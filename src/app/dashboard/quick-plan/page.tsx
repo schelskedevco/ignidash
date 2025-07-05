@@ -4,6 +4,8 @@ import {
   CalculatorIcon,
   PresentationChartLineIcon,
 } from "@heroicons/react/24/outline";
+import { Card } from "@/components/card";
+import { CoreInputs } from "./components/core-inputs";
 
 export default function QuickPlanPage() {
   return (
@@ -23,6 +25,9 @@ export default function QuickPlanPage() {
             Your Numbers
           </h3>
         </div>
+        <Card>
+          <CoreInputs />
+        </Card>
       </SecondaryColumn>
     </>
   );
