@@ -9,8 +9,10 @@ import {
 } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { DesktopSidebar } from "./components/desktop-sidebar";
+import { MainArea } from "./components/main-area";
 import { MobileHeader } from "./components/mobile-header";
 import { MobileSidebar } from "./components/mobile-sidebar";
+import { SecondaryColumn } from "./components/secondary-column";
 import { navigation } from "./navigation";
 
 export default function DashboardPage() {
@@ -63,17 +65,8 @@ export default function DashboardPage() {
           currentPageTitle="Quick Plan"
         />
 
-        <main className="lg:pl-72">
-          <div className="xl:pl-96">
-            <div className="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
-              {/* Main area */}
-            </div>
-          </div>
-        </main>
-
-        <aside className="border-foreground/10 dark:border-foreground/10 fixed inset-y-0 left-72 hidden w-96 overflow-y-auto border-r px-4 py-6 sm:px-6 lg:px-8 xl:block">
-          {/* Secondary column (hidden on smaller screens) */}
-        </aside>
+        <MainArea />
+        <SecondaryColumn />
       </div>
     </>
   );
