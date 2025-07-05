@@ -11,7 +11,7 @@ export function MobileSidebarContent({
   navigation,
 }: MobileSidebarContentProps) {
   return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2 dark:bg-zinc-900">
+    <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-100 px-6 pb-2 dark:bg-zinc-900">
       <div className="border-foreground/10 flex h-16 shrink-0 items-center justify-between gap-2 border-b">
         <div className="flex items-center gap-2">
           <FireIcon className="h-8 w-8 text-rose-500" />
@@ -29,8 +29,8 @@ export function MobileSidebarContent({
                     href={item.href}
                     className={cn(
                       item.current
-                        ? "bg-gray-50 text-rose-600 dark:bg-zinc-800 dark:text-rose-400"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-rose-600 dark:text-gray-300 dark:hover:bg-zinc-800 dark:hover:text-rose-400",
+                        ? "bg-white text-rose-600 dark:bg-zinc-800 dark:text-rose-400"
+                        : "text-gray-700 hover:bg-white hover:text-rose-600 dark:text-gray-300 dark:hover:bg-zinc-800 dark:hover:text-rose-400",
                       "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold"
                     )}
                   >
