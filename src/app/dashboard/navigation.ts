@@ -18,10 +18,60 @@ export interface NavigationItem {
   current: boolean;
 }
 
+export const navigationItems: Omit<NavigationItem, "current">[] = [
+  { name: "Quick Plan", href: "/dashboard/quick-plan", icon: BoltIcon },
+  {
+    name: "Deep Dive",
+    href: "/dashboard/deep-dive",
+    icon: MagnifyingGlassIcon,
+  },
+  { name: "Insights", href: "/dashboard/insights", icon: LightBulbIcon },
+  { name: "Explore", href: "/dashboard/explore", icon: ChartBarIcon },
+  { name: "Copilot", href: "/dashboard/copilot", icon: SparklesIcon },
+];
+
+export function getNavigation(currentPath: string): NavigationItem[] {
+  return navigationItems.map((item) => ({
+    ...item,
+    current: currentPath === item.href,
+  }));
+}
+
+export function getCurrentPageTitle(currentPath: string): string {
+  const item = navigationItems.find((item) => item.href === currentPath);
+  return item?.name || "Dashboard";
+}
+
+// Deprecated: Use getNavigation instead
 export const navigation: NavigationItem[] = [
-  { name: "Quick Plan", href: "#", icon: BoltIcon, current: true },
-  { name: "Deep Dive", href: "#", icon: MagnifyingGlassIcon, current: false },
-  { name: "Insights", href: "#", icon: LightBulbIcon, current: false },
-  { name: "Explore", href: "#", icon: ChartBarIcon, current: false },
-  { name: "Copilot", href: "#", icon: SparklesIcon, current: false },
+  {
+    name: "Quick Plan",
+    href: "/dashboard/quick-plan",
+    icon: BoltIcon,
+    current: true,
+  },
+  {
+    name: "Deep Dive",
+    href: "/dashboard/deep-dive",
+    icon: MagnifyingGlassIcon,
+    current: false,
+  },
+  {
+    name: "Insights",
+    href: "/dashboard/insights",
+    icon: LightBulbIcon,
+    current: false,
+  },
+  {
+    name: "Explore",
+    href: "/dashboard/explore",
+    icon: ChartBarIcon,
+    current: false,
+  },
+  {
+    name: "Copilot",
+    href: "/dashboard/copilot",
+    icon: SparklesIcon,
+    current: false,
+  },
 ];

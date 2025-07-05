@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FireIcon } from "@heroicons/react/24/solid";
 import { ModeToggle } from "@/components/mode-toggle";
 import { cn } from "@/lib/utils";
@@ -26,7 +27,7 @@ export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
               <ul role="list" className="-mx-2 space-y-1">
                 {navigation.map((item) => (
                   <li key={item.name}>
-                    <a
+                    <Link
                       href={item.href}
                       className={cn(
                         item.current
@@ -45,7 +46,7 @@ export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
                         )}
                       />
                       {item.name}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
