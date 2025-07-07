@@ -138,7 +138,10 @@ export default function HeroSection() {
           </div>
           <div className="text-center">
             <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
-              Financial Independence. Personalized.
+              Financial Independence.{" "}
+              <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">
+                Personalized.
+              </span>
             </h1>
             <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
               Explore retirement timelines, run what-if projections, and get
