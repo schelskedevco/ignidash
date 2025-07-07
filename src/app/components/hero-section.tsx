@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
+import { FireIcon } from "@heroicons/react/24/solid";
 
 const navigation = [
-  { name: "Product", href: "#" },
-  { name: "Features", href: "#" },
-  { name: "Marketplace", href: "#" },
-  { name: "Company", href: "#" },
+  { name: "How It Works", href: "#how-it-works" },
+  { name: "Pricing", href: "#pricing" },
+  { name: "FAQ", href: "#faq" },
+  { name: "Get Started", href: "/dashboard/quick-plan" },
 ];
 
 export default function HeroSection() {
@@ -24,14 +24,13 @@ export default function HeroSection() {
         >
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
-              <span className="sr-only">Your Company</span>
-              <Image
-                alt="Your Company"
-                src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-                width={32}
-                height={32}
-                className="h-8 w-auto"
-              />
+              <span className="sr-only">Ignidash</span>
+              <div className="flex items-center gap-2">
+                <FireIcon className="h-8 w-8 text-rose-500" />
+                <span className="text-xl font-semibold text-gray-900">
+                  Ignidash
+                </span>
+              </div>
             </a>
           </div>
           <div className="flex lg:hidden">
@@ -70,14 +69,13 @@ export default function HeroSection() {
           <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
               <a href="#" className="-m-1.5 p-1.5">
-                <span className="sr-only">Your Company</span>
-                <Image
-                  alt="Your Company"
-                  src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-                  width={32}
-                  height={32}
-                  className="h-8 w-auto"
-                />
+                <span className="sr-only">Ignidash</span>
+                <div className="flex items-center gap-2">
+                  <FireIcon className="h-8 w-8 text-rose-500" />
+                  <span className="text-xl font-semibold text-gray-900">
+                    Ignidash
+                  </span>
+                </div>
               </a>
               <button
                 type="button"
