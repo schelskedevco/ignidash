@@ -43,13 +43,10 @@ From running it by your inner circle to starting a conversation on Reddit or X, 
 ## Landing Page Structure
 
 1. **Hero** - Headline, subheadline, and primary CTA to Quick Plan
-2. **Problem/Solution** - Brief section on why traditional planning fails
-3. **Features** - Four features listed above with icons/illustrations
-4. **Quick Plan Demo** - Embedded calculator showing FIRE paths
-5. **Social Proof** - Testimonials and user success stories
-6. **Comparison Table** - Simple comparison vs traditional calculators
-7. **FAQ** - Address common concerns about AI, privacy, accuracy
-8. **Final CTA** - Reiterate privacy-first approach with Quick Plan CTA
+2. **Features** - Four features listed above with icons/illustrations
+3. **Social Proof** - Testimonials and user success stories
+4. **FAQ** - Address common concerns about AI, privacy, accuracy
+5. **Final CTA** - Reiterate privacy-first approach with Quick Plan CTA
 
 ## Visual Style
 
