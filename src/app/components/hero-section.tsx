@@ -145,7 +145,8 @@ export default function HeroSection() {
             </h1>
             <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
               Explore retirement timelines, run what-if projections, and get
-              AI-powered insights — without the complexity of traditional tools.
+              AI-powered insights to discover paths and make confident life
+              decisions.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
