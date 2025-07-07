@@ -5,7 +5,10 @@ import { DisclosureSection } from "@/components/disclosure-section";
 
 export function AlternativePaths() {
   return (
-    <DisclosureSection title="Coast FIRE">
+    <DisclosureSection
+      title="Coast FIRE"
+      desc="Front-load savings, then work just enough to cover living expenses."
+    >
       <form onSubmit={(e) => e.preventDefault()} className="mt-4 space-y-4">
         <div>
           <label

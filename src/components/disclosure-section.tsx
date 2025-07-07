@@ -10,12 +10,14 @@ import { cn } from "@/lib/utils";
 
 interface DisclosureSectionProps {
   title: string;
+  desc?: string;
   children: React.ReactNode;
   className?: string;
 }
 
 export function DisclosureSection({
   title,
+  desc,
   children,
   className,
 }: DisclosureSectionProps) {
@@ -27,8 +29,15 @@ export function DisclosureSection({
           className ?? ""
         )}
       >
-        {title}
-        <ChevronDownIcon className="w-5 group-data-open:rotate-180" />
+        <div className="w-full text-left">
+          <div className="flex w-full items-center justify-between">
+            <h4 className="text-base font-semibold">{title}</h4>
+            <ChevronDownIcon className="w-5 shrink-0 group-data-open:rotate-180" />
+          </div>
+          <p className="text-muted-foreground mt-2 hidden text-xs group-data-open:block">
+            {desc}
+          </p>
+        </div>
       </DisclosureButton>
       <DisclosurePanel>{children}</DisclosurePanel>
     </Disclosure>
