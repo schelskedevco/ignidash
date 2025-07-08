@@ -17,8 +17,8 @@ export default function CTASection() {
             >
               Start Quick Plan
             </a>
-            <a href="#faq" className="text-sm/6 font-semibold text-white">
-              Learn about privacy <span aria-hidden="true">→</span>
+            <a href="/pricing" className="text-sm/6 font-semibold text-white">
+              View pricing <span aria-hidden="true">→</span>
             </a>
           </div>
           <svg

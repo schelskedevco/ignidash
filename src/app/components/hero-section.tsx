@@ -8,7 +8,7 @@ import { FireIcon } from "@heroicons/react/24/solid";
 const navigation = [
   { name: "How It Works", href: "#how-it-works" },
   { name: "FAQ", href: "#faq" },
-  { name: "Pricing", href: "#pricing" },
+  { name: "Pricing", href: "/pricing" },
   { name: "Get Started", href: "/dashboard/quick-plan" },
 ];
 

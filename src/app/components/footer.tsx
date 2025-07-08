@@ -1,11 +1,11 @@
 const navigation = {
   main: [
     { name: "About", href: "#" },
+    { name: "Pricing", href: "/pricing" },
     { name: "Blog", href: "#" },
-    { name: "Jobs", href: "#" },
-    { name: "Press", href: "#" },
-    { name: "Accessibility", href: "#" },
-    { name: "Partners", href: "#" },
+    { name: "Privacy", href: "#" },
+    { name: "Terms", href: "#" },
+    { name: "Contact", href: "#" },
   ],
   social: [
     {
