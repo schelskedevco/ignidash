@@ -13,10 +13,8 @@ const tiers = [
     features: [
       "Save and compare unlimited scenarios",
       "Model life events and financial changes",
-      "Get smart suggestions based on your values",
-      "Explore pre-built life scenarios",
-      "Export plans and track progress",
-      "Monthly progress summaries",
+      "Explore templates and smart suggestions",
+      "Track progress with exports and summaries",
     ],
     featured: false,
   },
@@ -44,9 +42,9 @@ function classNames(...classes: string[]) {
 
 export default function PricingPage() {
   return (
-    <div className="relative isolate bg-white">
+    <>
       <Navbar />
-      <div className="px-6 py-24 sm:py-32 lg:px-8">
+      <div className="relative isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
         <div
           aria-hidden="true"
           className="absolute inset-x-0 -top-3 -z-10 transform-gpu overflow-hidden px-36 blur-3xl"
@@ -157,6 +155,6 @@ export default function PricingPage() {
         </div>
       </div>
       <Footer />
-    </div>
+    </>
   );
 }

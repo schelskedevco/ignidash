@@ -23,6 +23,7 @@ npm run typecheck    # TypeScript type checking without output
 - Pre-commit hooks automatically run ESLint (with fixes) and Prettier on staged files
 - All commits are automatically formatted and linted before being accepted
 - ESLint uses flat config format - modify `eslint.config.mjs`, not `.eslintrc`
+- Always run the format command after making changes.
 
 ## Architecture & Key Patterns
 
