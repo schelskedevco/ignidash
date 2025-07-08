@@ -225,7 +225,157 @@ interface Event {
 - **URL parameters** for sharing (base64 encoded state)
 - **No server storage** - privacy-first approach
 
-## Calculations & Outputs
+## Outputs Structure
+
+### Core Design Principles for Outputs
+
+- **Visual-first approach**: Charts before tables, overview before details
+- **Progressive disclosure**: Essential info first, advanced analysis for interested users
+- **Achievement celebration**: Generic handling for any already-achieved FIRE type
+- **Minimal duplication**: Strategic overlap only for essential information
+- **Mobile-optimized**: Touch-friendly, responsive design
+- **Shareability**: Reddit-optimized results with emotional hooks
+
+### Output Sections (Matching Input Flow)
+
+#### 1. Results Overview
+
+**Purpose**: Immediate gratification and key takeaways
+
+**Components**:
+
+- **Dynamic English hook**: Simple context-aware messaging
+  - Traditional FIRE: "You could reach FI at age 42!"
+  - Coast FIRE: "You're already coasting to FI!"
+  - Multiple paths: "You have 3 paths to financial independence"
+- **Core metrics for enabled paths**: Show essential results only
+  - Years to FI
+  - Age at FI
+  - Net Worth needed
+- **Simple achievement status**: Basic binary state
+  - ✅ "Already achieved" or "X years to go"
+  - No complex progress indicators or trajectory analysis
+- **Share button**: Basic social sharing functionality
+
+**Mobile Implementation**:
+
+- Stack metrics vertically with good spacing and typography
+- Basic share button
+- Clean, minimal design without card containers
+
+#### 2. Net Worth Chart
+
+**Purpose**: Visual understanding of financial trajectory
+
+**Components**:
+
+- **Multi-path visualization**: All enabled FIRE paths on single chart
+  - Traditional FIRE line
+  - Coast FIRE target line (if enabled)
+  - Barista FIRE transition point (if enabled)
+  - **Alternative approach**: If single chart becomes cluttered (especially on mobile), implement tab-based charts where users can select specific FIRE type to view individual charts
+- **Simple event markers**: Basic visual indicators showing timing
+  - Windfalls (green dot)
+  - Major purchases (red dot)
+  - Life changes (blue dot)
+  - Career breaks (orange dot)
+- **Basic interactions**: Hover for event details only
+- **Real-time updates**: Chart updates as users adjust inputs
+
+**Technical Specifications**:
+
+- **Library**: Recharts for React integration (charts not available in Tailwind Plus)
+- **Performance**: Debounced updates, memoized calculations
+- **Accessibility**: ARIA labels, keyboard navigation
+- **Responsive**: Standard responsive behavior
+
+#### 3. FIRE Path Comparison Table (Conditional)
+
+**Display Logic**: Only show when multiple FIRE paths are enabled
+
+**Simple Table Structure**:
+
+```
+| Path Type    | Years to FI | Age at FI | Net Worth Needed | Success Rate |
+|--------------|-------------|-----------|------------------|--------------|
+| Traditional  | 12.3 years  | Age 42    | $1,250,000      | 87%          |
+| Coast FIRE   | 8.1 years   | Age 38    | $850,000        | 95%          |
+| Barista FIRE | 9.5 years   | Age 40    | $900,000        | 91%          |
+```
+
+**Note**: Status (already achieved vs years away) can be deduced from Years to FI and Age at FI columns. Alternative column option: Monthly Savings Required instead of Success Rate.
+
+**Mobile Optimization**:
+
+- Simple stacked cards view
+- No sorting or interactive features
+- Clean, readable layout
+
+#### 4. Event Impact Summary
+
+**Purpose**: Quantify how life events affect FIRE timeline
+
+**Components**:
+
+- **Individual event analysis**: Simple impact statements
+  - "House down payment delays FIRE by 1.2 years"
+  - "Inheritance accelerates FIRE by 3.4 years"
+  - "Career break extends timeline by 2.1 years"
+  - "Child expenses add 4.2 years to FIRE"
+- **Cumulative effects**: "All events combined delay FIRE by 2.8 years"
+
+**Event Categories**:
+
+- **Accelerating events**: Windfalls (positive impact)
+- **Delaying events**: Major purchases, career breaks, life changes (negative impact)
+
+**Display**: Static text analysis with no interactive elements
+
+#### 5. Success Probability & Analysis
+
+**Purpose**: Address risk and uncertainty in projections
+
+**Simple Monte Carlo Implementation**:
+
+- **Simulation parameters**: 10,000 runs for statistical significance
+- **Variable factors**: Stock/bond returns with historical volatility
+- **Computational approach**: Web Workers for heavy calculations
+
+**Output Display**:
+
+- **Success probability percentage**: "89% chance of success"
+- **Basic historical context**: "Based on historical market data since 1871"
+- **Worst-case scenario context**: "In the worst historical period (Great Depression), you'd reach FI 3 years later"
+- **Improvement threshold**: "Reducing expenses by $200/month would increase success to 94%"
+- **Simple risk level**: Traffic light indicator
+  - Green (>90%): "High confidence"
+  - Yellow (70-90%): "Moderate confidence"
+  - Red (<70%): "Lower confidence"
+
+**Display**: Static analysis with no interactive elements or detailed breakdowns
+
+#### 6. Intelligent Explanation
+
+**Purpose**: Contextual insights and emotional engagement
+
+**Simple Rule-Based Insights**:
+
+- **Basic scenario detection**: High-level observations
+  - Coast FIRE achieved: "You have incredible flexibility"
+  - Long timeline: "Small changes can have big impact"
+  - Multiple paths: "You have several options to consider"
+
+**Emotional Engagement**:
+
+- **Simple reflection prompt**: "Does this timeline feel right to you?"
+- **Basic lifestyle context**: "At 42, you'd have decades of freedom"
+
+**Clear Upgrade CTA**:
+
+- **Value proposition**: "Explore unlimited scenarios with our full planner"
+- **Simple call to action**: Clear next step for interested users
+
+**Display**: Static insights with no complex personalization or detailed analysis
 
 ### Core Calculations
 
@@ -255,12 +405,68 @@ Barista FIRE Number = (Annual Expenses - Side Income) / Safe Withdrawal Rate
 Years to Barista FIRE = Time to reach Barista FIRE Number
 ```
 
-### Output Visualizations
+### Technical Implementation Specifications
 
-- **Portfolio growth chart** showing path to FIRE
-- **Multiple scenario comparison** (if multiple paths selected)
-- **Sensitivity analysis** for key variables
-- **Event impact visualization** showing effect of one-time events
+#### Chart Requirements
+
+- **Library**: Recharts for React integration (charts not available in Tailwind Plus)
+- **Performance**:
+  - Debounced updates (300ms)
+  - Memoized calculations using React.useMemo
+  - Efficient re-renders with React.memo
+- **Animations**: Smooth transitions for user engagement
+- **Responsiveness**: Mobile-first design with breakpoint considerations
+- **Accessibility**:
+  - ARIA labels for screen readers
+  - Keyboard navigation support
+  - High contrast mode compatibility
+
+#### Table Specifications
+
+- **Component Source**: Tailwind Plus UI blocks for table formatting and styling
+- **Responsive behavior**:
+  - Desktop: Full table display using Tailwind Plus table components
+  - Mobile: Stacked cards or horizontal scroll with Tailwind Plus responsive utilities
+- **Sorting capability**: Click column headers to sort (enhanced with Tailwind Plus styling)
+- **Highlighting**: Emphasize optimal or achieved paths using Tailwind Plus color schemes
+- **Export functionality**: PDF download for results
+
+#### Success Probability Calculations
+
+- **Historical data**: S&P 500 and bond returns since 1871
+- **Monte Carlo engine**:
+  - 10,000 simulations for statistical significance
+  - Variable inflation based on historical ranges
+  - Sequence of returns risk modeling
+- **Performance optimization**:
+  - Web Workers for heavy calculations
+  - Progressive result display
+  - Caching for repeated calculations
+
+### Marketing Strategy Alignment
+
+**Landing Page Promise Delivery**:
+
+- **"Every FIRE Path, Clearly Mapped"**: Comparison table and chart visualization
+- **"Play Out Your What-Ifs"**: Event impact analysis and optimization
+- **"Share Your Plan"**: Optimized share functionality with social preview
+- **"Which path excites you most?"**: Emotional engagement in explanation section
+
+**Reddit Virality Features**:
+
+- **Shareable moments**: "I discovered I could CoastFIRE at 40!"
+- **Authentic language**: Conversational, not corporate
+- **Visual results**: Charts and tables that screenshot well
+- **Success stories**: Achievement celebrations that inspire sharing
+
+### Performance Targets (Updated)
+
+- **Initial render**: < 1 second for results overview
+- **Chart interactions**: < 100ms response time
+- **Monte Carlo calculation**: < 2 seconds with progress indicator
+- **Table sorting/filtering**: < 50ms response time
+- **Mobile performance**: 60fps animations on modern devices
+- **Accessibility**: WCAG 2.1 AA compliance across all components
 
 ## Legal Compliance
 
@@ -347,11 +553,11 @@ personalized advice."
 ## Future Enhancements (Not MVP)
 
 - **Multiple plan comparison** (paid feature)
-- **Monte Carlo simulations** for success probability
 - **Tax-advantaged account modeling**
 - **International currency support**
 - **Advanced withdrawal strategies**
 - **Detailed breakdown exports**
+- **AI-powered optimization suggestions**
 
 ## Implementation Priority
 
@@ -359,7 +565,12 @@ personalized advice."
 2. **Progressive disclosure** for advanced options
 3. **Settings dialog** with global options
 4. **One-time events** functionality
-5. **Visualizations** and charts
-6. **Shareability** features
-7. **Mobile optimization**
-8. **Legal compliance** review
+5. **Results overview** with key metrics
+6. **Interactive net worth chart** with event markers
+7. **FIRE path comparison table** (conditional)
+8. **Event impact summary** with optimization suggestions
+9. **Success probability** with Monte Carlo analysis
+10. **Intelligent explanation** with emotional engagement
+11. **Shareability** features and social optimization
+12. **Mobile optimization** and responsive design
+13. **Legal compliance** review and disclaimers
