@@ -110,6 +110,7 @@ Users can add up to 3 events total, mixing and matching:
 - **Event Cards** showing type, amount, timing
 - **Delete** button for each event
 - **Event Counter** showing "2 of 3 events used"
+- **Upgrade prompt**: When at 3/3 limit, show "Model unlimited life events with Pro" (inputs section upsell)
 
 ## UI Layout & Settings
 
@@ -256,6 +257,7 @@ interface Event {
   - ✅ "Already achieved" or "X years to go"
   - No complex progress indicators or trajectory analysis
 - **Share button**: Basic social sharing functionality
+- **Pro upsell**: "Save and compare multiple scenarios with Pro" (subtle, contextual)
 
 **Mobile Implementation**:
 
@@ -323,13 +325,16 @@ interface Event {
   - "Career break extends timeline by 2.1 years"
   - "Child expenses add 4.2 years to FIRE"
 - **Cumulative effects**: "All events combined delay FIRE by 2.8 years"
+- **Simple optimization suggestions** (1-2 max, rule-based):
+  - "Moving house purchase 2 years later would save 8 months to FI"
+  - "Timing career break after age 35 would reduce impact by 6 months"
 
 **Event Categories**:
 
 - **Accelerating events**: Windfalls (positive impact)
 - **Delaying events**: Major purchases, career breaks, life changes (negative impact)
 
-**Display**: Static text analysis with no interactive elements
+**Display**: Static text analysis with simple timing-focused optimization suggestions
 
 #### 5. Success Probability & Analysis
 
@@ -365,14 +370,21 @@ interface Event {
   - Long timeline: "Small changes can have big impact"
   - Multiple paths: "You have several options to consider"
 
+**Lifestyle Implications**:
+
+- **Path-specific lifestyle context**: What each path means for your life
+  - Traditional FIRE: "Complete financial freedom at 42 - pursue any passion without income constraints"
+  - Coast FIRE: "Stop saving at 38, work flexibly knowing retirement is secured"
+  - Barista FIRE: "Transition to meaningful part-time work at 40 with reduced financial pressure"
+
 **Emotional Engagement**:
 
 - **Simple reflection prompt**: "Does this timeline feel right to you?"
-- **Basic lifestyle context**: "At 42, you'd have decades of freedom"
+- **Lifestyle visualization**: "At 42, you'd have 40+ years to pursue whatever excites you"
 
-**Clear Upgrade CTA**:
+**Clear Upgrade CTAs**:
 
-- **Value proposition**: "Explore unlimited scenarios with our full planner"
+- **Pro+AI upsell**: "Want personalized guidance? Get AI-powered insights with Pro+AI"
 - **Simple call to action**: Clear next step for interested users
 
 **Display**: Static insights with no complex personalization or detailed analysis
@@ -551,6 +563,17 @@ personalized advice."
 - **Mobile responsiveness**: Works on iOS Safari and Android Chrome
 
 ## Future Enhancements (Not MVP)
+
+### Output Section Stretch Goals
+
+- **Results Overview**: Visual timeline showing "You are here → FI at 42" progress indicator
+- **Net Worth Chart**: Chart annotations explaining key moments ("This is when you hit Coast FIRE")
+- **FIRE Path Comparison**: "Lifestyle" column showing practical implications of each path
+- **Event Impact Summary**: Advanced multi-variable optimization with scenario modeling
+- **Success Probability**: Benchmark comparisons vs similar user situations
+- **Intelligent Explanation**: Scenario-specific decision support and lifestyle insights (AI-powered, paid tier)
+
+### General Enhancements
 
 - **Multiple plan comparison** (paid feature)
 - **Tax-advantaged account modeling**
