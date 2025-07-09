@@ -25,7 +25,7 @@ export default function Tabs() {
         <select
           defaultValue={tabs.find((tab) => tab.current)?.name}
           aria-label="Select a tab"
-          className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+          className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600"
         >
           {tabs.map((tab) => (
             <option key={tab.name}>{tab.name}</option>
@@ -46,7 +46,7 @@ export default function Tabs() {
                 aria-current={tab.current ? "page" : undefined}
                 className={classNames(
                   tab.current
-                    ? "border-indigo-500 text-indigo-600"
+                    ? "border-rose-500 text-rose-600"
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
                   "group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium"
                 )}
@@ -55,7 +55,7 @@ export default function Tabs() {
                   aria-hidden="true"
                   className={classNames(
                     tab.current
-                      ? "text-indigo-500"
+                      ? "text-rose-500"
                       : "text-gray-400 group-hover:text-gray-500",
                     "mr-2 -ml-0.5 size-5"
                   )}
