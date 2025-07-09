@@ -34,6 +34,11 @@ export function ModeToggle() {
   }
 
   return (
-    <IconButton icon={icon} label={label} onClick={() => setTheme(newTheme)} />
+    <IconButton
+      icon={icon}
+      label={label}
+      onClick={() => setTheme(newTheme)}
+      surfaceColor="emphasized"
+    />
   );
 }
