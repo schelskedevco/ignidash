@@ -15,7 +15,7 @@ export function RightChevronButton({
     <button
       type="button"
       onClick={onClick}
-      className={`bg-emphasized-background text-foreground hover:bg-background hover:ring-foreground/10 flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-sm shadow-sm hover:ring-1 hover:ring-inset sm:px-6 ${className}`}
+      className={`bg-emphasized-background text-foreground hover:bg-background hover:ring-foreground/10 focus-visible:outline-foreground flex w-full items-center justify-between rounded-lg px-4 py-2.5 text-sm shadow-sm hover:ring-1 hover:ring-inset focus-visible:outline-2 focus-visible:outline-offset-2 sm:px-6 ${className}`}
     >
       <span>{title}</span>
       <ChevronRightIcon className="h-5 w-5" />

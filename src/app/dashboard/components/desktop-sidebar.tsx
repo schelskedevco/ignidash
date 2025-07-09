@@ -33,7 +33,7 @@ export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
                         item.current
                           ? "border border-rose-600 bg-white text-rose-600 dark:border-rose-400 dark:bg-zinc-800 dark:text-rose-400"
                           : "border border-transparent text-gray-700 hover:bg-white hover:text-rose-600 dark:text-gray-300 dark:hover:bg-zinc-800 dark:hover:text-rose-400",
-                        "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold"
+                        "group focus-visible:outline-foreground flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2"
                       )}
                     >
                       <item.icon
@@ -54,7 +54,7 @@ export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
             <li className="-mx-6 mt-auto">
               <a
                 href="#"
-                className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-900 hover:bg-white dark:text-gray-100 dark:hover:bg-zinc-800"
+                className="focus-visible:outline-foreground flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-900 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 dark:text-gray-100 dark:hover:bg-zinc-800"
               >
                 <Image
                   alt=""

@@ -27,7 +27,7 @@ export function DisclosureSection({
     <Disclosure>
       <DisclosureButton
         className={cn(
-          "group data-open:border-foreground/10 flex w-full items-center justify-between gap-2 data-open:mb-5 data-open:border-b data-open:pb-5",
+          "group data-open:border-foreground/10 focus-visible:outline-foreground flex w-full items-center justify-between gap-2 focus-visible:outline-2 focus-visible:outline-offset-2 data-open:mb-5 data-open:border-b data-open:pb-5",
           className ?? ""
         )}
       >
