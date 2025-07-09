@@ -44,11 +44,10 @@ export function GlobalSettings() {
       </div>
       <div className="border-foreground/10 mb-5 border-b pb-5">
         <div className="ml-2">
-          <h4 className="text-base font-semibold">Foundation</h4>
-          <p className="text-muted-foreground mt-2 text-sm">
-            The core numbers needed to estimate your financial independence
-            timeline.
-          </p>
+          <h4 className="text-base font-semibold">
+            Death & <span className="line-through decoration-2">Taxes</span>{" "}
+            Inflation
+          </h4>
         </div>
 
         <Card>
