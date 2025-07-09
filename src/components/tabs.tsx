@@ -21,7 +21,7 @@ export default function Tabs() {
         <select
           defaultValue={tabs.find((tab) => tab.current)?.name}
           aria-label="Select a tab"
-          className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600"
+          className="bg-emphasized-background text-foreground outline-foreground/10 col-start-1 row-start-1 w-full appearance-none rounded-md py-2 pr-8 pl-3 text-base outline-1 -outline-offset-1 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 dark:focus:outline-rose-400"
         >
           {tabs.map((tab) => (
             <option key={tab.name}>{tab.name}</option>
@@ -29,11 +29,11 @@ export default function Tabs() {
         </select>
         <ChevronDownIcon
           aria-hidden="true"
-          className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500"
+          className="fill-muted-foreground pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end"
         />
       </div>
       <div className="hidden sm:block">
-        <div className="border-b border-gray-200">
+        <div className="border-foreground/10 border-b">
           <nav aria-label="Tabs" className="-mb-px flex space-x-8">
             {tabs.map((tab) => (
               <a
@@ -42,8 +42,8 @@ export default function Tabs() {
                 aria-current={tab.current ? "page" : undefined}
                 className={classNames(
                   tab.current
-                    ? "border-rose-500 text-rose-600"
-                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                    ? "border-rose-600 text-rose-600 dark:border-rose-400 dark:text-rose-400"
+                    : "border-transparent text-gray-700 hover:text-rose-600 dark:text-gray-300 dark:hover:text-rose-400",
                   "group inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium"
                 )}
               >
@@ -51,8 +51,8 @@ export default function Tabs() {
                   aria-hidden="true"
                   className={classNames(
                     tab.current
-                      ? "text-rose-500"
-                      : "text-gray-400 group-hover:text-gray-500",
+                      ? "text-rose-600 dark:text-rose-400"
+                      : "text-gray-400 group-hover:text-rose-600 dark:text-gray-500 dark:group-hover:text-rose-400",
                     "mr-2 -ml-0.5 size-5"
                   )}
                 />
