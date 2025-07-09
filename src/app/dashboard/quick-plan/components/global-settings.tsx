@@ -70,6 +70,18 @@ export function GlobalSettings() {
                 min="50"
                 max="110"
               />
+              <p className="text-muted-foreground mt-2 text-xs">
+                How far out to project all FIRE calculations (50-110 years). See{" "}
+                <a
+                  href="https://www.cdc.gov/nchs/fastats/life-expectancy.htm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-rose-600 underline hover:text-rose-700"
+                >
+                  CDC life expectancy data
+                </a>{" "}
+                for current averages.
+              </p>
             </div>
             <div key="inflation-rate">
               <label
@@ -88,6 +100,18 @@ export function GlobalSettings() {
                 max="8"
                 step="0.1"
               />
+              <p className="text-muted-foreground mt-2 text-xs">
+                Used for real return calculations (0-8%). See{" "}
+                <a
+                  href="https://www.bls.gov/charts/consumer-price-index/consumer-price-index-by-category-line-chart.htm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-rose-600 underline hover:text-rose-700"
+                >
+                  Bureau of Labor Statistics CPI data
+                </a>{" "}
+                for current inflation rates.
+              </p>
             </div>
           </form>
         </Card>
