@@ -3,8 +3,10 @@ import { SecondaryColumn } from "../components/secondary-column";
 import {
   CalculatorIcon,
   PresentationChartLineIcon,
+  Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { Card } from "@/components/card";
+import { IconButton } from "@/components/icon-button";
 import { CoreInputs } from "./components/core-inputs";
 import { CoastFIRE, BaristaFIRE } from "./components/alternative-paths";
 
@@ -21,10 +23,13 @@ export default function QuickPlanPage() {
       </MainArea>
       <SecondaryColumn>
         <div className="border-foreground/10 mb-5 border-b pb-5">
-          <h3 className="font-display flex items-center gap-2 text-lg font-semibold text-gray-900 lg:text-xl dark:text-gray-100">
-            <CalculatorIcon className="h-5 w-5" />
-            Your Numbers
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-display flex items-center gap-2 text-lg font-semibold text-gray-900 lg:text-xl dark:text-gray-100">
+              <CalculatorIcon className="h-5 w-5" />
+              Your Numbers
+            </h3>
+            <IconButton icon={Cog6ToothIcon} label="Settings" />
+          </div>
         </div>
         <div className="border-foreground/10 mb-5 border-b pb-5">
           <div className="ml-2">
