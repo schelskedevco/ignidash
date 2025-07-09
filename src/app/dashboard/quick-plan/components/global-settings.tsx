@@ -49,7 +49,7 @@ export function GlobalSettings() {
                 href="https://www.cdc.gov/nchs/fastats/life-expectancy.htm"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-rose-600 underline hover:text-rose-700"
+                className="text-foreground hover:text-foreground/80 underline"
               >
                 CDC life expectancy data
               </a>{" "}
@@ -73,7 +73,7 @@ export function GlobalSettings() {
                 href="https://www.bls.gov/charts/consumer-price-index/consumer-price-index-by-category-line-chart.htm"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-rose-600 underline hover:text-rose-700"
+                className="text-foreground hover:text-foreground/80 underline"
               >
                 Bureau of Labor Statistics CPI data
               </a>{" "}
