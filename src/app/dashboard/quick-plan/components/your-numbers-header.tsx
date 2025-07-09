@@ -23,7 +23,12 @@ export function YourNumbersHeader() {
           />
         </div>
       </div>
-      <Drawer open={settingsOpen} setOpen={setSettingsOpen} title="Settings">
+      <Drawer
+        open={settingsOpen}
+        setOpen={setSettingsOpen}
+        title="Settings"
+        desc="Adjust the assumptions and rules used to calculate your FIRE timeline."
+      >
         <div />
       </Drawer>
     </>
