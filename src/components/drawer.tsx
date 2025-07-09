@@ -51,8 +51,8 @@ export default function Drawer({
                   </button>
                 </div>
               </TransitionChild>
-              <div className="bg-emphasized-background flex h-full flex-col overflow-y-auto py-6">
-                <div className="px-4 sm:px-6">
+              <div className="flex h-full flex-col overflow-y-auto">
+                <div className="bg-emphasized-background px-4 py-6 sm:px-6">
                   <DialogTitle className="text-foreground text-base font-semibold">
                     {title}
                   </DialogTitle>
@@ -62,7 +62,7 @@ export default function Drawer({
                     </div>
                   )}
                 </div>
-                <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                <div className="bg-background relative flex-1 px-4 py-6 sm:px-6">
                   {children}
                 </div>
               </div>
