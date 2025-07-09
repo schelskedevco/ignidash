@@ -13,7 +13,7 @@ export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
       {/* Sidebar component, swap this element with another sidebar if you like */}
-      <div className="border-foreground/10 dark:border-foreground/10 flex grow flex-col gap-y-5 overflow-y-auto border-r bg-gray-100 px-6 dark:bg-zinc-900">
+      <div className="border-foreground/10 dark:border-foreground/10 bg-emphasized-background flex grow flex-col gap-y-5 overflow-y-auto border-r px-6">
         <div className="border-foreground/10 flex h-16 shrink-0 items-center justify-between gap-2 border-b">
           <div className="flex items-center gap-2">
             <FireIcon className="h-8 w-8 text-rose-500" />

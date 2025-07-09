@@ -4,6 +4,7 @@
 
 :root {
   --background: #ffffff;
+  --emphasized-background: #f3f4f6;
   --foreground: #171717;
   --muted-foreground: #6b7280;
 }
@@ -20,6 +21,7 @@ html {
 
 @theme inline {
   --color-background: var(--background);
+  --color-emphasized-background: var(--emphasized-background);
   --color-foreground: var(--foreground);
   --color-muted-foreground: var(--muted-foreground);
   --font-sans: var(--font-inter);
@@ -28,6 +30,7 @@ html {
 
 .dark {
   --background: #27272a;
+  --emphasized-background: #18181b;
   --foreground: #ededed;
   --muted-foreground: #9ca3af;
 }

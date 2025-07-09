@@ -12,7 +12,7 @@ export function MobileSidebarContent({
   navigation,
 }: MobileSidebarContentProps) {
   return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-100 px-6 pb-2 dark:bg-zinc-900">
+    <div className="bg-emphasized-background flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-2">
       <div className="border-foreground/10 flex h-16 shrink-0 items-center justify-between gap-2 border-b">
         <div className="flex items-center gap-2">
           <FireIcon className="h-8 w-8 text-rose-500" />

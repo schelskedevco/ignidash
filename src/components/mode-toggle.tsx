@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/catalyst/button";
+import { IconButton } from "@/components/icon-button";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 
 export function ModeToggle() {
@@ -19,9 +19,21 @@ export function ModeToggle() {
     return null;
   }
 
+  let icon;
+  let label;
+  let newTheme;
+
+  if (isDark) {
+    icon = SunIcon;
+    label = "Switch to light mode";
+    newTheme = "light";
+  } else {
+    icon = MoonIcon;
+    label = "Switch to dark mode";
+    newTheme = "dark";
+  }
+
   return (
-    <Button onClick={() => setTheme(isDark ? "light" : "dark")} outline>
-      {isDark ? <SunIcon /> : <MoonIcon />}
-    </Button>
+    <IconButton icon={icon} label={label} onClick={() => setTheme(newTheme)} />
   );
 }

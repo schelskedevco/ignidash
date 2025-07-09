@@ -11,7 +11,7 @@ export function MobileHeader({
   currentPageTitle,
 }: MobileHeaderProps) {
   return (
-    <div className="sticky top-0 z-40 flex items-center gap-x-6 bg-gray-100 px-4 py-4 shadow-xs sm:px-6 lg:hidden dark:bg-zinc-900">
+    <div className="bg-emphasized-background sticky top-0 z-40 flex items-center gap-x-6 px-4 py-4 shadow-xs sm:px-6 lg:hidden">
       <button
         type="button"
         onClick={onMenuClick}
