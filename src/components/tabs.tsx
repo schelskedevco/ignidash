@@ -1,16 +1,12 @@
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import {
-  BuildingOfficeIcon,
-  CreditCardIcon,
-  UserIcon,
-  UsersIcon,
+  CalculatorIcon,
+  PresentationChartLineIcon,
 } from "@heroicons/react/20/solid";
 
 const tabs = [
-  { name: "My Account", href: "#", icon: UserIcon, current: false },
-  { name: "Company", href: "#", icon: BuildingOfficeIcon, current: false },
-  { name: "Team Members", href: "#", icon: UsersIcon, current: true },
-  { name: "Billing", href: "#", icon: CreditCardIcon, current: false },
+  { name: "Your Numbers", icon: CalculatorIcon, current: false },
+  { name: "Results", icon: PresentationChartLineIcon, current: true },
 ];
 
 function classNames(...classes: string[]) {
@@ -42,7 +38,7 @@ export default function Tabs() {
             {tabs.map((tab) => (
               <a
                 key={tab.name}
-                href={tab.href}
+                href={"#"}
                 aria-current={tab.current ? "page" : undefined}
                 className={classNames(
                   tab.current

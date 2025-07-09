@@ -9,12 +9,16 @@ import { Card } from "@/components/card";
 import { IconButton } from "@/components/icon-button";
 import { CoreInputs } from "./components/core-inputs";
 import { CoastFIRE, BaristaFIRE } from "./components/alternative-paths";
+import Tabs from "@/components/tabs";
 
 export default function QuickPlanPage() {
   return (
     <>
       <MainArea>
-        <div className="border-foreground/10 mb-5 border-b pb-5">
+        <div className="block xl:hidden">
+          <Tabs />
+        </div>
+        <div className="border-foreground/10 mb-5 hidden border-b pb-5 xl:block">
           <h3 className="font-display flex items-center gap-2 text-lg font-semibold text-gray-900 lg:text-xl dark:text-gray-100">
             <PresentationChartLineIcon className="h-5 w-5" />
             Results
