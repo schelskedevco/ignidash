@@ -51,7 +51,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
 
   return (
     <>
-      <FormSection title="Annual Income">
+      <FormSection title="Net Annual Income">
         <NumberField
           id="income-growth-rate"
           label="Income Growth Rate (%)"
