@@ -75,7 +75,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           min="0"
           max="10"
           step="0.1"
-          desc="Annual spending increase. 0% means buying less as prices rise."
+          desc="Annual spending increase. 0% means buying less as prices rise due to inflation."
         />
         <NumberField
           id="retirement-expenses"
