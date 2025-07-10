@@ -61,7 +61,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           min="0"
           max="50"
           step="0.1"
-          desc="Annual raise percentage. 0% means income stays at same currency amount."
+          desc="Annual raise percentage. 0% loses purchasing power to inflation."
         />
       </FormSection>
 
@@ -75,7 +75,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           min="0"
           max="10"
           step="0.1"
-          desc="Annual spending increase. 0% means spending stays at same currency amount."
+          desc="Annual spending increase. 0% means buying less as prices rise."
         />
         <NumberField
           id="retirement-expenses"
