@@ -11,8 +11,8 @@ interface GrowthAllocationProps {
 
 export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
   // Growth rates
-  const [incomeGrowthRate, setIncomeGrowthRate] = useState("0");
-  const [expenseGrowthRate, setExpenseGrowthRate] = useState("0");
+  const [incomeGrowthRate, setIncomeGrowthRate] = useState("3");
+  const [expenseGrowthRate, setExpenseGrowthRate] = useState("3");
   const [retirementExpenses, setRetirementExpenses] = useState("");
 
   // Asset allocation
@@ -57,7 +57,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           label="Income Growth Rate (%)"
           value={incomeGrowthRate}
           onChange={(e) => setIncomeGrowthRate(e.target.value)}
-          placeholder="0"
+          placeholder="3"
           min="0"
           max="50"
           step="0.1"
@@ -71,7 +71,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           label="Expense Growth Rate (%)"
           value={expenseGrowthRate}
           onChange={(e) => setExpenseGrowthRate(e.target.value)}
-          placeholder="0"
+          placeholder="3"
           min="0"
           max="10"
           step="0.1"
