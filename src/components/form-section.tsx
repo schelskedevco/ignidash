@@ -4,12 +4,14 @@ import { Card } from "@/components/card";
 
 interface FormSectionProps {
   title: React.ReactNode;
+  desc?: string;
   children: React.ReactNode;
   hasBorder?: boolean;
 }
 
 export function FormSection({
   title,
+  desc,
   children,
   hasBorder = true,
 }: FormSectionProps) {
@@ -21,6 +23,7 @@ export function FormSection({
     >
       <div className="ml-2">
         <h4 className="text-base font-semibold">{title}</h4>
+        {desc && <p className="text-muted-foreground mt-2 text-sm">{desc}</p>}
       </div>
       <Card>
         <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
