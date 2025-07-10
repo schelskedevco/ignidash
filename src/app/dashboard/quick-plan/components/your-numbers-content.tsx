@@ -7,6 +7,7 @@ import { RightChevronButton } from "@/components/right-chevron-button";
 import { useState } from "react";
 import Drawer from "@/components/drawer";
 import { GrowthAllocation } from "./growth-allocation";
+import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 
 export function YourNumbersContent() {
   const [growthAllocationOpen, setGrowthAllocationOpen] = useState(false);
@@ -43,6 +44,7 @@ export function YourNumbersContent() {
 
         <RightChevronButton
           title="Growth & Allocation"
+          leftIcon={AdjustmentsHorizontalIcon}
           onClick={() => setGrowthAllocationOpen(true)}
         />
       </div>
