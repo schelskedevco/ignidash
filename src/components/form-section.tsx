@@ -5,7 +5,7 @@ import type { InvalidInputErrorProps } from "@/components/invalid-input-error";
 
 interface FormSectionProps {
   title: React.ReactNode;
-  desc?: string;
+  desc?: string | React.ReactNode;
   children: React.ReactNode;
   hasBorder?: boolean;
   errorComponent?: React.ReactElement<InvalidInputErrorProps> | false;

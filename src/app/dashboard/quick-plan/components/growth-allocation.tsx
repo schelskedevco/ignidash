@@ -89,7 +89,20 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
 
       <FormSection
         title="Asset Allocation"
-        desc="How your investments are divided. Must total 100%."
+        desc={
+          <>
+            How your investments are divided. Must total 100%. See{" "}
+            <a
+              href="https://institutional.vanguard.com/investment/strategies/tdf-glide-path.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground hover:text-foreground/80 underline"
+            >
+              typical age-based allocations
+            </a>
+            .
+          </>
+        }
         errorComponent={
           showAllocationError && (
             <InvalidInputError title="Asset allocation must total 100%" />
@@ -130,7 +143,20 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
       <FormSection
         title="Expected Returns"
         hasBorder={false}
-        desc="Annual returns before inflation. Historical averages vary."
+        desc={
+          <>
+            Annual returns before inflation. See{" "}
+            <a
+              href="https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground hover:text-foreground/80 underline"
+            >
+              historical data
+            </a>
+            . Past performance doesn&apos;t guarantee future results.
+          </>
+        }
       >
         <NumberField
           id="stock-return"
@@ -166,6 +192,14 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           desc="Money market rates. Often 2-5%, tracks Fed rates."
         />
       </FormSection>
+      <div className="border-foreground/10 rounded-lg border-1 p-2">
+        <p className="text-muted-foreground text-xs">
+          <strong>Disclaimer:</strong> This calculator is for educational
+          purposes only and does not constitute investment advice. Past
+          performance is not indicative of future results. Consult a qualified
+          financial advisor for personalized guidance.
+        </p>
+      </div>
     </>
   );
 }
