@@ -125,7 +125,11 @@ export function FoundationSettings({
           max="100"
         />
       </FormSection>
-      <FormSection title="Expected Returns" hasBorder={false}>
+      <FormSection
+        title="Expected Returns"
+        hasBorder={false}
+        desc="Expected annual returns before inflation. See data sources for historical averages."
+      >
         <NumberField
           id="stock-return"
           label="Stock Returns (%)"
