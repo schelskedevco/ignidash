@@ -104,7 +104,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           placeholder="70"
           min="0"
           max="100"
-          desc="Higher risk, higher potential returns. Common: 60-80%."
+          desc="Higher risk, higher returns. Typically decreases closer to retirement."
         />
         <NumberField
           id="bond-allocation"
@@ -114,7 +114,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           placeholder="30"
           min="0"
           max="100"
-          desc="Lower risk, steady income. Common: 20-40%."
+          desc="Lower risk, steady income. Typically increases closer to retirement."
         />
         <NumberField
           id="cash-allocation"
@@ -124,7 +124,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           placeholder="0"
           min="0"
           max="100"
-          desc="Emergency fund and stability. Common: 0-10%."
+          desc="Emergency fund and stability. Amount varies by personal needs."
         />
       </FormSection>
       <FormSection
