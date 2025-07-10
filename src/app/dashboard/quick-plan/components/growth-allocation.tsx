@@ -61,7 +61,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           min="0"
           max="50"
           step="0.1"
-          desc="Expected yearly increase in your income (0-50%), before accounting for inflation."
+          desc="Annual raise percentage. 0% means income stays at same currency amount."
         />
       </FormSection>
 
@@ -75,7 +75,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           min="0"
           max="10"
           step="0.1"
-          desc="Expected yearly increase in your expenses (0-10%), before accounting for inflation."
+          desc="Annual spending increase. 0% means spending stays at same currency amount."
         />
         <NumberField
           id="retirement-expenses"
@@ -83,12 +83,13 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           value={retirementExpenses}
           onChange={(e) => setRetirementExpenses(e.target.value)}
           placeholder={retirementExpensesPlaceholder}
-          desc="Your expected annual expenses in retirement. Consider how your spending might change."
+          desc="Annual spending in today's currency. Often lower than current expenses."
         />
       </FormSection>
 
       <FormSection
         title="Asset Allocation"
+        desc="How your investments are divided. Must total 100%."
         errorComponent={
           showAllocationError && (
             <InvalidInputError title="Asset allocation must total 100%" />
@@ -103,6 +104,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           placeholder="70"
           min="0"
           max="100"
+          desc="Higher risk, higher potential returns. Common: 60-80%."
         />
         <NumberField
           id="bond-allocation"
@@ -112,6 +114,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           placeholder="30"
           min="0"
           max="100"
+          desc="Lower risk, steady income. Common: 20-40%."
         />
         <NumberField
           id="cash-allocation"
@@ -121,12 +124,13 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           placeholder="0"
           min="0"
           max="100"
+          desc="Emergency fund and stability. Common: 0-10%."
         />
       </FormSection>
       <FormSection
         title="Expected Returns"
         hasBorder={false}
-        desc="Expected annual returns before inflation. See data sources for historical averages."
+        desc="Annual returns before inflation. Historical averages vary."
       >
         <NumberField
           id="stock-return"
@@ -137,6 +141,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           min="0"
           max="20"
           step="0.1"
+          desc="Historical average ~10%. Conservative projections use 7-8%."
         />
         <NumberField
           id="bond-return"
@@ -147,6 +152,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           min="0"
           max="15"
           step="0.1"
+          desc="Historical average 5-6%. Varies with interest rates."
         />
         <NumberField
           id="cash-return"
@@ -157,6 +163,7 @@ export function GrowthAllocation({ annualExpenses }: GrowthAllocationProps) {
           min="0"
           max="10"
           step="0.1"
+          desc="Money market rates. Often 2-5%, tracks Fed rates."
         />
       </FormSection>
     </>
