@@ -23,7 +23,7 @@ export function GlobalSettings() {
           min="2"
           max="6"
           step="0.1"
-          description="How much of your portfolio you can safely withdraw each year in retirement (2-6%)."
+          desc="How much of your portfolio you can safely withdraw each year in retirement (2-6%)."
         />
       </FormSection>
       <FormSection
@@ -42,7 +42,7 @@ export function GlobalSettings() {
           placeholder="85"
           min="50"
           max="110"
-          description={
+          desc={
             <>
               How far out to project all FIRE calculations (50-110 years). See{" "}
               <a
@@ -66,7 +66,7 @@ export function GlobalSettings() {
           min="0"
           max="8"
           step="0.1"
-          description={
+          desc={
             <>
               Used for real return calculations (0-8%). See{" "}
               <a

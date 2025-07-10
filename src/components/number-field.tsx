@@ -11,7 +11,7 @@ interface NumberFieldProps {
   min?: string;
   max?: string;
   step?: string;
-  description?: string | React.ReactNode;
+  desc?: string | React.ReactNode;
 }
 
 export function NumberField({
@@ -23,7 +23,7 @@ export function NumberField({
   min,
   max,
   step,
-  description,
+  desc,
 }: NumberFieldProps) {
   return (
     <div key={id}>
@@ -43,9 +43,7 @@ export function NumberField({
         max={max}
         step={step}
       />
-      {description && (
-        <p className="text-muted-foreground mt-2 text-xs">{description}</p>
-      )}
+      {desc && <p className="text-muted-foreground mt-2 text-xs">{desc}</p>}
     </div>
   );
 }

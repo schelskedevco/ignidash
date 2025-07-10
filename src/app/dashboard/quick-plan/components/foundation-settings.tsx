@@ -63,7 +63,7 @@ export function FoundationSettings({
           min="0"
           max="50"
           step="0.1"
-          description="Expected yearly increase in your income (0-50%), before accounting for inflation."
+          desc="Expected yearly increase in your income (0-50%), before accounting for inflation."
         />
       </FormSection>
 
@@ -77,7 +77,7 @@ export function FoundationSettings({
           min="0"
           max="10"
           step="0.1"
-          description="Expected yearly increase in your expenses (0-10%), before accounting for inflation."
+          desc="Expected yearly increase in your expenses (0-10%), before accounting for inflation."
         />
         <NumberField
           id="retirement-expenses"
@@ -85,7 +85,7 @@ export function FoundationSettings({
           value={retirementExpenses}
           onChange={(e) => setRetirementExpenses(e.target.value)}
           placeholder={retirementExpensesPlaceholder}
-          description="Your expected annual expenses in retirement. Consider how your spending might change."
+          desc="Your expected annual expenses in retirement. Consider how your spending might change."
         />
       </FormSection>
 
