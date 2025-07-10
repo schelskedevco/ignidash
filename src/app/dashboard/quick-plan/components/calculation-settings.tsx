@@ -23,7 +23,20 @@ export function CalculationSettings() {
           min="2"
           max="6"
           step="0.1"
-          desc="How much of your portfolio you can safely withdraw each year in retirement (2-6%)."
+          desc={
+            <>
+              Annual portfolio withdrawal percentage.{" "}
+              <a
+                href="https://www.investopedia.com/terms/f/four-percent-rule.asp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground hover:text-foreground/80 underline"
+              >
+                4% is standard.
+              </a>{" "}
+              Lower rates are more conservative.
+            </>
+          }
         />
       </FormSection>
       <FormSection
@@ -44,7 +57,7 @@ export function CalculationSettings() {
           max="110"
           desc={
             <>
-              How far out to project all FIRE calculations (50-110 years). See{" "}
+              Age you expect to live to. See{" "}
               <a
                 href="https://www.cdc.gov/nchs/fastats/life-expectancy.htm"
                 target="_blank"
@@ -68,7 +81,7 @@ export function CalculationSettings() {
           step="0.1"
           desc={
             <>
-              Used for real return calculations (0-8%). See{" "}
+              Expected yearly price increases. Historically 3%. See{" "}
               <a
                 href="https://www.bls.gov/charts/consumer-price-index/consumer-price-index-by-category-line-chart.htm"
                 target="_blank"
@@ -77,7 +90,7 @@ export function CalculationSettings() {
               >
                 Bureau of Labor Statistics CPI data
               </a>{" "}
-              for current inflation rates.
+              for current rates.
             </>
           }
         />
@@ -92,7 +105,7 @@ export function CalculationSettings() {
             { value: "today", label: "Today's Currency" },
             { value: "future", label: "Future Inflated Currency" },
           ]}
-          description="Today's currency shows purchasing power now, future currency show nominal amounts at retirement."
+          description="Today's shows purchasing power now. Future shows actual dollar amounts at retirement."
         />
       </FormSection>
     </>
