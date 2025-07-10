@@ -5,7 +5,7 @@ import { NumberField } from "@/components/number-field";
 import { SelectField } from "@/components/select-field";
 import { FormSection } from "@/components/form-section";
 
-export function GlobalSettings() {
+export function CalculationSettings() {
   const [safeWithdrawalRate, setSafeWithdrawalRate] = useState("4");
   const [inflationRate, setInflationRate] = useState("3");
   const [lifeExpectancy, setLifeExpectancy] = useState("85");

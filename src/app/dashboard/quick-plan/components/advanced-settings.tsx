@@ -5,13 +5,11 @@ import { NumberField } from "@/components/number-field";
 import { FormSection } from "@/components/form-section";
 import InvalidInputError from "@/components/invalid-input-error";
 
-interface FoundationSettingsProps {
+interface AdvancedSettingsProps {
   annualExpenses?: string;
 }
 
-export function FoundationSettings({
-  annualExpenses,
-}: FoundationSettingsProps) {
+export function AdvancedSettings({ annualExpenses }: AdvancedSettingsProps) {
   // Growth rates
   const [incomeGrowthRate, setIncomeGrowthRate] = useState("0");
   const [expenseGrowthRate, setExpenseGrowthRate] = useState("0");

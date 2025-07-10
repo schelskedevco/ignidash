@@ -2,11 +2,11 @@
 
 import { Card } from "@/components/card";
 import { CoreInputs } from "./core-inputs";
-import { CoastFIRE, BaristaFIRE } from "./alternative-paths";
+import { CoastFIRE, BaristaFIRE } from "./fire-path-options";
 import { RightChevronButton } from "@/components/right-chevron-button";
 import { useState } from "react";
 import Drawer from "@/components/drawer";
-import { FoundationSettings } from "./foundation-settings";
+import { AdvancedSettings } from "./advanced-settings";
 
 export function YourNumbersContent() {
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -42,13 +42,13 @@ export function YourNumbersContent() {
         </Card>
 
         <RightChevronButton
-          title="Configuration"
+          title="Advanced Settings"
           onClick={() => setAdvancedOpen(true)}
         />
       </div>
       <div className="border-foreground/10 mb-5 border-b pb-5">
         <div className="ml-2">
-          <h4 className="text-base font-semibold">Alternative Paths</h4>
+          <h4 className="text-base font-semibold">FIRE Paths</h4>
           <p className="text-muted-foreground mt-2 text-sm">
             Full retirement isn&apos;t your only option. Explore proven
             strategies for earlier freedom.
@@ -64,10 +64,10 @@ export function YourNumbersContent() {
       <Drawer
         open={advancedOpen}
         setOpen={setAdvancedOpen}
-        title="Configuration"
+        title="Advanced Settings"
         desc="Fine-tune how your Foundation numbers are used in projections."
       >
-        <FoundationSettings annualExpenses={annualExpenses} />
+        <AdvancedSettings annualExpenses={annualExpenses} />
       </Drawer>
     </>
   );
