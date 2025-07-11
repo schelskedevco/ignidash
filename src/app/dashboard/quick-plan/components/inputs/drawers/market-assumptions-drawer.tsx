@@ -88,7 +88,7 @@ export function MarketAssumptionsDrawer() {
 
       <SettingsSection
         title="Economic Factors"
-        desc="Economic factors that impact your purchasing power and real investment returns over time."
+        desc="Variables that impact your purchasing power and real investment returns over time."
         hasBorder={false}
         legendText="Economic factors for financial projections"
       >
