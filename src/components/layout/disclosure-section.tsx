@@ -36,7 +36,7 @@ export function DisclosureSection({
             <div className="flex w-full items-center justify-between">
               <div className="flex items-center gap-2">
                 {icon}
-                <h4 className="text-base font-semibold">{title}</h4>
+                <h4>{title}</h4>
               </div>
               <ChevronDownIcon
                 className="w-5 shrink-0 group-data-open:rotate-180"
