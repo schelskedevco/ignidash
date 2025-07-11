@@ -26,7 +26,7 @@ export function NumberField({
   desc,
 }: NumberFieldProps) {
   return (
-    <div key={id}>
+    <div>
       <label
         htmlFor={id}
         className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
@@ -42,8 +42,13 @@ export function NumberField({
         min={min}
         max={max}
         step={step}
+        aria-describedby={desc ? `${id}-desc` : undefined}
       />
-      {desc && <p className="text-muted-foreground mt-2 text-xs">{desc}</p>}
+      {desc && (
+        <p id={`${id}-desc`} className="text-muted-foreground mt-2 text-xs">
+          {desc}
+        </p>
+      )}
     </div>
   );
 }

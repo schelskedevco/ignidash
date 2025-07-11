@@ -33,35 +33,40 @@ export function BasicsSection({
       />
 
       <Card>
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-          <NumberField
-            id="current-age"
-            label="Current Age"
-            value={currentAge}
-            onChange={(e) => setCurrentAge(e.target.value)}
-            placeholder="28"
-          />
-          <NumberField
-            id="annual-income"
-            label="Net Annual Income"
-            value={annualIncome}
-            onChange={(e) => setAnnualIncome(e.target.value)}
-            placeholder="$85,000"
-          />
-          <NumberField
-            id="annual-expenses"
-            label="Annual Expenses"
-            value={annualExpenses}
-            onChange={(e) => setAnnualExpenses(e.target.value)}
-            placeholder="$50,000"
-          />
-          <NumberField
-            id="invested-assets"
-            label="Invested Assets"
-            value={investedAssets}
-            onChange={(e) => setInvestedAssets(e.target.value)}
-            placeholder="$75,000"
-          />
+        <form onSubmit={(e) => e.preventDefault()}>
+          <fieldset className="space-y-4">
+            <legend className="sr-only">
+              Basic financial information for FIRE calculation
+            </legend>
+            <NumberField
+              id="current-age"
+              label="Current Age"
+              value={currentAge}
+              onChange={(e) => setCurrentAge(e.target.value)}
+              placeholder="28"
+            />
+            <NumberField
+              id="annual-income"
+              label="Net Annual Income"
+              value={annualIncome}
+              onChange={(e) => setAnnualIncome(e.target.value)}
+              placeholder="$85,000"
+            />
+            <NumberField
+              id="annual-expenses"
+              label="Annual Expenses"
+              value={annualExpenses}
+              onChange={(e) => setAnnualExpenses(e.target.value)}
+              placeholder="$50,000"
+            />
+            <NumberField
+              id="invested-assets"
+              label="Invested Assets"
+              value={investedAssets}
+              onChange={(e) => setInvestedAssets(e.target.value)}
+              placeholder="$75,000"
+            />
+          </fieldset>
         </form>
       </Card>
     </div>
