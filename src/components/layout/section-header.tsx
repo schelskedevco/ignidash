@@ -8,7 +8,7 @@ export function SectionHeader({ title, desc }: SectionHeaderProps) {
     (title || desc) && (
       <div className="ml-2">
         {title && <h4 className="text-base font-semibold">{title}</h4>}
-        {desc && <p className="text-muted-foreground text-sm">{desc}</p>}
+        {desc && <p className="text-muted-foreground mt-1 text-sm">{desc}</p>}
       </div>
     )
   );
