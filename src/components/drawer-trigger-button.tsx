@@ -1,6 +1,6 @@
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 
-interface RightChevronButtonProps {
+interface DrawerTriggerButtonProps {
   title: string;
   onClick?: () => void;
   className?: string;
@@ -17,7 +17,7 @@ export function DrawerTriggerButton({
   onClick,
   className = "",
   leftIcon,
-}: RightChevronButtonProps) {
+}: DrawerTriggerButtonProps) {
   const LeftIcon = leftIcon;
 
   return (

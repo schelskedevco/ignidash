@@ -3,7 +3,7 @@
 import { Card } from "@/components/card";
 import type { InvalidInputErrorProps } from "@/components/invalid-input-error";
 
-interface FormSectionProps {
+interface SettingsSectionProps {
   title: React.ReactNode;
   desc?: string | React.ReactNode;
   children: React.ReactNode;
@@ -17,7 +17,7 @@ export function SettingsSection({
   children,
   hasBorder = true,
   errorComponent,
-}: FormSectionProps) {
+}: SettingsSectionProps) {
   return (
     <div
       className={
