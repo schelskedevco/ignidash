@@ -109,28 +109,33 @@ export function BasicsSection({
           desc="Set expected nominal growth rates for income and expenses over time."
           icon={<ArrowTrendingUpIcon className="h-5 w-5" aria-hidden="true" />}
         >
-          <div className="space-y-4">
-            <NumberField
-              id="income-growth-rate"
-              label="Income Growth Rate (%)"
-              value={incomeGrowthRate}
-              onChange={(e) => setIncomeGrowthRate(e.target.value)}
-              placeholder="3"
-              min="0"
-              max="50"
-              step="0.1"
-            />
-            <NumberField
-              id="expense-growth-rate"
-              label="Expense Growth Rate (%)"
-              value={expenseGrowthRate}
-              onChange={(e) => setExpenseGrowthRate(e.target.value)}
-              placeholder="3"
-              min="0"
-              max="10"
-              step="0.1"
-            />
-          </div>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <fieldset className="space-y-4">
+              <legend className="sr-only">
+                Income and expense growth rate projections
+              </legend>
+              <NumberField
+                id="income-growth-rate"
+                label="Income Growth Rate (%)"
+                value={incomeGrowthRate}
+                onChange={(e) => setIncomeGrowthRate(e.target.value)}
+                placeholder="3"
+                min="0"
+                max="50"
+                step="0.1"
+              />
+              <NumberField
+                id="expense-growth-rate"
+                label="Expense Growth Rate (%)"
+                value={expenseGrowthRate}
+                onChange={(e) => setExpenseGrowthRate(e.target.value)}
+                placeholder="3"
+                min="0"
+                max="10"
+                step="0.1"
+              />
+            </fieldset>
+          </form>
         </DisclosureSection>
 
         <DisclosureSection
@@ -138,38 +143,43 @@ export function BasicsSection({
           desc="Configure asset allocation across stocks, bonds, and cash."
           icon={<ChartPieIcon className="h-5 w-5" aria-hidden="true" />}
         >
-          <div className="space-y-4">
-            <NumberField
-              id="stock-allocation"
-              label="Stocks (%)"
-              value={stockAllocation}
-              onChange={(e) => setStockAllocation(e.target.value)}
-              placeholder="70"
-              min="0"
-              max="100"
-              step="1"
-            />
-            <NumberField
-              id="bond-allocation"
-              label="Bonds (%)"
-              value={bondAllocation}
-              onChange={(e) => setBondAllocation(e.target.value)}
-              placeholder="30"
-              min="0"
-              max="100"
-              step="1"
-            />
-            <NumberField
-              id="cash-allocation"
-              label="Cash (%)"
-              value={cashAllocation}
-              onChange={(e) => setCashAllocation(e.target.value)}
-              placeholder="0"
-              min="0"
-              max="100"
-              step="1"
-            />
-          </div>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <fieldset className="space-y-4">
+              <legend className="sr-only">
+                Asset allocation percentages for investment portfolio
+              </legend>
+              <NumberField
+                id="stock-allocation"
+                label="Stocks (%)"
+                value={stockAllocation}
+                onChange={(e) => setStockAllocation(e.target.value)}
+                placeholder="70"
+                min="0"
+                max="100"
+                step="1"
+              />
+              <NumberField
+                id="bond-allocation"
+                label="Bonds (%)"
+                value={bondAllocation}
+                onChange={(e) => setBondAllocation(e.target.value)}
+                placeholder="30"
+                min="0"
+                max="100"
+                step="1"
+              />
+              <NumberField
+                id="cash-allocation"
+                label="Cash (%)"
+                value={cashAllocation}
+                onChange={(e) => setCashAllocation(e.target.value)}
+                placeholder="0"
+                min="0"
+                max="100"
+                step="1"
+              />
+            </fieldset>
+          </form>
         </DisclosureSection>
         {showAllocationError && (
           <InvalidInputError title="Asset allocation must total 100%" />
