@@ -25,7 +25,6 @@ html {
   --color-foreground: var(--foreground);
   --color-muted-foreground: var(--muted-foreground);
   --font-sans: var(--font-ubuntu);
-  --font-display: var(--font-space-grotesk);
   --font-ubuntu: var(--font-ubuntu);
 }
 
