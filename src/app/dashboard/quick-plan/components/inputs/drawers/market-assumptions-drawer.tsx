@@ -4,6 +4,23 @@ import { useState } from "react";
 import { NumberField } from "@/components/ui/number-field";
 import { SettingsSection } from "@/components/layout/settings-section";
 
+function getInflationRateDescription() {
+  return (
+    <>
+      Expected yearly price increases. Historically 3%. See{" "}
+      <a
+        href="https://www.bls.gov/charts/consumer-price-index/consumer-price-index-by-category-line-chart.htm"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-foreground hover:text-foreground/80 underline"
+      >
+        Bureau of Labor Statistics CPI data
+      </a>{" "}
+      for current rates.
+    </>
+  );
+}
+
 export function MarketAssumptionsDrawer() {
   // Expected returns state
   const [stockReturn, setStockReturn] = useState("10");
@@ -19,7 +36,7 @@ export function MarketAssumptionsDrawer() {
         title="Expected Returns"
         desc={
           <>
-            Annual returns before inflation. See{" "}
+            Expected annual returns before inflation. See{" "}
             <a
               href="https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html"
               target="_blank"
@@ -78,20 +95,7 @@ export function MarketAssumptionsDrawer() {
           min="0"
           max="8"
           step="0.1"
-          desc={
-            <>
-              Expected yearly price increases. Historically 3%. See{" "}
-              <a
-                href="https://www.bls.gov/charts/consumer-price-index/consumer-price-index-by-category-line-chart.htm"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-foreground hover:text-foreground/80 underline"
-              >
-                Bureau of Labor Statistics CPI data
-              </a>{" "}
-              for current rates.
-            </>
-          }
+          desc={getInflationRateDescription()}
         />
       </SettingsSection>
     </>
