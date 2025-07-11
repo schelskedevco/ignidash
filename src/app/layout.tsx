@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, Ubuntu } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 
@@ -10,6 +10,12 @@ const inter = Inter({
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
+  subsets: ["latin"],
+});
+
+const ubuntu = Ubuntu({
+  variable: "--font-ubuntu",
+  weight: ["300", "400", "500", "700"],
   subsets: ["latin"],
 });
 
@@ -28,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${ubuntu.variable} h-full antialiased`}
       >
         <ThemeProvider
           attribute="class"
