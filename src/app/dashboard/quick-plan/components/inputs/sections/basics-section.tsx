@@ -1,8 +1,8 @@
 "use client";
 
-import { Card } from "@/components/card";
-import { NumberField } from "@/components/number-field";
-import { SectionHeader } from "./section-header";
+import { Card } from "@/components/ui/card";
+import { NumberField } from "@/components/ui/number-field";
+import { SectionHeader } from "@/components/layout/section-header";
 
 interface BasicsSectionProps {
   currentAge: string;

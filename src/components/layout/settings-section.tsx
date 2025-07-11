@@ -1,7 +1,7 @@
 "use client";
 
-import { Card } from "@/components/card";
-import type { InvalidInputErrorProps } from "@/components/invalid-input-error";
+import { Card } from "@/components/ui/card";
+import type { InvalidInputErrorProps } from "@/components/ui/invalid-input-error";
 
 interface SettingsSectionProps {
   title: React.ReactNode;

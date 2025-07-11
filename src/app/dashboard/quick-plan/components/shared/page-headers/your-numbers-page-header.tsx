@@ -1,5 +1,5 @@
 import { CalculatorIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { IconButton } from "@/components/icon-button";
+import { IconButton } from "@/components/ui/icon-button";
 
 export function YourNumbersPageHeader() {
   return (

@@ -1,9 +1,12 @@
 "use client";
 
-import { Card } from "@/components/card";
-import { CoastFIRE, BaristaFIRE } from "./goal-strategy-options";
-import { NumberField } from "@/components/number-field";
-import { SectionHeader } from "./section-header";
+import { Card } from "@/components/ui/card";
+import {
+  CoastFIRE,
+  BaristaFIRE,
+} from "../strategy-options/goal-strategy-options";
+import { NumberField } from "@/components/ui/number-field";
+import { SectionHeader } from "@/components/layout/section-header";
 
 interface GoalSectionProps {
   retirementExpenses: string;

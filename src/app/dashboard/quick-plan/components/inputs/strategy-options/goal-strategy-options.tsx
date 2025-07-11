@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/components/catalyst/input";
-import { DisclosureSection } from "@/components/disclosure-section";
+import { DisclosureSection } from "@/components/layout/disclosure-section";
 import { Coffee, RollerCoaster } from "lucide-react";
 
 export function CoastFIRE() {

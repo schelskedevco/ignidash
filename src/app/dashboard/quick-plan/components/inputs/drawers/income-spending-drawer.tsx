@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { NumberField } from "@/components/number-field";
-import { SettingsSection } from "@/components/settings-section";
+import { NumberField } from "@/components/ui/number-field";
+import { SettingsSection } from "@/components/layout/settings-section";
 
 export function IncomeSpendingDrawer() {
   // Growth rates state

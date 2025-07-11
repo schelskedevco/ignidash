@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FireIcon } from "@heroicons/react/24/solid";
-import { ModeToggle } from "@/components/mode-toggle";
+import { ModeToggle } from "@/components/providers/mode-toggle";
 import { cn } from "@/lib/utils";
 import type { NavigationItem } from "../navigation";
 

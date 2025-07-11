@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useTheme } from "next-themes";
-import { IconButton } from "@/components/icon-button";
+import { IconButton } from "@/components/ui/icon-button";
 import { SunIcon, MoonIcon } from "@heroicons/react/24/outline";
 
 export function ModeToggle() {

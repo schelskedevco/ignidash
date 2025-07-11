@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { BasicsSection } from "./basics-section";
-import { GoalSection } from "./goal-section";
-import { FineTuneSection } from "./fine-tune-section";
+import { BasicsSection } from "./sections/basics-section";
+import { GoalSection } from "./sections/goal-section";
+import { FineTuneSection } from "./sections/fine-tune-section";
 
 export function YourNumbersSections() {
   // Basics inputs state

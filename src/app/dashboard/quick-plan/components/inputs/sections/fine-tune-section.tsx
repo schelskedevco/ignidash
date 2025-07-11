@@ -1,18 +1,18 @@
 "use client";
 
-import { DrawerTriggerButton } from "@/components/drawer-trigger-button";
-import Drawer from "@/components/drawer";
-import { IncomeSpendingDrawer } from "./income-spending-drawer";
-import { InvestmentPortfolioDrawer } from "./investment-portfolio-drawer";
-import { MarketAssumptionsDrawer } from "./market-assumptions-drawer";
-import { RetirementFundingDrawer } from "./retirement-funding-drawer";
+import { DrawerTriggerButton } from "@/components/ui/drawer-trigger-button";
+import Drawer from "@/components/ui/drawer";
+import { IncomeSpendingDrawer } from "../drawers/income-spending-drawer";
+import { InvestmentPortfolioDrawer } from "../drawers/investment-portfolio-drawer";
+import { MarketAssumptionsDrawer } from "../drawers/market-assumptions-drawer";
+import { RetirementFundingDrawer } from "../drawers/retirement-funding-drawer";
 import {
   ArrowTrendingUpIcon,
   ChartPieIcon,
   ChartBarIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
-import { SectionHeader } from "./section-header";
+import { SectionHeader } from "@/components/layout/section-header";
 
 interface FineTuneSectionProps {
   incomeSpendingGrowthOpen: boolean;

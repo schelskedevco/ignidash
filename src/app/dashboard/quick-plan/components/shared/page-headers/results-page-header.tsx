@@ -5,7 +5,7 @@ import {
   LinkIcon,
   CheckIcon,
 } from "@heroicons/react/24/outline";
-import { IconButton } from "@/components/icon-button";
+import { IconButton } from "@/components/ui/icon-button";
 import { useState, useCallback } from "react";
 
 export function ResultsPageHeader() {

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { NumberField } from "@/components/number-field";
-import { SettingsSection } from "@/components/settings-section";
-import InvalidInputError from "@/components/invalid-input-error";
+import { NumberField } from "@/components/ui/number-field";
+import { SettingsSection } from "@/components/layout/settings-section";
+import InvalidInputError from "@/components/ui/invalid-input-error";
 
 export function InvestmentPortfolioDrawer() {
   // Asset allocation state
