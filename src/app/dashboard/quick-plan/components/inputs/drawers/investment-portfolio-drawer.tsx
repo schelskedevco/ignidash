@@ -38,7 +38,7 @@ export function InvestmentPortfolioDrawer() {
         hasBorder={false}
         desc={
           <>
-            How your investments are divided. Must total 100%. See{" "}
+            How your investments are divided. See{" "}
             <a
               href="https://institutional.vanguard.com/investment/strategies/tdf-glide-path.html"
               target="_blank"
