@@ -25,21 +25,28 @@ export function GoalSection({
         headline="Goal"
         desc="Full retirement isn't your only option. Explore proven strategies for earlier freedom."
       />
-      <Card>
-        <NumberField
-          id="retirement-expenses"
-          label="Retirement Expenses"
-          value={retirementExpenses}
-          onChange={(e) => setRetirementExpenses(e.target.value)}
-          placeholder={annualExpenses || "$50,000"}
-        />
-      </Card>
-      <Card>
-        <CoastFIRE />
-      </Card>
-      <Card>
-        <BaristaFIRE />
-      </Card>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <fieldset className="space-y-4">
+          <legend className="sr-only">
+            Retirement goal and strategy options
+          </legend>
+          <Card>
+            <NumberField
+              id="retirement-expenses"
+              label="Retirement Expenses"
+              value={retirementExpenses}
+              onChange={(e) => setRetirementExpenses(e.target.value)}
+              placeholder={annualExpenses || "$50,000"}
+            />
+          </Card>
+          <Card>
+            <CoastFIRE />
+          </Card>
+          <Card>
+            <BaristaFIRE />
+          </Card>
+        </fieldset>
+      </form>
     </div>
   );
 }
