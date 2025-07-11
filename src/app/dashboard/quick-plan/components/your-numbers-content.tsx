@@ -6,7 +6,6 @@ import { CoastFIRE, BaristaFIRE } from "./fire-path-options";
 import { RightChevronButton } from "@/components/right-chevron-button";
 import { useState } from "react";
 import Drawer from "@/components/drawer";
-import { GrowthAllocation } from "./growth-allocation";
 import { IncomeSpendingGrowth } from "./income-spending-growth";
 import { InvestmentPortfolio } from "./investment-portfolio";
 import { MarketEconomicAssumptions } from "./market-economic-assumptions";
@@ -20,8 +19,6 @@ import {
 import { NumberField } from "@/components/number-field";
 
 export function YourNumbersContent() {
-  const [growthAllocationOpen, setGrowthAllocationOpen] = useState(false);
-
   // Fine-Tune drawer states
   const [incomeSpendingGrowthOpen, setIncomeSpendingGrowthOpen] =
     useState(false);
@@ -119,17 +116,7 @@ export function YourNumbersContent() {
         />
       </div>
 
-      {/* Legacy drawer - keeping for reference */}
-      <Drawer
-        open={growthAllocationOpen}
-        setOpen={setGrowthAllocationOpen}
-        title="Growth & Allocation"
-        desc="Fine-tune how your Foundation numbers are used in projections."
-      >
-        <GrowthAllocation annualExpenses={annualExpenses} />
-      </Drawer>
-
-      {/* New Fine-Tune drawers */}
+      {/* Fine-Tune drawers */}
       <Drawer
         open={incomeSpendingGrowthOpen}
         setOpen={setIncomeSpendingGrowthOpen}
