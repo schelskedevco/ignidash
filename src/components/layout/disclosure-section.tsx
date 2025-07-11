@@ -43,9 +43,7 @@ export function DisclosureSection({
                 aria-hidden="true"
               />
             </div>
-            <p className="text-muted-foreground mt-2 hidden text-xs group-data-open:block">
-              {desc}
-            </p>
+            <p className="text-muted-foreground mt-2 block text-xs">{desc}</p>
           </div>
         </DisclosureButton>
         <DisclosurePanel>
