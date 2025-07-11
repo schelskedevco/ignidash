@@ -25,7 +25,7 @@ export default function Navbar() {
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Ignidash</span>
             <div className="flex items-center gap-2">
-              <FireIcon className="h-8 w-8 text-rose-500" />
+              <FireIcon className="h-8 w-8 text-rose-500" aria-hidden="true" />
               <span className="text-xl font-semibold text-gray-900">
                 Ignidash
               </span>
@@ -70,7 +70,10 @@ export default function Navbar() {
             <Link href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Ignidash</span>
               <div className="flex items-center gap-2">
-                <FireIcon className="h-8 w-8 text-rose-500" />
+                <FireIcon
+                  className="h-8 w-8 text-rose-500"
+                  aria-hidden="true"
+                />
                 <span className="text-xl font-semibold text-gray-900">
                   Ignidash
                 </span>

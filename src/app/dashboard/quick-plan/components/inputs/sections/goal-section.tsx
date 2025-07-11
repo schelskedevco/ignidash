@@ -39,12 +39,8 @@ export function GoalSection({
               placeholder={annualExpenses || "$50,000"}
             />
           </Card>
-          <Card>
-            <CoastFIRE />
-          </Card>
-          <Card>
-            <BaristaFIRE />
-          </Card>
+          <CoastFIRE />
+          <BaristaFIRE />
         </fieldset>
       </form>
     </div>

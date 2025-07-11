@@ -16,7 +16,7 @@ export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
       <div className="border-foreground/10 dark:border-foreground/10 bg-emphasized-background flex grow flex-col gap-y-5 overflow-y-auto border-r px-6">
         <div className="border-foreground/10 flex h-16 shrink-0 items-center justify-between gap-2 border-b">
           <div className="flex items-center gap-2">
-            <FireIcon className="h-8 w-8 text-rose-500" />
+            <FireIcon className="h-8 w-8 text-rose-500" aria-hidden="true" />
             <span className="font-display text-xl">Ignidash</span>
           </div>
           <ModeToggle />
