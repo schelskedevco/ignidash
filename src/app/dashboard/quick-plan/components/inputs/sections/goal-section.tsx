@@ -23,7 +23,7 @@ export function GoalSection({
     <div className="border-foreground/10 mb-5 border-b pb-5">
       <SectionHeader
         headline="Goal"
-        desc="Full retirement isn't your only option. Explore proven strategies for earlier freedom."
+        desc="How much do you need to retire comfortably? Explore different paths to get there."
       />
       <form onSubmit={(e) => e.preventDefault()}>
         <fieldset className="space-y-4">
