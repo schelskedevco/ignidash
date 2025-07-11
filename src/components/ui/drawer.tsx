@@ -13,7 +13,6 @@ interface DrawerProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   title?: string;
-  desc?: string;
   children?: React.ReactNode;
 }
 
@@ -21,7 +20,6 @@ export default function Drawer({
   open,
   setOpen,
   title = "Settings",
-  desc,
   children,
 }: DrawerProps) {
   return (
@@ -56,11 +54,6 @@ export default function Drawer({
                   <DialogTitle className="text-foreground text-base font-semibold">
                     {title}
                   </DialogTitle>
-                  {desc && (
-                    <div className="mt-1">
-                      <p className="text-muted-foreground text-sm">{desc}</p>
-                    </div>
-                  )}
                 </div>
                 <div className="bg-background relative flex-1 px-4 py-6 sm:px-6">
                   {children}

@@ -45,24 +45,28 @@ export function FineTuneSection({
 
         <DrawerTriggerButton
           title="Income & Spending Growth"
+          desc="Set expected growth rates for income and expenses over time."
           leftIcon={ArrowTrendingUpIcon}
           onClick={() => setIncomeSpendingGrowthOpen(true)}
         />
 
         <DrawerTriggerButton
           title="Investment Portfolio"
+          desc="Configure asset allocation across stocks, bonds, and cash."
           leftIcon={ChartPieIcon}
           onClick={() => setInvestmentPortfolioOpen(true)}
         />
 
         <DrawerTriggerButton
           title="Market & Economic Assumptions"
+          desc="Set inflation rate and how to project investment returns by asset class."
           leftIcon={ChartBarIcon}
           onClick={() => setMarketAssumptionsOpen(true)}
         />
 
         <DrawerTriggerButton
           title="Retirement Funding & Duration"
+          desc="Configure withdrawal strategy, retirement income sources, and life expectancy."
           leftIcon={ClockIcon}
           onClick={() => setRetirementFundingOpen(true)}
         />
@@ -73,7 +77,6 @@ export function FineTuneSection({
         open={incomeSpendingGrowthOpen}
         setOpen={setIncomeSpendingGrowthOpen}
         title="Income & Spending Growth"
-        desc="Set growth rates for income and expenses over time."
       >
         <IncomeSpendingDrawer />
       </Drawer>
@@ -82,7 +85,6 @@ export function FineTuneSection({
         open={investmentPortfolioOpen}
         setOpen={setInvestmentPortfolioOpen}
         title="Investment Portfolio"
-        desc="Configure your asset allocation across stocks, bonds, and cash."
       >
         <InvestmentPortfolioDrawer />
       </Drawer>
@@ -91,7 +93,6 @@ export function FineTuneSection({
         open={marketAssumptionsOpen}
         setOpen={setMarketAssumptionsOpen}
         title="Market & Economic Assumptions"
-        desc="Set expected returns and economic projections."
       >
         <MarketAssumptionsDrawer />
       </Drawer>
@@ -100,7 +101,6 @@ export function FineTuneSection({
         open={retirementFundingOpen}
         setOpen={setRetirementFundingOpen}
         title="Retirement Funding & Duration"
-        desc="Configure withdrawal rates and life expectancy."
       >
         <RetirementFundingDrawer />
       </Drawer>
