@@ -24,7 +24,7 @@ html {
   --color-emphasized-background: var(--emphasized-background);
   --color-foreground: var(--foreground);
   --color-muted-foreground: var(--muted-foreground);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-ubuntu);
   --font-display: var(--font-space-grotesk);
   --font-ubuntu: var(--font-ubuntu);
 }
@@ -39,7 +39,7 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-ubuntu), sans-serif;
 }
 
 /* Chrome, Safari, Edge, Opera */
