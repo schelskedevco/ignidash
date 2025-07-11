@@ -86,7 +86,7 @@ export function RetirementFundingDrawer() {
         />
         <NumberField
           id="retirement-income"
-          label="Expected Retirement Income"
+          label="Passive Retirement Income"
           value={retirementIncome}
           onChange={(e) => setRetirementIncome(e.target.value)}
           placeholder="$30,000"
