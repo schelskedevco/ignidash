@@ -7,26 +7,12 @@ import {
 } from "../strategy-options/goal-strategy-options";
 import { NumberField } from "@/components/ui/number-field";
 import { SectionHeader } from "@/components/layout/section-header";
+import { useGoalsData, useUpdateGoals } from "@/lib/stores/quick-plan-store";
 
-interface GoalSectionProps {
-  retirementExpenses: string;
-  setRetirementExpenses: (value: string) => void;
-  annualExpenses: string;
-  targetRetirementAge: string;
-  setTargetRetirementAge: (value: string) => void;
-  partTimeIncome: string;
-  setPartTimeIncome: (value: string) => void;
-}
+export function GoalSection() {
+  const goals = useGoalsData();
+  const updateGoals = useUpdateGoals();
 
-export function GoalSection({
-  retirementExpenses,
-  setRetirementExpenses,
-  annualExpenses,
-  targetRetirementAge,
-  setTargetRetirementAge,
-  partTimeIncome,
-  setPartTimeIncome,
-}: GoalSectionProps) {
   return (
     <div className="border-foreground/10 mb-5 border-b pb-5">
       <SectionHeader
@@ -43,18 +29,21 @@ export function GoalSection({
             <NumberField
               id="retirement-expenses"
               label="Retirement Expenses"
-              value={retirementExpenses}
-              onChange={(e) => setRetirementExpenses(e.target.value)}
-              placeholder={annualExpenses || "$50,000"}
+              value={goals.retirementExpenses}
+              onChange={(value) => updateGoals("retirementExpenses", value)}
+              placeholder="$50,000"
+              min={0}
             />
           </Card>
           <CoastFIRE
-            targetRetirementAge={targetRetirementAge}
-            setTargetRetirementAge={setTargetRetirementAge}
+            targetRetirementAge={goals.targetRetirementAge}
+            setTargetRetirementAge={(value) =>
+              updateGoals("targetRetirementAge", value)
+            }
           />
           <BaristaFIRE
-            partTimeIncome={partTimeIncome}
-            setPartTimeIncome={setPartTimeIncome}
+            partTimeIncome={goals.partTimeIncome}
+            setPartTimeIncome={(value) => updateGoals("partTimeIncome", value)}
           />
         </fieldset>
       </form>

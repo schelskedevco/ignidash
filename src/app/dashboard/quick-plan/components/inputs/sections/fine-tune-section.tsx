@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { DrawerTriggerButton } from "@/components/ui/drawer-trigger-button";
 import Drawer from "@/components/ui/drawer";
 import { MarketAssumptionsDrawer } from "../drawers/market-assumptions-drawer";
@@ -7,19 +8,10 @@ import { RetirementFundingDrawer } from "../drawers/retirement-funding-drawer";
 import { ChartBarIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { SectionHeader } from "@/components/layout/section-header";
 
-interface FineTuneSectionProps {
-  marketAssumptionsOpen: boolean;
-  setMarketAssumptionsOpen: (open: boolean) => void;
-  retirementFundingOpen: boolean;
-  setRetirementFundingOpen: (open: boolean) => void;
-}
+export function FineTuneSection() {
+  const [marketAssumptionsOpen, setMarketAssumptionsOpen] = useState(false);
+  const [retirementFundingOpen, setRetirementFundingOpen] = useState(false);
 
-export function FineTuneSection({
-  marketAssumptionsOpen,
-  setMarketAssumptionsOpen,
-  retirementFundingOpen,
-  setRetirementFundingOpen,
-}: FineTuneSectionProps) {
   return (
     <>
       <div className="border-foreground/10 mb-5 space-y-4 border-b pb-5">

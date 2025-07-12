@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { NumberField } from "@/components/ui/number-field";
 import { SettingsSection } from "@/components/layout/settings-section";
+import {
+  useMarketAssumptionsData,
+  useUpdateMarketAssumptions,
+} from "@/lib/stores/quick-plan-store";
 
 function getInflationRateDescription() {
   return (
@@ -39,13 +42,8 @@ function getExpectedReturnsDescription() {
 }
 
 export function MarketAssumptionsDrawer() {
-  // Expected returns state
-  const [stockReturn, setStockReturn] = useState("10");
-  const [bondReturn, setBondReturn] = useState("5");
-  const [cashReturn, setCashReturn] = useState("3");
-
-  // Economic assumptions state
-  const [inflationRate, setInflationRate] = useState("3");
+  const marketAssumptions = useMarketAssumptionsData();
+  const updateMarketAssumptions = useUpdateMarketAssumptions();
 
   return (
     <>
@@ -57,32 +55,32 @@ export function MarketAssumptionsDrawer() {
         <NumberField
           id="stock-return"
           label="Stock Returns (%)"
-          value={stockReturn}
-          onChange={(e) => setStockReturn(e.target.value)}
-          placeholder="10"
-          min="0"
-          max="20"
-          step="0.1"
+          value={marketAssumptions.stockReturn}
+          onChange={(value) => updateMarketAssumptions("stockReturn", value)}
+          placeholder="10%"
+          min={0}
+          max={20}
+          step={0.1}
         />
         <NumberField
           id="bond-return"
           label="Bond Returns (%)"
-          value={bondReturn}
-          onChange={(e) => setBondReturn(e.target.value)}
-          placeholder="5"
-          min="0"
-          max="15"
-          step="0.1"
+          value={marketAssumptions.bondReturn}
+          onChange={(value) => updateMarketAssumptions("bondReturn", value)}
+          placeholder="5%"
+          min={0}
+          max={15}
+          step={0.1}
         />
         <NumberField
           id="cash-return"
           label="Cash Returns (%)"
-          value={cashReturn}
-          onChange={(e) => setCashReturn(e.target.value)}
-          placeholder="3"
-          min="0"
-          max="10"
-          step="0.1"
+          value={marketAssumptions.cashReturn}
+          onChange={(value) => updateMarketAssumptions("cashReturn", value)}
+          placeholder="3%"
+          min={0}
+          max={10}
+          step={0.1}
         />
       </SettingsSection>
 
@@ -95,12 +93,12 @@ export function MarketAssumptionsDrawer() {
         <NumberField
           id="inflation-rate"
           label="Inflation Rate (%)"
-          value={inflationRate}
-          onChange={(e) => setInflationRate(e.target.value)}
-          placeholder="3"
-          min="0"
-          max="8"
-          step="0.1"
+          value={marketAssumptions.inflationRate}
+          onChange={(value) => updateMarketAssumptions("inflationRate", value)}
+          placeholder="3%"
+          min={0}
+          max={8}
+          step={0.1}
           desc={getInflationRateDescription()}
         />
       </SettingsSection>

@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { NumberField } from "@/components/ui/number-field";
 import { SettingsSection } from "@/components/layout/settings-section";
+import {
+  useRetirementFundingData,
+  useUpdateRetirementFunding,
+} from "@/lib/stores/quick-plan-store";
 
 function getSafeWithdrawalRateDescription() {
   return (
@@ -56,15 +59,8 @@ function getEffectiveTaxRateDescription() {
 }
 
 export function RetirementFundingDrawer() {
-  // Withdrawal strategy state
-  const [safeWithdrawalRate, setSafeWithdrawalRate] = useState("4");
-
-  // Tax planning state
-  const [retirementIncome, setRetirementIncome] = useState("0");
-  const [effectiveTaxRate, setEffectiveTaxRate] = useState("15");
-
-  // Life expectancy state
-  const [lifeExpectancy, setLifeExpectancy] = useState("85");
+  const retirementFunding = useRetirementFundingData();
+  const updateRetirementFunding = useUpdateRetirementFunding();
 
   return (
     <>
@@ -76,21 +72,25 @@ export function RetirementFundingDrawer() {
         <NumberField
           id="safe-withdrawal-rate"
           label="Safe Withdrawal Rate (%)"
-          value={safeWithdrawalRate}
-          onChange={(e) => setSafeWithdrawalRate(e.target.value)}
-          placeholder="4"
-          min="2"
-          max="6"
-          step="0.1"
+          value={retirementFunding.safeWithdrawalRate}
+          onChange={(value) =>
+            updateRetirementFunding("safeWithdrawalRate", value)
+          }
+          placeholder="4%"
+          min={2}
+          max={6}
+          step={0.1}
           desc={getSafeWithdrawalRateDescription()}
         />
         <NumberField
           id="retirement-income"
           label="Passive Retirement Income"
-          value={retirementIncome}
-          onChange={(e) => setRetirementIncome(e.target.value)}
+          value={retirementFunding.retirementIncome}
+          onChange={(value) =>
+            updateRetirementFunding("retirementIncome", value)
+          }
           placeholder="$0"
-          min="0"
+          min={0}
           desc="Passive income sources in retirement like Social Security, pensions, or annuities. This helps estimate total retirement income beyond investment withdrawals."
         />
       </SettingsSection>
@@ -104,22 +104,24 @@ export function RetirementFundingDrawer() {
         <NumberField
           id="life-expectancy"
           label="Life Expectancy (years)"
-          value={lifeExpectancy}
-          onChange={(e) => setLifeExpectancy(e.target.value)}
+          value={retirementFunding.lifeExpectancy}
+          onChange={(value) => updateRetirementFunding("lifeExpectancy", value)}
           placeholder="85"
-          min="50"
-          max="110"
+          min={50}
+          max={110}
           desc={getLifeExpectancyDescription()}
         />
         <NumberField
           id="effective-tax-rate"
           label="Estimated Effective Tax Rate (%)"
-          value={effectiveTaxRate}
-          onChange={(e) => setEffectiveTaxRate(e.target.value)}
-          placeholder="15"
-          min="0"
-          max="50"
-          step="0.1"
+          value={retirementFunding.effectiveTaxRate}
+          onChange={(value) =>
+            updateRetirementFunding("effectiveTaxRate", value)
+          }
+          placeholder="15%"
+          min={0}
+          max={50}
+          step={0.1}
           desc={getEffectiveTaxRateDescription()}
         />
       </SettingsSection>

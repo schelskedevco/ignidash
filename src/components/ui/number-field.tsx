@@ -5,12 +5,12 @@ import { Input } from "@/components/catalyst/input";
 interface NumberFieldProps {
   id: string;
   label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value: number | undefined;
+  onChange: (value: number | undefined) => void;
   placeholder?: string;
-  min?: string;
-  max?: string;
-  step?: string;
+  min?: number;
+  max?: number;
+  step?: number;
   desc?: string | React.ReactNode;
 }
 
@@ -25,6 +25,25 @@ export function NumberField({
   step,
   desc,
 }: NumberFieldProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+
+    if (inputValue === "") {
+      onChange(undefined);
+      return;
+    }
+
+    // Allow users to type "-" or "." without blocking
+    if (inputValue === "-" || inputValue === "." || inputValue === "-.") {
+      return; // Don't update store, let them finish typing
+    }
+
+    const numericValue = parseFloat(inputValue);
+    if (!isNaN(numericValue) && isFinite(numericValue)) {
+      onChange(numericValue);
+    }
+  };
+
   return (
     <div>
       <label
@@ -36,8 +55,8 @@ export function NumberField({
       <Input
         id={id}
         type="number"
-        value={value}
-        onChange={onChange}
+        value={value ?? ""}
+        onChange={handleChange}
         placeholder={placeholder}
         min={min}
         max={max}

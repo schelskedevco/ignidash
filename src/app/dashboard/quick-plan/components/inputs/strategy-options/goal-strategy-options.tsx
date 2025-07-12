@@ -5,8 +5,8 @@ import { DisclosureSection } from "@/components/layout/disclosure-section";
 import { Coffee, RollerCoaster } from "lucide-react";
 
 interface CoastFIREProps {
-  targetRetirementAge: string;
-  setTargetRetirementAge: (value: string) => void;
+  targetRetirementAge: number | undefined;
+  setTargetRetirementAge: (value: number | undefined) => void;
 }
 
 export function CoastFIRE({
@@ -23,16 +23,18 @@ export function CoastFIRE({
         id="target-retirement-age"
         label="Target Retirement Age"
         value={targetRetirementAge}
-        onChange={(e) => setTargetRetirementAge(e.target.value)}
+        onChange={(value) => setTargetRetirementAge(value)}
         placeholder="65"
+        min={18}
+        max={100}
       />
     </DisclosureSection>
   );
 }
 
 interface BaristaFIREProps {
-  partTimeIncome: string;
-  setPartTimeIncome: (value: string) => void;
+  partTimeIncome: number | undefined;
+  setPartTimeIncome: (value: number | undefined) => void;
 }
 
 export function BaristaFIRE({
@@ -47,10 +49,11 @@ export function BaristaFIRE({
     >
       <NumberField
         id="part-time-income"
-        label="Part-time Monthly Income"
+        label="Part-time Annual Income"
         value={partTimeIncome}
-        onChange={(e) => setPartTimeIncome(e.target.value)}
-        placeholder="$1,500"
+        onChange={(value) => setPartTimeIncome(value)}
+        placeholder="$18,000"
+        min={0}
       />
     </DisclosureSection>
   );

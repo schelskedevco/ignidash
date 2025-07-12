@@ -1,62 +1,31 @@
 "use client";
 
-import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { NumberField } from "@/components/ui/number-field";
 import { SectionHeader } from "@/components/layout/section-header";
 import { DisclosureSection } from "@/components/layout/disclosure-section";
 import InvalidInputError from "@/components/ui/invalid-input-error";
 import { ArrowTrendingUpIcon, ChartPieIcon } from "@heroicons/react/24/outline";
+import {
+  useBasicsData,
+  useGrowthRatesData,
+  useAllocationData,
+  useUpdateBasics,
+  useUpdateGrowthRates,
+  useUpdateAllocation,
+} from "@/lib/stores/quick-plan-store";
+import { useAllocationValidation } from "@/lib/hooks/use-validation";
 
-interface BasicsSectionProps {
-  currentAge: string;
-  setCurrentAge: (value: string) => void;
-  annualIncome: string;
-  setAnnualIncome: (value: string) => void;
-  annualExpenses: string;
-  setAnnualExpenses: (value: string) => void;
-  investedAssets: string;
-  setInvestedAssets: (value: string) => void;
-}
+export function BasicsSection() {
+  const basics = useBasicsData();
+  const growthRates = useGrowthRatesData();
+  const allocation = useAllocationData();
 
-export function BasicsSection({
-  currentAge,
-  setCurrentAge,
-  annualIncome,
-  setAnnualIncome,
-  annualExpenses,
-  setAnnualExpenses,
-  investedAssets,
-  setInvestedAssets,
-}: BasicsSectionProps) {
-  // Growth rates state
-  const [incomeGrowthRate, setIncomeGrowthRate] = useState("3");
-  const [expenseGrowthRate, setExpenseGrowthRate] = useState("3");
+  const { isValid: allocationIsValid } = useAllocationValidation(allocation);
 
-  // Asset allocation state
-  const [stockAllocation, setStockAllocation] = useState("70");
-  const [bondAllocation, setBondAllocation] = useState("30");
-  const [cashAllocation, setCashAllocation] = useState("0");
-
-  // Utility function to validate allocation totals 100%
-  const isAllocationValid = (
-    stocks: string,
-    bonds: string,
-    cash: string
-  ): boolean => {
-    const sum =
-      parseFloat(stocks || "0") +
-      parseFloat(bonds || "0") +
-      parseFloat(cash || "0");
-    return Math.abs(sum - 100) < 0.01;
-  };
-
-  // Show allocation error message
-  const showAllocationError = !isAllocationValid(
-    stockAllocation,
-    bondAllocation,
-    cashAllocation
-  );
+  const updateBasics = useUpdateBasics();
+  const updateGrowthRates = useUpdateGrowthRates();
+  const updateAllocation = useUpdateAllocation();
 
   return (
     <div className="border-foreground/10 mb-5 border-b pb-5">
@@ -74,30 +43,35 @@ export function BasicsSection({
             <NumberField
               id="current-age"
               label="Current Age"
-              value={currentAge}
-              onChange={(e) => setCurrentAge(e.target.value)}
+              value={basics.currentAge}
+              onChange={(value) => updateBasics("currentAge", value)}
               placeholder="28"
+              min={18}
+              max={100}
             />
             <NumberField
               id="annual-income"
               label="Net Annual Income"
-              value={annualIncome}
-              onChange={(e) => setAnnualIncome(e.target.value)}
+              value={basics.annualIncome}
+              onChange={(value) => updateBasics("annualIncome", value)}
               placeholder="$85,000"
+              min={0}
             />
             <NumberField
               id="annual-expenses"
               label="Annual Expenses"
-              value={annualExpenses}
-              onChange={(e) => setAnnualExpenses(e.target.value)}
+              value={basics.annualExpenses}
+              onChange={(value) => updateBasics("annualExpenses", value)}
               placeholder="$50,000"
+              min={0}
             />
             <NumberField
               id="invested-assets"
               label="Invested Assets"
-              value={investedAssets}
-              onChange={(e) => setInvestedAssets(e.target.value)}
+              value={basics.investedAssets}
+              onChange={(value) => updateBasics("investedAssets", value)}
               placeholder="$75,000"
+              min={0}
             />
           </fieldset>
         </form>
@@ -117,22 +91,26 @@ export function BasicsSection({
               <NumberField
                 id="income-growth-rate"
                 label="Income Growth Rate (%)"
-                value={incomeGrowthRate}
-                onChange={(e) => setIncomeGrowthRate(e.target.value)}
-                placeholder="3"
-                min="0"
-                max="50"
-                step="0.1"
+                value={growthRates.incomeGrowthRate}
+                onChange={(value) =>
+                  updateGrowthRates("incomeGrowthRate", value)
+                }
+                placeholder="3%"
+                min={0}
+                max={50}
+                step={0.1}
               />
               <NumberField
                 id="expense-growth-rate"
                 label="Expense Growth Rate (%)"
-                value={expenseGrowthRate}
-                onChange={(e) => setExpenseGrowthRate(e.target.value)}
-                placeholder="3"
-                min="0"
-                max="10"
-                step="0.1"
+                value={growthRates.expenseGrowthRate}
+                onChange={(value) =>
+                  updateGrowthRates("expenseGrowthRate", value)
+                }
+                placeholder="3%"
+                min={0}
+                max={10}
+                step={0.1}
               />
             </fieldset>
           </form>
@@ -151,37 +129,37 @@ export function BasicsSection({
               <NumberField
                 id="stock-allocation"
                 label="Stocks (%)"
-                value={stockAllocation}
-                onChange={(e) => setStockAllocation(e.target.value)}
-                placeholder="70"
-                min="0"
-                max="100"
-                step="1"
+                value={allocation.stockAllocation}
+                onChange={(value) => updateAllocation("stockAllocation", value)}
+                placeholder="70%"
+                min={0}
+                max={100}
+                step={1}
               />
               <NumberField
                 id="bond-allocation"
                 label="Bonds (%)"
-                value={bondAllocation}
-                onChange={(e) => setBondAllocation(e.target.value)}
-                placeholder="30"
-                min="0"
-                max="100"
-                step="1"
+                value={allocation.bondAllocation}
+                onChange={(value) => updateAllocation("bondAllocation", value)}
+                placeholder="30%"
+                min={0}
+                max={100}
+                step={1}
               />
               <NumberField
                 id="cash-allocation"
                 label="Cash (%)"
-                value={cashAllocation}
-                onChange={(e) => setCashAllocation(e.target.value)}
-                placeholder="0"
-                min="0"
-                max="100"
-                step="1"
+                value={allocation.cashAllocation}
+                onChange={(value) => updateAllocation("cashAllocation", value)}
+                placeholder="0%"
+                min={0}
+                max={100}
+                step={1}
               />
             </fieldset>
           </form>
         </DisclosureSection>
-        {showAllocationError && (
+        {!allocationIsValid && (
           <InvalidInputError title="Asset allocation must total 100%" />
         )}
       </div>
