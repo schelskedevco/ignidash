@@ -19,7 +19,7 @@ Quick Plan is the core FIRE calculator feature that provides instant projections
 #### 1. Current Age
 
 - **Type**: Number input
-- **Range**: 18-100
+- **Range**: 16-100
 - **Validation**: Required, must be valid integer
 - **UI**: Standard number input with stepper buttons
 

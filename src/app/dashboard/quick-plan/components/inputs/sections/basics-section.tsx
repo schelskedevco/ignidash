@@ -46,7 +46,7 @@ export function BasicsSection() {
               value={basics.currentAge}
               onChange={(value) => updateBasics("currentAge", value)}
               placeholder="28"
-              min={18}
+              min={16}
               max={100}
             />
             <NumberField

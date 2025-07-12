@@ -1,8 +1,13 @@
 import { z } from "zod";
 
-// Helper function to create a currency field with coercion
-const currencyField = () => {
-  return z.coerce.number().nonnegative("Must be 0 or greater");
+// Helper function to create a currency field that allows zero
+const currencyFieldAllowsZero = (customMessage?: string) => {
+  return z.coerce.number().nonnegative(customMessage || "Must be 0 or greater");
+};
+
+// Helper function to create a currency field that forbids zero
+const currencyFieldForbidsZero = (customMessage?: string) => {
+  return z.coerce.number().positive(customMessage || "Must be greater than 0");
 };
 
 // Helper function to create a percentage field with custom range
@@ -13,24 +18,33 @@ const percentageField = (min = 0, max = 100, fieldName = "Value") => {
     .max(max, `${fieldName} must be at most ${max}%`);
 };
 
-// Helper function to create an age field
-const ageField = () => {
+// Helper function to create an age field with configurable range
+const ageField = (
+  min = 16,
+  max = 100,
+  customMessages?: { min?: string; max?: string }
+) => {
   return z.coerce
     .number()
-    .min(18, "Age must be at least 18")
-    .max(100, "Age must be at most 100");
+    .min(min, customMessages?.min || `Age must be at least ${min}`)
+    .max(max, customMessages?.max || `Age must be at most ${max}`);
 };
 
 // Basic financial information schema
 export const basicsSchema = z.object({
-  currentAge: ageField(),
-  annualIncome: z.coerce
-    .number()
-    .positive("Annual income must be greater than 0"),
-  annualExpenses: z.coerce
-    .number()
-    .positive("Annual expenses must be greater than 0"),
-  investedAssets: currencyField(),
+  currentAge: ageField(16, 100, {
+    min: "You must be at least 16 years old to use this calculator",
+    max: "Age cannot exceed 100 years",
+  }),
+  annualIncome: currencyFieldForbidsZero(
+    "Annual income must be greater than 0"
+  ),
+  annualExpenses: currencyFieldForbidsZero(
+    "Annual expenses must be greater than 0"
+  ),
+  investedAssets: currencyFieldAllowsZero(
+    "Invested assets cannot be negative (enter 0 if starting from scratch)"
+  ),
 });
 
 // Growth rates schema (disclosure section)
@@ -62,11 +76,16 @@ export const allocationSchema = z
 
 // Goals schema
 export const goalsSchema = z.object({
-  retirementExpenses: z.coerce
-    .number()
-    .positive("Retirement expenses are required and must be greater than 0"),
-  targetRetirementAge: z.coerce.number().min(18).max(100).optional(),
-  partTimeIncome: z.coerce.number().positive().optional(),
+  retirementExpenses: currencyFieldForbidsZero(
+    "Retirement expenses are required and must be greater than 0"
+  ),
+  targetRetirementAge: ageField(16, 100, {
+    min: "Target retirement age must be at least 16",
+    max: "Target retirement age cannot exceed 100",
+  }).optional(),
+  partTimeIncome: currencyFieldAllowsZero(
+    "Part-time income cannot be negative (enter 0 if no part-time work planned)"
+  ).optional(),
 });
 
 // Market assumptions schema (drawer)
@@ -80,12 +99,13 @@ export const marketAssumptionsSchema = z.object({
 // Retirement funding schema (drawer)
 export const retirementFundingSchema = z.object({
   safeWithdrawalRate: percentageField(2, 6, "Safe withdrawal rate").optional(),
-  retirementIncome: currencyField().optional(),
-  lifeExpectancy: z.coerce
-    .number()
-    .min(50, "Life expectancy must be at least 50 years")
-    .max(110, "Life expectancy must be at most 110 years")
-    .optional(),
+  retirementIncome: currencyFieldAllowsZero(
+    "Passive retirement income cannot be negative (enter 0 if no pensions/Social Security expected)"
+  ).optional(),
+  lifeExpectancy: ageField(50, 110, {
+    min: "Life expectancy must be at least 50 years",
+    max: "Life expectancy must be at most 110 years",
+  }).optional(),
   effectiveTaxRate: percentageField(0, 50, "Effective tax rate").optional(),
 });
 

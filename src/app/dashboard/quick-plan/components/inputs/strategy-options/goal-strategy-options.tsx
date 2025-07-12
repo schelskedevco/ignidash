@@ -25,7 +25,7 @@ export function CoastFIRE({
         value={targetRetirementAge}
         onChange={(value) => setTargetRetirementAge(value)}
         placeholder="65"
-        min={18}
+        min={16}
         max={100}
       />
     </DisclosureSection>
