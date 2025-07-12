@@ -8,7 +8,7 @@ interface SelectFieldProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   options: Array<{ value: string; label: string }>;
-  description?: string | React.ReactNode;
+  desc?: string | React.ReactNode;
 }
 
 export function SelectField({
@@ -17,7 +17,7 @@ export function SelectField({
   value,
   onChange,
   options,
-  description,
+  desc,
 }: SelectFieldProps) {
   return (
     <div>
@@ -46,9 +46,7 @@ export function SelectField({
           className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
         />
       </div>
-      {description && (
-        <p className="text-muted-foreground mt-2 text-xs">{description}</p>
-      )}
+      {desc && <p className="text-muted-foreground mt-2 text-xs">{desc}</p>}
     </div>
   );
 }

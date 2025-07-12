@@ -39,6 +39,11 @@ interface QuickPlanState {
     };
   };
 
+  preferences: {
+    displayFormat: "today" | "future";
+    dataStorage: "localStorage" | "none";
+  };
+
   actions: {
     // Basic input actions
     updateBasics: (
@@ -64,6 +69,12 @@ interface QuickPlanState {
     updateRetirementFunding: (
       field: keyof QuickPlanState["inputs"]["retirementFunding"],
       value: number | undefined
+    ) => void;
+
+    // Preferences actions
+    updatePreferences: (
+      field: keyof QuickPlanState["preferences"],
+      value: string
     ) => void;
 
     // Utility actions
@@ -108,7 +119,40 @@ const defaultState: Omit<QuickPlanState, "actions"> = {
       effectiveTaxRate: 15, // Default from existing component
     },
   },
+  preferences: {
+    displayFormat: "today",
+    dataStorage: "localStorage",
+  },
 };
+
+// Clean up existing data if dataStorage preference is "none"
+const cleanupExistingData = () => {
+  if (typeof window === "undefined") return;
+
+  const stored = localStorage.getItem("quick-plan-storage");
+  if (!stored) return;
+
+  try {
+    const parsed = JSON.parse(stored);
+    if (parsed.state?.preferences?.dataStorage === "none") {
+      // Only keep preferences, remove inputs
+      const cleanedData = {
+        state: {
+          preferences: parsed.state.preferences,
+        },
+        version: parsed.version,
+      };
+      localStorage.setItem("quick-plan-storage", JSON.stringify(cleanedData));
+    }
+  } catch (error) {
+    // Handle parsing errors - remove corrupted data
+    console.warn("Failed to parse quick-plan storage:", error);
+    localStorage.removeItem("quick-plan-storage");
+  }
+};
+
+// Run cleanup on initialization
+cleanupExistingData();
 
 // Create the store
 export const useQuickPlanStore = create<QuickPlanState>()(
@@ -148,6 +192,18 @@ export const useQuickPlanStore = create<QuickPlanState>()(
               state.inputs.retirementFunding[field] = value;
             }),
 
+          // Preferences actions
+          updatePreferences: (field, value) =>
+            set((state) => {
+              if (field === "displayFormat") {
+                state.preferences.displayFormat = value as "today" | "future";
+              } else if (field === "dataStorage") {
+                state.preferences.dataStorage = value as
+                  | "localStorage"
+                  | "none";
+              }
+            }),
+
           // Utility actions
           resetStore: () =>
             set((state) => {
@@ -166,10 +222,19 @@ export const useQuickPlanStore = create<QuickPlanState>()(
       {
         name: "quick-plan-storage",
         version: 1,
-        // Only persist the inputs state, not the actions
-        partialize: (state) => ({
-          inputs: state.inputs,
-        }),
+        // Only persist the inputs and preferences state, not the actions
+        partialize: (state) => {
+          const baseResult = { preferences: state.preferences };
+
+          if (state.preferences.dataStorage === "localStorage") {
+            return {
+              ...baseResult,
+              inputs: state.inputs,
+            };
+          }
+
+          return baseResult;
+        },
       }
     ),
     {
@@ -215,6 +280,12 @@ export const useUpdateMarketAssumptions = () =>
   useQuickPlanStore((state) => state.actions.updateMarketAssumptions);
 export const useUpdateRetirementFunding = () =>
   useQuickPlanStore((state) => state.actions.updateRetirementFunding);
+
+// Preferences selectors
+export const usePreferencesData = () =>
+  useQuickPlanStore((state) => state.preferences);
+export const useUpdatePreferences = () =>
+  useQuickPlanStore((state) => state.actions.updatePreferences);
 
 // Utility selectors
 export const useResetStore = () =>

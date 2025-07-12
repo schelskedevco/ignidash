@@ -1,0 +1,74 @@
+"use client";
+
+import { SelectField } from "@/components/ui/select-field";
+import { SettingsSection } from "@/components/layout/settings-section";
+import { Button } from "@/components/catalyst/button";
+import {
+  usePreferencesData,
+  useUpdatePreferences,
+  useResetStore,
+} from "@/lib/stores/quick-plan-store";
+
+export function SettingsDrawer() {
+  const preferences = usePreferencesData();
+  const updatePreferences = useUpdatePreferences();
+  const resetStore = useResetStore();
+
+  const handleDeleteData = () => {
+    // Clear localStorage
+    localStorage.removeItem("quick-plan-storage");
+
+    // Reset store to defaults
+    resetStore();
+  };
+
+  return (
+    <>
+      <SettingsSection
+        title="Display"
+        desc="Choose how to display currency values in your projections."
+        legendText="Display format configuration"
+      >
+        <SelectField
+          id="display-format"
+          label="Currency Display"
+          value={preferences.displayFormat}
+          onChange={(e) => updatePreferences("displayFormat", e.target.value)}
+          options={[
+            { value: "today", label: "Today's Currency" },
+            { value: "future", label: "Future Inflated Currency" },
+          ]}
+          desc="Today's currency shows values in current dollars. Future inflated currency shows values adjusted for inflation."
+        />
+      </SettingsSection>
+
+      <SettingsSection
+        title="Data Storage"
+        desc="Control how your data is saved and managed."
+        hasBorder={false}
+        legendText="Data storage configuration"
+      >
+        <SelectField
+          id="data-storage"
+          label="Data Persistence"
+          value={preferences.dataStorage}
+          onChange={(e) => updatePreferences("dataStorage", e.target.value)}
+          options={[
+            { value: "localStorage", label: "Local Storage" },
+            { value: "none", label: "No Data Persistence" },
+          ]}
+          desc="Local storage saves your data on this device. No data persistence means your data is lost when you close or refresh the page."
+        />
+
+        <div>
+          <Button color="red" onClick={handleDeleteData} className="w-full">
+            Delete Saved Data
+          </Button>
+          <p className="text-muted-foreground mt-2 text-xs">
+            This will permanently delete all saved data and reset to defaults.
+          </p>
+        </div>
+      </SettingsSection>
+    </>
+  );
+}
