@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CalculatorIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { IconButton } from "@/components/ui/icon-button";
 import Drawer from "@/components/ui/drawer";
-import { SettingsDrawer } from "./drawers/settings-drawer";
+import { PreferencesDrawer } from "./drawers/preferences-drawer";
 
 export function YourNumbersPageHeader() {
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -26,7 +26,7 @@ export function YourNumbersPageHeader() {
       </div>
 
       <Drawer open={settingsOpen} setOpen={setSettingsOpen} title="Settings">
-        <SettingsDrawer />
+        <PreferencesDrawer />
       </Drawer>
     </>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { SelectField } from "@/components/ui/select-field";
-import { SettingsSection } from "@/components/layout/settings-section";
+import { CardFormSection } from "@/components/layout/card-form-section";
 import { Button } from "@/components/catalyst/button";
 import {
   usePreferencesData,
@@ -9,7 +9,7 @@ import {
   useResetStore,
 } from "@/lib/stores/quick-plan-store";
 
-export function SettingsDrawer() {
+export function PreferencesDrawer() {
   const preferences = usePreferencesData();
   const updatePreferences = useUpdatePreferences();
   const resetStore = useResetStore();
@@ -24,7 +24,7 @@ export function SettingsDrawer() {
 
   return (
     <>
-      <SettingsSection
+      <CardFormSection
         title="Display"
         desc="Choose how to display currency values in your projections."
         legendText="Display format configuration"
@@ -40,9 +40,9 @@ export function SettingsDrawer() {
           ]}
           desc="Today's currency shows values in current dollars. Future inflated currency shows values adjusted for inflation."
         />
-      </SettingsSection>
+      </CardFormSection>
 
-      <SettingsSection
+      <CardFormSection
         title="Data Storage"
         desc="Control how your data is saved and managed."
         hasBorder={false}
@@ -68,7 +68,7 @@ export function SettingsDrawer() {
             This will permanently delete all saved data and reset to defaults.
           </p>
         </div>
-      </SettingsSection>
+      </CardFormSection>
     </>
   );
 }

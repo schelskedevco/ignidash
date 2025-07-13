@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import type { InvalidInputErrorProps } from "@/components/ui/invalid-input-error";
 import { SectionHeader } from "./section-header";
 
-interface SettingsSectionProps {
+interface CardFormSectionProps {
   title?: React.ReactNode;
   desc?: string | React.ReactNode;
   children: React.ReactNode;
@@ -13,14 +13,14 @@ interface SettingsSectionProps {
   legendText?: string;
 }
 
-export function SettingsSection({
+export function CardFormSection({
   title,
   desc,
   children,
   hasBorder = true,
   errorComponent,
   legendText,
-}: SettingsSectionProps) {
+}: CardFormSectionProps) {
   return (
     <div
       className={

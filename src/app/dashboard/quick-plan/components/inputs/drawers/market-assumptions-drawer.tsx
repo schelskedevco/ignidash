@@ -1,7 +1,7 @@
 "use client";
 
 import { NumberField } from "@/components/ui/number-field";
-import { SettingsSection } from "@/components/layout/settings-section";
+import { CardFormSection } from "@/components/layout/card-form-section";
 import {
   useMarketAssumptionsData,
   useUpdateMarketAssumptions,
@@ -47,7 +47,7 @@ export function MarketAssumptionsDrawer() {
 
   return (
     <>
-      <SettingsSection
+      <CardFormSection
         title="Expected Returns"
         desc={getExpectedReturnsDescription()}
         legendText="Expected investment returns configuration"
@@ -88,9 +88,9 @@ export function MarketAssumptionsDrawer() {
           max={10}
           step={0.1}
         />
-      </SettingsSection>
+      </CardFormSection>
 
-      <SettingsSection
+      <CardFormSection
         title="Economic Factors"
         desc="Variables that impact your purchasing power and real investment returns over time."
         hasBorder={false}
@@ -109,7 +109,7 @@ export function MarketAssumptionsDrawer() {
           step={0.1}
           desc={getInflationRateDescription()}
         />
-      </SettingsSection>
+      </CardFormSection>
     </>
   );
 }

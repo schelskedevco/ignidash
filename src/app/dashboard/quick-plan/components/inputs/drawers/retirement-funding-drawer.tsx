@@ -1,7 +1,7 @@
 "use client";
 
 import { NumberField } from "@/components/ui/number-field";
-import { SettingsSection } from "@/components/layout/settings-section";
+import { CardFormSection } from "@/components/layout/card-form-section";
 import {
   useRetirementFundingData,
   useUpdateRetirementFunding,
@@ -64,7 +64,7 @@ export function RetirementFundingDrawer() {
 
   return (
     <>
-      <SettingsSection
+      <CardFormSection
         title="Cash Flow"
         desc="Portfolio withdrawals and income sources that will cover your retirement expenses."
         legendText="Retirement cash flow planning settings"
@@ -93,9 +93,9 @@ export function RetirementFundingDrawer() {
           min={0}
           desc="Passive income sources in retirement like Social Security, pensions, or annuities. This helps estimate total retirement income beyond investment withdrawals."
         />
-      </SettingsSection>
+      </CardFormSection>
 
-      <SettingsSection
+      <CardFormSection
         title="Death & Taxes"
         desc="Life expectancy and tax assumptions that affect retirement planning."
         hasBorder={false}
@@ -126,7 +126,7 @@ export function RetirementFundingDrawer() {
           step={0.1}
           desc={getEffectiveTaxRateDescription()}
         />
-      </SettingsSection>
+      </CardFormSection>
     </>
   );
 }
