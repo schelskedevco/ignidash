@@ -319,7 +319,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
           // Utility actions
           resetStore: () =>
             set((state) => {
-              Object.assign(state, defaultState);
+              Object.assign(state.inputs, defaultState.inputs);
             }),
 
           resetSection: (section) =>

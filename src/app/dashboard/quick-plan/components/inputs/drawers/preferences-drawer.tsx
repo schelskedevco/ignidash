@@ -1,6 +1,6 @@
 "use client";
 
-import { SelectField } from "@/components/ui/select-field";
+import { SelectInput } from "@/components/ui/select-input";
 import { CardFormSection } from "@/components/layout/card-form-section";
 import { Button } from "@/components/catalyst/button";
 import {
@@ -14,14 +14,6 @@ export function PreferencesDrawer() {
   const updatePreferences = useUpdatePreferences();
   const resetStore = useResetStore();
 
-  const handleDeleteData = () => {
-    // Clear localStorage
-    localStorage.removeItem("quick-plan-storage");
-
-    // Reset store to defaults
-    resetStore();
-  };
-
   return (
     <>
       <CardFormSection
@@ -29,7 +21,7 @@ export function PreferencesDrawer() {
         desc="Choose how to display currency values in your projections."
         legendText="Display format configuration"
       >
-        <SelectField
+        <SelectInput
           id="display-format"
           label="Currency Display"
           value={preferences.displayFormat}
@@ -48,7 +40,7 @@ export function PreferencesDrawer() {
         hasBorder={false}
         legendText="Data storage configuration"
       >
-        <SelectField
+        <SelectInput
           id="data-storage"
           label="Data Persistence"
           value={preferences.dataStorage}
@@ -61,7 +53,7 @@ export function PreferencesDrawer() {
         />
 
         <div>
-          <Button color="red" onClick={handleDeleteData} className="w-full">
+          <Button color="red" onClick={() => resetStore()} className="w-full">
             Delete Saved Data
           </Button>
           <p className="text-muted-foreground mt-2 text-xs">

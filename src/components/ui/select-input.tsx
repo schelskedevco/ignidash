@@ -2,7 +2,7 @@
 
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
-interface SelectFieldProps {
+interface SelectInputProps {
   id: string;
   label: string;
   value: string;
@@ -11,14 +11,14 @@ interface SelectFieldProps {
   desc?: string | React.ReactNode;
 }
 
-export function SelectField({
+export function SelectInput({
   id,
   label,
   value,
   onChange,
   options,
   desc,
-}: SelectFieldProps) {
+}: SelectInputProps) {
   return (
     <div>
       <label
