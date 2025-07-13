@@ -35,37 +35,35 @@ export const basicsSchema = z.object({
   currentAge: ageField(16, 100, {
     min: "You must be at least 16 years old to use this calculator",
     max: "Age cannot exceed 100 years",
-  }),
+  }).nullable(),
   annualIncome: currencyFieldForbidsZero(
     "Annual income must be greater than 0"
-  ),
+  ).nullable(),
   annualExpenses: currencyFieldForbidsZero(
     "Annual expenses must be greater than 0"
-  ),
+  ).nullable(),
   investedAssets: currencyFieldAllowsZero(
     "Invested assets cannot be negative (enter 0 if starting from scratch)"
-  ),
+  ).nullable(),
 });
 
 // Growth rates schema (disclosure section)
 export const growthRatesSchema = z.object({
-  incomeGrowthRate: percentageField(0, 50, "Income growth rate").optional(),
-  expenseGrowthRate: percentageField(0, 10, "Expense growth rate").optional(),
+  incomeGrowthRate: percentageField(0, 50, "Income growth rate"),
+  expenseGrowthRate: percentageField(0, 10, "Expense growth rate"),
 });
 
 // Asset allocation schema (disclosure section)
 export const allocationSchema = z
   .object({
-    stockAllocation: percentageField(0, 100, "Stock allocation").optional(),
-    bondAllocation: percentageField(0, 100, "Bond allocation").optional(),
-    cashAllocation: percentageField(0, 100, "Cash allocation").optional(),
+    stockAllocation: percentageField(0, 100, "Stock allocation"),
+    bondAllocation: percentageField(0, 100, "Bond allocation"),
+    cashAllocation: percentageField(0, 100, "Cash allocation"),
   })
   .refine(
     (data) => {
       const total =
-        (data.stockAllocation ?? 0) +
-        (data.bondAllocation ?? 0) +
-        (data.cashAllocation ?? 0);
+        data.stockAllocation + data.bondAllocation + data.cashAllocation;
       return Math.abs(total - 100) < 0.01;
     },
     {
@@ -78,35 +76,35 @@ export const allocationSchema = z
 export const goalsSchema = z.object({
   retirementExpenses: currencyFieldForbidsZero(
     "Retirement expenses are required and must be greater than 0"
-  ),
+  ).nullable(),
   targetRetirementAge: ageField(16, 100, {
     min: "Target retirement age must be at least 16",
     max: "Target retirement age cannot exceed 100",
-  }).optional(),
+  }).nullable(),
   partTimeIncome: currencyFieldAllowsZero(
     "Part-time income cannot be negative (enter 0 if no part-time work planned)"
-  ).optional(),
+  ).nullable(),
 });
 
 // Market assumptions schema (drawer)
 export const marketAssumptionsSchema = z.object({
-  stockReturn: percentageField(0, 20, "Stock return").optional(),
-  bondReturn: percentageField(0, 15, "Bond return").optional(),
-  cashReturn: percentageField(0, 10, "Cash return").optional(),
-  inflationRate: percentageField(0, 8, "Inflation rate").optional(),
+  stockReturn: percentageField(0, 20, "Stock return"),
+  bondReturn: percentageField(0, 15, "Bond return"),
+  cashReturn: percentageField(0, 10, "Cash return"),
+  inflationRate: percentageField(0, 8, "Inflation rate"),
 });
 
 // Retirement funding schema (drawer)
 export const retirementFundingSchema = z.object({
-  safeWithdrawalRate: percentageField(2, 6, "Safe withdrawal rate").optional(),
+  safeWithdrawalRate: percentageField(2, 6, "Safe withdrawal rate"),
   retirementIncome: currencyFieldAllowsZero(
     "Passive retirement income cannot be negative (enter 0 if no pensions/Social Security expected)"
-  ).optional(),
+  ),
   lifeExpectancy: ageField(50, 110, {
     min: "Life expectancy must be at least 50 years",
     max: "Life expectancy must be at most 110 years",
-  }).optional(),
-  effectiveTaxRate: percentageField(0, 50, "Effective tax rate").optional(),
+  }),
+  effectiveTaxRate: percentageField(0, 50, "Effective tax rate"),
 });
 
 // Combined schema for all inputs

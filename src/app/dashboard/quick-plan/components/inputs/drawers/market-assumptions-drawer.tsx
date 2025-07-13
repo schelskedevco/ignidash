@@ -56,7 +56,9 @@ export function MarketAssumptionsDrawer() {
           id="stock-return"
           label="Stock Returns (%)"
           value={marketAssumptions.stockReturn}
-          onChange={(value) => updateMarketAssumptions("stockReturn", value)}
+          onChange={(value) =>
+            updateMarketAssumptions("stockReturn", value ?? 10)
+          }
           placeholder="10%"
           min={0}
           max={20}
@@ -66,7 +68,9 @@ export function MarketAssumptionsDrawer() {
           id="bond-return"
           label="Bond Returns (%)"
           value={marketAssumptions.bondReturn}
-          onChange={(value) => updateMarketAssumptions("bondReturn", value)}
+          onChange={(value) =>
+            updateMarketAssumptions("bondReturn", value ?? 5)
+          }
           placeholder="5%"
           min={0}
           max={15}
@@ -76,7 +80,9 @@ export function MarketAssumptionsDrawer() {
           id="cash-return"
           label="Cash Returns (%)"
           value={marketAssumptions.cashReturn}
-          onChange={(value) => updateMarketAssumptions("cashReturn", value)}
+          onChange={(value) =>
+            updateMarketAssumptions("cashReturn", value ?? 3)
+          }
           placeholder="3%"
           min={0}
           max={10}
@@ -94,7 +100,9 @@ export function MarketAssumptionsDrawer() {
           id="inflation-rate"
           label="Inflation Rate (%)"
           value={marketAssumptions.inflationRate}
-          onChange={(value) => updateMarketAssumptions("inflationRate", value)}
+          onChange={(value) =>
+            updateMarketAssumptions("inflationRate", value ?? 3)
+          }
           placeholder="3%"
           min={0}
           max={8}

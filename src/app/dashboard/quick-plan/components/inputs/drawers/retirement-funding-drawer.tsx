@@ -74,7 +74,7 @@ export function RetirementFundingDrawer() {
           label="Safe Withdrawal Rate (%)"
           value={retirementFunding.safeWithdrawalRate}
           onChange={(value) =>
-            updateRetirementFunding("safeWithdrawalRate", value)
+            updateRetirementFunding("safeWithdrawalRate", value ?? 4)
           }
           placeholder="4%"
           min={2}
@@ -87,7 +87,7 @@ export function RetirementFundingDrawer() {
           label="Passive Retirement Income"
           value={retirementFunding.retirementIncome}
           onChange={(value) =>
-            updateRetirementFunding("retirementIncome", value)
+            updateRetirementFunding("retirementIncome", value ?? 0)
           }
           placeholder="$0"
           min={0}
@@ -105,7 +105,9 @@ export function RetirementFundingDrawer() {
           id="life-expectancy"
           label="Life Expectancy (years)"
           value={retirementFunding.lifeExpectancy}
-          onChange={(value) => updateRetirementFunding("lifeExpectancy", value)}
+          onChange={(value) =>
+            updateRetirementFunding("lifeExpectancy", value ?? 85)
+          }
           placeholder="85"
           min={50}
           max={110}
@@ -116,7 +118,7 @@ export function RetirementFundingDrawer() {
           label="Estimated Effective Tax Rate (%)"
           value={retirementFunding.effectiveTaxRate}
           onChange={(value) =>
-            updateRetirementFunding("effectiveTaxRate", value)
+            updateRetirementFunding("effectiveTaxRate", value ?? 15)
           }
           placeholder="15%"
           min={0}

@@ -6,36 +6,36 @@ import { immer } from "zustand/middleware/immer";
 interface QuickPlanState {
   inputs: {
     basics: {
-      currentAge: number | undefined;
-      annualIncome: number | undefined;
-      annualExpenses: number | undefined;
-      investedAssets: number | undefined;
+      currentAge: number | null;
+      annualIncome: number | null;
+      annualExpenses: number | null;
+      investedAssets: number | null;
     };
     growthRates: {
-      incomeGrowthRate: number | undefined;
-      expenseGrowthRate: number | undefined;
+      incomeGrowthRate: number;
+      expenseGrowthRate: number;
     };
     allocation: {
-      stockAllocation: number | undefined;
-      bondAllocation: number | undefined;
-      cashAllocation: number | undefined;
+      stockAllocation: number;
+      bondAllocation: number;
+      cashAllocation: number;
     };
     goals: {
-      retirementExpenses: number | undefined;
-      targetRetirementAge: number | undefined;
-      partTimeIncome: number | undefined;
+      retirementExpenses: number | null;
+      targetRetirementAge: number | null;
+      partTimeIncome: number | null;
     };
     marketAssumptions: {
-      stockReturn: number | undefined;
-      bondReturn: number | undefined;
-      cashReturn: number | undefined;
-      inflationRate: number | undefined;
+      stockReturn: number;
+      bondReturn: number;
+      cashReturn: number;
+      inflationRate: number;
     };
     retirementFunding: {
-      safeWithdrawalRate: number | undefined;
-      retirementIncome: number | undefined;
-      lifeExpectancy: number | undefined;
-      effectiveTaxRate: number | undefined;
+      safeWithdrawalRate: number;
+      retirementIncome: number;
+      lifeExpectancy: number;
+      effectiveTaxRate: number;
     };
   };
 
@@ -48,27 +48,27 @@ interface QuickPlanState {
     // Basic input actions
     updateBasics: (
       field: keyof QuickPlanState["inputs"]["basics"],
-      value: number | undefined
+      value: number | null
     ) => void;
     updateGrowthRates: (
       field: keyof QuickPlanState["inputs"]["growthRates"],
-      value: number | undefined
+      value: number
     ) => void;
     updateAllocation: (
       field: keyof QuickPlanState["inputs"]["allocation"],
-      value: number | undefined
+      value: number
     ) => void;
     updateGoals: (
       field: keyof QuickPlanState["inputs"]["goals"],
-      value: number | undefined
+      value: number | null
     ) => void;
     updateMarketAssumptions: (
       field: keyof QuickPlanState["inputs"]["marketAssumptions"],
-      value: number | undefined
+      value: number
     ) => void;
     updateRetirementFunding: (
       field: keyof QuickPlanState["inputs"]["retirementFunding"],
-      value: number | undefined
+      value: number
     ) => void;
 
     // Preferences actions
@@ -87,36 +87,36 @@ interface QuickPlanState {
 const defaultState: Omit<QuickPlanState, "actions"> = {
   inputs: {
     basics: {
-      currentAge: undefined, // undefined represents empty/unset for required fields
-      annualIncome: undefined,
-      annualExpenses: undefined,
-      investedAssets: undefined,
+      currentAge: null,
+      annualIncome: null,
+      annualExpenses: null,
+      investedAssets: null,
     },
     growthRates: {
-      incomeGrowthRate: 3, // Default from existing component
-      expenseGrowthRate: 3, // Default from existing component
+      incomeGrowthRate: 3,
+      expenseGrowthRate: 3,
     },
     allocation: {
-      stockAllocation: 70, // Default from existing component
-      bondAllocation: 30, // Default from existing component
-      cashAllocation: 0, // Default from existing component
+      stockAllocation: 70,
+      bondAllocation: 30,
+      cashAllocation: 0,
     },
     goals: {
-      retirementExpenses: undefined, // undefined represents empty/unset for required field
-      targetRetirementAge: undefined, // undefined represents empty/unset for optional field
-      partTimeIncome: undefined, // undefined represents empty/unset for optional field
+      retirementExpenses: null,
+      targetRetirementAge: null,
+      partTimeIncome: null,
     },
     marketAssumptions: {
-      stockReturn: 10, // Default from existing component
-      bondReturn: 5, // Default from existing component
-      cashReturn: 3, // Default from existing component
-      inflationRate: 3, // Default from existing component
+      stockReturn: 10,
+      bondReturn: 5,
+      cashReturn: 3,
+      inflationRate: 3,
     },
     retirementFunding: {
-      safeWithdrawalRate: 4, // Default from existing component
-      retirementIncome: 0, // Default to 0 (no passive income)
-      lifeExpectancy: 85, // Default from existing component
-      effectiveTaxRate: 15, // Default from existing component
+      safeWithdrawalRate: 4,
+      retirementIncome: 0,
+      lifeExpectancy: 85,
+      effectiveTaxRate: 15,
     },
   },
   preferences: {

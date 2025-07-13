@@ -5,8 +5,8 @@ import { Input } from "@/components/catalyst/input";
 interface NumberFieldProps {
   id: string;
   label: string;
-  value: number | undefined;
-  onChange: (value: number | undefined) => void;
+  value: number | null;
+  onChange: (value: number | null) => void;
   placeholder?: string;
   min?: number;
   max?: number;
@@ -29,7 +29,7 @@ export function NumberField({
     const inputValue = e.target.value;
 
     if (inputValue === "") {
-      onChange(undefined);
+      onChange(null);
       return;
     }
 

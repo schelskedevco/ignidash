@@ -93,7 +93,7 @@ export function BasicsSection() {
                 label="Income Growth Rate (%)"
                 value={growthRates.incomeGrowthRate}
                 onChange={(value) =>
-                  updateGrowthRates("incomeGrowthRate", value)
+                  updateGrowthRates("incomeGrowthRate", value ?? 3)
                 }
                 placeholder="3%"
                 min={0}
@@ -105,7 +105,7 @@ export function BasicsSection() {
                 label="Expense Growth Rate (%)"
                 value={growthRates.expenseGrowthRate}
                 onChange={(value) =>
-                  updateGrowthRates("expenseGrowthRate", value)
+                  updateGrowthRates("expenseGrowthRate", value ?? 3)
                 }
                 placeholder="3%"
                 min={0}
@@ -130,7 +130,9 @@ export function BasicsSection() {
                 id="stock-allocation"
                 label="Stocks (%)"
                 value={allocation.stockAllocation}
-                onChange={(value) => updateAllocation("stockAllocation", value)}
+                onChange={(value) =>
+                  updateAllocation("stockAllocation", value ?? 70)
+                }
                 placeholder="70%"
                 min={0}
                 max={100}
@@ -140,7 +142,9 @@ export function BasicsSection() {
                 id="bond-allocation"
                 label="Bonds (%)"
                 value={allocation.bondAllocation}
-                onChange={(value) => updateAllocation("bondAllocation", value)}
+                onChange={(value) =>
+                  updateAllocation("bondAllocation", value ?? 30)
+                }
                 placeholder="30%"
                 min={0}
                 max={100}
@@ -150,7 +154,9 @@ export function BasicsSection() {
                 id="cash-allocation"
                 label="Cash (%)"
                 value={allocation.cashAllocation}
-                onChange={(value) => updateAllocation("cashAllocation", value)}
+                onChange={(value) =>
+                  updateAllocation("cashAllocation", value ?? 0)
+                }
                 placeholder="0%"
                 min={0}
                 max={100}

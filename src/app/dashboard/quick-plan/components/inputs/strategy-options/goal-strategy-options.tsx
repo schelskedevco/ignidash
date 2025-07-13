@@ -5,8 +5,8 @@ import { DisclosureSection } from "@/components/layout/disclosure-section";
 import { Coffee, RollerCoaster } from "lucide-react";
 
 interface CoastFIREProps {
-  targetRetirementAge: number | undefined;
-  setTargetRetirementAge: (value: number | undefined) => void;
+  targetRetirementAge: number | null;
+  setTargetRetirementAge: (value: number | null) => void;
 }
 
 export function CoastFIRE({
@@ -33,8 +33,8 @@ export function CoastFIRE({
 }
 
 interface BaristaFIREProps {
-  partTimeIncome: number | undefined;
-  setPartTimeIncome: (value: number | undefined) => void;
+  partTimeIncome: number | null;
+  setPartTimeIncome: (value: number | null) => void;
 }
 
 export function BaristaFIRE({
