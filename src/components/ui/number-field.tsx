@@ -7,7 +7,7 @@ interface NumberFieldProps {
   id: string;
   label: string;
   value: number | null;
-  onBlur: (value: string) => { success: boolean; error?: string };
+  onBlur: (value: string | null) => { success: boolean; error?: string };
   placeholder?: string;
   min?: number;
   max?: number;
@@ -50,7 +50,7 @@ export function NumberField({
   };
 
   const handleBlur = () => {
-    const result = onBlur(localValue);
+    const result = onBlur(localValue !== "" ? localValue : null);
     if (!result.success && result.error) {
       setError(result.error);
     }
@@ -66,7 +66,7 @@ export function NumberField({
       </label>
       <Input
         id={id}
-        type="text"
+        type="number"
         value={localValue}
         onChange={handleChange}
         onBlur={handleBlur}

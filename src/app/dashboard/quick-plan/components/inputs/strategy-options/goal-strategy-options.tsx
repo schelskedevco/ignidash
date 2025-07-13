@@ -6,7 +6,7 @@ import { Coffee, RollerCoaster } from "lucide-react";
 
 interface CoastFIREProps {
   targetRetirementAge: number | null;
-  setTargetRetirementAge: (value: string) => {
+  setTargetRetirementAge: (value: string | null) => {
     success: boolean;
     error?: string;
   };
@@ -37,7 +37,10 @@ export function CoastFIRE({
 
 interface BaristaFIREProps {
   partTimeIncome: number | null;
-  setPartTimeIncome: (value: string) => { success: boolean; error?: string };
+  setPartTimeIncome: (value: string | null) => {
+    success: boolean;
+    error?: string;
+  };
 }
 
 export function BaristaFIRE({
