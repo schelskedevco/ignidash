@@ -42,8 +42,7 @@ export function BasicsSection() {
               value={basics.currentAge}
               onBlur={(value) => updateBasics("currentAge", value)}
               placeholder="28"
-              min={16}
-              max={100}
+              decimalScale={0}
             />
             <NumberInput
               id="annual-income"
@@ -51,7 +50,7 @@ export function BasicsSection() {
               value={basics.annualIncome}
               onBlur={(value) => updateBasics("annualIncome", value)}
               placeholder="$85,000"
-              min={0}
+              prefix="$"
             />
             <NumberInput
               id="annual-expenses"
@@ -59,7 +58,7 @@ export function BasicsSection() {
               value={basics.annualExpenses}
               onBlur={(value) => updateBasics("annualExpenses", value)}
               placeholder="$50,000"
-              min={0}
+              prefix="$"
             />
             <NumberInput
               id="invested-assets"
@@ -67,7 +66,7 @@ export function BasicsSection() {
               value={basics.investedAssets}
               onBlur={(value) => updateBasics("investedAssets", value)}
               placeholder="$75,000"
-              min={0}
+              prefix="$"
             />
           </fieldset>
         </form>
@@ -90,9 +89,7 @@ export function BasicsSection() {
                 value={growthRates.incomeGrowthRate}
                 onBlur={(value) => updateGrowthRates("incomeGrowthRate", value)}
                 placeholder="3%"
-                min={0}
-                max={50}
-                step={0.1}
+                suffix="%"
               />
               <NumberInput
                 id="expense-growth-rate"
@@ -102,9 +99,7 @@ export function BasicsSection() {
                   updateGrowthRates("expenseGrowthRate", value)
                 }
                 placeholder="3%"
-                min={0}
-                max={10}
-                step={0.1}
+                suffix="%"
               />
             </fieldset>
           </form>
@@ -126,9 +121,7 @@ export function BasicsSection() {
                 value={allocation.stockAllocation}
                 onBlur={(value) => updateAllocation("stockAllocation", value)}
                 placeholder="70%"
-                min={0}
-                max={100}
-                step={1}
+                suffix="%"
               />
               <NumberInput
                 id="bond-allocation"
@@ -136,9 +129,7 @@ export function BasicsSection() {
                 value={allocation.bondAllocation}
                 onBlur={(value) => updateAllocation("bondAllocation", value)}
                 placeholder="30%"
-                min={0}
-                max={100}
-                step={1}
+                suffix="%"
               />
               <NumberInput
                 id="cash-allocation"
@@ -146,9 +137,7 @@ export function BasicsSection() {
                 value={allocation.cashAllocation}
                 onBlur={(value) => updateAllocation("cashAllocation", value)}
                 placeholder="0%"
-                min={0}
-                max={100}
-                step={1}
+                suffix="%"
               />
             </fieldset>
           </form>

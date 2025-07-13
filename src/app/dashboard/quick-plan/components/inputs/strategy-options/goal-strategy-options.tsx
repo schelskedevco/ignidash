@@ -28,8 +28,7 @@ export function CoastFIRE({
         value={targetRetirementAge}
         onBlur={setTargetRetirementAge}
         placeholder="65"
-        min={16}
-        max={100}
+        decimalScale={0}
       />
     </DisclosureSection>
   );
@@ -59,7 +58,7 @@ export function BaristaFIRE({
         value={partTimeIncome}
         onBlur={setPartTimeIncome}
         placeholder="$18,000"
-        min={0}
+        prefix="$"
       />
     </DisclosureSection>
   );

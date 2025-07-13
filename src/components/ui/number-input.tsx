@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Input } from "@/components/catalyst/input";
+import { NumericFormat } from "react-number-format";
 
 interface NumberInputProps {
   id: string;
@@ -9,10 +10,13 @@ interface NumberInputProps {
   value: number | null;
   onBlur: (value: string | null) => { success: boolean; error?: string };
   placeholder?: string;
-  min?: number;
-  max?: number;
-  step?: number;
   desc?: string | React.ReactNode;
+  // Formatting props
+  prefix?: string;
+  suffix?: string;
+  decimalScale?: number;
+  allowNegative?: boolean;
+  allowLeadingZeros?: boolean;
 }
 
 export function NumberInput({
@@ -21,10 +25,12 @@ export function NumberInput({
   value,
   onBlur,
   placeholder,
-  min,
-  max,
-  step,
   desc,
+  prefix,
+  suffix,
+  decimalScale = 2,
+  allowNegative = true,
+  allowLeadingZeros = false,
 }: NumberInputProps) {
   // Local string state that allows incomplete inputs
   const [localValue, setLocalValue] = useState<string>(
@@ -39,14 +45,17 @@ export function NumberInput({
     setLocalValue(value?.toString() ?? "");
   }, [value]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-
+  const handleValueChange = (values: {
+    value: string;
+    formattedValue: string;
+    floatValue?: number;
+  }) => {
     if (error) {
       setError(null);
     }
 
-    setLocalValue(inputValue);
+    // Store the unformatted string value
+    setLocalValue(values.value);
   };
 
   const handleBlur = () => {
@@ -64,16 +73,20 @@ export function NumberInput({
       >
         {label}
       </label>
-      <Input
+      <NumericFormat
         id={id}
-        type="number"
         value={localValue}
-        onChange={handleChange}
+        onValueChange={handleValueChange}
         onBlur={handleBlur}
         placeholder={placeholder}
-        min={min}
-        max={max}
-        step={step}
+        thousandSeparator=","
+        decimalSeparator="."
+        prefix={prefix}
+        suffix={suffix}
+        decimalScale={decimalScale}
+        allowNegative={allowNegative}
+        allowLeadingZeros={allowLeadingZeros}
+        customInput={Input}
         aria-describedby={desc ? `${id}-desc` : undefined}
       />
       {error && (

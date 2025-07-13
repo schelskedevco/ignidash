@@ -32,7 +32,7 @@ export function GoalSection() {
               value={goals.retirementExpenses}
               onBlur={(value) => updateGoals("retirementExpenses", value)}
               placeholder="$50,000"
-              min={0}
+              prefix="$"
             />
           </Card>
           <CoastFIRE

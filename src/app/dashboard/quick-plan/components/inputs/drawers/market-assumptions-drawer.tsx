@@ -58,9 +58,7 @@ export function MarketAssumptionsDrawer() {
           value={marketAssumptions.stockReturn}
           onBlur={(value) => updateMarketAssumptions("stockReturn", value)}
           placeholder="10%"
-          min={0}
-          max={20}
-          step={0.1}
+          suffix="%"
         />
         <NumberInput
           id="bond-return"
@@ -68,9 +66,7 @@ export function MarketAssumptionsDrawer() {
           value={marketAssumptions.bondReturn}
           onBlur={(value) => updateMarketAssumptions("bondReturn", value)}
           placeholder="5%"
-          min={0}
-          max={15}
-          step={0.1}
+          suffix="%"
         />
         <NumberInput
           id="cash-return"
@@ -78,9 +74,7 @@ export function MarketAssumptionsDrawer() {
           value={marketAssumptions.cashReturn}
           onBlur={(value) => updateMarketAssumptions("cashReturn", value)}
           placeholder="3%"
-          min={0}
-          max={10}
-          step={0.1}
+          suffix="%"
         />
       </CardFormSection>
 
@@ -96,9 +90,7 @@ export function MarketAssumptionsDrawer() {
           value={marketAssumptions.inflationRate}
           onBlur={(value) => updateMarketAssumptions("inflationRate", value)}
           placeholder="3%"
-          min={0}
-          max={8}
-          step={0.1}
+          suffix="%"
           desc={getInflationRateDescription()}
         />
       </CardFormSection>

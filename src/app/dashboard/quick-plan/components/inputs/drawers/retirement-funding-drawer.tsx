@@ -77,9 +77,7 @@ export function RetirementFundingDrawer() {
             updateRetirementFunding("safeWithdrawalRate", value)
           }
           placeholder="4%"
-          min={2}
-          max={6}
-          step={0.1}
+          suffix="%"
           desc={getSafeWithdrawalRateDescription()}
         />
         <NumberInput
@@ -88,7 +86,7 @@ export function RetirementFundingDrawer() {
           value={retirementFunding.retirementIncome}
           onBlur={(value) => updateRetirementFunding("retirementIncome", value)}
           placeholder="$0"
-          min={0}
+          prefix="$"
           desc="Passive income sources in retirement like Social Security, pensions, or annuities. This helps estimate total retirement income beyond investment withdrawals."
         />
       </CardFormSection>
@@ -105,8 +103,7 @@ export function RetirementFundingDrawer() {
           value={retirementFunding.lifeExpectancy}
           onBlur={(value) => updateRetirementFunding("lifeExpectancy", value)}
           placeholder="85"
-          min={50}
-          max={110}
+          decimalScale={0}
           desc={getLifeExpectancyDescription()}
         />
         <NumberInput
@@ -115,9 +112,7 @@ export function RetirementFundingDrawer() {
           value={retirementFunding.effectiveTaxRate}
           onBlur={(value) => updateRetirementFunding("effectiveTaxRate", value)}
           placeholder="15%"
-          min={0}
-          max={50}
-          step={0.1}
+          suffix="%"
           desc={getEffectiveTaxRateDescription()}
         />
       </CardFormSection>
