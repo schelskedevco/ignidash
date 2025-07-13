@@ -13,14 +13,18 @@ const coerceNumber = (zodNumber: ZodNumber) => {
 // Helper function to create a currency field that allows zero
 const currencyFieldAllowsZero = (customMessage?: string) => {
   return coerceNumber(
-    z.number().nonnegative(customMessage || "Must be 0 or greater")
+    z
+      .number("Must be a valid number")
+      .nonnegative(customMessage || "Must be 0 or greater")
   );
 };
 
 // Helper function to create a currency field that forbids zero
 const currencyFieldForbidsZero = (customMessage?: string) => {
   return coerceNumber(
-    z.number().positive(customMessage || "Must be greater than 0")
+    z
+      .number("Must be a valid number")
+      .positive(customMessage || "Must be greater than 0")
   );
 };
 
@@ -28,7 +32,7 @@ const currencyFieldForbidsZero = (customMessage?: string) => {
 const percentageField = (min = 0, max = 100, fieldName = "Value") => {
   return coerceNumber(
     z
-      .number()
+      .number("Must be a valid percentage")
       .min(min, `${fieldName} must be at least ${min}%`)
       .max(max, `${fieldName} must be at most ${max}%`)
   );
@@ -42,7 +46,7 @@ const ageField = (
 ) => {
   return coerceNumber(
     z
-      .number()
+      .number("Must be a valid age")
       .min(min, customMessages?.min || `Age must be at least ${min}`)
       .max(max, customMessages?.max || `Age must be at most ${max}`)
   );
