@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Input } from "@/components/catalyst/input";
 
 interface NumberFieldProps {
@@ -25,8 +26,21 @@ export function NumberField({
   step,
   desc,
 }: NumberFieldProps) {
+  // Local string state that allows incomplete inputs
+  const [localValue, setLocalValue] = useState<string>(
+    () => value?.toString() ?? ""
+  );
+
+  // Sync external value changes to local state
+  useEffect(() => {
+    setLocalValue(value?.toString() ?? "");
+  }, [value]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+
+    // Always update local state to allow typing
+    setLocalValue(inputValue);
 
     if (inputValue === "") {
       onChange(null);
@@ -54,8 +68,8 @@ export function NumberField({
       </label>
       <Input
         id={id}
-        type="number"
-        value={value ?? ""}
+        type="text"
+        value={localValue}
         onChange={handleChange}
         placeholder={placeholder}
         min={min}

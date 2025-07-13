@@ -1,43 +1,26 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import {
+  quickPlanSchema,
+  type QuickPlanInputs,
+  type BasicsInputs,
+  type GrowthRatesInputs,
+  type AllocationInputs,
+  type GoalsInputs,
+  type MarketAssumptionsInputs,
+  type RetirementFundingInputs,
+} from "../schemas/quick-plan-schema";
+
+// Update result type
+type UpdateResult = {
+  success: boolean;
+  error?: string;
+};
 
 // Store state interface
 interface QuickPlanState {
-  inputs: {
-    basics: {
-      currentAge: number | null;
-      annualIncome: number | null;
-      annualExpenses: number | null;
-      investedAssets: number | null;
-    };
-    growthRates: {
-      incomeGrowthRate: number;
-      expenseGrowthRate: number;
-    };
-    allocation: {
-      stockAllocation: number;
-      bondAllocation: number;
-      cashAllocation: number;
-    };
-    goals: {
-      retirementExpenses: number | null;
-      targetRetirementAge: number | null;
-      partTimeIncome: number | null;
-    };
-    marketAssumptions: {
-      stockReturn: number;
-      bondReturn: number;
-      cashReturn: number;
-      inflationRate: number;
-    };
-    retirementFunding: {
-      safeWithdrawalRate: number;
-      retirementIncome: number;
-      lifeExpectancy: number;
-      effectiveTaxRate: number;
-    };
-  };
+  inputs: QuickPlanInputs;
 
   preferences: {
     displayFormat: "today" | "future";
@@ -45,31 +28,25 @@ interface QuickPlanState {
   };
 
   actions: {
-    // Basic input actions
-    updateBasics: (
-      field: keyof QuickPlanState["inputs"]["basics"],
-      value: number | null
-    ) => void;
+    // Basic input actions with validation and error reporting
+    updateBasics: (field: keyof BasicsInputs, value: unknown) => UpdateResult;
     updateGrowthRates: (
-      field: keyof QuickPlanState["inputs"]["growthRates"],
-      value: number
-    ) => void;
+      field: keyof GrowthRatesInputs,
+      value: unknown
+    ) => UpdateResult;
     updateAllocation: (
-      field: keyof QuickPlanState["inputs"]["allocation"],
-      value: number
-    ) => void;
-    updateGoals: (
-      field: keyof QuickPlanState["inputs"]["goals"],
-      value: number | null
-    ) => void;
+      field: keyof AllocationInputs,
+      value: unknown
+    ) => UpdateResult;
+    updateGoals: (field: keyof GoalsInputs, value: unknown) => UpdateResult;
     updateMarketAssumptions: (
-      field: keyof QuickPlanState["inputs"]["marketAssumptions"],
-      value: number
-    ) => void;
+      field: keyof MarketAssumptionsInputs,
+      value: unknown
+    ) => UpdateResult;
     updateRetirementFunding: (
-      field: keyof QuickPlanState["inputs"]["retirementFunding"],
-      value: number
-    ) => void;
+      field: keyof RetirementFundingInputs,
+      value: unknown
+    ) => UpdateResult;
 
     // Preferences actions
     updatePreferences: (
@@ -79,12 +56,12 @@ interface QuickPlanState {
 
     // Utility actions
     resetStore: () => void;
-    resetSection: (section: keyof QuickPlanState["inputs"]) => void;
+    resetSection: (section: keyof QuickPlanInputs) => void;
   };
 }
 
 // Default state with existing component defaults
-const defaultState: Omit<QuickPlanState, "actions"> = {
+const defaultState: Pick<QuickPlanState, "inputs" | "preferences"> = {
   inputs: {
     basics: {
       currentAge: null,
@@ -154,43 +131,178 @@ const cleanupExistingData = () => {
 // Run cleanup on initialization
 cleanupExistingData();
 
+// Type to ensure section exists in both QuickPlanInputs and quickPlanSchema.shape
+type ValidSection = keyof QuickPlanInputs & keyof typeof quickPlanSchema.shape;
+
+// Helper to validate a single field within a section
+const validateField = <T extends ValidSection>(
+  section: T,
+  field: keyof QuickPlanInputs[T],
+  value: unknown,
+  currentData: QuickPlanInputs[T]
+): { valid: boolean; data?: QuickPlanInputs[T]; error?: string } => {
+  // Get the schema for this section
+  const sectionSchema = quickPlanSchema.shape[section];
+
+  // Create updated data
+  const updatedData = { ...currentData, [field]: value };
+
+  // Use safeParse for cleaner error handling
+  const result = sectionSchema.safeParse(updatedData);
+
+  if (result.success) {
+    return {
+      valid: true,
+      data: result.data as QuickPlanInputs[T],
+    };
+  }
+
+  // Extract the most relevant error message
+  const { error } = result;
+
+  // Find field-specific error or form-level error
+  const relevantIssue =
+    error.issues.find((issue) => {
+      return (
+        issue.path[0] === field ||
+        issue.path[0] === "_form" ||
+        issue.path.length === 0
+      );
+    }) || error.issues[0];
+
+  return {
+    valid: false,
+    error: relevantIssue.message,
+  };
+};
+
 // Create the store
 export const useQuickPlanStore = create<QuickPlanState>()(
   devtools(
     persist(
-      immer((set) => ({
+      immer((set, get) => ({
         ...defaultState,
         actions: {
-          // Basic input update actions
-          updateBasics: (field, value) =>
-            set((state) => {
-              state.inputs.basics[field] = value;
-            }),
+          // Update actions with validation
+          updateBasics: (field, value) => {
+            const result = validateField(
+              "basics",
+              field,
+              value,
+              get().inputs.basics
+            );
 
-          updateGrowthRates: (field, value) =>
-            set((state) => {
-              state.inputs.growthRates[field] = value;
-            }),
+            if (result.valid && result.data) {
+              set((state) => {
+                state.inputs.basics = result.data!;
+              });
+            }
 
-          updateAllocation: (field, value) =>
-            set((state) => {
-              state.inputs.allocation[field] = value;
-            }),
+            return {
+              success: result.valid,
+              error: result.error,
+            };
+          },
 
-          updateGoals: (field, value) =>
-            set((state) => {
-              state.inputs.goals[field] = value;
-            }),
+          updateGrowthRates: (field, value) => {
+            const result = validateField(
+              "growthRates",
+              field,
+              value,
+              get().inputs.growthRates
+            );
 
-          updateMarketAssumptions: (field, value) =>
-            set((state) => {
-              state.inputs.marketAssumptions[field] = value;
-            }),
+            if (result.valid && result.data) {
+              set((state) => {
+                state.inputs.growthRates = result.data!;
+              });
+            }
 
-          updateRetirementFunding: (field, value) =>
-            set((state) => {
-              state.inputs.retirementFunding[field] = value;
-            }),
+            return {
+              success: result.valid,
+              error: result.error,
+            };
+          },
+
+          updateAllocation: (field, value) => {
+            const result = validateField(
+              "allocation",
+              field,
+              value,
+              get().inputs.allocation
+            );
+
+            if (result.valid && result.data) {
+              set((state) => {
+                state.inputs.allocation = result.data!;
+              });
+            }
+
+            return {
+              success: result.valid,
+              error: result.error,
+            };
+          },
+
+          updateGoals: (field, value) => {
+            const result = validateField(
+              "goals",
+              field,
+              value,
+              get().inputs.goals
+            );
+
+            if (result.valid && result.data) {
+              set((state) => {
+                state.inputs.goals = result.data!;
+              });
+            }
+
+            return {
+              success: result.valid,
+              error: result.error,
+            };
+          },
+
+          updateMarketAssumptions: (field, value) => {
+            const result = validateField(
+              "marketAssumptions",
+              field,
+              value,
+              get().inputs.marketAssumptions
+            );
+
+            if (result.valid && result.data) {
+              set((state) => {
+                state.inputs.marketAssumptions = result.data!;
+              });
+            }
+
+            return {
+              success: result.valid,
+              error: result.error,
+            };
+          },
+
+          updateRetirementFunding: (field, value) => {
+            const result = validateField(
+              "retirementFunding",
+              field,
+              value,
+              get().inputs.retirementFunding
+            );
+
+            if (result.valid && result.data) {
+              set((state) => {
+                state.inputs.retirementFunding = result.data!;
+              });
+            }
+
+            return {
+              success: result.valid,
+              error: result.error,
+            };
+          },
 
           // Preferences actions
           updatePreferences: (field, value) =>
