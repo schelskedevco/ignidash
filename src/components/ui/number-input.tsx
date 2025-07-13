@@ -88,6 +88,10 @@ export function NumberInput({
         allowLeadingZeros={allowLeadingZeros}
         customInput={Input}
         aria-describedby={desc ? `${id}-desc` : undefined}
+        isAllowed={(values) => {
+          const { value } = values;
+          return value.length <= 10;
+        }}
       />
       {error && (
         <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>
