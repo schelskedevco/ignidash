@@ -6,9 +6,7 @@ export function YourNumbersSections() {
   return (
     <>
       <BasicsSection />
-
       <GoalSection />
-
       <FineTuneSection />
     </>
   );
