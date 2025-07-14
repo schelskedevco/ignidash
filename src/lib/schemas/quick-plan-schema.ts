@@ -161,3 +161,77 @@ export const formatZodErrors = (error: z.ZodError) => {
 
   return formatted;
 };
+
+// Type to ensure section exists in both QuickPlanInputs and quickPlanSchema.shape
+type ValidSection = keyof QuickPlanInputs & keyof typeof quickPlanSchema.shape;
+
+// Helper to validate a single field within a section
+export const validateField = <T extends ValidSection>(
+  section: T,
+  field: keyof QuickPlanInputs[T],
+  value: unknown,
+  currentData: QuickPlanInputs[T]
+): { valid: boolean; data?: QuickPlanInputs[T]; error?: string } => {
+  // Get the schema for this section
+  const sectionSchema = quickPlanSchema.shape[section];
+
+  // Create updated data
+  const updatedData = { ...currentData, [field]: value };
+
+  // Use safeParse for cleaner error handling
+  const result = sectionSchema.safeParse(updatedData);
+
+  if (result.success) {
+    return {
+      valid: true,
+      data: result.data as QuickPlanInputs[T],
+    };
+  }
+
+  // Extract the most relevant error message for field validation
+  const { error } = result;
+
+  // Find field-specific error or form-level error
+  const relevantIssue =
+    error.issues.find((issue) => {
+      return issue.path[0] === field || issue.path.length === 0;
+    }) || error.issues[0];
+
+  return {
+    valid: false,
+    error: relevantIssue.message,
+  };
+};
+
+// Helper to validate an entire section
+export const validateSection = <T extends ValidSection>(
+  section: T,
+  sectionData: unknown
+): { valid: boolean; data?: QuickPlanInputs[T]; error?: string } => {
+  // Get the schema for this section
+  const sectionSchema = quickPlanSchema.shape[section];
+
+  // Use safeParse for cleaner error handling
+  const result = sectionSchema.safeParse(sectionData);
+
+  if (result.success) {
+    return {
+      valid: true,
+      data: result.data as QuickPlanInputs[T],
+    };
+  }
+
+  // Extract form-level error message for section validation
+  const { error } = result;
+
+  // For section validation, look specifically for form-level errors
+  const relevantIssue =
+    error.issues.find((issue) => {
+      return issue.path[0] === "_form" || issue.path.length === 0;
+    }) || error.issues[0];
+
+  return {
+    valid: false,
+    error: relevantIssue.message,
+  };
+};
