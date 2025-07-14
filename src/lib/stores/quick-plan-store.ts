@@ -61,7 +61,7 @@ interface QuickPlanState {
 }
 
 // Default state with existing component defaults
-const defaultState: Pick<QuickPlanState, "inputs" | "preferences"> = {
+export const defaultState: Pick<QuickPlanState, "inputs" | "preferences"> = {
   inputs: {
     basics: {
       currentAge: null,
