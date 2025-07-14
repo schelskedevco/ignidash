@@ -25,7 +25,7 @@ export function MobileSidebar({
     <Dialog open={open} onClose={onClose} className="relative z-50 lg:hidden">
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-zinc-900/90 transition-opacity duration-300 ease-linear data-closed:opacity-0"
+        className="fixed inset-0 bg-zinc-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"
       />
 
       <div className="fixed inset-0 flex">
