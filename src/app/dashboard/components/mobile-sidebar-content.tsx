@@ -6,10 +6,12 @@ import type { NavigationItem } from "../navigation";
 
 interface MobileSidebarContentProps {
   navigation: NavigationItem[];
+  onClose: () => void;
 }
 
 export function MobileSidebarContent({
   navigation,
+  onClose,
 }: MobileSidebarContentProps) {
   return (
     <div className="bg-emphasized-background flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-2">
@@ -28,6 +30,7 @@ export function MobileSidebarContent({
                 <li key={item.name}>
                   <Link
                     href={item.href}
+                    onClick={onClose}
                     className={cn(
                       item.current
                         ? "border border-rose-600 bg-white text-rose-600 dark:border-rose-400 dark:bg-zinc-800 dark:text-rose-400"

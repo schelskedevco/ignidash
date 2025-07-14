@@ -46,7 +46,7 @@ export function MobileSidebar({
             </div>
           </TransitionChild>
 
-          <MobileSidebarContent navigation={navigation} />
+          <MobileSidebarContent navigation={navigation} onClose={onClose} />
         </DialogPanel>
       </div>
     </Dialog>
