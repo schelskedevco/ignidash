@@ -66,3 +66,28 @@ export const calculatePortfolioReturnReal = (
 
   return realReturn * 100;
 };
+
+// Helper function to calculate yearly contribution (income - expenses) for a given year
+export const calculateYearlyContribution = (
+  inputs: QuickPlanInputs,
+  year: number
+): number => {
+  const { annualIncome, annualExpenses } = inputs.basics;
+  const { incomeGrowthRate, expenseGrowthRate } = inputs.growthRates;
+
+  if (annualIncome === null || annualExpenses === null) {
+    console.warn(
+      "Cannot calculate yearly contribution: annual income and expenses are required"
+    );
+    return -1;
+  }
+
+  // Calculate income and expenses for the given year
+  // Year n contribution = (annualIncome × (1 + incomeGrowthRate/100)^n) - (annualExpenses × (1 + expenseGrowthRate/100)^n)
+  const futureIncome =
+    annualIncome * Math.pow(1 + incomeGrowthRate / 100, year);
+  const futureExpenses =
+    annualExpenses * Math.pow(1 + expenseGrowthRate / 100, year);
+
+  return futureIncome - futureExpenses;
+};
