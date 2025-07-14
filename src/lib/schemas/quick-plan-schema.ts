@@ -16,7 +16,7 @@ const currencyFieldAllowsZero = (customMessage?: string) => {
     z
       .number("Must be a valid number")
       .nonnegative(customMessage || "Must be 0 or greater")
-      .max(999999999, "Whoa there, Bezos!")
+      .max(99999999999, "Whoa there, Bezos!")
   );
 };
 
@@ -26,7 +26,7 @@ const currencyFieldForbidsZero = (customMessage?: string) => {
     z
       .number("Must be a valid number")
       .positive(customMessage || "Must be greater than 0")
-      .max(999999999, "Whoa there, Bezos!")
+      .max(99999999999, "Whoa there, Bezos!")
   );
 };
 

@@ -90,7 +90,7 @@ export function NumberInput({
         aria-describedby={desc ? `${id}-desc` : undefined}
         isAllowed={(values) => {
           const { value } = values;
-          return value.length <= 10;
+          return value.length <= 12;
         }}
       />
       {error && (
