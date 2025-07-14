@@ -42,6 +42,13 @@ export function getCurrentPageTitle(currentPath: string): string {
   return item?.name || "Dashboard";
 }
 
+export function getCurrentPageIcon(
+  currentPath: string
+): NavigationItem["icon"] {
+  const item = navigationItems.find((item) => item.href === currentPath);
+  return item?.icon || BoltIcon;
+}
+
 // Deprecated: Use getNavigation instead
 export const navigation: NavigationItem[] = [
   {
