@@ -9,6 +9,7 @@ interface NumberInputProps {
   label: string;
   value: number | null;
   onBlur: (value: string | null) => { success: boolean; error?: string };
+  inputMode: "numeric" | "decimal";
   placeholder?: string;
   desc?: string | React.ReactNode;
   // Formatting props
@@ -24,6 +25,7 @@ export function NumberInput({
   label,
   value,
   onBlur,
+  inputMode,
   placeholder,
   desc,
   prefix,
@@ -79,6 +81,7 @@ export function NumberInput({
         onValueChange={handleValueChange}
         onBlur={handleBlur}
         placeholder={placeholder}
+        inputMode={inputMode}
         thousandSeparator=","
         decimalSeparator="."
         prefix={prefix}

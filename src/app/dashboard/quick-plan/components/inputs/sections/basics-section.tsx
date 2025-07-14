@@ -86,6 +86,7 @@ export function BasicsSection() {
               label="Current Age"
               value={basics.currentAge}
               onBlur={(value) => updateBasics("currentAge", value)}
+              inputMode="numeric"
               placeholder="28"
               decimalScale={0}
             />
@@ -94,6 +95,7 @@ export function BasicsSection() {
               label="Net Annual Income"
               value={basics.annualIncome}
               onBlur={(value) => updateBasics("annualIncome", value)}
+              inputMode="decimal"
               placeholder="$85,000"
               prefix="$"
             />
@@ -102,6 +104,7 @@ export function BasicsSection() {
               label="Annual Expenses"
               value={basics.annualExpenses}
               onBlur={(value) => updateBasics("annualExpenses", value)}
+              inputMode="decimal"
               placeholder="$50,000"
               prefix="$"
             />
@@ -110,6 +113,7 @@ export function BasicsSection() {
               label="Invested Assets"
               value={basics.investedAssets}
               onBlur={(value) => updateBasics("investedAssets", value)}
+              inputMode="decimal"
               placeholder="$75,000"
               prefix="$"
             />
@@ -133,6 +137,7 @@ export function BasicsSection() {
                 label="Income Growth Rate (%)"
                 value={growthRates.incomeGrowthRate}
                 onBlur={(value) => updateGrowthRates("incomeGrowthRate", value)}
+                inputMode="decimal"
                 placeholder="3%"
                 suffix="%"
               />
@@ -143,6 +148,7 @@ export function BasicsSection() {
                 onBlur={(value) =>
                   updateGrowthRates("expenseGrowthRate", value)
                 }
+                inputMode="decimal"
                 placeholder="3%"
                 suffix="%"
               />
@@ -167,6 +173,7 @@ export function BasicsSection() {
                 onBlur={(value) =>
                   handleAllocationBlur("stockAllocation", value)
                 }
+                inputMode="decimal"
                 placeholder="70%"
                 suffix="%"
               />
@@ -177,6 +184,7 @@ export function BasicsSection() {
                 onBlur={(value) =>
                   handleAllocationBlur("bondAllocation", value)
                 }
+                inputMode="decimal"
                 placeholder="30%"
                 suffix="%"
               />
@@ -187,6 +195,7 @@ export function BasicsSection() {
                 onBlur={(value) =>
                   handleAllocationBlur("cashAllocation", value)
                 }
+                inputMode="decimal"
                 placeholder="0%"
                 suffix="%"
               />

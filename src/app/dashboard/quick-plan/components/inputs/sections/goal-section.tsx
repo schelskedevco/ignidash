@@ -31,6 +31,7 @@ export function GoalSection() {
               label="Retirement Expenses"
               value={goals.retirementExpenses}
               onBlur={(value) => updateGoals("retirementExpenses", value)}
+              inputMode="decimal"
               placeholder="$50,000"
               prefix="$"
             />

@@ -76,6 +76,7 @@ export function RetirementFundingDrawer() {
           onBlur={(value) =>
             updateRetirementFunding("safeWithdrawalRate", value)
           }
+          inputMode="decimal"
           placeholder="4%"
           suffix="%"
           desc={getSafeWithdrawalRateDescription()}
@@ -85,6 +86,7 @@ export function RetirementFundingDrawer() {
           label="Passive Retirement Income"
           value={retirementFunding.retirementIncome}
           onBlur={(value) => updateRetirementFunding("retirementIncome", value)}
+          inputMode="decimal"
           placeholder="$0"
           prefix="$"
           desc="Passive income sources in retirement like Social Security, pensions, or annuities. This helps estimate total retirement income beyond investment withdrawals."
@@ -102,6 +104,7 @@ export function RetirementFundingDrawer() {
           label="Life Expectancy (years)"
           value={retirementFunding.lifeExpectancy}
           onBlur={(value) => updateRetirementFunding("lifeExpectancy", value)}
+          inputMode="numeric"
           placeholder="85"
           decimalScale={0}
           desc={getLifeExpectancyDescription()}
@@ -111,6 +114,7 @@ export function RetirementFundingDrawer() {
           label="Estimated Effective Tax Rate (%)"
           value={retirementFunding.effectiveTaxRate}
           onBlur={(value) => updateRetirementFunding("effectiveTaxRate", value)}
+          inputMode="decimal"
           placeholder="15%"
           suffix="%"
           desc={getEffectiveTaxRateDescription()}

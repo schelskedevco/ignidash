@@ -57,6 +57,7 @@ export function MarketAssumptionsDrawer() {
           label="Stock Returns (%)"
           value={marketAssumptions.stockReturn}
           onBlur={(value) => updateMarketAssumptions("stockReturn", value)}
+          inputMode="decimal"
           placeholder="10%"
           suffix="%"
         />
@@ -65,6 +66,7 @@ export function MarketAssumptionsDrawer() {
           label="Bond Returns (%)"
           value={marketAssumptions.bondReturn}
           onBlur={(value) => updateMarketAssumptions("bondReturn", value)}
+          inputMode="decimal"
           placeholder="5%"
           suffix="%"
         />
@@ -73,6 +75,7 @@ export function MarketAssumptionsDrawer() {
           label="Cash Returns (%)"
           value={marketAssumptions.cashReturn}
           onBlur={(value) => updateMarketAssumptions("cashReturn", value)}
+          inputMode="decimal"
           placeholder="3%"
           suffix="%"
         />
@@ -89,6 +92,7 @@ export function MarketAssumptionsDrawer() {
           label="Inflation Rate (%)"
           value={marketAssumptions.inflationRate}
           onBlur={(value) => updateMarketAssumptions("inflationRate", value)}
+          inputMode="decimal"
           placeholder="3%"
           suffix="%"
           desc={getInflationRateDescription()}
