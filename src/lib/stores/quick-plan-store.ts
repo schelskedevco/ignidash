@@ -383,10 +383,12 @@ export const useRequiredPortfolio = () =>
   );
 
 export const useWeightedPortfolioReturnNominal = () =>
-  useQuickPlanStore((state) => {
-    const inputs = state.inputs;
-    return calculateWeightedPortfolioReturnNominal(inputs);
-  });
+  useQuickPlanStore((state) =>
+    calculateWeightedPortfolioReturnNominal(
+      state.inputs.allocation,
+      state.inputs.marketAssumptions
+    )
+  );
 
 export const useWeightedPortfolioReturnReal = () =>
   useQuickPlanStore((state) => {

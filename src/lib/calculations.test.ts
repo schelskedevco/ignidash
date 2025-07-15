@@ -44,7 +44,10 @@ describe("calculatePortfolioReturnNominal", () => {
       },
     };
 
-    const result = calculateWeightedPortfolioReturnNominal(inputs);
+    const result = calculateWeightedPortfolioReturnNominal(
+      inputs.allocation,
+      inputs.marketAssumptions
+    );
 
     // Expected calculation:
     // Stock: 70% × 10% = 0.70 × 0.10 = 0.07
@@ -63,7 +66,12 @@ describe("calculatePortfolioReturnNominal", () => {
         cashAllocation: 0,
       },
     };
-    expect(calculateWeightedPortfolioReturnNominal(inputs)).toBe(10);
+    expect(
+      calculateWeightedPortfolioReturnNominal(
+        inputs.allocation,
+        inputs.marketAssumptions
+      )
+    ).toBe(10);
   });
 
   it("should warn when allocations don't sum to 100%", () => {
@@ -77,7 +85,10 @@ describe("calculatePortfolioReturnNominal", () => {
       },
     };
 
-    calculateWeightedPortfolioReturnNominal(inputs);
+    calculateWeightedPortfolioReturnNominal(
+      inputs.allocation,
+      inputs.marketAssumptions
+    );
     expect(consoleSpy).toHaveBeenCalledWith("Allocations sum to 95%, not 100%");
     consoleSpy.mockRestore();
   });
@@ -118,7 +129,10 @@ describe("calculatePortfolioReturnReal", () => {
       },
     };
 
-    const nominalReturn = calculateWeightedPortfolioReturnNominal(inputs);
+    const nominalReturn = calculateWeightedPortfolioReturnNominal(
+      inputs.allocation,
+      inputs.marketAssumptions
+    );
     const realReturn = calculateWeightedPortfolioReturnReal(inputs);
 
     // With 0% inflation, real return should equal nominal return
