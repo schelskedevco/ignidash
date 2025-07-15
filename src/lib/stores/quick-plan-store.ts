@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import { useShallow } from "zustand/react/shallow";
 import {
   type QuickPlanInputs,
   type BasicsInputs,
@@ -307,6 +308,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
     ),
     {
       name: "Quick Plan Store",
+      anonymousActionType: "quickPlan/action", // Default for any unnamed actions
     }
   )
 );
@@ -378,19 +380,13 @@ export const useRequiredPortfolio = () =>
 
 // FIRE Calculations
 export const useYearsToFIRE = () =>
-  useQuickPlanStore((state) => {
-    return calculateYearsToFIRE(state.inputs);
-  });
+  useQuickPlanStore((state) => calculateYearsToFIRE(state.inputs));
 
 export const useFIREAge = () =>
-  useQuickPlanStore((state) => {
-    return calculateFIREAge(state.inputs);
-  });
+  useQuickPlanStore((state) => calculateFIREAge(state.inputs));
 
 export const useFIREAnalysis = () =>
-  useQuickPlanStore((state) => {
-    return getFIREAnalysis(state.inputs);
-  });
+  useQuickPlanStore(useShallow((state) => getFIREAnalysis(state.inputs)));
 
 // Validation State Selectors
 export const useBasicsValidation = () =>
