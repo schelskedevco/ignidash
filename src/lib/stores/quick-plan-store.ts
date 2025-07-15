@@ -462,16 +462,22 @@ export const useFuturePortfolioValue = (
 // Validation helper functions (can be reused)
 const validateBasicsComplete = (basics: BasicsInputs) => {
   const { currentAge, annualIncome, annualExpenses, investedAssets } = basics;
+
+  const hasCurrentAge = currentAge !== null;
+  const hasAnnualIncome = annualIncome !== null;
+  const hasAnnualExpenses = annualExpenses !== null;
+  const hasInvestedAssets = investedAssets !== null;
+
   return {
     isComplete:
-      currentAge !== null &&
-      annualIncome !== null &&
-      annualExpenses !== null &&
-      investedAssets !== null,
-    hasCurrentAge: currentAge !== null,
-    hasAnnualIncome: annualIncome !== null,
-    hasAnnualExpenses: annualExpenses !== null,
-    hasInvestedAssets: investedAssets !== null,
+      hasCurrentAge &&
+      hasAnnualIncome &&
+      hasAnnualExpenses &&
+      hasInvestedAssets,
+    hasCurrentAge: hasCurrentAge,
+    hasAnnualIncome: hasAnnualIncome,
+    hasAnnualExpenses: hasAnnualExpenses,
+    hasInvestedAssets: hasInvestedAssets,
   };
 };
 
