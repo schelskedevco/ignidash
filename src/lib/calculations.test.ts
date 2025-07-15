@@ -437,7 +437,14 @@ describe("calculateFuturePortfolioValue", () => {
       },
     };
 
-    const result = calculateFuturePortfolioValue(inputs, 5, false); // false for real values
+    const result = calculateFuturePortfolioValue(
+      inputs.basics,
+      inputs.allocation,
+      inputs.marketAssumptions,
+      inputs.growthRates,
+      5,
+      false
+    ); // false for real values
 
     // Since growth rates are nominal (3%) and inflation is 3%, real growth is 0%
     // Real return: 5.3398% (from nominal 8.5% and 3% inflation)
@@ -483,7 +490,14 @@ describe("calculateFuturePortfolioValue", () => {
       },
     };
 
-    const result = calculateFuturePortfolioValue(inputs, 5, true); // true for nominal values
+    const result = calculateFuturePortfolioValue(
+      inputs.basics,
+      inputs.allocation,
+      inputs.marketAssumptions,
+      inputs.growthRates,
+      5,
+      true
+    ); // true for nominal values
 
     // Nominal return: 8.5%
     // Initial assets after 5 years: 100,000 × (1.085)^5 = 150,365.67
@@ -528,7 +542,14 @@ describe("calculateFuturePortfolioValue", () => {
       },
     };
 
-    const result = calculateFuturePortfolioValue(inputs, 5, false); // false for real values
+    const result = calculateFuturePortfolioValue(
+      inputs.basics,
+      inputs.allocation,
+      inputs.marketAssumptions,
+      inputs.growthRates,
+      5,
+      false
+    ); // false for real values
 
     // With 0% real return and 0% real growth on contributions
     // Initial assets: 100,000 (no real growth)
@@ -565,7 +586,14 @@ describe("calculateFuturePortfolioValue", () => {
       },
     };
 
-    const result = calculateFuturePortfolioValue(inputs, 10, false); // false for real values
+    const result = calculateFuturePortfolioValue(
+      inputs.basics,
+      inputs.allocation,
+      inputs.marketAssumptions,
+      inputs.growthRates,
+      10,
+      false
+    ); // false for real values
 
     // Real return: (1.07 / 1.03) - 1 = 3.883%
     // Real income growth: (1.01 / 1.03) - 1 = -1.94%
@@ -590,7 +618,14 @@ describe("calculateFuturePortfolioValue", () => {
       },
     };
 
-    const result = calculateFuturePortfolioValue(inputs, 5, false);
+    const result = calculateFuturePortfolioValue(
+      inputs.basics,
+      inputs.allocation,
+      inputs.marketAssumptions,
+      inputs.growthRates,
+      5,
+      false
+    );
 
     expect(consoleSpy).toHaveBeenCalledWith(
       "Cannot calculate future portfolio value: invested assets is required"
@@ -611,7 +646,14 @@ describe("calculateFuturePortfolioValue", () => {
       },
     };
 
-    const result = calculateFuturePortfolioValue(inputs, 5, false);
+    const result = calculateFuturePortfolioValue(
+      inputs.basics,
+      inputs.allocation,
+      inputs.marketAssumptions,
+      inputs.growthRates,
+      5,
+      false
+    );
 
     expect(consoleSpy).toHaveBeenCalledWith(
       "Cannot calculate yearly contribution: annual income and expenses are required"

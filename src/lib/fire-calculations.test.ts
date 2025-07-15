@@ -514,7 +514,14 @@ describe("FIRE Calculations - Additional Validation", () => {
       };
 
       const years = calculateYearsToFIRE(inputs);
-      const futureValue = calculateFuturePortfolioValue(inputs, years, false);
+      const futureValue = calculateFuturePortfolioValue(
+        inputs.basics,
+        inputs.allocation,
+        inputs.marketAssumptions,
+        inputs.growthRates,
+        years,
+        false
+      );
       const requiredPortfolio = 40000 / 0.04;
 
       // The portfolio value at FIRE should be >= required (within rounding)
@@ -523,7 +530,10 @@ describe("FIRE Calculations - Additional Validation", () => {
       // But year before should be less
       if (years > 0) {
         const yearBefore = calculateFuturePortfolioValue(
-          inputs,
+          inputs.basics,
+          inputs.allocation,
+          inputs.marketAssumptions,
+          inputs.growthRates,
           years - 1,
           false
         );
@@ -584,7 +594,10 @@ describe("FIRE Calculations - Additional Validation", () => {
         annualSavings * ((Math.pow(1 + realReturn, years) - 1) / realReturn);
 
       const portfolioValue = calculateFuturePortfolioValue(
-        inputs,
+        inputs.basics,
+        inputs.allocation,
+        inputs.marketAssumptions,
+        inputs.growthRates,
         years,
         false
       );

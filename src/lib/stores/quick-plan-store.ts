@@ -448,10 +448,16 @@ export const useFuturePortfolioValue = (
   years: number,
   nominal: boolean = false
 ) =>
-  useQuickPlanStore((state) => {
-    const inputs = state.inputs;
-    return calculateFuturePortfolioValue(inputs, years, nominal);
-  });
+  useQuickPlanStore((state) =>
+    calculateFuturePortfolioValue(
+      state.inputs.basics,
+      state.inputs.allocation,
+      state.inputs.marketAssumptions,
+      state.inputs.growthRates,
+      years,
+      nominal
+    )
+  );
 
 // Validation helper functions (can be reused)
 const validateBasicsComplete = (basics: BasicsInputs) => {

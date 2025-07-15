@@ -38,7 +38,14 @@ export const calculateYearsToFIRE = (
 
   while (low <= high) {
     const mid = Math.floor((low + high) / 2);
-    const futureValue = calculateFuturePortfolioValue(inputs, mid, false); // Use real terms
+    const futureValue = calculateFuturePortfolioValue(
+      inputs.basics,
+      inputs.allocation,
+      inputs.marketAssumptions,
+      inputs.growthRates,
+      mid,
+      false
+    ); // Use real terms
 
     if (futureValue === -1) {
       return -1; // Error in calculation
@@ -54,12 +61,22 @@ export const calculateYearsToFIRE = (
 
   // If no solution found within maxYears, check if it's achievable at all
   if (result === -1) {
-    const finalValue = calculateFuturePortfolioValue(inputs, maxYears, false);
+    const finalValue = calculateFuturePortfolioValue(
+      inputs.basics,
+      inputs.allocation,
+      inputs.marketAssumptions,
+      inputs.growthRates,
+      maxYears,
+      false
+    );
     if (finalValue < requiredPortfolio) {
       // Check if portfolio is growing - if the trajectory is positive,
       // it might be achievable beyond maxYears
       const valueAt90Years = calculateFuturePortfolioValue(
-        inputs,
+        inputs.basics,
+        inputs.allocation,
+        inputs.marketAssumptions,
+        inputs.growthRates,
         maxYears - 10,
         false
       );
@@ -135,7 +152,10 @@ export const getFIREAnalysis = (
   }
 
   const projectedPortfolioAtFIRE = calculateFuturePortfolioValue(
-    inputs,
+    inputs.basics,
+    inputs.allocation,
+    inputs.marketAssumptions,
+    inputs.growthRates,
     yearsToFIRE,
     false
   );
