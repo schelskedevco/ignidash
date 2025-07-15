@@ -18,7 +18,7 @@ export function ResultsOverview() {
 
   return (
     <>
-      <div>
+      <div className="mx-auto max-w-7xl">
         <h3 className="text-foreground flex items-center justify-center gap-4 text-center text-2xl font-semibold">
           <PartyPopper className="h-6 w-6 shrink-0" />
           {fireAnalysis.message}
