@@ -169,7 +169,7 @@ export const getFIREAnalysis = (
   } else if (yearsToFIRE <= 30) {
     message = `FIRE is achievable in ${yearsToFIRE} years at age ${fireAge}.`;
   } else {
-    message = `FIRE is projected in ${yearsToFIRE} years at age ${fireAge}. Consider increasing savings or adjusting expectations.`;
+    message = `FIRE is projected in ${yearsToFIRE} years at age ${fireAge}.`;
   }
 
   return {
