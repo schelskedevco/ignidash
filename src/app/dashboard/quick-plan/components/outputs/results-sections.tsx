@@ -11,7 +11,7 @@ export function ResultsSections() {
     <>
       <div>
         <h3 className="text-foreground flex items-center justify-center gap-4 text-center text-2xl font-semibold">
-          <PartyPopper className="h-6 w-6" />
+          <PartyPopper className="h-6 w-6 shrink-0" />
           You can FIRE at X!
         </h3>
         <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
