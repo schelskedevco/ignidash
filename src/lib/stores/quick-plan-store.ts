@@ -70,8 +70,8 @@ export const defaultState: Pick<QuickPlanState, "inputs" | "preferences"> = {
       investedAssets: null,
     },
     growthRates: {
-      incomeGrowthRate: 3,
-      expenseGrowthRate: 3,
+      incomeGrowthRate: 3, // Nominal % - "My salary increases by X% per year"
+      expenseGrowthRate: 3, // Nominal % - "My spending increases by X% per year"
     },
     allocation: {
       stockAllocation: 70,
@@ -79,19 +79,19 @@ export const defaultState: Pick<QuickPlanState, "inputs" | "preferences"> = {
       cashAllocation: 0,
     },
     goals: {
-      retirementExpenses: null,
+      retirementExpenses: null, // Real $ - "What I'd spend in retirement (today's dollars)"
       targetRetirementAge: null,
-      partTimeIncome: null,
+      partTimeIncome: null, // Real $ - "Part-time income (today's dollars)"
     },
     marketAssumptions: {
-      stockReturn: 10,
-      bondReturn: 5,
-      cashReturn: 3,
-      inflationRate: 3,
+      stockReturn: 10, // Nominal % - matches market reporting
+      bondReturn: 5, // Nominal %
+      cashReturn: 3, // Nominal %
+      inflationRate: 3, // The bridge between nominal and real
     },
     retirementFunding: {
       safeWithdrawalRate: 4,
-      retirementIncome: 0,
+      retirementIncome: 0, // Real $ - "Social Security (today's dollars)"
       lifeExpectancy: 85,
       effectiveTaxRate: 15,
     },
