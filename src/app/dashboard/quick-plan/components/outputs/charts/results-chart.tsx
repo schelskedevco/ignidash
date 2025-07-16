@@ -66,7 +66,7 @@ export function ResultsChart() {
   const gridColor = theme === "dark" ? "#4b5563" : "#d1d5db"; // gray-600 : gray-300
 
   return (
-    <div className="h-64 w-full sm:h-80">
+    <div className="h-64 w-full sm:h-80 lg:h-96">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} className="text-xs">
           <defs>
