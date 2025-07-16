@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { useShallow } from "zustand/react/shallow";
+import { useMemo } from "react";
 import {
   type QuickPlanInputs,
   type BasicsInputs,
@@ -18,6 +19,7 @@ import {
   calculateYearsToFIRE,
   calculateFIREAge,
   getFIREAnalysis,
+  getFIREChartData,
 } from "../fire-analysis";
 
 // Update result type
@@ -387,6 +389,11 @@ export const useFIREAge = () =>
 
 export const useFIREAnalysis = () =>
   useQuickPlanStore(useShallow((state) => getFIREAnalysis(state.inputs)));
+
+export const useFIREChartData = () => {
+  const inputs = useQuickPlanStore((state) => state.inputs);
+  return useMemo(() => getFIREChartData(inputs), [inputs]);
+};
 
 // Validation State Selectors
 export const useBasicsValidation = () =>

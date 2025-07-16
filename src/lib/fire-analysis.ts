@@ -184,3 +184,34 @@ export const getFIREAnalysis = (
     message,
   };
 };
+
+export interface ChartDataPoint {
+  age: number;
+  portfolioValue: number;
+}
+
+export const getFIREChartData = (
+  inputs: QuickPlanInputs
+): { age: number; portfolioValue: number }[] => {
+  const startAge = inputs.basics.currentAge;
+  const endAge = inputs.retirementFunding.lifeExpectancy;
+  if (startAge === null) return [];
+
+  const data: ChartDataPoint[] = [];
+  for (let age = startAge; age <= endAge; age++) {
+    const portfolioValue = calculateFuturePortfolioValue(
+      inputs.basics,
+      inputs.allocation,
+      inputs.marketAssumptions,
+      inputs.growthRates,
+      age - startAge,
+      false // Use real terms
+    );
+
+    if (portfolioValue !== -1) {
+      data.push({ age, portfolioValue });
+    }
+  }
+
+  return data;
+};
