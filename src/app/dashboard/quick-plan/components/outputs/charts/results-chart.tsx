@@ -75,7 +75,7 @@ export function ResultsChart() {
   const interval = isSmallScreen ? 4 : 3;
 
   return (
-    <div className="[&_svg:focus]:outline-foreground h-64 w-full sm:h-80 lg:h-96 [&_svg:focus]:outline-2 [&_svg:focus]:outline-offset-2">
+    <div className="[&_svg:focus]:outline-foreground h-64 w-full sm:h-80 lg:h-96 [&_svg:focus]:rounded-lg [&_svg:focus]:outline-2 [&_svg:focus]:outline-offset-2">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} className="text-xs">
           <defs>
