@@ -1,5 +1,6 @@
 import { useIsCalculationReady } from "@/lib/stores/quick-plan-store";
 import { Card } from "@/components/ui/card";
+import { SectionHeader } from "@/components/layout/section-header";
 import { ResultsOverview } from "./results-overview";
 import { ResultsChart } from "./charts/results-chart";
 
@@ -7,14 +8,20 @@ export function ResultsSections() {
   const isCalculationReady = useIsCalculationReady();
   if (isCalculationReady) {
     return (
-      <div className="mx-auto max-w-5xl space-y-8">
-        <ResultsOverview />
-        <Card>
-          <h4 className="text-foreground mb-4 text-center text-lg font-semibold sm:text-left">
-            Portfolio Projection
-          </h4>
-          <ResultsChart />
-        </Card>
+      <div className="mx-auto max-w-5xl space-y-4">
+        <div className="border-foreground/10 mb-5 border-b pb-5">
+          <SectionHeader
+            title="Overview"
+            desc="Key metrics and accurate projections for your retirement plan."
+          />
+          <ResultsOverview />
+          <Card>
+            <h4 className="text-foreground mb-4 text-center text-lg font-semibold sm:text-left">
+              Portfolio Projection
+            </h4>
+            <ResultsChart />
+          </Card>
+        </div>
       </div>
     );
   }

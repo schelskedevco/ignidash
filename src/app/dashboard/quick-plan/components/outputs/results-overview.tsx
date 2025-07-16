@@ -12,7 +12,7 @@ export function ResultsOverview() {
 
   return (
     <>
-      <dl className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
+      <dl className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-3">
         {stats.map((item) => (
           <div
             key={item.name}
