@@ -14,7 +14,10 @@ export function ResultsOverview() {
     <>
       <dl className="divide-foreground/10 mt-5 grid grid-cols-1 divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0">
         {stats.map((item) => (
-          <div key={item.name} className="px-4 py-5 sm:p-6">
+          <div
+            key={item.name}
+            className="px-4 py-5 text-center sm:p-6 sm:text-left"
+          >
             <dt className="text-muted-foreground truncate text-sm font-medium">
               {item.name}
             </dt>
