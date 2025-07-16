@@ -123,40 +123,6 @@ export function BasicsSection() {
 
       <div className="mt-4 space-y-4">
         <DisclosureSection
-          title="Income & Spending Growth"
-          desc="Set expected nominal growth rates for income and expenses over time."
-          icon={<ArrowTrendingUpIcon className="h-5 w-5" aria-hidden="true" />}
-        >
-          <form onSubmit={(e) => e.preventDefault()}>
-            <fieldset className="space-y-4">
-              <legend className="sr-only">
-                Income and expense growth rate projections
-              </legend>
-              <NumberInput
-                id="income-growth-rate"
-                label="Income Growth Rate (%)"
-                value={growthRates.incomeGrowthRate}
-                onBlur={(value) => updateGrowthRates("incomeGrowthRate", value)}
-                inputMode="decimal"
-                placeholder="3%"
-                suffix="%"
-              />
-              <NumberInput
-                id="expense-growth-rate"
-                label="Expense Growth Rate (%)"
-                value={growthRates.expenseGrowthRate}
-                onBlur={(value) =>
-                  updateGrowthRates("expenseGrowthRate", value)
-                }
-                inputMode="decimal"
-                placeholder="3%"
-                suffix="%"
-              />
-            </fieldset>
-          </form>
-        </DisclosureSection>
-
-        <DisclosureSection
           title="Investment Portfolio"
           desc="Configure asset allocation across stocks, bonds, and cash."
           icon={<ChartPieIcon className="h-5 w-5" aria-hidden="true" />}
@@ -197,6 +163,40 @@ export function BasicsSection() {
                 }
                 inputMode="decimal"
                 placeholder="0%"
+                suffix="%"
+              />
+            </fieldset>
+          </form>
+        </DisclosureSection>
+
+        <DisclosureSection
+          title="Income & Spending Growth"
+          desc="Set expected nominal growth rates for income and expenses over time."
+          icon={<ArrowTrendingUpIcon className="h-5 w-5" aria-hidden="true" />}
+        >
+          <form onSubmit={(e) => e.preventDefault()}>
+            <fieldset className="space-y-4">
+              <legend className="sr-only">
+                Income and expense growth rate projections
+              </legend>
+              <NumberInput
+                id="income-growth-rate"
+                label="Income Growth Rate (%)"
+                value={growthRates.incomeGrowthRate}
+                onBlur={(value) => updateGrowthRates("incomeGrowthRate", value)}
+                inputMode="decimal"
+                placeholder="3%"
+                suffix="%"
+              />
+              <NumberInput
+                id="expense-growth-rate"
+                label="Expense Growth Rate (%)"
+                value={growthRates.expenseGrowthRate}
+                onBlur={(value) =>
+                  updateGrowthRates("expenseGrowthRate", value)
+                }
+                inputMode="decimal"
+                placeholder="3%"
                 suffix="%"
               />
             </fieldset>
