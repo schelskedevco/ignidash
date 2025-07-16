@@ -8,9 +8,13 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 import { ChartDataPoint } from "@/lib/fire-analysis";
-import { useFIREChartData } from "@/lib/stores/quick-plan-store";
+import {
+  useFIREChartData,
+  useFIREAnalysis,
+} from "@/lib/stores/quick-plan-store";
 import { formatNumber } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
@@ -47,6 +51,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 export function ResultsChart() {
   const { theme } = useTheme();
   const chartData = useFIREChartData();
+  const fireAnalysis = useFIREAnalysis();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
@@ -64,6 +69,7 @@ export function ResultsChart() {
   }
 
   const gridColor = theme === "dark" ? "#4b5563" : "#d1d5db"; // gray-600 : gray-300
+  const foregroundColor = theme === "dark" ? "#f3f4f6" : "#111827"; // gray-100 : gray-900
 
   return (
     <div className="h-64 w-full sm:h-80 lg:h-96">
@@ -91,6 +97,18 @@ export function ResultsChart() {
             fillOpacity={1}
             fill="url(#colorPortfolio)"
           />
+          {fireAnalysis.achievable && fireAnalysis.fireAge > 0 && (
+            <ReferenceLine
+              x={fireAnalysis.fireAge}
+              stroke={foregroundColor}
+              strokeDasharray="5 5"
+              label={{
+                value: "FIRE Age",
+                position: "insideBottomLeft",
+                fill: foregroundColor,
+              }}
+            />
+          )}
         </AreaChart>
       </ResponsiveContainer>
     </div>
