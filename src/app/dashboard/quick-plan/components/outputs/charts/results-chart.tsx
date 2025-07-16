@@ -86,13 +86,13 @@ export function ResultsChart() {
           </defs>
           <XAxis
             tick={{ fill: foregroundMutedColor }}
-            axisLine={{ stroke: foregroundMutedColor }}
+            axisLine={false}
             dataKey="age"
             interval={interval}
           />
           <YAxis
             tick={{ fill: foregroundMutedColor }}
-            axisLine={{ stroke: foregroundMutedColor }}
+            axisLine={false}
             hide={isSmallScreen}
             tickFormatter={(value: number, _index: number) =>
               formatNumber(value)
