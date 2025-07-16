@@ -68,7 +68,7 @@ export function ResultsChart() {
     return null;
   }
 
-  const gridColor = theme === "dark" ? "#4b5563" : "#d1d5db"; // gray-600 : gray-300
+  const gridColor = theme === "dark" ? "#374151" : "#d1d5db"; // gray-700 : gray-300
   const foregroundColor = theme === "dark" ? "#f3f4f6" : "#111827"; // gray-100 : gray-900
   const foregroundMutedColor = theme === "dark" ? "#d1d5db" : "#4b5563"; // gray-300 : gray-600
 
