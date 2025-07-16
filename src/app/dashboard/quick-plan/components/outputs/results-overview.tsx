@@ -12,16 +12,9 @@ export function ResultsOverview() {
 
   return (
     <>
-      <dl className="mt-5 grid grid-cols-1 sm:grid-cols-3">
-        {stats.map((item, index) => (
-          <div
-            key={item.name}
-            className={`px-4 py-5 sm:p-6 ${
-              index < stats.length - 1
-                ? "border-foreground/10 border-b sm:border-r sm:border-b-0"
-                : ""
-            }`}
-          >
+      <dl className="divide-foreground/10 mt-5 grid grid-cols-1 divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        {stats.map((item) => (
+          <div key={item.name} className="px-4 py-5 sm:p-6">
             <dt className="text-muted-foreground truncate text-sm font-medium">
               {item.name}
             </dt>
