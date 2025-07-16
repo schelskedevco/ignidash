@@ -11,12 +11,17 @@ import {
 } from "recharts";
 import { useFIREChartData } from "@/lib/stores/quick-plan-store";
 import { formatNumber } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 export function ResultsChart() {
+  const { theme } = useTheme();
   const chartData = useFIREChartData();
+
   if (chartData.length === 0) {
     return null;
   }
+
+  const gridColor = theme === "dark" ? "#4b5563" : "#d1d5db"; // gray-600 : gray-300
 
   return (
     <div className="h-64 w-full sm:h-80">
@@ -36,7 +41,7 @@ export function ResultsChart() {
             tickFormatter={formatNumber}
             className="text-muted-foreground text-xs"
           />
-          <CartesianGrid strokeDasharray="3 3" />
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <Tooltip
             labelFormatter={(age: number) => `Age ${age}`}
             formatter={(value: number) => [
