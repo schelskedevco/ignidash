@@ -13,7 +13,7 @@ export function ResultsOverview() {
 
   return (
     <>
-      <h3 className="text-foreground flex items-center justify-center gap-4 text-center text-2xl font-semibold">
+      <h3 className="text-foreground border-foreground/10 mb-5 flex items-center justify-center gap-4 border-b pb-5 text-center text-2xl font-semibold">
         <PartyPopper className="h-6 w-6 shrink-0" />
         {fireAnalysis.message}
       </h3>
