@@ -60,8 +60,8 @@ export const basicsSchema = z.object({
     min: "You must be at least 16 years old to use this calculator",
     max: "Age cannot exceed 100 years",
   }).nullable(),
-  annualIncome: currencyFieldForbidsZero(
-    "Annual income must be greater than 0"
+  annualIncome: currencyFieldAllowsZero(
+    "Annual income cannot be negative (enter 0 if no current income)"
   ).nullable(),
   annualExpenses: currencyFieldForbidsZero(
     "Annual expenses must be greater than 0"
