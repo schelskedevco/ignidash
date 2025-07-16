@@ -95,7 +95,7 @@ export function ResultsChart() {
             axisLine={false}
             hide={isSmallScreen}
             tickFormatter={(value: number, _index: number) =>
-              formatNumber(value)
+              formatNumber(value, 1)
             }
           />
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
