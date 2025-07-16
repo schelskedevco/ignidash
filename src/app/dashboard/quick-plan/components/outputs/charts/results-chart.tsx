@@ -9,10 +9,40 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { ChartDataPoint } from "@/lib/fire-analysis";
 import { useFIREChartData } from "@/lib/stores/quick-plan-store";
 import { formatNumber } from "@/lib/utils";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    name: string;
+    color: string;
+    dataKey: keyof ChartDataPoint;
+    payload: ChartDataPoint;
+  }>;
+  label?: number;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="text-foreground bg-background rounded-lg border p-3 shadow-md">
+        <p className="mb-1 text-sm font-medium">Age {label}</p>
+        <p className="text-sm">
+          Portfolio Value:
+          <span className="ml-1 font-medium">
+            {formatNumber(payload[0].value)}
+          </span>
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
 
 export function ResultsChart() {
   const { theme } = useTheme();
@@ -45,17 +75,10 @@ export function ResultsChart() {
               <stop offset="95%" stopColor="#e11d48" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <XAxis dataKey="age" />
+          <XAxis dataKey="age" interval={isSmallScreen ? 4 : 3} />
           <YAxis tickFormatter={formatNumber} hide={isSmallScreen} />
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-          <Tooltip
-            wrapperClassName="text-sm"
-            labelFormatter={(age: number) => `Age ${age}`}
-            formatter={(value: number) => [
-              formatNumber(value),
-              "Portfolio Value",
-            ]}
-          />
+          <Tooltip content={<CustomTooltip />} />
           <Area
             type="monotone"
             dataKey="portfolioValue"
