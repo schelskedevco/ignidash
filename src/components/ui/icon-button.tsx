@@ -28,7 +28,7 @@ export default function IconButton({ icon: Icon, label, onClick, surfaceColor = 
       type="button"
       aria-label={label}
       onClick={onClick}
-      className={`focus-outline border-border rounded-full border p-2 shadow-md ${hoverClass}`}
+      className={`focus-outline border-border rounded-full border p-2 shadow-md transition-shadow duration-300 ease-in-out hover:shadow-xl ${hoverClass}`}
     >
       <Icon aria-hidden="true" className="size-5" />
     </button>
