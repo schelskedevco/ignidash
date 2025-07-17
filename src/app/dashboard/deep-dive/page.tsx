@@ -1,4 +1,4 @@
-import { MainArea } from '../components/main-area';
+import { MainArea } from '@/components/layout/main-area';
 
 export default function DeepDivePage() {
   return (

@@ -1,7 +1,7 @@
 'use client';
 
-import { MainArea } from '../components/main-area';
-import { SecondaryColumn } from '../components/secondary-column';
+import { MainArea } from '@/components/layout/main-area';
+import { SecondaryColumn } from '@/components/layout/secondary-column';
 import { SectionSelector } from './components/section-selector';
 import { ResultsSections } from './components/outputs/results-sections';
 import { ResultsPageHeader } from './components/outputs/results-page-header';
