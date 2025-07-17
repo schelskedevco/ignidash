@@ -17,11 +17,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div>
       <MobileSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} navigation={navigation} />
-
       <DesktopSidebar navigation={navigation} />
-
       <MobileHeader onMenuClick={() => setSidebarOpen(true)} currentPageTitle={currentPageTitle} currentPageIcon={currentPageIcon} />
-
       {children}
     </div>
   );
