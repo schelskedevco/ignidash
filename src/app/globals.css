@@ -4,12 +4,12 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff; /* white */
-  --emphasized-background: #f3f4f6; /* gray-100 */
-  --foreground: #171717; /* neutral-900 */
-  --muted-foreground: #6b7280; /* gray-500 */
+  --background: #ffffff;
+  --emphasized-background: #f4f4f5; /* zinc-100 */
+  --foreground: #18181b; /* zinc-900 */
+  --muted-foreground: #71717a; /* zinc-500 */
   --primary: #e11d48; /* rose-600 */
-  --border: #e5e7eb; /* gray-200 */
+  --border: #e4e4e7; /* zinc-200 */
 }
 
 @theme inline {
@@ -25,8 +25,8 @@
 .dark {
   --background: #27272a; /* zinc-800 */
   --emphasized-background: #18181b; /* zinc-900 */
-  --foreground: #e5e7eb; /* gray-200 */
-  --muted-foreground: #9ca3af; /* gray-400 */
+  --foreground: #f4f4f5; /* zinc-100 */
+  --muted-foreground: #a1a1aa; /* zinc-400 */
   --primary: #fb7185; /* rose-400 */
   --border: #3f3f46; /* zinc-700 */
 }
