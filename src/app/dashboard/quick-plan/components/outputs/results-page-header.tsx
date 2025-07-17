@@ -2,6 +2,7 @@
 
 import { PresentationChartLineIcon, LinkIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { IconButton } from '@/components/ui/icon-button';
+import ColumnHeader from '@/components/column-header';
 import { useState, useCallback } from 'react';
 
 export function ResultsPageHeader() {
@@ -24,14 +25,10 @@ export function ResultsPageHeader() {
   }
 
   return (
-    <div className="border-foreground/10 mb-5 border-b pb-5">
-      <div className="flex items-center justify-between">
-        <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 lg:text-xl dark:text-gray-100">
-          <PresentationChartLineIcon className="h-5 w-5" aria-hidden="true" />
-          Results
-        </h3>
-        <IconButton icon={icon} label={label} onClick={handleLinkClick} />
-      </div>
-    </div>
+    <ColumnHeader
+      title="Results"
+      icon={PresentationChartLineIcon}
+      iconButton={<IconButton icon={icon} label={label} onClick={handleLinkClick} />}
+    />
   );
 }
