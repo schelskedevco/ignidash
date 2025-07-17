@@ -3,7 +3,7 @@
 import { Dialog, DialogBackdrop, DialogPanel, TransitionChild } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { MobileSidebarContent } from './mobile-sidebar-content';
-import type { NavigationItem } from '../navigation';
+import type { NavigationItem } from '../../../app/dashboard/navigation';
 
 interface MobileSidebarProps {
   open: boolean;
