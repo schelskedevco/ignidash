@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { DesktopSidebar } from '@/components/layout/sidebar/desktop-sidebar';
-import { MobileHeader } from '@/components/layout/sidebar/mobile-header';
-import { MobileSidebar } from '@/components/layout/sidebar/mobile-sidebar';
+import MobileHeader from '@/components/layout/sidebar/mobile-header';
+import MobileSidebar from '@/components/layout/sidebar/mobile-sidebar';
 import { getNavigation, getCurrentPageTitle, getCurrentPageIcon } from '@/lib/navigation';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
