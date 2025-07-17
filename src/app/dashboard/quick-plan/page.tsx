@@ -1,13 +1,15 @@
 'use client';
 
+import { useState } from 'react';
+
 import { MainArea } from '@/components/layout/main-area';
 import { SecondaryColumn } from '@/components/layout/secondary-column';
+
 import { SectionSelector } from './components/section-selector';
 import { ResultsSections } from './components/outputs/results-sections';
 import { ResultsPageHeader } from './components/outputs/results-page-header';
 import { NumbersColumnSections } from './components/inputs/numbers-column-sections';
 import { NumbersColumnHeader } from './components/inputs/numbers-column-header';
-import { useState } from 'react';
 
 type ActiveSection = 'results' | 'your-numbers';
 
