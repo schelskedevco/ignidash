@@ -1,8 +1,8 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
+import Card from '@/components/ui/card';
 import type { InvalidInputErrorProps } from '@/components/ui/invalid-input-error';
-import { SectionHeader } from './section-header';
+import SectionHeader from './section-header';
 
 interface CardFormSectionProps {
   title?: React.ReactNode;

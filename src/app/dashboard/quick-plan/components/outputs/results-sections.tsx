@@ -1,6 +1,6 @@
 import { useIsCalculationReady } from '@/lib/stores/quick-plan-store';
-import { Card } from '@/components/ui/card';
-import { SectionHeader } from '@/components/section-header';
+import Card from '@/components/ui/card';
+import SectionHeader from '@/components/section-header';
 import { ResultsOverview } from './results-overview';
 import { ResultsChart } from './charts/results-chart';
 

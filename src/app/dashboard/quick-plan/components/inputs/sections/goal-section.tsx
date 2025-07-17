@@ -1,9 +1,9 @@
 'use client';
 
-import { Card } from '@/components/ui/card';
+import Card from '@/components/ui/card';
 import { CoastFIRE, BaristaFIRE } from '../strategy-options/goal-strategy-options';
 import { NumberInput } from '@/components/ui/number-input';
-import { SectionHeader } from '@/components/section-header';
+import SectionHeader from '@/components/section-header';
 import { useGoalsData, useUpdateGoals } from '@/lib/stores/quick-plan-store';
 
 export function GoalSection() {

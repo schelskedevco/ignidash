@@ -3,7 +3,7 @@ interface SectionHeaderProps {
   desc: string | React.ReactNode;
 }
 
-export function SectionHeader({ title, desc }: SectionHeaderProps) {
+export default function SectionHeader({ title, desc }: SectionHeaderProps) {
   return (
     <div className="ml-2">
       <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
