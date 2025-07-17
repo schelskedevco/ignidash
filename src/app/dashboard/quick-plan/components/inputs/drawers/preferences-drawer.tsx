@@ -4,7 +4,7 @@ import { Button } from '@/components/catalyst/button';
 import { usePreferencesData, useUpdatePreferences, useResetStore } from '@/lib/stores/quick-plan-store';
 import SectionHeader from '@/components/section-header';
 import Card from '@/components/ui/card';
-import SelectInput from '@/components/ui/select-input';
+import SelectMenu from '@/components/ui/select-menu';
 
 export default function PreferencesDrawer() {
   const preferences = usePreferencesData();
@@ -19,7 +19,7 @@ export default function PreferencesDrawer() {
           <form onSubmit={(e) => e.preventDefault()}>
             <fieldset className="space-y-4">
               <legend className="sr-only">Display format configuration</legend>
-              <SelectInput
+              <SelectMenu
                 id="display-format"
                 label="Currency Display"
                 value={preferences.displayFormat}
@@ -41,7 +41,7 @@ export default function PreferencesDrawer() {
           <form onSubmit={(e) => e.preventDefault()}>
             <fieldset className="space-y-4">
               <legend className="sr-only">Data storage configuration</legend>
-              <SelectInput
+              <SelectMenu
                 id="data-storage"
                 label="Data Persistence"
                 value={preferences.dataStorage}
