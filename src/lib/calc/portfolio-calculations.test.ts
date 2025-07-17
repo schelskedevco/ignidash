@@ -6,7 +6,7 @@ import {
   calculateYearlyContribution,
   calculateFuturePortfolioValue,
 } from './portfolio-calculations';
-import { defaultState } from './stores/quick-plan-store';
+import { defaultState } from '../stores/quick-plan-store';
 
 describe('calculateRequiredPortfolio', () => {
   it('should return 1,000,000 for 40,000 retirement expenses with 4% SWR', () => {

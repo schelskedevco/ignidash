@@ -1,4 +1,4 @@
-import { AllocationInputs, MarketAssumptionsInputs, GrowthRatesInputs, BasicsInputs } from './schemas/quick-plan-schema';
+import { AllocationInputs, MarketAssumptionsInputs, GrowthRatesInputs, BasicsInputs } from '../schemas/quick-plan-schema';
 
 // Calculation function to determine required portfolio for retirement
 export const calculateRequiredPortfolio = (retirementExpenses: number | null, safeWithdrawalRate: number): number => {

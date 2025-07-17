@@ -1,4 +1,4 @@
-import { QuickPlanInputs } from './schemas/quick-plan-schema';
+import { QuickPlanInputs } from '../schemas/quick-plan-schema';
 import { calculateRequiredPortfolio, calculateFuturePortfolioValue } from './portfolio-calculations';
 
 /**

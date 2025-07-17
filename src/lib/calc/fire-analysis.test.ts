@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { calculateYearsToFIRE, calculateFIREAge, getFIREAnalysis } from './fire-analysis';
 import { calculateFuturePortfolioValue, calculateWeightedPortfolioReturnReal } from './portfolio-calculations';
-import { QuickPlanInputs } from './schemas/quick-plan-schema';
+import { QuickPlanInputs } from '../schemas/quick-plan-schema';
 
 describe('FIRE Calculations', () => {
   // Base test case with complete valid inputs

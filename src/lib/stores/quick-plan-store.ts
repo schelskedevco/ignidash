@@ -14,8 +14,8 @@ import {
   validateField,
   validateSection,
 } from '../schemas/quick-plan-schema';
-import { calculateRequiredPortfolio } from '../portfolio-calculations';
-import { calculateYearsToFIRE, calculateFIREAge, getFIREAnalysis, getFIREChartData } from '../fire-analysis';
+import { calculateRequiredPortfolio } from '../calc/portfolio-calculations';
+import { calculateYearsToFIRE, calculateFIREAge, getFIREAnalysis, getFIREChartData } from '../calc/fire-analysis';
 
 // Update result type
 type UpdateResult = {
