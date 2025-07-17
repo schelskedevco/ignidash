@@ -9,7 +9,7 @@ import ColumnHeader from '@/components/column-header';
 
 import { PreferencesDrawer } from './drawers/preferences-drawer';
 
-export function NumbersColumnHeader() {
+export default function NumbersColumnHeader() {
   const [preferencesOpen, setPreferencesOpen] = useState(false);
 
   return (
