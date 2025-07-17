@@ -1,3 +1,26 @@
+/**
+ * Quick Plan Store - Financial Planning State Management
+ *
+ * This Zustand store manages the state for a comprehensive financial planning application.
+ * It handles user inputs across multiple categories (basics, growth rates, allocation, goals,
+ * market assumptions, retirement funding) and provides computed selectors for FIRE calculations,
+ * portfolio analysis, and validation states.
+ *
+ * Architecture:
+ * - Uses Zustand with Immer for immutable state updates
+ * - Persistent storage with selective data retention based on user preferences
+ * - Comprehensive validation using schema validation functions
+ * - Computed selectors for derived data and calculations
+ * - Modular hook exports for optimal React component integration
+ *
+ * Key Features:
+ * - Form validation with error reporting
+ * - Selective localStorage persistence
+ * - FIRE (Financial Independence, Retire Early) calculations
+ * - Portfolio and asset analysis
+ * - Performance-optimized selectors
+ */
+
 import { useMemo } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
@@ -18,10 +41,38 @@ import {
 import { calculateRequiredPortfolio } from '@/lib/calc/portfolio-calculations';
 import { calculateYearsToFIRE, calculateFIREAge, getFIREAnalysis, getFIREChartData } from '@/lib/calc/fire-analysis';
 
-// Update result type
+// ================================
+// TYPES & HELPERS
+// ================================
+
 type UpdateResult = {
   success: boolean;
   error?: string;
+};
+
+/**
+ * Helper function to create update actions with validation
+ * Reduces code duplication across all update methods
+ */
+const createUpdateAction = <T extends keyof QuickPlanInputs>(
+  section: T,
+  set: (fn: (state: QuickPlanState) => void) => void,
+  get: () => QuickPlanState
+) => {
+  return (field: keyof QuickPlanInputs[T], value: unknown): UpdateResult => {
+    const result = validateField(section, field, value, get().inputs[section]);
+
+    if (result.valid && result.data) {
+      set((state) => {
+        state.inputs[section] = result.data!;
+      });
+    }
+
+    return {
+      success: result.valid,
+      error: result.error,
+    };
+  };
 };
 
 // Store state interface
@@ -53,7 +104,7 @@ interface QuickPlanState {
   };
 }
 
-// Default state with existing component defaults
+// Default state
 export const defaultState: Pick<QuickPlanState, 'inputs' | 'preferences'> = {
   inputs: {
     basics: {
@@ -131,88 +182,20 @@ export const useQuickPlanStore = create<QuickPlanState>()(
       immer((set, get) => ({
         ...defaultState,
         actions: {
-          // Update actions with validation
-          updateBasics: (field, value) => {
-            const result = validateField('basics', field, value, get().inputs.basics);
+          // Update actions with validation - using helper to reduce duplication
+          updateBasics: createUpdateAction('basics', set, get),
+          updateGrowthRates: createUpdateAction('growthRates', set, get),
+          updateGoals: createUpdateAction('goals', set, get),
+          updateMarketAssumptions: createUpdateAction('marketAssumptions', set, get),
+          updateRetirementFunding: createUpdateAction('retirementFunding', set, get),
 
-            if (result.valid && result.data) {
-              set((state) => {
-                state.inputs.basics = result.data!;
-              });
-            }
-
-            return {
-              success: result.valid,
-              error: result.error,
-            };
-          },
-
-          updateGrowthRates: (field, value) => {
-            const result = validateField('growthRates', field, value, get().inputs.growthRates);
-
-            if (result.valid && result.data) {
-              set((state) => {
-                state.inputs.growthRates = result.data!;
-              });
-            }
-
-            return {
-              success: result.valid,
-              error: result.error,
-            };
-          },
-
+          // Special case for allocation - uses validateSection instead of validateField
           updateAllocation: (data) => {
             const result = validateSection('allocation', data);
 
             if (result.valid && result.data) {
               set((state) => {
                 state.inputs.allocation = result.data!;
-              });
-            }
-
-            return {
-              success: result.valid,
-              error: result.error,
-            };
-          },
-
-          updateGoals: (field, value) => {
-            const result = validateField('goals', field, value, get().inputs.goals);
-
-            if (result.valid && result.data) {
-              set((state) => {
-                state.inputs.goals = result.data!;
-              });
-            }
-
-            return {
-              success: result.valid,
-              error: result.error,
-            };
-          },
-
-          updateMarketAssumptions: (field, value) => {
-            const result = validateField('marketAssumptions', field, value, get().inputs.marketAssumptions);
-
-            if (result.valid && result.data) {
-              set((state) => {
-                state.inputs.marketAssumptions = result.data!;
-              });
-            }
-
-            return {
-              success: result.valid,
-              error: result.error,
-            };
-          },
-
-          updateRetirementFunding: (field, value) => {
-            const result = validateField('retirementFunding', field, value, get().inputs.retirementFunding);
-
-            if (result.valid && result.data) {
-              set((state) => {
-                state.inputs.retirementFunding = result.data!;
               });
             }
 
@@ -299,12 +282,6 @@ export const useUpdatePreferences = () => useQuickPlanStore((state) => state.act
 export const useResetStore = () => useQuickPlanStore((state) => state.actions.resetStore);
 export const useResetSection = () => useQuickPlanStore((state) => state.actions.resetSection);
 
-// ================================
-// COMPUTED SELECTORS
-// ================================
-// These selectors perform calculations using the input data
-// They are memoized by Zustand for performance optimization
-
 // Portfolio & Asset Calculations
 export const useRequiredPortfolio = () =>
   useQuickPlanStore((state) =>
@@ -313,11 +290,8 @@ export const useRequiredPortfolio = () =>
 
 // FIRE Calculations
 export const useYearsToFIRE = () => useQuickPlanStore((state) => calculateYearsToFIRE(state.inputs));
-
 export const useFIREAge = () => useQuickPlanStore((state) => calculateFIREAge(state.inputs));
-
 export const useFIREAnalysis = () => useQuickPlanStore(useShallow((state) => getFIREAnalysis(state.inputs)));
-
 export const useFIREChartData = () => {
   const inputs = useQuickPlanStore((state) => state.inputs);
   return useMemo(() => getFIREChartData(inputs), [inputs]);
@@ -332,9 +306,7 @@ export const useBasicsValidation = () =>
       state.inputs.basics.annualExpenses !== null &&
       state.inputs.basics.investedAssets !== null
   );
-
 export const useGoalsValidation = () => useQuickPlanStore((state) => state.inputs.goals.retirementExpenses !== null);
-
 export const useIsCalculationReady = () =>
   useQuickPlanStore(
     (state) =>
