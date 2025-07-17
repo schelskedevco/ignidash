@@ -6,7 +6,7 @@ import Drawer from '@/components/ui/drawer';
 import { MarketAssumptionsDrawer } from '../drawers/market-assumptions-drawer';
 import { RetirementFundingDrawer } from '../drawers/retirement-funding-drawer';
 import { ChartBarIcon, ClockIcon } from '@heroicons/react/24/outline';
-import { SectionHeader } from '@/components/layout/section-header';
+import { SectionHeader } from '@/components/section-header';
 
 export function FineTuneSection() {
   const [marketAssumptionsOpen, setMarketAssumptionsOpen] = useState(false);

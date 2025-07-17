@@ -1,7 +1,7 @@
 'use client';
 
 import { SelectInput } from '@/components/ui/select-input';
-import { CardFormSection } from '@/components/layout/card-form-section';
+import { CardFormSection } from '@/components/card-form-section';
 import { Button } from '@/components/catalyst/button';
 import { usePreferencesData, useUpdatePreferences, useResetStore } from '@/lib/stores/quick-plan-store';
 

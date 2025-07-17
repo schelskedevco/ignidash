@@ -1,7 +1,7 @@
 'use client';
 
 import { NumberInput } from '@/components/ui/number-input';
-import { DisclosureSection } from '@/components/layout/disclosure-section';
+import { DisclosureSection } from '@/components/disclosure-section';
 import { Coffee, RollerCoaster } from 'lucide-react';
 
 interface CoastFIREProps {
