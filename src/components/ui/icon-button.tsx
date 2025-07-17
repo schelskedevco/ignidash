@@ -13,14 +13,22 @@ interface IconButtonProps {
 }
 
 export default function IconButton({ icon: Icon, label, onClick, surfaceColor = 'default' }: IconButtonProps) {
-  const hoverClasses = surfaceColor === 'emphasized' ? 'hover:bg-background' : 'hover:bg-emphasized-background';
+  let hoverClass;
+  switch (surfaceColor) {
+    case 'default':
+      hoverClass = 'hover:bg-emphasized-background';
+      break;
+    case 'emphasized':
+      hoverClass = 'hover:bg-background';
+      break;
+  }
 
   return (
     <button
       type="button"
       aria-label={label}
       onClick={onClick}
-      className={`focus-outline rounded-full p-2 ${hoverClasses} border-border border`}
+      className={`focus-outline rounded-full p-2 ${hoverClass} border-border border`}
     >
       <Icon aria-hidden="true" className="h-5 w-5" />
     </button>
