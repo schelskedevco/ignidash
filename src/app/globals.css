@@ -11,16 +11,6 @@
   --border: #e5e7eb; /* gray-200 */
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-emphasized-background: var(--emphasized-background);
@@ -39,6 +29,16 @@ html {
   --muted-foreground: #9ca3af; /* gray-400 */
   --primary: #f43f5e; /* rose-500 */
   --border: #3f3f46; /* zinc-700 */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 body {
