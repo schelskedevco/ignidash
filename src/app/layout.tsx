@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
-import { Ubuntu } from 'next/font/google';
+import { Outfit } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 
-const ubuntu = Ubuntu({
-  variable: '--font-ubuntu',
-  weight: ['300', '400', '500', '700'],
+const outfit = Outfit({
+  variable: '--font-outfit',
   subsets: ['latin'],
 });
 
@@ -23,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
-      <body className={`${ubuntu.variable} h-full antialiased`}>
+      <body className={`${outfit.variable} h-full antialiased`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
