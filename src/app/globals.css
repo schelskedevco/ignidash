@@ -9,7 +9,7 @@
   --foreground: #18181b; /* zinc-900 */
   --muted-foreground: #71717a; /* zinc-500 */
   --primary: #e11d48; /* rose-600 */
-  --border: #e4e4e7; /* zinc-200 */
+  --border: #d4d4d8; /* zinc-300 */
 }
 
 @theme inline {
