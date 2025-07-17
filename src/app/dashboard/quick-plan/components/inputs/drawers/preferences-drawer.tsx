@@ -54,7 +54,7 @@ export default function PreferencesDrawer() {
               />
 
               <div>
-                <Button color="red" onClick={() => resetStore()} className="w-full">
+                <Button color="red" onClick={() => resetStore()} className="focus-outline w-full">
                   Delete Saved Data
                 </Button>
                 <p className="text-muted-foreground mt-2 text-xs">This will permanently delete all saved data and reset to defaults.</p>
