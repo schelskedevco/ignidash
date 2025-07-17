@@ -4,7 +4,7 @@ import { SectionHeader } from '@/components/section-header';
 import { ResultsOverview } from './results-overview';
 import { ResultsChart } from './charts/results-chart';
 
-export function ResultsSections() {
+export default function ResultsSections() {
   const isCalculationReady = useIsCalculationReady();
   if (isCalculationReady) {
     return (

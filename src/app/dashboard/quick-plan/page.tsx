@@ -5,8 +5,8 @@ import { useState } from 'react';
 import { MainArea } from '@/components/layout/main-area';
 import { SecondaryColumn } from '@/components/layout/secondary-column';
 
-import { SectionSelector } from './components/section-selector';
-import { ResultsSections } from './components/outputs/results-sections';
+import SectionSelector from './components/section-selector';
+import ResultsSections from './components/outputs/results-sections';
 import ResultsColumnHeader from './components/outputs/results-column-header';
 import NumbersColumnSections from './components/inputs/numbers-column-sections';
 import NumbersColumnHeader from './components/inputs/numbers-column-header';

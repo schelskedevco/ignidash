@@ -27,7 +27,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-export function SectionSelector({ activeSection, setActiveSection }: SectionSelectorProps) {
+export default function SectionSelector({ activeSection, setActiveSection }: SectionSelectorProps) {
   return (
     <div className="mb-5">
       <div className="border-foreground/10 grid grid-cols-1 border-b pb-5 sm:hidden">
