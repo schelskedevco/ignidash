@@ -1,8 +1,9 @@
+import { useMemo } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { useShallow } from 'zustand/react/shallow';
-import { useMemo } from 'react';
+
 import {
   type QuickPlanInputs,
   type BasicsInputs,
@@ -13,9 +14,9 @@ import {
   type RetirementFundingInputs,
   validateField,
   validateSection,
-} from '../schemas/quick-plan-schema';
-import { calculateRequiredPortfolio } from '../calc/portfolio-calculations';
-import { calculateYearsToFIRE, calculateFIREAge, getFIREAnalysis, getFIREChartData } from '../calc/fire-analysis';
+} from '@/lib/schemas/quick-plan-schema';
+import { calculateRequiredPortfolio } from '@/lib/calc/portfolio-calculations';
+import { calculateYearsToFIRE, calculateFIREAge, getFIREAnalysis, getFIREChartData } from '@/lib/calc/fire-analysis';
 
 // Update result type
 type UpdateResult = {
