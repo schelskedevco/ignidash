@@ -84,9 +84,9 @@ export default function NumberInput({
           return value.length <= 12;
         }}
       />
-      {error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>}
       {desc && (
-        <p id={`${id}-desc`} className="text-muted-foreground mt-2 text-xs">
+        <p id={`${id}-desc`} className="text-muted-foreground mt-2 text-sm">
           {desc}
         </p>
       )}
