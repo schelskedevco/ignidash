@@ -1,7 +1,8 @@
 'use client';
 
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
+
 import { cn } from '@/lib/utils';
 
 interface DisclosureSectionProps {
@@ -18,7 +19,7 @@ export default function DisclosureSection({ title, desc, icon: Icon, children }:
     <Disclosure as="div" className="bg-emphasized-background border-border my-4 overflow-hidden rounded-lg border shadow-sm">
       <DisclosureButton
         className={cn(
-          'group data-open:border-border focus-outline flex w-full items-center justify-between gap-2 p-4 data-open:border-b data-open:pb-5'
+          'group data-open:border-border focus-outline flex w-full items-center justify-between p-4 data-open:border-b data-open:pb-5'
         )}
       >
         <div className="flex w-full items-center justify-between text-left">
