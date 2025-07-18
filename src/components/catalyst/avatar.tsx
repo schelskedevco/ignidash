@@ -1,6 +1,5 @@
 import * as Headless from '@headlessui/react';
 import clsx from 'clsx';
-import Image from 'next/image';
 import React, { forwardRef } from 'react';
 import { TouchTarget } from './button';
 import { Link } from './link';
@@ -46,7 +45,7 @@ export function Avatar({
           </text>
         </svg>
       )}
-      {src && <Image className="size-full" src={src} alt={alt} fill />}
+      {src && <img className="size-full" src={src} alt={alt} />}
     </span>
   );
 }

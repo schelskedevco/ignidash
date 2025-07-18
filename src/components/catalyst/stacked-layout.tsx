@@ -48,10 +48,7 @@ export function StackedLayout({
   navbar,
   sidebar,
   children,
-}: React.PropsWithChildren<{
-  navbar: React.ReactNode;
-  sidebar: React.ReactNode;
-}>) {
+}: React.PropsWithChildren<{ navbar: React.ReactNode; sidebar: React.ReactNode }>) {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (

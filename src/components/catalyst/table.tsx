@@ -5,12 +5,7 @@ import type React from 'react';
 import { createContext, useContext, useState } from 'react';
 import { Link } from './link';
 
-const TableContext = createContext<{
-  bleed: boolean;
-  dense: boolean;
-  grid: boolean;
-  striped: boolean;
-}>({
+const TableContext = createContext<{ bleed: boolean; dense: boolean; grid: boolean; striped: boolean }>({
   bleed: false,
   dense: false,
   grid: false,
@@ -25,12 +20,7 @@ export function Table({
   className,
   children,
   ...props
-}: {
-  bleed?: boolean;
-  dense?: boolean;
-  grid?: boolean;
-  striped?: boolean;
-} & React.ComponentPropsWithoutRef<'div'>) {
+}: { bleed?: boolean; dense?: boolean; grid?: boolean; striped?: boolean } & React.ComponentPropsWithoutRef<'div'>) {
   return (
     <TableContext.Provider value={{ bleed, dense, grid, striped } as React.ContextType<typeof TableContext>}>
       <div className="flow-root">
@@ -52,11 +42,7 @@ export function TableBody(props: React.ComponentPropsWithoutRef<'tbody'>) {
   return <tbody {...props} />;
 }
 
-const TableRowContext = createContext<{
-  href?: string;
-  target?: string;
-  title?: string;
-}>({
+const TableRowContext = createContext<{ href?: string; target?: string; title?: string }>({
   href: undefined,
   target: undefined,
   title: undefined,
@@ -68,11 +54,7 @@ export function TableRow({
   title,
   className,
   ...props
-}: {
-  href?: string;
-  target?: string;
-  title?: string;
-} & React.ComponentPropsWithoutRef<'tr'>) {
+}: { href?: string; target?: string; title?: string } & React.ComponentPropsWithoutRef<'tr'>) {
   const { striped } = useContext(TableContext);
 
   return (

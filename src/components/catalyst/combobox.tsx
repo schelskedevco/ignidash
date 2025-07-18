@@ -24,9 +24,7 @@ export function Combobox<T>({
   autoFocus?: boolean;
   'aria-label'?: string;
   children: (value: NonNullable<T>) => React.ReactElement;
-} & Omit<Headless.ComboboxProps<T, false>, 'as' | 'multiple' | 'children'> & {
-    anchor?: 'top' | 'bottom';
-  }) {
+} & Omit<Headless.ComboboxProps<T, false>, 'as' | 'multiple' | 'children'> & { anchor?: 'top' | 'bottom' }) {
   const [query, setQuery] = useState('');
 
   const filteredOptions =

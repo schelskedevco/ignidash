@@ -49,11 +49,7 @@ export function PaginationPage({
   className,
   current = false,
   children,
-}: React.PropsWithChildren<{
-  href: string;
-  className?: string;
-  current?: boolean;
-}>) {
+}: React.PropsWithChildren<{ href: string; className?: string; current?: boolean }>) {
   return (
     <Button
       href={href}
