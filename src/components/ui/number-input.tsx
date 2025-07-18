@@ -79,14 +79,19 @@ export default function NumberInput({
         allowLeadingZeros={false}
         customInput={Input}
         aria-invalid={!!error}
-        aria-describedby={desc ? `${id}-desc` : undefined}
+        aria-describedby={error || desc ? `${id}-message` : undefined}
         isAllowed={({ value }) => value.length <= 12}
       />
-      {error && <p className="mt-2 text-sm text-red-600 dark:text-red-400">{error}</p>}
-      {desc && (
-        <p id={`${id}-desc`} className="text-muted-foreground mt-2 text-sm">
-          {desc}
+      {error ? (
+        <p id={`${id}-message`} className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
+          {error}
         </p>
+      ) : (
+        desc && (
+          <p id={`${id}-message`} className="text-muted-foreground mt-2 text-sm">
+            {desc}
+          </p>
+        )
       )}
     </div>
   );
