@@ -10,12 +10,11 @@ interface NumberInputProps {
   value: number | null;
   onBlur: (value: string | null) => { success: boolean; error?: string };
   inputMode: 'numeric' | 'decimal';
-  placeholder?: string;
+  placeholder: string;
   desc?: string | React.ReactNode;
   prefix?: string;
   suffix?: string;
   decimalScale?: number;
-  allowNegative?: boolean;
   allowLeadingZeros?: boolean;
 }
 
@@ -30,7 +29,6 @@ export default function NumberInput({
   prefix,
   suffix,
   decimalScale = 2,
-  allowNegative = true,
   allowLeadingZeros = false,
 }: NumberInputProps) {
   // Local string state that allows incomplete inputs
@@ -79,7 +77,7 @@ export default function NumberInput({
         prefix={prefix}
         suffix={suffix}
         decimalScale={decimalScale}
-        allowNegative={allowNegative}
+        allowNegative={true}
         allowLeadingZeros={allowLeadingZeros}
         customInput={Input}
         aria-describedby={desc ? `${id}-desc` : undefined}
