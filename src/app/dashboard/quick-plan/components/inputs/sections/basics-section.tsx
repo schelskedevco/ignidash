@@ -43,7 +43,7 @@ export function BasicsSection() {
   }, [allocation]);
 
   // Error state for allocation validation
-  const [allocationError, setAllocationError] = useState<string | null>(null);
+  const [allocationError, setAllocationError] = useState<string | undefined>(undefined);
 
   // Handler for allocation field changes
   const handleAllocationBlur = (field: keyof typeof localAllocation, value: unknown) => {
@@ -56,9 +56,9 @@ export function BasicsSection() {
 
     const result = updateAllocation(updatedAllocation);
     if (!result.success) {
-      setAllocationError(result.error || 'Invalid allocation values');
+      setAllocationError(result.error);
     } else {
-      setAllocationError(null);
+      setAllocationError(undefined);
     }
 
     /*
