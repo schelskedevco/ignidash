@@ -2,10 +2,7 @@ type SurfaceColor = 'default' | 'emphasized';
 
 interface IconButtonProps {
   icon: React.ForwardRefExoticComponent<
-    React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & {
-      title?: string;
-      titleId?: string;
-    } & React.RefAttributes<SVGSVGElement>
+    React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & { title?: string; titleId?: string } & React.RefAttributes<SVGSVGElement>
   >;
   label: string;
   onClick?: () => void;
