@@ -18,10 +18,10 @@ export default function GoalSection() {
         title="Retirement Goal"
         desc="Your retirement spending level determines when you'll have enough to retire. Consider optional strategies for getting there."
       />
-      <form onSubmit={(e) => e.preventDefault()}>
-        <fieldset className="space-y-4">
-          <legend className="sr-only">Retirement goal and strategy options</legend>
-          <Card>
+      <Card>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <fieldset className="space-y-4">
+            <legend className="sr-only">Retirement goal and strategy options</legend>
             <NumberInput
               id="retirement-expenses"
               label="Retirement Expenses"
@@ -31,13 +31,13 @@ export default function GoalSection() {
               placeholder="$50,000"
               prefix="$"
             />
-          </Card>
-          {/* TODO: Should these be separate forms? */}
-          <DisclosureCard
-            title="Coast FIRE"
-            desc="Front-load savings, then work just enough to cover living expenses."
-            icon={RollerCoaster}
-          >
+          </fieldset>
+        </form>
+      </Card>
+      <DisclosureCard title="Coast FIRE" desc="Front-load savings, then work just enough to cover living expenses." icon={RollerCoaster}>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <fieldset className="space-y-4">
+            <legend className="sr-only"></legend>
             <NumberInput
               id="target-retirement-age"
               label="Target Retirement Age"
@@ -47,8 +47,13 @@ export default function GoalSection() {
               placeholder="65"
               decimalScale={0}
             />
-          </DisclosureCard>
-          <DisclosureCard title="Barista FIRE" desc="Work part-time in enjoyable jobs while investments cover the rest." icon={Coffee}>
+          </fieldset>
+        </form>
+      </DisclosureCard>
+      <DisclosureCard title="Barista FIRE" desc="Work part-time in enjoyable jobs while investments cover the rest." icon={Coffee}>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <fieldset className="space-y-4">
+            <legend className="sr-only"></legend>
             <NumberInput
               id="part-time-income"
               label="Part-time Annual Income"
@@ -58,9 +63,9 @@ export default function GoalSection() {
               placeholder="$18,000"
               prefix="$"
             />
-          </DisclosureCard>
-        </fieldset>
-      </form>
+          </fieldset>
+        </form>
+      </DisclosureCard>
     </div>
   );
 }
