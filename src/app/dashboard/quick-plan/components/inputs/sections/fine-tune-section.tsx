@@ -14,7 +14,7 @@ export function FineTuneSection() {
 
   return (
     <>
-      <div className="border-foreground/10 mb-5 space-y-4 border-b pb-5">
+      <div className="border-border mb-5 space-y-4 border-b pb-5">
         <SectionHeader title="Fine-Tuning" desc="Adjust advanced settings to refine your projections and assumptions." />
 
         <DrawerTriggerButton
