@@ -20,7 +20,7 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
         <Bars3Icon aria-hidden="true" className="size-6" />
       </button>
       <div className="flex flex-1 items-center gap-2 text-sm/6 font-semibold">
-        <Icon aria-hidden="true" className="size-5" />
+        <Icon aria-hidden="true" className="text-primary size-5" />
         {currentPageTitle}
       </div>
       <a className="focus-outline" href="#">
