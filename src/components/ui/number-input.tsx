@@ -78,6 +78,7 @@ export default function NumberInput({
         allowNegative={true}
         allowLeadingZeros={false}
         customInput={Input}
+        aria-invalid={!!error}
         aria-describedby={desc ? `${id}-desc` : undefined}
         isAllowed={(values) => {
           const { value } = values;
