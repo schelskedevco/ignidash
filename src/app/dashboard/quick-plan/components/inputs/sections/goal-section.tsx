@@ -32,7 +32,7 @@ export default function GoalSection() {
               prefix="$"
             />
           </Card>
-          {/* Should these be separate forms? */}
+          {/* TODO: Should these be separate forms? */}
           <DisclosureCard
             title="Coast FIRE"
             desc="Front-load savings, then work just enough to cover living expenses."
