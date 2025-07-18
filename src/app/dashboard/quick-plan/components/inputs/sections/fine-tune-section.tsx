@@ -1,10 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { ChartBarIcon, ClockIcon } from '@heroicons/react/24/outline';
 
-import { DrawerTriggerButton } from '@/components/ui/drawer-trigger-button';
-import Drawer from '@/components/ui/drawer';
 import Card from '@/components/ui/card';
 import NumberInput from '@/components/ui/number-input';
 import SectionHeader from '@/components/section-header';
@@ -15,9 +12,6 @@ import {
   useRetirementFundingData,
   useUpdateRetirementFunding,
 } from '@/lib/stores/quick-plan-store';
-
-import { MarketAssumptionsDrawer } from '../drawers/market-assumptions-drawer';
-import { RetirementFundingDrawer } from '../drawers/retirement-funding-drawer';
 
 function getInflationRateDescription() {
   return (
@@ -110,9 +104,6 @@ export function FineTuneSection() {
 
   const retirementFunding = useRetirementFundingData();
   const updateRetirementFunding = useUpdateRetirementFunding();
-
-  const [marketAssumptionsOpen, setMarketAssumptionsOpen] = useState(false);
-  const [retirementFundingOpen, setRetirementFundingOpen] = useState(false);
 
   return (
     <>
@@ -233,30 +224,7 @@ export function FineTuneSection() {
             </form>
           </DisclosureSection>
         </div>
-
-        <DrawerTriggerButton
-          title="Market & Economic Assumptions"
-          desc="Set inflation rate and how to project investment returns by asset class."
-          leftIcon={ChartBarIcon}
-          onClick={() => setMarketAssumptionsOpen(true)}
-        />
-
-        <DrawerTriggerButton
-          title="Retirement Funding & Duration"
-          desc="Configure withdrawal strategy, retirement income sources, and life expectancy."
-          leftIcon={ClockIcon}
-          onClick={() => setRetirementFundingOpen(true)}
-        />
       </div>
-
-      {/* Fine-Tune drawers */}
-      <Drawer open={marketAssumptionsOpen} setOpen={setMarketAssumptionsOpen} title="Market & Economic Assumptions">
-        <MarketAssumptionsDrawer />
-      </Drawer>
-
-      <Drawer open={retirementFundingOpen} setOpen={setRetirementFundingOpen} title="Retirement Funding & Duration">
-        <RetirementFundingDrawer />
-      </Drawer>
     </>
   );
 }
