@@ -20,7 +20,7 @@ interface NumberInputProps {
   allowLeadingZeros?: boolean;
 }
 
-export function NumberInput({
+export default function NumberInput({
   id,
   label,
   value,

@@ -1,6 +1,6 @@
 'use client';
 
-import { NumberInput } from '@/components/ui/number-input';
+import NumberInput from '@/components/ui/number-input';
 import { CardFormSection } from '@/components/card-form-section';
 import { useRetirementFundingData, useUpdateRetirementFunding } from '@/lib/stores/quick-plan-store';
 

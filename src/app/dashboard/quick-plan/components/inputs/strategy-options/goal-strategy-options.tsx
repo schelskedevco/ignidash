@@ -1,6 +1,6 @@
 'use client';
 
-import { NumberInput } from '@/components/ui/number-input';
+import NumberInput from '@/components/ui/number-input';
 import { DisclosureSection } from '@/components/disclosure-section';
 import { Coffee, RollerCoaster } from 'lucide-react';
 

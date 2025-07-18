@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Card from '@/components/ui/card';
-import { NumberInput } from '@/components/ui/number-input';
+import NumberInput from '@/components/ui/number-input';
 import SectionHeader from '@/components/section-header';
 import { DisclosureSection } from '@/components/disclosure-section';
 import InvalidInputError from '@/components/ui/invalid-input-error';
