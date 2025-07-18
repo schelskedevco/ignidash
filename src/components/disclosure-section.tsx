@@ -24,7 +24,7 @@ export default function DisclosureSection({ title, desc, icon: Icon, children }:
             </div>
             <p className="text-muted-foreground mt-2 text-sm">{desc}</p>
           </div>
-          <ChevronDownIcon className="ml-2 w-5 shrink-0 group-data-open:rotate-180" aria-hidden="true" />
+          <ChevronDownIcon className="ml-2 w-5 shrink-0 transition-transform duration-100 group-data-open:-rotate-180" aria-hidden="true" />
         </div>
       </DisclosureButton>
       <DisclosurePanel>
