@@ -1,3 +1,5 @@
+'use client';
+
 import { useIsCalculationReady } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
 import SectionHeader from '@/components/section-header';
