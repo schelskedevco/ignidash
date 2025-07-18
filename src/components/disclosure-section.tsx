@@ -15,28 +15,26 @@ interface DisclosureSectionProps {
 
 export default function DisclosureSection({ title, desc, icon: Icon, children }: DisclosureSectionProps) {
   return (
-    <div className="bg-emphasized-background border-border my-4 overflow-hidden rounded-lg border shadow-sm">
-      <Disclosure>
-        <DisclosureButton
-          className={cn(
-            'group data-open:border-border focus-outline flex w-full items-center justify-between gap-2 p-4 data-open:border-b data-open:pb-5'
-          )}
-        >
-          <div className="flex w-full items-center justify-between text-left">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <Icon className="text-primary h-5 w-5" aria-hidden="true" />
-                <span>{title}</span>
-              </div>
-              <p className="text-muted-foreground mt-2 text-sm">{desc}</p>
+    <Disclosure as="div" className="bg-emphasized-background border-border my-4 overflow-hidden rounded-lg border shadow-sm">
+      <DisclosureButton
+        className={cn(
+          'group data-open:border-border focus-outline flex w-full items-center justify-between gap-2 p-4 data-open:border-b data-open:pb-5'
+        )}
+      >
+        <div className="flex w-full items-center justify-between text-left">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <Icon className="text-primary h-5 w-5" aria-hidden="true" />
+              <span>{title}</span>
             </div>
-            <ChevronDownIcon className="ml-2 w-5 shrink-0 group-data-open:rotate-180" aria-hidden="true" />
+            <p className="text-muted-foreground mt-2 text-sm">{desc}</p>
           </div>
-        </DisclosureButton>
-        <DisclosurePanel>
-          <div className="px-4 py-5 sm:p-6">{children}</div>
-        </DisclosurePanel>
-      </Disclosure>
-    </div>
+          <ChevronDownIcon className="ml-2 w-5 shrink-0 group-data-open:rotate-180" aria-hidden="true" />
+        </div>
+      </DisclosureButton>
+      <DisclosurePanel>
+        <div className="px-4 py-5 sm:p-6">{children}</div>
+      </DisclosurePanel>
+    </Disclosure>
   );
 }
