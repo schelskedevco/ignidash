@@ -15,7 +15,6 @@ interface NumberInputProps {
   prefix?: string;
   suffix?: string;
   decimalScale?: number;
-  allowLeadingZeros?: boolean;
 }
 
 export default function NumberInput({
@@ -29,17 +28,16 @@ export default function NumberInput({
   prefix,
   suffix,
   decimalScale = 2,
-  allowLeadingZeros = false,
 }: NumberInputProps) {
   // Local string state that allows incomplete inputs
-  const [localValue, setLocalValue] = useState<string>(() => value?.toString() ?? '');
+  const [localValue, setLocalValue] = useState<string>(() => `${value ?? ''}`);
 
   // Local error state for displaying validation errors
   const [error, setError] = useState<string | null>(null);
 
   // Sync external value changes to local state
   useEffect(() => {
-    setLocalValue(value?.toString() ?? '');
+    setLocalValue(`${value ?? ''}`);
   }, [value]);
 
   const handleValueChange = (values: { value: string; formattedValue: string; floatValue?: number }) => {
@@ -78,7 +76,7 @@ export default function NumberInput({
         suffix={suffix}
         decimalScale={decimalScale}
         allowNegative={true}
-        allowLeadingZeros={allowLeadingZeros}
+        allowLeadingZeros={false}
         customInput={Input}
         aria-describedby={desc ? `${id}-desc` : undefined}
         isAllowed={(values) => {
