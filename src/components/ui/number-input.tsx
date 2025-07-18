@@ -12,7 +12,6 @@ interface NumberInputProps {
   inputMode: 'numeric' | 'decimal';
   placeholder?: string;
   desc?: string | React.ReactNode;
-  // Formatting props
   prefix?: string;
   suffix?: string;
   decimalScale?: number;
@@ -46,6 +45,7 @@ export default function NumberInput({
   }, [value]);
 
   const handleValueChange = (values: { value: string; formattedValue: string; floatValue?: number }) => {
+    // Reset error state on input change
     if (error) {
       setError(null);
     }
