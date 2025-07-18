@@ -21,7 +21,7 @@ export default function GoalSection() {
       <Card>
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset className="space-y-4">
-            <legend className="sr-only">Retirement goal and strategy options</legend>
+            <legend className="sr-only">Retirement spending goal configuration</legend>
             <NumberInput
               id="retirement-expenses"
               label="Retirement Expenses"
@@ -37,7 +37,7 @@ export default function GoalSection() {
       <DisclosureCard title="Coast FIRE" desc="Front-load savings, then work just enough to cover living expenses." icon={RollerCoaster}>
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset className="space-y-4">
-            <legend className="sr-only"></legend>
+            <legend className="sr-only">Coast FIRE target retirement age setting</legend>
             <NumberInput
               id="target-retirement-age"
               label="Target Retirement Age"
@@ -53,7 +53,7 @@ export default function GoalSection() {
       <DisclosureCard title="Barista FIRE" desc="Work part-time in enjoyable jobs while investments cover the rest." icon={Coffee}>
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset className="space-y-4">
-            <legend className="sr-only"></legend>
+            <legend className="sr-only">Barista FIRE part-time income configuration</legend>
             <NumberInput
               id="part-time-income"
               label="Part-time Annual Income"
