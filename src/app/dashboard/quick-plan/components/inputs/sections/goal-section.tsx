@@ -1,11 +1,12 @@
 'use client';
 
+import { Coffee, RollerCoaster } from 'lucide-react';
+
 import Card from '@/components/ui/card';
 import NumberInput from '@/components/ui/number-input';
 import SectionHeader from '@/components/section-header';
+import DisclosureSection from '@/components/disclosure-section';
 import { useGoalsData, useUpdateGoals } from '@/lib/stores/quick-plan-store';
-
-import { CoastFIRE, BaristaFIRE } from '../strategy-options/goal-strategy-options';
 
 export function GoalSection() {
   const goals = useGoalsData();
@@ -31,11 +32,32 @@ export function GoalSection() {
               prefix="$"
             />
           </Card>
-          <CoastFIRE
-            targetRetirementAge={goals.targetRetirementAge}
-            setTargetRetirementAge={(value) => updateGoals('targetRetirementAge', value)}
-          />
-          <BaristaFIRE partTimeIncome={goals.partTimeIncome} setPartTimeIncome={(value) => updateGoals('partTimeIncome', value)} />
+          <DisclosureSection
+            title="Coast FIRE"
+            desc="Front-load savings, then work just enough to cover living expenses."
+            icon={RollerCoaster}
+          >
+            <NumberInput
+              id="target-retirement-age"
+              label="Target Retirement Age"
+              value={goals.targetRetirementAge}
+              onBlur={(value) => updateGoals('targetRetirementAge', value)}
+              inputMode="numeric"
+              placeholder="65"
+              decimalScale={0}
+            />
+          </DisclosureSection>
+          <DisclosureSection title="Barista FIRE" desc="Work part-time in enjoyable jobs while investments cover the rest." icon={Coffee}>
+            <NumberInput
+              id="part-time-income"
+              label="Part-time Annual Income"
+              value={goals.partTimeIncome}
+              onBlur={(value) => updateGoals('partTimeIncome', value)}
+              inputMode="decimal"
+              placeholder="$18,000"
+              prefix="$"
+            />
+          </DisclosureSection>
         </fieldset>
       </form>
     </div>
