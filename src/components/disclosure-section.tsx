@@ -5,7 +5,7 @@ import { ChevronDownIcon } from '@heroicons/react/24/solid';
 
 interface DisclosureSectionProps {
   title: string;
-  desc: string;
+  desc: string | React.ReactNode;
   icon: React.ForwardRefExoticComponent<
     React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & { title?: string; titleId?: string } & React.RefAttributes<SVGSVGElement>
   >;
