@@ -1,8 +1,9 @@
 'use client';
 
+import { Coffee, RollerCoaster } from 'lucide-react';
+
 import NumberInput from '@/components/ui/number-input';
 import DisclosureSection from '@/components/disclosure-section';
-import { Coffee, RollerCoaster } from 'lucide-react';
 
 interface CoastFIREProps {
   targetRetirementAge: number | null;
