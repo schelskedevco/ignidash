@@ -7,7 +7,7 @@ import Card from '@/components/ui/card';
 import NumberInput from '@/components/ui/number-input';
 import InvalidInputError from '@/components/ui/invalid-input-error';
 import SectionHeader from '@/components/section-header';
-import DisclosureSection from '@/components/disclosure-section';
+import DisclosureSection from '@/components/disclosure-card';
 import {
   useBasicsData,
   useGrowthRatesData,

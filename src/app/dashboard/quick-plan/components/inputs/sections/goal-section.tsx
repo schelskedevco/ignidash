@@ -5,7 +5,7 @@ import { Coffee, RollerCoaster } from 'lucide-react';
 import Card from '@/components/ui/card';
 import NumberInput from '@/components/ui/number-input';
 import SectionHeader from '@/components/section-header';
-import DisclosureSection from '@/components/disclosure-section';
+import DisclosureSection from '@/components/disclosure-card';
 import { useGoalsData, useUpdateGoals } from '@/lib/stores/quick-plan-store';
 
 export function GoalSection() {

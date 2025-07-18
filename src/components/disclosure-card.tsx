@@ -3,7 +3,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 
-interface DisclosureSectionProps {
+interface DisclosureCardProps {
   title: string;
   desc: string | React.ReactNode;
   icon: React.ForwardRefExoticComponent<
@@ -12,7 +12,7 @@ interface DisclosureSectionProps {
   children: React.ReactNode;
 }
 
-export default function DisclosureSection({ title, desc, icon: Icon, children }: DisclosureSectionProps) {
+export default function DisclosureCard({ title, desc, icon: Icon, children }: DisclosureCardProps) {
   return (
     <Disclosure
       as="div"
