@@ -67,7 +67,7 @@ export function BasicsSection() {
   };
 
   return (
-    <div className="border-foreground/10 mb-5 border-b pb-5">
+    <div className="border-border mb-5 border-b pb-5">
       <SectionHeader title="Financial Foundation" desc="The core numbers needed to estimate your financial independence timeline." />
 
       <Card>
