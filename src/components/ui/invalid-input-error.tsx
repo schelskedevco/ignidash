@@ -7,7 +7,7 @@ export interface InvalidInputErrorProps {
 
 export default function InvalidInputError({ title, desc }: InvalidInputErrorProps) {
   return (
-    <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/50">
+    <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-950/50">
       <div className="flex">
         <div className="shrink-0">
           <XCircleIcon aria-hidden="true" className="size-5 text-red-400 dark:text-red-500" />
