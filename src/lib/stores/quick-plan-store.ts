@@ -388,6 +388,22 @@ export const useCashRealReturn = () =>
     return realReturn * 100; // Convert back to percentage
   });
 
+export const useIncomeRealGrowthRate = () =>
+  useQuickPlanStore((state) => {
+    const nominalGrowthRate = state.inputs.growthRates.incomeGrowthRate;
+    const inflationRate = state.inputs.marketAssumptions.inflationRate;
+    const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate / 100) - 1;
+    return realGrowthRate * 100; // Convert back to percentage
+  });
+
+export const useExpenseRealGrowthRate = () =>
+  useQuickPlanStore((state) => {
+    const nominalGrowthRate = state.inputs.growthRates.expenseGrowthRate;
+    const inflationRate = state.inputs.marketAssumptions.inflationRate;
+    const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate / 100) - 1;
+    return realGrowthRate * 100; // Convert back to percentage
+  });
+
 /**
  * Validation State Selectors
  * These hooks check if sections or the entire form have valid data for calculations

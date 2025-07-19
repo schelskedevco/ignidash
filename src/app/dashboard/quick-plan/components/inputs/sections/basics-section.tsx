@@ -19,6 +19,8 @@ import {
   useStocksDollarAmount,
   useBondsDollarAmount,
   useCashDollarAmount,
+  useIncomeRealGrowthRate,
+  useExpenseRealGrowthRate,
 } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 
@@ -35,6 +37,10 @@ export default function BasicsSection() {
   const stocksDollarAmount = useStocksDollarAmount();
   const bondsDollarAmount = useBondsDollarAmount();
   const cashDollarAmount = useCashDollarAmount();
+
+  // Get real growth rates
+  const incomeRealGrowthRate = useIncomeRealGrowthRate();
+  const expenseRealGrowthRate = useExpenseRealGrowthRate();
 
   // Local state for allocation tracking
   const [localAllocation, setLocalAllocation] = useState({
@@ -200,7 +206,12 @@ export default function BasicsSection() {
               <legend className="sr-only">Income and expense growth rate projections</legend>
               <NumberInput
                 id="income-growth-rate"
-                label="Income Growth Rate (%)"
+                label={
+                  <div className="flex w-full items-center justify-between">
+                    <span>Income Growth Rate (%)</span>
+                    <span className="text-muted-foreground">{incomeRealGrowthRate.toFixed(1)}% real</span>
+                  </div>
+                }
                 value={growthRates.incomeGrowthRate}
                 onBlur={(value) => updateGrowthRates('incomeGrowthRate', value)}
                 inputMode="decimal"
@@ -209,7 +220,12 @@ export default function BasicsSection() {
               />
               <NumberInput
                 id="expense-growth-rate"
-                label="Expense Growth Rate (%)"
+                label={
+                  <div className="flex w-full items-center justify-between">
+                    <span>Expense Growth Rate (%)</span>
+                    <span className="text-muted-foreground">{expenseRealGrowthRate.toFixed(1)}% real</span>
+                  </div>
+                }
                 value={growthRates.expenseGrowthRate}
                 onBlur={(value) => updateGrowthRates('expenseGrowthRate', value)}
                 inputMode="decimal"
