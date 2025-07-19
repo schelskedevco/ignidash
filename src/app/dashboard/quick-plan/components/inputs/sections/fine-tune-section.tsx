@@ -188,7 +188,7 @@ export default function FineTuneSection() {
                   inputMode="decimal"
                   placeholder="$0"
                   prefix="$"
-                  desc="Passive income sources in retirement like Social Security, pensions, or annuities. This helps estimate total retirement income beyond investment withdrawals."
+                  desc="Income from Social Security, pensions, or annuities."
                 />
               </fieldset>
             </form>
