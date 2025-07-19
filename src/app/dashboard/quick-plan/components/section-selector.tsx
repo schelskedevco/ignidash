@@ -64,14 +64,14 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
                 className={cn(
                   tab.value === activeSection
                     ? 'border-primary text-primary'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                    : 'hover:border-primary/75 hover:text-primary/75 text-muted-foreground border-transparent',
                   'group focus-outline inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium'
                 )}
               >
                 <tab.icon
                   aria-hidden="true"
                   className={cn(
-                    tab.value === activeSection ? 'text-primary' : 'text-gray-400 group-hover:text-gray-500',
+                    tab.value === activeSection ? 'text-primary' : 'group-hover:text-primary/75 text-muted-foreground',
                     'mr-2 -ml-0.5 size-5'
                   )}
                 />
