@@ -109,7 +109,7 @@ export default function FineTuneSection() {
   return (
     <>
       <SectionContainer showBottomBorder>
-        <SectionHeader title="Fine-Tuning" desc="Adjust advanced settings to refine your projections and assumptions." />
+        <SectionHeader title="Fine-Tuning" desc="Modify default assumptions for more personalized retirement projections." />
         <Card>
           <form onSubmit={(e) => e.preventDefault()}>
             <fieldset className="space-y-4">
