@@ -52,6 +52,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
           className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end"
         />
       </div>
+
       {/* Desktop Navigation */}
       <div className="hidden sm:block">
         <div className="border-border border-b">
