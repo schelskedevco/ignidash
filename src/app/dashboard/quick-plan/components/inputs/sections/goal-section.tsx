@@ -58,7 +58,7 @@ export default function GoalSection() {
             <legend className="sr-only">Barista FIRE part-time income configuration</legend>
             <NumberInput
               id="part-time-income"
-              label="Part-Time Annual Income"
+              label="Gross Part-Time Annual Income"
               value={goals.partTimeIncome}
               onBlur={(value) => updateGoals('partTimeIncome', value)}
               inputMode="decimal"

@@ -165,13 +165,13 @@ export default function FineTuneSection() {
                 />
                 <NumberInput
                   id="retirement-income"
-                  label="Passive Retirement Income"
+                  label="Gross Passive Retirement Income"
                   value={retirementFunding.retirementIncome}
                   onBlur={(value) => updateRetirementFunding('retirementIncome', value)}
                   inputMode="decimal"
                   placeholder="$0"
                   prefix="$"
-                  desc="Income from Social Security, pensions, or annuities starting at age 62."
+                  desc="Gross income from Social Security, pensions, or annuities starting at age 62."
                 />
               </fieldset>
             </form>
