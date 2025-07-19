@@ -4,7 +4,7 @@ import Card from '@/components/ui/card';
 import { useFIREAnalysis } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 
-export function ResultsOverview() {
+export default function ResultsMetrics() {
   const fireAnalysis = useFIREAnalysis();
 
   const stats = [
