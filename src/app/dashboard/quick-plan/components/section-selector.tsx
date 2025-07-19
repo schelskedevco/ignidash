@@ -7,11 +7,6 @@ import { cn } from '@/lib/utils';
 
 type ActiveSection = 'results' | 'your-numbers';
 
-interface SectionSelectorProps {
-  activeSection: ActiveSection;
-  setActiveSection: (section: ActiveSection) => void;
-}
-
 const tabs = [
   {
     name: 'Your Numbers',
@@ -24,6 +19,11 @@ const tabs = [
     value: 'results' as ActiveSection,
   },
 ];
+
+interface SectionSelectorProps {
+  activeSection: ActiveSection;
+  setActiveSection: (section: ActiveSection) => void;
+}
 
 export default function SectionSelector({ activeSection, setActiveSection }: SectionSelectorProps) {
   return (
