@@ -68,16 +68,16 @@ function getSafeWithdrawalRateDescription() {
 function getLifeExpectancyDescription() {
   return (
     <>
-      Age you expect to live to. See{' '}
+      Your best guess at longevity.{' '}
       <a
         href="https://www.cdc.gov/nchs/fastats/life-expectancy.htm"
         target="_blank"
         rel="noopener noreferrer"
         className="text-foreground hover:text-foreground/80 underline"
       >
-        CDC life expectancy data
-      </a>{' '}
-      for current averages.
+        US average: 77 years
+      </a>
+      .
     </>
   );
 }
