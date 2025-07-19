@@ -1,3 +1,5 @@
+'use client';
+
 type SurfaceColor = 'default' | 'emphasized';
 
 interface IconButtonProps {
