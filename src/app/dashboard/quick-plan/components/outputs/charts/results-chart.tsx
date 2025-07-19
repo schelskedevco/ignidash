@@ -1,11 +1,12 @@
 'use client';
 
+import { useTheme } from 'next-themes';
+import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+
 import { ChartDataPoint } from '@/lib/calc/fire-analysis';
 import { useFIREChartData, useFIREAnalysis } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
-import { useTheme } from 'next-themes';
-import { useState, useEffect } from 'react';
 
 interface CustomTooltipProps {
   active?: boolean;
