@@ -188,7 +188,7 @@ export default function FineTuneSection() {
                   inputMode="decimal"
                   placeholder="$0"
                   prefix="$"
-                  desc="Income from Social Security, pensions, or annuities."
+                  desc="Income from Social Security, pensions, or annuities starting at age 62."
                 />
               </fieldset>
             </form>
