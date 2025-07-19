@@ -1,3 +1,5 @@
+'use client';
+
 import { useFIREAnalysis } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 
