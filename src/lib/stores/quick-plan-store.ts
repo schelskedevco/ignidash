@@ -361,6 +361,34 @@ export const useCashDollarAmount = () =>
   });
 
 /**
+ * Real Return Rate Calculations
+ * These hooks calculate real (inflation-adjusted) returns using the Fisher equation
+ */
+export const useStocksRealReturn = () =>
+  useQuickPlanStore((state) => {
+    const nominalReturn = state.inputs.marketAssumptions.stockReturn;
+    const inflationRate = state.inputs.marketAssumptions.inflationRate;
+    const realReturn = (1 + nominalReturn / 100) / (1 + inflationRate / 100) - 1;
+    return realReturn * 100; // Convert back to percentage
+  });
+
+export const useBondsRealReturn = () =>
+  useQuickPlanStore((state) => {
+    const nominalReturn = state.inputs.marketAssumptions.bondReturn;
+    const inflationRate = state.inputs.marketAssumptions.inflationRate;
+    const realReturn = (1 + nominalReturn / 100) / (1 + inflationRate / 100) - 1;
+    return realReturn * 100; // Convert back to percentage
+  });
+
+export const useCashRealReturn = () =>
+  useQuickPlanStore((state) => {
+    const nominalReturn = state.inputs.marketAssumptions.cashReturn;
+    const inflationRate = state.inputs.marketAssumptions.inflationRate;
+    const realReturn = (1 + nominalReturn / 100) / (1 + inflationRate / 100) - 1;
+    return realReturn * 100; // Convert back to percentage
+  });
+
+/**
  * Validation State Selectors
  * These hooks check if sections or the entire form have valid data for calculations
  */

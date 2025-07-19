@@ -12,6 +12,9 @@ import {
   useUpdateMarketAssumptions,
   useRetirementFundingData,
   useUpdateRetirementFunding,
+  useStocksRealReturn,
+  useBondsRealReturn,
+  useCashRealReturn,
 } from '@/lib/stores/quick-plan-store';
 
 function getInflationRateDescription() {
@@ -89,6 +92,11 @@ export default function FineTuneSection() {
   const retirementFunding = useRetirementFundingData();
   const updateRetirementFunding = useUpdateRetirementFunding();
 
+  // Get real return rates
+  const stocksRealReturn = useStocksRealReturn();
+  const bondsRealReturn = useBondsRealReturn();
+  const cashRealReturn = useCashRealReturn();
+
   return (
     <>
       <SectionContainer showBottomBorder>
@@ -117,7 +125,12 @@ export default function FineTuneSection() {
                 <legend className="sr-only">Expected investment returns configuration</legend>
                 <NumberInput
                   id="stock-return"
-                  label="Stock Returns (%)"
+                  label={
+                    <div className="flex w-full items-center justify-between">
+                      <span>Stock Returns (%)</span>
+                      <span className="text-muted-foreground">{stocksRealReturn.toFixed(1)}% real</span>
+                    </div>
+                  }
                   value={marketAssumptions.stockReturn}
                   onBlur={(value) => updateMarketAssumptions('stockReturn', value)}
                   inputMode="decimal"
@@ -126,7 +139,12 @@ export default function FineTuneSection() {
                 />
                 <NumberInput
                   id="bond-return"
-                  label="Bond Returns (%)"
+                  label={
+                    <div className="flex w-full items-center justify-between">
+                      <span>Bond Returns (%)</span>
+                      <span className="text-muted-foreground">{bondsRealReturn.toFixed(1)}% real</span>
+                    </div>
+                  }
                   value={marketAssumptions.bondReturn}
                   onBlur={(value) => updateMarketAssumptions('bondReturn', value)}
                   inputMode="decimal"
@@ -135,7 +153,12 @@ export default function FineTuneSection() {
                 />
                 <NumberInput
                   id="cash-return"
-                  label="Cash Returns (%)"
+                  label={
+                    <div className="flex w-full items-center justify-between">
+                      <span>Cash Returns (%)</span>
+                      <span className="text-muted-foreground">{cashRealReturn.toFixed(1)}% real</span>
+                    </div>
+                  }
                   value={marketAssumptions.cashReturn}
                   onBlur={(value) => updateMarketAssumptions('cashReturn', value)}
                   inputMode="decimal"
