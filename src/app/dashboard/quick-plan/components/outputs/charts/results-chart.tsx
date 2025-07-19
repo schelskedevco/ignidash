@@ -48,6 +48,7 @@ export function ResultsChart() {
   const gridColor = theme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
   const foregroundColor = theme === 'dark' ? '#f3f4f6' : '#111827'; // gray-100 : gray-900
   const foregroundMutedColor = theme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
+  const primaryColor = theme === 'dark' ? '#fb7185' : '#e11d48'; // rose-400 : rose-600
 
   const interval = isSmallScreen ? 4 : 3;
   const isAchievable = fireAnalysis.achievable && fireAnalysis.fireAge > 0;
@@ -58,8 +59,8 @@ export function ResultsChart() {
         <AreaChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
           <defs>
             <linearGradient id="colorPortfolio" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#e11d48" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#e11d48" stopOpacity={0} />
+              <stop offset="5%" stopColor={primaryColor} stopOpacity={0.8} />
+              <stop offset="95%" stopColor={primaryColor} stopOpacity={0} />
             </linearGradient>
           </defs>
           <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
@@ -71,7 +72,7 @@ export function ResultsChart() {
           />
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <Tooltip content={<CustomTooltip />} />
-          <Area type="monotone" dataKey="portfolioValue" stroke="#e11d48" fillOpacity={1} fill="url(#colorPortfolio)" />
+          <Area type="monotone" dataKey="portfolioValue" stroke={primaryColor} fillOpacity={1} fill="url(#colorPortfolio)" />
           {isAchievable && (
             <ReferenceLine
               x={fireAnalysis.fireAge}
