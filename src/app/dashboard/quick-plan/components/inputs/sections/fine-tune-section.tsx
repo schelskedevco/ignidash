@@ -1,6 +1,6 @@
 'use client';
 
-import { ChartBarIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, BanknotesIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 
 import Card from '@/components/ui/card';
 import NumberInput from '@/components/ui/number-input';
@@ -148,7 +148,7 @@ export default function FineTuneSection() {
           <DisclosureCard
             title="Cash Flow"
             desc="Portfolio withdrawals and income sources that will cover your retirement expenses."
-            icon={ChartBarIcon}
+            icon={BanknotesIcon}
           >
             <form onSubmit={(e) => e.preventDefault()}>
               <fieldset className="space-y-4">
@@ -179,7 +179,7 @@ export default function FineTuneSection() {
           <DisclosureCard
             title="Death & Taxes"
             desc="Life expectancy and tax assumptions that affect retirement planning."
-            icon={ClockIcon}
+            icon={DocumentTextIcon}
           >
             <form onSubmit={(e) => e.preventDefault()}>
               <fieldset className="space-y-4">
