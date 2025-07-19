@@ -39,7 +39,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
             }
           }}
           aria-label="Select a section"
-          className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600"
+          className="bg-emphasized-background outline-border col-start-1 row-start-1 w-full appearance-none rounded-md py-2 pr-8 pl-3 text-base outline-1 -outline-offset-1 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600"
         >
           {tabs.map((tab) => (
             <option key={tab.name} value={tab.name}>
@@ -49,7 +49,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
         </select>
         <ChevronDownIcon
           aria-hidden="true"
-          className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500"
+          className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end"
         />
       </div>
       {/* Desktop Navigation */}
