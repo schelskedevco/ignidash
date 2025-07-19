@@ -34,7 +34,7 @@ function getInflationRateDescription() {
 function getExpectedReturnsDescription() {
   return (
     <>
-      Expected annual returns before inflation. See{' '}
+      Expected nominal returns for each asset class based on{' '}
       <a
         href="https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html"
         target="_blank"
@@ -43,7 +43,7 @@ function getExpectedReturnsDescription() {
       >
         historical data
       </a>
-      . Past performance doesn&apos;t guarantee future results.
+      .
     </>
   );
 }
