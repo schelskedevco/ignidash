@@ -51,7 +51,6 @@ export default function ResultsChart() {
   const primaryColor = theme === 'dark' ? '#fb7185' : '#e11d48'; // rose-400 : rose-600
 
   const interval = isSmallScreen ? 4 : 3;
-  const isAchievable = fireAnalysis.achievable && fireAnalysis.fireAge > 0;
 
   return (
     <div className="[&_svg:focus]:outline-primary h-64 w-full sm:h-80 lg:h-96 [&_svg:focus]:rounded-lg [&_svg:focus]:outline-2 [&_svg:focus]:outline-offset-2">
@@ -73,9 +72,9 @@ export default function ResultsChart() {
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <Tooltip content={<CustomTooltip />} />
           <Area type="monotone" dataKey="portfolioValue" stroke={primaryColor} fillOpacity={1} fill="url(#colorPortfolio)" />
-          {isAchievable && (
+          {fireAnalysis.isAchievable && (
             <ReferenceLine
-              x={fireAnalysis.fireAge}
+              x={fireAnalysis.fireAge!}
               stroke={foregroundColor}
               strokeDasharray="10 5"
               label={{ value: 'FIRE', position: 'insideBottomLeft', fill: foregroundColor }}

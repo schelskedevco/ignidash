@@ -182,7 +182,7 @@ describe('FIRE Calculations', () => {
     it('should provide complete FIRE analysis for achievable scenario', () => {
       const analysis = getFIREAnalysis(baseInputs);
 
-      expect(analysis.achievable).toBe(true);
+      expect(analysis.isAchievable).toBe(true);
       expect(analysis.yearsToFIRE).toBe(14);
       expect(analysis.fireAge).toBe(44);
       expect(analysis.requiredPortfolio).toBe(1000000); // 40k / 0.04
@@ -198,7 +198,7 @@ describe('FIRE Calculations', () => {
       };
       const analysis = getFIREAnalysis(wealthyInputs);
 
-      expect(analysis.achievable).toBe(true);
+      expect(analysis.isAchievable).toBe(true);
       expect(analysis.yearsToFIRE).toBe(0);
       expect(analysis.fireAge).toBe(30);
     });
@@ -213,7 +213,7 @@ describe('FIRE Calculations', () => {
       };
       const analysis = getFIREAnalysis(invalidInputs);
 
-      expect(analysis.achievable).toBe(false);
+      expect(analysis.isAchievable).toBe(false);
       expect(analysis.yearsToFIRE).toBe(null);
       expect(analysis.fireAge).toBe(null);
     });
@@ -229,7 +229,7 @@ describe('FIRE Calculations', () => {
       };
       const analysis = getFIREAnalysis(slowInputs);
 
-      expect(analysis.achievable).toBe(true);
+      expect(analysis.isAchievable).toBe(true);
       expect(analysis.yearsToFIRE).toBe(28);
     });
 
@@ -262,7 +262,7 @@ describe('FIRE Calculations', () => {
       };
       const analysis = getFIREAnalysis(quickFireInputs);
 
-      expect(analysis.achievable).toBe(true);
+      expect(analysis.isAchievable).toBe(true);
       expect(analysis.yearsToFIRE).toBe(5);
     });
   });

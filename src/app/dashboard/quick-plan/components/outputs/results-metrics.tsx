@@ -19,7 +19,7 @@ export default function ResultsMetrics() {
         {stats.map((item) => (
           <Card key={item.name} className="text-center sm:text-left">
             <dt className="text-muted-foreground truncate text-sm font-medium">{item.name}</dt>
-            <dd className="text-foreground mt-1 text-3xl font-semibold tracking-tight">{formatNumber(item.stat)}</dd>
+            <dd className="text-foreground mt-1 text-3xl font-semibold tracking-tight">{item.stat ? formatNumber(item.stat) : 'N/A'}</dd>
           </Card>
         ))}
       </dl>
