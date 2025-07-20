@@ -28,13 +28,11 @@ export const calculateWeightedPortfolioReturnNominal = (
 
 // Helper function to calculate real portfolio return
 export const calculateWeightedPortfolioReturnReal = (allocation: AllocationInputs, marketAssumptions: MarketAssumptionsInputs): number => {
-  const { inflationRate } = marketAssumptions;
-
   // Get nominal return using the nominal function
   const nominalReturn = calculateWeightedPortfolioReturnNominal(allocation, marketAssumptions);
 
   // Calculate real return (adjust for inflation)
-  const realReturn = (1 + nominalReturn / 100) / (1 + inflationRate / 100) - 1;
+  const realReturn = (1 + nominalReturn / 100) / (1 + marketAssumptions.inflationRate / 100) - 1;
 
   return realReturn * 100;
 };
