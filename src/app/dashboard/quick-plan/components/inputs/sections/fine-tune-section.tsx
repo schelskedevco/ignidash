@@ -34,23 +34,6 @@ function getInflationRateDescription() {
   );
 }
 
-function getExpectedReturnsDescription() {
-  return (
-    <>
-      Expected nominal returns for each asset class based on{' '}
-      <a
-        href="https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histretSP.html"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-foreground hover:text-foreground/80 underline"
-      >
-        historical data
-      </a>
-      .
-    </>
-  );
-}
-
 function getSafeWithdrawalRateDescription() {
   return (
     <>
@@ -119,7 +102,7 @@ export default function FineTuneSection() {
           </form>
         </Card>
         <div className="space-y-4">
-          <DisclosureCard title="Expected Returns" desc={getExpectedReturnsDescription()} icon={ChartBarIcon}>
+          <DisclosureCard title="Expected Returns" desc="Expected nominal returns for each asset class." icon={ChartBarIcon}>
             <form onSubmit={(e) => e.preventDefault()}>
               <fieldset className="space-y-4">
                 <legend className="sr-only">Expected investment returns configuration</legend>
