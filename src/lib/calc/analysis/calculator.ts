@@ -6,7 +6,7 @@ import { calculateRequiredPortfolio, calculateFuturePortfolioValue } from '../co
  * Calculate the number of years until FIRE (Financial Independence, Retire Early)
  * Returns -1 if FIRE is not achievable within 100 years or if required data is missing
  */
-export const calculateYearsToFIRE = (inputs: QuickPlanInputs, maxYears: number = 100): number | null => {
+export const calculateYearsToFIRE = (inputs: QuickPlanInputs, maxYears: number = 100, calculateInNominalTerms: boolean): number | null => {
   const requiredPortfolio = calculateRequiredPortfolio(inputs.goals.retirementExpenses, inputs.retirementFunding.safeWithdrawalRate);
   if (requiredPortfolio === null) {
     console.warn('Cannot calculate years to FIRE: required portfolio is missing');
@@ -30,7 +30,7 @@ export const calculateYearsToFIRE = (inputs: QuickPlanInputs, maxYears: number =
 
   while (low <= high) {
     const mid = Math.floor((low + high) / 2);
-    const futureValue = calculateFuturePortfolioValue(inputs, mid, false); // Use real terms
+    const futureValue = calculateFuturePortfolioValue(inputs, mid, calculateInNominalTerms);
 
     if (futureValue === null) {
       return null; // Error in calculation
@@ -51,14 +51,14 @@ export const calculateYearsToFIRE = (inputs: QuickPlanInputs, maxYears: number =
  * Calculate the age at which someone can achieve FIRE
  * Returns -1 if FIRE is not achievable or if required data is missing
  */
-export const calculateFIREAge = (inputs: QuickPlanInputs): number | null => {
+export const calculateFIREAge = (inputs: QuickPlanInputs, calculateInNominalTerms: boolean): number | null => {
   const { currentAge } = inputs.basics;
   if (currentAge === null) {
     console.warn('Cannot calculate FIRE age: current age is required');
     return null;
   }
 
-  const yearsToFIRE = calculateYearsToFIRE(inputs);
+  const yearsToFIRE = calculateYearsToFIRE(inputs, 100, calculateInNominalTerms);
   if (yearsToFIRE === null) {
     console.warn('Cannot calculate FIRE age: years to FIRE is required');
     return null;
@@ -72,15 +72,16 @@ export const calculateFIREAge = (inputs: QuickPlanInputs): number | null => {
  * Provides more context about the FIRE calculation
  */
 export const getFIREAnalysis = (
-  inputs: QuickPlanInputs
+  inputs: QuickPlanInputs,
+  calculateInNominalTerms: boolean
 ): {
   isAchievable: boolean;
   fireAge: number | null;
   yearsToFIRE: number | null;
   requiredPortfolio: number | null;
 } => {
-  const fireAge = calculateFIREAge(inputs);
-  const yearsToFIRE = calculateYearsToFIRE(inputs);
+  const fireAge = calculateFIREAge(inputs, calculateInNominalTerms);
+  const yearsToFIRE = calculateYearsToFIRE(inputs, 100, calculateInNominalTerms);
   const requiredPortfolio = calculateRequiredPortfolio(inputs.goals.retirementExpenses, inputs.retirementFunding.safeWithdrawalRate);
 
   return {

@@ -47,7 +47,7 @@ describe('FIRE Calculations', () => {
 
   describe('calculateYearsToFIRE', () => {
     it('should calculate years to FIRE for a typical scenario', () => {
-      const years = calculateYearsToFIRE(baseInputs);
+      const years = calculateYearsToFIRE(baseInputs, 100, false);
       // With $100k starting, $40k/year savings (0% real growth), 5.34% real return
       // Need to reach $1M (40k/0.04)
       // Solving: 100k * 1.0534^n + 40k * [(1.0534^n - 1) / 0.0534] ≥ 1M
@@ -63,7 +63,7 @@ describe('FIRE Calculations', () => {
           investedAssets: 2000000, // Already wealthy
         },
       };
-      const years = calculateYearsToFIRE(wealthyInputs);
+      const years = calculateYearsToFIRE(wealthyInputs, 100, false);
       expect(years).toBe(0);
     });
 
@@ -75,7 +75,7 @@ describe('FIRE Calculations', () => {
           retirementExpenses: null,
         },
       };
-      const years = calculateYearsToFIRE(invalidInputs);
+      const years = calculateYearsToFIRE(invalidInputs, 100, false);
       expect(years).toBe(null);
     });
 
@@ -89,7 +89,7 @@ describe('FIRE Calculations', () => {
           investedAssets: 1000,
         },
       };
-      const years = calculateYearsToFIRE(lowSavingsInputs, 100);
+      const years = calculateYearsToFIRE(lowSavingsInputs, 100, false);
       // With only $1k starting and $1k/year savings at 5.34% real
       // Need to reach $1M
       // This will take 76 years (portfolio = $1,009,518)
@@ -105,7 +105,7 @@ describe('FIRE Calculations', () => {
           annualExpenses: 30000, // $120k/year savings
         },
       };
-      const years = calculateYearsToFIRE(highSavingsInputs);
+      const years = calculateYearsToFIRE(highSavingsInputs, 100, false);
       // With $100k starting, $120k/year savings, 5.34% real return
       // Need to reach $1M
       // This takes approximately 7 years
@@ -122,7 +122,7 @@ describe('FIRE Calculations', () => {
           annualExpenses: 60000, // Zero savings
         },
       };
-      const years = calculateYearsToFIRE(goodStartInputs);
+      const years = calculateYearsToFIRE(goodStartInputs, 100, false);
       // $800k growing at 5.34% real needs to reach $1M
       // 800k * 1.0534^n = 1M
       // n = ln(1.25) / ln(1.0534) ≈ 4.3 years
@@ -132,7 +132,7 @@ describe('FIRE Calculations', () => {
 
   describe('calculateFIREAge', () => {
     it('should calculate FIRE age correctly', () => {
-      const fireAge = calculateFIREAge(baseInputs);
+      const fireAge = calculateFIREAge(baseInputs, false);
       // Current age 30 + 14 years to FIRE = 44
       expect(fireAge).toBe(44);
     });
@@ -145,7 +145,7 @@ describe('FIRE Calculations', () => {
           investedAssets: 2000000,
         },
       };
-      const fireAge = calculateFIREAge(wealthyInputs);
+      const fireAge = calculateFIREAge(wealthyInputs, false);
       expect(fireAge).toBe(30);
     });
 
@@ -157,7 +157,7 @@ describe('FIRE Calculations', () => {
           currentAge: null,
         },
       };
-      const fireAge = calculateFIREAge(invalidInputs);
+      const fireAge = calculateFIREAge(invalidInputs, false);
       expect(fireAge).toBe(null);
     });
 
@@ -171,7 +171,7 @@ describe('FIRE Calculations', () => {
           investedAssets: 100,
         },
       };
-      const fireAge = calculateFIREAge(lowSavingsInputs);
+      const fireAge = calculateFIREAge(lowSavingsInputs, false);
       // With minimal savings, FIRE takes ~90 years
       // Age 30 + 90 = 120
       expect(fireAge).toBe(120);
@@ -180,7 +180,7 @@ describe('FIRE Calculations', () => {
 
   describe('getFIREAnalysis', () => {
     it('should provide complete FIRE analysis for achievable scenario', () => {
-      const analysis = getFIREAnalysis(baseInputs);
+      const analysis = getFIREAnalysis(baseInputs, false);
 
       expect(analysis.isAchievable).toBe(true);
       expect(analysis.yearsToFIRE).toBe(14);
@@ -196,7 +196,7 @@ describe('FIRE Calculations', () => {
           investedAssets: 1500000,
         },
       };
-      const analysis = getFIREAnalysis(wealthyInputs);
+      const analysis = getFIREAnalysis(wealthyInputs, false);
 
       expect(analysis.isAchievable).toBe(true);
       expect(analysis.yearsToFIRE).toBe(0);
@@ -211,7 +211,7 @@ describe('FIRE Calculations', () => {
           retirementExpenses: null,
         },
       };
-      const analysis = getFIREAnalysis(invalidInputs);
+      const analysis = getFIREAnalysis(invalidInputs, false);
 
       expect(analysis.isAchievable).toBe(false);
       expect(analysis.yearsToFIRE).toBe(null);
@@ -227,7 +227,7 @@ describe('FIRE Calculations', () => {
           annualExpenses: 50000, // $10k/year savings
         },
       };
-      const analysis = getFIREAnalysis(slowInputs);
+      const analysis = getFIREAnalysis(slowInputs, false);
 
       expect(analysis.isAchievable).toBe(true);
       expect(analysis.yearsToFIRE).toBe(28);
@@ -245,7 +245,7 @@ describe('FIRE Calculations', () => {
           safeWithdrawalRate: 3.5,
         },
       };
-      const analysis = getFIREAnalysis(customInputs);
+      const analysis = getFIREAnalysis(customInputs, false);
 
       expect(analysis.requiredPortfolio).toBeCloseTo(1428571.43, 2);
     });
@@ -260,7 +260,7 @@ describe('FIRE Calculations', () => {
           investedAssets: 200000,
         },
       };
-      const analysis = getFIREAnalysis(quickFireInputs);
+      const analysis = getFIREAnalysis(quickFireInputs, false);
 
       expect(analysis.isAchievable).toBe(true);
       expect(analysis.yearsToFIRE).toBe(5);
@@ -278,7 +278,7 @@ describe('FIRE Calculations', () => {
           investedAssets: 500000,
         },
       };
-      const years = calculateYearsToFIRE(zeroIncomeInputs);
+      const years = calculateYearsToFIRE(zeroIncomeInputs, 100, false);
       // $500k with -$40k/year withdrawals at 5.34% real return
       // Portfolio shrinks over time, will never reach $1M
       expect(years).toBe(null);
@@ -294,7 +294,7 @@ describe('FIRE Calculations', () => {
           investedAssets: 900000, // Close to FIRE already
         },
       };
-      const years = calculateYearsToFIRE(withdrawingButGrowingInputs);
+      const years = calculateYearsToFIRE(withdrawingButGrowingInputs, 100, false);
       // $900k with -$20k/year withdrawals at 5.34% real return
       // Growth: $48k/year, Withdrawal: $20k/year, Net: +$28k/year
       // Should still reach $1M in about 4 years
@@ -309,7 +309,7 @@ describe('FIRE Calculations', () => {
           safeWithdrawalRate: 6, // Very high
         },
       };
-      const analysis = getFIREAnalysis(highWithdrawalInputs);
+      const analysis = getFIREAnalysis(highWithdrawalInputs, false);
 
       // Required portfolio = $40k / 0.06 = $666,667
       expect(analysis.requiredPortfolio).toBeCloseTo(666666.67, 2);
@@ -327,7 +327,7 @@ describe('FIRE Calculations', () => {
           inflationRate: 5, // Higher than returns
         },
       };
-      const years = calculateYearsToFIRE(negativeReturnInputs);
+      const years = calculateYearsToFIRE(negativeReturnInputs, 100, false);
       // Nominal return: 0.7*3% + 0.3*2% = 2.7%
       // Real return: (1.027/1.05) - 1 = -2.19%
       // With negative real returns, portfolio shrinks in real terms
@@ -342,7 +342,7 @@ describe('FIRE Calculations', () => {
           investedAssets: 1000000, // Exactly at FIRE
         },
       };
-      const years = calculateYearsToFIRE(exactFIREInputs);
+      const years = calculateYearsToFIRE(exactFIREInputs, 100, false);
       expect(years).toBe(0);
     });
 
@@ -354,7 +354,7 @@ describe('FIRE Calculations', () => {
           investedAssets: 999999, // $1 short of FIRE
         },
       };
-      const years = calculateYearsToFIRE(almostFIREInputs);
+      const years = calculateYearsToFIRE(almostFIREInputs, 100, false);
       // Should need 1 year to make up the difference with growth/contributions
       expect(years).toBe(1);
     });
@@ -404,7 +404,7 @@ describe('FIRE Calculations - Additional Validation', () => {
         },
       };
 
-      const years = calculateYearsToFIRE(firecalcInputs);
+      const years = calculateYearsToFIRE(firecalcInputs, 100, false);
       // With 4% real return (7% - 3%), should be around 16-17 years
       expect(years).toBeGreaterThanOrEqual(15);
       expect(years).toBeLessThanOrEqual(18);
@@ -449,7 +449,7 @@ describe('FIRE Calculations - Additional Validation', () => {
         },
       };
 
-      const analysis = getFIREAnalysis(pcInputs);
+      const analysis = getFIREAnalysis(pcInputs, false);
       // $50k expenses / 4% = $1.25M needed
       expect(analysis.requiredPortfolio).toBe(1250000);
       // With $50k/year savings and good returns, should be 11-14 years
@@ -498,7 +498,7 @@ describe('FIRE Calculations - Additional Validation', () => {
         },
       };
 
-      const years = calculateYearsToFIRE(inputs)!;
+      const years = calculateYearsToFIRE(inputs, 100, false)!;
       const futureValue = calculateFuturePortfolioValue(inputs, years, false);
       const requiredPortfolio = 40000 / 0.04;
 
@@ -608,7 +608,7 @@ describe('FIRE Calculations - Additional Validation', () => {
         },
       };
 
-      const years = calculateYearsToFIRE(extremeInputs);
+      const years = calculateYearsToFIRE(extremeInputs, 100, false);
       // With 16.5% real return (20% - 3% inflation adjusted), should be about 9 years
       expect(years).toBe(9);
       expect(years).toBeGreaterThan(0);
@@ -652,7 +652,7 @@ describe('FIRE Calculations - Additional Validation', () => {
         },
       };
 
-      const years = calculateYearsToFIRE(zeroReturnInputs);
+      const years = calculateYearsToFIRE(zeroReturnInputs, 100, false);
       // Need $1M, have $100k, save $40k/year with 0% growth
       // Should take exactly (1000000 - 100000) / 40000 = 22.5 years
       expect(years).toBe(23); // Rounds up
@@ -702,7 +702,7 @@ describe('FIRE Calculations - Additional Validation', () => {
       // Run multiple times
       const results = [];
       for (let i = 0; i < 5; i++) {
-        results.push(calculateYearsToFIRE(inputs));
+        results.push(calculateYearsToFIRE(inputs, 100, false));
       }
 
       // All results should be identical
@@ -757,7 +757,7 @@ describe('FIRE Calculations - Additional Validation', () => {
             annualExpenses: 100000 - savings,
           },
         };
-        return calculateYearsToFIRE(inputs)!;
+        return calculateYearsToFIRE(inputs, 100, false)!;
       });
 
       // Years to FIRE should decrease as savings increase
@@ -808,7 +808,7 @@ describe('FIRE Calculations - Additional Validation', () => {
         },
       };
 
-      const years = calculateYearsToFIRE(coastInputs);
+      const years = calculateYearsToFIRE(coastInputs, 100, false);
       // $250k growing at ~5.9% real to reach $1M
       // ln(4) / ln(1.059) ≈ 24 years
       expect(years).toBeGreaterThan(20);
@@ -854,7 +854,7 @@ describe('FIRE Calculations - Additional Validation', () => {
         },
       };
 
-      const analysis = getFIREAnalysis(baristaInputs);
+      const analysis = getFIREAnalysis(baristaInputs, false);
       // Need only $625k instead of $1M
       expect(analysis.requiredPortfolio).toBe(625000);
       expect(analysis.yearsToFIRE).toBeLessThan(10);
@@ -902,7 +902,7 @@ describe('Property-Based Validation', () => {
       },
     };
 
-    const lowReturnYears = calculateYearsToFIRE(baseInputs)!;
+    const lowReturnYears = calculateYearsToFIRE(baseInputs, 100, false)!;
 
     const highReturnInputs = {
       ...baseInputs,
@@ -912,7 +912,7 @@ describe('Property-Based Validation', () => {
       },
     };
 
-    const highReturnYears = calculateYearsToFIRE(highReturnInputs);
+    const highReturnYears = calculateYearsToFIRE(highReturnInputs, 100, false)!;
 
     expect(highReturnYears).toBeLessThan(lowReturnYears);
   });
@@ -955,7 +955,7 @@ describe('Property-Based Validation', () => {
       },
     };
 
-    const years = calculateYearsToFIRE(impossibleInputs);
+    const years = calculateYearsToFIRE(impossibleInputs, 100, false);
     expect(years).toBe(null);
   });
 });
