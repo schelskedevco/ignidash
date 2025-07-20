@@ -169,7 +169,7 @@ export default function FineTuneSection() {
             </form>
           </DisclosureCard>
           <DisclosureCard
-            title="Cash Flow"
+            title="Retirement Cash Flow"
             desc="Portfolio withdrawals and income sources that will cover your retirement expenses."
             icon={BanknotesIcon}
           >
