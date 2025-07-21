@@ -129,13 +129,10 @@ export const calculateFuturePortfolioValueAfterRetirement = (
     // Beginning-of-year withdrawal
     portfolioValue -= grossWithdrawal;
 
-    // If portfolio goes negative, return 0 (portfolio depleted)
-    if (portfolioValue < 0) {
-      return 0;
+    // Portfolio grows for the rest of the year (only if positive)
+    if (portfolioValue > 0) {
+      portfolioValue *= 1 + rateOfReturn;
     }
-
-    // Portfolio grows for the rest of the year
-    portfolioValue *= 1 + rateOfReturn;
 
     // If passive income exceeds expenses, add surplus as end-of-year contribution
     if (surplus > 0) {
@@ -156,13 +153,10 @@ export const calculateFuturePortfolioValueAfterRetirement = (
     const proratedWithdrawal = grossWithdrawal * partialYear;
     portfolioValue -= proratedWithdrawal;
 
-    // If portfolio goes negative, return 0 (portfolio depleted)
-    if (portfolioValue < 0) {
-      return 0;
+    // Portfolio grows for the partial year (only if positive)
+    if (portfolioValue > 0) {
+      portfolioValue *= Math.pow(1 + rateOfReturn, partialYear);
     }
-
-    // Portfolio grows for the partial year
-    portfolioValue *= Math.pow(1 + rateOfReturn, partialYear);
 
     // If passive income exceeds expenses, add prorated surplus as end-of-period contribution
     if (surplus > 0) {
