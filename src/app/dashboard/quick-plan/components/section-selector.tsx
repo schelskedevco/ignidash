@@ -49,7 +49,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
         </select>
         <ChevronDownIcon
           aria-hidden="true"
-          className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end"
+          className="text-muted-foreground pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end"
         />
       </div>
 
