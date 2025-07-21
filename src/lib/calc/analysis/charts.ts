@@ -1,6 +1,6 @@
 import { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 
-import { calculateFuturePortfolioValue, calculatePostFIREPortfolioValue } from '../core/projections';
+import { calculateFuturePortfolioValue, calculateFuturePortfolioValueAfterRetirement } from '../core/projections';
 
 export interface ChartDataPoint {
   age: number;
@@ -36,7 +36,7 @@ export const getFIREChartData = (inputs: QuickPlanInputs, fireAge: number | null
   for (const age of sortedAges) {
     const portfolioValue =
       fireAge !== null && age >= fireAge && portfolioValueAtFIRE !== null
-        ? calculatePostFIREPortfolioValue(inputs, portfolioValueAtFIRE, age - fireAge)
+        ? calculateFuturePortfolioValueAfterRetirement(inputs, portfolioValueAtFIRE, age - fireAge)
         : calculateFuturePortfolioValue(inputs, age - startAge);
 
     if (portfolioValue !== null) {

@@ -67,7 +67,7 @@ export const calculateFuturePortfolioValue = (inputs: QuickPlanInputs, years: nu
 };
 
 // Calculate portfolio value after FIRE age with retirement withdrawals
-export const calculatePostFIREPortfolioValue = (
+export const calculateFuturePortfolioValueAfterRetirement = (
   inputs: QuickPlanInputs,
   startingPortfolioValue: number,
   yearsInRetirement: number

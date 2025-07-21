@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 
 import { defaultState } from '@/lib/stores/quick-plan-store';
 
-import { calculateRequiredPortfolio, calculateFuturePortfolioValue, calculatePostFIREPortfolioValue } from './projections';
+import { calculateRequiredPortfolio, calculateFuturePortfolioValue, calculateFuturePortfolioValueAfterRetirement } from './projections';
 
 describe('calculateRequiredPortfolio', () => {
   it('should return 1,000,000 for 40,000 retirement expenses with 4% SWR', () => {
@@ -331,7 +331,7 @@ describe('calculateFuturePortfolioValue', () => {
   });
 });
 
-describe('calculatePostFIREPortfolioValue', () => {
+describe('calculateFuturePortfolioValueAfterRetirement', () => {
   const baseInputs = {
     ...defaultState.inputs,
     goals: {
@@ -365,7 +365,7 @@ describe('calculatePostFIREPortfolioValue', () => {
     // Nominal return: (0.6 × 8%) + (0.4 × 4%) = 6.4%
     // Real return: (1.064 / 1.03) - 1 = 3.3009%
 
-    const result = calculatePostFIREPortfolioValue(baseInputs, 1000000, 1);
+    const result = calculateFuturePortfolioValueAfterRetirement(baseInputs, 1000000, 1);
 
     // After 1 year:
     // Start: $1,000,000
@@ -389,7 +389,7 @@ describe('calculatePostFIREPortfolioValue', () => {
     // Retirement expenses: $80,000
     // No withdrawal needed, portfolio just grows
 
-    const result = calculatePostFIREPortfolioValue(highIncomeInputs, 1000000, 1);
+    const result = calculateFuturePortfolioValueAfterRetirement(highIncomeInputs, 1000000, 1);
 
     // Portfolio grows by real return: $1,000,000 × 1.033009 = $1,033,009
     expect(result).toBeCloseTo(1033010, 0);
@@ -405,13 +405,13 @@ describe('calculatePostFIREPortfolioValue', () => {
 
     // With only $50,000 starting portfolio and high expenses,
     // the portfolio should be depleted quickly
-    const result = calculatePostFIREPortfolioValue(smallPortfolioInputs, 50000, 1);
+    const result = calculateFuturePortfolioValueAfterRetirement(smallPortfolioInputs, 50000, 1);
 
     expect(result).toBe(0);
   });
 
   it('should calculate multiple years correctly', () => {
-    const result = calculatePostFIREPortfolioValue(baseInputs, 1000000, 3);
+    const result = calculateFuturePortfolioValueAfterRetirement(baseInputs, 1000000, 3);
 
     // Year 1: $1,000,000 - $76,667 = $923,333 → $923,333 × 1.033009 = $953,812
     // Year 2: $953,812 - $76,667 = $877,145 → $877,145 × 1.033009 = $906,090
@@ -429,7 +429,7 @@ describe('calculatePostFIREPortfolioValue', () => {
       },
     };
 
-    const result = calculatePostFIREPortfolioValue(invalidInputs, 1000000, 1);
+    const result = calculateFuturePortfolioValueAfterRetirement(invalidInputs, 1000000, 1);
 
     expect(consoleSpy).toHaveBeenCalledWith('Cannot calculate post-FIRE portfolio value: retirement expenses is required');
     expect(result).toBe(null);
@@ -450,7 +450,7 @@ describe('calculatePostFIREPortfolioValue', () => {
     // Shortfall: $50,000
     // No tax on withdrawal: $50,000 needed
 
-    const result = calculatePostFIREPortfolioValue(noTaxInputs, 1000000, 1);
+    const result = calculateFuturePortfolioValueAfterRetirement(noTaxInputs, 1000000, 1);
 
     // After 1 year:
     // Start: $1,000,000
