@@ -24,11 +24,7 @@ export const calculateFuturePortfolioValue = (inputs: QuickPlanInputs, years: nu
   // Get return rate as decimal
   const rateOfReturn = calculateWeightedPortfolioReturnReal(inputs.allocation, inputs.marketAssumptions) / 100;
 
-  // Current assets grow for the full period
-  const futureValueOfAssets = investedAssets * Math.pow(1 + rateOfReturn, years);
-
-  // Calculate future value of all contributions
-  let futureValueOfContributions = 0;
+  let portfolioValue = investedAssets;
 
   // Handle full years
   const fullYears = Math.floor(years);
@@ -41,15 +37,13 @@ export const calculateFuturePortfolioValue = (inputs: QuickPlanInputs, years: nu
       return null;
     }
 
-    // Contribution made at end of year, so it grows for (years - year - 1) periods
-    const growthPeriods = years - year - 1;
-    if (contribution >= 0) {
-      // Positive contributions grow with returns
-      futureValueOfContributions += contribution * Math.pow(1 + rateOfReturn, growthPeriods);
-    } else {
-      // Negative contributions (withdrawals) don't earn returns, just reduce the total
-      futureValueOfContributions += contribution;
+    // Portfolio grows for the year (only if positive)
+    if (portfolioValue > 0) {
+      portfolioValue *= 1 + rateOfReturn;
     }
+
+    // Add contribution at end of year
+    portfolioValue += contribution;
   }
 
   // Handle partial year if present
@@ -63,13 +57,17 @@ export const calculateFuturePortfolioValue = (inputs: QuickPlanInputs, years: nu
       return null;
     }
 
-    // For partial year, contribution is prorated and made at the end of the partial period
-    // So it has no growth period (added at the very end)
+    // Portfolio grows for the partial year (only if positive)
+    if (portfolioValue > 0) {
+      portfolioValue *= Math.pow(1 + rateOfReturn, partialYear);
+    }
+
+    // Add prorated contribution at end of partial year
     const proratedContribution = partialYearContribution * partialYear;
-    futureValueOfContributions += proratedContribution;
+    portfolioValue += proratedContribution;
   }
 
-  return futureValueOfAssets + futureValueOfContributions;
+  return portfolioValue;
 };
 
 // Helper function to calculate retirement withdrawal and surplus for a given age
