@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
       <p className="mb-1 text-sm font-medium">Age {label}</p>
       <p className="text-sm">
         Portfolio Value:
-        <span className="ml-1 font-medium">{formatNumber(payload[0].value)}</span>
+        <span className="ml-1 font-medium">{formatNumber(payload[0].value, 3)}</span>
       </p>
     </div>
   );
