@@ -9,7 +9,7 @@ type ActiveSection = 'results' | 'your-numbers';
 
 const tabs = [
   {
-    name: 'Your Numbers',
+    name: 'Numbers',
     icon: CalculatorIcon,
     value: 'your-numbers' as ActiveSection,
   },
