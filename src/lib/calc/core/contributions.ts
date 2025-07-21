@@ -21,3 +21,34 @@ export const calculateYearlyContribution = (inputs: QuickPlanInputs, year: numbe
 
   return futureIncome - futureExpenses;
 };
+
+// Helper function to calculate retirement withdrawal and surplus for a given age
+export const calculateRetirementCashFlow = (
+  retirementExpenses: number,
+  retirementIncome: number,
+  effectiveTaxRate: number,
+  currentAge: number
+): { grossWithdrawal: number; surplus: number } => {
+  // Only apply retirement income if age 62 or older
+  const applicableRetirementIncome = currentAge >= 62 ? retirementIncome : 0;
+
+  // Calculate net passive income (after taxes)
+  const netPassiveIncome = applicableRetirementIncome * (1 - effectiveTaxRate / 100);
+
+  // Calculate after-tax shortfall that needs to be covered by withdrawals
+  const afterTaxShortfall = retirementExpenses - netPassiveIncome;
+
+  // If passive income covers all expenses, no withdrawal needed
+  let grossWithdrawal = 0;
+  let surplus = 0;
+
+  if (afterTaxShortfall > 0) {
+    // Calculate gross withdrawal needed (includes taxes on the withdrawal)
+    grossWithdrawal = afterTaxShortfall / (1 - effectiveTaxRate / 100);
+  } else {
+    // Passive income exceeds expenses, calculate surplus
+    surplus = Math.abs(afterTaxShortfall);
+  }
+
+  return { grossWithdrawal, surplus };
+};
