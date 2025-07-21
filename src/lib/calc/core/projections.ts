@@ -160,8 +160,7 @@ export const calculateFuturePortfolioValueAfterRetirement = (
 
     // If passive income exceeds expenses, add prorated surplus as end-of-period contribution
     if (surplus > 0) {
-      const proratedSurplus = surplus * partialYear;
-      portfolioValue += proratedSurplus;
+      portfolioValue += surplus * partialYear;
     }
   }
 
