@@ -38,8 +38,8 @@ export default function Drawer({ open, setOpen, title = 'Settings', children }: 
                   </button>
                 </div>
               </TransitionChild>
-              <div className="flex h-full flex-col overflow-y-auto">
-                <div className="bg-emphasized-background flex items-center justify-between px-4 py-6 sm:px-6">
+              <div className="border-border flex h-full flex-col overflow-y-auto border-l">
+                <div className="bg-emphasized-background border-border flex items-center justify-between border-b px-4 py-6 sm:px-6">
                   <DialogTitle className="text-xl font-semibold tracking-tight">{title}</DialogTitle>
                   <button
                     type="button"
