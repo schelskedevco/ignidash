@@ -26,33 +26,31 @@ interface SectionSelectorProps {
 
 export default function SectionSelector({ activeSection, setActiveSection }: SectionSelectorProps) {
   return (
-    <div className="mb-5">
-      <div className="border-border border-b">
-        <nav aria-label="Tabs" className="-mb-px flex space-x-8">
-          {tabs.map((tab) => (
-            <button
-              key={tab.name}
-              onClick={() => setActiveSection(tab.value)}
-              aria-current={tab.value === activeSection ? 'page' : undefined}
+    <div className="border-border mb-5 border-b">
+      <nav aria-label="Tabs" className="-mb-px flex space-x-8">
+        {tabs.map((tab) => (
+          <button
+            key={tab.name}
+            onClick={() => setActiveSection(tab.value)}
+            aria-current={tab.value === activeSection ? 'page' : undefined}
+            className={cn(
+              tab.value === activeSection
+                ? 'border-primary text-primary'
+                : 'hover:border-primary/75 hover:text-primary/75 text-muted-foreground border-transparent',
+              'group focus-outline inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium'
+            )}
+          >
+            <tab.icon
+              aria-hidden="true"
               className={cn(
-                tab.value === activeSection
-                  ? 'border-primary text-primary'
-                  : 'hover:border-primary/75 hover:text-primary/75 text-muted-foreground border-transparent',
-                'group focus-outline inline-flex items-center border-b-2 px-1 py-4 text-sm font-medium'
+                tab.value === activeSection ? 'text-primary' : 'group-hover:text-primary/75 text-muted-foreground',
+                'mr-2 -ml-0.5 size-5'
               )}
-            >
-              <tab.icon
-                aria-hidden="true"
-                className={cn(
-                  tab.value === activeSection ? 'text-primary' : 'group-hover:text-primary/75 text-muted-foreground',
-                  'mr-2 -ml-0.5 size-5'
-                )}
-              />
-              <span>{tab.name}</span>
-            </button>
-          ))}
-        </nav>
-      </div>
+            />
+            <span>{tab.name}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }
