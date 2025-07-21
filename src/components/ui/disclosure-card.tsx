@@ -14,7 +14,7 @@ export default function DisclosureCard({ title, desc, icon: Icon, children }: Di
   return (
     <Disclosure
       as="div"
-      className="bg-emphasized-background border-border my-4 rounded-lg border shadow-sm transition-shadow duration-300 ease-in-out hover:shadow-lg"
+      className="bg-emphasized-background border-border shadow-foreground/10 my-4 rounded-lg border shadow-sm transition-shadow duration-300 ease-in-out hover:shadow-lg"
     >
       <DisclosureButton className="group data-open:border-border focus-outline flex w-full items-center justify-between p-4 data-open:border-b data-open:pb-5">
         <div className="flex w-full items-center justify-between text-left">
