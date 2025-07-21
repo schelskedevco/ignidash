@@ -25,6 +25,8 @@ interface SectionSelectorProps {
 }
 
 export default function SectionSelector({ activeSection, setActiveSection }: SectionSelectorProps) {
+  // current ? 'bg-background text-primary ring-primary ring' : 'hover:bg-background',
+  //       'group focus-outline flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold'
   return (
     <div className="mb-5">
       {/* Mobile Navigation */}
@@ -34,22 +36,22 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
             type="button"
             onClick={() => setActiveSection('your-numbers')}
             className={cn(
-              activeSection === 'your-numbers' ? '' : '',
-              'bg-emphasized-background ring-border hover:bg-background relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10'
+              activeSection === 'your-numbers' ? 'text-primary' : 'hover:text-primary/75 text-muted-foreground',
+              'ring-border relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10'
             )}
           >
-            <CalculatorIcon className="text-primary mr-2 -ml-0.5 size-5" aria-hidden="true" />
+            <CalculatorIcon aria-hidden="true" className="mr-2 -ml-0.5 size-5" />
             Numbers
           </button>
           <button
             type="button"
             onClick={() => setActiveSection('results')}
             className={cn(
-              activeSection === 'results' ? '' : '',
-              'bg-emphasized-background ring-border hover:bg-background relative -ml-px inline-flex items-center rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10'
+              activeSection === 'results' ? 'text-primary' : 'hover:text-primary/75 text-muted-foreground',
+              'ring-border relative -ml-px inline-flex items-center rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10'
             )}
           >
-            <PresentationChartLineIcon className="text-primary mr-2 -ml-0.5 size-5" aria-hidden="true" />
+            <PresentationChartLineIcon aria-hidden="true" className="mr-2 -ml-0.5 size-5" />
             Results
           </button>
         </span>
