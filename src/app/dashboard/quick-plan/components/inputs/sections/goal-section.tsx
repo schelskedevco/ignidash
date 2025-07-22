@@ -12,7 +12,11 @@ export default function GoalSection() {
 
   return (
     <SectionContainer showBottomBorder>
-      <SectionHeader title="Retirement Goal" desc="Your retirement spending level determines when you'll have enough to retire." />
+      <SectionHeader
+        title="Retirement Goal"
+        desc="Your retirement spending level determines when you'll have enough to retire."
+        status="complete"
+      />
       <Card>
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset className="space-y-4">

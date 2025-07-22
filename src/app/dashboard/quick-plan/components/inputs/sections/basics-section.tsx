@@ -86,7 +86,11 @@ export default function BasicsSection() {
 
   return (
     <SectionContainer showBottomBorder>
-      <SectionHeader title="Financial Foundation" desc="Enter the core numbers needed to estimate your financial independence timeline." />
+      <SectionHeader
+        title="Financial Foundation"
+        desc="Enter the core numbers needed to estimate your financial independence timeline."
+        status="complete"
+      />
       <Card>
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset className="space-y-4">
