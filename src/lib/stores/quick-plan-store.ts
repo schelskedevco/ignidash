@@ -251,7 +251,9 @@ export const useQuickPlanStore = create<QuickPlanState>()(
       })),
       {
         name: 'quick-plan-storage',
-        version: 1,
+        version: 2,
+        // Simple migration: just use defaults for any version change
+        migrate: () => defaultState,
         // Only persist the inputs and preferences state, not the actions
         partialize: (state) => {
           const baseResult = { preferences: state.preferences };
