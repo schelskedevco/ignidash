@@ -111,7 +111,7 @@ export default function FineTuneSection() {
                   label={
                     <div className="flex w-full items-center justify-between">
                       <span>Stock Returns (%)</span>
-                      <span className="text-muted-foreground">{stocksRealReturn.toFixed(1)}% real</span>
+                      <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
                     </div>
                   }
                   value={marketAssumptions.stockReturn}
@@ -125,7 +125,7 @@ export default function FineTuneSection() {
                   label={
                     <div className="flex w-full items-center justify-between">
                       <span>Bond Returns (%)</span>
-                      <span className="text-muted-foreground">{bondsRealReturn.toFixed(1)}% real</span>
+                      <span className="text-muted-foreground text-sm/6">{bondsRealReturn.toFixed(1)}% real</span>
                     </div>
                   }
                   value={marketAssumptions.bondReturn}
@@ -139,7 +139,7 @@ export default function FineTuneSection() {
                   label={
                     <div className="flex w-full items-center justify-between">
                       <span>Cash Returns (%)</span>
-                      <span className="text-muted-foreground">{cashRealReturn.toFixed(1)}% real</span>
+                      <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
                     </div>
                   }
                   value={marketAssumptions.cashReturn}

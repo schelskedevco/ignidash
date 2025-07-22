@@ -21,7 +21,12 @@ export default function FIREPathsSection() {
             <legend className="sr-only">Coast FIRE target retirement age setting</legend>
             <NumberInput
               id="target-retirement-age"
-              label="Target Retirement Age"
+              label={
+                <div className="flex w-full items-center justify-between">
+                  <span>Target Retirement Age</span>
+                  <span className="text-muted-foreground text-sm/6">Optional</span>
+                </div>
+              }
               value={flexiblePaths.targetRetirementAge}
               onBlur={(value) => updateFlexiblePaths('targetRetirementAge', value)}
               inputMode="numeric"
@@ -38,7 +43,12 @@ export default function FIREPathsSection() {
             <legend className="sr-only">Barista FIRE part-time income configuration</legend>
             <NumberInput
               id="part-time-income"
-              label="Part-Time Income"
+              label={
+                <div className="flex w-full items-center justify-between">
+                  <span>Part-Time Income</span>
+                  <span className="text-muted-foreground text-sm/6">Optional</span>
+                </div>
+              }
               value={flexiblePaths.partTimeIncome}
               onBlur={(value) => updateFlexiblePaths('partTimeIncome', value)}
               inputMode="decimal"

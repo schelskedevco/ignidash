@@ -142,7 +142,7 @@ export default function BasicsSection() {
                   stocksDollarAmount > 0 ? (
                     <div className="flex w-full items-center justify-between">
                       <span>Stocks (%)</span>
-                      <span className="text-muted-foreground">${formatNumber(stocksDollarAmount, 1)}</span>
+                      <span className="text-muted-foreground text-sm/6">${formatNumber(stocksDollarAmount, 1)}</span>
                     </div>
                   ) : (
                     'Stocks (%)'
@@ -160,7 +160,7 @@ export default function BasicsSection() {
                   bondsDollarAmount > 0 ? (
                     <div className="flex w-full items-center justify-between">
                       <span>Bonds (%)</span>
-                      <span className="text-muted-foreground">${formatNumber(bondsDollarAmount, 1)}</span>
+                      <span className="text-muted-foreground text-sm/6">${formatNumber(bondsDollarAmount, 1)}</span>
                     </div>
                   ) : (
                     'Bonds (%)'
@@ -178,7 +178,7 @@ export default function BasicsSection() {
                   cashDollarAmount > 0 ? (
                     <div className="flex w-full items-center justify-between">
                       <span>Cash (%)</span>
-                      <span className="text-muted-foreground">${formatNumber(cashDollarAmount, 1)}</span>
+                      <span className="text-muted-foreground text-sm/6">${formatNumber(cashDollarAmount, 1)}</span>
                     </div>
                   ) : (
                     'Cash (%)'
@@ -209,7 +209,7 @@ export default function BasicsSection() {
                 label={
                   <div className="flex w-full items-center justify-between">
                     <span>Income Growth Rate (%)</span>
-                    <span className="text-muted-foreground">{incomeRealGrowthRate.toFixed(1)}% real</span>
+                    <span className="text-muted-foreground text-sm/6">{incomeRealGrowthRate.toFixed(1)}% real</span>
                   </div>
                 }
                 value={growthRates.incomeGrowthRate}
@@ -223,7 +223,7 @@ export default function BasicsSection() {
                 label={
                   <div className="flex w-full items-center justify-between">
                     <span>Spending Growth Rate (%)</span>
-                    <span className="text-muted-foreground">{expenseRealGrowthRate.toFixed(1)}% real</span>
+                    <span className="text-muted-foreground text-sm/6">{expenseRealGrowthRate.toFixed(1)}% real</span>
                   </div>
                 }
                 value={growthRates.expenseGrowthRate}
