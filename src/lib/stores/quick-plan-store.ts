@@ -52,7 +52,7 @@ type UpdateResult = {
 };
 
 type TouchedState = {
-  [K in keyof QuickPlanInputs]: Record<string, boolean>;
+  [K in keyof QuickPlanInputs]: boolean;
 };
 
 /**
@@ -75,17 +75,11 @@ const createSimpleUpdateAction = <T extends keyof QuickPlanInputs>(
     if (result.valid && result.data) {
       set((state) => {
         state.inputs[section] = result.data!;
-        state.touched[section] = {
-          ...state.touched[section],
-          [field]: true,
-        };
+        state.touched[section] = true;
       });
     } else {
       set((state) => {
-        state.touched[section] = {
-          ...state.touched[section],
-          [field]: true,
-        };
+        state.touched[section] = true;
       });
     }
 
@@ -169,13 +163,13 @@ export const defaultState: Pick<QuickPlanState, 'inputs' | 'touched' | 'preferen
     },
   },
   touched: {
-    basics: {},
-    growthRates: {},
-    allocation: {},
-    goals: {},
-    marketAssumptions: {},
-    retirementFunding: {},
-    flexiblePaths: {},
+    basics: false,
+    growthRates: false,
+    allocation: false,
+    goals: false,
+    marketAssumptions: false,
+    retirementFunding: false,
+    flexiblePaths: false,
   },
   preferences: {
     displayFormat: 'today',
@@ -242,11 +236,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
             const result = validateSection('allocation', data);
 
             set((state) => {
-              state.touched.allocation = {
-                stockAllocation: true,
-                bondAllocation: true,
-                cashAllocation: true,
-              };
+              state.touched.allocation = true;
 
               if (result.valid && result.data) {
                 state.inputs.allocation = result.data!;
