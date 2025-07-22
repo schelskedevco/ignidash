@@ -1101,3 +1101,373 @@ describe('Floating Point Precision Integration Tests', () => {
     }
   });
 });
+
+// Integration Stress Tests - Combining Multiple Edge Conditions
+describe('Integration Stress Tests', () => {
+  describe('Extreme Scenario Combinations', () => {
+    it('should handle maximum tax rate + minimum life expectancy + high savings', () => {
+      const extremeInputs: QuickPlanInputs = {
+        basics: {
+          currentAge: 45, // Starting late
+          annualIncome: 300000, // Very high income
+          annualExpenses: 50000, // Very low expenses (high savings rate)
+          investedAssets: 10000, // Starting with almost nothing
+        },
+        growthRates: {
+          incomeGrowthRate: 1, // Low income growth
+          expenseGrowthRate: 5, // High expense growth
+        },
+        allocation: {
+          stockAllocation: 100, // Aggressive allocation
+          bondAllocation: 0,
+          cashAllocation: 0,
+        },
+        goals: {
+          retirementExpenses: 80000, // High retirement expenses
+        },
+        marketAssumptions: {
+          stockReturn: 15, // Very high returns
+          bondReturn: 8,
+          cashReturn: 4,
+          inflationRate: 6, // High inflation
+        },
+        retirementFunding: {
+          safeWithdrawalRate: 2, // Very conservative withdrawal rate
+          retirementIncome: 60000, // High retirement income
+          lifeExpectancy: 50, // Minimum life expectancy
+          effectiveTaxRate: 50, // Maximum tax rate
+        },
+        flexiblePaths: {
+          targetRetirementAge: 50,
+          partTimeIncome: 0,
+        },
+      };
+
+      const analysis = getFIREAnalysis(extremeInputs);
+
+      // With extreme conditions (very high required portfolio due to 50% tax + 2% SWR),
+      // FIRE may not be achievable within the short life expectancy window
+      expect(analysis.requiredPortfolio).toBeGreaterThan(0);
+      if (analysis.isAchievable) {
+        expect(analysis.fireAge).toBeGreaterThan(extremeInputs.basics.currentAge!);
+        // Note: FIRE age might exceed life expectancy in extreme scenarios
+      }
+
+      // Calculation should be mathematically consistent
+      if (analysis.yearsToFIRE !== null) {
+        const portfolioAtFIRE = calculateFuturePortfolioValue(extremeInputs, analysis.yearsToFIRE);
+        expect(portfolioAtFIRE).toBeGreaterThanOrEqual(analysis.requiredPortfolio! - 5000); // Allow tolerance
+      }
+    });
+
+    it('should handle negative real returns + high expenses + young age', () => {
+      const negativeReturnInputs: QuickPlanInputs = {
+        basics: {
+          currentAge: 18, // Very young
+          annualIncome: 25000, // Low income
+          annualExpenses: 24000, // Very low savings
+          investedAssets: 1000, // Minimal start
+        },
+        growthRates: {
+          incomeGrowthRate: 2, // Income growth below inflation
+          expenseGrowthRate: 4, // Expenses grow faster
+        },
+        allocation: {
+          stockAllocation: 0, // Conservative allocation
+          bondAllocation: 50,
+          cashAllocation: 50,
+        },
+        goals: {
+          retirementExpenses: 30000,
+        },
+        marketAssumptions: {
+          stockReturn: 3,
+          bondReturn: 2,
+          cashReturn: 1,
+          inflationRate: 6, // High inflation creates negative real returns
+        },
+        retirementFunding: {
+          safeWithdrawalRate: 4,
+          retirementIncome: 0,
+          lifeExpectancy: 90, // Long life expectancy
+          effectiveTaxRate: 0, // No taxes
+        },
+        flexiblePaths: {
+          targetRetirementAge: 65,
+          partTimeIncome: 0,
+        },
+      };
+
+      const analysis = getFIREAnalysis(negativeReturnInputs);
+
+      // With negative real returns and declining real savings, FIRE should not be achievable
+      expect(analysis.isAchievable).toBe(false);
+      expect(analysis.yearsToFIRE).toBe(null);
+      expect(analysis.fireAge).toBe(null);
+    });
+
+    it('should handle maximum age range + extreme market volatility scenario', () => {
+      const maxRangeInputs: QuickPlanInputs = {
+        basics: {
+          currentAge: 16, // Minimum age
+          annualIncome: 40000, // Modest income
+          annualExpenses: 20000, // Modest expenses
+          investedAssets: 5000, // Small start
+        },
+        growthRates: {
+          incomeGrowthRate: 8, // High income growth
+          expenseGrowthRate: 2, // Low expense growth
+        },
+        allocation: {
+          stockAllocation: 90, // Very aggressive
+          bondAllocation: 10,
+          cashAllocation: 0,
+        },
+        goals: {
+          retirementExpenses: 25000,
+        },
+        marketAssumptions: {
+          stockReturn: 12, // High stock returns
+          bondReturn: 3,
+          cashReturn: 1,
+          inflationRate: 4,
+        },
+        retirementFunding: {
+          safeWithdrawalRate: 3, // Conservative withdrawal
+          retirementIncome: 15000, // Some passive income
+          lifeExpectancy: 110, // Maximum life expectancy
+          effectiveTaxRate: 25,
+        },
+        flexiblePaths: {
+          targetRetirementAge: 50,
+          partTimeIncome: 0,
+        },
+      };
+
+      const analysis = getFIREAnalysis(maxRangeInputs);
+
+      // Should be achievable with high income growth and good returns
+      expect(analysis.isAchievable).toBe(true);
+      expect(analysis.fireAge).toBeGreaterThan(16);
+      expect(analysis.fireAge).toBeLessThan(110);
+
+      // Should handle the long planning horizon gracefully
+      expect(analysis.yearsToFIRE).toBeLessThan(50); // Should achieve FIRE well before maximum age
+    });
+
+    it('should handle debt scenario + inflation + cash allocation', () => {
+      const debtScenarioInputs: QuickPlanInputs = {
+        basics: {
+          currentAge: 35,
+          annualIncome: 80000,
+          annualExpenses: 75000, // Low savings rate
+          investedAssets: 0, // Starting with no assets (debt scenario handled by "no growth on negative" policy)
+        },
+        growthRates: {
+          incomeGrowthRate: 3,
+          expenseGrowthRate: 3,
+        },
+        allocation: {
+          stockAllocation: 0, // All cash during debt payoff
+          bondAllocation: 0,
+          cashAllocation: 100,
+        },
+        goals: {
+          retirementExpenses: 60000,
+        },
+        marketAssumptions: {
+          stockReturn: 10,
+          bondReturn: 5,
+          cashReturn: 2, // Low cash returns
+          inflationRate: 3, // Matches cash returns = 0% real return
+        },
+        retirementFunding: {
+          safeWithdrawalRate: 4,
+          retirementIncome: 20000, // Some Social Security
+          lifeExpectancy: 85,
+          effectiveTaxRate: 20,
+        },
+        flexiblePaths: {
+          targetRetirementAge: 65,
+          partTimeIncome: 0,
+        },
+      };
+
+      const analysis = getFIREAnalysis(debtScenarioInputs);
+
+      // With 0% real returns and only $5000/year savings, FIRE might not be achievable within 100 years
+      // or might require very long timeframes
+      if (analysis.isAchievable) {
+        expect(analysis.yearsToFIRE).toBeGreaterThan(25); // Should take a long time
+        expect(analysis.fireAge).toBeGreaterThan(60); // Late retirement
+      } else {
+        // Not achievable within reasonable timeframe - acceptable result
+        expect(analysis.yearsToFIRE).toBe(null);
+        expect(analysis.fireAge).toBe(null);
+      }
+    });
+
+    it('should handle Coast FIRE boundary conditions', () => {
+      // Scenario where current assets could grow to FIRE amount without more contributions
+      const coastFireInputs: QuickPlanInputs = {
+        basics: {
+          currentAge: 30,
+          annualIncome: 60000,
+          annualExpenses: 60000, // Zero net savings
+          investedAssets: 400000, // Substantial starting assets
+        },
+        growthRates: {
+          incomeGrowthRate: 3,
+          expenseGrowthRate: 3,
+        },
+        allocation: {
+          stockAllocation: 80,
+          bondAllocation: 20,
+          cashAllocation: 0,
+        },
+        goals: {
+          retirementExpenses: 40000,
+        },
+        marketAssumptions: {
+          stockReturn: 9,
+          bondReturn: 4,
+          cashReturn: 2,
+          inflationRate: 3,
+        },
+        retirementFunding: {
+          safeWithdrawalRate: 4,
+          retirementIncome: 0,
+          lifeExpectancy: 90,
+          effectiveTaxRate: 15,
+        },
+        flexiblePaths: {
+          targetRetirementAge: 65, // Target retirement at 65
+          partTimeIncome: 0,
+        },
+      };
+
+      const analysis = getFIREAnalysis(coastFireInputs);
+
+      // Should achieve FIRE through asset growth alone
+      expect(analysis.isAchievable).toBe(true);
+      expect(analysis.fireAge).toBeGreaterThan(30);
+      expect(analysis.fireAge).toBeLessThanOrEqual(65);
+
+      // Verify the math: $400k growing at real rate to reach required portfolio
+      const realReturn = calculateWeightedPortfolioReturnReal(coastFireInputs.allocation, coastFireInputs.marketAssumptions) / 100;
+      const requiredPortfolio = analysis.requiredPortfolio!;
+      const yearsToGrow = Math.log(requiredPortfolio / 400000) / Math.log(1 + realReturn);
+
+      expect(analysis.yearsToFIRE).toBeCloseTo(yearsToGrow, 1);
+    });
+  });
+
+  describe('Numerical Stability Tests', () => {
+    it('should maintain precision with extreme values and fractional calculations', () => {
+      const precisionInputs: QuickPlanInputs = {
+        basics: {
+          currentAge: 33.333333,
+          annualIncome: 99999.99,
+          annualExpenses: 55555.55,
+          investedAssets: 123456.78,
+        },
+        growthRates: {
+          incomeGrowthRate: 3.14159, // Pi percent
+          expenseGrowthRate: 2.71828, // e percent
+        },
+        allocation: {
+          stockAllocation: 66.6667,
+          bondAllocation: 33.3333,
+          cashAllocation: 0,
+        },
+        goals: {
+          retirementExpenses: 44444.44,
+        },
+        marketAssumptions: {
+          stockReturn: 8.5,
+          bondReturn: 4.25,
+          cashReturn: 2.125,
+          inflationRate: 2.5,
+        },
+        retirementFunding: {
+          safeWithdrawalRate: 3.75,
+          retirementIncome: 12345.67,
+          lifeExpectancy: 87,
+          effectiveTaxRate: 22.5,
+        },
+        flexiblePaths: {
+          targetRetirementAge: 62,
+          partTimeIncome: 0,
+        },
+      };
+
+      const analysis = getFIREAnalysis(precisionInputs);
+
+      // Should handle high precision inputs without errors
+      expect(analysis.isAchievable).toBe(true);
+      expect(typeof analysis.fireAge).toBe('number');
+      expect(typeof analysis.yearsToFIRE).toBe('number');
+      expect(typeof analysis.requiredPortfolio).toBe('number');
+
+      // Results should be mathematically consistent
+      if (analysis.yearsToFIRE !== null) {
+        const futureValue = calculateFuturePortfolioValue(precisionInputs, analysis.yearsToFIRE);
+        expect(futureValue).toBeGreaterThanOrEqual(analysis.requiredPortfolio! - 1000);
+      }
+    });
+
+    it('should handle repeated calculations consistently', () => {
+      const consistencyInputs: QuickPlanInputs = {
+        basics: {
+          currentAge: 40,
+          annualIncome: 120000,
+          annualExpenses: 75000,
+          investedAssets: 250000,
+        },
+        growthRates: {
+          incomeGrowthRate: 3.5,
+          expenseGrowthRate: 2.8,
+        },
+        allocation: {
+          stockAllocation: 75,
+          bondAllocation: 20,
+          cashAllocation: 5,
+        },
+        goals: {
+          retirementExpenses: 55000,
+        },
+        marketAssumptions: {
+          stockReturn: 8.5,
+          bondReturn: 4.2,
+          cashReturn: 1.8,
+          inflationRate: 2.7,
+        },
+        retirementFunding: {
+          safeWithdrawalRate: 4,
+          retirementIncome: 18000,
+          lifeExpectancy: 88,
+          effectiveTaxRate: 24,
+        },
+        flexiblePaths: {
+          targetRetirementAge: 60,
+          partTimeIncome: 0,
+        },
+      };
+
+      // Run the same calculation multiple times
+      const results = [];
+      for (let i = 0; i < 10; i++) {
+        results.push(getFIREAnalysis(consistencyInputs));
+      }
+
+      // All results should be identical
+      const firstResult = results[0];
+      results.forEach((result) => {
+        expect(result.isAchievable).toBe(firstResult.isAchievable);
+        expect(result.fireAge).toBe(firstResult.fireAge);
+        expect(result.yearsToFIRE).toBe(firstResult.yearsToFIRE);
+        expect(result.requiredPortfolio).toBe(firstResult.requiredPortfolio);
+      });
+    });
+  });
+});

@@ -386,4 +386,191 @@ describe('getFIREChartData', () => {
       expect(firePoint.age % 1).toBeGreaterThan(0); // Should be fractional
     });
   });
+
+  describe('Life Expectancy Edge Cases', () => {
+    it('should handle minimum life expectancy (50 years)', () => {
+      const minLifeExpectancyInputs = {
+        ...baseInputs,
+        basics: {
+          ...baseInputs.basics,
+          currentAge: 45, // 5 years before minimum life expectancy
+        },
+        retirementFunding: {
+          ...baseInputs.retirementFunding,
+          lifeExpectancy: 50, // Minimum allowed
+        },
+      };
+
+      const data = getFIREChartData(minLifeExpectancyInputs, null);
+
+      // Should have data points from age 45 to 50 (6 points)
+      expect(data).toHaveLength(6);
+      expect(data[0].age).toBe(45);
+      expect(data[data.length - 1].age).toBe(50);
+
+      // All portfolio values should be valid numbers
+      data.forEach((point) => {
+        expect(typeof point.portfolioValue).toBe('number');
+        expect(point.portfolioValue).toBeGreaterThan(0);
+      });
+    });
+
+    it('should handle maximum life expectancy (110 years)', () => {
+      const maxLifeExpectancyInputs = {
+        ...baseInputs,
+        basics: {
+          ...baseInputs.basics,
+          currentAge: 25,
+        },
+        retirementFunding: {
+          ...baseInputs.retirementFunding,
+          lifeExpectancy: 110, // Maximum allowed
+        },
+      };
+
+      const data = getFIREChartData(maxLifeExpectancyInputs, null);
+
+      // Should have data points from age 25 to 110 (86 points)
+      expect(data).toHaveLength(86);
+      expect(data[0].age).toBe(25);
+      expect(data[data.length - 1].age).toBe(110);
+
+      // Portfolio values should continue to be calculated even at extreme ages
+      const lastPoint = data[data.length - 1];
+      expect(typeof lastPoint.portfolioValue).toBe('number');
+    });
+
+    it('should handle life expectancy very close to current age', () => {
+      const closeLifeExpectancyInputs = {
+        ...baseInputs,
+        basics: {
+          ...baseInputs.basics,
+          currentAge: 84,
+        },
+        retirementFunding: {
+          ...baseInputs.retirementFunding,
+          lifeExpectancy: 85, // Only 1 year difference
+        },
+      };
+
+      const data = getFIREChartData(closeLifeExpectancyInputs, null);
+
+      // Should have exactly 2 data points (ages 84 and 85)
+      expect(data).toHaveLength(2);
+      expect(data[0].age).toBe(84);
+      expect(data[1].age).toBe(85);
+
+      // Both points should have valid portfolio values
+      data.forEach((point) => {
+        expect(typeof point.portfolioValue).toBe('number');
+        expect(point.portfolioValue).toBeGreaterThan(0);
+      });
+    });
+
+    it('should handle life expectancy equal to current age', () => {
+      const equalAgeInputs = {
+        ...baseInputs,
+        basics: {
+          ...baseInputs.basics,
+          currentAge: 75,
+        },
+        retirementFunding: {
+          ...baseInputs.retirementFunding,
+          lifeExpectancy: 75, // Same as current age
+        },
+      };
+
+      const data = getFIREChartData(equalAgeInputs, null);
+
+      // Should have exactly 1 data point
+      expect(data).toHaveLength(1);
+      expect(data[0].age).toBe(75);
+      expect(typeof data[0].portfolioValue).toBe('number');
+    });
+
+    it('should handle FIRE age near life expectancy boundary', () => {
+      const nearEndInputs = {
+        ...baseInputs,
+        basics: {
+          ...baseInputs.basics,
+          currentAge: 60,
+        },
+        retirementFunding: {
+          ...baseInputs.retirementFunding,
+          lifeExpectancy: 65, // Short life expectancy
+        },
+      };
+
+      const fireAge = 64.5; // Very close to life expectancy
+      const data = getFIREChartData(nearEndInputs, fireAge);
+
+      // Should include the FIRE age point
+      const fireAgePoint = data.find((point) => point.age === fireAge);
+      expect(fireAgePoint).toBeDefined();
+
+      // Data should end at life expectancy
+      expect(data[data.length - 1].age).toBe(65);
+
+      // FIRE age should be included in chronological order
+      const fireAgeIndex = data.findIndex((point) => point.age === fireAge);
+      expect(fireAgeIndex).toBeGreaterThan(0);
+      expect(fireAgeIndex).toBeLessThan(data.length - 1);
+    });
+
+    it('should handle FIRE age beyond life expectancy', () => {
+      const shortLifeInputs = {
+        ...baseInputs,
+        basics: {
+          ...baseInputs.basics,
+          currentAge: 55,
+        },
+        retirementFunding: {
+          ...baseInputs.retirementFunding,
+          lifeExpectancy: 70, // Relatively short
+        },
+      };
+
+      const fireAge = 75; // Beyond life expectancy
+      const data = getFIREChartData(shortLifeInputs, fireAge);
+
+      // FIRE age should NOT be included since it's beyond life expectancy
+      const fireAgePoint = data.find((point) => point.age === fireAge);
+      expect(fireAgePoint).toBeUndefined();
+
+      // Data should still end at life expectancy
+      expect(data[data.length - 1].age).toBe(70);
+
+      // Should have expected number of points (55 to 70 = 16 points)
+      expect(data).toHaveLength(16);
+    });
+
+    it('should handle retirement phase with different life expectancy scenarios', () => {
+      // Test scenario where person retires early but has long life expectancy
+      const earlyRetireInputs = {
+        ...baseInputs,
+        basics: {
+          ...baseInputs.basics,
+          currentAge: 35,
+        },
+        retirementFunding: {
+          ...baseInputs.retirementFunding,
+          lifeExpectancy: 95, // Very long life
+        },
+      };
+
+      const fireAge = 45; // Early retirement
+      const data = getFIREChartData(earlyRetireInputs, fireAge);
+
+      // Should have many points in retirement phase
+      const retirementPoints = data.filter((point) => point.age >= fireAge);
+      expect(retirementPoints.length).toBe(51); // Ages 45-95
+
+      // Portfolio should be calculated for all retirement years
+      retirementPoints.forEach((point) => {
+        expect(typeof point.portfolioValue).toBe('number');
+        // Note: Portfolio value might go negative in very long retirement scenarios
+        // This is mathematically correct behavior
+      });
+    });
+  });
 });
