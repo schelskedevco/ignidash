@@ -11,6 +11,7 @@ import {
   useGoalsHasErrors,
   useGoalsValidation,
   useRetirementFundingHasErrors,
+  useRetirementFundingTouched,
 } from '@/lib/stores/quick-plan-store';
 
 import RetirementFunding from './retirement-funding';
@@ -21,18 +22,21 @@ export default function GoalSection() {
   const updateGoals = useUpdateGoals();
 
   const goalsAreTouched = useGoalsTouched();
-  const goalsAreComplete = useGoalsValidation();
+  const retirementFundingTouched = useRetirementFundingTouched();
+  const isTouched = goalsAreTouched || retirementFundingTouched;
 
   const goalsHasErrors = useGoalsHasErrors();
   const retirementFundingHasErrors = useRetirementFundingHasErrors();
   const hasErrors = goalsHasErrors || retirementFundingHasErrors;
+
+  const goalsAreComplete = useGoalsValidation();
 
   let status: SectionStatus;
   if (goalsAreComplete) {
     status = hasErrors ? 'error' : 'complete';
   } else if (hasErrors) {
     status = 'error';
-  } else if (goalsAreTouched) {
+  } else if (isTouched) {
     status = 'in-progress';
   } else {
     status = 'not-started';
