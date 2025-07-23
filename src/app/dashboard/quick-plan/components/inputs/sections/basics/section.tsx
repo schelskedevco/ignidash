@@ -19,7 +19,7 @@ export default function BasicsSection() {
 
   let status: SectionStatus;
   if (basicsAreComplete) {
-    status = 'complete';
+    status = basicsHasErrors ? 'error' : 'complete';
   } else if (basicsHasErrors) {
     status = 'error';
   } else if (basicsAreTouched) {

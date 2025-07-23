@@ -19,7 +19,7 @@ export default function GoalSection() {
 
   let status: SectionStatus;
   if (goalsAreComplete) {
-    status = 'complete';
+    status = goalsHasErrors ? 'error' : 'complete';
   } else if (goalsHasErrors) {
     status = 'error';
   } else if (goalsAreTouched) {
