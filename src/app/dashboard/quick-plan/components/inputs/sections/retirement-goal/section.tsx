@@ -4,7 +4,14 @@ import Card from '@/components/ui/card';
 import NumberInput from '@/components/ui/number-input';
 import SectionHeader, { SectionStatus } from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
-import { useGoalsData, useUpdateGoals, useGoalsTouched, useGoalsHasErrors, useGoalsValidation } from '@/lib/stores/quick-plan-store';
+import {
+  useGoalsData,
+  useUpdateGoals,
+  useGoalsTouched,
+  useGoalsHasErrors,
+  useGoalsValidation,
+  useRetirementFundingHasErrors,
+} from '@/lib/stores/quick-plan-store';
 
 import RetirementFunding from './retirement-funding';
 import DeathTaxes from './death-taxes';
@@ -14,13 +21,16 @@ export default function GoalSection() {
   const updateGoals = useUpdateGoals();
 
   const goalsAreTouched = useGoalsTouched();
-  const goalsHasErrors = useGoalsHasErrors();
   const goalsAreComplete = useGoalsValidation();
+
+  const goalsHasErrors = useGoalsHasErrors();
+  const retirementFundingHasErrors = useRetirementFundingHasErrors();
+  const hasErrors = goalsHasErrors || retirementFundingHasErrors;
 
   let status: SectionStatus;
   if (goalsAreComplete) {
-    status = goalsHasErrors ? 'error' : 'complete';
-  } else if (goalsHasErrors) {
+    status = hasErrors ? 'error' : 'complete';
+  } else if (hasErrors) {
     status = 'error';
   } else if (goalsAreTouched) {
     status = 'in-progress';
