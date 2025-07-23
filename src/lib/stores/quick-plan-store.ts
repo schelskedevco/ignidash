@@ -285,14 +285,14 @@ export const useQuickPlanStore = create<QuickPlanState>()(
           resetStore: () =>
             set((state) => {
               Object.assign(state.inputs, defaultState.inputs);
-              Object.assign(state.touched, defaultState.touched);
+              state.touched = defaultState.touched;
               state.errors = defaultState.errors;
             }),
 
           resetSection: (section) =>
             set((state) => {
               Object.assign(state.inputs[section], defaultState.inputs[section]);
-              Object.assign(state.touched[section], defaultState.touched[section]);
+              state.touched[section] = false;
               state.errors[section] = defaultState.errors[section];
             }),
         },
