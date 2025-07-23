@@ -288,6 +288,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
 
           resetSection: (section) =>
             set((state) => {
+              // NOTE: Rethink Object.assign approach if using deeply nested state in the future.
               Object.assign(state.inputs[section], defaultState.inputs[section]);
               state.touched[section] = false;
               if (state.errors[section]) delete state.errors[section];
