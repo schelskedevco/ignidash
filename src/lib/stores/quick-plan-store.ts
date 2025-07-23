@@ -81,7 +81,11 @@ const createSimpleUpdateAction = <T extends keyof QuickPlanInputs>(
     if (result.valid && result.data) {
       set((state) => {
         state.inputs[section] = result.data!;
-        state.touched[section] = true;
+        if (value) {
+          state.touched[section] = true;
+        } else {
+          state.touched[section] = false;
+        }
         if (state.errors[section]) delete state.errors[section][field];
       });
     } else {
