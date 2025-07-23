@@ -4,7 +4,7 @@ import Card from '@/components/ui/card';
 import NumberInput from '@/components/ui/number-input';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
-import { useMarketAssumptionsData, useUpdateMarketAssumptions } from '@/lib/stores/quick-plan-store';
+import { useMarketAssumptionsData, useUpdateMarketAssumptions, useMarketAssumptionsHasErrors } from '@/lib/stores/quick-plan-store';
 
 import ExpectedReturns from './expected-returns';
 
@@ -28,6 +28,7 @@ function getInflationRateDescription() {
 export default function FineTuneSection() {
   const marketAssumptions = useMarketAssumptionsData();
   const updateMarketAssumptions = useUpdateMarketAssumptions();
+  const marketAssumptionsHasErrors = useMarketAssumptionsHasErrors();
 
   return (
     <>
@@ -35,7 +36,7 @@ export default function FineTuneSection() {
         <SectionHeader
           title="Fine-Tuning"
           desc="Modify default assumptions for more personalized retirement projections."
-          status="complete"
+          status={marketAssumptionsHasErrors ? 'error' : 'complete'}
         />
         <Card>
           <form onSubmit={(e) => e.preventDefault()}>

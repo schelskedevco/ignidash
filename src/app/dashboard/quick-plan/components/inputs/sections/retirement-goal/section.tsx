@@ -10,8 +10,8 @@ import {
   useGoalsTouched,
   useGoalsHasErrors,
   useGoalsValidation,
-  useRetirementFundingHasErrors,
   useRetirementFundingTouched,
+  useRetirementFundingHasErrors,
 } from '@/lib/stores/quick-plan-store';
 
 import RetirementFunding from './retirement-funding';
