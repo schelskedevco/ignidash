@@ -66,57 +66,55 @@ export default function FineTuneSection() {
             </fieldset>
           </form>
         </Card>
-        <div className="space-y-4">
-          <DisclosureCard title="Expected Returns" desc="Expected nominal returns for each asset class." icon={ChartBarIcon}>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <fieldset className="space-y-4">
-                <legend className="sr-only">Expected investment returns configuration</legend>
-                <NumberInput
-                  id="stock-return"
-                  label={
-                    <div className="flex w-full items-center justify-between">
-                      <span>Stock Returns (%)</span>
-                      <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
-                    </div>
-                  }
-                  value={marketAssumptions.stockReturn}
-                  onBlur={(value) => updateMarketAssumptions('stockReturn', value)}
-                  inputMode="decimal"
-                  placeholder="10%"
-                  suffix="%"
-                />
-                <NumberInput
-                  id="bond-return"
-                  label={
-                    <div className="flex w-full items-center justify-between">
-                      <span>Bond Returns (%)</span>
-                      <span className="text-muted-foreground text-sm/6">{bondsRealReturn.toFixed(1)}% real</span>
-                    </div>
-                  }
-                  value={marketAssumptions.bondReturn}
-                  onBlur={(value) => updateMarketAssumptions('bondReturn', value)}
-                  inputMode="decimal"
-                  placeholder="5%"
-                  suffix="%"
-                />
-                <NumberInput
-                  id="cash-return"
-                  label={
-                    <div className="flex w-full items-center justify-between">
-                      <span>Cash Returns (%)</span>
-                      <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
-                    </div>
-                  }
-                  value={marketAssumptions.cashReturn}
-                  onBlur={(value) => updateMarketAssumptions('cashReturn', value)}
-                  inputMode="decimal"
-                  placeholder="3%"
-                  suffix="%"
-                />
-              </fieldset>
-            </form>
-          </DisclosureCard>
-        </div>
+        <DisclosureCard title="Expected Returns" desc="Expected nominal returns for each asset class." icon={ChartBarIcon}>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <fieldset className="space-y-4">
+              <legend className="sr-only">Expected investment returns configuration</legend>
+              <NumberInput
+                id="stock-return"
+                label={
+                  <div className="flex w-full items-center justify-between">
+                    <span>Stock Returns (%)</span>
+                    <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
+                  </div>
+                }
+                value={marketAssumptions.stockReturn}
+                onBlur={(value) => updateMarketAssumptions('stockReturn', value)}
+                inputMode="decimal"
+                placeholder="10%"
+                suffix="%"
+              />
+              <NumberInput
+                id="bond-return"
+                label={
+                  <div className="flex w-full items-center justify-between">
+                    <span>Bond Returns (%)</span>
+                    <span className="text-muted-foreground text-sm/6">{bondsRealReturn.toFixed(1)}% real</span>
+                  </div>
+                }
+                value={marketAssumptions.bondReturn}
+                onBlur={(value) => updateMarketAssumptions('bondReturn', value)}
+                inputMode="decimal"
+                placeholder="5%"
+                suffix="%"
+              />
+              <NumberInput
+                id="cash-return"
+                label={
+                  <div className="flex w-full items-center justify-between">
+                    <span>Cash Returns (%)</span>
+                    <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
+                  </div>
+                }
+                value={marketAssumptions.cashReturn}
+                onBlur={(value) => updateMarketAssumptions('cashReturn', value)}
+                inputMode="decimal"
+                placeholder="3%"
+                suffix="%"
+              />
+            </fieldset>
+          </form>
+        </DisclosureCard>
       </SectionContainer>
     </>
   );
