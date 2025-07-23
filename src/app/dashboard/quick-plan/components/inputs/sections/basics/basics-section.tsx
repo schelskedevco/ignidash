@@ -6,8 +6,8 @@ import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import { useBasicsData, useUpdateBasics } from '@/lib/stores/quick-plan-store';
 
-import InvestmentPortfolio from './basics/investment-portfolio';
-import IncomeSpendingGrowth from './basics/income-spending-growth';
+import InvestmentPortfolio from './investment-portfolio';
+import IncomeSpendingGrowth from './income-spending-growth';
 
 export default function BasicsSection() {
   const basics = useBasicsData();
