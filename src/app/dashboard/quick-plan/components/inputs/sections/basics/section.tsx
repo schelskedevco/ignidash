@@ -4,7 +4,17 @@ import Card from '@/components/ui/card';
 import NumberInput from '@/components/ui/number-input';
 import SectionHeader, { SectionStatus } from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
-import { useBasicsData, useUpdateBasics, useBasicsTouched, useBasicsHasErrors, useBasicsValidation } from '@/lib/stores/quick-plan-store';
+import {
+  useBasicsData,
+  useUpdateBasics,
+  useBasicsTouched,
+  useBasicsHasErrors,
+  useBasicsValidation,
+  useAllocationTouched,
+  useAllocationHasErrors,
+  useGrowthRatesTouched,
+  useGrowthRatesHasErrors,
+} from '@/lib/stores/quick-plan-store';
 
 import InvestmentPortfolio from './investment-portfolio';
 import IncomeSpendingGrowth from './income-spending-growth';
@@ -14,15 +24,23 @@ export default function BasicsSection() {
   const updateBasics = useUpdateBasics();
 
   const basicsAreTouched = useBasicsTouched();
+  const allocationTouched = useAllocationTouched();
+  const growthRatesTouched = useGrowthRatesTouched();
+  const isTouched = basicsAreTouched || allocationTouched || growthRatesTouched;
+
   const basicsHasErrors = useBasicsHasErrors();
+  const allocationHasErrors = useAllocationHasErrors();
+  const growthRatesHasErrors = useGrowthRatesHasErrors();
+  const hasErrors = basicsHasErrors || allocationHasErrors || growthRatesHasErrors;
+
   const basicsAreComplete = useBasicsValidation();
 
   let status: SectionStatus;
   if (basicsAreComplete) {
-    status = basicsHasErrors ? 'error' : 'complete';
-  } else if (basicsHasErrors) {
+    status = hasErrors ? 'error' : 'complete';
+  } else if (hasErrors) {
     status = 'error';
-  } else if (basicsAreTouched) {
+  } else if (isTouched) {
     status = 'in-progress';
   } else {
     status = 'not-started';
