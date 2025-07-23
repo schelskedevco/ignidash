@@ -1,6 +1,6 @@
 import Badge, { BadgeColor } from '@/components/ui/badge';
 
-type SectionStatus = 'complete' | 'in-progress' | 'not-started' | 'error' | 'optional';
+export type SectionStatus = 'complete' | 'in-progress' | 'not-started' | 'error' | 'optional';
 
 interface SectionHeaderProps {
   title: string | React.ReactNode;

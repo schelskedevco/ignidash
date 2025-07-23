@@ -2,9 +2,9 @@
 
 import Card from '@/components/ui/card';
 import NumberInput from '@/components/ui/number-input';
-import SectionHeader from '@/components/ui/section-header';
+import SectionHeader, { SectionStatus } from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
-import { useBasicsData, useUpdateBasics } from '@/lib/stores/quick-plan-store';
+import { useBasicsData, useUpdateBasics, useBasicsTouched, useBasicsHasErrors, useBasicsValidation } from '@/lib/stores/quick-plan-store';
 
 import InvestmentPortfolio from './investment-portfolio';
 import IncomeSpendingGrowth from './income-spending-growth';
@@ -13,12 +13,27 @@ export default function BasicsSection() {
   const basics = useBasicsData();
   const updateBasics = useUpdateBasics();
 
+  const basicsAreTouched = useBasicsTouched();
+  const basicsHasErrors = useBasicsHasErrors();
+  const basicsAreComplete = useBasicsValidation();
+
+  let status: SectionStatus;
+  if (basicsAreComplete) {
+    status = 'complete';
+  } else if (basicsHasErrors) {
+    status = 'error';
+  } else if (basicsAreTouched) {
+    status = 'in-progress';
+  } else {
+    status = 'not-started';
+  }
+
   return (
     <SectionContainer showBottomBorder>
       <SectionHeader
         title="Financial Foundation"
         desc="Enter the core numbers needed to estimate your financial independence timeline."
-        status="complete"
+        status={status}
       />
       <Card>
         <form onSubmit={(e) => e.preventDefault()}>
