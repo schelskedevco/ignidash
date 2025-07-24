@@ -6,6 +6,7 @@ import { calculateRequiredPortfolio, calculateFuturePortfolioValue } from '../co
  * Calculate the number of years until FIRE (Financial Independence, Retire Early)
  * Returns -1 if FIRE is not achievable within 100 years or if required data is missing
  */
+// CAN BE DERIVED FROM OTHER SIMULATION ENGINE DATA
 export const calculateYearsToFIRE = (inputs: QuickPlanInputs): number | null => {
   const requiredPortfolio = calculateRequiredPortfolio(
     inputs.goals.retirementExpenses,
@@ -82,6 +83,7 @@ export const calculateFIREAge = (inputs: QuickPlanInputs): number | null => {
  * Get detailed FIRE calculation results
  * Provides more context about the FIRE calculation
  */
+// SIMULATION RESULT FOR DISPLAY
 export const getFIREAnalysis = (
   inputs: QuickPlanInputs
 ): {

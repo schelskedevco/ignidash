@@ -1,5 +1,7 @@
 import { AllocationInputs, MarketAssumptionsInputs } from '@/lib/schemas/quick-plan-schema';
 
+// WEIGHTED RETURNS FOR FIXED RETURNS SIMULATION ENGINE
+
 // Helper function to calculate nominal portfolio return
 export const calculateWeightedPortfolioReturnNominal = (
   allocation: AllocationInputs,

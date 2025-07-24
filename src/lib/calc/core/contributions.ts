@@ -1,6 +1,7 @@
 import { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 
 // Helper function to calculate yearly contribution (income - expenses) for a given year
+// CASH FLOW IN ACCUMULATION PHASE
 export const calculateYearlyContribution = (inputs: QuickPlanInputs, year: number): number | null => {
   const { annualIncome, annualExpenses } = inputs.basics;
   if (annualIncome === null || annualExpenses === null) {
@@ -23,6 +24,7 @@ export const calculateYearlyContribution = (inputs: QuickPlanInputs, year: numbe
 };
 
 // Helper function to calculate retirement withdrawal and surplus for a given age
+// CASH FLOW IN RETIREMENT PHASE
 export const calculateRetirementCashFlow = (
   retirementExpenses: number,
   retirementIncome: number,

@@ -7,6 +7,8 @@ export interface ChartDataPoint {
   portfolioValue: number;
 }
 
+// SIMULATION ENGINE ACROSS AGES FOR FIRE CHART
+// CHANGES LIFE PHASE BASED ON PORTFOLIO VALUE AND FIRE AGE
 export const getFIREChartData = (inputs: QuickPlanInputs, fireAge: number | null): ChartDataPoint[] => {
   const startAge = inputs.basics.currentAge;
   if (startAge === null) return [];

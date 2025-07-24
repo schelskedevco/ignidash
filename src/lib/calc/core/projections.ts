@@ -4,6 +4,7 @@ import { calculateWeightedPortfolioReturnReal } from './returns';
 import { calculateYearlyContribution, calculateRetirementCashFlow } from './contributions';
 
 // Calculation function to determine required portfolio for retirement
+// CRITERIA FOR SWITCHING TO RETIREMENT PHASE && RESULT OF CALCULATION FOR DISPLAY
 export const calculateRequiredPortfolio = (
   retirementExpenses: number | null,
   safeWithdrawalRate: number,
@@ -22,6 +23,7 @@ export const calculateRequiredPortfolio = (
 };
 
 // Calculate future portfolio value with annual contributions
+// FIXED RATE OF RETURNS SIMULATION ENGINE IN ACCUMULATION PHASE
 export const calculateFuturePortfolioValue = (inputs: QuickPlanInputs, years: number): number | null => {
   const { investedAssets } = inputs.basics;
   if (investedAssets === null) {
@@ -79,6 +81,7 @@ export const calculateFuturePortfolioValue = (inputs: QuickPlanInputs, years: nu
 };
 
 // Calculate portfolio value after FIRE age with retirement withdrawals
+// FIXED RATE OF RETURNS SIMULATION ENGINE IN RETIREMENT PHASE
 export const calculateFuturePortfolioValueAfterRetirement = (
   inputs: QuickPlanInputs,
   startingPortfolioValue: number,
