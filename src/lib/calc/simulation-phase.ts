@@ -20,7 +20,7 @@ export class AccumulationPhase implements SimulationPhase {
   }
 
   getNextPhase(_inputs: QuickPlanInputs): SimulationPhase | null {
-    throw new Error('getNextPhase not implemented for AccumulationPhase');
+    return new RetirementPhase();
   }
 
   getName(): string {
@@ -34,11 +34,11 @@ export class RetirementPhase implements SimulationPhase {
   }
 
   shouldTransition(_year: number, _portfolio: Portfolio, _inputs: QuickPlanInputs): boolean {
-    throw new Error('shouldTransition not implemented for RetirementPhase');
+    return false;
   }
 
   getNextPhase(_inputs: QuickPlanInputs): SimulationPhase | null {
-    throw new Error('getNextPhase not implemented for RetirementPhase');
+    return null;
   }
 
   getName(): string {

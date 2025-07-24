@@ -1,6 +1,7 @@
 import { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 
 import { Portfolio } from './portfolio';
+import { ReturnsProvider, FixedReturnProvider } from './returns-provider';
 
 interface SimulationResult {
   success: boolean;
@@ -15,10 +16,16 @@ export class FixedReturnsSimulationEngine implements SimulationEngine {
   constructor(private inputs: QuickPlanInputs) {}
 
   runSimulation(): SimulationResult {
+    const _returnProvider = this.createReturnProvider();
+
     return {
       success: true,
       data: [],
     };
+  }
+
+  private createReturnProvider(): ReturnsProvider {
+    return new FixedReturnProvider(this.inputs);
   }
 }
 
