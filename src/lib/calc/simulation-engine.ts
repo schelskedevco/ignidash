@@ -26,7 +26,7 @@ import { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 import { Portfolio } from './portfolio';
 import { ReturnsProvider, FixedReturnProvider } from './returns-provider';
 import { SimulationPhase, AccumulationPhase } from './simulation-phase';
-import { convertAllocationInputsToAssetAllocation } from './asset';
+import { AssetReturns, convertAllocationInputsToAssetAllocation } from './asset';
 
 /**
  * Simulation result containing success status and time-series portfolio data
@@ -34,6 +34,8 @@ import { convertAllocationInputsToAssetAllocation } from './asset';
 interface SimulationResult {
   success: boolean;
   data: Array<[number /* timeInYears */, Portfolio]>;
+  phasesMetadata: Array<[number /* timeInYears */, SimulationPhase]>;
+  returnsMetadata: Array<[number /* timeInYears */, AssetReturns]>;
 }
 
 /**
@@ -74,6 +76,8 @@ export class FixedReturnsSimulationEngine implements SimulationEngine {
     const lifeExpectancy = this.inputs.retirementFunding.lifeExpectancy;
 
     const data: Array<[number, Portfolio]> = [[0, portfolio]];
+    const phasesMetadata: Array<[number, SimulationPhase]> = [[0, currentPhase]];
+    const returnsMetadata: Array<[number, AssetReturns]> = [];
 
     for (let year = 1; year <= lifeExpectancy - startAge; year++) {
       // Process cash flows first (throughout the year)
@@ -87,6 +91,7 @@ export class FixedReturnsSimulationEngine implements SimulationEngine {
       portfolio = portfolio.withReturns(returns);
 
       data.push([year, portfolio]);
+      returnsMetadata.push([year, returns]);
 
       // Check if portfolio is depleted first
       if (portfolio.getTotalValue() <= 0) break;
@@ -96,12 +101,15 @@ export class FixedReturnsSimulationEngine implements SimulationEngine {
         const nextPhase = currentPhase.getNextPhase(this.inputs);
         if (!nextPhase) break; // Simulation complete
         currentPhase = nextPhase;
+        phasesMetadata.push([year, currentPhase]);
       }
     }
 
     return {
       success: portfolio.getTotalValue() > 0,
       data,
+      phasesMetadata,
+      returnsMetadata,
     };
   }
 
@@ -198,6 +206,8 @@ export class MonteCarloSimulationEngine implements SimulationEngine {
     return {
       success: true,
       data: [],
+      phasesMetadata: [],
+      returnsMetadata: [],
     };
   }
 
