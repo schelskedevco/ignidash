@@ -18,11 +18,11 @@ export class AnnualIncome implements CashFlow {
     this.inputs = inputs;
   }
 
-  shouldApply(_year: number, _currentAge: number): boolean {
+  shouldApply(year: number, currentAge: number): boolean {
     return true;
   }
 
-  calculateChange(year: number, _currentAge: number): number {
+  calculateChange(year: number, currentAge: number): number {
     const { annualIncome } = this.inputs.basics;
     if (!annualIncome) {
       return 0;
@@ -47,11 +47,11 @@ export class AnnualExpenses implements CashFlow {
     this.inputs = inputs;
   }
 
-  shouldApply(_year: number, _currentAge: number): boolean {
+  shouldApply(year: number, currentAge: number): boolean {
     return true;
   }
 
-  calculateChange(year: number, _currentAge: number): number {
+  calculateChange(year: number, currentAge: number): number {
     const { annualExpenses } = this.inputs.basics;
     if (!annualExpenses) {
       return 0;
@@ -78,11 +78,11 @@ export class PassiveRetirementIncome implements CashFlow {
     this.inputs = inputs;
   }
 
-  shouldApply(_year: number, currentAge: number): boolean {
+  shouldApply(year: number, currentAge: number): boolean {
     return currentAge >= 62;
   }
 
-  calculateChange(_year: number, _currentAge: number): number {
+  calculateChange(year: number, currentAge: number): number {
     const { retirementIncome, effectiveTaxRate } = this.inputs.retirementFunding;
     return retirementIncome * (1 - effectiveTaxRate / 100);
   }
@@ -98,11 +98,11 @@ export class RetirementExpenses implements CashFlow {
     this.inputs = inputs;
   }
 
-  shouldApply(_year: number, _currentAge: number): boolean {
+  shouldApply(year: number, currentAge: number): boolean {
     return true;
   }
 
-  calculateChange(_year: number, _currentAge: number): number {
+  calculateChange(year: number, currentAge: number): number {
     const { retirementExpenses } = this.inputs.goals;
     return retirementExpenses ?? 0;
   }
