@@ -48,14 +48,14 @@ export class AccumulationPhase implements SimulationPhase {
     // Apply net cash flow to portfolio
     if (totalCashFlow > 0) {
       // Surplus - contribute to portfolio (using target allocation)
-      return portfolio.addContribution(totalCashFlow, {
+      return portfolio.withContribution(totalCashFlow, {
         stocks: inputs.allocation.stockAllocation,
         bonds: inputs.allocation.bondAllocation,
         cash: inputs.allocation.cashAllocation,
       });
     } else if (totalCashFlow < 0) {
       // Deficit - withdraw from portfolio (cash → bonds → stocks)
-      return portfolio.withdraw(Math.abs(totalCashFlow));
+      return portfolio.withWithdrawal(Math.abs(totalCashFlow));
     }
 
     return portfolio; // No net change

@@ -33,7 +33,7 @@ export class FixedReturnsSimulationEngine implements SimulationEngine {
 
       // Apply returns at end of year (compounding on final balance)
       const returns = returnProvider.getReturns(year);
-      portfolio = portfolio.applyReturns(returns);
+      portfolio = portfolio.withReturns(returns);
 
       data.push([year, portfolio]);
 

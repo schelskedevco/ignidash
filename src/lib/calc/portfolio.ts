@@ -26,7 +26,8 @@ export class Portfolio {
     };
   }
 
-  applyReturns(returns: AssetReturns): Portfolio {
+  // Apply market returns (increases growth, not principal)
+  withReturns(returns: AssetReturns): Portfolio {
     const updatedAssets = this.assets.map((asset) => {
       const returnRate = returns[asset.assetClass] || 0;
       const currentValue = asset.principal + asset.growth;
@@ -41,7 +42,8 @@ export class Portfolio {
     return new Portfolio(updatedAssets);
   }
 
-  addContribution(amount: number, targetAllocation: AssetAllocation): Portfolio {
+  // Add contribution (increases principal)
+  withContribution(amount: number, targetAllocation: AssetAllocation): Portfolio {
     if (amount < 0) throw new Error('Contribution amount must be positive');
     if (amount === 0) return this; // No change
 
@@ -53,7 +55,8 @@ export class Portfolio {
     return new Portfolio(updatedAssets);
   }
 
-  withdraw(amount: number): Portfolio {
+  // Withdraw money (priority: cash → bonds → stocks)
+  withWithdrawal(amount: number): Portfolio {
     if (amount < 0) throw new Error('Withdrawal amount must be positive');
     if (amount === 0) return this;
 
