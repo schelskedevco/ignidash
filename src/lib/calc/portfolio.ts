@@ -79,7 +79,7 @@ export class Portfolio {
    */
   withReturns(returns: AssetReturns): Portfolio {
     const updatedAssets = this.assets.map((asset) => {
-      const returnRate = returns[asset.assetClass] || 0;
+      const returnRate = returns[asset.assetClass];
       const currentValue = asset.principal + asset.growth;
       const returnAmount = currentValue * returnRate;
 
