@@ -92,7 +92,7 @@ export class FixedReturnsSimulationEngine implements SimulationEngine {
       if (portfolio.getTotalValue() <= 0) break;
 
       // Check for phase transition
-      if (currentPhase.shouldTransition(year, portfolio, this.inputs)) {
+      if (currentPhase.shouldTransition(portfolio, this.inputs)) {
         const nextPhase = currentPhase.getNextPhase(this.inputs);
         if (!nextPhase) break; // Simulation complete
         currentPhase = nextPhase;
@@ -150,7 +150,7 @@ export class FixedReturnsSimulationEngine implements SimulationEngine {
     let phase: SimulationPhase = new AccumulationPhase();
 
     // Keep transitioning until we find a phase we can't transition out of yet
-    while (phase.shouldTransition(0, portfolio, this.inputs)) {
+    while (phase.shouldTransition(portfolio, this.inputs)) {
       const nextPhase = phase.getNextPhase(this.inputs);
       if (!nextPhase) break;
       phase = nextPhase;
