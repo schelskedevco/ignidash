@@ -43,7 +43,7 @@ export class Portfolio {
   }
 
   // Add contribution (increases principal)
-  withContribution(amount: number, targetAllocation: AssetAllocation): Portfolio {
+  withContribution(amount: number, targetAllocation: AssetAllocation /* TODO: Need targetAllocation? */): Portfolio {
     if (amount < 0) throw new Error('Contribution amount must be positive');
     if (amount === 0) return this; // No change
 

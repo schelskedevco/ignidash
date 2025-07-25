@@ -1,7 +1,7 @@
 import { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 
 import { Portfolio } from './portfolio';
-import { CashFlow, AnnualIncome, AnnualExpenses } from './cash-flow';
+import { CashFlow, AnnualIncome, AnnualExpenses, PassiveRetirementIncome, RetirementExpenses } from './cash-flow';
 
 export interface SimulationPhase {
   getCashFlows(inputs: QuickPlanInputs): CashFlow[];
@@ -64,7 +64,7 @@ export class AccumulationPhase implements SimulationPhase {
 
 export class RetirementPhase implements SimulationPhase {
   getCashFlows(_inputs: QuickPlanInputs): CashFlow[] {
-    throw new Error('getCashFlows not implemented for RetirementPhase');
+    return [new PassiveRetirementIncome(), new RetirementExpenses()];
   }
 
   shouldTransition(_year: number, _portfolio: Portfolio, _inputs: QuickPlanInputs): boolean {
@@ -79,7 +79,30 @@ export class RetirementPhase implements SimulationPhase {
     return 'Retirement Phase';
   }
 
-  processYear(_year: number, _portfolio: Portfolio, _inputs: QuickPlanInputs): Portfolio {
-    throw new Error('processYear not implemented for RetirementPhase');
+  processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): Portfolio {
+    const currentAge = inputs.basics.currentAge! + year;
+    let totalCashFlow = 0;
+
+    // Calculate net cash flow from income and expenses
+    for (const cashFlow of this.getCashFlows(inputs)) {
+      if (cashFlow.shouldApply(year, currentAge, inputs)) {
+        totalCashFlow += cashFlow.calculateChange(year, currentAge, inputs);
+      }
+    }
+
+    if (totalCashFlow >= 0) {
+      return portfolio.withContribution(totalCashFlow, {
+        stocks: inputs.allocation.stockAllocation,
+        bonds: inputs.allocation.bondAllocation,
+        cash: inputs.allocation.cashAllocation,
+      });
+    }
+
+    // Need to withdraw to cover shortfall
+    const shortfall = Math.abs(totalCashFlow);
+    const effectiveTaxRate = inputs.retirementFunding.effectiveTaxRate;
+    const grossWithdrawal = shortfall / (1 - effectiveTaxRate / 100);
+
+    return portfolio.withWithdrawal(grossWithdrawal);
   }
 }
