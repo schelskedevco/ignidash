@@ -23,10 +23,7 @@ export class AnnualIncome implements CashFlow {
   }
 
   calculateChange(year: number, currentAge: number): number {
-    const { annualIncome } = this.inputs.basics;
-    if (!annualIncome) {
-      return 0;
-    }
+    const annualIncome = this.inputs.basics.annualIncome!;
 
     // Convert nominal growth to real growth
     const { incomeGrowthRate } = this.inputs.growthRates;
@@ -52,10 +49,7 @@ export class AnnualExpenses implements CashFlow {
   }
 
   calculateChange(year: number, currentAge: number): number {
-    const { annualExpenses } = this.inputs.basics;
-    if (!annualExpenses) {
-      return 0;
-    }
+    const annualExpenses = this.inputs.basics.annualExpenses!;
 
     // Convert nominal growth to real growth
     const { expenseGrowthRate } = this.inputs.growthRates;
@@ -104,6 +98,6 @@ export class RetirementExpenses implements CashFlow {
 
   calculateChange(year: number, currentAge: number): number {
     const { retirementExpenses } = this.inputs.goals;
-    return retirementExpenses ?? 0;
+    return retirementExpenses!;
   }
 }
