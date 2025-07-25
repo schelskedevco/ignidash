@@ -1,6 +1,7 @@
 export type AssetClass = 'stocks' | 'bonds' | 'cash';
 
 export type AssetReturns = Record<AssetClass, number>;
+export type AssetAllocation = Record<AssetClass, number>;
 
 /**
  * All monetary values in this interface are in real (inflation-adjusted) dollars
