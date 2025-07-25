@@ -3,16 +3,17 @@ import { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 import { Portfolio } from './portfolio';
 import { CashFlow } from './cash-flow';
 
-interface SimulationPhase {
-  getCashFlow(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): CashFlow;
+export interface SimulationPhase {
+  getCashFlows(inputs: QuickPlanInputs): CashFlow[];
   shouldTransition(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): boolean;
   getNextPhase(inputs: QuickPlanInputs): SimulationPhase | null;
   getName(): string;
+  processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): Portfolio;
 }
 
 export class AccumulationPhase implements SimulationPhase {
-  getCashFlow(_year: number, _portfolio: Portfolio, _inputs: QuickPlanInputs): CashFlow {
-    throw new Error('getCashFlow not implemented for AccumulationPhase');
+  getCashFlows(_inputs: QuickPlanInputs): CashFlow[] {
+    throw new Error('getCashFlows not implemented for AccumulationPhase');
   }
 
   shouldTransition(_year: number, _portfolio: Portfolio, _inputs: QuickPlanInputs): boolean {
@@ -26,11 +27,15 @@ export class AccumulationPhase implements SimulationPhase {
   getName(): string {
     return 'Accumulation Phase';
   }
+
+  processYear(_year: number, _portfolio: Portfolio, _inputs: QuickPlanInputs): Portfolio {
+    throw new Error('processYear not implemented for AccumulationPhase');
+  }
 }
 
 export class RetirementPhase implements SimulationPhase {
-  getCashFlow(_year: number, _portfolio: Portfolio, _inputs: QuickPlanInputs): CashFlow {
-    throw new Error('getCashFlow not implemented for RetirementPhase');
+  getCashFlows(_inputs: QuickPlanInputs): CashFlow[] {
+    throw new Error('getCashFlows not implemented for RetirementPhase');
   }
 
   shouldTransition(_year: number, _portfolio: Portfolio, _inputs: QuickPlanInputs): boolean {
@@ -43,5 +48,9 @@ export class RetirementPhase implements SimulationPhase {
 
   getName(): string {
     return 'Retirement Phase';
+  }
+
+  processYear(_year: number, _portfolio: Portfolio, _inputs: QuickPlanInputs): Portfolio {
+    throw new Error('processYear not implemented for RetirementPhase');
   }
 }
