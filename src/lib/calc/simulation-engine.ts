@@ -194,10 +194,12 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
   runMonteCarloSimulation(numScenarios: number): MonteCarloResult {
     const scenarios: SimulationResult[] = [];
 
-    // Run multiple scenarios with different seeds
+    // Create one returns provider and reset it for each scenario
+    const returnsProvider = new StochasticReturnsProvider(this.inputs, this.baseSeed);
+
+    // Run multiple scenarios using resetForNewScenario
     for (let i = 0; i < numScenarios; i++) {
-      const scenarioSeed = this.baseSeed + i * 1000; // Ensure different seeds
-      const returnsProvider = new StochasticReturnsProvider(this.inputs, scenarioSeed);
+      returnsProvider.resetForNewScenario(i);
       const result = this.runSimulation(returnsProvider);
       scenarios.push(result);
     }

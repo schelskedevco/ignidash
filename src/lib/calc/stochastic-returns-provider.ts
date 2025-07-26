@@ -240,10 +240,3 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     this.rng.reset(newSeed);
   }
 }
-
-/**
- * Factory function to create stochastic returns provider
- */
-export function createStochasticReturnsProvider(inputs: QuickPlanInputs, seed: number): ReturnsProvider {
-  return new StochasticReturnsProvider(inputs, seed);
-}
