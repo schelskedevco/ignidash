@@ -148,20 +148,16 @@ export class StochasticReturnsProvider implements ReturnsProvider {
 
   constructor(
     private inputs: QuickPlanInputs,
-    options?: {
-      seed?: number;
-      volatility?: Partial<MarketVolatility>;
+    options: {
+      seed: number;
     }
   ) {
-    // Initialize with seed for this specific scenario
-    this.scenarioSeed = options?.seed ?? Math.floor(Math.random() * 1000000);
+    // Initialize with required seed for this specific scenario
+    this.scenarioSeed = options.seed;
     this.rng = new SeededRandom(this.scenarioSeed);
 
-    // Merge custom volatility with defaults
-    this.volatility = {
-      ...DEFAULT_VOLATILITY,
-      ...options?.volatility,
-    };
+    // Use default volatility (custom volatility not allowed)
+    this.volatility = DEFAULT_VOLATILITY;
   }
 
   /**
@@ -255,9 +251,8 @@ export class StochasticReturnsProvider implements ReturnsProvider {
  */
 export function createStochasticReturnsProvider(
   inputs: QuickPlanInputs,
-  options?: {
-    seed?: number;
-    volatility?: Partial<MarketVolatility>;
+  options: {
+    seed: number;
   }
 ): ReturnsProvider {
   return new StochasticReturnsProvider(inputs, options);
