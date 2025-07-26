@@ -144,17 +144,13 @@ const CHOLESKY_MATRIX = computeCholeskyDecomposition(CORRELATION_MATRIX);
 export class StochasticReturnsProvider implements ReturnsProvider {
   private rng: SeededRandom;
   private volatility: MarketVolatility;
-  private scenarioSeed: number;
 
   constructor(
     private inputs: QuickPlanInputs,
-    options: {
-      seed: number;
-    }
+    private seed: number
   ) {
     // Initialize with required seed for this specific scenario
-    this.scenarioSeed = options.seed;
-    this.rng = new SeededRandom(this.scenarioSeed);
+    this.rng = new SeededRandom(this.seed);
 
     // Use default volatility (custom volatility not allowed)
     this.volatility = DEFAULT_VOLATILITY;
@@ -241,7 +237,7 @@ export class StochasticReturnsProvider implements ReturnsProvider {
    */
   resetForNewScenario(scenarioNumber: number): void {
     // Use scenario number to create unique seed for each scenario
-    const newSeed = this.scenarioSeed + scenarioNumber * 1000;
+    const newSeed = this.seed + scenarioNumber * 1000;
     this.rng.reset(newSeed);
   }
 }
@@ -249,11 +245,6 @@ export class StochasticReturnsProvider implements ReturnsProvider {
 /**
  * Factory function to create stochastic returns provider
  */
-export function createStochasticReturnsProvider(
-  inputs: QuickPlanInputs,
-  options: {
-    seed: number;
-  }
-): ReturnsProvider {
-  return new StochasticReturnsProvider(inputs, options);
+export function createStochasticReturnsProvider(inputs: QuickPlanInputs, seed: number): ReturnsProvider {
+  return new StochasticReturnsProvider(inputs, seed);
 }
