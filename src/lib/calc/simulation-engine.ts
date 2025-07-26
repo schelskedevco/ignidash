@@ -24,7 +24,8 @@
 import { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 
 import { Portfolio } from './portfolio';
-import { ReturnsProvider, FixedReturnProvider, ReturnsWithMetadata } from './returns-provider';
+import { ReturnsProvider, ReturnsWithMetadata } from './returns-provider';
+import { StochasticReturnsProvider } from './stochastic-returns-provider';
 import { SimulationPhase, AccumulationPhase } from './simulation-phase';
 import { convertAllocationInputsToAssetAllocation } from './asset';
 
@@ -40,36 +41,24 @@ interface SimulationResult {
 }
 
 /**
- * Simulation engine interface for financial projection strategies
+ * Financial Simulation Engine
+ * Core simulation engine that models portfolio performance across life phases
+ * Works with any returns provider (fixed or stochastic) for flexible simulation strategies
  */
-interface SimulationEngine {
+export class FinancialSimulationEngine {
   /**
-   * Executes the financial simulation
-   * @returns Simulation result with success status and portfolio time series
-   */
-  runSimulation(): SimulationResult;
-}
-
-/**
- * Fixed Returns Simulation Engine
- * Deterministic simulation using consistent market returns throughout the projection
- * Models portfolio performance with fixed asset class returns and phase transitions
- */
-export class FixedReturnsSimulationEngine implements SimulationEngine {
-  /**
-   * Creates a fixed returns simulation engine
+   * Creates a financial simulation engine
    * @param inputs - User's financial planning inputs and assumptions
    */
-  constructor(private inputs: QuickPlanInputs) {}
+  constructor(protected inputs: QuickPlanInputs) {}
 
   /**
    * Runs a complete financial simulation from current age to life expectancy
    * Processes annual cash flows, rebalancing, and returns across all life phases
+   * @param returnsProvider - Provider for market returns (fixed or stochastic)
    * @returns Simulation result with success status and portfolio progression
    */
-  runSimulation(): SimulationResult {
-    const returnProvider = this.createReturnProvider();
-
+  runSimulation(returnsProvider: ReturnsProvider): SimulationResult {
     let portfolio = this.initializePortfolio();
     let currentPhase = this.determineInitialPhase(portfolio);
 
@@ -88,7 +77,7 @@ export class FixedReturnsSimulationEngine implements SimulationEngine {
       portfolio = portfolio.withRebalance(convertAllocationInputsToAssetAllocation(this.inputs.allocation));
 
       // Apply returns at end of year (compounding on final balance)
-      const returns = returnProvider.getReturns(year);
+      const returns = returnsProvider.getReturns(year);
       portfolio = portfolio.withReturns(returns.returns);
 
       data.push([year, portfolio]);
@@ -112,14 +101,6 @@ export class FixedReturnsSimulationEngine implements SimulationEngine {
       phasesMetadata,
       returnsMetadata,
     };
-  }
-
-  /**
-   * Creates the return provider for market return calculations
-   * @returns Fixed return provider using user's market assumptions
-   */
-  private createReturnProvider(): ReturnsProvider {
-    return new FixedReturnProvider(this.inputs);
   }
 
   /**
@@ -188,53 +169,69 @@ interface MonteCarloResult {
 }
 
 /**
- * Monte Carlo Simulation Engine (Placeholder Implementation)
- * Stochastic simulation using variable market returns for risk analysis
- * Currently a placeholder for future probabilistic modeling capabilities
+ * Monte Carlo Simulation Engine
+ * Extends the base simulation engine to run multiple stochastic scenarios
+ * Provides probabilistic analysis with success rates and percentile outcomes
  */
-export class MonteCarloSimulationEngine implements SimulationEngine {
+export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
   /**
    * Creates a Monte Carlo simulation engine
    * @param inputs - User's financial planning inputs and assumptions
+   * @param baseSeed - Base seed for random number generation
    */
-  constructor(private inputs: QuickPlanInputs) {}
-
-  /**
-   * Placeholder simulation method (not yet implemented)
-   * @returns Empty simulation result
-   */
-  runSimulation(): SimulationResult {
-    return {
-      success: true,
-      data: [],
-      phasesMetadata: [],
-      returnsMetadata: [],
-    };
+  constructor(
+    inputs: QuickPlanInputs,
+    private baseSeed: number
+  ) {
+    super(inputs);
   }
 
   /**
-   * Runs multiple simulation scenarios for Monte Carlo analysis (placeholder)
+   * Runs multiple simulation scenarios for Monte Carlo analysis
    * @param numScenarios - Number of scenarios to simulate
    * @returns Aggregate results with success rates and percentiles
    */
   runMonteCarloSimulation(numScenarios: number): MonteCarloResult {
     const scenarios: SimulationResult[] = [];
+
+    // Run multiple scenarios with different seeds
     for (let i = 0; i < numScenarios; i++) {
-      scenarios.push(this.runSimulation());
+      const scenarioSeed = this.baseSeed + i * 1000; // Ensure different seeds
+      const returnsProvider = new StochasticReturnsProvider(this.inputs, scenarioSeed);
+      const result = this.runSimulation(returnsProvider);
+      scenarios.push(result);
     }
 
-    // Aggregate statistics calculation would go here
-    const aggregateStats = {
-      successRate: scenarios.filter((s) => s.success).length / numScenarios,
-      percentiles: {
-        p10: 0, // Placeholder
-        p25: 0, // Placeholder
-        p50: 0, // Placeholder
-        p75: 0, // Placeholder
-        p90: 0, // Placeholder
-      },
+    // Calculate aggregate statistics
+    const successCount = scenarios.filter((s) => s.success).length;
+    const successRate = successCount / numScenarios;
+
+    // Extract final portfolio values for percentile calculations
+    const finalValues = scenarios
+      .map((scenario) => {
+        const lastDataPoint = scenario.data[scenario.data.length - 1];
+        return lastDataPoint ? lastDataPoint[1].getTotalValue() : 0;
+      })
+      .sort((a, b) => a - b);
+
+    // Calculate percentiles
+    const getPercentile = (arr: number[], percentile: number) => {
+      const index = Math.floor((percentile / 100) * arr.length);
+      return arr[index] || 0;
     };
 
-    return { scenarios, aggregateStats };
+    return {
+      scenarios,
+      aggregateStats: {
+        successRate,
+        percentiles: {
+          p10: getPercentile(finalValues, 10),
+          p25: getPercentile(finalValues, 25),
+          p50: getPercentile(finalValues, 50),
+          p75: getPercentile(finalValues, 75),
+          p90: getPercentile(finalValues, 90),
+        },
+      },
+    };
   }
 }
