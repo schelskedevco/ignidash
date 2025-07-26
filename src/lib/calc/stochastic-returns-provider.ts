@@ -218,10 +218,9 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     // Convert expected return to log-normal parameters
     // E[R] = exp(μ + σ²/2) - 1, so μ = ln(1 + E[R]) - σ²/2 (Reference: https://www.statlect.com/probability-distributions/log-normal-distribution)
     const mu = Math.log(1 + expectedReturn) - 0.5 * volatility * volatility;
-    const sigma = volatility;
 
     // Generate log-normal return (Reference: https://en.wikipedia.org/wiki/Log-normal_distribution#Generation_and_parameters)
-    return Math.exp(mu + sigma * z) - 1;
+    return Math.exp(mu + volatility * z) - 1;
   }
 
   /**
