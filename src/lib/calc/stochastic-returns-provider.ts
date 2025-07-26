@@ -30,7 +30,7 @@ class SeededRandom {
   }
 
   /**
-   * Generate next random number between 0 and 1
+   * Generate next random number in the interval [0, 1)
    */
   next(): number {
     // LCG parameters (same as glibc)
