@@ -182,11 +182,8 @@ export class StochasticReturnsProvider implements ReturnsProvider {
 
     // Generate nominal returns using appropriate distributions
     const nominalStockReturn = this.generateLogNormalReturn(expectedStockReturn, this.volatility.stocks, correlatedRandoms[0]);
-
     const nominalBondReturn = this.generateNormalReturn(expectedBondReturn, this.volatility.bonds, correlatedRandoms[1]);
-
     const nominalCashReturn = this.generateNormalReturn(expectedCashReturn, this.volatility.cash, correlatedRandoms[2]);
-
     const inflation = this.generateNormalReturn(expectedInflation, this.volatility.inflation, correlatedRandoms[3]);
 
     // Calculate real returns using Fisher equation
