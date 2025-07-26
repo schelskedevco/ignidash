@@ -154,7 +154,7 @@ export class FinancialSimulationEngine {
  * Monte Carlo simulation result with multiple scenarios and aggregate statistics
  */
 interface MonteCarloResult {
-  scenarios: SimulationResult[];
+  scenarios: Array<[number /* seed */, SimulationResult]>;
   aggregateStats: {
     successRate: number;
     percentiles: {
@@ -192,26 +192,26 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
    * @returns Aggregate results with success rates and percentiles
    */
   runMonteCarloSimulation(numScenarios: number): MonteCarloResult {
-    const scenarios: SimulationResult[] = [];
+    const scenarios: Array<[number, SimulationResult]> = [];
 
     // Create one returns provider and reset it for each scenario
     const returnsProvider = new StochasticReturnsProvider(this.inputs, this.baseSeed);
 
     // Run multiple scenarios using resetForNewScenario
     for (let i = 0; i < numScenarios; i++) {
-      returnsProvider.resetForNewScenario(i);
+      const scenarioSeed = returnsProvider.resetForNewScenario(i);
       const result = this.runSimulation(returnsProvider);
-      scenarios.push(result);
+      scenarios.push([scenarioSeed, result]);
     }
 
     // Calculate aggregate statistics
-    const successCount = scenarios.filter((s) => s.success).length;
+    const successCount = scenarios.filter(([_seed, result]) => result.success).length;
     const successRate = successCount / numScenarios;
 
     // Extract final portfolio values for percentile calculations
     const finalValues = scenarios
-      .map((scenario) => {
-        const lastDataPoint = scenario.data[scenario.data.length - 1];
+      .map(([_seed, result]) => {
+        const lastDataPoint = result.data[result.data.length - 1];
         return lastDataPoint ? lastDataPoint[1].getTotalValue() : 0;
       })
       .sort((a, b) => a - b);

@@ -234,9 +234,10 @@ export class StochasticReturnsProvider implements ReturnsProvider {
   /**
    * Reset the random number generator for a new scenario
    */
-  resetForNewScenario(scenarioNumber: number): void {
+  resetForNewScenario(scenarioNumber: number): number {
     // Use scenario number to create unique seed for each scenario
     const newSeed = this.seed + scenarioNumber * 1000;
     this.rng.reset(newSeed);
+    return newSeed;
   }
 }
