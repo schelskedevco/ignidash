@@ -51,24 +51,20 @@ export class FinancialSimulationEngine {
   /**
    * Creates a financial simulation engine
    * @param inputs - User's financial planning inputs and assumptions
-   * @param initialPortfolio - Starting portfolio state
-   * @param initialPhase - Starting simulation phase
    */
-  constructor(
-    protected inputs: QuickPlanInputs,
-    private initialPortfolio: Portfolio,
-    private initialPhase: SimulationPhase
-  ) {}
+  constructor(protected inputs: QuickPlanInputs) {}
 
   /**
    * Runs a complete financial simulation from current age to life expectancy
    * Processes annual cash flows, rebalancing, and returns across all life phases
    * @param returnsProvider - Provider for market returns (fixed or stochastic)
+   * @param initialPortfolio - Starting portfolio state
+   * @param initialPhase - Starting simulation phase
    * @returns Simulation result with success status and portfolio progression
    */
-  runSimulation(returnsProvider: ReturnsProvider): SimulationResult {
-    let portfolio = this.initialPortfolio;
-    let currentPhase = this.initialPhase;
+  runSimulation(returnsProvider: ReturnsProvider, initialPortfolio: Portfolio, initialPhase: SimulationPhase): SimulationResult {
+    let portfolio = initialPortfolio;
+    let currentPhase = initialPhase;
 
     const startAge = this.inputs.basics.currentAge!;
     const lifeExpectancy = this.inputs.retirementFunding.lifeExpectancy;
@@ -193,9 +189,7 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
     inputs: QuickPlanInputs,
     private baseSeed: number
   ) {
-    const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(inputs);
-    const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, inputs);
-    super(inputs, portfolio, initialPhase);
+    super(inputs);
   }
 
   /**
@@ -212,7 +206,9 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
     // Run multiple scenarios using resetForNewScenario
     for (let i = 0; i < numScenarios; i++) {
       const scenarioSeed = returnsProvider.resetForNewScenario(i);
-      const result = this.runSimulation(returnsProvider);
+      const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(this.inputs);
+      const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, this.inputs);
+      const result = this.runSimulation(returnsProvider, portfolio, initialPhase);
       scenarios.push([scenarioSeed, result]);
     }
 
@@ -281,9 +277,7 @@ export class HistoricalBacktestSimulationEngine extends FinancialSimulationEngin
    * @param inputs - User's financial planning inputs and assumptions
    */
   constructor(inputs: QuickPlanInputs) {
-    const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(inputs);
-    const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, inputs);
-    super(inputs, portfolio, initialPhase);
+    super(inputs);
   }
 
   /**
@@ -298,7 +292,9 @@ export class HistoricalBacktestSimulationEngine extends FinancialSimulationEngin
     // Run simulation for each possible start year
     for (let startYear = dataRange.startYear; startYear <= dataRange.endYear; startYear++) {
       const returnsProvider = new HistoricalBacktestReturnsProvider(startYear);
-      const result = this.runSimulation(returnsProvider);
+      const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(this.inputs);
+      const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, this.inputs);
+      const result = this.runSimulation(returnsProvider, portfolio, initialPhase);
       scenarios.push([startYear, result]);
     }
 
