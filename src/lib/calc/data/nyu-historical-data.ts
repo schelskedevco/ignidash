@@ -127,8 +127,8 @@ export function getNyuHistoricalData(startYear: number, endYear: number): NyuHis
  */
 export function getNyuDataRange(): { startYear: number; endYear: number } {
   return {
-    startYear: nyuHistoricalData[0]?.year ?? 1928,
-    endYear: nyuHistoricalData[nyuHistoricalData.length - 1]?.year ?? new Date().getFullYear(),
+    startYear: nyuHistoricalData[0].year,
+    endYear: nyuHistoricalData[nyuHistoricalData.length - 1].year,
   };
 }
 
