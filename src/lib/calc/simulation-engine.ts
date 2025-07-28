@@ -353,9 +353,6 @@ export class HistoricalBacktestSimulationEngine extends FinancialSimulationEngin
       return arr[Math.min(index, arr.length - 1)]; // Ensure we don't exceed array bounds
     };
 
-    // Run SORR stress tests on the scenarios
-    const sorrStressTests = this.runSorrHistoricalBacktest(scenarios);
-
     return {
       scenarios,
       aggregateStats: {
@@ -368,7 +365,7 @@ export class HistoricalBacktestSimulationEngine extends FinancialSimulationEngin
           p90: getPercentile(finalValues, 90),
         },
       },
-      sorrStressTests,
+      sorrStressTests: this.runSorrHistoricalBacktest(scenarios),
     };
   }
 
