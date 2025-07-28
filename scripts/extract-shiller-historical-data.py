@@ -223,7 +223,7 @@ def main():
     project_root = os.path.dirname(script_dir)
     
     csv_path = os.path.join(project_root, 'src/lib/calc/data/ie-data.csv')
-    output_path = os.path.join(project_root, 'src/lib/calc/data/historical-data.ts')
+    output_path = os.path.join(project_root, 'src/lib/calc/data/shiller-historical-data.ts')
     
     print("Parsing CSV data...")
     monthly_data = parse_csv_file(csv_path)
