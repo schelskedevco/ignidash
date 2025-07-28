@@ -395,13 +395,15 @@ export class HistoricalBacktestSimulationEngine extends FinancialSimulationEngin
   }
 
   /**
-   * Runs supplemental SORR historical backtests by finding the first scenario with a SORR-sensitive phase
+   * Runs supplemental SORR historical backtests using the median portfolio value at SORR-sensitive phase
    * and re-running simulations from various historical downturns at that vulnerable point
    * @param scenarios - Array of historical backtest scenarios to analyze
-   * @returns SORR stress test results organized by risk category, or null if no SORR-sensitive phase found
+   * @returns SORR stress test results, or null if no SORR-sensitive phase found
    */
   private runSorrHistoricalBacktest(scenarios: Array<[number, SimulationResult]>): SorrEventResult[] | null {
-    // Find the first simulation where a SORR-sensitive phase is encountered
+    // Collect all portfolios at SORR-sensitive phase transitions
+    const sorrTransitions: Array<{ portfolio: Portfolio; phase: SimulationPhase }> = [];
+
     for (const [_startYear, result] of scenarios) {
       // Look through phase transitions to find when SORR sensitivity begins
       for (let i = 0; i < result.phasesMetadata.length; i++) {
@@ -410,13 +412,26 @@ export class HistoricalBacktestSimulationEngine extends FinancialSimulationEngin
         if (phase.isSensitiveToSORR()) {
           // Extract the portfolio state at this transition point
           const portfolioAtTransition = result.data.find(([time, _portfolio]) => time === timeInYears)![1];
-
-          // Run simulations for all risk categories
-          return this.runSorrStressTests(portfolioAtTransition, phase);
+          sorrTransitions.push({
+            portfolio: portfolioAtTransition,
+            phase: phase,
+          });
+          break; // Only take the first SORR-sensitive phase per scenario
         }
       }
     }
 
-    return null; // No SORR-sensitive phase found in any scenario
+    // If no SORR-sensitive transitions found, return null
+    if (!sorrTransitions.length) {
+      return null;
+    }
+
+    // Sort transitions by portfolio value and find the median
+    const sortedTransitions = sorrTransitions.sort((a, b) => a.portfolio.getTotalValue() - b.portfolio.getTotalValue());
+    const medianIndex = Math.floor(sortedTransitions.length / 2);
+    const medianTransition = sortedTransitions[medianIndex];
+
+    // Run simulations using the median portfolio
+    return this.runSorrStressTests(medianTransition.portfolio, medianTransition.phase);
   }
 }
