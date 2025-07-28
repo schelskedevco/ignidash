@@ -51,8 +51,14 @@ export class FinancialSimulationEngine {
   /**
    * Creates a financial simulation engine
    * @param inputs - User's financial planning inputs and assumptions
+   * @param initialPortfolio - Starting portfolio state
+   * @param initialPhase - Starting simulation phase
    */
-  constructor(protected inputs: QuickPlanInputs) {}
+  constructor(
+    protected inputs: QuickPlanInputs,
+    private initialPortfolio: Portfolio,
+    private initialPhase: SimulationPhase
+  ) {}
 
   /**
    * Runs a complete financial simulation from current age to life expectancy
@@ -61,8 +67,8 @@ export class FinancialSimulationEngine {
    * @returns Simulation result with success status and portfolio progression
    */
   runSimulation(returnsProvider: ReturnsProvider): SimulationResult {
-    let portfolio = this.initializePortfolio();
-    let currentPhase = this.determineInitialPhase(portfolio);
+    let portfolio = this.initialPortfolio;
+    let currentPhase = this.initialPhase;
 
     const startAge = this.inputs.basics.currentAge!;
     const lifeExpectancy = this.inputs.retirementFunding.lifeExpectancy;
@@ -107,11 +113,12 @@ export class FinancialSimulationEngine {
 
   /**
    * Initializes the starting portfolio based on user's current assets and allocation
+   * @param inputs - User's financial planning inputs
    * @returns Portfolio with assets distributed according to target allocation
    */
-  private initializePortfolio(): Portfolio {
-    const { stockAllocation, bondAllocation, cashAllocation } = this.inputs.allocation;
-    const { investedAssets } = this.inputs.basics;
+  static createDefaultInitialPortfolio(inputs: QuickPlanInputs): Portfolio {
+    const { stockAllocation, bondAllocation, cashAllocation } = inputs.allocation;
+    const { investedAssets } = inputs.basics;
 
     return Portfolio.create([
       {
@@ -136,14 +143,15 @@ export class FinancialSimulationEngine {
    * Determines the appropriate starting phase based on current portfolio status
    * Automatically transitions through phases until reaching an applicable one
    * @param portfolio - Current portfolio state
+   * @param inputs - User's financial planning inputs
    * @returns Appropriate simulation phase for the starting conditions
    */
-  private determineInitialPhase(portfolio: Portfolio): SimulationPhase {
+  static createDefaultInitialPhase(portfolio: Portfolio, inputs: QuickPlanInputs): SimulationPhase {
     let phase: SimulationPhase = new AccumulationPhase();
 
     // Keep transitioning until we find a phase we can't transition out of yet
-    while (phase.shouldTransition(portfolio, this.inputs)) {
-      const nextPhase = phase.getNextPhase(this.inputs);
+    while (phase.shouldTransition(portfolio, inputs)) {
+      const nextPhase = phase.getNextPhase(inputs);
       if (!nextPhase) break;
       phase = nextPhase;
     }
@@ -185,7 +193,9 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
     inputs: QuickPlanInputs,
     private baseSeed: number
   ) {
-    super(inputs);
+    const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(inputs);
+    const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, inputs);
+    super(inputs, portfolio, initialPhase);
   }
 
   /**
@@ -271,7 +281,9 @@ export class HistoricalBacktestSimulationEngine extends FinancialSimulationEngin
    * @param inputs - User's financial planning inputs and assumptions
    */
   constructor(inputs: QuickPlanInputs) {
-    super(inputs);
+    const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(inputs);
+    const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, inputs);
+    super(inputs, portfolio, initialPhase);
   }
 
   /**

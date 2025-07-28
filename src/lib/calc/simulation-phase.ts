@@ -66,6 +66,14 @@ export interface SimulationPhase {
    * @returns Updated portfolio after processing the year
    */
   processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): Portfolio;
+
+  /**
+   * Determines if this phase is sensitive to sequence of returns risk
+   * Sensitive phases will be tested against all categories of historical market downturns
+   * (small, medium, and large catastrophes) to provide comprehensive risk analysis
+   * @returns True if this phase should undergo black swan event testing
+   */
+  isSensitiveToSORR(): boolean;
 }
 
 /**
@@ -118,6 +126,10 @@ export class AccumulationPhase implements SimulationPhase {
 
     return portfolio; // No net change
   }
+
+  isSensitiveToSORR(): boolean {
+    return false;
+  }
 }
 
 /**
@@ -163,5 +175,9 @@ export class RetirementPhase implements SimulationPhase {
     const grossWithdrawal = shortfall / (1 - effectiveTaxRate / 100);
 
     return portfolio.withWithdrawal(grossWithdrawal);
+  }
+
+  isSensitiveToSORR(): boolean {
+    return true;
   }
 }
