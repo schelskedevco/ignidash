@@ -223,7 +223,7 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
     // Calculate percentiles
     const getPercentile = (arr: number[], percentile: number) => {
       const index = Math.floor((percentile / 100) * arr.length);
-      return arr[index];
+      return arr[Math.min(index, arr.length - 1)]; // Ensure we don't exceed array bounds
     };
 
     return {
