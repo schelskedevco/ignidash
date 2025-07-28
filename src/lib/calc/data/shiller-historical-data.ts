@@ -183,8 +183,8 @@ export function getHistoricalData(startYear: number, endYear: number): Historica
  */
 export function getDataRange(): { startYear: number; endYear: number } {
   return {
-    startYear: historicalData[0]?.year ?? 1871,
-    endYear: historicalData[historicalData.length - 1]?.year ?? new Date().getFullYear(),
+    startYear: historicalData[0].year,
+    endYear: historicalData[historicalData.length - 1].year,
   };
 }
 
