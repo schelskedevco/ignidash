@@ -26,11 +26,9 @@ import { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 import { Portfolio } from './portfolio';
 import { ReturnsProvider, ReturnsWithMetadata } from './returns-provider';
 import { StochasticReturnsProvider } from './stochastic-returns-provider';
-import { HistoricalBacktestReturnsProvider } from './historical-backtest-returns-provider';
 import { LcgHistoricalBacktestReturnsProvider } from './lcg-historical-backtest-returns-provider';
 import { SimulationPhase, AccumulationPhase } from './simulation-phase';
 import { convertAllocationInputsToAssetAllocation } from './asset';
-import { getNyuDataRange } from './data/nyu-historical-data';
 
 /**
  * Simulation result containing success status, portfolio progression, and metadata
@@ -219,120 +217,6 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
     // Extract final portfolio values for percentile calculations
     const finalValues = scenarios
       .map(([_seed, result]) => {
-        const dataPointsCount = result.data.length;
-        if (dataPointsCount === 0) throw new Error('No data points in simulation result');
-
-        return result.data[dataPointsCount - 1][1].getTotalValue();
-      })
-      .sort((a, b) => a - b);
-
-    // Calculate percentiles
-    const getPercentile = (arr: number[], percentile: number) => {
-      const index = Math.floor((percentile / 100) * arr.length);
-      return arr[Math.min(index, arr.length - 1)]; // Ensure we don't exceed array bounds
-    };
-
-    return {
-      scenarios,
-      aggregateStats: {
-        successRate,
-        percentiles: {
-          p10: getPercentile(finalValues, 10),
-          p25: getPercentile(finalValues, 25),
-          p50: getPercentile(finalValues, 50),
-          p75: getPercentile(finalValues, 75),
-          p90: getPercentile(finalValues, 90),
-        },
-      },
-    };
-  }
-}
-
-/**
- * Historical backtest simulation result with scenarios for each start year and aggregate statistics
- */
-interface HistoricalBacktestResult {
-  scenarios: Array<[number /* startYear */, SimulationResult]>;
-  aggregateStats: {
-    successRate: number;
-    percentiles: {
-      p10: number;
-      p25: number;
-      p50: number;
-      p75: number;
-      p90: number;
-    };
-    // Other aggregate statistics
-  };
-}
-
-/**
- * Historical Backtest Simulation Engine
- * Extends the base simulation engine to run historical backtests across all available years
- * Tests financial plans against real historical market sequences from 1928-2024
- */
-export class HistoricalBacktestSimulationEngine extends FinancialSimulationEngine {
-  /**
-   * Major historical market events for SORR stress testing
-   * Each event is tested from its starting year to capture the full sequence of returns
-   * worstStockReturn shows the worst annual return during the event period
-   */
-  private static readonly SORR_HISTORICAL_EVENTS = [
-    { year: 1929, description: 'Great Depression', worstStockReturn: -0.3807 }, // 1931 was worst
-    { year: 1937, description: 'Recession of 1937-38', worstStockReturn: -0.3713 }, // 1937 itself
-    { year: 1939, description: 'Pre-WWII Uncertainty', worstStockReturn: -0.2065 }, // 1941 was worst
-    { year: 1946, description: 'Post-War Inflation', worstStockReturn: -0.2248 }, // 1946 itself
-    { year: 1957, description: 'Eisenhower Recession', worstStockReturn: -0.1298 }, // 1957 itself
-    { year: 1962, description: 'Flash Crash of 1962', worstStockReturn: -0.1001 }, // 1962 itself
-    { year: 1966, description: 'Credit Crunch of 1966', worstStockReturn: -0.1298 }, // 1966 itself
-    { year: 1969, description: 'Nixon Recession', worstStockReturn: -0.136 }, // 1969 itself
-    { year: 1973, description: 'Oil Embargo & Stagflation', worstStockReturn: -0.3404 }, // 1974 was worst
-    { year: 1977, description: 'Stagflation Era', worstStockReturn: -0.1282 }, // 1977 itself
-    { year: 1981, description: 'Volcker Recession', worstStockReturn: -0.1251 }, // 1981 itself
-    { year: 1990, description: 'Gulf War Recession', worstStockReturn: -0.0864 }, // 1990 itself
-    { year: 2000, description: 'Dot-com Bubble Burst', worstStockReturn: -0.2378 }, // 2002 was worst
-    { year: 2008, description: 'Global Financial Crisis', worstStockReturn: -0.3661 }, // 2008 itself
-    { year: 2022, description: 'Inflation & Rate Hikes', worstStockReturn: -0.2301 }, // 2022 itself
-  ] as const;
-
-  /**
-   * Creates a historical backtest simulation engine
-   * @param inputs - User's financial planning inputs and assumptions
-   * @param baseSeed - Base seed for random number generation
-   */
-  constructor(
-    inputs: QuickPlanInputs,
-    private baseSeed: number
-  ) {
-    super(inputs);
-  }
-
-  /**
-   * Runs historical backtest simulations using all available start years
-   * Tests the financial plan against each historical period from 1928-2024
-   * @returns Aggregate results with success rates and percentiles based on historical outcomes
-   */
-  runHistoricalBacktest(): HistoricalBacktestResult {
-    const dataRange = getNyuDataRange();
-    const scenarios: Array<[number, SimulationResult]> = [];
-
-    const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(this.inputs);
-    const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, this.inputs);
-
-    // Run simulation for each possible start year
-    for (let startYear = dataRange.startYear; startYear <= dataRange.endYear; startYear++) {
-      const returnsProvider = new HistoricalBacktestReturnsProvider(startYear);
-      const result = this.runSimulation(returnsProvider, portfolio, initialPhase);
-      scenarios.push([startYear, result]);
-    }
-
-    // Calculate aggregate statistics
-    const successCount = scenarios.filter(([_startYear, result]) => result.success).length;
-    const successRate = successCount / scenarios.length;
-
-    // Extract final portfolio values for percentile calculations
-    const finalValues = scenarios
-      .map(([_startYear, result]) => {
         const dataPointsCount = result.data.length;
         if (dataPointsCount === 0) throw new Error('No data points in simulation result');
 
