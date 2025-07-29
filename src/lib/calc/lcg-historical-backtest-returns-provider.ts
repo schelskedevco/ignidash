@@ -44,12 +44,17 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
    * @param seed - Base seed for LCG random number generation
    */
   constructor(seed: number) {
+    // Initialize data range and historical data
     this.dataRange = getNyuDataRange();
     this.historicalData = nyuHistoricalData;
+
+    // Initialize seeded random number generator
     this.rng = new SeededRandom(seed);
 
     // Generate random start year using LCG
     this.selectedStartYear = this.generateRandomStartYear();
+
+    // Initialize sequence tracking
     this.currentSequenceStartYear = this.selectedStartYear;
     this.currentSequenceStartSimYear = 1;
   }
