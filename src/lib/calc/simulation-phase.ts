@@ -108,23 +108,19 @@ export class AccumulationPhase implements SimulationPhase {
     const currentAge = inputs.basics.currentAge! + year;
     let totalCashFlow = 0;
 
-    // Calculate net cash flow from all income/expense events
     for (const cashFlow of this.getCashFlows(inputs)) {
       if (cashFlow.shouldApply(year, currentAge)) {
         totalCashFlow += cashFlow.calculateAmount(year, currentAge);
       }
     }
 
-    // Apply net cash flow to portfolio
     if (totalCashFlow > 0) {
-      // Surplus - contribute to portfolio (using target allocation)
       return portfolio.withCash(totalCashFlow);
     } else if (totalCashFlow < 0) {
-      // Deficit - withdraw from portfolio (cash → bonds → stocks)
       return portfolio.withWithdrawal(Math.abs(totalCashFlow));
     }
 
-    return portfolio; // No net change
+    return portfolio;
   }
 
   isSensitiveToSORR(): boolean {
@@ -158,7 +154,6 @@ export class RetirementPhase implements SimulationPhase {
     const currentAge = inputs.basics.currentAge! + year;
     let totalCashFlow = 0;
 
-    // Calculate net cash flow from income and expenses
     for (const cashFlow of this.getCashFlows(inputs)) {
       if (cashFlow.shouldApply(year, currentAge)) {
         totalCashFlow += cashFlow.calculateAmount(year, currentAge);
@@ -169,7 +164,6 @@ export class RetirementPhase implements SimulationPhase {
       return portfolio.withCash(totalCashFlow);
     }
 
-    // Need to withdraw to cover shortfall
     const shortfall = Math.abs(totalCashFlow);
     const effectiveTaxRate = inputs.retirementFunding.effectiveTaxRate;
     const grossWithdrawal = shortfall / (1 - effectiveTaxRate / 100);
