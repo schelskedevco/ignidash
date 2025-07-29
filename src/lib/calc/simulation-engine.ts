@@ -293,15 +293,15 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
   runLcgHistoricalBacktest(numScenarios: number): LcgHistoricalBacktestResult {
     const scenarios: Array<[number, SimulationResult]> = [];
 
-    // Create one returns provider and reset it for each scenario
-    const returnsProvider = new LcgHistoricalBacktestReturnsProvider(this.baseSeed);
     const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(this.inputs);
     const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, this.inputs);
 
-    // Run multiple scenarios using resetForNewScenario to get different start years
+    // Run multiple scenarios, creating a new provider for each
     for (let i = 0; i < numScenarios; i++) {
-      const selectedStartYear = returnsProvider.resetForNewScenario(i);
+      const scenarioSeed = this.baseSeed + i * 1009; // Prime multiplier for better distribution
+      const returnsProvider = new LcgHistoricalBacktestReturnsProvider(scenarioSeed);
       const result = this.runSimulation(returnsProvider, portfolio, initialPhase);
+      const selectedStartYear = returnsProvider.getSelectedStartYear();
       scenarios.push([selectedStartYear, result]);
     }
 

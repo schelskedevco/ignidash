@@ -81,27 +81,35 @@ describe('LcgHistoricalBacktestReturnsProvider', () => {
     });
   });
 
-  describe('resetForNewScenario', () => {
-    it('should generate different start years for different scenarios', () => {
-      const provider = new LcgHistoricalBacktestReturnsProvider(54321);
+  describe('different scenarios via new instances', () => {
+    it('should generate different start years for different scenario seeds', () => {
+      const baseSeed = 54321;
 
-      // Get initial start year
-      const initial = provider.getReturns(1);
-      const initialStartYear = initial.metadata.extras!.selectedStartYear;
+      // Create providers for different scenarios
+      const provider1 = new LcgHistoricalBacktestReturnsProvider(baseSeed + 1 * 1009);
+      const provider2 = new LcgHistoricalBacktestReturnsProvider(baseSeed + 2 * 1009);
+      const provider3 = new LcgHistoricalBacktestReturnsProvider(baseSeed + 3 * 1009);
 
-      // Reset for scenario 1
-      const newStartYear1 = provider.resetForNewScenario(1);
-      const result1 = provider.getReturns(1);
+      const result1 = provider1.getReturns(1);
+      const result2 = provider2.getReturns(1);
+      const result3 = provider3.getReturns(1);
 
-      expect(newStartYear1).not.toBe(initialStartYear);
-      expect(result1.metadata.extras!.selectedStartYear).toBe(newStartYear1);
+      const startYear1 = result1.metadata.extras!.selectedStartYear as number;
+      const startYear2 = result2.metadata.extras!.selectedStartYear as number;
+      const startYear3 = result3.metadata.extras!.selectedStartYear as number;
 
-      // Reset for scenario 2
-      const newStartYear2 = provider.resetForNewScenario(2);
-      const result2 = provider.getReturns(1);
+      // Different seeds should generally produce different start years
+      expect(startYear1).not.toBe(startYear2);
+      expect(startYear2).not.toBe(startYear3);
+      expect(startYear1).not.toBe(startYear3);
 
-      expect(newStartYear2).not.toBe(newStartYear1);
-      expect(result2.metadata.extras!.selectedStartYear).toBe(newStartYear2);
+      // All should be valid years
+      expect(startYear1).toBeGreaterThanOrEqual(dataRange.startYear);
+      expect(startYear1).toBeLessThanOrEqual(dataRange.endYear);
+      expect(startYear2).toBeGreaterThanOrEqual(dataRange.startYear);
+      expect(startYear2).toBeLessThanOrEqual(dataRange.endYear);
+      expect(startYear3).toBeGreaterThanOrEqual(dataRange.startYear);
+      expect(startYear3).toBeLessThanOrEqual(dataRange.endYear);
     });
   });
 

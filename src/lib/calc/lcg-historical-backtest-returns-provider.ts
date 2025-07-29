@@ -118,20 +118,10 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   }
 
   /**
-   * Reset the provider for a new scenario with a different start year
-   * @param scenarioNumber - Zero-based scenario index for deterministic seed generation
-   * @returns The new start year selected for this scenario
+   * Get the currently selected start year for this scenario
+   * @returns The start year being used for the current scenario
    */
-  resetForNewScenario(scenarioNumber: number): number {
-    // Create unique seed for this scenario (similar to StochasticReturnsProvider approach)
-    const baseSeed = Math.floor(Math.abs(scenarioNumber)) % 2147483648;
-    this.rng.reset(baseSeed + scenarioNumber * 1000);
-
-    // Generate new random start year for this scenario
-    this.selectedStartYear = this.generateRandomStartYear();
-    this.currentSequenceStartYear = this.selectedStartYear;
-    this.currentSequenceStartSimYear = 1;
-
+  getSelectedStartYear(): number {
     return this.selectedStartYear;
   }
 }
