@@ -41,6 +41,8 @@ import {
 } from '@/lib/schemas/quick-plan-schema';
 import { calculateYearsToFIRE, calculateFIREAge, getFIREAnalysis } from '@/lib/calc/analysis/calculator';
 import { getFIREChartData } from '@/lib/calc/analysis/charts';
+import { FinancialSimulationEngine } from '@/lib/calc/simulation-engine';
+import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
 
 // ================================
 // TYPES & HELPERS
@@ -385,6 +387,60 @@ export const useUpdatePreferences = () => useQuickPlanStore((state) => state.act
  */
 export const useResetStore = () => useQuickPlanStore((state) => state.actions.resetStore);
 export const useResetSection = () => useQuickPlanStore((state) => state.actions.resetSection);
+
+/**
+ * Fixed Returns Simulation Hook
+ * Central hook that runs the simulation engine with fixed returns provider
+ * All FIRE calculations derive from this simulation data
+ */
+export const useFixedReturnsSimulation = () => {
+  const inputs = useQuickPlanStore((state) => state.inputs);
+  const isReady = useIsCalculationReady();
+
+  return useMemo(() => {
+    if (!isReady) return null;
+
+    const engine = new FinancialSimulationEngine(inputs);
+    const returnsProvider = new FixedReturnsProvider(inputs);
+    const initialPortfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(inputs);
+    const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(initialPortfolio, inputs);
+
+    return engine.runSimulation(returnsProvider, initialPortfolio, initialPhase);
+  }, [inputs, isReady]);
+};
+
+/**
+ * FIRE Analysis Hook
+ * Provides computed values for Financial Independence, Retire Early analysis
+ */
+export const useFixedReturnsAnalysis = () => {
+  const inputs = useQuickPlanStore((state) => state.inputs);
+  const simulation = useFixedReturnsSimulation();
+
+  return useMemo(() => {
+    if (!simulation) return null;
+
+    let yearsToFIRE = null;
+    let fireAge = null;
+    for (const phase of simulation.phasesMetadata) {
+      if (phase[1].getName() === 'Retirement Phase') {
+        yearsToFIRE = phase[0];
+        fireAge = inputs.basics.currentAge! + yearsToFIRE;
+      }
+    }
+
+    let requiredPortfolio = null;
+    if (yearsToFIRE !== null) {
+      requiredPortfolio = simulation.data[yearsToFIRE][1].getTotalValue();
+    }
+
+    return {
+      yearsToFIRE,
+      fireAge,
+      requiredPortfolio,
+    };
+  }, [inputs, simulation]);
+};
 
 /**
  * FIRE Calculations
