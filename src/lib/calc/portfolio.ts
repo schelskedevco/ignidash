@@ -89,7 +89,7 @@ export class Portfolio {
       };
     });
 
-    return new Portfolio(updatedAssets);
+    return Portfolio.create(updatedAssets);
   }
 
   /**
@@ -136,7 +136,7 @@ export class Portfolio {
       }
     }
 
-    return new Portfolio(updatedAssets);
+    return Portfolio.create(updatedAssets);
   }
 
   /**
@@ -154,7 +154,7 @@ export class Portfolio {
       asset.assetClass === 'cash' ? { ...asset, principal: asset.principal + amount } : asset
     );
 
-    return new Portfolio(updatedAssets);
+    return Portfolio.create(updatedAssets);
   }
 
   /**
@@ -184,6 +184,6 @@ export class Portfolio {
       };
     });
 
-    return new Portfolio(updatedAssets);
+    return Portfolio.create(updatedAssets);
   }
 }
