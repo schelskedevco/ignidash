@@ -80,7 +80,6 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
     const targetHistoricalYear = this.currentSequenceStartYear + yearsIntoSequence;
 
     let adjustedYear: number;
-
     if (targetHistoricalYear <= this.dataRange.endYear) {
       // Within range, use the year directly
       adjustedYear = targetHistoricalYear;
