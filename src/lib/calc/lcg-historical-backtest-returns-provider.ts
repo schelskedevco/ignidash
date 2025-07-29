@@ -34,11 +34,8 @@ import { SeededRandom } from './seeded-random';
 export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   private dataRange: { startYear: number; endYear: number };
   private historicalData: NyuHistoricalYearData[];
-
   private rng: SeededRandom;
-
   private selectedStartYear: number;
-
   private currentSequenceStartYear: number;
   private currentSequenceStartSimYear: number;
 
