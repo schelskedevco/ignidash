@@ -86,7 +86,7 @@ export interface Percentiles {
 export interface MultiSimulationStats {
   count: number;
   values: PortfolioStats;
-  returns: ReturnsStats | null;
+  returns: ReturnsStats;
   percentiles: Percentiles;
 }
 
@@ -394,19 +394,22 @@ export class SimulationAnalyzer {
     const yearlyProgression = [];
 
     for (let year = 0; year < maxYears; year++) {
-      const activePortfolios = results
-        .map((result) => result.data.find(([time]) => time === year)?.[1])
-        .filter((portfolio) => portfolio !== undefined);
+      const activeResults = results.filter((result) => result.data.some(([time]) => time === year));
+
+      const activePortfolios = activeResults.map((result) => result.data.find(([time]) => time === year)![1]);
+      const activeReturnsMetadata = activeResults
+        .map((result) => result.returnsMetadata.find(([time]) => time === year)?.[1])
+        .filter((metadata) => metadata !== undefined);
 
       const count = activePortfolios.length;
       const survivalRate = count / results.length;
       const values = this.calculatePortfolioStats(activePortfolios);
+      const returns = this.calculateReturnsStats(activeReturnsMetadata);
 
-      // Calculate percentiles for this year's values
       const yearlyValues = activePortfolios.map((portfolio) => portfolio.getTotalValue()).sort((a, b) => a - b);
       const percentiles = this.calculatePercentilesFromValues(yearlyValues);
 
-      yearlyProgression.push({ year, count, survivalRate, values, returns: null, percentiles });
+      yearlyProgression.push({ year, count, survivalRate, values, returns, percentiles });
     }
 
     return yearlyProgression;
