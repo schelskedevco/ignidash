@@ -19,7 +19,7 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-primary: var(--primary);
   --color-border: var(--border);
-  --font-sans: var(--font-outfit);
+  --font-sans: var(--font-figtree);
 }
 
 .dark {
@@ -38,7 +38,7 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-outfit), sans-serif;
+  font-family: var(--font-figtree), sans-serif;
 }
 
 /* Chrome, Safari, Edge, Opera */
