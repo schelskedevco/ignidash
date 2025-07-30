@@ -21,6 +21,7 @@
 import { AssetClass } from './asset';
 import { Portfolio } from './portfolio';
 import { SimulationResult } from './simulation-engine';
+import { ReturnsWithMetadata } from './returns-provider';
 
 /**
  * Core statistical measures for asset or portfolio values
@@ -138,7 +139,7 @@ export class SimulationAnalyzer {
 
     return {
       values: this.calculatePortfolioStats(portfolios),
-      returns: this.calculateReturnsStats(portfolios),
+      returns: this.calculateReturnsStatsFromMetadata(result.returnsMetadata),
     };
   }
 
@@ -198,11 +199,14 @@ export class SimulationAnalyzer {
     // Build yearly progression
     const yearlyProgression = this.buildYearlyProgression(results);
 
+    // Aggregate returnsMetadata from all simulations
+    const allReturnsMetadata = results.flatMap((result) => result.returnsMetadata);
+
     return {
       successRate,
       count,
       values: this.calculatePortfolioStats(allPortfolios),
-      returns: this.calculateReturnsStats(allPortfolios),
+      returns: this.calculateReturnsStatsFromMetadata(allReturnsMetadata),
       percentiles: this.calculatePercentilesFromValues(finalValues),
       successStats,
       failStats,
@@ -234,24 +238,23 @@ export class SimulationAnalyzer {
   }
 
   /**
-   * Calculates returns statistics for period-over-period performance
+   * Calculates returns statistics from returnsMetadata
    *
-   * @param portfolios - Array of portfolio instances to analyze
+   * @param returnsMetadata - Array of returns metadata from simulations
    * @returns Returns statistics for each asset class and overall portfolio
    */
-  private calculateReturnsStats(portfolios: Portfolio[]): ReturnsStats {
+  private calculateReturnsStatsFromMetadata(returnsMetadata: Array<[number, ReturnsWithMetadata]>): ReturnsStats {
     const assetClasses: AssetClass[] = ['stocks', 'bonds', 'cash'];
     const assets: AssetStats = {} as AssetStats;
 
     // Calculate returns for each asset class
     for (const assetClass of assetClasses) {
-      const returns = this.calculateAssetReturns(portfolios, assetClass);
+      const returns = returnsMetadata.map(([, metadata]) => metadata.returns[assetClass]);
       assets[assetClass] = this.calculateStats(returns);
     }
 
-    // Calculate overall portfolio returns
-    const portfolioReturns = this.calculatePortfolioReturns(portfolios);
-    const overall = this.calculateStats(portfolioReturns);
+    // Calculate overall portfolio returns (weighted average would be complex, so null for now)
+    const overall = null;
 
     return { assets, overall };
   }
@@ -332,51 +335,6 @@ export class SimulationAnalyzer {
   }
 
   /**
-   * Calculates period-over-period returns for a specific asset class
-   *
-   * @param portfolios - Array of portfolio instances in chronological order
-   * @param assetClass - Asset class to calculate returns for
-   * @returns Array of period-over-period return rates
-   */
-  private calculateAssetReturns(portfolios: Portfolio[], assetClass: AssetClass): number[] {
-    const returns: number[] = [];
-    for (let i = 1; i < portfolios.length; i++) {
-      const prevValue = portfolios[i - 1].getAssetValue(assetClass);
-      const currentValue = portfolios[i].getAssetValue(assetClass);
-
-      if (prevValue > 0) {
-        returns.push((currentValue - prevValue) / prevValue);
-      } else {
-        returns.push(0);
-      }
-    }
-
-    return returns;
-  }
-
-  /**
-   * Calculates period-over-period returns for total portfolio
-   *
-   * @param portfolios - Array of portfolio instances in chronological order
-   * @returns Array of period-over-period return rates for total portfolio
-   */
-  private calculatePortfolioReturns(portfolios: Portfolio[]): number[] {
-    const returns: number[] = [];
-    for (let i = 1; i < portfolios.length; i++) {
-      const prevValue = portfolios[i - 1].getTotalValue();
-      const currentValue = portfolios[i].getTotalValue();
-
-      if (prevValue > 0) {
-        returns.push((currentValue - prevValue) / prevValue);
-      } else {
-        returns.push(0);
-      }
-    }
-
-    return returns;
-  }
-
-  /**
    * Calculates comprehensive statistics for a segment of simulations
    *
    * @param results - Array of simulation results to analyze
@@ -388,9 +346,12 @@ export class SimulationAnalyzer {
     // Extract segment portfolios from segment simulations
     const segmentPortfolios = segmentResults.flatMap(({ data }) => data.map(([, portfolio]) => portfolio));
 
+    // Aggregate returnsMetadata from segment simulations
+    const segmentReturnsMetadata = segmentResults.flatMap((result) => result.returnsMetadata);
+
     // Calculate portfolio and returns statistics
     const values = this.calculatePortfolioStats(segmentPortfolios);
-    const returns = this.calculateReturnsStats(segmentPortfolios);
+    const returns = this.calculateReturnsStatsFromMetadata(segmentReturnsMetadata);
 
     // Calculate percentiles based on final portfolio values
     const finalValues = segmentResults
