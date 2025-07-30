@@ -215,7 +215,7 @@ export class SimulationAnalyzer {
       successStats,
       failStats,
       yearlyProgression: this.buildYearlyProgression(results),
-      phaseStats: null, // Phase stats not implemented yet
+      phaseStats: this.buildPhaseStats(results),
     };
   }
 
@@ -420,5 +420,153 @@ export class SimulationAnalyzer {
     }
 
     return yearlyProgression;
+  }
+
+  /**
+   * Builds phase statistics across all simulations
+   * Analyzes portfolio performance during different life phases (accumulation, retirement)
+   *
+   * @param results - Array of all simulation results
+   * @returns Phase-specific statistics with durations and performance metrics
+   */
+  private buildPhaseStats(results: SimulationResult[]): Array<
+    MultiSimulationStats & {
+      phaseName: string;
+      meanDuration: number;
+    }
+  > | null {
+    if (results.length === 0) return null;
+
+    // Extract all unique phase names across all simulations
+    const allPhaseNames = new Set<string>();
+    results.forEach((result) => {
+      result.phasesMetadata.forEach(([, phase]) => {
+        allPhaseNames.add(phase.getName());
+      });
+    });
+
+    if (allPhaseNames.size === 0) return null;
+
+    // Build statistics for each phase
+    const phaseStats: Array<
+      MultiSimulationStats & {
+        phaseName: string;
+        meanDuration: number;
+      }
+    > = [];
+
+    for (const phaseName of Array.from(allPhaseNames)) {
+      // Extract data for this specific phase across all simulations
+      const phaseData = this.extractPhaseData(results, phaseName);
+
+      if (phaseData.portfolios.length === 0) continue;
+
+      // Calculate statistics for this phase
+      const values = this.calculatePortfolioStats(phaseData.portfolios);
+      const returns = this.calculateReturnsStats(phaseData.returnsMetadata);
+
+      // Calculate percentiles from phase-specific portfolio values
+      const phasePortfolioValues = phaseData.portfolios.map((portfolio) => portfolio.getTotalValue()).sort((a, b) => a - b);
+      const percentiles = this.calculatePercentilesFromValues(phasePortfolioValues);
+
+      // Calculate mean duration for this phase
+      const meanDuration =
+        phaseData.durations.length > 0 ? phaseData.durations.reduce((sum, duration) => sum + duration, 0) / phaseData.durations.length : 0;
+
+      phaseStats.push({ phaseName, meanDuration, count: phaseData.simulationCount, values, returns, percentiles });
+    }
+
+    return phaseStats.length > 0 ? phaseStats : null;
+  }
+
+  /**
+   * Extracts portfolio data, returns metadata, and duration information for a specific phase
+   *
+   * @param results - Array of all simulation results
+   * @param phaseName - Name of the phase to extract data for
+   * @returns Aggregated data for the specified phase
+   */
+  private extractPhaseData(
+    results: SimulationResult[],
+    phaseName: string
+  ): {
+    portfolios: Portfolio[];
+    returnsMetadata: ReturnsWithMetadata[];
+    durations: number[];
+    simulationCount: number;
+  } {
+    const portfolios: Portfolio[] = [];
+    const returnsMetadata: ReturnsWithMetadata[] = [];
+    const durations: number[] = [];
+    let simulationCount = 0;
+
+    for (const result of results) {
+      // Track if this simulation had the phase
+      let hadPhase = false;
+      let phaseStartYear: number | null = null;
+      let phaseEndYear: number | null = null;
+
+      // Find all time periods where this phase was active
+      for (const [year, phase] of result.phasesMetadata) {
+        if (phase.getName() === phaseName) {
+          if (phaseStartYear === null) {
+            phaseStartYear = year;
+            hadPhase = true;
+          }
+          phaseEndYear = year;
+        }
+      }
+
+      if (!hadPhase) continue;
+
+      simulationCount++;
+
+      // Calculate phase duration
+      if (phaseStartYear !== null && phaseEndYear !== null) {
+        // For the duration calculation, we need to find the next phase transition or end of simulation
+        let actualEndYear = phaseEndYear;
+
+        // Check if there's a phase transition after this phase
+        const nextPhaseIndex = result.phasesMetadata.findIndex(([year, phase]) => year > phaseEndYear! && phase.getName() !== phaseName);
+
+        if (nextPhaseIndex !== -1) {
+          actualEndYear = result.phasesMetadata[nextPhaseIndex][0] - 1;
+        } else {
+          // Phase continued until end of simulation
+          const lastDataPoint = result.data[result.data.length - 1];
+          actualEndYear = lastDataPoint[0];
+        }
+
+        const duration = actualEndYear - phaseStartYear + 1;
+        durations.push(duration);
+      }
+
+      // Extract portfolio data for years when this phase was active
+      for (const [year, portfolio] of result.data) {
+        // Check if this year falls within the phase period
+        const activePhase = result.phasesMetadata.filter(([phaseYear]) => phaseYear <= year).pop(); // Get the most recent phase at this year
+
+        if (activePhase && activePhase[1].getName() === phaseName) {
+          portfolios.push(portfolio);
+        }
+      }
+
+      // Extract returns metadata for years when this phase was active
+      for (const [year, metadata] of result.returnsMetadata) {
+        // Check if this year falls within the phase period
+        const activePhase = result.phasesMetadata.filter(([phaseYear]) => phaseYear <= year).pop(); // Get the most recent phase at this year
+
+        if (activePhase && activePhase[1].getName() === phaseName) {
+          returnsMetadata.push(metadata);
+        }
+      }
+    }
+
+    return {
+      portfolios,
+      returnsMetadata,
+      durations,
+      simulationCount,
+    };
   }
 }
