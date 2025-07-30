@@ -24,6 +24,7 @@ import { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 
 import { Portfolio } from './portfolio';
 import { CashFlow, AnnualIncome, AnnualExpenses, PassiveRetirementIncome, RetirementExpenses } from './cash-flow';
+import WithdrawalStrategy from './withdrawal-strategy';
 
 /**
  * Simulation phase interface defining financial life stage behavior
@@ -133,13 +134,7 @@ export class RetirementPhase implements SimulationPhase {
   }
 
   canTransitionTo(portfolio: Portfolio, inputs: QuickPlanInputs): boolean {
-    const retirementExpenses = inputs.goals.retirementExpenses!;
-    const { safeWithdrawalRate, effectiveTaxRate } = inputs.retirementFunding;
-
-    const grossWithdrawal = retirementExpenses / (1 - effectiveTaxRate / 100);
-    const requiredPortfolio = grossWithdrawal / (safeWithdrawalRate / 100);
-
-    return portfolio.getTotalValue() >= requiredPortfolio;
+    return portfolio.getTotalValue() >= WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs);
   }
 
   getNextPhase(inputs: QuickPlanInputs): SimulationPhase | null {
