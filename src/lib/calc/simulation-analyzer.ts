@@ -398,11 +398,13 @@ export class SimulationAnalyzer {
   > {
     if (results.length === 0) return [];
 
-    const maxYears = Math.max(...results.map((result) => result.data.length));
+    const maxYears = Math.max(...results.map((result) => result.data[result.data.length - 1][0]));
     const yearlyProgression = [];
 
     for (let year = 0; year < maxYears; year++) {
-      const activePortfolios = results.filter((result) => year < result.data.length).map((result) => result.data[year][1]);
+      const activePortfolios = results
+        .filter((result) => year <= result.data[result.data.length - 1][0])
+        .map((result) => result.data.find(([time]) => time === year)![1]);
 
       const count = activePortfolios.length;
       const survivalRate = count / results.length;
