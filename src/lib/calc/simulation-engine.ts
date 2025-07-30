@@ -34,7 +34,7 @@ import { convertAllocationInputsToAssetAllocation } from './asset';
  * Simulation result containing success status, portfolio progression, and metadata
  * Tracks year-by-year portfolio values, phase transitions, and market returns applied
  */
-interface SimulationResult {
+export interface SimulationResult {
   success: boolean;
   data: Array<[number /* timeInYears */, Portfolio]>;
   phasesMetadata: Array<[number /* timeInYears */, SimulationPhase]>;
