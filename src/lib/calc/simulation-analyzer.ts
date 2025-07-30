@@ -139,7 +139,7 @@ export class SimulationAnalyzer {
 
     return {
       values: this.calculatePortfolioStats(portfolios),
-      returns: this.calculateReturnsStatsFromMetadata(result.returnsMetadata),
+      returns: this.calculateReturnsStats(result.returnsMetadata),
     };
   }
 
@@ -206,7 +206,7 @@ export class SimulationAnalyzer {
       successRate,
       count,
       values: this.calculatePortfolioStats(allPortfolios),
-      returns: this.calculateReturnsStatsFromMetadata(allReturnsMetadata),
+      returns: this.calculateReturnsStats(allReturnsMetadata),
       percentiles: this.calculatePercentilesFromValues(finalValues),
       successStats,
       failStats,
@@ -243,7 +243,7 @@ export class SimulationAnalyzer {
    * @param returnsMetadata - Array of returns metadata from simulations
    * @returns Returns statistics for each asset class and overall portfolio
    */
-  private calculateReturnsStatsFromMetadata(returnsMetadata: Array<[number, ReturnsWithMetadata]>): ReturnsStats {
+  private calculateReturnsStats(returnsMetadata: Array<[number, ReturnsWithMetadata]>): ReturnsStats {
     const assetClasses: AssetClass[] = ['stocks', 'bonds', 'cash'];
     const assets: AssetStats = {} as AssetStats;
 
@@ -351,7 +351,7 @@ export class SimulationAnalyzer {
 
     // Calculate portfolio and returns statistics
     const values = this.calculatePortfolioStats(segmentPortfolios);
-    const returns = this.calculateReturnsStatsFromMetadata(segmentReturnsMetadata);
+    const returns = this.calculateReturnsStats(segmentReturnsMetadata);
 
     // Calculate percentiles based on final portfolio values
     const finalValues = segmentResults
