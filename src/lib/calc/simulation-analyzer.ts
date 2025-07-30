@@ -108,12 +108,12 @@ export interface AggregateSimulationStats extends MultiSimulationStats {
     | null;
 
   // Yearly progression tracking
-  yearlyProgression: Array<{
-    year: number;
-    activeSimulations: number;
-    survivalRate: number;
-    values: PortfolioStats;
-  }>;
+  yearlyProgression: Array<
+    MultiSimulationStats & {
+      year: number;
+      survivalRate: number;
+    }
+  >;
 }
 
 /**
@@ -429,12 +429,12 @@ export class SimulationAnalyzer {
    * @param results - Array of all simulation results
    * @returns Yearly statistics including survival rate and portfolio values
    */
-  private buildYearlyProgression(results: SimulationResult[]): Array<{
-    year: number;
-    activeSimulations: number;
-    survivalRate: number;
-    values: PortfolioStats;
-  }> {
+  private buildYearlyProgression(results: SimulationResult[]): Array<
+    MultiSimulationStats & {
+      year: number;
+      survivalRate: number;
+    }
+  > {
     if (results.length === 0) return [];
 
     const maxYears = Math.max(...results.map((result) => result.data.length));
@@ -443,11 +443,15 @@ export class SimulationAnalyzer {
     for (let year = 0; year < maxYears; year++) {
       const activePortfolios = results.filter((result) => year < result.data.length).map((result) => result.data[year][1]);
 
-      const activeSimulations = activePortfolios.length;
-      const survivalRate = activeSimulations / results.length;
+      const count = activePortfolios.length;
+      const survivalRate = count / results.length;
       const values = this.calculatePortfolioStats(activePortfolios);
+      const returns = this.calculateReturnsStats(activePortfolios);
 
-      yearlyProgression.push({ year, activeSimulations, survivalRate, values });
+      const yearlyValues = activePortfolios.map((portfolio) => portfolio.getTotalValue()).sort((a, b) => a - b);
+      const percentiles = this.calculatePercentilesFromValues(yearlyValues);
+
+      yearlyProgression.push({ year, count, survivalRate, values, returns, percentiles });
     }
 
     return yearlyProgression;
