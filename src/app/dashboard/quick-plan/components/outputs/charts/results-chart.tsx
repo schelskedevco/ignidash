@@ -109,7 +109,7 @@ export default function ResultsChart() {
           <Tooltip content={<CustomTooltip currentAge={currentAge!} />} />
           <Area type="monotone" dataKey="stocks" stackId="1" stroke="var(--chart-3)" fill="url(#colorStocks)" activeDot={false} />
           <Area type="monotone" dataKey="bonds" stackId="1" stroke="var(--chart-2)" fill="url(#colorBonds)" activeDot={false} />
-          <Area type="monotone" dataKey="cash" stackId="1" stroke="var(--chart-1)" fill="url(#colorCash)" activeDot={{ r: 5 }} />
+          <Area type="monotone" dataKey="cash" stackId="1" stroke="var(--chart-1)" fill="url(#colorCash)" activeDot={false} />
           {fireAnalysis.fireAge && (
             <ReferenceLine
               x={Math.round(fireAnalysis.fireAge!)}
