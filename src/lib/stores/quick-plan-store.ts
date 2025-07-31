@@ -410,12 +410,12 @@ export const useFixedReturnsSimulation = () => {
 
 export const useMonteCarloSimulation = () => {
   const inputs = useQuickPlanStore((state) => state.inputs);
+  const baseSeed = Math.floor(Math.random() * 1000);
 
   return useMemo(() => {
-    const baseSeed = Math.floor(Math.random() * 1000);
     const engine = new MonteCarloSimulationEngine(inputs, baseSeed);
     return engine.runMonteCarloSimulation(500);
-  }, [inputs]);
+  }, [inputs, baseSeed]);
 };
 
 export const useMonteCarloChartData = () => {
