@@ -35,11 +35,11 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
         </p>
         <p className="flex justify-between rounded-lg bg-[var(--chart-2)] px-2 text-sm">
           <span className="mr-2">Bonds:</span>
-          <span className="ml-1 font-semibold">{formatNumber(payload[1].value, 3)}</span>
+          <span className="ml-1 font-semibold">{formatNumber(payload[0].value, 3)}</span>
         </p>
         <p className="flex justify-between rounded-lg bg-[var(--chart-3)] px-2 text-sm">
           <span className="mr-2">Stocks:</span>
-          <span className="ml-1 font-semibold">{formatNumber(payload[0].value, 3)}</span>
+          <span className="ml-1 font-semibold">{formatNumber(payload[1].value, 3)}</span>
         </p>
       </div>
       <p className="mt-2 flex justify-between border-t pt-2 text-sm font-semibold">
