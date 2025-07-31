@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 import { ChartDataPoint } from '@/lib/calc/analysis/charts';
-import { useFIREChartData, useFIREAnalysis } from '@/lib/stores/quick-plan-store';
+import { useFixedReturnsChartData, useFixedReturnsAnalysis } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -38,8 +38,8 @@ export default function ResultsChart() {
   const { theme } = useTheme();
   const isSmallScreen = useIsMobile();
 
-  const chartData = useFIREChartData();
-  const fireAnalysis = useFIREAnalysis();
+  const chartData = useFixedReturnsChartData();
+  const fireAnalysis = useFixedReturnsAnalysis();
 
   if (chartData.length === 0) {
     return null;
@@ -72,7 +72,7 @@ export default function ResultsChart() {
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <Tooltip content={<CustomTooltip />} />
           <Area type="monotone" dataKey="portfolioValue" stroke={primaryColor} fillOpacity={1} fill="url(#colorPortfolio)" />
-          {fireAnalysis.isAchievable && (
+          {fireAnalysis.fireAge && (
             <ReferenceLine
               x={Math.round(fireAnalysis.fireAge!)}
               stroke={foregroundColor}

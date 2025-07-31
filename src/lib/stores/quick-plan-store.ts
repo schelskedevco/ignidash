@@ -433,6 +433,18 @@ export const useFixedReturnsAnalysis = () => {
   }, [inputs, simulation]);
 };
 
+export const useFixedReturnsChartData = () => {
+  const currentAge = useCurrentAge()!;
+  const simulation = useFixedReturnsSimulation();
+
+  return useMemo(() => {
+    return simulation.data.map(([timeInYears, portfolio]) => ({
+      age: timeInYears + currentAge,
+      portfolioValue: portfolio.getTotalValue(),
+    }));
+  }, [currentAge, simulation]);
+};
+
 /**
  * FIRE Calculations
  * These hooks provide computed values for Financial Independence, Retire Early analysis
