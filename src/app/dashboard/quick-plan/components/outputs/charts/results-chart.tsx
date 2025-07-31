@@ -23,30 +23,34 @@ interface CustomTooltipProps {
 const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (!(active && payload && payload.length)) return null;
 
+  console.log('CustomTooltip payload:', payload);
+
   return (
-    <div className="text-foreground rounded-lg border bg-rose-100 p-3 shadow-md dark:bg-rose-900">
+    <div className="text-foreground bg-background rounded-lg border p-3 shadow-md">
       <p className="mb-1 border-b pb-1 text-sm font-medium">Age {label}</p>
-      <p className="flex justify-between text-sm">
-        <span className="mr-2">Stocks:</span>
-        <span className="ml-1 font-medium">{formatNumber(payload[0].value, 3)}</span>
-      </p>
-      <p className="flex justify-between text-sm">
-        <span className="mr-2">Bonds:</span>
-        <span className="ml-1 font-medium">{formatNumber(payload[1].value, 3)}</span>
-      </p>
-      <p className="flex justify-between text-sm">
-        <span className="mr-2">Cash:</span>
-        <span className="ml-1 font-medium">{formatNumber(payload[2].value, 3)}</span>
-      </p>
-      <p className="flex justify-between text-sm">
-        <span className="mr-2">Total:</span>
-        <span className="ml-1 font-medium">
-          {formatNumber(
-            payload.reduce((sum, item) => sum + item.value, 0),
-            3
-          )}
-        </span>
-      </p>
+      <div className="flex flex-col gap-2">
+        <p className="flex justify-between rounded-lg bg-[var(--chart-3)] px-2 text-sm">
+          <span className="mr-2">Stocks:</span>
+          <span className="ml-1 font-medium">{formatNumber(payload[0].value, 3)}</span>
+        </p>
+        <p className="flex justify-between rounded-lg bg-[var(--chart-2)] px-2 text-sm">
+          <span className="mr-2">Bonds:</span>
+          <span className="ml-1 font-medium">{formatNumber(payload[1].value, 3)}</span>
+        </p>
+        <p className="flex justify-between rounded-lg bg-[var(--chart-1)] px-2 text-sm">
+          <span className="mr-2">Cash:</span>
+          <span className="ml-1 font-medium">{formatNumber(payload[2].value, 3)}</span>
+        </p>
+        <p className="flex justify-between rounded-lg px-2 text-sm">
+          <span className="mr-2">Total:</span>
+          <span className="ml-1 font-medium">
+            {formatNumber(
+              payload.reduce((sum, item) => sum + item.value, 0),
+              3
+            )}
+          </span>
+        </p>
+      </div>
     </div>
   );
 };
