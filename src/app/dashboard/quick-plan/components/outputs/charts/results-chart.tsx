@@ -48,7 +48,6 @@ export default function ResultsChart() {
   const gridColor = theme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
   const foregroundColor = theme === 'dark' ? '#f3f4f6' : '#111827'; // gray-100 : gray-900
   const foregroundMutedColor = theme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
-  const primaryColor = theme === 'dark' ? '#fb7185' : '#e11d48'; // rose-400 : rose-600
 
   const interval = isSmallScreen ? 4 : 3;
 
@@ -58,16 +57,16 @@ export default function ResultsChart() {
         <AreaChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
           <defs>
             <linearGradient id="colorStocks" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={primaryColor} stopOpacity={0.9} />
-              <stop offset="95%" stopColor={primaryColor} stopOpacity={0.6} />
+              <stop offset="5%" stopColor="var(--chart-3)" stopOpacity={1} />
+              <stop offset="95%" stopColor="var(--chart-3)" stopOpacity={1} />
             </linearGradient>
             <linearGradient id="colorBonds" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={primaryColor} stopOpacity={0.6} />
-              <stop offset="95%" stopColor={primaryColor} stopOpacity={0.3} />
+              <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={1} />
+              <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={1} />
             </linearGradient>
             <linearGradient id="colorCash" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor={primaryColor} stopOpacity={0.3} />
-              <stop offset="95%" stopColor={primaryColor} stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={1} />
+              <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={1} />
             </linearGradient>
           </defs>
           <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
@@ -79,9 +78,9 @@ export default function ResultsChart() {
           />
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <Tooltip content={<CustomTooltip />} />
-          <Area type="monotone" dataKey="stocks" stackId="1" stroke={primaryColor} fillOpacity={1} fill="url(#colorStocks)" />
-          <Area type="monotone" dataKey="bonds" stackId="1" stroke={primaryColor} fillOpacity={1} fill="url(#colorBonds)" />
-          <Area type="monotone" dataKey="cash" stackId="1" stroke={primaryColor} fillOpacity={1} fill="url(#colorCash)" />
+          <Area type="monotone" dataKey="stocks" stackId="1" stroke="var(--chart-3)" fillOpacity={1} fill="url(#colorStocks)" />
+          <Area type="monotone" dataKey="bonds" stackId="1" stroke="var(--chart-2)" fillOpacity={1} fill="url(#colorBonds)" />
+          <Area type="monotone" dataKey="cash" stackId="1" stroke="var(--chart-1)" fillOpacity={1} fill="url(#colorCash)" />
           {fireAnalysis.fireAge && (
             <ReferenceLine
               x={Math.round(fireAnalysis.fireAge!)}

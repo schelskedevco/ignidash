@@ -10,6 +10,10 @@
   --muted-foreground: #71717a; /* zinc-500 */
   --primary: #e11d48; /* rose-600 */
   --border: #d4d4d8; /* zinc-300 */
+
+  --chart-1: hsl(346 77% 65%); /* Darker pink (top) */
+  --chart-2: hsl(346 77% 80%); /* Medium pink (middle) */
+  --chart-3: hsl(346 77% 95%); /* Very light pink (bottom) */
 }
 
 @theme inline {
@@ -29,6 +33,10 @@
   --muted-foreground: #a1a1aa; /* zinc-400 */
   --primary: #fb7185; /* rose-400 */
   --border: #3f3f46; /* zinc-700 */
+
+  --chart-1: hsl(346 80% 50%); /* Brighter red (top) */
+  --chart-2: hsl(346 75% 35%); /* Deep burgundy (middle) */
+  --chart-3: hsl(346 70% 20%); /* Very dark maroon (bottom) */
 }
 
 html {
