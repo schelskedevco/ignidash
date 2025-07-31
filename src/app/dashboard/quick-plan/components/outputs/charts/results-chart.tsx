@@ -57,9 +57,17 @@ export default function ResultsChart() {
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
           <defs>
-            <linearGradient id="colorPortfolio" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="colorStocks" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor={primaryColor} stopOpacity={0.8} />
-              <stop offset="95%" stopColor={primaryColor} stopOpacity={0} />
+              <stop offset="95%" stopColor={primaryColor} stopOpacity={0.6} />
+            </linearGradient>
+            <linearGradient id="colorBonds" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={primaryColor} stopOpacity={0.6} />
+              <stop offset="95%" stopColor={primaryColor} stopOpacity={0.4} />
+            </linearGradient>
+            <linearGradient id="colorCash" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor={primaryColor} stopOpacity={0.4} />
+              <stop offset="95%" stopColor={primaryColor} stopOpacity={0.2} />
             </linearGradient>
           </defs>
           <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
@@ -71,7 +79,9 @@ export default function ResultsChart() {
           />
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <Tooltip content={<CustomTooltip />} />
-          <Area type="monotone" dataKey="portfolioValue" stroke={primaryColor} fillOpacity={1} fill="url(#colorPortfolio)" />
+          <Area type="monotone" dataKey="stocks" stackId="1" stroke={primaryColor} fillOpacity={1} fill="url(#colorStocks)" />
+          <Area type="monotone" dataKey="bonds" stackId="1" stroke={primaryColor} fillOpacity={1} fill="url(#colorBonds)" />
+          <Area type="monotone" dataKey="cash" stackId="1" stroke={primaryColor} fillOpacity={1} fill="url(#colorCash)" />
           {fireAnalysis.fireAge && (
             <ReferenceLine
               x={Math.round(fireAnalysis.fireAge!)}
