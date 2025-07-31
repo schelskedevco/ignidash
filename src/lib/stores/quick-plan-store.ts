@@ -414,7 +414,7 @@ export const useMonteCarloSimulation = () => {
   return useMemo(() => {
     const baseSeed = Math.floor(Math.random() * 1000);
     const engine = new MonteCarloSimulationEngine(inputs, baseSeed);
-    return engine.runMonteCarloSimulation(2000);
+    return engine.runMonteCarloSimulation(500);
   }, [inputs]);
 };
 
@@ -431,9 +431,9 @@ export const useMonteCarloChartData = () => {
 
     return analysis.yearlyProgression.map((data) => ({
       age: data.year + currentAge,
-      p25: data.percentiles.p25,
+      p10: data.percentiles.p10,
       p50: data.percentiles.p50,
-      p75: data.percentiles.p75,
+      p90: data.percentiles.p90,
     }));
   }, [currentAge, simulation]);
 };
