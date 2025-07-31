@@ -29,17 +29,17 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     <div className="text-foreground bg-background rounded-lg border p-3 shadow-md">
       <p className="mb-1 border-b pb-1 text-sm font-medium">Age {label}</p>
       <div className="flex flex-col gap-2">
-        <p className="flex justify-between rounded-lg bg-[var(--chart-3)] px-2 text-sm">
-          <span className="mr-2">Stocks:</span>
-          <span className="ml-1 font-medium">{formatNumber(payload[0].value, 3)}</span>
+        <p className="flex justify-between rounded-lg bg-[var(--chart-1)] px-2 text-sm">
+          <span className="mr-2">Cash:</span>
+          <span className="ml-1 font-medium">{formatNumber(payload[2].value, 3)}</span>
         </p>
         <p className="flex justify-between rounded-lg bg-[var(--chart-2)] px-2 text-sm">
           <span className="mr-2">Bonds:</span>
           <span className="ml-1 font-medium">{formatNumber(payload[1].value, 3)}</span>
         </p>
-        <p className="flex justify-between rounded-lg bg-[var(--chart-1)] px-2 text-sm">
-          <span className="mr-2">Cash:</span>
-          <span className="ml-1 font-medium">{formatNumber(payload[2].value, 3)}</span>
+        <p className="flex justify-between rounded-lg bg-[var(--chart-3)] px-2 text-sm">
+          <span className="mr-2">Stocks:</span>
+          <span className="ml-1 font-medium">{formatNumber(payload[0].value, 3)}</span>
         </p>
         <p className="flex justify-between rounded-lg px-2 text-sm">
           <span className="mr-2">Total:</span>
