@@ -103,9 +103,7 @@ export class AnnualExpenses implements CashFlow {
     const realExpenseGrowth = (1 + expenseGrowthRate / 100) / (1 + this.inputs.marketAssumptions.inflationRate / 100) - 1;
 
     // Calculate future expenses
-    const futureExpenses = annualExpenses * Math.pow(1 + realExpenseGrowth, year);
-
-    return -futureExpenses;
+    return -annualExpenses * Math.pow(1 + realExpenseGrowth, year);
   }
 }
 
@@ -154,6 +152,6 @@ export class RetirementExpenses implements CashFlow {
   }
 
   calculateAmount(year: number, currentAge: number): number {
-    return this.inputs.goals.retirementExpenses!;
+    return -this.inputs.goals.retirementExpenses!;
   }
 }
