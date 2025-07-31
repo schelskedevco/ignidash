@@ -421,8 +421,8 @@ export const useFixedReturnsAnalysis = () => {
   return useMemo(() => {
     if (!simulation) return null;
 
-    let yearsToFIRE = null;
-    let fireAge = null;
+    let yearsToFIRE: number | null = null;
+    let fireAge: number | null = null;
     for (const phase of simulation.phasesMetadata) {
       if (phase[1].getName() === 'Retirement Phase') {
         yearsToFIRE = phase[0];
