@@ -8,9 +8,9 @@ interface ResultsMetricsProps {
 
 export default function ResultsMetrics({ fireAnalysis }: ResultsMetricsProps) {
   const stats = [
-    { name: 'Success Rate', stat: fireAnalysis?.successRate, fractionDigits: 1 },
-    { name: 'Median FIRE Age', stat: fireAnalysis?.p50FireAge, fractionDigits: 1 },
-    { name: 'Median Years to FIRE', stat: fireAnalysis?.p50YearsToFIRE, fractionDigits: 1 },
+    { name: 'Success Rate', stat: (fireAnalysis?.successRate ?? 0) * 100, fractionDigits: 0 },
+    { name: 'Median FIRE Age', stat: fireAnalysis?.p50FireAge, fractionDigits: 0 },
+    { name: 'Median Years to FIRE', stat: fireAnalysis?.p50YearsToFIRE, fractionDigits: 0 },
     { name: 'Required Portfolio Size', stat: fireAnalysis?.requiredPortfolio, fractionDigits: 2 },
   ];
 
