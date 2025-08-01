@@ -397,23 +397,22 @@ export class SimulationAnalyzer {
   > {
     if (results.length === 0) return [];
 
-    const maxYears = Math.max(...results.map((result) => result.data[result.data.length - 1][0]));
+    // Since all simulations have the same structure, we can use the first one to determine years
+    const totalYears = results[0].data.length;
     const yearlyProgression = [];
 
-    for (let year = 0; year <= maxYears; year++) {
-      const activeResults = results.filter((result) => result.data.some(([time]) => time === year));
+    for (let year = 0; year < totalYears; year++) {
+      // Direct array access since all simulations have data for all years
+      const portfolios = results.map((result) => result.data[year][1]);
 
-      const activePortfolios = activeResults.map((result) => result.data.find(([time]) => time === year)![1]);
-      const activeReturnsMetadata = activeResults
-        // Failed simulations won't have returns metadata for the last year
-        .map((result) => result.returnsMetadata.find(([time]) => time === year)?.[1])
-        .filter((metadata) => metadata !== undefined);
+      // Returns metadata starts at year 1
+      const returnsMetadata = year > 0 ? results.map((result) => result.returnsMetadata[year - 1][1]) : [];
 
-      const count = activePortfolios.length;
-      const values = this.calculatePortfolioStats(activePortfolios);
-      const returns = this.calculateReturnsStats(activeReturnsMetadata);
+      const count = portfolios.length;
+      const values = this.calculatePortfolioStats(portfolios);
+      const returns = this.calculateReturnsStats(returnsMetadata);
 
-      const yearlyValues = activePortfolios.map((portfolio) => portfolio.getTotalValue()).sort((a, b) => a - b);
+      const yearlyValues = portfolios.map((portfolio) => portfolio.getTotalValue()).sort((a, b) => a - b);
       const percentiles = this.calculatePercentilesFromValues(yearlyValues);
 
       yearlyProgression.push({ year, count, values, returns, percentiles });
