@@ -33,7 +33,7 @@ export default function SelectMenu({ id, label, value, onChange, options, desc }
         </select>
         <ChevronDownIcon
           aria-hidden="true"
-          className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end sm:size-4"
+          className="text-muted-foreground pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end sm:size-4"
         />
       </div>
       {desc && <p className="text-muted-foreground mt-2 text-sm">{desc}</p>}
