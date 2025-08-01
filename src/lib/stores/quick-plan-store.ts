@@ -39,7 +39,7 @@ import {
   validateField,
   validateSection,
 } from '@/lib/schemas/quick-plan-schema';
-import { FinancialSimulationEngine, MonteCarloSimulationEngine } from '@/lib/calc/simulation-engine';
+import { FinancialSimulationEngine, MonteCarloSimulationEngine, LcgHistoricalBacktestSimulationEngine } from '@/lib/calc/simulation-engine';
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
 import { SimulationAnalyzer } from '@/lib/calc/simulation-analyzer';
 import WithdrawalStrategy from '@/lib/calc/withdrawal-strategy';
@@ -417,6 +417,16 @@ export const useMonteCarloSimulation = () => {
   }, [inputs]);
 };
 
+export const useHistoricalBacktestSimulation = () => {
+  const inputs = useQuickPlanStore((state) => state.inputs);
+
+  return useMemo(() => {
+    const baseSeed = Math.floor(Math.random() * 1000);
+    const engine = new LcgHistoricalBacktestSimulationEngine(inputs, baseSeed);
+    return engine.runLcgHistoricalBacktest(100);
+  }, [inputs]);
+};
+
 /**
  * FIRE Analysis Hook
  * Provides computed values for Financial Independence, Retire Early analysis
@@ -467,7 +477,55 @@ export const useMonteCarloAnalysis = () => {
     let p90YearsToFIRE: number | null = null;
     let p90FireAge: number | null = null;
 
-    // Ending porfolio?
+    for (const phase of analysis.phaseStats ?? []) {
+      if (phase.phaseName === 'Accumulation Phase') {
+        p10YearsToFIRE = phase.durationPercentiles.p10;
+        p10FireAge = inputs.basics.currentAge! + p10YearsToFIRE;
+
+        p50YearsToFIRE = phase.durationPercentiles.p50;
+        p50FireAge = inputs.basics.currentAge! + p50YearsToFIRE;
+
+        p90YearsToFIRE = phase.durationPercentiles.p90;
+        p90FireAge = inputs.basics.currentAge! + p90YearsToFIRE;
+        break;
+      }
+    }
+
+    return {
+      successRate,
+      p10YearsToFIRE,
+      p10FireAge,
+      p50YearsToFIRE,
+      p50FireAge,
+      p90YearsToFIRE,
+      p90FireAge,
+      requiredPortfolio,
+    };
+  }, [inputs, simulation]);
+};
+
+export const useHistoricalBacktestAnalysis = () => {
+  const inputs = useQuickPlanStore((state) => state.inputs);
+  const simulation = useHistoricalBacktestSimulation();
+
+  return useMemo(() => {
+    const analyzer = new SimulationAnalyzer();
+    const simulationData = simulation.simulations.map(([, result]) => result);
+
+    const analysis = analyzer.analyzeSimulations(simulationData);
+    if (!analysis) return null;
+
+    const successRate = analysis.successRate;
+    const requiredPortfolio = WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs);
+
+    let p10YearsToFIRE: number | null = null;
+    let p10FireAge: number | null = null;
+
+    let p50YearsToFIRE: number | null = null;
+    let p50FireAge: number | null = null;
+
+    let p90YearsToFIRE: number | null = null;
+    let p90FireAge: number | null = null;
 
     for (const phase of analysis.phaseStats ?? []) {
       if (phase.phaseName === 'Accumulation Phase') {
@@ -514,6 +572,26 @@ export const useFixedReturnsChartData = () => {
 export const useMonteCarloChartData = () => {
   const currentAge = useCurrentAge()!;
   const simulation = useMonteCarloSimulation();
+
+  return useMemo(() => {
+    const analyzer = new SimulationAnalyzer();
+    const simulationData = simulation.simulations.map(([, result]) => result);
+
+    const analysis = analyzer.analyzeSimulations(simulationData);
+    if (!analysis) return [];
+
+    return analysis.yearlyProgression.map((data) => ({
+      age: data.year + currentAge,
+      p10: data.percentiles.p10,
+      p50: data.percentiles.p50,
+      p90: data.percentiles.p90,
+    }));
+  }, [currentAge, simulation]);
+};
+
+export const useHistoricalBacktestChartData = () => {
+  const currentAge = useCurrentAge()!;
+  const simulation = useHistoricalBacktestSimulation();
 
   return useMemo(() => {
     const analyzer = new SimulationAnalyzer();
