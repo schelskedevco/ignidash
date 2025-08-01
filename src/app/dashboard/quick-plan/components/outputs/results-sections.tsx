@@ -33,10 +33,34 @@ export default function ResultsSections() {
       break;
   }
 
+  const comingSoon = (
+    <div className="text-muted-foreground ml-2 py-10 font-semibold italic">
+      <p>Coming soon...</p>
+    </div>
+  );
+
   return (
-    <SectionContainer showBottomBorder>
-      <SectionHeader title="Overview" desc="Timeline, milestones, and portfolio projections in one view." />
-      {resultsOverview}
-    </SectionContainer>
+    <>
+      <SectionContainer showBottomBorder>
+        <SectionHeader title="Overview" desc="Timeline, milestones, and portfolio projections in one view." />
+        {resultsOverview}
+      </SectionContainer>
+      <SectionContainer showBottomBorder>
+        <SectionHeader title="Metrics" desc="Key performance indicators and detailed statistics about your projections." />
+        {comingSoon}
+      </SectionContainer>
+      <SectionContainer showBottomBorder>
+        <SectionHeader title="Tables" desc="Tabular view of your simulation data at different levels of granularity." />
+        {comingSoon}
+      </SectionContainer>
+      <SectionContainer showBottomBorder>
+        <SectionHeader title="Risk Analysis" desc="Understand failure scenarios and what causes them." />
+        {comingSoon}
+      </SectionContainer>
+      <SectionContainer showBottomBorder={false}>
+        <SectionHeader title="Summary" desc="AI-powered insights and recommendations based on your simulation results." />
+        {comingSoon}
+      </SectionContainer>
+    </>
   );
 }
