@@ -83,7 +83,7 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
     fireAnalysis?.p90FireAge && fireAnalysis?.p50FireAge && fireAnalysis.p90FireAge > 3 + fireAnalysis.p50FireAge;
 
   return (
-    <div className="[&_svg:focus]:outline-primary h-64 w-full sm:h-80 lg:h-96 [&_svg:focus]:rounded-lg [&_svg:focus]:outline-2 [&_svg:focus]:outline-offset-2">
+    <div className="h-64 w-full sm:h-80 lg:h-96">
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }}>
           <defs>
