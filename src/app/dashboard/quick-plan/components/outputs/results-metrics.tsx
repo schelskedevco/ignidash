@@ -1,16 +1,29 @@
-'use client';
-
 import Card from '@/components/ui/card';
-import { useFixedReturnsAnalysis } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 
-export default function ResultsMetrics() {
-  const fireAnalysis = useFixedReturnsAnalysis();
+interface ResultsMetricsProps {
+  simulationMode: 'fixedReturns' | 'monteCarlo' | 'historicalBacktest';
+  fireAge: number | null | undefined;
+  yearsToFIRE: number | null | undefined;
+  requiredPortfolio: number | null | undefined;
+}
+
+export default function ResultsMetrics({ simulationMode, fireAge, yearsToFIRE, requiredPortfolio }: ResultsMetricsProps) {
+  let stochasticPrefix;
+  switch (simulationMode) {
+    case 'fixedReturns':
+      stochasticPrefix = '';
+      break;
+    case 'monteCarlo':
+    case 'historicalBacktest':
+      stochasticPrefix = 'Median ';
+      break;
+  }
 
   const stats = [
-    { name: 'FIRE Age', stat: fireAnalysis.fireAge, fractionDigits: 1 },
-    { name: 'Years to FIRE', stat: fireAnalysis.yearsToFIRE, fractionDigits: 1 },
-    { name: 'Required Portfolio Size', stat: fireAnalysis.requiredPortfolio, fractionDigits: 2 },
+    { name: `${stochasticPrefix}FIRE Age`, stat: fireAge, fractionDigits: 1 },
+    { name: `${stochasticPrefix}Years to FIRE`, stat: yearsToFIRE, fractionDigits: 1 },
+    { name: 'Required Portfolio Size', stat: requiredPortfolio, fractionDigits: 2 },
   ];
 
   return (
