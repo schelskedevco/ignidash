@@ -25,7 +25,7 @@ import { useMemo } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { useShallow } from 'zustand/react/shallow';
+// import { useShallow } from 'zustand/react/shallow';
 
 import {
   type QuickPlanInputs,
@@ -39,8 +39,6 @@ import {
   validateField,
   validateSection,
 } from '@/lib/schemas/quick-plan-schema';
-import { calculateYearsToFIRE, calculateFIREAge, getFIREAnalysis } from '@/lib/calc/analysis/calculator';
-import { getFIREChartData } from '@/lib/calc/analysis/charts';
 import { FinancialSimulationEngine, MonteCarloSimulationEngine } from '@/lib/calc/simulation-engine';
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
 import { SimulationAnalyzer } from '@/lib/calc/simulation-analyzer';
@@ -175,6 +173,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
       bondReturn: 5, // Nominal %
       cashReturn: 3, // Nominal %
       inflationRate: 3, // The bridge between nominal and real
+      simulationMode: 'fixedReturns',
     },
     retirementFunding: {
       safeWithdrawalRate: 4,
@@ -530,24 +529,6 @@ export const useMonteCarloChartData = () => {
       p90: data.percentiles.p90,
     }));
   }, [currentAge, simulation]);
-};
-
-/**
- * FIRE Calculations
- * These hooks provide computed values for Financial Independence, Retire Early analysis
- */
-export const useYearsToFIRE = () => useQuickPlanStore((state) => calculateYearsToFIRE(state.inputs));
-export const useFIREAge = () => useQuickPlanStore((state) => calculateFIREAge(state.inputs));
-export const useFIREAnalysis = () => useQuickPlanStore(useShallow((state) => getFIREAnalysis(state.inputs)));
-export const useFIREChartData = () => {
-  const inputs = useQuickPlanStore((state) => state.inputs);
-
-  const fireAge = useFIREAge();
-  // TODO: Rethink rounding logic. See results-chart.tsx's ReferenceLine for context.
-  // Rounding here to ensure consistent chart data, but may need to be revisited.
-  const roundedFireAge = fireAge !== null ? Math.round(fireAge) : null;
-
-  return useMemo(() => getFIREChartData(inputs, roundedFireAge), [inputs, roundedFireAge]);
 };
 
 /**

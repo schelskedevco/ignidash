@@ -3,10 +3,16 @@
 import { useTheme } from 'next-themes';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-import { ChartDataPoint } from '@/lib/calc/analysis/charts';
 import { useFixedReturnsChartData, useFixedReturnsAnalysis, useCurrentAge } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+
+interface ChartDataPoint {
+  age: number;
+  stocks: number;
+  bonds: number;
+  cash: number;
+}
 
 interface CustomTooltipProps {
   active?: boolean;
