@@ -457,17 +457,40 @@ export const useMonteCarloAnalysis = () => {
     if (!analysis) return null;
 
     const successRate = analysis.successRate;
+    const requiredPortfolio = WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs);
 
-    const yearsToFIRE: number | null = null;
-    const fireAge: number | null = null;
+    let p10YearsToFIRE: number | null = null;
+    let p10FireAge: number | null = null;
 
-    // TODO: Extract percentile-based yearsToFIRE and fireAge from analysis
+    let p50YearsToFIRE: number | null = null;
+    let p50FireAge: number | null = null;
+
+    let p90YearsToFIRE: number | null = null;
+    let p90FireAge: number | null = null;
+
+    for (const phase of analysis.phaseStats ?? []) {
+      if (phase.phaseName === 'Retirement Phase') {
+        p10YearsToFIRE = phase.durationPercentiles.p10;
+        p10FireAge = inputs.basics.currentAge! + p10YearsToFIRE;
+
+        p50YearsToFIRE = phase.durationPercentiles.p50;
+        p50FireAge = inputs.basics.currentAge! + p50YearsToFIRE;
+
+        p90YearsToFIRE = phase.durationPercentiles.p90;
+        p90FireAge = inputs.basics.currentAge! + p90YearsToFIRE;
+        break;
+      }
+    }
 
     return {
       successRate,
-      yearsToFIRE,
-      fireAge,
-      requiredPortfolio: WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs),
+      p10YearsToFIRE,
+      p10FireAge,
+      p50YearsToFIRE,
+      p50FireAge,
+      p90YearsToFIRE,
+      p90FireAge,
+      requiredPortfolio,
     };
   }, [inputs, simulation]);
 };
