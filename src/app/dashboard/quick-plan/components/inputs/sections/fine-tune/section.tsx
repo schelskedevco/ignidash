@@ -1,29 +1,12 @@
 'use client';
 
 import Card from '@/components/ui/card';
-import NumberInput from '@/components/ui/number-input';
+import SelectMenu from '@/components/ui/select-menu';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import { useMarketAssumptionsData, useUpdateMarketAssumptions, useMarketAssumptionsHasErrors } from '@/lib/stores/quick-plan-store';
 
 import ExpectedReturns from './expected-returns';
-
-function getInflationRateDescription() {
-  return (
-    <>
-      Average annual cost of living increase.{' '}
-      <a
-        href="https://www.bls.gov/charts/consumer-price-index/consumer-price-index-by-category-line-chart.htm"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-foreground hover:text-foreground/80 underline"
-      >
-        Historical average: 3%
-      </a>
-      .
-    </>
-  );
-}
 
 export default function FineTuneSection() {
   const marketAssumptions = useMarketAssumptionsData();
@@ -42,15 +25,16 @@ export default function FineTuneSection() {
           <form onSubmit={(e) => e.preventDefault()}>
             <fieldset className="space-y-4">
               <legend className="sr-only">Economic factors for financial projections</legend>
-              <NumberInput
-                id="inflation-rate"
-                label="Inflation Rate (%)"
-                value={marketAssumptions.inflationRate}
-                onBlur={(value) => updateMarketAssumptions('inflationRate', value)}
-                inputMode="decimal"
-                placeholder="3%"
-                suffix="%"
-                desc={getInflationRateDescription()}
+              <SelectMenu
+                id="simulation-mode"
+                label="Simulation Mode"
+                value={marketAssumptions.simulationMode}
+                onChange={(e) => updateMarketAssumptions('simulationMode', e.target.value)}
+                options={[
+                  { value: 'fixedReturns', label: 'Fixed Returns' },
+                  { value: 'monteCarlo', label: 'Monte Carlo' },
+                  { value: 'historicalBacktest', label: 'Historical Backtest' },
+                ]}
               />
             </fieldset>
           </form>

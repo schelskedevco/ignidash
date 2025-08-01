@@ -12,6 +12,23 @@ import {
   useCashRealReturn,
 } from '@/lib/stores/quick-plan-store';
 
+// function getInflationRateDescription() {
+//   return (
+//     <>
+//       Average annual cost of living increase.{' '}
+//       <a
+//         href="https://www.bls.gov/charts/consumer-price-index/consumer-price-index-by-category-line-chart.htm"
+//         target="_blank"
+//         rel="noopener noreferrer"
+//         className="text-foreground hover:text-foreground/80 underline"
+//       >
+//         Historical average: 3%
+//       </a>
+//       .
+//     </>
+//   );
+// }
+
 export default function ExpectedReturns() {
   const marketAssumptions = useMarketAssumptionsData();
   const updateMarketAssumptions = useUpdateMarketAssumptions();
@@ -64,6 +81,20 @@ export default function ExpectedReturns() {
             }
             value={marketAssumptions.cashReturn}
             onBlur={(value) => updateMarketAssumptions('cashReturn', value)}
+            inputMode="decimal"
+            placeholder="3%"
+            suffix="%"
+          />
+          <NumberInput
+            id="inflation-rate"
+            label={
+              <div className="flex w-full items-center justify-between">
+                <span>Inflation Rate (%)</span>
+                <span className="text-muted-foreground text-sm/6">—</span>
+              </div>
+            }
+            value={marketAssumptions.inflationRate}
+            onBlur={(value) => updateMarketAssumptions('inflationRate', value)}
             inputMode="decimal"
             placeholder="3%"
             suffix="%"
