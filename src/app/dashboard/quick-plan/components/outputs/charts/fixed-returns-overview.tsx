@@ -6,7 +6,7 @@ import Card from '@/components/ui/card';
 import ResultsChart from './results-chart';
 import ResultsMetrics from '../results-metrics';
 
-export default function FixedReturnsResultsChart() {
+export default function FixedReturnsOverview() {
   const fireAnalysis = useFixedReturnsAnalysis();
 
   const fireAge = fireAnalysis.fireAge;

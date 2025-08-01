@@ -4,9 +4,9 @@ import { useIsCalculationReady, useMarketAssumptionsData } from '@/lib/stores/qu
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 
-import FixedReturnsResultsChart from './charts/fixed-returns-results-chart';
-import MonteCarloResultsChart from './charts/monte-carlo-results-chart';
-import HistoricalBacktestResultsChart from './charts/historical-backtest-results-chart';
+import FixedReturnsOverview from './charts/fixed-returns-overview';
+import MonteCarloOverview from './charts/monte-carlo-overview';
+import HistoricalBacktestOverview from './charts/historical-backtest-overview';
 
 export default function ResultsSections() {
   const isCalculationReady = useIsCalculationReady();
@@ -23,13 +23,13 @@ export default function ResultsSections() {
   let resultsChart;
   switch (marketAssumptions.simulationMode) {
     case 'fixedReturns':
-      resultsChart = <FixedReturnsResultsChart />;
+      resultsChart = <FixedReturnsOverview />;
       break;
     case 'monteCarlo':
-      resultsChart = <MonteCarloResultsChart />;
+      resultsChart = <MonteCarloOverview />;
       break;
     case 'historicalBacktest':
-      resultsChart = <HistoricalBacktestResultsChart />;
+      resultsChart = <HistoricalBacktestOverview />;
       break;
   }
 
