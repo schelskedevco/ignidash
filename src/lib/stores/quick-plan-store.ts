@@ -390,9 +390,8 @@ export const useResetStore = () => useQuickPlanStore((state) => state.actions.re
 export const useResetSection = () => useQuickPlanStore((state) => state.actions.resetSection);
 
 /**
- * Fixed Returns Simulation Hook
- * Central hook that runs the simulation engine with fixed returns provider
- * All FIRE calculations derive from this simulation data
+ * Simulation & Analysis Hooks
+ * These hooks provide access to simulation and analysis functions
  */
 export const useFixedReturnsSimulation = () => {
   const inputs = useQuickPlanStore((state) => state.inputs);
@@ -427,10 +426,12 @@ export const useHistoricalBacktestSimulation = () => {
   }, [inputs]);
 };
 
-/**
- * FIRE Analysis Hook
- * Provides computed values for Financial Independence, Retire Early analysis
- */
+export interface FixedReturnsAnalysis {
+  yearsToFIRE: number | null;
+  fireAge: number | null;
+  requiredPortfolio: number;
+}
+
 export const useFixedReturnsAnalysis = () => {
   const inputs = useQuickPlanStore((state) => state.inputs);
   const simulation = useFixedReturnsSimulation();
