@@ -7,7 +7,8 @@ import SectionContainer from '@/components/ui/section-container';
 
 import ResultsMetrics from './results-metrics';
 import ResultsChart from './charts/results-chart';
-import StochasticResultsChart from './charts/stochastic-results-chart';
+import MonteCarloResultsChart from './charts/monte-carlo-results-chart';
+import HistoricalBacktestResultsChart from './charts/historical-backtest-results-chart';
 
 export default function ResultsSections() {
   const isCalculationReady = useIsCalculationReady();
@@ -27,10 +28,10 @@ export default function ResultsSections() {
       resultsChart = <ResultsChart />;
       break;
     case 'monteCarlo':
-      resultsChart = <StochasticResultsChart />;
+      resultsChart = <MonteCarloResultsChart />;
       break;
     case 'historicalBacktest':
-      resultsChart = <StochasticResultsChart />;
+      resultsChart = <HistoricalBacktestResultsChart />;
       break;
   }
 

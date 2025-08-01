@@ -3,7 +3,7 @@
 import { useTheme } from 'next-themes';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-import { useMonteCarloChartData, useMonteCarloAnalysis, useCurrentAge } from '@/lib/stores/quick-plan-store';
+import { useCurrentAge, StochasticAnalysis } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -57,12 +57,15 @@ const CustomTooltip = ({ active, payload, label, currentAge }: CustomTooltipProp
   );
 };
 
-export default function ResultsChart() {
+interface StochasticResultsChartProps {
+  fireAnalysis: StochasticAnalysis | null;
+  chartData: StochasticChartDataPoint[];
+}
+
+export default function ResultsChart({ fireAnalysis, chartData }: StochasticResultsChartProps) {
   const { theme } = useTheme();
   const isSmallScreen = useIsMobile();
 
-  const chartData = useMonteCarloChartData();
-  const fireAnalysis = useMonteCarloAnalysis();
   const currentAge = useCurrentAge();
 
   if (chartData.length === 0) {

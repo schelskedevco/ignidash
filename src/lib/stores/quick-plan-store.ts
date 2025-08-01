@@ -454,6 +454,17 @@ export const useFixedReturnsAnalysis = () => {
   }, [inputs, simulation]);
 };
 
+export interface StochasticAnalysis {
+  successRate: number;
+  p10YearsToFIRE: number | null;
+  p10FireAge: number | null;
+  p50YearsToFIRE: number | null;
+  p50FireAge: number | null;
+  p90YearsToFIRE: number | null;
+  p90FireAge: number | null;
+  requiredPortfolio: number;
+}
+
 export const useMonteCarloAnalysis = () => {
   const inputs = useQuickPlanStore((state) => state.inputs);
   const simulation = useMonteCarloSimulation();
