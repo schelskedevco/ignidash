@@ -81,16 +81,6 @@ export class FinancialSimulationEngine {
       // Process cash flows first (throughout the year)
       portfolio = currentPhase.processYear(year, portfolio, this.inputs);
 
-      // Check if portfolio is depleted
-      if (portfolio.getTotalValue() <= 0) {
-        data.push([year, portfolio]);
-        // Fill remaining years with the final (depleted) portfolio for statistics
-        for (let remainingYear = year + 1; remainingYear <= lifeExpectancy - startAge; remainingYear++) {
-          data.push([remainingYear, portfolio]);
-        }
-        break;
-      }
-
       // Rebalance portfolio to target allocation before applying returns
       portfolio = portfolio.withRebalance(assetAllocation);
 
@@ -103,12 +93,12 @@ export class FinancialSimulationEngine {
 
       data.push([year, portfolio]);
       returnsMetadata.push([year, returns]);
+      phasesMetadata.push([year, currentPhase]);
 
       // Check for phase transition
       const nextPhase = currentPhase.getNextPhase(this.inputs);
       if (nextPhase && nextPhase.canTransitionTo(portfolio, this.inputs)) {
         currentPhase = nextPhase;
-        phasesMetadata.push([year, currentPhase]);
       }
     }
 
