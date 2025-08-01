@@ -77,10 +77,6 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
   const foregroundMutedColor = theme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
 
   const interval = isSmallScreen ? 4 : 3;
-  const showP10ReferenceLine =
-    fireAnalysis?.p10FireAge && fireAnalysis?.p50FireAge && fireAnalysis.p10FireAge < fireAnalysis.p50FireAge - 3;
-  const showP90ReferenceLine =
-    fireAnalysis?.p90FireAge && fireAnalysis?.p50FireAge && fireAnalysis.p90FireAge > 3 + fireAnalysis.p50FireAge;
 
   return (
     <div className="h-64 w-full sm:h-80 lg:h-96">
@@ -112,28 +108,12 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
           <Area type="monotone" dataKey="p90" stroke="var(--chart-2)" fill="url(#colorP90)" activeDot={false} />
           <Area type="monotone" dataKey="p50" stroke="var(--chart-3)" fill="url(#colorP50)" activeDot={false} />
           <Area type="monotone" dataKey="p10" stroke="var(--chart-1)" fill="url(#colorP10)" activeDot={false} />
-          {showP10ReferenceLine && (
-            <ReferenceLine
-              x={Math.round(fireAnalysis.p10FireAge!)}
-              stroke={foregroundColor}
-              strokeDasharray="5 5"
-              label={{ value: 'P10', position: 'insideBottomLeft', fill: foregroundColor }}
-            />
-          )}
           {fireAnalysis?.p50FireAge && (
             <ReferenceLine
               x={Math.round(fireAnalysis.p50FireAge)}
               stroke={foregroundColor}
               strokeDasharray="5 5"
               label={{ value: 'P50', position: 'insideBottomLeft', fill: foregroundColor }}
-            />
-          )}
-          {showP90ReferenceLine && (
-            <ReferenceLine
-              x={Math.round(fireAnalysis.p90FireAge!)}
-              stroke={foregroundColor}
-              strokeDasharray="5 5"
-              label={{ value: 'P90', position: 'insideBottomLeft', fill: foregroundColor }}
             />
           )}
           {fireAnalysis?.requiredPortfolio && (
