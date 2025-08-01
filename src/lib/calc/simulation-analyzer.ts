@@ -498,6 +498,7 @@ export class SimulationAnalyzer {
     const portfolios: Portfolio[] = [];
     const returnsMetadata: ReturnsWithMetadata[] = [];
     const durations: number[] = [];
+
     let simulationCount = 0;
 
     for (const result of results) {
