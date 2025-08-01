@@ -19,7 +19,7 @@ export default function FineTuneSection() {
       simulationModeDesc = 'Uses your Expected Returns assumptions for a single deterministic projection.';
       break;
     case 'monteCarlo':
-      simulationModeDesc = 'Runs hundreds of simulations with random (but realistic) market variables to show probability of success.';
+      simulationModeDesc = 'Runs hundreds of simulations with random but realistic market returns to show probability of success.';
       break;
     case 'historicalBacktest':
       simulationModeDesc = 'Tests your plan against actual historical market data from different starting years.';
