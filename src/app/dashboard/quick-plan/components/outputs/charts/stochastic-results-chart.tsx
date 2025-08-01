@@ -138,7 +138,7 @@ export default function ResultsChart() {
               y={Math.round(fireAnalysis.requiredPortfolio)}
               stroke={foregroundColor}
               strokeDasharray="10 5"
-              label={{ value: 'Required Portfolio', position: 'insideBottom', fill: foregroundColor }}
+              label={{ value: 'Required Portfolio', position: 'insideBottomRight', fill: foregroundColor }}
             />
           )}
         </AreaChart>
