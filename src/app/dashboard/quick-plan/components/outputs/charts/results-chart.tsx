@@ -122,6 +122,12 @@ export default function ResultsChart() {
               label={{ value: 'FIRE', position: 'insideBottomLeft', fill: foregroundColor }}
             />
           )}
+          <ReferenceLine
+            y={Math.round(fireAnalysis.requiredPortfolio)}
+            stroke={foregroundColor}
+            strokeDasharray="10 5"
+            label={{ value: 'Required Portfolio', position: 'insideBottomRight', fill: foregroundColor }}
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>
