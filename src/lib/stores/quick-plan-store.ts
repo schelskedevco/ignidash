@@ -468,6 +468,8 @@ export const useMonteCarloAnalysis = () => {
     let p90YearsToFIRE: number | null = null;
     let p90FireAge: number | null = null;
 
+    // Ending porfolio?
+
     for (const phase of analysis.phaseStats ?? []) {
       if (phase.phaseName === 'Retirement Phase') {
         p10YearsToFIRE = phase.durationPercentiles.p10;

@@ -520,43 +520,24 @@ export class SimulationAnalyzer {
       if (!hadPhase) continue;
 
       simulationCount++;
+      durations.push(phaseEndYear! - phaseStartYear! + 1);
 
-      // Calculate phase duration
-      if (phaseStartYear !== null && phaseEndYear !== null) {
-        // For the duration calculation, we need to find the next phase transition or end of simulation
-        let actualEndYear = phaseEndYear;
-
-        // Check if there's a phase transition after this phase
-        const nextPhaseIndex = result.phasesMetadata.findIndex(([year, phase]) => year > phaseEndYear! && phase.getName() !== phaseName);
-
-        if (nextPhaseIndex !== -1) {
-          actualEndYear = result.phasesMetadata[nextPhaseIndex][0] - 1;
-        } else {
-          // Phase continued until end of simulation
-          const lastDataPoint = result.data[result.data.length - 1];
-          actualEndYear = lastDataPoint[0];
-        }
-
-        const duration = actualEndYear - phaseStartYear + 1;
-        durations.push(duration);
+      // Build a map for efficient phase lookup
+      const phaseMap = new Map<number, string>();
+      for (const [year, phase] of result.phasesMetadata) {
+        phaseMap.set(year, phase.getName());
       }
 
       // Extract portfolio data for years when this phase was active
       for (const [year, portfolio] of result.data) {
-        // Check if this year falls within the phase period
-        const activePhase = result.phasesMetadata.filter(([phaseYear]) => phaseYear <= year).pop(); // Get the most recent phase at this year
-
-        if (activePhase && activePhase[1].getName() === phaseName) {
+        if (phaseMap.get(year) === phaseName) {
           portfolios.push(portfolio);
         }
       }
 
       // Extract returns metadata for years when this phase was active
       for (const [year, metadata] of result.returnsMetadata) {
-        // Check if this year falls within the phase period
-        const activePhase = result.phasesMetadata.filter(([phaseYear]) => phaseYear <= year).pop(); // Get the most recent phase at this year
-
-        if (activePhase && activePhase[1].getName() === phaseName) {
+        if (phaseMap.get(year) === phaseName) {
           returnsMetadata.push(metadata);
         }
       }
