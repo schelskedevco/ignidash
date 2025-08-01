@@ -77,9 +77,16 @@ export class FinancialSimulationEngine {
     const phasesMetadata: Array<[number, SimulationPhase]> = [[0, currentPhase]];
     const returnsMetadata: Array<[number, ReturnsWithMetadata]> = [];
 
+    let success = true;
+
     for (let year = 1; year <= lifeExpectancy - startAge; year++) {
       // Process cash flows first (throughout the year)
       portfolio = currentPhase.processYear(year, portfolio, this.inputs);
+
+      // Ensure portfolio is still valid after cash flows
+      if (!(portfolio.getTotalValue() > 0.1)) {
+        success = false;
+      }
 
       // Rebalance portfolio to target allocation before applying returns
       portfolio = portfolio.withRebalance(assetAllocation);
@@ -105,7 +112,7 @@ export class FinancialSimulationEngine {
     }
 
     return {
-      success: portfolio.getTotalValue() > 0,
+      success,
       data,
       phasesMetadata,
       returnsMetadata,
