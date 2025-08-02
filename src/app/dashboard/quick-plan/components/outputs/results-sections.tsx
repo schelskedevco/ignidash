@@ -53,7 +53,6 @@ export default function ResultsSections() {
       <SectionContainer showBottomBorder>
         <SectionHeader title="Tables" desc="Tabular view of your simulation data at different levels of granularity." />
         <Table />
-        {comingSoon}
       </SectionContainer>
       <SectionContainer showBottomBorder>
         <SectionHeader title="Risk Analysis" desc="Understand failure scenarios and what causes them." />
