@@ -7,6 +7,7 @@ import SectionContainer from '@/components/ui/section-container';
 import FixedReturnsOverview from './charts/fixed-returns-overview';
 import MonteCarloOverview from './charts/monte-carlo-overview';
 import HistoricalBacktestOverview from './charts/historical-backtest-overview';
+import Table from './tables/table';
 
 export default function ResultsSections() {
   const isCalculationReady = useIsCalculationReady();
@@ -51,6 +52,7 @@ export default function ResultsSections() {
       </SectionContainer>
       <SectionContainer showBottomBorder>
         <SectionHeader title="Tables" desc="Tabular view of your simulation data at different levels of granularity." />
+        <Table />
         {comingSoon}
       </SectionContainer>
       <SectionContainer showBottomBorder>
