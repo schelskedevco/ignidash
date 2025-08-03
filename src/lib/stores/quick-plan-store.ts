@@ -427,6 +427,7 @@ export const useHistoricalBacktestSimulation = () => {
 };
 
 export interface FixedReturnsAnalysis {
+  progressToFIRE: number;
   yearsToFIRE: number | null;
   fireAge: number | null;
   requiredPortfolio: number;
@@ -448,17 +449,23 @@ export const useFixedReturnsAnalysis = () => {
       }
     }
 
+    const requiredPortfolio = WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs);
+    const progressToFIRE = Math.min(inputs.basics.investedAssets! / requiredPortfolio, 1);
+    const finalPortfolio = simulation.data[simulation.data.length - 1][1].getTotalValue();
+
     return {
+      progressToFIRE,
       yearsToFIRE,
       fireAge,
-      requiredPortfolio: WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs),
-      finalPortfolio: simulation.data[simulation.data.length - 1][1].getTotalValue(),
+      requiredPortfolio,
+      finalPortfolio,
     };
   }, [inputs, simulation]);
 };
 
 export interface StochasticAnalysis {
   successRate: number;
+  progressToFIRE: number;
   p10YearsToFIRE: number | null;
   p10FireAge: number | null;
   p50YearsToFIRE: number | null;
@@ -482,6 +489,7 @@ export const useMonteCarloAnalysis = () => {
 
     const successRate = analysis.successRate;
     const requiredPortfolio = WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs);
+    const progressToFIRE = Math.min(inputs.basics.investedAssets! / requiredPortfolio, 1);
     const finalPortfolio = analysis.yearlyProgression[analysis.yearlyProgression.length - 1].percentiles.p50;
 
     let p10YearsToFIRE: number | null = null;
@@ -509,6 +517,7 @@ export const useMonteCarloAnalysis = () => {
 
     return {
       successRate,
+      progressToFIRE,
       p10YearsToFIRE,
       p10FireAge,
       p50YearsToFIRE,
@@ -534,6 +543,7 @@ export const useHistoricalBacktestAnalysis = () => {
 
     const successRate = analysis.successRate;
     const requiredPortfolio = WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs);
+    const progressToFIRE = Math.min(inputs.basics.investedAssets! / requiredPortfolio, 1);
     const finalPortfolio = analysis.yearlyProgression[analysis.yearlyProgression.length - 1].percentiles.p50;
 
     let p10YearsToFIRE: number | null = null;
@@ -561,6 +571,7 @@ export const useHistoricalBacktestAnalysis = () => {
 
     return {
       successRate,
+      progressToFIRE,
       p10YearsToFIRE,
       p10FireAge,
       p50YearsToFIRE,
