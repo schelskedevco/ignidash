@@ -123,20 +123,24 @@ export class FinancialSimulationEngine {
     const { stockAllocation, bondAllocation, cashAllocation } = inputs.allocation;
     const { investedAssets } = inputs.basics;
 
-    return Portfolio.create([
-      {
-        assetClass: 'stocks',
-        value: investedAssets! * (stockAllocation / 100),
-      },
-      {
-        assetClass: 'bonds',
-        value: investedAssets! * (bondAllocation / 100),
-      },
-      {
-        assetClass: 'cash',
-        value: investedAssets! * (cashAllocation / 100),
-      },
-    ]);
+    return Portfolio.create(
+      [
+        {
+          assetClass: 'stocks',
+          value: investedAssets! * (stockAllocation / 100),
+        },
+        {
+          assetClass: 'bonds',
+          value: investedAssets! * (bondAllocation / 100),
+        },
+        {
+          assetClass: 'cash',
+          value: investedAssets! * (cashAllocation / 100),
+        },
+      ],
+      investedAssets!,
+      0
+    );
   }
 
   /**

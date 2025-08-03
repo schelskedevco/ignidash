@@ -27,15 +27,19 @@ import { Asset, AssetClass, AssetReturns, AssetAllocation } from './asset';
  * Provides immutable operations for portfolio management and analysis
  */
 export class Portfolio {
-  constructor(public assets: Asset[]) {}
+  constructor(
+    public assets: Asset[],
+    public contributions: number,
+    public withdrawals: number
+  ) {}
 
   /**
    * Creates a new portfolio instance with a copy of the provided assets
    * @param assets - Array of assets to include in the portfolio
    * @returns New portfolio instance
    */
-  static create(assets: Asset[]): Portfolio {
-    return new Portfolio([...assets]);
+  static create(assets: Asset[], contributions: number, withdrawals: number): Portfolio {
+    return new Portfolio([...assets], contributions, withdrawals);
   }
 
   /**
@@ -88,7 +92,7 @@ export class Portfolio {
       };
     });
 
-    return Portfolio.create(updatedAssets);
+    return Portfolio.create(updatedAssets, this.contributions, this.withdrawals);
   }
 
   /**
@@ -128,7 +132,7 @@ export class Portfolio {
       }
     }
 
-    return Portfolio.create(updatedAssets);
+    return Portfolio.create(updatedAssets, this.contributions, this.withdrawals + amount);
   }
 
   /**
@@ -143,7 +147,7 @@ export class Portfolio {
 
     const updatedAssets = this.assets.map((asset) => (asset.assetClass === 'cash' ? { ...asset, value: asset.value + amount } : asset));
 
-    return Portfolio.create(updatedAssets);
+    return Portfolio.create(updatedAssets, this.contributions + amount, this.withdrawals);
   }
 
   /**
@@ -163,6 +167,31 @@ export class Portfolio {
       return { ...asset, value: targetValue };
     });
 
-    return Portfolio.create(updatedAssets);
+    return Portfolio.create(updatedAssets, this.contributions, this.withdrawals);
+  }
+
+  /**
+   * Calculates the portfolio's total return performance
+   * Performance = (value + withdrawals - contributions) / contributions
+   * @returns Total return as a decimal (e.g., 0.1 = 10% return), or null if no contributions
+   */
+  getPerformance(): number | null {
+    if (this.contributions === 0) return null;
+
+    return (this.getTotalValue() + this.withdrawals - this.contributions) / this.contributions;
+  }
+
+  /**
+   * Calculates the portfolio's annualized return given the number of years
+   * @param years - Number of years the portfolio has been held
+   * @returns Annualized return as a decimal, or null if cannot be calculated
+   */
+  getAnnualizedReturn(years: number): number | null {
+    if (years <= 0) return null;
+
+    const totalReturn = this.getPerformance();
+    if (totalReturn === null) return null;
+
+    return Math.pow(1 + totalReturn, 1 / years) - 1;
   }
 }
