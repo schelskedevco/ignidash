@@ -15,7 +15,7 @@ export default function ResultsMetrics({ fireAnalysis }: ResultsMetricsProps) {
       <MetricsCard name="Years to FIRE" stat={fireAnalysis.yearsToFIRE !== null ? `${formatNumber(fireAnalysis.yearsToFIRE, 0)}` : '∞'} />
       <MetricsCard name="Required Portfolio" stat={`$${formatNumber(fireAnalysis.requiredPortfolio, 2)}`} />
       <MetricsCard name="Final Portfolio" stat={`$${formatNumber(fireAnalysis.finalPortfolio, 2)}`} />
-      <MetricsCard name="Return on Investment" stat={`${(fireAnalysis.performance * 100).toFixed(1)}%`} />
+      <MetricsCard name="Return on Investment" stat={`${((fireAnalysis.performance ?? 0) * 100).toFixed(1)}%`} />
     </dl>
   );
 }

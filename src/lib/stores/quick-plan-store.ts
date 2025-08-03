@@ -432,7 +432,7 @@ export interface FixedReturnsAnalysis {
   fireAge: number | null;
   requiredPortfolio: number;
   finalPortfolio: number;
-  performance: number;
+  performance: number | null;
 }
 
 export const useFixedReturnsAnalysis = () => {
