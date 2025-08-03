@@ -31,12 +31,10 @@ export default function ResultsMetrics({ fireAnalysis }: ResultsMetricsProps) {
   );
 
   return (
-    <>
-      <dl className="grid grid-cols-1 sm:grid-cols-3 sm:gap-5">
-        {fireAgeCard}
-        {requiredPortfolioCard}
-        {finalPortfolioCard}
-      </dl>
-    </>
+    <dl className="grid grid-cols-1 sm:grid-cols-3 sm:gap-5">
+      {fireAgeCard}
+      {requiredPortfolioCard}
+      {finalPortfolioCard}
+    </dl>
   );
 }
