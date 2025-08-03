@@ -28,9 +28,9 @@ export default function ResultsMetrics({ fireAnalysis }: ResultsMetricsProps) {
           name="Median FIRE Age"
           stat={p50FireAge}
           statContext={` (in ${p50YearsToFIRE} years)`}
-          className="col-span-2 2xl:col-span-1"
+          className="sm:col-span-2 2xl:col-span-1"
         />
-        <MetricsCard name="Required Portfolio" stat={requiredPortfolio} className="col-span-2 sm:col-span-1 2xl:col-span-2" />
+        <MetricsCard name="Required Portfolio" stat={requiredPortfolio} className="2xl:col-span-2" />
         <MetricsCard name="Median Final Portfolio" stat={finalPortfolio} className="col-span-2 sm:col-span-1" />
       </dl>
     </>
