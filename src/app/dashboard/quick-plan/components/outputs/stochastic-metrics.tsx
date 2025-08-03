@@ -24,10 +24,14 @@ export default function ResultsMetrics({ fireAnalysis }: ResultsMetricsProps) {
       <dl className="mt-4 mb-8 grid grid-cols-2 gap-2 2xl:grid-cols-3">
         <MetricsCard name="Success Rate" stat={successRate} />
         <MetricsCard name="Progress to FIRE" stat={progressToFIRE} />
-        <MetricsCard name="P50 FIRE Age" stat={p50FireAge} />
-        <MetricsCard name="P50 Years to FIRE" stat={p50YearsToFIRE} />
-        <MetricsCard name="Required Portfolio" stat={requiredPortfolio} />
-        <MetricsCard name="P50 Final Portfolio" stat={finalPortfolio} />
+        <MetricsCard
+          name="Median FIRE Age"
+          stat={p50FireAge}
+          statContext={` (in ${p50YearsToFIRE} years)`}
+          className="col-span-2 2xl:col-span-1"
+        />
+        <MetricsCard name="Required Portfolio" stat={requiredPortfolio} className="col-span-2 sm:col-span-1 2xl:col-span-2" />
+        <MetricsCard name="Median Final Portfolio" stat={finalPortfolio} className="col-span-2 sm:col-span-1" />
       </dl>
     </>
   );

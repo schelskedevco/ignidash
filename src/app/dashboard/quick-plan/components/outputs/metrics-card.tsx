@@ -1,15 +1,21 @@
 import Card from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
 interface MetricsCardProps {
   name: string;
   stat: string | number;
+  statContext?: string;
+  className?: string;
 }
 
-export default function MetricsCard({ name, stat }: MetricsCardProps) {
+export default function MetricsCard({ name, stat, statContext, className }: MetricsCardProps) {
   return (
-    <Card className="my-0 text-center sm:text-left">
+    <Card className={cn('my-0 text-center sm:text-left', className)}>
       <dt className="text-muted-foreground truncate text-sm font-medium">{name}</dt>
-      <dd className="text-foreground mt-1 text-3xl font-semibold tracking-tight">{stat}</dd>
+      <dd className="text-foreground mt-1 text-3xl font-semibold tracking-tight">
+        <span>{stat}</span>
+        <span className="text-muted-foreground ml-1 text-sm">{statContext}</span>
+      </dd>
     </Card>
   );
 }
