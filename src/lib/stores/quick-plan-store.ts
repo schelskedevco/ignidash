@@ -466,6 +466,7 @@ export interface StochasticAnalysis {
   p90YearsToFIRE: number | null;
   p90FireAge: number | null;
   requiredPortfolio: number;
+  finalPortfolio: number;
 }
 
 export const useMonteCarloAnalysis = () => {
@@ -481,6 +482,7 @@ export const useMonteCarloAnalysis = () => {
 
     const successRate = analysis.successRate;
     const requiredPortfolio = WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs);
+    const finalPortfolio = analysis.yearlyProgression[analysis.yearlyProgression.length - 1].percentiles.p50;
 
     let p10YearsToFIRE: number | null = null;
     let p10FireAge: number | null = null;
@@ -514,6 +516,7 @@ export const useMonteCarloAnalysis = () => {
       p90YearsToFIRE,
       p90FireAge,
       requiredPortfolio,
+      finalPortfolio,
     };
   }, [inputs, simulation]);
 };
@@ -531,6 +534,7 @@ export const useHistoricalBacktestAnalysis = () => {
 
     const successRate = analysis.successRate;
     const requiredPortfolio = WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs);
+    const finalPortfolio = analysis.yearlyProgression[analysis.yearlyProgression.length - 1].percentiles.p50;
 
     let p10YearsToFIRE: number | null = null;
     let p10FireAge: number | null = null;
@@ -564,6 +568,7 @@ export const useHistoricalBacktestAnalysis = () => {
       p90YearsToFIRE,
       p90FireAge,
       requiredPortfolio,
+      finalPortfolio,
     };
   }, [inputs, simulation]);
 };
