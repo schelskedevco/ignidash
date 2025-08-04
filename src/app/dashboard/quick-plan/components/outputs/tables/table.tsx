@@ -1,8 +1,4 @@
-interface TableColumn<T> {
-  key: keyof T;
-  title: string;
-  format?: (value: T[keyof T]) => string;
-}
+import { type TableColumn } from '@/lib/utils/table-formatters';
 
 interface TableProps<T extends Record<string, unknown>> {
   columns: TableColumn<T>[];
