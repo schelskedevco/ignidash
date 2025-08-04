@@ -19,17 +19,18 @@ export default function Table<T extends Record<string, unknown>>({
 }: TableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { paginatedData, totalPages } = useMemo(() => {
+  const { paginatedData, totalPages, emptyRows } = useMemo(() => {
     if (!showPagination) {
-      return { paginatedData: data, totalPages: 1 };
+      return { paginatedData: data, totalPages: 1, emptyRows: 0 };
     }
 
     const total = Math.ceil(data.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const paginated = data.slice(startIndex, endIndex);
+    const emptyRowCount = itemsPerPage - paginated.length;
 
-    return { paginatedData: paginated, totalPages: total };
+    return { paginatedData: paginated, totalPages: total, emptyRows: emptyRowCount };
   }, [data, currentPage, itemsPerPage, showPagination]);
 
   const handlePageChange = (page: number) => setCurrentPage(page);
@@ -93,6 +94,16 @@ export default function Table<T extends Record<string, unknown>>({
                     </td>
                   </tr>
                 ))}
+                {/* Empty rows to maintain consistent height */}
+                {emptyRows > 0 &&
+                  showPagination &&
+                  Array.from({ length: emptyRows }).map((_, index) => (
+                    <tr key={`empty-${index}`}>
+                      <td colSpan={columns.length + 1} className="py-4 text-sm whitespace-nowrap">
+                        &nbsp;
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
