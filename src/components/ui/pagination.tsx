@@ -6,7 +6,7 @@ interface PaginationProps {
 
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
   return (
-    <nav aria-label="Pagination" className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
+    <nav aria-label="Pagination" className="border-border flex items-center justify-between border-t bg-white py-3">
       <div className="hidden sm:block">
         <p className="text-sm text-gray-700">
           Showing <span className="font-medium">1</span> to <span className="font-medium">10</span> of{' '}
