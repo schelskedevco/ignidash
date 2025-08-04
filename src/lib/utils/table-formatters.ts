@@ -5,7 +5,13 @@
  * and format values according to their specified types.
  */
 
-import { type SimulationTableRow, type ColumnFormat, SIMULATION_TABLE_CONFIG } from '@/lib/schemas/simulation-table-schema';
+import {
+  type SimulationTableRow,
+  type ColumnFormat,
+  SIMULATION_TABLE_CONFIG,
+  type MonteCarloTableRow,
+  MONTE_CARLO_TABLE_CONFIG,
+} from '@/lib/schemas/simulation-table-schema';
 import { type TableColumn } from '@/lib/types/table';
 
 // Currency formatter
@@ -16,11 +22,10 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 0,
 });
 
-// Format value based on column format type
-export const formatValue = (value: SimulationTableRow[keyof SimulationTableRow], format: ColumnFormat): string => {
-  if (typeof value !== 'number' && format !== 'string') {
-    return '—'; // Return dash for invalid numeric values
-  }
+// Format value based on column format type (now supports all table types)
+export const formatValue = (value: unknown, format: ColumnFormat): string => {
+  if (value == null) return '—'; // Return dash for null/undefined values
+  if (typeof value !== 'number' && format !== 'string') return '—'; // Return dash for invalid numeric values
 
   switch (format) {
     case 'currency':
@@ -30,6 +35,10 @@ export const formatValue = (value: SimulationTableRow[keyof SimulationTableRow],
     case 'number':
       return String(value);
     case 'string':
+      // Special handling for boolean values
+      if (typeof value === 'boolean') {
+        return value ? 'Yes' : 'No';
+      }
       return String(value);
     default:
       return String(value);
@@ -42,5 +51,14 @@ export const generateSimulationTableColumns = (): TableColumn<SimulationTableRow
     key: key as keyof SimulationTableRow,
     title: config.title,
     format: (value: SimulationTableRow[keyof SimulationTableRow]) => formatValue(value, config.format),
+  }));
+};
+
+// Generate Monte Carlo table columns from schema configuration
+export const generateMonteCarloTableColumns = (): TableColumn<MonteCarloTableRow>[] => {
+  return Object.entries(MONTE_CARLO_TABLE_CONFIG).map(([key, config]) => ({
+    key: key as keyof MonteCarloTableRow,
+    title: config.title,
+    format: (value: MonteCarloTableRow[keyof MonteCarloTableRow]) => formatValue(value, config.format),
   }));
 };

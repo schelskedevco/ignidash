@@ -62,3 +62,45 @@ export const validateSimulationTableRow = (data: unknown): SimulationTableRow =>
 export const validateSimulationTableData = (data: unknown[]): SimulationTableRow[] => {
   return data.map(validateSimulationTableRow);
 };
+
+// Monte Carlo table schema
+export const monteCarloTableRowSchema = z.object({
+  seed: z.number(),
+  success: z.boolean(),
+  fireAge: z.number().nullable(),
+  finalPhaseName: z.string(),
+  finalPortfolioValue: z.number(),
+  averageStocksReturn: z.number().nullable(),
+  averageBondsReturn: z.number().nullable(),
+  averageCashReturn: z.number().nullable(),
+  averageInflationRate: z.number().nullable(),
+});
+
+// Infer TypeScript type from Monte Carlo schema
+export type MonteCarloTableRow = z.infer<typeof monteCarloTableRowSchema>;
+
+// Define the Monte Carlo columns structure with metadata
+const MONTE_CARLO_COLUMNS = {
+  seed: { title: 'Seed', format: 'number' },
+  success: { title: 'Success', format: 'string' },
+  fireAge: { title: 'FIRE Age', format: 'number' },
+  finalPhaseName: { title: 'Final Phase Name', format: 'string' },
+  finalPortfolioValue: { title: 'Final Portfolio Value', format: 'currency' },
+  averageStocksReturn: { title: 'Average Stocks Return', format: 'percentage' },
+  averageBondsReturn: { title: 'Average Bonds Return', format: 'percentage' },
+  averageCashReturn: { title: 'Average Cash Return', format: 'percentage' },
+  averageInflationRate: { title: 'Average Inflation Rate', format: 'percentage' },
+} as const;
+
+// Type-safe config for Monte Carlo table
+export const MONTE_CARLO_TABLE_CONFIG: Record<keyof MonteCarloTableRow, { title: string; format: ColumnFormat }> = MONTE_CARLO_COLUMNS;
+
+// Helper to validate Monte Carlo data at runtime
+export const validateMonteCarloTableRow = (data: unknown): MonteCarloTableRow => {
+  return monteCarloTableRowSchema.parse(data);
+};
+
+// Helper to validate array of Monte Carlo data
+export const validateMonteCarloTableData = (data: unknown[]): MonteCarloTableRow[] => {
+  return data.map(validateMonteCarloTableRow);
+};

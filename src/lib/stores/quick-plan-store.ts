@@ -43,7 +43,12 @@ import { FinancialSimulationEngine, MonteCarloSimulationEngine, LcgHistoricalBac
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
 import { SimulationAnalyzer } from '@/lib/calc/simulation-analyzer';
 import WithdrawalStrategy from '@/lib/calc/withdrawal-strategy';
-import { type SimulationTableRow, validateSimulationTableData } from '@/lib/schemas/simulation-table-schema';
+import {
+  type SimulationTableRow,
+  validateSimulationTableData,
+  type MonteCarloTableRow,
+  validateMonteCarloTableData,
+} from '@/lib/schemas/simulation-table-schema';
 
 // ================================
 // TYPES & HELPERS
@@ -680,6 +685,68 @@ export const useFixedReturnsTableData = (): SimulationTableRow[] => {
 
     // Validate data against schema
     return validateSimulationTableData(rawData);
+  }, [currentAge, simulation]);
+};
+
+export const useMonteCarloTableData = (): MonteCarloTableRow[] => {
+  const currentAge = useCurrentAge()!;
+  const simulation = useMonteCarloSimulation();
+
+  return useMemo(() => {
+    // Map through each simulation result to create table rows
+    const rawData = simulation.simulations.map(([seed, simulationResult]) => {
+      // Calculate FIRE age - find when retirement phase starts
+      let fireAge: number | null = null;
+      for (const [year, phase] of simulationResult.phasesMetadata) {
+        if (phase.getName() === 'Retirement Phase') {
+          fireAge = currentAge + year;
+          break;
+        }
+      }
+
+      // Get final phase name - last entry in phasesMetadata
+      const finalPhaseEntry = simulationResult.phasesMetadata[simulationResult.phasesMetadata.length - 1];
+      const finalPhaseName = finalPhaseEntry ? finalPhaseEntry[1].getName() : '';
+
+      // Get final portfolio value - last entry in data array
+      const finalPortfolioEntry = simulationResult.data[simulationResult.data.length - 1];
+      const finalPortfolioValue = finalPortfolioEntry ? finalPortfolioEntry[1].getTotalValue() : 0;
+
+      // Calculate average returns from returnsMetadata
+      let averageStocksReturn: number | null = null;
+      let averageBondsReturn: number | null = null;
+      let averageCashReturn: number | null = null;
+      let averageInflationRate: number | null = null;
+
+      if (simulationResult.returnsMetadata.length > 0) {
+        const stocksReturns = simulationResult.returnsMetadata.map(([, returns]) => returns.returns.stocks).filter((r) => r !== null);
+        const bondsReturns = simulationResult.returnsMetadata.map(([, returns]) => returns.returns.bonds).filter((r) => r !== null);
+        const cashReturns = simulationResult.returnsMetadata.map(([, returns]) => returns.returns.cash).filter((r) => r !== null);
+        const inflationRates = simulationResult.returnsMetadata
+          .map(([, returns]) => returns.metadata.inflationRate)
+          .filter((r) => r !== null && r !== undefined);
+
+        averageStocksReturn = stocksReturns.length > 0 ? (stocksReturns.reduce((sum, r) => sum + r, 0) / stocksReturns.length) * 100 : null;
+        averageBondsReturn = bondsReturns.length > 0 ? (bondsReturns.reduce((sum, r) => sum + r, 0) / bondsReturns.length) * 100 : null;
+        averageCashReturn = cashReturns.length > 0 ? (cashReturns.reduce((sum, r) => sum + r, 0) / cashReturns.length) * 100 : null;
+        averageInflationRate = inflationRates.length > 0 ? inflationRates.reduce((sum, r) => sum + r, 0) / inflationRates.length : null;
+      }
+
+      return {
+        seed,
+        success: simulationResult.success,
+        fireAge,
+        finalPhaseName,
+        finalPortfolioValue,
+        averageStocksReturn,
+        averageBondsReturn,
+        averageCashReturn,
+        averageInflationRate,
+      };
+    });
+
+    // Validate data against schema
+    return validateMonteCarloTableData(rawData);
   }, [currentAge, simulation]);
 };
 
