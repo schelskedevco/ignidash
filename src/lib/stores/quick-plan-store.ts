@@ -712,23 +712,27 @@ export const useMonteCarloTableData = (): MonteCarloTableRow[] => {
       const finalPortfolioEntry = simulationResult.data[simulationResult.data.length - 1];
       const finalPortfolioValue = finalPortfolioEntry ? finalPortfolioEntry[1].getTotalValue() : 0;
 
-      // Calculate average returns from returnsMetadata
+      // Use SimulationAnalyzer to get average returns
+      const analyzer = new SimulationAnalyzer();
+      const analysis = analyzer.analyzeSimulation(simulationResult);
+
       let averageStocksReturn: number | null = null;
       let averageBondsReturn: number | null = null;
       let averageCashReturn: number | null = null;
       let averageInflationRate: number | null = null;
 
+      if (analysis) {
+        // Get mean returns from analyzer (convert from decimal to percentage)
+        averageStocksReturn = analysis.returns.assets.stocks?.mean ? analysis.returns.assets.stocks.mean * 100 : null;
+        averageBondsReturn = analysis.returns.assets.bonds?.mean ? analysis.returns.assets.bonds.mean * 100 : null;
+        averageCashReturn = analysis.returns.assets.cash?.mean ? analysis.returns.assets.cash.mean * 100 : null;
+      }
+
+      // Calculate average inflation rate (not available in analyzer)
       if (simulationResult.returnsMetadata.length > 0) {
-        const stocksReturns = simulationResult.returnsMetadata.map(([, returns]) => returns.returns.stocks).filter((r) => r !== null);
-        const bondsReturns = simulationResult.returnsMetadata.map(([, returns]) => returns.returns.bonds).filter((r) => r !== null);
-        const cashReturns = simulationResult.returnsMetadata.map(([, returns]) => returns.returns.cash).filter((r) => r !== null);
         const inflationRates = simulationResult.returnsMetadata
           .map(([, returns]) => returns.metadata.inflationRate)
           .filter((r) => r !== null && r !== undefined);
-
-        averageStocksReturn = stocksReturns.length > 0 ? (stocksReturns.reduce((sum, r) => sum + r, 0) / stocksReturns.length) * 100 : null;
-        averageBondsReturn = bondsReturns.length > 0 ? (bondsReturns.reduce((sum, r) => sum + r, 0) / bondsReturns.length) * 100 : null;
-        averageCashReturn = cashReturns.length > 0 ? (cashReturns.reduce((sum, r) => sum + r, 0) / cashReturns.length) * 100 : null;
         averageInflationRate = inflationRates.length > 0 ? inflationRates.reduce((sum, r) => sum + r, 0) / inflationRates.length : null;
       }
 
