@@ -6,6 +6,7 @@
  */
 
 import { type SimulationTableRow, type ColumnFormat, SIMULATION_TABLE_CONFIG } from '@/lib/schemas/simulation-table-schema';
+import { type TableColumn } from '@/lib/types/table';
 
 // Currency formatter
 const currencyFormatter = new Intl.NumberFormat('en-US', {
@@ -35,13 +36,6 @@ export const formatValue = (value: SimulationTableRow[keyof SimulationTableRow],
   }
 };
 
-// Table column interface compatible with generic Table component
-export interface TableColumn<T> {
-  key: keyof T;
-  title: string;
-  format?: (value: T[keyof T]) => string;
-}
-
 // Generate table columns from schema configuration
 export const generateSimulationTableColumns = (): TableColumn<SimulationTableRow>[] => {
   return Object.entries(SIMULATION_TABLE_CONFIG).map(([key, config]) => ({
@@ -50,6 +44,3 @@ export const generateSimulationTableColumns = (): TableColumn<SimulationTableRow
     format: (value: SimulationTableRow[keyof SimulationTableRow]) => formatValue(value, config.format),
   }));
 };
-
-// Export the generated columns for use in components
-export const SIMULATION_TABLE_COLUMNS = generateSimulationTableColumns();

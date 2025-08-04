@@ -1,4 +1,4 @@
-import { type TableColumn } from '@/lib/utils/table-formatters';
+import { type TableColumn } from '@/lib/types/table';
 
 interface TableProps<T extends Record<string, unknown>> {
   columns: TableColumn<T>[];
