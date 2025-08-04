@@ -6,7 +6,7 @@ import { generateSimulationTableColumns } from '@/lib/utils/table-formatters';
 
 import Table from './table';
 
-export default function SimulationDataTable() {
+export default function FixedReturnsDataTable() {
   const tableData = useFixedReturnsTableData();
 
   return <Table<SimulationTableRow> columns={generateSimulationTableColumns()} data={tableData} keyField="year" />;

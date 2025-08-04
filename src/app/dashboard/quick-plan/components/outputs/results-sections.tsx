@@ -7,7 +7,7 @@ import SectionContainer from '@/components/ui/section-container';
 import FixedReturnsOverview from './charts/fixed-returns-overview';
 import MonteCarloOverview from './charts/monte-carlo-overview';
 import HistoricalBacktestOverview from './charts/historical-backtest-overview';
-import SimulationDataTable from './tables/simulation-data-table';
+import FixedReturnsDataTable from './tables/fixed-returns-data-table';
 
 export default function ResultsSections() {
   const isCalculationReady = useIsCalculationReady();
@@ -45,7 +45,7 @@ export default function ResultsSections() {
       <SectionContainer showBottomBorder>
         <SectionHeader title="Overview" desc="Key metrics, charts, and your simulation data in one view." />
         {resultsOverview}
-        <SimulationDataTable />
+        <FixedReturnsDataTable />
       </SectionContainer>
       <SectionContainer showBottomBorder>
         <SectionHeader title="Risk Analysis" desc="Understand failure scenarios and what causes them." />
