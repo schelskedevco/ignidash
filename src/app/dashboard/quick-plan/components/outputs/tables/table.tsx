@@ -1,4 +1,6 @@
 import { useState, useMemo } from 'react';
+import { ChevronDownIcon } from '@heroicons/react/16/solid';
+
 import { type TableColumn } from '@/lib/types/table';
 import Pagination from '@/components/ui/pagination';
 
@@ -44,17 +46,29 @@ export default function Table<T extends Record<string, unknown>>({
               <thead>
                 <tr className="text-foreground">
                   {columns.map((col, index) => {
+                    const sortableButton = (
+                      <button className="group inline-flex">
+                        {col.title}
+                        <span className="invisible ml-2 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible">
+                          <ChevronDownIcon
+                            aria-hidden="true"
+                            className="invisible ml-2 size-5 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible"
+                          />
+                        </span>
+                      </button>
+                    );
+
                     if (index === 0) {
                       return (
                         <th key={String(col.key)} scope="col" className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-6 lg:pl-8">
-                          {col.title}
+                          {sortableButton}
                         </th>
                       );
                     }
 
                     return (
                       <th key={String(col.key)} scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">
-                        {col.title}
+                        {sortableButton}
                       </th>
                     );
                   })}
