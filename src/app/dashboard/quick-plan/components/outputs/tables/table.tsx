@@ -128,7 +128,7 @@ export default function Table<T extends Record<string, unknown>>({
               </thead>
               <tbody className="divide-border/50 divide-y">
                 {paginatedData.map((row) => (
-                  <tr key={String(row[keyField])}>
+                  <tr key={String(row[keyField])} className="hover:bg-emphasized-background/50">
                     {columns.map((col, index) => {
                       const rawVal = row[col.key];
                       const displayVal = col.format ? col.format(rawVal) : String(rawVal);
