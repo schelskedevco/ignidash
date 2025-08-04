@@ -658,17 +658,21 @@ export const useFixedReturnsTableData = (): SimulationTableRow[] => {
       // For year 0, there are no returns yet
       const returns = index > 0 && simulation.returnsMetadata[index - 1] ? simulation.returnsMetadata[index - 1][1] : null;
 
+      const stocksReturn = returns?.returns.stocks;
+      const bondsReturn = returns?.returns.bonds;
+      const cashReturn = returns?.returns.cash;
+
       return {
         year,
         age: currentAge + year,
         phaseName,
         portfolioValue: portfolio.getTotalValue(),
         stocksValue: portfolio.getAssetValue('stocks'),
-        stocksReturn: (returns?.returns.stocks || 0) * 100, // Convert to percentage
+        stocksReturn: stocksReturn ? stocksReturn * 100 : null, // Convert to percentage
         bondsValue: portfolio.getAssetValue('bonds'),
-        bondsReturn: (returns?.returns.bonds || 0) * 100, // Convert to percentage
+        bondsReturn: bondsReturn ? bondsReturn * 100 : null, // Convert to percentage
         cashValue: portfolio.getAssetValue('cash'),
-        cashReturn: (returns?.returns.cash || 0) * 100, // Convert to percentage
+        cashReturn: cashReturn ? cashReturn * 100 : null, // Convert to percentage
         inflationRate: returns?.metadata.inflationRate || 0, // Already in percentage form
       };
     });

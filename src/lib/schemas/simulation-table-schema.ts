@@ -21,11 +21,11 @@ export const simulationTableRowSchema = z.object({
   phaseName: z.string(),
   portfolioValue: z.number(),
   stocksValue: z.number(),
-  stocksReturn: z.number(),
+  stocksReturn: z.number().nullable(),
   bondsValue: z.number(),
-  bondsReturn: z.number(),
+  bondsReturn: z.number().nullable(),
   cashValue: z.number(),
-  cashReturn: z.number(),
+  cashReturn: z.number().nullable(),
   inflationRate: z.number(),
 });
 
