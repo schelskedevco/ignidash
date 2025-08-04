@@ -661,6 +661,7 @@ export const useFixedReturnsTableData = (): SimulationTableRow[] => {
       const stocksReturn = returns?.returns.stocks;
       const bondsReturn = returns?.returns.bonds;
       const cashReturn = returns?.returns.cash;
+      const inflationRate = returns?.metadata.inflationRate;
 
       return {
         year,
@@ -673,7 +674,7 @@ export const useFixedReturnsTableData = (): SimulationTableRow[] => {
         bondsReturn: bondsReturn ? bondsReturn * 100 : null, // Convert to percentage
         cashValue: portfolio.getAssetValue('cash'),
         cashReturn: cashReturn ? cashReturn * 100 : null, // Convert to percentage
-        inflationRate: returns?.metadata.inflationRate || 0, // Already in percentage form
+        inflationRate: inflationRate ?? null, // Already in percentage form
       };
     });
 

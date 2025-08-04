@@ -26,7 +26,7 @@ export const simulationTableRowSchema = z.object({
   bondsReturn: z.number().nullable(),
   cashValue: z.number(),
   cashReturn: z.number().nullable(),
-  inflationRate: z.number(),
+  inflationRate: z.number().nullable(),
 });
 
 // Infer TypeScript type from schema
