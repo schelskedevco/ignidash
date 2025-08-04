@@ -67,12 +67,12 @@ export default function Table<T extends Record<string, unknown>>({
                     }
 
                     return (
-                      <th key={String(col.key)} scope="col" className="px-3 py-3.5">
+                      <th key={String(col.key)} scope="col" className="border-border/50 border-l px-3 py-3.5">
                         {sortableButton}
                       </th>
                     );
                   })}
-                  <th scope="col" className="py-3.5 pr-4 pl-3 sm:pr-6 lg:pr-8">
+                  <th scope="col" className="border-border/50 border-l py-3.5 pr-4 pl-3 sm:pr-6 lg:pr-8">
                     <span className="sr-only">Edit</span>
                   </th>
                 </tr>
@@ -96,12 +96,18 @@ export default function Table<T extends Record<string, unknown>>({
                       }
 
                       return (
-                        <td key={String(col.key)} className="text-muted-foreground px-3 py-4 text-sm whitespace-nowrap">
+                        <td
+                          key={String(col.key)}
+                          className="text-muted-foreground border-border/50 border-l px-3 py-4 text-sm whitespace-nowrap"
+                        >
                           {displayVal}
                         </td>
                       );
                     })}
-                    <td key="Edit" className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6 lg:pr-8">
+                    <td
+                      key="Edit"
+                      className="border-border/50 border-l py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-6 lg:pr-8"
+                    >
                       <a href="#" className="text-primary hover:text-primary/75">
                         Edit {/* <span className="sr-only">, {person.name}</span> */}
                       </a>
