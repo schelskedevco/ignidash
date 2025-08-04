@@ -47,7 +47,7 @@ export default function Table<T extends Record<string, unknown>>({
                 <tr className="text-foreground">
                   {columns.map((col, index) => {
                     const sortableButton = (
-                      <button className="group inline-flex items-center text-left whitespace-nowrap">
+                      <button className="group inline-flex items-center text-left text-sm font-semibold whitespace-nowrap">
                         {col.title}
                         <span className="invisible ml-2 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible">
                           <ChevronDownIcon
@@ -60,14 +60,14 @@ export default function Table<T extends Record<string, unknown>>({
 
                     if (index === 0) {
                       return (
-                        <th key={String(col.key)} scope="col" className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold sm:pl-6 lg:pl-8">
+                        <th key={String(col.key)} scope="col" className="py-3.5 pr-3 pl-4 sm:pl-6 lg:pl-8">
                           {sortableButton}
                         </th>
                       );
                     }
 
                     return (
-                      <th key={String(col.key)} scope="col" className="px-3 py-3.5 text-left text-sm font-semibold">
+                      <th key={String(col.key)} scope="col" className="px-3 py-3.5">
                         {sortableButton}
                       </th>
                     );
