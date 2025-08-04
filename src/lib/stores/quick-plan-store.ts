@@ -450,7 +450,7 @@ export const useFixedReturnsAnalysis = () => {
     let yearsToFIRE: number | null = null;
     let fireAge: number | null = null;
     for (const phase of simulation.phasesMetadata) {
-      if (phase[1].getName() === 'Retirement Phase') {
+      if (phase[1].getName() === 'Retirement') {
         yearsToFIRE = phase[0];
         fireAge = inputs.basics.currentAge! + yearsToFIRE;
         break;
@@ -506,7 +506,7 @@ export const useMonteCarloAnalysis = () => {
     let p90FireAge: number | null = null;
 
     for (const phase of analysis.phaseStats ?? []) {
-      if (phase.phaseName === 'Accumulation Phase') {
+      if (phase.phaseName === 'Accumulation') {
         p10YearsToFIRE = phase.durationPercentiles.p10;
         p10FireAge = inputs.basics.currentAge! + p10YearsToFIRE;
 
@@ -560,7 +560,7 @@ export const useHistoricalBacktestAnalysis = () => {
     let p90FireAge: number | null = null;
 
     for (const phase of analysis.phaseStats ?? []) {
-      if (phase.phaseName === 'Accumulation Phase') {
+      if (phase.phaseName === 'Accumulation') {
         p10YearsToFIRE = phase.durationPercentiles.p10;
         p10FireAge = inputs.basics.currentAge! + p10YearsToFIRE;
 
@@ -698,7 +698,7 @@ export const useMonteCarloTableData = (): MonteCarloTableRow[] => {
       // Calculate FIRE age - find when retirement phase starts
       let fireAge: number | null = null;
       for (const [year, phase] of simulationResult.phasesMetadata) {
-        if (phase.getName() === 'Retirement Phase') {
+        if (phase.getName() === 'Retirement') {
           fireAge = currentAge + year;
           break;
         }

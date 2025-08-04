@@ -96,7 +96,7 @@ export class AccumulationPhase implements SimulationPhase {
   }
 
   getName(): string {
-    return 'Accumulation Phase';
+    return 'Accumulation';
   }
 
   processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): Portfolio {
@@ -142,7 +142,7 @@ export class RetirementPhase implements SimulationPhase {
   }
 
   getName(): string {
-    return 'Retirement Phase';
+    return 'Retirement';
   }
 
   processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): Portfolio {
