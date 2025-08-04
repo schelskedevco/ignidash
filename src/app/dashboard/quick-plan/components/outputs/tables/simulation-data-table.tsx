@@ -1,6 +1,6 @@
 'use client';
 
-import { useFixedReturnsTableData } from '@/lib/stores/quick-plan-store';
+import { useFixedReturnsTableData, type SimulationDataRow } from '@/lib/stores/quick-plan-store';
 
 import Table from './table';
 
@@ -11,32 +11,18 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 0,
 });
 
-const percentageFormatter = (value: unknown) => {
+const percentageFormatter = (value: SimulationDataRow[keyof SimulationDataRow]) => {
   const numValue = value as number;
   return `${(numValue * 100).toFixed(1)}%`;
 };
 
-const inflationFormatter = (value: unknown) => {
+const inflationFormatter = (value: SimulationDataRow[keyof SimulationDataRow]) => {
   const numValue = value as number;
   return `${numValue.toFixed(1)}%`;
 };
 
-type SimulationDataRow = {
-  year: number;
-  age: number;
-  phaseName: string;
-  portfolioValue: number;
-  stocksValue: number;
-  stocksReturn: number;
-  bondsValue: number;
-  bondsReturn: number;
-  cashValue: number;
-  cashReturn: number;
-  inflationRate: number;
-};
-
 export default function SimulationDataTable() {
-  const tableData = useFixedReturnsTableData() as SimulationDataRow[];
+  const tableData = useFixedReturnsTableData();
 
   const columns = [
     {
@@ -54,12 +40,12 @@ export default function SimulationDataTable() {
     {
       key: 'portfolioValue' as keyof SimulationDataRow,
       title: 'Portfolio Value',
-      format: (value: unknown) => currencyFormatter.format(value as number),
+      format: (value: SimulationDataRow[keyof SimulationDataRow]) => currencyFormatter.format(value as number),
     },
     {
       key: 'stocksValue' as keyof SimulationDataRow,
       title: 'Stocks Value',
-      format: (value: unknown) => currencyFormatter.format(value as number),
+      format: (value: SimulationDataRow[keyof SimulationDataRow]) => currencyFormatter.format(value as number),
     },
     {
       key: 'stocksReturn' as keyof SimulationDataRow,
@@ -69,7 +55,7 @@ export default function SimulationDataTable() {
     {
       key: 'bondsValue' as keyof SimulationDataRow,
       title: 'Bonds Value',
-      format: (value: unknown) => currencyFormatter.format(value as number),
+      format: (value: SimulationDataRow[keyof SimulationDataRow]) => currencyFormatter.format(value as number),
     },
     {
       key: 'bondsReturn' as keyof SimulationDataRow,
@@ -79,7 +65,7 @@ export default function SimulationDataTable() {
     {
       key: 'cashValue' as keyof SimulationDataRow,
       title: 'Cash Value',
-      format: (value: unknown) => currencyFormatter.format(value as number),
+      format: (value: SimulationDataRow[keyof SimulationDataRow]) => currencyFormatter.format(value as number),
     },
     {
       key: 'cashReturn' as keyof SimulationDataRow,

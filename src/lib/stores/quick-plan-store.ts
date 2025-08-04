@@ -637,7 +637,21 @@ export const useHistoricalBacktestChartData = () => {
   }, [currentAge, simulation]);
 };
 
-export const useFixedReturnsTableData = () => {
+export interface SimulationDataRow extends Record<string, unknown> {
+  year: number;
+  age: number;
+  phaseName: string;
+  portfolioValue: number;
+  stocksValue: number;
+  stocksReturn: number;
+  bondsValue: number;
+  bondsReturn: number;
+  cashValue: number;
+  cashReturn: number;
+  inflationRate: number;
+}
+
+export const useFixedReturnsTableData = (): SimulationDataRow[] => {
   const currentAge = useCurrentAge()!;
   const simulation = useFixedReturnsSimulation();
 
