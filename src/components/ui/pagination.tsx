@@ -1,3 +1,5 @@
+import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/react/20/solid';
+
 import { Button } from '@/components/catalyst/button';
 
 interface PaginationProps {
@@ -16,11 +18,13 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         </p>
       </div>
       <div className="flex flex-1 justify-between sm:justify-end sm:gap-2">
-        <Button onClick={() => onPageChange(currentPage - 1)} color="rose">
+        <Button onClick={() => onPageChange(currentPage - 1)} plain>
+          <ArrowLongLeftIcon className="h-5 w-5" />
           Previous
         </Button>
-        <Button onClick={() => onPageChange(currentPage + 1)} color="rose">
+        <Button onClick={() => onPageChange(currentPage + 1)} plain>
           Next
+          <ArrowLongRightIcon className="h-5 w-5" />
         </Button>
       </div>
     </nav>
