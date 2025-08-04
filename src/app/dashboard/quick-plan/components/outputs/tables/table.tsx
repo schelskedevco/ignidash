@@ -96,7 +96,7 @@ export default function Table<T extends Record<string, unknown>>({
                     const sortableButton = (
                       <button
                         onClick={() => handleSort(col.key)}
-                        className="group inline-flex items-center text-left text-sm font-semibold whitespace-nowrap"
+                        className="inline-flex items-center text-left text-sm font-semibold whitespace-nowrap"
                       >
                         {col.title}
                         <span className="ml-2 flex-none rounded-sm text-gray-400">
@@ -116,7 +116,10 @@ export default function Table<T extends Record<string, unknown>>({
                         <th
                           key={String(col.key)}
                           scope="col"
-                          className={cn('py-3.5 pr-3 pl-4 sm:pl-6 lg:pl-8', hoveredColumn === col.key && 'bg-emphasized-background/50')}
+                          className={cn(
+                            'group py-3.5 pr-3 pl-4 sm:pl-6 lg:pl-8',
+                            hoveredColumn === col.key && 'bg-emphasized-background/50'
+                          )}
                           onMouseEnter={() => setHoveredColumn(col.key)}
                           onMouseLeave={() => setHoveredColumn(null)}
                         >
@@ -129,7 +132,10 @@ export default function Table<T extends Record<string, unknown>>({
                       <th
                         key={String(col.key)}
                         scope="col"
-                        className={cn('border-border/50 border-l px-3 py-3.5', hoveredColumn === col.key && 'bg-emphasized-background/50')}
+                        className={cn(
+                          'group border-border/50 border-l px-3 py-3.5',
+                          hoveredColumn === col.key && 'bg-emphasized-background/50'
+                        )}
                         onMouseEnter={() => setHoveredColumn(col.key)}
                         onMouseLeave={() => setHoveredColumn(null)}
                       >
