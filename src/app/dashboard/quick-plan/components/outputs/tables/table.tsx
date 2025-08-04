@@ -47,7 +47,7 @@ export default function Table<T extends Record<string, unknown>>({
                 <tr className="text-foreground">
                   {columns.map((col, index) => {
                     const sortableButton = (
-                      <button className="group inline-flex items-center text-left">
+                      <button className="group inline-flex items-center text-left whitespace-nowrap">
                         {col.title}
                         <span className="invisible ml-2 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible">
                           <ChevronDownIcon
