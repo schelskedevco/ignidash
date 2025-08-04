@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/16/solid';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/16/solid';
 
 import { type TableColumn } from '@/lib/types/table';
 import Pagination from '@/components/ui/pagination';
@@ -12,6 +12,13 @@ interface TableProps<T extends Record<string, unknown>> {
   showPagination?: boolean;
 }
 
+type SortDirection = 'asc' | 'desc' | null;
+
+interface SortState<T> {
+  column: keyof T | null;
+  direction: SortDirection;
+}
+
 export default function Table<T extends Record<string, unknown>>({
   columns,
   data,
@@ -20,20 +27,55 @@ export default function Table<T extends Record<string, unknown>>({
   showPagination = true,
 }: TableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortState, setSortState] = useState<SortState<T>>({
+    column: null,
+    direction: null,
+  });
+
+  const handleSort = (column: keyof T) => {
+    setSortState((prev) => {
+      if (prev.column === column) {
+        if (prev.direction === 'asc') return { column, direction: 'desc' };
+        if (prev.direction === 'desc') return { column: null, direction: null };
+      }
+      return { column, direction: 'asc' };
+    });
+    setCurrentPage(1);
+  };
+
+  const sortedData = useMemo(() => {
+    if (!sortState.column || !sortState.direction) return data;
+
+    return [...data].sort((a, b) => {
+      const aVal = a[sortState.column!];
+      const bVal = b[sortState.column!];
+
+      if (aVal === bVal) return 0;
+
+      let comparison = 0;
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        comparison = aVal - bVal;
+      } else {
+        comparison = String(aVal).localeCompare(String(bVal));
+      }
+
+      return sortState.direction === 'asc' ? comparison : -comparison;
+    });
+  }, [data, sortState]);
 
   const { paginatedData, totalPages, emptyRows } = useMemo(() => {
     if (!showPagination) {
-      return { paginatedData: data, totalPages: 1, emptyRows: 0 };
+      return { paginatedData: sortedData, totalPages: 1, emptyRows: 0 };
     }
 
-    const total = Math.ceil(data.length / itemsPerPage);
+    const total = Math.ceil(sortedData.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginated = data.slice(startIndex, endIndex);
+    const paginated = sortedData.slice(startIndex, endIndex);
     const emptyRowCount = itemsPerPage - paginated.length;
 
     return { paginatedData: paginated, totalPages: total, emptyRows: emptyRowCount };
-  }, [data, currentPage, itemsPerPage, showPagination]);
+  }, [sortedData, currentPage, itemsPerPage, showPagination]);
 
   const handlePageChange = (page: number) => setCurrentPage(page);
 
@@ -46,14 +88,21 @@ export default function Table<T extends Record<string, unknown>>({
               <thead>
                 <tr className="text-foreground">
                   {columns.map((col, index) => {
+                    const isSorted = sortState.column === col.key;
                     const sortableButton = (
-                      <button className="group inline-flex items-center text-left text-sm font-semibold whitespace-nowrap">
+                      <button
+                        onClick={() => handleSort(col.key)}
+                        className="group inline-flex items-center text-left text-sm font-semibold whitespace-nowrap"
+                      >
                         {col.title}
-                        <span className="invisible ml-2 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible">
-                          <ChevronDownIcon
-                            aria-hidden="true"
-                            className="invisible ml-2 size-5 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible"
-                          />
+                        <span className="ml-2 flex-none rounded-sm text-gray-400">
+                          {isSorted && sortState.direction === 'asc' ? (
+                            <ChevronUpIcon aria-hidden="true" className="size-5" />
+                          ) : isSorted && sortState.direction === 'desc' ? (
+                            <ChevronDownIcon aria-hidden="true" className="size-5" />
+                          ) : (
+                            <ChevronDownIcon aria-hidden="true" className="invisible size-5 group-hover:visible" />
+                          )}
                         </span>
                       </button>
                     );
