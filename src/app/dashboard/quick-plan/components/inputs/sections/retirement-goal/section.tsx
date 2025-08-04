@@ -45,7 +45,7 @@ export default function GoalSection() {
   return (
     <SectionContainer showBottomBorder>
       <SectionHeader
-        title="Retirement Goal"
+        title="Retirement Phase"
         desc="Your retirement spending level determines when you'll have enough to retire."
         status={status}
       />
