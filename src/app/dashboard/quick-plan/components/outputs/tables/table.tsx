@@ -124,7 +124,7 @@ export default function Table<T extends Record<string, unknown>>({
                         const sortableButton = (
                           <button
                             onClick={() => handleSort(col.key)}
-                            className="inline-flex w-full cursor-pointer items-center text-left text-sm font-semibold whitespace-nowrap"
+                            className="focus-outline inline-flex w-full cursor-pointer items-center text-left text-sm font-semibold whitespace-nowrap"
                             aria-label={`Sort by ${col.title}, currently ${sortDirection}`}
                           >
                             {col.title}
@@ -175,7 +175,7 @@ export default function Table<T extends Record<string, unknown>>({
                       <tr
                         key={String(row[keyField])}
                         className={cn(
-                          'hover:bg-background/50',
+                          'hover:bg-background/50 focus-outline',
                           onRowClick && 'cursor-pointer',
                           selectedRow === String(row[keyField]) && 'bg-background/50'
                         )}
