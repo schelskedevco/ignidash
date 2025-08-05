@@ -5,7 +5,7 @@ import Card from '@/components/ui/card';
 
 import StochasticResultsChart from './stochastic-results-chart';
 import ResultsMetrics from '../stochastic-metrics';
-import MonteCarloDataTableWithDrillDown from '../tables/monte-carlo-data-table';
+import MonteCarloDataTable from '../tables/monte-carlo-data-table';
 
 export default function MonteCarloOverview() {
   const simulation = useMonteCarloSimulation();
@@ -23,7 +23,7 @@ export default function MonteCarloOverview() {
         <h4 className="text-foreground mb-4 text-center text-lg font-semibold sm:text-left">Portfolio Projection</h4>
         <StochasticResultsChart fireAnalysis={fireAnalysis} chartData={chartData} />
       </Card>
-      <MonteCarloDataTableWithDrillDown simulation={simulation} />
+      <MonteCarloDataTable simulation={simulation} />
     </>
   );
 }
