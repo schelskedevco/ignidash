@@ -88,13 +88,13 @@ export default function Table<T extends Record<string, unknown>>({
 
   return (
     <>
-      <Card removeInternalPadding>
+      <Card className="bg-background" removeInternalPadding>
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flow-root">
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle">
                 <table className="divide-border relative min-w-full divide-y">
-                  <thead>
+                  <thead className="bg-emphasized-background">
                     <tr className="text-foreground">
                       {columns.map((col, index) => {
                         const isSorted = sortState.column === col.key;
@@ -147,7 +147,7 @@ export default function Table<T extends Record<string, unknown>>({
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-border/50 divide-y">
+                  <tbody className="divide-border/50 bg-emphasized-background/50 divide-y">
                     {paginatedData.map((row) => (
                       <tr
                         key={String(row[keyField])}
