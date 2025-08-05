@@ -41,10 +41,7 @@ export default function ResultsSections() {
 
   return (
     <>
-      <SectionContainer showBottomBorder>
-        <SectionHeader title="Overview" desc="Key metrics, charts, and your simulation data in one view." />
-        {resultsOverview}
-      </SectionContainer>
+      {resultsOverview}
       <SectionContainer showBottomBorder>
         <SectionHeader title="Risk Analysis" desc="Understand failure scenarios and what causes them." />
         {comingSoon}
