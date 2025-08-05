@@ -99,19 +99,22 @@ export default function Table<T extends Record<string, unknown>>({
                     <tr className="text-foreground">
                       {columns.map((col, index) => {
                         const isSorted = sortState.column === col.key;
+                        const sortDirection = isSorted ? (sortState.direction === 'asc' ? 'ascending' : 'descending') : 'none';
+
                         const sortableButton = (
                           <button
                             onClick={() => handleSort(col.key)}
                             className="inline-flex w-full cursor-pointer items-center text-left text-sm font-semibold whitespace-nowrap"
+                            aria-label={`Sort by ${col.title}, currently ${sortDirection}`}
                           >
                             {col.title}
-                            <span className="ml-2 flex-none rounded-sm text-gray-400">
+                            <span className="ml-2 flex-none rounded-sm text-gray-400" aria-hidden="true">
                               {isSorted && sortState.direction === 'asc' ? (
-                                <ChevronUpIcon aria-hidden="true" className="size-5" />
+                                <ChevronUpIcon className="size-5" />
                               ) : isSorted && sortState.direction === 'desc' ? (
-                                <ChevronDownIcon aria-hidden="true" className="size-5" />
+                                <ChevronDownIcon className="size-5" />
                               ) : (
-                                <ChevronDownIcon aria-hidden="true" className="invisible size-5 group-hover:visible" />
+                                <ChevronDownIcon className="invisible size-5 group-hover:visible" />
                               )}
                             </span>
                           </button>
@@ -125,6 +128,7 @@ export default function Table<T extends Record<string, unknown>>({
                               className={cn('group py-3.5 pr-3 pl-4 sm:pl-6 lg:pl-8', hoveredColumn === col.key && 'bg-background/50')}
                               onMouseEnter={() => setHoveredColumn(col.key)}
                               onMouseLeave={() => setHoveredColumn(null)}
+                              aria-sort={sortDirection}
                             >
                               {sortableButton}
                             </th>
@@ -138,6 +142,7 @@ export default function Table<T extends Record<string, unknown>>({
                             className={cn('group border-border/50 border-l px-3 py-3.5', hoveredColumn === col.key && 'bg-background/50')}
                             onMouseEnter={() => setHoveredColumn(col.key)}
                             onMouseLeave={() => setHoveredColumn(null)}
+                            aria-sort={sortDirection}
                           >
                             {sortableButton}
                           </th>
@@ -160,6 +165,15 @@ export default function Table<T extends Record<string, unknown>>({
                         }}
                         onBlur={() => setSelectedRow(null)}
                         tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setSelectedRow(String(row[keyField]));
+                            onRowClick?.(row);
+                          }
+                        }}
+                        role={onRowClick ? 'button' : undefined}
+                        aria-label={onRowClick ? `View details for simulation number ${String(row[keyField])}` : undefined}
                       >
                         {columns.map((col, index) => {
                           const rawVal = row[col.key];
