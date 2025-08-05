@@ -48,7 +48,10 @@ import {
   validateSimulationTableData,
   type MonteCarloTableRow,
   validateMonteCarloTableData,
+  type HistoricalBacktestTableRow,
+  validateHistoricalBacktestTableData,
 } from '@/lib/schemas/simulation-table-schema';
+import { formatHistoricalPeriods } from '@/lib/utils/table-formatters';
 
 // ================================
 // TYPES & HELPERS
@@ -752,6 +755,77 @@ export const useMonteCarloTableData = (): MonteCarloTableRow[] => {
 
     // Validate data against schema
     return validateMonteCarloTableData(rawData);
+  }, [currentAge, simulation]);
+};
+
+export const useHistoricalBacktestTableData = (): HistoricalBacktestTableRow[] => {
+  const currentAge = useCurrentAge()!;
+  const simulation = useHistoricalBacktestSimulation();
+
+  return useMemo(() => {
+    // Map through each simulation result to create table rows
+    const rawData = simulation.simulations.map(([seed, simulationResult]) => {
+      // Calculate FIRE age - find when retirement phase starts
+      let fireAge: number | null = null;
+      for (const [year, phase] of simulationResult.phasesMetadata) {
+        if (phase.getName() === 'Retirement') {
+          fireAge = currentAge + year;
+          break;
+        }
+      }
+
+      // Get final phase name - last entry in phasesMetadata
+      const finalPhaseEntry = simulationResult.phasesMetadata[simulationResult.phasesMetadata.length - 1];
+      const finalPhaseName = finalPhaseEntry ? finalPhaseEntry[1].getName() : '';
+
+      // Get final portfolio value - last entry in data array
+      const finalPortfolioEntry = simulationResult.data[simulationResult.data.length - 1];
+      const finalPortfolioValue = finalPortfolioEntry ? finalPortfolioEntry[1].getTotalValue() : 0;
+
+      // Use SimulationAnalyzer to get average returns
+      const analyzer = new SimulationAnalyzer();
+      const analysis = analyzer.analyzeSimulation(simulationResult);
+
+      let averageStocksReturn: number | null = null;
+      let averageBondsReturn: number | null = null;
+      let averageCashReturn: number | null = null;
+      let averageInflationRate: number | null = null;
+
+      if (analysis) {
+        // Get mean returns from analyzer (convert from decimal to percentage)
+        averageStocksReturn = analysis.returns.assets.stocks?.mean ? analysis.returns.assets.stocks.mean * 100 : null;
+        averageBondsReturn = analysis.returns.assets.bonds?.mean ? analysis.returns.assets.bonds.mean * 100 : null;
+        averageCashReturn = analysis.returns.assets.cash?.mean ? analysis.returns.assets.cash.mean * 100 : null;
+      }
+
+      // Calculate average inflation rate (not available in analyzer)
+      if (simulationResult.returnsMetadata.length > 0) {
+        const inflationRates = simulationResult.returnsMetadata
+          .map(([, returns]) => returns.metadata.inflationRate)
+          .filter((r) => r !== null && r !== undefined);
+        averageInflationRate = inflationRates.length > 0 ? inflationRates.reduce((sum, r) => sum + r, 0) / inflationRates.length : null;
+      }
+
+      // Format historical periods using the utility function
+      const historicalPeriods = formatHistoricalPeriods(simulationResult.historicalPeriods);
+
+      return {
+        seed,
+        success: simulationResult.success,
+        fireAge,
+        bankruptcyAge: simulationResult.bankruptcyAge,
+        finalPhaseName,
+        finalPortfolioValue,
+        averageStocksReturn,
+        averageBondsReturn,
+        averageCashReturn,
+        averageInflationRate,
+        historicalPeriods,
+      };
+    });
+
+    // Validate data against schema
+    return validateHistoricalBacktestTableData(rawData);
   }, [currentAge, simulation]);
 };
 

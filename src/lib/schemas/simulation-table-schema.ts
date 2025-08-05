@@ -106,3 +106,50 @@ export const validateMonteCarloTableRow = (data: unknown): MonteCarloTableRow =>
 export const validateMonteCarloTableData = (data: unknown[]): MonteCarloTableRow[] => {
   return data.map(validateMonteCarloTableRow);
 };
+
+// Historical Backtest table schema (extends Monte Carlo with historical periods)
+export const historicalBacktestTableRowSchema = z.object({
+  seed: z.number(),
+  success: z.boolean(),
+  fireAge: z.number().nullable(),
+  bankruptcyAge: z.number().nullable(),
+  finalPhaseName: z.string(),
+  finalPortfolioValue: z.number(),
+  averageStocksReturn: z.number().nullable(),
+  averageBondsReturn: z.number().nullable(),
+  averageCashReturn: z.number().nullable(),
+  averageInflationRate: z.number().nullable(),
+  historicalPeriods: z.string(), // Formatted as "1978 — 2024, 1985 — 2024"
+});
+
+// Infer TypeScript type from Historical Backtest schema
+export type HistoricalBacktestTableRow = z.infer<typeof historicalBacktestTableRowSchema>;
+
+// Define the Historical Backtest columns structure with metadata
+const HISTORICAL_BACKTEST_COLUMNS = {
+  seed: { title: 'Seed', format: 'number' },
+  success: { title: 'Success', format: 'string' },
+  fireAge: { title: 'FIRE Age', format: 'number' },
+  bankruptcyAge: { title: 'Bankruptcy Age', format: 'number' },
+  finalPhaseName: { title: 'Final Phase', format: 'string' },
+  finalPortfolioValue: { title: 'Final Portfolio', format: 'currency' },
+  averageStocksReturn: { title: 'Mean Stocks Return', format: 'percentage' },
+  averageBondsReturn: { title: 'Mean Bonds Return', format: 'percentage' },
+  averageCashReturn: { title: 'Mean Cash Return', format: 'percentage' },
+  averageInflationRate: { title: 'Mean Inflation Rate', format: 'percentage' },
+  historicalPeriods: { title: 'Historical Periods', format: 'string' },
+} as const;
+
+// Type-safe config for Historical Backtest table
+export const HISTORICAL_BACKTEST_TABLE_CONFIG: Record<keyof HistoricalBacktestTableRow, { title: string; format: ColumnFormat }> =
+  HISTORICAL_BACKTEST_COLUMNS;
+
+// Helper to validate Historical Backtest data at runtime
+export const validateHistoricalBacktestTableRow = (data: unknown): HistoricalBacktestTableRow => {
+  return historicalBacktestTableRowSchema.parse(data);
+};
+
+// Helper to validate array of Historical Backtest data
+export const validateHistoricalBacktestTableData = (data: unknown[]): HistoricalBacktestTableRow[] => {
+  return data.map(validateHistoricalBacktestTableRow);
+};
