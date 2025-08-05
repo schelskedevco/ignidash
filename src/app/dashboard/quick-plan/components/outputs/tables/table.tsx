@@ -38,6 +38,7 @@ export default function Table<T extends Record<string, unknown>>({
     direction: null,
   });
   const [hoveredColumn, setHoveredColumn] = useState<keyof T | null>(null);
+  const [selectedRow, setSelectedRow] = useState<string | null>(null);
 
   const handleSort = (column: keyof T) => {
     setSortState((prev) => {
@@ -148,8 +149,17 @@ export default function Table<T extends Record<string, unknown>>({
                     {paginatedData.map((row) => (
                       <tr
                         key={String(row[keyField])}
-                        className={cn('hover:bg-background/50', onRowClick && 'cursor-pointer')}
-                        onClick={() => onRowClick?.(row)}
+                        className={cn(
+                          'hover:bg-background/50',
+                          onRowClick && 'cursor-pointer',
+                          selectedRow === String(row[keyField]) && 'bg-background/50'
+                        )}
+                        onClick={() => {
+                          setSelectedRow(String(row[keyField]));
+                          onRowClick?.(row);
+                        }}
+                        onBlur={() => setSelectedRow(null)}
+                        tabIndex={0}
                       >
                         {columns.map((col, index) => {
                           const rawVal = row[col.key];
