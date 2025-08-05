@@ -1,13 +1,18 @@
 'use client';
 
-import { useHistoricalBacktestChartData, useHistoricalBacktestAnalysis } from '@/lib/stores/quick-plan-store';
+import {
+  useHistoricalBacktestChartData,
+  useHistoricalBacktestAnalysis,
+  useHistoricalBacktestSimulation,
+} from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
 
 import StochasticResultsChart from './stochastic-results-chart';
 import ResultsMetrics from '../stochastic-metrics';
-import HistoricalBacktestDataTable from '../tables/historical-backtest-data-table';
+import HistoricalBacktestDataTableWithDrillDown from '../tables/historical-backtest-data-table-with-drill-down';
 
 export default function HistoricalBacktestOverview() {
+  const simulation = useHistoricalBacktestSimulation();
   const chartData = useHistoricalBacktestChartData();
   const fireAnalysis = useHistoricalBacktestAnalysis();
 
@@ -22,7 +27,7 @@ export default function HistoricalBacktestOverview() {
         <h4 className="text-foreground mb-4 text-center text-lg font-semibold sm:text-left">Portfolio Projection</h4>
         <StochasticResultsChart fireAnalysis={fireAnalysis} chartData={chartData} />
       </Card>
-      <HistoricalBacktestDataTable />
+      <HistoricalBacktestDataTableWithDrillDown simulation={simulation} />
     </>
   );
 }

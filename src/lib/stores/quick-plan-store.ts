@@ -39,7 +39,14 @@ import {
   validateField,
   validateSection,
 } from '@/lib/schemas/quick-plan-schema';
-import { FinancialSimulationEngine, MonteCarloSimulationEngine, LcgHistoricalBacktestSimulationEngine } from '@/lib/calc/simulation-engine';
+import {
+  FinancialSimulationEngine,
+  MonteCarloSimulationEngine,
+  LcgHistoricalBacktestSimulationEngine,
+  type SimulationResult,
+  type MultiSimulationResult,
+  type LcgHistoricalBacktestResult,
+} from '@/lib/calc/simulation-engine';
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
 import { SimulationAnalyzer } from '@/lib/calc/simulation-analyzer';
 import WithdrawalStrategy from '@/lib/calc/withdrawal-strategy';
@@ -414,24 +421,24 @@ export const useFixedReturnsSimulation = () => {
   }, [inputs]);
 };
 
-export const useMonteCarloSimulation = () => {
+export const useMonteCarloSimulation = (baseSeed?: number) => {
   const inputs = useQuickPlanStore((state) => state.inputs);
 
   return useMemo(() => {
-    const baseSeed = Math.floor(Math.random() * 1000);
-    const engine = new MonteCarloSimulationEngine(inputs, baseSeed);
+    const seed = baseSeed ?? Math.floor(Math.random() * 1000);
+    const engine = new MonteCarloSimulationEngine(inputs, seed);
     return engine.runMonteCarloSimulation(100);
-  }, [inputs]);
+  }, [inputs, baseSeed]);
 };
 
-export const useHistoricalBacktestSimulation = () => {
+export const useHistoricalBacktestSimulation = (baseSeed?: number) => {
   const inputs = useQuickPlanStore((state) => state.inputs);
 
   return useMemo(() => {
-    const baseSeed = Math.floor(Math.random() * 1000);
-    const engine = new LcgHistoricalBacktestSimulationEngine(inputs, baseSeed);
+    const seed = baseSeed ?? Math.floor(Math.random() * 1000);
+    const engine = new LcgHistoricalBacktestSimulationEngine(inputs, seed);
     return engine.runLcgHistoricalBacktest(100);
-  }, [inputs]);
+  }, [inputs, baseSeed]);
 };
 
 export interface FixedReturnsAnalysis {
@@ -690,9 +697,8 @@ export const useFixedReturnsTableData = (): SimulationTableRow[] => {
   }, [currentAge, simulation]);
 };
 
-export const useMonteCarloTableData = (): MonteCarloTableRow[] => {
+export const useMonteCarloTableData = (simulation: MultiSimulationResult): MonteCarloTableRow[] => {
   const currentAge = useCurrentAge()!;
-  const simulation = useMonteCarloSimulation();
 
   return useMemo(() => {
     // Map through each simulation result to create table rows
@@ -757,9 +763,8 @@ export const useMonteCarloTableData = (): MonteCarloTableRow[] => {
   }, [currentAge, simulation]);
 };
 
-export const useHistoricalBacktestTableData = (): HistoricalBacktestTableRow[] => {
+export const useHistoricalBacktestTableData = (simulation: LcgHistoricalBacktestResult): HistoricalBacktestTableRow[] => {
   const currentAge = useCurrentAge()!;
-  const simulation = useHistoricalBacktestSimulation();
 
   return useMemo(() => {
     // Map through each simulation result to create table rows
@@ -822,6 +827,56 @@ export const useHistoricalBacktestTableData = (): HistoricalBacktestTableRow[] =
 
     // Validate data against schema
     return validateHistoricalBacktestTableData(rawData);
+  }, [currentAge, simulation]);
+};
+
+/**
+ * Hook to convert a single SimulationResult to SimulationTableRow[] format
+ * Used for drill-down functionality in Monte Carlo and Historical Backtest tables
+ */
+export const useSimulationDetailData = (simulation: SimulationResult | null): SimulationTableRow[] => {
+  const currentAge = useCurrentAge()!;
+
+  return useMemo(() => {
+    if (!simulation) return [];
+
+    // Create a map for efficient phase lookup
+    const phaseMap = new Map<number, string>();
+    for (const [year, phase] of simulation.phasesMetadata) {
+      phaseMap.set(year, phase.getName());
+    }
+
+    // Map through simulation data to create table rows
+    const rawData = simulation.data.map(([year, portfolio], index) => {
+      // Get phase name for this year
+      const phaseName = phaseMap.get(year) || '';
+
+      // Get returns from previous year (returns are applied at end of year)
+      // For year 0, there are no returns yet
+      const returns = index > 0 && simulation.returnsMetadata[index - 1] ? simulation.returnsMetadata[index - 1][1] : null;
+
+      const stocksReturn = returns?.returns.stocks;
+      const bondsReturn = returns?.returns.bonds;
+      const cashReturn = returns?.returns.cash;
+      const inflationRate = returns?.metadata.inflationRate;
+
+      return {
+        year,
+        age: currentAge + year,
+        phaseName,
+        portfolioValue: portfolio.getTotalValue(),
+        stocksValue: portfolio.getAssetValue('stocks'),
+        stocksReturn: stocksReturn ? stocksReturn * 100 : null, // Convert to percentage
+        bondsValue: portfolio.getAssetValue('bonds'),
+        bondsReturn: bondsReturn ? bondsReturn * 100 : null, // Convert to percentage
+        cashValue: portfolio.getAssetValue('cash'),
+        cashReturn: cashReturn ? cashReturn * 100 : null, // Convert to percentage
+        inflationRate: inflationRate ?? null, // Already in percentage form
+      };
+    });
+
+    // Validate data against schema
+    return validateSimulationTableData(rawData);
   }, [currentAge, simulation]);
 };
 

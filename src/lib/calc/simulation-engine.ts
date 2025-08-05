@@ -174,7 +174,7 @@ export class FinancialSimulationEngine {
  * Represents the results of multiple simulations, each with its own seed and corresponding result
  * Used for aggregating Monte Carlo or historical backtest simulations
  */
-interface MultiSimulationResult {
+export interface MultiSimulationResult {
   simulations: Array<[number /* seed */, SimulationResult]>;
 }
 

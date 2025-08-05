@@ -13,6 +13,7 @@ interface TableProps<T extends Record<string, unknown>> {
   keyField: keyof T;
   itemsPerPage?: number;
   showPagination?: boolean;
+  onRowClick?: (row: T) => void;
 }
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -28,6 +29,7 @@ export default function Table<T extends Record<string, unknown>>({
   keyField,
   itemsPerPage = 10,
   showPagination = true,
+  onRowClick,
 }: TableProps<T>) {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortState, setSortState] = useState<SortState<T>>({
@@ -150,7 +152,11 @@ export default function Table<T extends Record<string, unknown>>({
               </thead>
               <tbody className="divide-border/50 divide-y">
                 {paginatedData.map((row) => (
-                  <tr key={String(row[keyField])} className="hover:bg-emphasized-background/50">
+                  <tr
+                    key={String(row[keyField])}
+                    className={cn('hover:bg-emphasized-background/50', onRowClick && 'cursor-pointer')}
+                    onClick={() => onRowClick?.(row)}
+                  >
                     {columns.map((col, index) => {
                       const rawVal = row[col.key];
                       const displayVal = col.format ? col.format(rawVal) : String(rawVal);
