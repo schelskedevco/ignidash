@@ -88,7 +88,7 @@ export default function Table<T extends Record<string, unknown>>({
 
   return (
     <>
-      <Card>
+      <Card removeInternalPadding>
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flow-root">
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -121,10 +121,7 @@ export default function Table<T extends Record<string, unknown>>({
                             <th
                               key={String(col.key)}
                               scope="col"
-                              className={cn(
-                                'group py-3.5 pr-3 pl-4 sm:pl-6 lg:pl-8',
-                                hoveredColumn === col.key && 'bg-emphasized-background/50'
-                              )}
+                              className={cn('group py-3.5 pr-3 pl-4 sm:pl-6 lg:pl-8', hoveredColumn === col.key && 'bg-background/50')}
                               onMouseEnter={() => setHoveredColumn(col.key)}
                               onMouseLeave={() => setHoveredColumn(null)}
                             >
@@ -137,10 +134,7 @@ export default function Table<T extends Record<string, unknown>>({
                           <th
                             key={String(col.key)}
                             scope="col"
-                            className={cn(
-                              'group border-border/50 border-l px-3 py-3.5',
-                              hoveredColumn === col.key && 'bg-emphasized-background/50'
-                            )}
+                            className={cn('group border-border/50 border-l px-3 py-3.5', hoveredColumn === col.key && 'bg-background/50')}
                             onMouseEnter={() => setHoveredColumn(col.key)}
                             onMouseLeave={() => setHoveredColumn(null)}
                           >
@@ -157,7 +151,7 @@ export default function Table<T extends Record<string, unknown>>({
                     {paginatedData.map((row) => (
                       <tr
                         key={String(row[keyField])}
-                        className={cn('hover:bg-emphasized-background/50', onRowClick && 'cursor-pointer')}
+                        className={cn('hover:bg-background/50', onRowClick && 'cursor-pointer')}
                         onClick={() => onRowClick?.(row)}
                       >
                         {columns.map((col, index) => {
@@ -170,7 +164,7 @@ export default function Table<T extends Record<string, unknown>>({
                                 key={String(col.key)}
                                 className={cn(
                                   'text-foreground py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-6 lg:pl-8',
-                                  hoveredColumn === col.key && 'bg-emphasized-background/50'
+                                  hoveredColumn === col.key && 'bg-background/50'
                                 )}
                               >
                                 {displayVal}
@@ -183,7 +177,7 @@ export default function Table<T extends Record<string, unknown>>({
                               key={String(col.key)}
                               className={cn(
                                 'text-muted-foreground border-border/50 border-l px-3 py-4 text-sm whitespace-nowrap',
-                                hoveredColumn === col.key && 'bg-emphasized-background/50'
+                                hoveredColumn === col.key && 'bg-background/50'
                               )}
                             >
                               {displayVal}
