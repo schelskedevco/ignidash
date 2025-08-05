@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { ChevronLeftIcon } from '@heroicons/react/16/solid';
+import { ArrowLongLeftIcon } from '@heroicons/react/20/solid';
 
 import { useMonteCarloTableData, useSimulationDetailData } from '@/lib/stores/quick-plan-store';
 import { type SimulationTableRow, type MonteCarloTableRow } from '@/lib/schemas/simulation-table-schema';
@@ -36,16 +36,22 @@ export default function MonteCarloDataTable({ simulation }: MonteCarloDataTableP
 
   if (selectedSeed !== null) {
     return (
-      <div>
-        <div className="mb-4 px-4 sm:px-6 lg:px-8">
-          <button onClick={handleBack} className="text-primary hover:text-primary/75 inline-flex items-center gap-2 text-sm font-medium">
-            <ChevronLeftIcon className="h-4 w-4" />
-            Back to Summary
-          </button>
-          <h3 className="text-foreground mt-2 text-base font-semibold">Simulation #{selectedSeed} Details</h3>
+      <>
+        <div className="border-border border-b py-5 sm:flex sm:items-center sm:justify-between">
+          <h3 className="text-base font-semibold text-gray-900">Simulation #{selectedSeed} Details</h3>
+          <div className="mt-3 sm:mt-0 sm:ml-4">
+            <button
+              onClick={handleBack}
+              type="button"
+              className="inline-flex items-center gap-2 rounded-md bg-rose-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600"
+            >
+              <ArrowLongLeftIcon className="h-5 w-5" />
+              <span>Go back</span>
+            </button>
+          </div>
         </div>
         <Table<SimulationTableRow> columns={detailDataColumns} data={detailData} keyField="year" />
-      </div>
+      </>
     );
   }
 
