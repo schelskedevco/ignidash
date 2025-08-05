@@ -10,11 +10,11 @@ import type { LcgHistoricalBacktestResult } from '@/lib/calc/simulation-engine';
 
 import Table from './table';
 
-interface HistoricalBacktestDataTableWithDrillDownProps {
+interface HistoricalBacktestDataTableProps {
   simulation: LcgHistoricalBacktestResult;
 }
 
-export default function HistoricalBacktestDataTableWithDrillDown({ simulation }: HistoricalBacktestDataTableWithDrillDownProps) {
+export default function HistoricalBacktestDataTable({ simulation }: HistoricalBacktestDataTableProps) {
   const [selectedSeed, setSelectedSeed] = useState<number | null>(null);
 
   // Find the selected simulation result

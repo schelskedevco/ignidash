@@ -9,7 +9,7 @@ import Card from '@/components/ui/card';
 
 import StochasticResultsChart from './stochastic-results-chart';
 import ResultsMetrics from '../stochastic-metrics';
-import HistoricalBacktestDataTableWithDrillDown from '../tables/historical-backtest-data-table-with-drill-down';
+import HistoricalBacktestDataTableWithDrillDown from '../tables/historical-backtest-data-table';
 
 export default function HistoricalBacktestOverview() {
   const simulation = useHistoricalBacktestSimulation();

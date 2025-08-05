@@ -10,11 +10,11 @@ import type { MultiSimulationResult } from '@/lib/calc/simulation-engine';
 
 import Table from './table';
 
-interface MonteCarloDataTableWithDrillDownProps {
+interface MonteCarloDataTableProps {
   simulation: MultiSimulationResult;
 }
 
-export default function MonteCarloDataTableWithDrillDown({ simulation }: MonteCarloDataTableWithDrillDownProps) {
+export default function MonteCarloDataTable({ simulation }: MonteCarloDataTableProps) {
   const [selectedSeed, setSelectedSeed] = useState<number | null>(null);
 
   // Find the selected simulation result

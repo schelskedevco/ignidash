@@ -5,7 +5,7 @@ import Card from '@/components/ui/card';
 
 import StochasticResultsChart from './stochastic-results-chart';
 import ResultsMetrics from '../stochastic-metrics';
-import MonteCarloDataTableWithDrillDown from '../tables/monte-carlo-data-table-with-drill-down';
+import MonteCarloDataTableWithDrillDown from '../tables/monte-carlo-data-table';
 
 export default function MonteCarloOverview() {
   const simulation = useMonteCarloSimulation();
