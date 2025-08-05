@@ -21,7 +21,7 @@ export default function ResultsMetrics({ fireAnalysis }: ResultsMetricsProps) {
 
   return (
     <>
-      <dl className="mt-4 mb-8 grid grid-cols-2 gap-2 2xl:grid-cols-3">
+      <dl className="my-4 grid grid-cols-2 gap-2 2xl:grid-cols-3">
         <MetricsCard name="Success Rate" stat={successRate} />
         <MetricsCard name="Progress to FIRE" stat={progressToFIRE} />
         <MetricsCard

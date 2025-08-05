@@ -15,7 +15,7 @@ export default function ResultsMetrics({ fireAnalysis }: ResultsMetricsProps) {
   const finalPortfolio = `$${formatNumber(fireAnalysis.finalPortfolio, 2)}`;
 
   return (
-    <dl className="mt-4 mb-8 grid grid-cols-2 gap-2 2xl:grid-cols-3">
+    <dl className="my-4 grid grid-cols-2 gap-2 2xl:grid-cols-3">
       <MetricsCard name="Success" stat={fireAnalysis.success ? 'Yes!' : 'No'} />
       <MetricsCard name="Progress to FIRE" stat={progressToFIRE} />
       <MetricsCard name="FIRE Age" stat={fireAge} statContext={` (in ${yearsToFIRE} years)`} className="sm:col-span-2 2xl:col-span-1" />
