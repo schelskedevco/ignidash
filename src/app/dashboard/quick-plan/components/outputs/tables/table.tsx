@@ -96,7 +96,7 @@ export default function Table<T extends Record<string, unknown>>({
                     const sortableButton = (
                       <button
                         onClick={() => handleSort(col.key)}
-                        className="inline-flex items-center text-left text-sm font-semibold whitespace-nowrap"
+                        className="inline-flex cursor-pointer items-center text-left text-sm font-semibold whitespace-nowrap"
                       >
                         {col.title}
                         <span className="ml-2 flex-none rounded-sm text-gray-400">
