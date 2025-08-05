@@ -51,7 +51,6 @@ import {
   type HistoricalBacktestTableRow,
   validateHistoricalBacktestTableData,
 } from '@/lib/schemas/simulation-table-schema';
-import { formatHistoricalPeriods } from '@/lib/utils/table-formatters';
 
 // ================================
 // TYPES & HELPERS
@@ -806,8 +805,8 @@ export const useHistoricalBacktestTableData = (): HistoricalBacktestTableRow[] =
         averageInflationRate = inflationRates.length > 0 ? inflationRates.reduce((sum, r) => sum + r, 0) / inflationRates.length : null;
       }
 
-      // Format historical periods using the utility function
-      const historicalPeriods = formatHistoricalPeriods(simulationResult.historicalPeriods);
+      // Pass raw historical ranges data (formatting happens in table-formatters)
+      const historicalPeriods = simulationResult.historicalRanges;
 
       return {
         seed,

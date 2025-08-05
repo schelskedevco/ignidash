@@ -47,6 +47,7 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider<Lcg
   private selectedStartYear: number;
   private currentSequenceStartYear: number;
   private currentSequenceStartSimYear: number;
+  private historicalRanges: Array<{ startYear: number; endYear: number }> = [];
 
   /**
    * Creates an LCG historical backtest returns provider
@@ -66,6 +67,9 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider<Lcg
     // Initialize sequence tracking
     this.currentSequenceStartYear = this.selectedStartYear;
     this.currentSequenceStartSimYear = 1;
+
+    // Track the first range
+    this.historicalRanges = [{ startYear: this.selectedStartYear, endYear: this.selectedStartYear }];
   }
 
   /**
@@ -92,11 +96,16 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider<Lcg
     if (targetHistoricalYear <= this.dataRange.endYear) {
       // Within range, use the year directly
       adjustedYear = targetHistoricalYear;
+      // Update the current range's end year
+      const currentRange = this.historicalRanges[this.historicalRanges.length - 1];
+      currentRange.endYear = adjustedYear;
     } else {
       // We've hit the end of available data, start a new sequence
       this.currentSequenceStartYear = this.generateRandomStartYear();
       this.currentSequenceStartSimYear = simulationYear;
       adjustedYear = this.currentSequenceStartYear;
+      // Add a new range
+      this.historicalRanges.push({ startYear: adjustedYear, endYear: adjustedYear });
     }
 
     const yearData = this.historicalData.find((data) => data.year === adjustedYear);
@@ -129,5 +138,13 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider<Lcg
    */
   getSelectedStartYear(): number {
     return this.selectedStartYear;
+  }
+
+  /**
+   * Get the historical ranges used in this simulation
+   * @returns Array of historical year ranges used for returns
+   */
+  getHistoricalRanges(): Array<{ startYear: number; endYear: number }> {
+    return [...this.historicalRanges];
   }
 }

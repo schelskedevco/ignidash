@@ -33,7 +33,7 @@ export const simulationTableRowSchema = z.object({
 export type SimulationTableRow = z.infer<typeof simulationTableRowSchema>;
 
 // Format types for different data presentations
-export type ColumnFormat = 'number' | 'currency' | 'percentage' | 'string';
+export type ColumnFormat = 'number' | 'currency' | 'percentage' | 'string' | 'historicalRanges';
 
 // Define the structure with metadata
 const SIMULATION_COLUMNS = {
@@ -119,7 +119,7 @@ export const historicalBacktestTableRowSchema = z.object({
   averageBondsReturn: z.number().nullable(),
   averageCashReturn: z.number().nullable(),
   averageInflationRate: z.number().nullable(),
-  historicalPeriods: z.string(), // Formatted as "1978 — 2024, 1985 — 2024"
+  historicalPeriods: z.array(z.object({ startYear: z.number(), endYear: z.number() })), // Raw range data
 });
 
 // Infer TypeScript type from Historical Backtest schema
@@ -137,7 +137,7 @@ const HISTORICAL_BACKTEST_COLUMNS = {
   averageBondsReturn: { title: 'Mean Bonds Return', format: 'percentage' },
   averageCashReturn: { title: 'Mean Cash Return', format: 'percentage' },
   averageInflationRate: { title: 'Mean Inflation Rate', format: 'percentage' },
-  historicalPeriods: { title: 'Historical Periods', format: 'string' },
+  historicalPeriods: { title: 'Historical Periods', format: 'historicalRanges' },
 } as const;
 
 // Type-safe config for Historical Backtest table

@@ -225,21 +225,14 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
 }
 
 /**
- * Historical Period Information
- * Represents the historical years used in a simulation
- */
-export interface HistoricalPeriod {
-  simulationYear: number;
-  historicalYear: number;
-}
-
-/**
  * LCG Historical Backtest Result Interface
- * Extends MultiSimulationResult to include historical period information
- * Each simulation includes the historical years used for returns
+ * Extends MultiSimulationResult to include historical range information
+ * Each simulation includes the historical year ranges used for returns
  */
 export interface LcgHistoricalBacktestResult extends MultiSimulationResult<LcgHistoricalBacktestExtras> {
-  simulations: Array<[number /* seed */, SimulationResult<LcgHistoricalBacktestExtras> & { historicalPeriods: HistoricalPeriod[] }]>;
+  simulations: Array<
+    [number /* seed */, SimulationResult<LcgHistoricalBacktestExtras> & { historicalRanges: Array<{ startYear: number; endYear: number }> }]
+  >;
 }
 
 /**
@@ -269,7 +262,9 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
    * @returns Aggregate results with simulation seeds, results, and historical periods used
    */
   runLcgHistoricalBacktest(numSimulations: number): LcgHistoricalBacktestResult {
-    const simulations: Array<[number, SimulationResult<LcgHistoricalBacktestExtras> & { historicalPeriods: HistoricalPeriod[] }]> = [];
+    const simulations: Array<
+      [number, SimulationResult<LcgHistoricalBacktestExtras> & { historicalRanges: Array<{ startYear: number; endYear: number }> }]
+    > = [];
 
     const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(this.inputs);
     const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, this.inputs);
@@ -279,16 +274,10 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
       const returnsProvider = new LcgHistoricalBacktestReturnsProvider(simulationSeed);
       const result = this.runSimulation<LcgHistoricalBacktestExtras>(returnsProvider, portfolio, initialPhase);
 
-      // Extract historical periods from the returns metadata
-      const historicalPeriods = result.returnsMetadata.map(([, returns]) => {
-        const extras = returns.metadata.extras!;
-        return {
-          simulationYear: extras.simulationYear,
-          historicalYear: extras.historicalYear,
-        };
-      });
+      // Get historical ranges from the returns provider
+      const historicalRanges = returnsProvider.getHistoricalRanges();
 
-      simulations.push([simulationSeed, { ...result, historicalPeriods }]);
+      simulations.push([simulationSeed, { ...result, historicalRanges }]);
     }
 
     return {
