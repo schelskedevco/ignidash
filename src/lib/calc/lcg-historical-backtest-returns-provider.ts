@@ -29,7 +29,7 @@ import { SeededRandom } from './seeded-random';
 /**
  * LCG Historical Backtest Returns Provider Implementation
  * Provides returns based on real historical data with randomly selected start years
- * Automatically loops back to beginning of data when simulation extends beyond available years
+ * Automatically loops back to first year of data when simulation extends beyond available years
  */
 export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   private dataRange: { startYear: number; endYear: number };
@@ -91,8 +91,8 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
       const currentRange = this.historicalRanges[this.historicalRanges.length - 1];
       currentRange.endYear = adjustedYear;
     } else {
-      // We've hit the end of available data, start a new sequence
-      this.currentSequenceStartYear = this.generateRandomStartYear();
+      // We've hit the end of available data, restart from the beginning
+      this.currentSequenceStartYear = this.dataRange.startYear;
       this.currentSequenceStartSimYear = simulationYear;
       adjustedYear = this.currentSequenceStartYear;
       // Add a new range
