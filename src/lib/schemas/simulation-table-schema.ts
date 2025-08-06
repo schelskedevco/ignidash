@@ -153,3 +153,59 @@ export const validateHistoricalBacktestTableRow = (data: unknown): HistoricalBac
 export const validateHistoricalBacktestTableData = (data: unknown[]): HistoricalBacktestTableRow[] => {
   return data.map(validateHistoricalBacktestTableRow);
 };
+
+// Yearly aggregate table schema
+export const yearlyAggregateTableRowSchema = z.object({
+  // Time identifiers
+  year: z.number(),
+  age: z.number(),
+
+  // Success metrics
+  percentAccumulation: z.number(), // 0-100
+  percentRetirement: z.number(), // 0-100
+  percentBankrupt: z.number(), // 0-100
+
+  // Portfolio percentiles
+  p10Portfolio: z.number(),
+  p25Portfolio: z.number(),
+  p50Portfolio: z.number(),
+  p75Portfolio: z.number(),
+  p90Portfolio: z.number(),
+
+  // Additional statistics
+  minPortfolio: z.number(),
+  maxPortfolio: z.number(),
+});
+
+// Infer TypeScript type from schema
+export type YearlyAggregateTableRow = z.infer<typeof yearlyAggregateTableRowSchema>;
+
+// Define the columns structure with metadata
+const YEARLY_AGGREGATE_COLUMNS = {
+  year: { title: 'Year', format: 'number' },
+  age: { title: 'Age', format: 'number' },
+  percentAccumulation: { title: '% Accumulation Phase', format: 'percentage' },
+  percentRetirement: { title: '% Retirement Phase', format: 'percentage' },
+  percentBankrupt: { title: '% Bankrupt', format: 'percentage' },
+  p10Portfolio: { title: 'P10 Portfolio', format: 'currency' },
+  p25Portfolio: { title: 'P25 Portfolio', format: 'currency' },
+  p50Portfolio: { title: 'P50 Portfolio', format: 'currency' },
+  p75Portfolio: { title: 'P75 Portfolio', format: 'currency' },
+  p90Portfolio: { title: 'P90 Portfolio', format: 'currency' },
+  minPortfolio: { title: 'Min Portfolio', format: 'currency' },
+  maxPortfolio: { title: 'Max Portfolio', format: 'currency' },
+} as const;
+
+// Type-safe config for Yearly Aggregate table
+export const YEARLY_AGGREGATE_TABLE_CONFIG: Record<keyof YearlyAggregateTableRow, { title: string; format: ColumnFormat }> =
+  YEARLY_AGGREGATE_COLUMNS;
+
+// Helper to validate yearly aggregate data at runtime
+export const validateYearlyAggregateTableRow = (data: unknown): YearlyAggregateTableRow => {
+  return yearlyAggregateTableRowSchema.parse(data);
+};
+
+// Helper to validate array of yearly aggregate data
+export const validateYearlyAggregateTableData = (data: unknown[]): YearlyAggregateTableRow[] => {
+  return data.map(validateYearlyAggregateTableRow);
+};

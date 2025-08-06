@@ -57,6 +57,8 @@ import {
   validateMonteCarloTableData,
   type HistoricalBacktestTableRow,
   validateHistoricalBacktestTableData,
+  type YearlyAggregateTableRow,
+  validateYearlyAggregateTableData,
 } from '@/lib/schemas/simulation-table-schema';
 
 // ================================
@@ -878,6 +880,14 @@ export const useSimulationDetailData = (simulation: SimulationResult | null): Si
     // Validate data against schema
     return validateSimulationTableData(rawData);
   }, [currentAge, simulation]);
+};
+
+export const useHistoricalBacktestYearlyResultsTableData = (simulation: LcgHistoricalBacktestResult): YearlyAggregateTableRow[] => {
+  return validateYearlyAggregateTableData([]);
+};
+
+export const useMonteCarloYearlyResultsTableData = (simulation: MultiSimulationResult): YearlyAggregateTableRow[] => {
+  return validateYearlyAggregateTableData([]);
 };
 
 /**
