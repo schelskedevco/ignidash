@@ -6,10 +6,9 @@ interface SectionHeaderProps {
   title: string | React.ReactNode;
   desc?: string | React.ReactNode;
   status?: SectionStatus;
-  rightAddOn?: React.ReactNode;
 }
 
-export default function SectionHeader({ title, desc, status, rightAddOn }: SectionHeaderProps) {
+export default function SectionHeader({ title, desc, status }: SectionHeaderProps) {
   let badgeColor: BadgeColor, badgeText;
   switch (status) {
     case 'complete':
@@ -42,7 +41,7 @@ export default function SectionHeader({ title, desc, status, rightAddOn }: Secti
     <div className="ml-2">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
-        {rightAddOn ? rightAddOn : status && <Badge color={badgeColor} text={badgeText} />}
+        {status && <Badge color={badgeColor} text={badgeText} />}
       </div>
       {desc && <p className="text-muted-foreground mt-2 text-base">{desc}</p>}
     </div>

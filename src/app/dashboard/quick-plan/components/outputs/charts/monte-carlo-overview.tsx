@@ -8,6 +8,8 @@ import { useMonteCarloChartData, useMonteCarloAnalysis, useMonteCarloSimulation 
 import Card from '@/components/ui/card';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
+import SectionControls from '@/components/ui/section-controls';
+import ButtonGroup from '@/components/ui/button-group';
 
 import StochasticResultsChart from './stochastic-results-chart';
 import ResultsMetrics from '../stochastic-metrics';
@@ -28,6 +30,10 @@ export default function MonteCarloOverview() {
   }
 
   const headerText = selectedSeed !== null ? `Simulation #${selectedSeed} Details` : 'Simulations Table';
+  const headerDesc =
+    selectedSeed !== null
+      ? 'Year-by-year progression and outcomes for this specific simulation.'
+      : 'Browse all simulation runs and select one to explore further.';
 
   return (
     <>
@@ -43,14 +49,15 @@ export default function MonteCarloOverview() {
         </Card>
       </SectionContainer>
       <SectionContainer showBottomBorder>
-        <SectionHeader
-          title={headerText}
-          rightAddOn={
+        <SectionHeader title={headerText} desc={headerDesc} />
+        <SectionControls
+          leftAddOn={
             <Button disabled={selectedSeed === null} onClick={() => setSelectedSeed(null)} plain>
               <ArrowLongLeftIcon className="h-5 w-5" />
               <span>Return</span>
             </Button>
           }
+          rightAddOn={<ButtonGroup />}
         />
         <MonteCarloDataTable simulation={simulation} selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} />
       </SectionContainer>
