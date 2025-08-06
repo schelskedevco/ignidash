@@ -23,7 +23,7 @@ export default function ButtonGroup({
   lastButtonText,
   lastButtonOnClick,
 }: ButtonGroupProps) {
-  const [_, setActiveButton] = useState<'first' | 'middle' | 'last' | null>(null);
+  const [activeButton, setActiveButton] = useState<'first' | 'middle' | 'last' | null>(null);
 
   const handleFirstClick = () => {
     setActiveButton('first');
@@ -45,7 +45,10 @@ export default function ButtonGroup({
       <button
         onClick={handleFirstClick}
         type="button"
-        className="bg-emphasized-background ring-border hover:bg-background relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10"
+        className={cn(
+          'bg-emphasized-background ring-border hover:bg-background relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10',
+          { 'bg-background': activeButton === 'first' }
+        )}
       >
         {firstButtonText}
       </button>
@@ -53,7 +56,10 @@ export default function ButtonGroup({
         <button
           onClick={handleMiddleClick}
           type="button"
-          className="bg-emphasized-background ring-border hover:bg-background relative -ml-px inline-flex items-center px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10"
+          className={cn(
+            'bg-emphasized-background ring-border hover:bg-background relative -ml-px inline-flex items-center px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10',
+            { 'bg-background': activeButton === 'middle' }
+          )}
         >
           {middleButtonText}
         </button>
@@ -61,7 +67,10 @@ export default function ButtonGroup({
       <button
         onClick={handleLastClick}
         type="button"
-        className="bg-emphasized-background ring-border hover:bg-background relative -ml-px inline-flex items-center rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10"
+        className={cn(
+          'bg-emphasized-background ring-border hover:bg-background relative -ml-px inline-flex items-center rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10',
+          { 'bg-background': activeButton === 'last' }
+        )}
       >
         {lastButtonText}
       </button>
