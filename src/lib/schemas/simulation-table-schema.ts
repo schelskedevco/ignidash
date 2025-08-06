@@ -173,8 +173,8 @@ export const yearlyAggregateTableRowSchema = z.object({
   p90Portfolio: z.number(),
 
   // Additional statistics
-  minPortfolio: z.number(),
-  maxPortfolio: z.number(),
+  minPortfolio: z.number().nullable(),
+  maxPortfolio: z.number().nullable(),
 });
 
 // Infer TypeScript type from schema

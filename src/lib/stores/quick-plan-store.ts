@@ -914,8 +914,8 @@ export const useHistoricalBacktestYearlyResultsTableData = (simulation: LcgHisto
       p50Portfolio: yearData.percentiles.p50,
       p75Portfolio: yearData.percentiles.p75,
       p90Portfolio: yearData.percentiles.p90,
-      minPortfolio: yearData.values.overall?.min ?? 0,
-      maxPortfolio: yearData.values.overall?.max ?? 0,
+      minPortfolio: yearData.values.overall?.min ?? null,
+      maxPortfolio: yearData.values.overall?.max ?? null,
     }));
 
     // Validate data against schema
@@ -946,8 +946,8 @@ export const useMonteCarloYearlyResultsTableData = (simulation: MultiSimulationR
       p50Portfolio: yearData.percentiles.p50,
       p75Portfolio: yearData.percentiles.p75,
       p90Portfolio: yearData.percentiles.p90,
-      minPortfolio: yearData.values.overall?.min ?? 0,
-      maxPortfolio: yearData.values.overall?.max ?? 0,
+      minPortfolio: yearData.values.overall?.min ?? null,
+      maxPortfolio: yearData.values.overall?.max ?? null,
     }));
 
     // Validate data against schema
