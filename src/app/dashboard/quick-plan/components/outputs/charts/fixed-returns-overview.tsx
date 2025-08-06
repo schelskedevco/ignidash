@@ -26,7 +26,7 @@ export default function FixedReturnsOverview() {
         </Card>
       </SectionContainer>
       <SectionContainer showBottomBorder>
-        <SectionHeader title="Simulation Table" />
+        <SectionHeader title="Simulation Table" desc="Year-by-year progression showing portfolio value, asset allocation, and returns." />
         <FixedReturnsDataTable />
       </SectionContainer>
     </>
