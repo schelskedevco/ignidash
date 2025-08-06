@@ -30,7 +30,7 @@ export default function RetirementFunding() {
   return (
     <DisclosureCard
       title="Retirement Funding"
-      desc="Portfolio withdrawals and income sources that will cover your retirement spending."
+      desc="Portfolio withdrawals and income that will cover your retirement spending."
       icon={BanknotesIcon}
     >
       <form onSubmit={(e) => e.preventDefault()}>
