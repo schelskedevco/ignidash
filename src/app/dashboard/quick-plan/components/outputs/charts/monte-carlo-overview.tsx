@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowLongLeftIcon } from '@heroicons/react/20/solid';
+import { ChevronLeftIcon } from '@heroicons/react/20/solid';
 
 import { Button } from '@/components/catalyst/button';
 import { useMonteCarloChartData, useMonteCarloAnalysis, useMonteCarloSimulation } from '@/lib/stores/quick-plan-store';
@@ -62,7 +62,7 @@ export default function MonteCarloOverview() {
         <SectionControls
           leftAddOn={
             <Button disabled={selectedSeed === null} onClick={() => setSelectedSeed(null)} plain>
-              <ArrowLongLeftIcon className="h-5 w-5" />
+              <ChevronLeftIcon className="h-5 w-5" />
               <span>Return</span>
             </Button>
           }
