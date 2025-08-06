@@ -8,7 +8,6 @@ import { useMonteCarloChartData, useMonteCarloAnalysis, useMonteCarloSimulation 
 import Card from '@/components/ui/card';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
-import SectionControls from '@/components/ui/section-controls';
 import ButtonGroup from '@/components/ui/button-group';
 
 import StochasticResultsChart from './stochastic-results-chart';
@@ -58,22 +57,24 @@ export default function MonteCarloOverview() {
         </Card>
       </SectionContainer>
       <SectionContainer showBottomBorder>
-        <SectionHeader title={headerText} desc={headerDesc} />
-        <SectionControls
-          leftAddOn={
-            <Button disabled={selectedSeed === null} onClick={() => setSelectedSeed(null)} plain>
-              <ChevronLeftIcon className="h-5 w-5" />
-              <span>Return</span>
-            </Button>
-          }
+        <SectionHeader
+          title={headerText}
+          desc={headerDesc}
           rightAddOn={
-            <ButtonGroup
-              firstButtonText="All simulations"
-              firstButtonOnClick={() => setViewMode('all')}
-              lastButtonText="Yearly results"
-              lastButtonOnClick={() => setViewMode('yearly')}
-              defaultActiveButton="first"
-            />
+            selectedSeed !== null ? (
+              <Button disabled={selectedSeed === null} onClick={() => setSelectedSeed(null)} plain>
+                <ChevronLeftIcon className="h-5 w-5" />
+                <span>Return</span>
+              </Button>
+            ) : (
+              <ButtonGroup
+                firstButtonText="All simulations"
+                firstButtonOnClick={() => setViewMode('all')}
+                lastButtonText="Yearly results"
+                lastButtonOnClick={() => setViewMode('yearly')}
+                defaultActiveButton="first"
+              />
+            )
           }
         />
         <MonteCarloDataTable simulation={simulation} selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} viewMode={viewMode} />

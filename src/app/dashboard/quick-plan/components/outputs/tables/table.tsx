@@ -103,7 +103,7 @@ export default function Table<T extends Record<string, unknown>>({
 
   return (
     <>
-      <Card removeInternalPadding className="mt-1">
+      <Card removeInternalPadding>
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flow-root">
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
