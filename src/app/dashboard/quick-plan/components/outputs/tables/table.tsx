@@ -90,6 +90,9 @@ export default function Table<T extends Record<string, unknown>>({
 
   const handlePageChange = (page: number) => setCurrentPage(page);
 
+  // Reset to first page when data changes
+  useEffect(() => setCurrentPage(1), [data]);
+
   // Auto-focus first row when onEscPressed is provided
   useEffect(() => {
     if (onEscPressed && tableRef.current) {
