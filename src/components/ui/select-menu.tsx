@@ -23,7 +23,7 @@ export default function SelectMenu({ id, label, value, onChange, options, desc }
           name={id}
           value={value}
           onChange={onChange}
-          className="bg-background outline-border col-start-1 row-start-1 w-full appearance-none rounded-md py-1.5 pr-8 pl-3 text-base outline-1 -outline-offset-1 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-sm/6"
+          className="bg-background outline-border focus:outline-primary col-start-1 row-start-1 w-full appearance-none rounded-md py-1.5 pr-8 pl-3 text-base outline-1 -outline-offset-1 focus:outline-2 focus:-outline-offset-2 sm:text-sm/6"
         >
           {options.map((option) => (
             <option key={option.value} value={option.value}>
