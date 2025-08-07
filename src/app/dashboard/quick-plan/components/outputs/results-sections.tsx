@@ -42,10 +42,6 @@ export default function ResultsSections() {
   return (
     <>
       {resultsOverview}
-      <SectionContainer showBottomBorder>
-        <SectionHeader title="Risk Analysis" desc="Understand failure scenarios and what causes them." />
-        {comingSoon}
-      </SectionContainer>
       <SectionContainer showBottomBorder={false}>
         <SectionHeader title="Summary" desc="AI-powered insights and recommendations based on your simulation results." />
         {comingSoon}
