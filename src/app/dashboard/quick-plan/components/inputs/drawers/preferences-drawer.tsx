@@ -28,7 +28,7 @@ export default function PreferencesDrawer() {
 
   return (
     <>
-      <SectionContainer showBottomBorder>
+      <SectionContainer showBottomBorder location="drawer">
         <SectionHeader title="Display" desc="Choose how to display currency values in your projections." />
         <Card>
           <form onSubmit={(e) => e.preventDefault()}>
@@ -50,7 +50,7 @@ export default function PreferencesDrawer() {
         </Card>
       </SectionContainer>
 
-      <SectionContainer showBottomBorder={false}>
+      <SectionContainer showBottomBorder={false} location="drawer">
         <SectionHeader title="Data Storage" desc="Control how your data is saved and managed." />
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset className="space-y-4">
