@@ -67,7 +67,7 @@ const CustomTooltip = ({ active, payload, label, currentAge }: CustomTooltipProp
 };
 
 export default function FixedResultsChart() {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
   const chartData = useFixedReturnsChartData();
@@ -78,9 +78,9 @@ export default function FixedResultsChart() {
     return null;
   }
 
-  const gridColor = theme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
-  const foregroundColor = theme === 'dark' ? '#f3f4f6' : '#111827'; // gray-100 : gray-900
-  const foregroundMutedColor = theme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
+  const gridColor = resolvedTheme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
+  const foregroundColor = resolvedTheme === 'dark' ? '#f3f4f6' : '#111827'; // gray-100 : gray-900
+  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
 
   const interval = isSmallScreen ? 4 : 3;
 
