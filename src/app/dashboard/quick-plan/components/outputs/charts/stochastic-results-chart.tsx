@@ -42,11 +42,11 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
       <div className="flex flex-col gap-2">
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-2)]/60 px-2 text-sm">
+        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-3)]/60 px-2 text-sm">
           <span className="mr-2">P75:</span>
           <span className="ml-1 font-semibold">{formatNumber(payload[0].value, 3)}</span>
         </p>
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-3)]/60 px-2 text-sm">
+        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-2)]/60 px-2 text-sm">
           <span className="mr-2">Median (P50):</span>
           <span className="ml-1 font-semibold">{formatNumber(payload[1].value, 3)}</span>
         </p>
