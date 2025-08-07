@@ -116,6 +116,10 @@ export class FinancialSimulationEngine {
       phasesMetadata.push([year, currentPhase]);
     }
 
+    // Success if we never hit bankruptcy and reached final simulation phase
+    const nextPhase = currentPhase.getNextPhase(this.inputs);
+    success = success && nextPhase === null;
+
     return { success, bankruptcyAge, data, phasesMetadata, returnsMetadata };
   }
 
