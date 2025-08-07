@@ -9,9 +9,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 interface StochasticChartDataPoint {
   age: number;
-  p10: number;
+  p25: number;
   p50: number;
-  p90: number;
+  p75: number;
 }
 
 interface CustomTooltipProps {
@@ -41,7 +41,7 @@ const CustomTooltip = ({ active, payload, label, currentAge }: CustomTooltipProp
       </p>
       <div className="flex flex-col gap-2">
         <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-2)]/60 px-2 text-sm">
-          <span className="mr-2">P90:</span>
+          <span className="mr-2">P75:</span>
           <span className="ml-1 font-semibold">{formatNumber(payload[0].value, 3)}</span>
         </p>
         <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-3)]/60 px-2 text-sm">
@@ -49,7 +49,7 @@ const CustomTooltip = ({ active, payload, label, currentAge }: CustomTooltipProp
           <span className="ml-1 font-semibold">{formatNumber(payload[1].value, 3)}</span>
         </p>
         <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-1)]/60 px-2 text-sm">
-          <span className="mr-2">P10:</span>
+          <span className="mr-2">P25:</span>
           <span className="ml-1 font-semibold">{formatNumber(payload[2].value, 3)}</span>
         </p>
       </div>
@@ -83,7 +83,7 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }} tabIndex={-1}>
           <defs>
-            <linearGradient id="colorP90" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="colorP75" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={1} />
               <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={1} />
             </linearGradient>
@@ -91,7 +91,7 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
               <stop offset="5%" stopColor="var(--chart-3)" stopOpacity={1} />
               <stop offset="95%" stopColor="var(--chart-3)" stopOpacity={1} />
             </linearGradient>
-            <linearGradient id="colorP10" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="colorP25" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={1} />
               <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={1} />
             </linearGradient>
@@ -105,9 +105,9 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
           />
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <Tooltip content={<CustomTooltip currentAge={currentAge!} />} />
-          <Area type="monotone" dataKey="p90" stroke="var(--chart-2)" fill="url(#colorP90)" activeDot={false} />
+          <Area type="monotone" dataKey="p75" stroke="var(--chart-2)" fill="url(#colorP75)" activeDot={false} />
           <Area type="monotone" dataKey="p50" stroke="var(--chart-3)" fill="url(#colorP50)" activeDot={false} />
-          <Area type="monotone" dataKey="p10" stroke="var(--chart-1)" fill="url(#colorP10)" activeDot={false} />
+          <Area type="monotone" dataKey="p25" stroke="var(--chart-1)" fill="url(#colorP25)" activeDot={false} />
           {fireAnalysis?.p50FireAge && (
             <ReferenceLine
               x={Math.round(fireAnalysis.p50FireAge)}

@@ -627,9 +627,9 @@ export const useMonteCarloChartData = () => {
 
     return analysis.yearlyProgression.map((data) => ({
       age: data.year + currentAge,
-      p10: data.percentiles.p10,
+      p25: data.percentiles.p25,
       p50: data.percentiles.p50,
-      p90: data.percentiles.p90,
+      p75: data.percentiles.p75,
     }));
   }, [currentAge, simulation]);
 };
@@ -647,9 +647,9 @@ export const useHistoricalBacktestChartData = () => {
 
     return analysis.yearlyProgression.map((data) => ({
       age: data.year + currentAge,
-      p10: data.percentiles.p10,
+      p25: data.percentiles.p25,
       p50: data.percentiles.p50,
-      p90: data.percentiles.p90,
+      p75: data.percentiles.p75,
     }));
   }, [currentAge, simulation]);
 };
