@@ -135,7 +135,7 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
             <ReferenceLine
               x={Math.round(fireAnalysis.p50FireAge)}
               stroke={foregroundColor}
-              strokeDasharray="5 5"
+              strokeDasharray="10 5"
               label={{ value: 'P50 FIRE', position: 'insideBottomLeft', fill: foregroundColor }}
             />
           )}
