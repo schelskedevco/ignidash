@@ -173,7 +173,7 @@ export default function Table<T extends Record<string, unknown>>({
                       })}
                     </tr>
                   </thead>
-                  <tbody className="divide-border/50 bg-emphasized-background/50 divide-y">
+                  <tbody className="divide-border/50 bg-emphasized-background/50 border-border divide-y border-b">
                     {paginatedData.map((row) => (
                       <tr
                         key={String(row[keyField])}
@@ -246,16 +246,16 @@ export default function Table<T extends Record<string, unknown>>({
             </div>
           </div>
         </div>
+        {showPagination && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={data.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={handlePageChange}
+          />
+        )}
       </Card>
-      {showPagination && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalItems={data.length}
-          itemsPerPage={itemsPerPage}
-          onPageChange={handlePageChange}
-        />
-      )}
     </>
   );
 }

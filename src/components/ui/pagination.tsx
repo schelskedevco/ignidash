@@ -15,7 +15,7 @@ export default function Pagination({ currentPage, totalPages, totalItems, itemsP
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <nav aria-label="Pagination" className="ml-2 flex items-center justify-between">
+    <nav aria-label="Pagination" className="mx-4 my-2 flex items-center justify-between">
       <div className="hidden sm:block">
         <p className="text-muted-foreground text-sm">
           Showing <span className="font-extrabold">{startItem}</span> to <span className="font-extrabold">{endItem}</span> of{' '}
