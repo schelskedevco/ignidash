@@ -127,10 +127,10 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
             tickFormatter={(value: number) => formatNumber(value, 1)}
           />
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-          <Tooltip content={<CustomTooltip currentAge={currentAge!} disabled={isSmallScreen && clickedOutsideChart} />} />
           <Area type="monotone" dataKey="p75" stroke="var(--chart-3)" fill="url(#colorP75)" activeDot={false} />
           <Area type="monotone" dataKey="p50" stroke="var(--chart-2)" fill="url(#colorP50)" activeDot={false} />
           <Area type="monotone" dataKey="p25" stroke="var(--chart-1)" fill="url(#colorP25)" activeDot={false} />
+          <Tooltip content={<CustomTooltip currentAge={currentAge!} disabled={isSmallScreen && clickedOutsideChart} />} />
           {fireAnalysis?.p50FireAge && (
             <ReferenceLine
               x={Math.round(fireAnalysis.p50FireAge)}

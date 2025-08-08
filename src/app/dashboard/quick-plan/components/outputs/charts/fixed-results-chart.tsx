@@ -133,10 +133,10 @@ export default function FixedResultsChart() {
             tickFormatter={(value: number) => formatNumber(value, 1)}
           />
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-          <Tooltip content={<CustomTooltip currentAge={currentAge!} disabled={isSmallScreen && clickedOutsideChart} />} />
           <Area type="monotone" dataKey="stocks" stackId="1" stroke="var(--chart-3)" fill="url(#colorStocks)" activeDot={false} />
           <Area type="monotone" dataKey="bonds" stackId="1" stroke="var(--chart-2)" fill="url(#colorBonds)" activeDot={false} />
           <Area type="monotone" dataKey="cash" stackId="1" stroke="var(--chart-1)" fill="url(#colorCash)" activeDot={false} />
+          <Tooltip content={<CustomTooltip currentAge={currentAge!} disabled={isSmallScreen && clickedOutsideChart} />} />
           {fireAnalysis.fireAge && (
             <ReferenceLine
               x={Math.round(fireAnalysis.fireAge!)}
