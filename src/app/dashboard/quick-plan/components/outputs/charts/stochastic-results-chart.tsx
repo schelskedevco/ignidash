@@ -47,7 +47,7 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
           <span className="ml-1 font-semibold">{formatNumber(payload[0].value, 3)}</span>
         </p>
         <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-2)]/60 px-2 text-sm">
-          <span className="mr-2">Median (P50):</span>
+          <span className="mr-2">P50:</span>
           <span className="ml-1 font-semibold">{formatNumber(payload[1].value, 3)}</span>
         </p>
         <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-1)]/60 px-2 text-sm">
