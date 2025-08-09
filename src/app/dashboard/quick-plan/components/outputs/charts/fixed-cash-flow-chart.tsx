@@ -97,14 +97,6 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
             hide={isSmallScreen}
             tickFormatter={(value: number) => formatNumber(value, 1, '$')}
           />
-          <Bar
-            dataKey="amount"
-            onClick={() => {}}
-            label={CustomLabel}
-            radius={[8, 8, 0, 0]}
-            stroke="var(--chart-1)"
-            fill="var(--chart-3)"
-          />
           {inflowBar}
           {outflowBar}
           {netBar}
