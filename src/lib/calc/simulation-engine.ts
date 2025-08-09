@@ -103,7 +103,7 @@ export class FinancialSimulationEngine {
       const returns = returnsProvider.getReturns(year);
       const [portfolioWithReturns, totalReturnsAmount] = portfolio.withReturns(returns.returns);
       portfolio = portfolioWithReturns;
-      cashFlows.push({ name: 'Market Returns', amount: totalReturnsAmount });
+      cashFlows.push({ name: 'Returns', amount: totalReturnsAmount });
 
       // Rebalance again after returns to maintain target allocation
       portfolio = portfolio.withRebalance(assetAllocation);
