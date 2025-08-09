@@ -2,7 +2,7 @@
 
 import { useTheme } from 'next-themes';
 import { useRef, useState, useEffect } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, Tooltip } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell /* Tooltip */ } from 'recharts';
 
 import { useFixedReturnsCashFlowChartData } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
@@ -28,7 +28,7 @@ interface CustomTooltipProps {
   disabled: boolean;
 }
 
-const CustomTooltip = ({ active, payload, label, selectedAge, disabled }: CustomTooltipProps) => {
+const _CustomTooltip = ({ active, payload, label, selectedAge, disabled }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
   return (
@@ -51,7 +51,7 @@ interface FixedCashFlowChartProps {
 
 export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
-  const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
+  const [_, setClickedOutsideChart] = useState(false);
 
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
@@ -97,7 +97,7 @@ export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
             hide={isSmallScreen}
             tickFormatter={(value: number) => formatNumber(value, 1)}
           />
-          <Tooltip cursor={false} content={<CustomTooltip selectedAge={age} disabled={isSmallScreen && clickedOutsideChart} />} />
+          {/* <Tooltip cursor={false} content={<CustomTooltip selectedAge={age} disabled={isSmallScreen && clickedOutsideChart} />} /> */}
           <Bar dataKey="amount" onClick={() => {}}>
             {chartData.map((item, index) => (
               <Cell cursor="pointer" fill={barColors[(index + 2) % barColors.length]} key={`cell-${index}`} />
