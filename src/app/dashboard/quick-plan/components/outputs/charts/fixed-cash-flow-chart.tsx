@@ -2,7 +2,7 @@
 
 import { useTheme } from 'next-themes';
 import { useRef } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from 'recharts';
 
 import { useFixedReturnsCashFlowChartData } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
@@ -27,6 +27,7 @@ export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
 
   const gridColor = resolvedTheme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
+  const barColors = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)'];
 
   return (
     <div ref={chartRef} className="h-64 w-full sm:h-80 lg:h-96 [&_svg:focus]:outline-none">
@@ -40,14 +41,11 @@ export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
             tickFormatter={(value: number) => formatNumber(value, 1)}
           />
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-          <Bar type="monotone" dataKey="amount" stroke="var(--chart-1)" fill="var(--chart-3)" />
-          {/* <Bar type="monotone" dataKey="amount" stroke="var(--chart-2)" fill="url(#color2)" />
-          <Bar type="monotone" dataKey="amount" stroke="var(--chart-1)" fill="url(#color3)" /> */}
-          {/* <Bar dataKey="uv" onClick={handleClick}>
-            {data.map((entry, index) => (
-              <Cell cursor="pointer" fill={index === activeIndex ? '#82ca9d' : '#8884d8'} key={`cell-${index}`} />
+          <Bar dataKey="amount" onClick={() => {}}>
+            {chartData.map((item, index) => (
+              <Cell cursor="pointer" fill={barColors[(index + 2) % barColors.length]} key={`cell-${index}`} />
             ))}
-          </Bar> */}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>
