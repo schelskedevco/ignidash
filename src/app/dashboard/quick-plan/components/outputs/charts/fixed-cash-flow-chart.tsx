@@ -82,6 +82,9 @@ export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
     return null;
   }
 
+  const netCashFlow = chartData.reduce((sum, item) => sum + item.amount, 0);
+  const chartDataWithNet = [...chartData, { age, name: 'Net', amount: netCashFlow }];
+
   const gridColor = resolvedTheme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
   const barColors = ['var(--chart-2)', 'var(--chart-3)'];
@@ -89,7 +92,7 @@ export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
   return (
     <div className="h-64 w-full sm:h-80 lg:h-96 [&_svg:focus]:outline-none">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }} tabIndex={-1}>
+        <BarChart data={chartDataWithNet} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }} tabIndex={-1}>
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="name" />
           <YAxis
@@ -100,7 +103,7 @@ export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
           />
           {/* <Tooltip cursor={false} content={<CustomTooltip selectedAge={age} disabled={isSmallScreen && clickedOutsideChart} />} /> */}
           <Bar dataKey="amount" onClick={() => {}} label={CustomLabel} radius={[8, 8, 0, 0]}>
-            {chartData.map((item, index) => (
+            {chartDataWithNet.map((item, index) => (
               <Cell fill={barColors[(index + 2) % barColors.length]} stroke="var(--chart-1)" key={`cell-${index}`} />
             ))}
           </Bar>
