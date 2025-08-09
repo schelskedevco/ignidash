@@ -69,8 +69,14 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
 
       chartData = [inflowData, outflowData] as typeof chartData;
 
-      inflowBar = <Bar dataKey="amount" label={CustomLabel} radius={[8, 8, 0, 0]} stroke="var(--chart-1)" fill="var(--chart-3)" />;
-      outflowBar = <Bar dataKey="amount" label={CustomLabel} radius={[8, 8, 0, 0]} stroke="var(--chart-1)" fill="var(--chart-3)" />;
+      inflowBar = Array.from(inflowBarKeys).map((key, index) => {
+        const barRadius: [number, number, number, number] | undefined = index === inflowBarKeys.size - 1 ? [8, 8, 0, 0] : undefined;
+        return <Bar key={key} dataKey={key} stackId="a" radius={barRadius} stroke="var(--chart-1)" fill="var(--chart-3)" />;
+      });
+      outflowBar = Array.from(outflowBarKeys).map((key, index) => {
+        const barRadius: [number, number, number, number] | undefined = index === outflowBarKeys.size - 1 ? [8, 8, 0, 0] : undefined;
+        return <Bar key={key} dataKey={key} stackId="a" radius={barRadius} stroke="var(--chart-1)" fill="var(--chart-3)" />;
+      });
       break;
     case 'net':
       chartData = [{ age, name: 'Net', amount: chartData.reduce((sum, item) => sum + item.amount, 0) }];
