@@ -125,6 +125,7 @@ export default function FixedResultsChart() {
               <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={1} />
             </linearGradient>
           </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
           <YAxis
             tick={{ fill: foregroundMutedColor }}
@@ -132,7 +133,6 @@ export default function FixedResultsChart() {
             hide={isSmallScreen}
             tickFormatter={(value: number) => formatNumber(value, 1)}
           />
-          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <Area type="monotone" dataKey="stocks" stackId="1" stroke="var(--chart-3)" fill="url(#colorStocks)" activeDot={false} />
           <Area type="monotone" dataKey="bonds" stackId="1" stroke="var(--chart-2)" fill="url(#colorBonds)" activeDot={false} />
           <Area type="monotone" dataKey="cash" stackId="1" stroke="var(--chart-1)" fill="url(#colorCash)" activeDot={false} />

@@ -33,6 +33,7 @@ export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
     <div ref={chartRef} className="h-64 w-full sm:h-80 lg:h-96 [&_svg:focus]:outline-none">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }} tabIndex={-1}>
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="name" />
           <YAxis
             tick={{ fill: foregroundMutedColor }}
@@ -40,7 +41,6 @@ export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
             hide={isSmallScreen}
             tickFormatter={(value: number) => formatNumber(value, 1)}
           />
-          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <Bar dataKey="amount" onClick={() => {}}>
             {chartData.map((item, index) => (
               <Cell cursor="pointer" fill={barColors[(index + 2) % barColors.length]} key={`cell-${index}`} />

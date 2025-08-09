@@ -119,6 +119,7 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
               <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={1} />
             </linearGradient>
           </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
           <YAxis
             tick={{ fill: foregroundMutedColor }}
@@ -126,7 +127,6 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
             hide={isSmallScreen}
             tickFormatter={(value: number) => formatNumber(value, 1)}
           />
-          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <Area type="monotone" dataKey="p75" stroke="var(--chart-3)" fill="url(#colorP75)" activeDot={false} />
           <Area type="monotone" dataKey="p50" stroke="var(--chart-2)" fill="url(#colorP50)" activeDot={false} />
           <Area type="monotone" dataKey="p25" stroke="var(--chart-1)" fill="url(#colorP25)" activeDot={false} />
