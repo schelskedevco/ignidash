@@ -39,21 +39,42 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
-  const allChartData = useFixedReturnsCashFlowChartData();
+  const allChartData = useFixedReturnsCashFlowChartData().filter((item) => item.age === age);
 
-  let chartData = allChartData.filter((item) => item.age === age);
+  let inflowBar = null;
+  let outflowBar = null;
+  let netBar = null;
+  let chartData = allChartData;
+
   switch (mode) {
     case 'inflowOutflow':
-      const totalInflow = chartData.filter((item) => item.amount >= 0).reduce((sum, item) => sum + item.amount, 0);
-      const totalOutflow = chartData.filter((item) => item.amount < 0).reduce((sum, item) => sum + item.amount, 0);
+      const inflows = chartData.filter((item) => item.amount >= 0);
+      const outflows = chartData.filter((item) => item.amount < 0);
 
-      chartData = [
-        { age, name: 'Inflows', amount: totalInflow },
-        { age, name: 'Outflows', amount: totalOutflow },
-      ];
+      const inflowData: Record<string, number | string> = { age, name: 'Inflows' };
+      const inflowBarKeys = new Set<string>();
+
+      inflows.forEach((item) => {
+        inflowData[item.name] = item.amount;
+        inflowBarKeys.add(item.name);
+      });
+
+      const outflowData: Record<string, number | string> = { age, name: 'Outflows' };
+      const outflowBarKeys = new Set<string>();
+
+      outflows.forEach((item) => {
+        outflowData[item.name] = Math.abs(item.amount);
+        outflowBarKeys.add(item.name);
+      });
+
+      chartData = [inflowData, outflowData] as typeof chartData;
+
+      inflowBar = <Bar dataKey="amount" label={CustomLabel} radius={[8, 8, 0, 0]} stroke="var(--chart-1)" fill="var(--chart-3)" />;
+      outflowBar = <Bar dataKey="amount" label={CustomLabel} radius={[8, 8, 0, 0]} stroke="var(--chart-1)" fill="var(--chart-3)" />;
       break;
     case 'net':
       chartData = [{ age, name: 'Net', amount: chartData.reduce((sum, item) => sum + item.amount, 0) }];
+      netBar = <Bar dataKey="amount" label={CustomLabel} radius={[8, 8, 0, 0]} stroke="var(--chart-1)" fill="var(--chart-3)" />;
       break;
   }
 
@@ -84,6 +105,9 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
             stroke="var(--chart-1)"
             fill="var(--chart-3)"
           />
+          {inflowBar}
+          {outflowBar}
+          {netBar}
         </BarChart>
       </ResponsiveContainer>
     </div>
