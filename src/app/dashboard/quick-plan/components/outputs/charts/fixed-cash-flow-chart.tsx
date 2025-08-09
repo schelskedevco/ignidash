@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell /* Tooltip */ } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer /* Tooltip */ } from 'recharts';
 
 import { useFixedReturnsCashFlowChartData } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
@@ -81,6 +81,13 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
   let chartData = allChartData.filter((item) => item.age === age);
   switch (mode) {
     case 'inflowOutflow':
+      const totalInflow = chartData.filter((item) => item.amount >= 0).reduce((sum, item) => sum + item.amount, 0);
+      const totalOutflow = chartData.filter((item) => item.amount < 0).reduce((sum, item) => sum + item.amount, 0);
+
+      chartData = [
+        { age, name: 'Inflows', amount: totalInflow },
+        { age, name: 'Outflows', amount: totalOutflow },
+      ];
       break;
     case 'net':
       chartData = [{ age, name: 'Net', amount: chartData.reduce((sum, item) => sum + item.amount, 0) }];
@@ -93,7 +100,6 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
 
   const gridColor = resolvedTheme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
-  const barColors = ['var(--chart-3)', 'var(--chart-2)'];
 
   return (
     <div className="h-64 w-full sm:h-80 lg:h-96 [&_svg:focus]:outline-none">
@@ -108,11 +114,14 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
             tickFormatter={(value: number) => formatNumber(value, 1, '$')}
           />
           {/* <Tooltip cursor={false} content={<CustomTooltip selectedAge={age} disabled={isSmallScreen && clickedOutsideChart} />} /> */}
-          <Bar dataKey="amount" onClick={() => {}} label={CustomLabel} radius={[8, 8, 0, 0]}>
-            {chartData.map((item, index) => (
-              <Cell fill={barColors[(index + 2) % barColors.length]} stroke="var(--chart-1)" key={`cell-${index}`} />
-            ))}
-          </Bar>
+          <Bar
+            dataKey="amount"
+            onClick={() => {}}
+            label={CustomLabel}
+            radius={[8, 8, 0, 0]}
+            stroke="var(--chart-1)"
+            fill="var(--chart-3)"
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>
