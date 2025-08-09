@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+
 import { useFixedReturnsAnalysis, useCurrentAge } from '@/lib/stores/quick-plan-store';
+import { useIsXSmallMobile } from '@/hooks/use-mobile';
 import Card from '@/components/ui/card';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
@@ -14,6 +16,7 @@ import ResultsMetrics from '../fixed-returns-metrics';
 export default function FixedReturnsOverview() {
   const fireAnalysis = useFixedReturnsAnalysis();
   const currentAge = useCurrentAge();
+  const isXSmallScreen = useIsXSmallMobile();
 
   // Track selected age for cash flow chart
   const [selectedAge, setSelectedAge] = useState<number>(currentAge! + 1);
@@ -36,13 +39,15 @@ export default function FixedReturnsOverview() {
             }}
           />
         </Card>
-        <Card>
-          <h4 className="text-foreground mb-4 flex items-center justify-center text-lg font-semibold sm:justify-between">
-            <span className="mr-2">Cash Flow</span>
-            <span className="text-muted-foreground">Age {selectedAge}</span>
-          </h4>
-          <FixedCashFlowChart age={selectedAge} />
-        </Card>
+        {!isXSmallScreen && (
+          <Card>
+            <h4 className="text-foreground mb-4 flex items-center justify-center text-lg font-semibold sm:justify-between">
+              <span className="mr-2">Cash Flow</span>
+              <span className="text-muted-foreground">Age {selectedAge}</span>
+            </h4>
+            <FixedCashFlowChart age={selectedAge} />
+          </Card>
+        )}
       </SectionContainer>
       <SectionContainer showBottomBorder>
         <SectionHeader title="Quick Stats" desc="A brief overview of your simulation's statistics." />
