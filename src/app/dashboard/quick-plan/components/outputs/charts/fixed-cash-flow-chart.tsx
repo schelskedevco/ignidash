@@ -1,12 +1,49 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useRef } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from 'recharts';
+import { useRef, useState, useEffect } from 'react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, Tooltip } from 'recharts';
 
 import { useFixedReturnsCashFlowChartData } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+
+interface CashFlowChartDataPoint {
+  age: number;
+  amount: number;
+  name: string;
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    name: string;
+    color: string;
+    dataKey: keyof CashFlowChartDataPoint;
+    payload: CashFlowChartDataPoint;
+  }>;
+  label?: number;
+  selectedAge: number;
+  disabled: boolean;
+}
+
+const CustomTooltip = ({ active, payload, label, selectedAge, disabled }: CustomTooltipProps) => {
+  if (!(active && payload && payload.length) || disabled) return null;
+
+  return (
+    <div className="text-foreground bg-background rounded-lg border p-3 shadow-md">
+      <p className="border-foreground/50 mb-2 flex justify-between border-b pb-2 text-sm font-semibold">
+        <span>Age</span>
+        <span className="text-muted-foreground">{selectedAge}</span>
+      </p>
+      <p className="flex justify-between text-sm font-semibold">
+        <span className="mr-2">{label}:</span>
+        <span className="ml-1 font-semibold">{formatNumber(payload[0].payload.amount, 3)}</span>
+      </p>
+    </div>
+  );
+};
 
 interface FixedCashFlowChartProps {
   age: number;
@@ -14,12 +51,31 @@ interface FixedCashFlowChartProps {
 
 export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
+  const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
   const allChartData = useFixedReturnsCashFlowChartData();
   const chartData = allChartData.filter((item) => item.age === age);
+
+  useEffect(() => {
+    const handleInteractionStart = (event: MouseEvent | TouchEvent) => {
+      if (chartRef.current && !chartRef.current.contains(event.target as Node)) {
+        setClickedOutsideChart(true);
+      } else {
+        setClickedOutsideChart(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleInteractionStart);
+    document.addEventListener('touchstart', handleInteractionStart);
+
+    return () => {
+      document.removeEventListener('mousedown', handleInteractionStart);
+      document.removeEventListener('touchstart', handleInteractionStart);
+    };
+  }, []);
 
   if (chartData.length === 0) {
     return null;
@@ -41,6 +97,7 @@ export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
             hide={isSmallScreen}
             tickFormatter={(value: number) => formatNumber(value, 1)}
           />
+          <Tooltip content={<CustomTooltip selectedAge={age} disabled={isSmallScreen && clickedOutsideChart} />} />
           <Bar dataKey="amount" onClick={() => {}}>
             {chartData.map((item, index) => (
               <Cell cursor="pointer" fill={barColors[(index + 2) % barColors.length]} key={`cell-${index}`} />
