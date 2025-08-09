@@ -67,6 +67,25 @@ const CustomLabel = ({ x, y, width, height, value }: CustomLabelProps) => {
   );
 };
 
+interface CustomXAxisTickProps {
+  x: number;
+  y: number;
+  payload: {
+    value: string;
+  };
+}
+
+const CustomXAxisTick = ({ x, y, payload }: CustomXAxisTickProps) => {
+  const textClass = payload.value === 'Net' ? 'text-xs font-bold' : 'text-xs';
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={0} dy={10} fill="currentColor" textAnchor="middle" className={textClass}>
+        {payload.value}
+      </text>
+    </g>
+  );
+};
+
 interface FixedCashFlowChartProps {
   age: number;
 }
@@ -94,7 +113,7 @@ export default function FixedCashFlowChart({ age }: FixedCashFlowChartProps) {
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartDataWithNet} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }} tabIndex={-1}>
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-          <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="name" />
+          <XAxis tick={CustomXAxisTick} axisLine={false} dataKey="name" />
           <YAxis
             tick={{ fill: foregroundMutedColor }}
             axisLine={false}
