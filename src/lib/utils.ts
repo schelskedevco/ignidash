@@ -14,3 +14,7 @@ export function formatNumber(num: number, fractionDigits: number = 2, prefix: st
   if (absNum >= 1000) return sign + prefix + (absNum / 1000).toFixed(1) + 'k';
   return sign + prefix + absNum.toFixed(fractionDigits);
 }
+
+export function formatNumberAsNumber(num: number): number {
+  return parseFloat(num.toFixed(2));
+}

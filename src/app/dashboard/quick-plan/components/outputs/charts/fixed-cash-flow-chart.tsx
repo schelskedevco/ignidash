@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList /* Tooltip */ } from 'recharts';
 
 import { useFixedReturnsCashFlowChartData } from '@/lib/stores/quick-plan-store';
-import { formatNumber } from '@/lib/utils';
+import { formatNumber, formatNumberAsNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface FixedCashFlowChartProps {
@@ -32,7 +32,7 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
       const inflowBarKeys = new Set<string>();
 
       inflows.forEach((item) => {
-        inflowData[item.name] = item.amount;
+        inflowData[item.name] = formatNumberAsNumber(item.amount);
         inflowBarKeys.add(item.name);
       });
 
@@ -40,7 +40,7 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
       const outflowBarKeys = new Set<string>();
 
       outflows.forEach((item) => {
-        outflowData[item.name] = Math.abs(item.amount);
+        outflowData[item.name] = formatNumberAsNumber(Math.abs(item.amount));
         outflowBarKeys.add(item.name);
       });
 
@@ -52,7 +52,7 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
         const barRadius: [number, number, number, number] | undefined = index === inflowBarKeys.size - 1 ? [8, 8, 0, 0] : undefined;
         return (
           <Bar key={key} dataKey={key} stackId="a" radius={barRadius} stroke="var(--chart-1)" fill={barColor}>
-            <LabelList dataKey={key} position="middle" />
+            <LabelList dataKey={key} position="middle" formatter={(value) => `$${value}`} />
           </Bar>
         );
       });
@@ -61,16 +61,16 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
         const barRadius: [number, number, number, number] | undefined = index === outflowBarKeys.size - 1 ? [8, 8, 0, 0] : undefined;
         return (
           <Bar key={key} dataKey={key} stackId="a" radius={barRadius} stroke="var(--chart-1)" fill={barColor}>
-            <LabelList dataKey={key} position="middle" />
+            <LabelList dataKey={key} position="middle" formatter={(value) => `$${value}`} />
           </Bar>
         );
       });
       break;
     case 'net':
-      chartData = [{ age, name: 'Net', amount: chartData.reduce((sum, item) => sum + item.amount, 0) }];
+      chartData = [{ age, name: 'Net', amount: formatNumberAsNumber(chartData.reduce((sum, item) => sum + item.amount, 0)) }];
       netBar = (
         <Bar dataKey="amount" radius={[8, 8, 0, 0]} stroke="var(--chart-1)" fill="var(--chart-3)">
-          <LabelList dataKey="amount" position="middle" />
+          <LabelList dataKey="amount" position="middle" formatter={(value) => `$${value}`} />
         </Bar>
       );
       break;
