@@ -87,7 +87,7 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
       chartData = [{ age, name: 'Net', amount: formatNumberAsNumber(chartData.reduce((sum, item) => sum + item.amount, 0)) }];
       netBar = (
         <Bar dataKey="amount" stroke="var(--chart-1)" fill="var(--chart-3)" maxBarSize={250}>
-          <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent />} />
+          <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent label="Net" />} />
         </Bar>
       );
       break;
