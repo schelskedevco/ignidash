@@ -147,6 +147,7 @@ interface QuickPlanState {
   preferences: {
     displayFormat: 'today' | 'future';
     dataStorage: 'localStorage' | 'none';
+    showReferenceLines: boolean;
   };
 
   actions: {
@@ -163,7 +164,7 @@ interface QuickPlanState {
     updateFlexiblePaths: (field: keyof FlexiblePathsInputs, value: unknown) => UpdateResult;
 
     // Preferences actions
-    updatePreferences: (field: keyof QuickPlanState['preferences'], value: string) => void;
+    updatePreferences: (field: keyof QuickPlanState['preferences'], value: string | boolean) => void;
 
     // Utility actions
     resetStore: () => void;
@@ -222,6 +223,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
   preferences: {
     displayFormat: 'today',
     dataStorage: 'localStorage',
+    showReferenceLines: true,
   },
 };
 
@@ -312,6 +314,8 @@ export const useQuickPlanStore = create<QuickPlanState>()(
                 state.preferences.displayFormat = value as 'today' | 'future';
               } else if (field === 'dataStorage') {
                 state.preferences.dataStorage = value as 'localStorage' | 'none';
+              } else if (field === 'showReferenceLines') {
+                state.preferences.showReferenceLines = value as boolean;
               }
             }),
 
@@ -403,6 +407,7 @@ export const useUpdateFlexiblePaths = () => useQuickPlanStore((state) => state.a
  * These hooks manage user preferences and settings
  */
 export const usePreferencesData = () => useQuickPlanStore((state) => state.preferences);
+export const useShowReferenceLinesPreference = () => useQuickPlanStore((state) => state.preferences.showReferenceLines);
 export const useUpdatePreferences = () => useQuickPlanStore((state) => state.actions.updatePreferences);
 
 /**

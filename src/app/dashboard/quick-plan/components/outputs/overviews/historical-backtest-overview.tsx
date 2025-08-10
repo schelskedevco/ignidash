@@ -8,6 +8,8 @@ import {
   useHistoricalBacktestChartData,
   useHistoricalBacktestAnalysis,
   useHistoricalBacktestSimulation,
+  useShowReferenceLinesPreference,
+  useUpdatePreferences,
 } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
 import SectionHeader from '@/components/ui/section-header';
@@ -22,7 +24,9 @@ import HistoricalBacktestDataTable from '../tables/historical-backtest-data-tabl
 export default function HistoricalBacktestOverview() {
   const [selectedSeed, setSelectedSeed] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'all' | 'yearly'>('all');
-  const [showReferenceLines, setShowReferenceLines] = useState<boolean>(true);
+
+  const showReferenceLines = useShowReferenceLinesPreference();
+  const updatePreferences = useUpdatePreferences();
 
   const simulation = useHistoricalBacktestSimulation();
   const chartData = useHistoricalBacktestChartData();
@@ -63,7 +67,7 @@ export default function HistoricalBacktestOverview() {
             <Switch
               color="rose"
               checked={showReferenceLines}
-              onChange={() => setShowReferenceLines(!showReferenceLines)}
+              onChange={() => updatePreferences('showReferenceLines', !showReferenceLines)}
               aria-label="Toggle reference lines"
             />
           </div>

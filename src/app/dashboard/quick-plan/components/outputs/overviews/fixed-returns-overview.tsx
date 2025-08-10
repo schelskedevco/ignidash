@@ -3,7 +3,12 @@
 import { useState, useMemo } from 'react';
 import { ArrowsUpDownIcon, ScaleIcon } from '@heroicons/react/20/solid';
 
-import { useFixedReturnsAnalysis, useCurrentAge } from '@/lib/stores/quick-plan-store';
+import {
+  useFixedReturnsAnalysis,
+  useCurrentAge,
+  useShowReferenceLinesPreference,
+  useUpdatePreferences,
+} from '@/lib/stores/quick-plan-store';
 import { useIsXSmallMobile } from '@/hooks/use-mobile';
 import Card from '@/components/ui/card';
 import SectionHeader from '@/components/ui/section-header';
@@ -24,7 +29,9 @@ export default function FixedReturnsOverview() {
   // Track selected age for cash flow chart
   const [selectedAge, setSelectedAge] = useState<number>(currentAge! + 1);
   const [viewMode, setViewMode] = useState<'inflowOutflow' | 'net'>('inflowOutflow');
-  const [showReferenceLines, setShowReferenceLines] = useState<boolean>(true);
+
+  const showReferenceLines = useShowReferenceLinesPreference();
+  const updatePreferences = useUpdatePreferences();
 
   const memoizedCashFlowChart = useMemo(() => <FixedCashFlowChart age={selectedAge} mode={viewMode} />, [selectedAge, viewMode]);
 
@@ -42,7 +49,7 @@ export default function FixedReturnsOverview() {
             <Switch
               color="rose"
               checked={showReferenceLines}
-              onChange={() => setShowReferenceLines(!showReferenceLines)}
+              onChange={() => updatePreferences('showReferenceLines', !showReferenceLines)}
               aria-label="Toggle reference lines"
             />
           </div>

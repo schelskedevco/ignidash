@@ -4,7 +4,13 @@ import { useState, useEffect } from 'react';
 import { ChevronLeftIcon, TableCellsIcon, CalendarDaysIcon } from '@heroicons/react/20/solid';
 
 import { Button } from '@/components/catalyst/button';
-import { useMonteCarloChartData, useMonteCarloAnalysis, useMonteCarloSimulation } from '@/lib/stores/quick-plan-store';
+import {
+  useMonteCarloChartData,
+  useMonteCarloAnalysis,
+  useMonteCarloSimulation,
+  useShowReferenceLinesPreference,
+  useUpdatePreferences,
+} from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
@@ -18,7 +24,9 @@ import MonteCarloDataTable from '../tables/monte-carlo-data-table';
 export default function MonteCarloOverview() {
   const [selectedSeed, setSelectedSeed] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'all' | 'yearly'>('all');
-  const [showReferenceLines, setShowReferenceLines] = useState<boolean>(true);
+
+  const showReferenceLines = useShowReferenceLinesPreference();
+  const updatePreferences = useUpdatePreferences();
 
   const simulation = useMonteCarloSimulation();
   const chartData = useMonteCarloChartData();
@@ -59,7 +67,7 @@ export default function MonteCarloOverview() {
             <Switch
               color="rose"
               checked={showReferenceLines}
-              onChange={() => setShowReferenceLines(!showReferenceLines)}
+              onChange={() => updatePreferences('showReferenceLines', !showReferenceLines)}
               aria-label="Toggle reference lines"
             />
           </div>
