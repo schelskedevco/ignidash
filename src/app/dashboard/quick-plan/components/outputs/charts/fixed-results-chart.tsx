@@ -72,9 +72,10 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
 interface FixedResultsChartProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
+  showReferenceLines: boolean;
 }
 
-export default function FixedResultsChart({ onAgeSelect, selectedAge }: FixedResultsChartProps) {
+export default function FixedResultsChart({ onAgeSelect, selectedAge, showReferenceLines }: FixedResultsChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
@@ -152,7 +153,7 @@ export default function FixedResultsChart({ onAgeSelect, selectedAge }: FixedRes
             content={<CustomTooltip currentAge={currentAge!} disabled={isSmallScreen && clickedOutsideChart} />}
             cursor={{ stroke: foregroundMutedColor }}
           />
-          {fireAnalysis.fireAge && (
+          {fireAnalysis.fireAge && showReferenceLines && (
             <ReferenceLine
               x={Math.round(fireAnalysis.fireAge!)}
               stroke={foregroundColor}
@@ -161,12 +162,14 @@ export default function FixedResultsChart({ onAgeSelect, selectedAge }: FixedRes
             />
           )}
           {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
-          <ReferenceLine
-            y={Math.round(fireAnalysis.requiredPortfolio)}
-            stroke={foregroundColor}
-            strokeDasharray="10 5"
-            label={{ value: 'Required Portfolio', position: 'insideBottomRight', fill: foregroundColor }}
-          />
+          {showReferenceLines && (
+            <ReferenceLine
+              y={Math.round(fireAnalysis.requiredPortfolio)}
+              stroke={foregroundColor}
+              strokeDasharray="10 5"
+              label={{ value: 'Required Portfolio', position: 'insideBottomRight', fill: foregroundColor }}
+            />
+          )}
         </AreaChart>
       </ResponsiveContainer>
     </div>

@@ -9,6 +9,7 @@ import Card from '@/components/ui/card';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import ButtonGroup from '@/components/ui/button-group';
+import { Switch } from '@/components/catalyst/switch';
 
 import FixedResultsChart from './fixed-results-chart';
 import FixedCashFlowChart from './fixed-cash-flow-chart';
@@ -23,6 +24,7 @@ export default function FixedReturnsOverview() {
   // Track selected age for cash flow chart
   const [selectedAge, setSelectedAge] = useState<number>(currentAge! + 1);
   const [viewMode, setViewMode] = useState<'inflowOutflow' | 'net'>('inflowOutflow');
+  const [showReferenceLines, setShowReferenceLines] = useState<boolean>(true);
 
   return (
     <>
@@ -33,13 +35,22 @@ export default function FixedReturnsOverview() {
       <SectionContainer showBottomBorder>
         <SectionHeader title="Data Visualization" desc="Interactive charts to explore your projection." />
         <Card>
-          <h4 className="text-foreground mb-4 text-center text-lg font-semibold sm:text-left">Portfolio Projection</h4>
+          <div className="mb-4 flex items-center justify-between">
+            <h4 className="text-foreground text-center text-lg font-semibold sm:text-left">Portfolio Projection</h4>
+            <Switch
+              color="rose"
+              checked={showReferenceLines}
+              onChange={() => setShowReferenceLines(!showReferenceLines)}
+              aria-label="Toggle reference lines"
+            />
+          </div>
           <FixedResultsChart
-            selectedAge={selectedAge}
             onAgeSelect={(age) => {
               // Prevent selecting current age or lower
               if (age >= currentAge! + 1) setSelectedAge(age);
             }}
+            selectedAge={selectedAge}
+            showReferenceLines={showReferenceLines}
           />
         </Card>
         {!isXSmallScreen && (
