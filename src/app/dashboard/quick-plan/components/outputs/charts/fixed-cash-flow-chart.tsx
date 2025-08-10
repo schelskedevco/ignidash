@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList /* Tooltip */ } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList, Cell /* Tooltip */ } from 'recharts';
 
 import { useFixedReturnsCashFlowChartData } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
@@ -46,8 +46,12 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
   switch (mode) {
     case 'inflowOutflow':
       bar = (
-        <Bar dataKey="amount" stroke="var(--chart-1)" fill="var(--chart-3)" maxBarSize={250} minPointSize={20}>
-          <LabelList dataKey="amount" position="middle" content={CustomLabelListContent} />
+        <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
+          {chartData.map((entry, index) => {
+            const fillColor = entry.amount >= 0 ? 'var(--chart-3)' : 'var(--chart-2)';
+            return <Cell key={`cell-${index}`} fill={fillColor} stroke="var(--chart-1)" />;
+          })}
+          <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent />} />
         </Bar>
       );
       break;
@@ -57,8 +61,12 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
       yAxisDomain = [Math.min(0, netAmount * 1.25), Math.max(0, netAmount * 1.25)];
       chartData = [{ age, name: 'Net Cash Flow', amount: netAmount }];
       bar = (
-        <Bar dataKey="amount" stroke="var(--chart-1)" fill="var(--chart-3)" maxBarSize={250} minPointSize={20}>
-          <LabelList dataKey="amount" position="middle" content={CustomLabelListContent} />
+        <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
+          {chartData.map((entry, index) => {
+            const fillColor = entry.amount >= 0 ? 'var(--chart-3)' : 'var(--chart-2)';
+            return <Cell key={`cell-${index}`} fill={fillColor} stroke="var(--chart-1)" />;
+          })}
+          <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent />} />
         </Bar>
       );
       break;
