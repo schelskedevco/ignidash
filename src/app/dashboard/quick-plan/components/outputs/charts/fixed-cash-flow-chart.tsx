@@ -7,6 +7,27 @@ import { useFixedReturnsCashFlowChartData } from '@/lib/stores/quick-plan-store'
 import { formatNumber, formatNumberAsNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CustomLabelListContent = (props: any) => {
+  const { x, y, width, height, value, label } = props;
+  if (!x || !y || !width || !height || !value || value === 0) {
+    return null;
+  }
+
+  return (
+    <text
+      x={x + width / 2}
+      y={y + height / 2}
+      fill="currentColor"
+      textAnchor="middle"
+      dominantBaseline="middle"
+      className="text-xs font-medium sm:text-base"
+    >
+      {label ? `${label}: ${formatNumber(value, 1, '$')}` : formatNumber(value, 1, '$')}
+    </text>
+  );
+};
+
 interface FixedCashFlowChartProps {
   age: number;
   mode: 'inflowOutflow' | 'net';
@@ -45,23 +66,18 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
       });
 
       chartData = [inflowData, outflowData] as typeof chartData;
-      const barColors = ['var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)'];
 
       inflowBar = Array.from(inflowBarKeys).map((key, index) => {
-        const barColor = barColors[index % barColors.length];
-        const barRadius: [number, number, number, number] | undefined = index === inflowBarKeys.size - 1 ? [8, 8, 0, 0] : undefined;
         return (
-          <Bar key={key} dataKey={key} stackId="a" radius={barRadius} stroke="var(--chart-1)" fill={barColor}>
-            <LabelList dataKey={key} position="middle" formatter={(value) => `$${value}`} />
+          <Bar key={key} dataKey={key} stackId="a" stroke="var(--chart-1)" fill="var(--chart-3)">
+            <LabelList dataKey={key} position="middle" content={<CustomLabelListContent label={key} />} />
           </Bar>
         );
       });
       outflowBar = Array.from(outflowBarKeys).map((key, index) => {
-        const barColor = barColors[index % barColors.length];
-        const barRadius: [number, number, number, number] | undefined = index === outflowBarKeys.size - 1 ? [8, 8, 0, 0] : undefined;
         return (
-          <Bar key={key} dataKey={key} stackId="a" radius={barRadius} stroke="var(--chart-1)" fill={barColor}>
-            <LabelList dataKey={key} position="middle" formatter={(value) => `$${value}`} />
+          <Bar key={key} dataKey={key} stackId="a" stroke="var(--chart-1)" fill="var(--chart-3)">
+            <LabelList dataKey={key} position="middle" content={<CustomLabelListContent label={key} />} />
           </Bar>
         );
       });
@@ -69,8 +85,8 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
     case 'net':
       chartData = [{ age, name: 'Net', amount: formatNumberAsNumber(chartData.reduce((sum, item) => sum + item.amount, 0)) }];
       netBar = (
-        <Bar dataKey="amount" radius={[8, 8, 0, 0]} stroke="var(--chart-1)" fill="var(--chart-3)">
-          <LabelList dataKey="amount" position="middle" formatter={(value) => `$${value}`} />
+        <Bar dataKey="amount" stroke="var(--chart-1)" fill="var(--chart-3)">
+          <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent />} />
         </Bar>
       );
       break;
