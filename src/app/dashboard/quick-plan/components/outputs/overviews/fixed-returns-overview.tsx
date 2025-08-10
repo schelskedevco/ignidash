@@ -47,8 +47,12 @@ export default function FixedReturnsOverview() {
           <div className="mb-4 flex items-center justify-between">
             <h4 className="text-foreground text-center text-lg font-semibold sm:text-left">Portfolio Projection</h4>
             <Switch
+              className="focus-outline"
               color="rose"
               checked={showReferenceLines}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') updatePreferences('showReferenceLines', !showReferenceLines);
+              }}
               onChange={() => updatePreferences('showReferenceLines', !showReferenceLines)}
               aria-label="Toggle reference lines"
             />
