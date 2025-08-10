@@ -9,7 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomLabelListContent = (props: any) => {
-  const { x, y, width, height, value, label } = props;
+  const { x, y, width, height, value } = props;
   if (!value || value === 0) {
     return null;
   }
@@ -23,7 +23,6 @@ const CustomLabelListContent = (props: any) => {
       dominantBaseline="middle"
       className="text-xs sm:text-sm"
     >
-      {label && <tspan>{label}: </tspan>}
       <tspan className="font-semibold">{formatNumber(value, 1, '$')}</tspan>
     </text>
   );
@@ -38,56 +37,24 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
-  const allChartData = useFixedReturnsCashFlowChartData().filter((item) => item.age === age);
-
-  let inflowBar = null;
-  let outflowBar = null;
-  let netBar = null;
-  let chartData = allChartData;
+  let bar = null;
+  let chartData = useFixedReturnsCashFlowChartData()
+    .filter((item) => item.age === age)
+    .sort((a, b) => b.amount - a.amount);
 
   switch (mode) {
     case 'inflowOutflow':
-      const inflows = chartData.filter((item) => item.amount >= 0);
-      const outflows = chartData.filter((item) => item.amount < 0);
-
-      const inflowData: Record<string, number | string> = { age, name: 'Inflows' };
-      const inflowBarKeys = new Set<string>();
-
-      inflows.forEach((item) => {
-        inflowData[item.name] = item.amount;
-        inflowBarKeys.add(item.name);
-      });
-
-      const outflowData: Record<string, number | string> = { age, name: 'Outflows' };
-      const outflowBarKeys = new Set<string>();
-
-      outflows.forEach((item) => {
-        outflowData[item.name] = Math.abs(item.amount);
-        outflowBarKeys.add(item.name);
-      });
-
-      chartData = [inflowData, outflowData] as typeof chartData;
-
-      inflowBar = Array.from(inflowBarKeys).map((key, index) => {
-        return (
-          <Bar key={key} dataKey={key} stackId="a" stroke="var(--chart-1)" fill="var(--chart-3)" maxBarSize={250}>
-            <LabelList dataKey={key} position="middle" content={<CustomLabelListContent label={key} />} />
-          </Bar>
-        );
-      });
-      outflowBar = Array.from(outflowBarKeys).map((key, index) => {
-        return (
-          <Bar key={key} dataKey={key} stackId="a" stroke="var(--chart-1)" fill="var(--chart-3)" maxBarSize={250}>
-            <LabelList dataKey={key} position="middle" content={<CustomLabelListContent label={key} />} />
-          </Bar>
-        );
-      });
+      bar = (
+        <Bar dataKey="amount" stroke="var(--chart-1)" fill="var(--chart-3)" maxBarSize={250} minPointSize={20}>
+          <LabelList dataKey="amount" position="middle" content={CustomLabelListContent} />
+        </Bar>
+      );
       break;
     case 'net':
-      chartData = [{ age, name: 'Net', amount: chartData.reduce((sum, item) => sum + item.amount, 0) }];
-      netBar = (
-        <Bar dataKey="amount" stroke="var(--chart-1)" fill="var(--chart-3)" maxBarSize={250}>
-          <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent label="Net" />} />
+      chartData = [{ age, name: 'Net Cash Flow', amount: chartData.reduce((sum, item) => sum + item.amount, 0) }];
+      bar = (
+        <Bar dataKey="amount" stroke="var(--chart-1)" fill="var(--chart-3)" maxBarSize={250} minPointSize={20}>
+          <LabelList dataKey="amount" position="middle" content={CustomLabelListContent} />
         </Bar>
       );
       break;
@@ -119,9 +86,7 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
             tickFormatter={(value: number) => formatNumber(value, 1, '$')}
             domain={yAxisDomain}
           />
-          {inflowBar}
-          {outflowBar}
-          {netBar}
+          {bar}
         </BarChart>
       </ResponsiveContainer>
     </div>
