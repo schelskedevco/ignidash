@@ -15,7 +15,7 @@ import SectionContainer from '@/components/ui/section-container';
 import ButtonGroup from '@/components/ui/button-group';
 import { Switch } from '@/components/catalyst/switch';
 
-import StochasticResultsChart from './stochastic-results-chart';
+import StochasticResultsChart from '../charts/stochastic-results-chart';
 import ResultsMetrics from '../stochastic-metrics';
 import HistoricalBacktestDataTable from '../tables/historical-backtest-data-table';
 
