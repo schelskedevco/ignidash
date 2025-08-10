@@ -82,11 +82,6 @@ export default function FixedCashFlowChart({ age, mode }: FixedCashFlowChartProp
           </Bar>
         );
       });
-      // netBar = (
-      //   <Bar dataKey="amount" stackId="a" stroke="var(--chart-1)" fill="var(--chart-2)" maxBarSize={250}>
-      //     <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent label="Net" />} />
-      //   </Bar>
-      // );
       break;
     case 'net':
       chartData = [{ age, name: 'Net', amount: chartData.reduce((sum, item) => sum + item.amount, 0) }];
