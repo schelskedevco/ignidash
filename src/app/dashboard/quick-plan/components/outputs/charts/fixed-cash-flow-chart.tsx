@@ -21,7 +21,7 @@ const CustomLabelListContent = (props: any) => {
       fill="currentColor"
       textAnchor="middle"
       dominantBaseline="middle"
-      className="text-xs font-medium sm:text-base"
+      className="text-xs font-medium sm:text-sm"
     >
       {label ? `${label}: ${formatNumber(value, 1, '$')}` : formatNumber(value, 1, '$')}
     </text>
