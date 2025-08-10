@@ -135,20 +135,10 @@ export default function ResultsChart({ fireAnalysis, chartData }: StochasticResu
             cursor={{ stroke: foregroundMutedColor }}
           />
           {fireAnalysis?.p50FireAge && (
-            <ReferenceLine
-              x={Math.round(fireAnalysis.p50FireAge)}
-              stroke={foregroundColor}
-              strokeDasharray="10 5"
-              label={{ value: 'P50 FIRE', position: 'insideBottomLeft', fill: foregroundColor }}
-            />
+            <ReferenceLine x={Math.round(fireAnalysis.p50FireAge)} stroke={foregroundColor} strokeDasharray="10 5" />
           )}
           {fireAnalysis?.requiredPortfolio && (
-            <ReferenceLine
-              y={Math.round(fireAnalysis.requiredPortfolio)}
-              stroke={foregroundColor}
-              strokeDasharray="10 5"
-              label={{ value: 'Required Portfolio', position: 'insideBottomRight', fill: foregroundColor }}
-            />
+            <ReferenceLine y={Math.round(fireAnalysis.requiredPortfolio)} stroke={foregroundColor} strokeDasharray="10 5" />
           )}
         </AreaChart>
       </ResponsiveContainer>

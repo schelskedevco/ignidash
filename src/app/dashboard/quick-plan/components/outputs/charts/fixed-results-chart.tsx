@@ -154,21 +154,11 @@ export default function FixedResultsChart({ onAgeSelect, selectedAge, showRefere
             cursor={{ stroke: foregroundMutedColor }}
           />
           {fireAnalysis.fireAge && showReferenceLines && (
-            <ReferenceLine
-              x={Math.round(fireAnalysis.fireAge!)}
-              stroke={foregroundColor}
-              strokeDasharray="10 5"
-              label={{ value: 'FIRE', position: 'insideBottomLeft', fill: foregroundColor }}
-            />
+            <ReferenceLine x={Math.round(fireAnalysis.fireAge!)} stroke={foregroundColor} strokeDasharray="10 5" />
           )}
           {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
           {showReferenceLines && (
-            <ReferenceLine
-              y={Math.round(fireAnalysis.requiredPortfolio)}
-              stroke={foregroundColor}
-              strokeDasharray="10 5"
-              label={{ value: 'Required Portfolio', position: 'insideBottomRight', fill: foregroundColor }}
-            />
+            <ReferenceLine y={Math.round(fireAnalysis.requiredPortfolio)} stroke={foregroundColor} strokeDasharray="10 5" />
           )}
         </AreaChart>
       </ResponsiveContainer>
