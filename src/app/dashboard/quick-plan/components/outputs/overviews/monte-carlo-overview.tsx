@@ -11,7 +11,7 @@ import SectionContainer from '@/components/ui/section-container';
 import ButtonGroup from '@/components/ui/button-group';
 import { Switch } from '@/components/catalyst/switch';
 
-import StochasticResultsChart from '../charts/stochastic-results-chart';
+import StochasticResultsChart from '../charts/stochastic-results-area-chart';
 import ResultsMetrics from '../stochastic-metrics';
 import MonteCarloDataTable from '../tables/monte-carlo-data-table';
 

@@ -11,8 +11,8 @@ import SectionContainer from '@/components/ui/section-container';
 import ButtonGroup from '@/components/ui/button-group';
 import { Switch } from '@/components/catalyst/switch';
 
-import FixedResultsChart from '../charts/fixed-results-chart';
-import FixedCashFlowChart from '../charts/fixed-cash-flow-chart';
+import FixedResultsChart from '../charts/fixed-results-area-chart';
+import FixedCashFlowChart from '../charts/fixed-cash-flow-bar-chart';
 import FixedReturnsDataTable from '../tables/fixed-returns-data-table';
 import ResultsMetrics from '../fixed-returns-metrics';
 
