@@ -1,7 +1,7 @@
 'use client';
 
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { X } from 'lucide-react';
 
 interface DrawerProps {
   open: boolean;
@@ -15,7 +15,7 @@ export default function Drawer({ open, setOpen, title = 'Settings', children }: 
     <Dialog open={open} onClose={setOpen} className="relative z-50">
       <DialogBackdrop
         transition
-        className="bg-emphasized-background fixed inset-0 transition-opacity duration-300 ease-in-out data-closed:opacity-0 sm:bg-zinc-900/75"
+        className="bg-emphasized-background fixed inset-0 transition-opacity duration-300 ease-in-out data-closed:opacity-0 sm:bg-zinc-100/75 dark:sm:bg-zinc-900/75"
       />
 
       <div className="fixed inset-0 overflow-hidden">
@@ -34,7 +34,7 @@ export default function Drawer({ open, setOpen, title = 'Settings', children }: 
                   >
                     <span className="absolute -inset-2.5" />
                     <span className="sr-only">Close panel</span>
-                    <XMarkIcon aria-hidden="true" className="size-6" />
+                    <X aria-hidden="true" className="size-6 text-black dark:text-white" />
                   </button>
                 </div>
               </TransitionChild>
@@ -47,7 +47,7 @@ export default function Drawer({ open, setOpen, title = 'Settings', children }: 
                     className="focus-outline hover:text-muted-foreground rounded-md sm:hidden"
                   >
                     <span className="sr-only">Close panel</span>
-                    <XMarkIcon aria-hidden="true" className="size-6" />
+                    <X aria-hidden="true" className="size-6" />
                   </button>
                 </div>
                 <div className="bg-background relative flex-1 px-4 py-6 sm:px-6">{children}</div>
