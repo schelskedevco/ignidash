@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import IconButton from '@/components/ui/icon-button';
 import Drawer from '@/components/ui/drawer';
 import { useLinkSharing } from '@/hooks/use-link-sharing';
+import { useDrawerHistory } from '@/hooks/use-drawer-history';
 
 import PreferencesDrawer from './inputs/drawers/preferences-drawer';
 
@@ -33,6 +34,12 @@ interface SectionSelectorProps {
 export default function SectionSelector({ activeSection, setActiveSection }: SectionSelectorProps) {
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const { icon, label, handleLinkClick } = useLinkSharing();
+
+  useDrawerHistory({
+    isOpen: preferencesOpen,
+    onClose: () => setPreferencesOpen(false),
+    drawerName: 'preferences-mobile',
+  });
 
   return (
     <>
