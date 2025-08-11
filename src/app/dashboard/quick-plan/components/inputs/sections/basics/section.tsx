@@ -53,7 +53,7 @@ export default function BasicsSection() {
 
   return (
     <SectionContainer showBottomBorder>
-      <SectionHeader title="Financial Foundation" desc="The core numbers for your financial independence timeline." status={status} />
+      <SectionHeader title="Financial Foundation" desc="The basis for your financial independence timeline." status={status} />
       <Card>
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset className="space-y-4">
