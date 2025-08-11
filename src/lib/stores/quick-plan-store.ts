@@ -656,26 +656,6 @@ export const useMonteCarloChartData = () => {
   }, [currentAge, simulation]);
 };
 
-export const useHistoricalBacktestChartData = () => {
-  const currentAge = useCurrentAge()!;
-  const simulation = useHistoricalBacktestSimulation();
-
-  return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
-    return analysis.yearlyProgression.map((data) => ({
-      age: data.year + currentAge,
-      p25: data.percentiles.p25,
-      p50: data.percentiles.p50,
-      p75: data.percentiles.p75,
-    }));
-  }, [currentAge, simulation]);
-};
-
 export const useMonteCarloCashFlowChartData = () => {
   const currentAge = useCurrentAge()!;
   const simulation = useMonteCarloSimulation();
@@ -696,6 +676,26 @@ export const useMonteCarloCashFlowChartData = () => {
           amount: stats!.mean,
         }))
     );
+  }, [currentAge, simulation]);
+};
+
+export const useHistoricalBacktestChartData = () => {
+  const currentAge = useCurrentAge()!;
+  const simulation = useHistoricalBacktestSimulation();
+
+  return useMemo(() => {
+    const analyzer = new SimulationAnalyzer();
+    const simulationData = simulation.simulations.map(([, result]) => result);
+
+    const analysis = analyzer.analyzeSimulations(simulationData);
+    if (!analysis) return [];
+
+    return analysis.yearlyProgression.map((data) => ({
+      age: data.year + currentAge,
+      p25: data.percentiles.p25,
+      p50: data.percentiles.p50,
+      p75: data.percentiles.p75,
+    }));
   }, [currentAge, simulation]);
 };
 
