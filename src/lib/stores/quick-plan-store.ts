@@ -676,7 +676,7 @@ export const useHistoricalBacktestChartData = () => {
   }, [currentAge, simulation]);
 };
 
-export const useStochasticReturnsCashFlowChartData = () => {
+export const useMonteCarloCashFlowChartData = () => {
   const currentAge = useCurrentAge()!;
   const simulation = useMonteCarloSimulation();
 

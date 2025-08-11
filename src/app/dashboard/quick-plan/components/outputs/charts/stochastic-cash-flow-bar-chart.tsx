@@ -3,9 +3,14 @@
 import { useTheme } from 'next-themes';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList, Cell /* Tooltip */ } from 'recharts';
 
-import { useStochasticReturnsCashFlowChartData } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+
+interface StochasticCashFlowChartDataPoint {
+  age: number;
+  name: string;
+  amount: number;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomLabelListContent = (props: any) => {
@@ -31,16 +36,15 @@ const CustomLabelListContent = (props: any) => {
 interface StochasticCashFlowChartProps {
   age: number;
   mode: 'inflowOutflow' | 'net';
+  rawChartData: StochasticCashFlowChartDataPoint[];
 }
 
-export default function StochasticCashFlowChart({ age, mode }: StochasticCashFlowChartProps) {
+export default function StochasticCashFlowChart({ age, mode, rawChartData }: StochasticCashFlowChartProps) {
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
   let yAxisDomain: [number, number] | undefined = undefined;
-  let chartData = useStochasticReturnsCashFlowChartData()
-    .filter((item) => item.age === age && item.amount !== 0)
-    .sort((a, b) => b.amount - a.amount);
+  let chartData = rawChartData.filter((item) => item.age === age && item.amount !== 0).sort((a, b) => b.amount - a.amount);
   let bar = null;
 
   switch (mode) {

@@ -9,6 +9,7 @@ import {
   useMonteCarloChartData,
   useMonteCarloAnalysis,
   useMonteCarloSimulation,
+  useMonteCarloCashFlowChartData,
   useShowReferenceLinesPreference,
   useUpdatePreferences,
 } from '@/lib/stores/quick-plan-store';
@@ -29,6 +30,7 @@ export default function MonteCarloOverview() {
   const [viewMode, setViewMode] = useState<'all' | 'yearly'>('all');
 
   const currentAge = useCurrentAge();
+  const isXSmallScreen = useIsXSmallMobile();
 
   const [selectedAge, setSelectedAge] = useState<number>(currentAge! + 1);
   const [cashFlowViewMode, setCashFlowViewMode] = useState<'inflowOutflow' | 'net'>('inflowOutflow');
@@ -39,14 +41,14 @@ export default function MonteCarloOverview() {
   const simulation = useMonteCarloSimulation();
   const chartData = useMonteCarloChartData();
   const fireAnalysis = useMonteCarloAnalysis();
-  const isXSmallScreen = useIsXSmallMobile();
+  const cashFlowChartData = useMonteCarloCashFlowChartData();
 
   // Reset selectedSeed when simulation changes
   useEffect(() => setSelectedSeed(null), [simulation, viewMode]);
 
   const memoizedCashFlowChart = useMemo(
-    () => <StochasticCashFlowChart age={selectedAge} mode={cashFlowViewMode} />,
-    [selectedAge, cashFlowViewMode]
+    () => <StochasticCashFlowChart age={selectedAge} mode={cashFlowViewMode} rawChartData={cashFlowChartData} />,
+    [selectedAge, cashFlowViewMode, cashFlowChartData]
   );
 
   if (chartData.length === 0) {
