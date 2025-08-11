@@ -60,7 +60,6 @@ export default function FixedReturnsOverview() {
             </div>
             <FixedResultsChart
               onAgeSelect={(age) => {
-                // Prevent selecting current age or lower
                 if (age >= currentAge! + 1) setSelectedAge(age);
               }}
               selectedAge={selectedAge}

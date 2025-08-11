@@ -63,9 +63,17 @@ interface StochasticResultsChartProps {
   fireAnalysis: StochasticAnalysis | null;
   chartData: StochasticChartDataPoint[];
   showReferenceLines: boolean;
+  onAgeSelect: (age: number) => void;
+  selectedAge: number;
 }
 
-export default function ResultsChart({ fireAnalysis, chartData, showReferenceLines }: StochasticResultsChartProps) {
+export default function ResultsChart({
+  fireAnalysis,
+  chartData,
+  showReferenceLines,
+  onAgeSelect,
+  selectedAge,
+}: StochasticResultsChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
@@ -102,11 +110,23 @@ export default function ResultsChart({ fireAnalysis, chartData, showReferenceLin
 
   const interval = 5;
 
+  const onClick = (data: { activeLabel: string | undefined }) => {
+    if (data.activeLabel !== undefined && onAgeSelect) {
+      onAgeSelect(Number(data.activeLabel));
+    }
+  };
+
   return (
     <div>
       <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }} tabIndex={-1}>
+          <AreaChart
+            data={chartData}
+            className="text-xs"
+            margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
+            tabIndex={-1}
+            onClick={onClick}
+          >
             <defs>
               <linearGradient id="colorP75" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--chart-3)" stopOpacity={1} />
@@ -139,6 +159,7 @@ export default function ResultsChart({ fireAnalysis, chartData, showReferenceLin
             {fireAnalysis?.p50FireAge && showReferenceLines && (
               <ReferenceLine x={Math.round(fireAnalysis.p50FireAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
             )}
+            {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
             {fireAnalysis?.requiredPortfolio && showReferenceLines && (
               <ReferenceLine y={Math.round(fireAnalysis.requiredPortfolio)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
             )}

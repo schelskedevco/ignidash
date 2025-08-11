@@ -676,6 +676,29 @@ export const useHistoricalBacktestChartData = () => {
   }, [currentAge, simulation]);
 };
 
+export const useStochasticReturnsCashFlowChartData = () => {
+  const currentAge = useCurrentAge()!;
+  const simulation = useMonteCarloSimulation();
+
+  return useMemo(() => {
+    const analyzer = new SimulationAnalyzer();
+    const simulationData = simulation.simulations.map(([, result]) => result);
+
+    const analysis = analyzer.analyzeSimulations(simulationData);
+    if (!analysis) return [];
+
+    return analysis.yearlyProgression.flatMap((data) =>
+      Object.entries(data.cashFlows.byName)
+        .filter(([, stats]) => stats !== null)
+        .map(([name, stats]) => ({
+          age: data.year + currentAge,
+          name,
+          amount: stats!.mean,
+        }))
+    );
+  }, [currentAge, simulation]);
+};
+
 export const useFixedReturnsTableData = (): SimulationTableRow[] => {
   const currentAge = useCurrentAge()!;
   const simulation = useFixedReturnsSimulation();
