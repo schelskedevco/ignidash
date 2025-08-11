@@ -19,10 +19,10 @@ export default function PreferencesDrawer() {
   let displayFormatDesc;
   switch (preferences.displayFormat) {
     case 'today':
-      displayFormatDesc = "Display results in today's dollars, without inflation adjustments.";
+      displayFormatDesc = "Display results in today's dollars, adjusted for inflation to show constant purchasing power.";
       break;
     case 'future':
-      displayFormatDesc = 'Display results adjusted for projected inflation over time.';
+      displayFormatDesc = 'Display results in future dollars, showing actual amounts without adjusting for inflation.';
       break;
   }
 
