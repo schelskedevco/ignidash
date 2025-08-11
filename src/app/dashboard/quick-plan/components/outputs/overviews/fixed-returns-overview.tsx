@@ -43,49 +43,51 @@ export default function FixedReturnsOverview() {
       </SectionContainer>
       <SectionContainer showBottomBorder>
         <SectionHeader title="Data Visualization" desc="Interactive charts to explore your projection." />
-        <Card>
-          <div className="mb-4 flex items-center justify-between">
-            <h4 className="text-foreground text-center text-lg font-semibold sm:text-left">Portfolio Projection</h4>
-            <Switch
-              className="focus-outline"
-              color="rose"
-              checked={showReferenceLines}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') updatePreferences('showReferenceLines', !showReferenceLines);
-              }}
-              onChange={() => updatePreferences('showReferenceLines', !showReferenceLines)}
-              aria-label="Toggle reference lines"
-            />
-          </div>
-          <FixedResultsChart
-            onAgeSelect={(age) => {
-              // Prevent selecting current age or lower
-              if (age >= currentAge! + 1) setSelectedAge(age);
-            }}
-            selectedAge={selectedAge}
-            showReferenceLines={showReferenceLines}
-          />
-        </Card>
-        {!isXSmallScreen && (
-          <Card>
+        <div className="my-4 grid grid-cols-1 gap-2 [@media(min-width:1920px)]:grid-cols-2">
+          <Card className="my-0">
             <div className="mb-4 flex items-center justify-between">
-              <h4 className="text-foreground flex items-center text-lg font-semibold">
-                <span className="mr-2">Cash Flow</span>
-                <span className="text-muted-foreground">Age {selectedAge}</span>
-              </h4>
-              <ButtonGroup
-                firstButtonText="Inflow & Outflow"
-                firstButtonIcon={<ArrowsUpDownIcon />}
-                firstButtonOnClick={() => setViewMode('inflowOutflow')}
-                lastButtonText="Net"
-                lastButtonIcon={<ScaleIcon />}
-                lastButtonOnClick={() => setViewMode('net')}
-                defaultActiveButton="first"
+              <h4 className="text-foreground text-center text-lg font-semibold sm:text-left">Portfolio Projection</h4>
+              <Switch
+                className="focus-outline"
+                color="rose"
+                checked={showReferenceLines}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') updatePreferences('showReferenceLines', !showReferenceLines);
+                }}
+                onChange={() => updatePreferences('showReferenceLines', !showReferenceLines)}
+                aria-label="Toggle reference lines"
               />
             </div>
-            {memoizedCashFlowChart}
+            <FixedResultsChart
+              onAgeSelect={(age) => {
+                // Prevent selecting current age or lower
+                if (age >= currentAge! + 1) setSelectedAge(age);
+              }}
+              selectedAge={selectedAge}
+              showReferenceLines={showReferenceLines}
+            />
           </Card>
-        )}
+          {!isXSmallScreen && (
+            <Card className="my-0">
+              <div className="mb-4 flex items-center justify-between">
+                <h4 className="text-foreground flex items-center text-lg font-semibold">
+                  <span className="mr-2">Cash Flow</span>
+                  <span className="text-muted-foreground">Age {selectedAge}</span>
+                </h4>
+                <ButtonGroup
+                  firstButtonText="Inflow & Outflow"
+                  firstButtonIcon={<ArrowsUpDownIcon />}
+                  firstButtonOnClick={() => setViewMode('inflowOutflow')}
+                  lastButtonText="Net"
+                  lastButtonIcon={<ScaleIcon />}
+                  lastButtonOnClick={() => setViewMode('net')}
+                  defaultActiveButton="first"
+                />
+              </div>
+              {memoizedCashFlowChart}
+            </Card>
+          )}
+        </div>
       </SectionContainer>
       <SectionContainer showBottomBorder>
         <SectionHeader title="Quick Stats" desc="A brief overview of your simulation's statistics." />

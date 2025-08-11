@@ -112,7 +112,7 @@ export default function FixedResultsChart({ onAgeSelect, selectedAge, showRefere
   const foregroundColor = resolvedTheme === 'dark' ? '#f3f4f6' : '#111827'; // gray-100 : gray-900
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
 
-  const interval = isSmallScreen ? 4 : 3;
+  const interval = 5;
 
   const onClick = (data: { activeLabel: string | undefined }) => {
     if (data.activeLabel !== undefined && onAgeSelect) {
