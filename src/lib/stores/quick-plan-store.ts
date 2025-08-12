@@ -719,6 +719,104 @@ export const useHistoricalBacktestPhasePercentAreaChartData = () => {
   }, [currentAge, simulation]);
 };
 
+export const useMonteCarloReturnsChartData = () => {
+  const currentAge = useCurrentAge()!;
+  const simulation = useMonteCarloSimulation();
+
+  return useMemo(() => {
+    const analyzer = new SimulationAnalyzer();
+    const simulationData = simulation.simulations.map(([, result]) => result);
+
+    const analysis = analyzer.analyzeSimulations(simulationData);
+    if (!analysis) return [];
+
+    return analysis.yearlyProgression.flatMap((data) => {
+      const results = [];
+
+      const stocksAmountMean = data.returns.amounts.stocks?.mean;
+      if (stocksAmountMean) {
+        results.push({
+          age: data.year + currentAge,
+          name: 'Stocks',
+          rate: data.returns.rates.stocks?.mean ?? null,
+          amount: stocksAmountMean,
+        });
+      }
+
+      const bondsAmountMean = data.returns.amounts.bonds?.mean;
+      if (bondsAmountMean) {
+        results.push({
+          age: data.year + currentAge,
+          name: 'Bonds',
+          rate: data.returns.rates.bonds?.mean ?? null,
+          amount: bondsAmountMean,
+        });
+      }
+
+      const cashAmountMean = data.returns.amounts.cash?.mean;
+      if (cashAmountMean) {
+        results.push({
+          age: data.year + currentAge,
+          name: 'Cash',
+          rate: data.returns.rates.cash?.mean ?? null,
+          amount: cashAmountMean,
+        });
+      }
+
+      return results;
+    });
+  }, [currentAge, simulation]);
+};
+
+export const useHistoricalBacktestReturnsChartData = () => {
+  const currentAge = useCurrentAge()!;
+  const simulation = useHistoricalBacktestSimulation();
+
+  return useMemo(() => {
+    const analyzer = new SimulationAnalyzer();
+    const simulationData = simulation.simulations.map(([, result]) => result);
+
+    const analysis = analyzer.analyzeSimulations(simulationData);
+    if (!analysis) return [];
+
+    return analysis.yearlyProgression.flatMap((data) => {
+      const results = [];
+
+      const stocksAmountMean = data.returns.amounts.stocks?.mean;
+      if (stocksAmountMean) {
+        results.push({
+          age: data.year + currentAge,
+          name: 'Stocks',
+          rate: data.returns.rates.stocks?.mean ?? null,
+          amount: stocksAmountMean,
+        });
+      }
+
+      const bondsAmountMean = data.returns.amounts.bonds?.mean;
+      if (bondsAmountMean) {
+        results.push({
+          age: data.year + currentAge,
+          name: 'Bonds',
+          rate: data.returns.rates.bonds?.mean ?? null,
+          amount: bondsAmountMean,
+        });
+      }
+
+      const cashAmountMean = data.returns.amounts.cash?.mean;
+      if (cashAmountMean) {
+        results.push({
+          age: data.year + currentAge,
+          name: 'Cash',
+          rate: data.returns.rates.cash?.mean ?? null,
+          amount: cashAmountMean,
+        });
+      }
+
+      return results;
+    });
+  }, [currentAge, simulation]);
+};
+
 export const useHistoricalBacktestChartData = () => {
   const currentAge = useCurrentAge()!;
   const simulation = useHistoricalBacktestSimulation();
@@ -841,9 +939,9 @@ export const useMonteCarloTableData = (simulation: MultiSimulationResult): Monte
 
       if (analysis) {
         // Get mean returns from analyzer (convert from decimal to percentage)
-        averageStocksReturn = analysis.returns.assets.stocks?.mean ? analysis.returns.assets.stocks.mean * 100 : null;
-        averageBondsReturn = analysis.returns.assets.bonds?.mean ? analysis.returns.assets.bonds.mean * 100 : null;
-        averageCashReturn = analysis.returns.assets.cash?.mean ? analysis.returns.assets.cash.mean * 100 : null;
+        averageStocksReturn = analysis.returns.rates.stocks?.mean ? analysis.returns.rates.stocks.mean * 100 : null;
+        averageBondsReturn = analysis.returns.rates.bonds?.mean ? analysis.returns.rates.bonds.mean * 100 : null;
+        averageCashReturn = analysis.returns.rates.cash?.mean ? analysis.returns.rates.cash.mean * 100 : null;
       }
 
       // Calculate average inflation rate (not available in analyzer)
@@ -907,9 +1005,9 @@ export const useHistoricalBacktestTableData = (simulation: LcgHistoricalBacktest
 
       if (analysis) {
         // Get mean returns from analyzer (convert from decimal to percentage)
-        averageStocksReturn = analysis.returns.assets.stocks?.mean ? analysis.returns.assets.stocks.mean * 100 : null;
-        averageBondsReturn = analysis.returns.assets.bonds?.mean ? analysis.returns.assets.bonds.mean * 100 : null;
-        averageCashReturn = analysis.returns.assets.cash?.mean ? analysis.returns.assets.cash.mean * 100 : null;
+        averageStocksReturn = analysis.returns.rates.stocks?.mean ? analysis.returns.rates.stocks.mean * 100 : null;
+        averageBondsReturn = analysis.returns.rates.bonds?.mean ? analysis.returns.rates.bonds.mean * 100 : null;
+        averageCashReturn = analysis.returns.rates.cash?.mean ? analysis.returns.rates.cash.mean * 100 : null;
       }
 
       // Calculate average inflation rate (not available in analyzer)

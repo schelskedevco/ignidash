@@ -1,7 +1,15 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { ChevronLeftIcon, TableCellsIcon, CalendarDaysIcon, ArrowsUpDownIcon, ScaleIcon } from '@heroicons/react/20/solid';
+import {
+  ChevronLeftIcon,
+  TableCellsIcon,
+  CalendarDaysIcon,
+  ArrowsUpDownIcon,
+  ScaleIcon,
+  ReceiptPercentIcon,
+  DocumentCurrencyDollarIcon,
+} from '@heroicons/react/20/solid';
 
 import { Button } from '@/components/catalyst/button';
 import {
@@ -11,6 +19,7 @@ import {
   useMonteCarloSimulation,
   useMonteCarloCashFlowChartData,
   useMonteCarloPhasePercentAreaChartData,
+  useMonteCarloReturnsChartData,
   useShowReferenceLinesPreference,
   useUpdatePreferences,
 } from '@/lib/stores/quick-plan-store';
@@ -25,6 +34,7 @@ import StochasticResultsChart from '../charts/stochastic-results-area-chart';
 import StochasticCashFlowChart from '../charts/stochastic-cash-flow-bar-chart';
 import StochasticCashFlowLineChart from '../charts/stochastic-cash-flow-line-chart';
 import StochasticPhasePercentAreaChart from '../charts/stochastic-phase-percent-area-chart';
+import StochasticReturnsChart from '../charts/stochastic-returns-bar-chart';
 import ResultsMetrics from '../stochastic-metrics';
 import MonteCarloDataTable from '../tables/monte-carlo-data-table';
 
@@ -38,6 +48,8 @@ export default function MonteCarloOverview() {
   const [selectedAge, setSelectedAge] = useState<number>(currentAge! + 1);
   const [cashFlowViewMode, setCashFlowViewMode] = useState<'inflowOutflow' | 'net'>('inflowOutflow');
 
+  const [returnsViewMode, setReturnsViewMode] = useState<'amounts' | 'rates'>('rates');
+
   const showReferenceLines = useShowReferenceLinesPreference();
   const updatePreferences = useUpdatePreferences();
 
@@ -46,6 +58,7 @@ export default function MonteCarloOverview() {
   const fireAnalysis = useMonteCarloAnalysis();
   const cashFlowChartData = useMonteCarloCashFlowChartData();
   const phasePercentChartData = useMonteCarloPhasePercentAreaChartData();
+  const returnsChartData = useMonteCarloReturnsChartData();
 
   // Reset selectedSeed when simulation changes
   useEffect(() => setSelectedSeed(null), [simulation, viewMode]);
@@ -77,6 +90,10 @@ export default function MonteCarloOverview() {
       />
     ),
     [selectedAge, phasePercentChartData, currentAge]
+  );
+  const memoizedReturnsChart = useMemo(
+    () => <StochasticReturnsChart age={selectedAge} mode={returnsViewMode} rawChartData={returnsChartData} />,
+    [returnsChartData, selectedAge, returnsViewMode]
   );
 
   if (chartData.length === 0) {
@@ -167,6 +184,24 @@ export default function MonteCarloOverview() {
               </h4>
             </div>
             {memoizedPhasePercentChart}
+          </Card>
+          <Card className="my-0">
+            <div className="mb-4 flex items-center justify-between">
+              <h4 className="text-foreground flex items-center text-lg font-semibold">
+                <span className="mr-2">Returns</span>
+                <span className="text-muted-foreground">Age {selectedAge}</span>
+              </h4>
+              <ButtonGroup
+                firstButtonText="Rates"
+                firstButtonIcon={<ReceiptPercentIcon />}
+                firstButtonOnClick={() => setReturnsViewMode('rates')}
+                lastButtonText="Amounts"
+                lastButtonIcon={<DocumentCurrencyDollarIcon />}
+                lastButtonOnClick={() => setReturnsViewMode('amounts')}
+                defaultActiveButton="first"
+              />
+            </div>
+            {memoizedReturnsChart}
           </Card>
         </div>
       </SectionContainer>

@@ -57,7 +57,8 @@ export interface PortfolioStats {
  * Returns analysis for period-over-period performance
  */
 export interface ReturnsStats {
-  assets: AssetStats;
+  rates: AssetStats;
+  amounts: AssetStats;
 }
 
 /**
@@ -263,15 +264,20 @@ export class SimulationAnalyzer {
    */
   private calculateReturnsStats(returnsMetadata: ReturnsWithMetadata[]): ReturnsStats {
     const assetClasses: AssetClass[] = ['stocks', 'bonds', 'cash'];
-    const assets: AssetStats = {} as AssetStats;
+
+    const rates: AssetStats = {} as AssetStats;
+    const amounts: AssetStats = {} as AssetStats;
 
     // Calculate returns for each asset class
     for (const assetClass of assetClasses) {
-      const returns = returnsMetadata.map((metadata) => metadata.returns[assetClass]);
-      assets[assetClass] = this.calculateStats(returns);
+      const returnRates = returnsMetadata.map((metadata) => metadata.returns[assetClass]);
+      rates[assetClass] = this.calculateStats(returnRates);
+
+      const returnAmounts = returnsMetadata.map((metadata) => metadata.amounts![assetClass]);
+      amounts[assetClass] = this.calculateStats(returnAmounts);
     }
 
-    return { assets };
+    return { rates, amounts };
   }
 
   /**
