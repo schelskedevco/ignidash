@@ -40,7 +40,7 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
         <span>Age {label}</span>
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
-      <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+      <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-1)]/60 px-2 text-sm">
         <span className="mr-2">Net Cash Flow:</span>
         <span className="ml-1 font-semibold">{formatNumber(payload[0].value, 3, '$')}</span>
       </p>
