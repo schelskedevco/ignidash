@@ -23,7 +23,7 @@
 
 import { ReturnsProvider, ReturnsWithMetadata } from './returns-provider';
 import { nyuHistoricalData, NyuHistoricalYearData, getNyuDataRange } from './data/nyu-historical-data';
-import { AssetReturns } from './asset';
+import { AssetReturnRates } from './asset';
 import { SeededRandom } from './seeded-random';
 
 /**
@@ -104,7 +104,7 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
       throw new Error(`Historical data not found for year ${adjustedYear}`);
     }
 
-    const returns: AssetReturns = {
+    const returns: AssetReturnRates = {
       stocks: yearData.stockReturn,
       bonds: yearData.bondReturn,
       cash: yearData.cashReturn,

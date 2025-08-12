@@ -25,7 +25,7 @@ import type { AllocationInputs } from '@/lib/schemas/quick-plan-schema';
 export type AssetClass = 'stocks' | 'bonds' | 'cash';
 
 /** Asset return rates mapped by asset class (as decimal rates) */
-export type AssetReturns = Record<AssetClass, number>;
+export type AssetReturnRates = Record<AssetClass, number>;
 
 /** Asset allocation percentages mapped by asset class (as decimal percentages) */
 export type AssetAllocation = Record<AssetClass, number>;

@@ -20,7 +20,7 @@
  * - Error handling for edge cases (empty portfolios, negative values)
  */
 
-import { Asset, AssetClass, AssetReturns, AssetAllocation } from './asset';
+import { Asset, AssetClass, AssetReturnRates, AssetAllocation } from './asset';
 
 /**
  * Portfolio class for managing investment assets
@@ -81,7 +81,7 @@ export class Portfolio {
    * @param returns - Asset class return rates as decimals
    * @returns Array containing new portfolio instance and total returns amount
    */
-  withReturns(returns: AssetReturns): [Portfolio, number] {
+  withReturns(returns: AssetReturnRates): [Portfolio, number] {
     let totalReturnsAmount = 0;
 
     const updatedAssets = this.assets.map((asset) => {
