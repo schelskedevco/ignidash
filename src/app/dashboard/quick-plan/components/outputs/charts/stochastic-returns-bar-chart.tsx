@@ -54,13 +54,14 @@ export default function StochasticReturnsChart({ age, mode, rawChartData }: Stoc
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
-  const chartData = rawChartData.filter((item) => item.age === age);
+  let chartData = rawChartData.filter((item) => item.age === age);
 
   let bar = null;
   let formatter = undefined;
 
   switch (mode) {
     case 'amounts':
+      chartData = chartData.filter((item) => item.amount !== null);
       formatter = (value: number) => formatNumber(value, 1, '$');
       bar = (
         <Bar dataKey="amount" fill="var(--chart-3)" stroke="var(--chart-1)" maxBarSize={250} minPointSize={20}>
