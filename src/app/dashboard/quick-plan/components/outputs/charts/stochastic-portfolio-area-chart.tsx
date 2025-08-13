@@ -8,7 +8,7 @@ import { useCurrentAge, StochasticAnalysis } from '@/lib/stores/quick-plan-store
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-export interface StochasticChartDataPoint {
+export interface StochasticPortfolioAreaChartDataPoint {
   age: number;
   p25: number;
   p50: number;
@@ -21,8 +21,8 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof StochasticChartDataPoint;
-    payload: StochasticChartDataPoint;
+    dataKey: keyof StochasticPortfolioAreaChartDataPoint;
+    payload: StochasticPortfolioAreaChartDataPoint;
   }>;
   label?: number;
   currentAge: number;
@@ -59,21 +59,21 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
   );
 };
 
-interface StochasticResultsChartProps {
+interface StochasticPortfolioAreaChartProps {
   fireAnalysis: StochasticAnalysis | null;
-  chartData: StochasticChartDataPoint[];
+  chartData: StochasticPortfolioAreaChartDataPoint[];
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
 
-export default function ResultsChart({
+export default function StochasticPortfolioAreaChart({
   fireAnalysis,
   chartData,
   showReferenceLines,
   onAgeSelect,
   selectedAge,
-}: StochasticResultsChartProps) {
+}: StochasticPortfolioAreaChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 

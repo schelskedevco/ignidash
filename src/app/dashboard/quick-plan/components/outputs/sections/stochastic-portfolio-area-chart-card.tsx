@@ -9,11 +9,11 @@ import {
 import Card from '@/components/ui/card';
 import { Switch } from '@/components/catalyst/switch';
 
-import StochasticResultsChart, { type StochasticChartDataPoint } from '../charts/stochastic-results-area-chart';
+import StochasticPortfolioAreaChart, { type StochasticPortfolioAreaChartDataPoint } from '../charts/stochastic-portfolio-area-chart';
 
 interface StochasticPortfolioAreaChartCardProps {
   fireAnalysis: StochasticAnalysis | null;
-  chartData: StochasticChartDataPoint[];
+  chartData: StochasticPortfolioAreaChartDataPoint[];
   setSelectedAge: (age: number) => void;
   selectedAge: number;
 }
@@ -46,7 +46,7 @@ export default function StochasticPortfolioAreaChartCard({
           aria-label="Toggle reference lines"
         />
       </div>
-      <StochasticResultsChart
+      <StochasticPortfolioAreaChart
         fireAnalysis={fireAnalysis}
         chartData={chartData}
         showReferenceLines={showReferenceLines}
