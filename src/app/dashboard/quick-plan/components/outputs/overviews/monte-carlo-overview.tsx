@@ -30,7 +30,7 @@ import StochasticReturnsLineChart from '../charts/stochastic-returns-line-chart'
 import StochasticWithdrawalsChart from '../charts/stochastic-withdrawals-bar-chart';
 import StochasticWithdrawalsLineChart from '../charts/stochastic-withdrawals-line-chart';
 import ResultsMetrics from '../stochastic-metrics';
-import StochasticPortfolioAreaChartSection from '../sections/stochastic-portfolio-area-chart-section';
+import StochasticPortfolioAreaChartCard from '../sections/stochastic-portfolio-area-chart-card';
 import StochasticDataTableSection from '../sections/stochastic-data-table-section';
 
 export default function MonteCarloOverview() {
@@ -134,7 +134,7 @@ export default function MonteCarloOverview() {
       <SectionContainer showBottomBorder>
         <SectionHeader title="Data Visualization" desc="Interactive charts to explore your projection." />
         <div className="my-4 grid grid-cols-1 gap-2 [@media(min-width:1920px)]:grid-cols-2">
-          <StochasticPortfolioAreaChartSection
+          <StochasticPortfolioAreaChartCard
             fireAnalysis={fireAnalysis}
             chartData={chartData}
             setSelectedAge={setSelectedAge}

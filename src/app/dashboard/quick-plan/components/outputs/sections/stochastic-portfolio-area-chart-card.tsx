@@ -11,19 +11,19 @@ import { Switch } from '@/components/catalyst/switch';
 
 import StochasticResultsChart, { type StochasticChartDataPoint } from '../charts/stochastic-results-area-chart';
 
-interface StochasticPortfolioAreaChartSectionProps {
+interface StochasticPortfolioAreaChartCardProps {
   fireAnalysis: StochasticAnalysis | null;
   chartData: StochasticChartDataPoint[];
   setSelectedAge: (age: number) => void;
   selectedAge: number;
 }
 
-export default function StochasticPortfolioAreaChartSection({
+export default function StochasticPortfolioAreaChartCard({
   fireAnalysis,
   chartData,
   setSelectedAge,
   selectedAge,
-}: StochasticPortfolioAreaChartSectionProps) {
+}: StochasticPortfolioAreaChartCardProps) {
   const currentAge = useCurrentAge();
   const showReferenceLines = useShowReferenceLinesPreference();
   const updatePreferences = useUpdatePreferences();
