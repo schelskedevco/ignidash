@@ -65,9 +65,9 @@ export interface SimulationPhase {
    * @param year - Current simulation year
    * @param portfolio - Current portfolio state
    * @param inputs - User's financial planning inputs
-   * @returns Tuple with updated portfolio and array of cash flows
+   * @returns Tuple with updated portfolio, array of cash flows, and withdrawal amount
    */
-  processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): [Portfolio, Array<{ name: string; amount: number }>];
+  processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): [Portfolio, Array<{ name: string; amount: number }>, number];
 
   /**
    * Determines if this phase is sensitive to sequence of returns risk
@@ -99,7 +99,7 @@ export class AccumulationPhase implements SimulationPhase {
     return 'Accumulation';
   }
 
-  processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): [Portfolio, Array<{ name: string; amount: number }>] {
+  processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): [Portfolio, Array<{ name: string; amount: number }>, number] {
     const currentAge = inputs.basics.currentAge! + year;
 
     let totalCashFlow = 0;
@@ -114,13 +114,15 @@ export class AccumulationPhase implements SimulationPhase {
     }
 
     let updatedPortfolio = portfolio;
+    let withdrawalAmount = 0;
     if (totalCashFlow > 0) {
       updatedPortfolio = portfolio.withCash(totalCashFlow);
     } else if (totalCashFlow < 0) {
-      updatedPortfolio = portfolio.withWithdrawal(Math.abs(totalCashFlow));
+      withdrawalAmount = Math.abs(totalCashFlow);
+      updatedPortfolio = portfolio.withWithdrawal(withdrawalAmount);
     }
 
-    return [updatedPortfolio, cashFlows];
+    return [updatedPortfolio, cashFlows, withdrawalAmount];
   }
 
   isSensitiveToSORR(): boolean {
@@ -150,7 +152,7 @@ export class RetirementPhase implements SimulationPhase {
     return 'Retirement';
   }
 
-  processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): [Portfolio, Array<{ name: string; amount: number }>] {
+  processYear(year: number, portfolio: Portfolio, inputs: QuickPlanInputs): [Portfolio, Array<{ name: string; amount: number }>, number] {
     const currentAge = inputs.basics.currentAge! + year;
 
     let totalCashFlow = 0;
@@ -167,7 +169,7 @@ export class RetirementPhase implements SimulationPhase {
     let updatedPortfolio;
     if (totalCashFlow >= 0) {
       updatedPortfolio = portfolio.withCash(totalCashFlow);
-      return [updatedPortfolio, cashFlows];
+      return [updatedPortfolio, cashFlows, 0];
     }
 
     const shortfall = Math.abs(totalCashFlow);
@@ -180,7 +182,7 @@ export class RetirementPhase implements SimulationPhase {
       cashFlows.push({ name: 'Withdrawal Taxes', amount: -taxAmount });
     }
 
-    return [updatedPortfolio, cashFlows];
+    return [updatedPortfolio, cashFlows, grossWithdrawal];
   }
 
   isSensitiveToSORR(): boolean {
