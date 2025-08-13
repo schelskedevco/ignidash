@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 import {
   useCurrentAge,
@@ -12,11 +12,9 @@ import {
   useMonteCarloReturnsChartData,
   useMonteCarloWithdrawalsChartData,
 } from '@/lib/stores/quick-plan-store';
-import Card from '@/components/ui/card';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 
-import StochasticWithdrawalsLineChart from '../charts/stochastic-withdrawals-line-chart';
 import ResultsMetrics from '../stochastic-metrics';
 import StochasticPortfolioAreaChartCard from '../cards/stochastic-portfolio-area-chart-card';
 import StochasticPortfolioBarChartCard from '../cards/stochastic-portfolio-bar-chart-card';
@@ -26,37 +24,21 @@ import StochasticPhasePercentAreaChartCard from '../cards/stochastic-phase-perce
 import StochasticReturnsBarChartCard from '../cards/stochastic-returns-bar-chart-card';
 import StochasticReturnsLineChartCard from '../cards/stochastic-returns-line-chart-card';
 import StochasticWithdrawalsBarChartCard from '../cards/stochastic-withdrawals-bar-chart-card';
+import StochasticWithdrawalsLineChartCard from '../cards/stochastic-withdrawals-line-chart-card';
 import StochasticDataTableSection from '../sections/stochastic-data-table-section';
 
 export default function MonteCarloOverview() {
   const currentAge = useCurrentAge();
-
   const [selectedAge, setSelectedAge] = useState<number>(currentAge! + 1);
 
   const simulation = useMonteCarloSimulation();
+
   const chartData = useMonteCarloChartData(simulation);
   const fireAnalysis = useMonteCarloAnalysis(simulation);
   const cashFlowChartData = useMonteCarloCashFlowChartData(simulation);
   const phasePercentChartData = useMonteCarloPhasePercentAreaChartData(simulation);
   const returnsChartData = useMonteCarloReturnsChartData(simulation);
   const withdrawalsChartData = useMonteCarloWithdrawalsChartData(simulation);
-
-  const memoizedWithdrawalsLineChart = useMemo(
-    () => (
-      <StochasticWithdrawalsLineChart
-        onAgeSelect={(age) => {
-          if (age >= currentAge! + 1) setSelectedAge(age);
-        }}
-        selectedAge={selectedAge}
-        rawChartData={withdrawalsChartData}
-      />
-    ),
-    [withdrawalsChartData, selectedAge, currentAge]
-  );
-
-  if (chartData.length === 0) {
-    return null;
-  }
 
   return (
     <>
@@ -89,15 +71,11 @@ export default function MonteCarloOverview() {
           <StochasticReturnsBarChartCard selectedAge={selectedAge} rawChartData={returnsChartData} />
           <StochasticReturnsLineChartCard setSelectedAge={setSelectedAge} selectedAge={selectedAge} rawChartData={returnsChartData} />
           <StochasticWithdrawalsBarChartCard selectedAge={selectedAge} rawChartData={withdrawalsChartData} />
-          <Card className="my-0">
-            <div className="mb-4 flex items-center justify-between">
-              <h4 className="text-foreground flex items-center text-lg font-semibold">
-                <span className="mr-2">Withdrawal Rate</span>
-                <span className="text-muted-foreground">Time Series</span>
-              </h4>
-            </div>
-            {memoizedWithdrawalsLineChart}
-          </Card>
+          <StochasticWithdrawalsLineChartCard
+            setSelectedAge={setSelectedAge}
+            selectedAge={selectedAge}
+            rawChartData={withdrawalsChartData}
+          />
         </div>
       </SectionContainer>
       <SectionContainer showBottomBorder>
