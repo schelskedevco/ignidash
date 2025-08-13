@@ -59,6 +59,7 @@ export interface PortfolioStats {
 export interface ReturnsStats {
   rates: AssetStats;
   amounts: AssetStats;
+  inflation: Stats | null;
 }
 
 /**
@@ -277,7 +278,9 @@ export class SimulationAnalyzer {
       amounts[assetClass] = this.calculateStats(returnAmounts);
     }
 
-    return { rates, amounts };
+    const inflation = this.calculateStats(returnsMetadata.map((metadata) => metadata.metadata.inflationRate));
+
+    return { rates, amounts, inflation };
   }
 
   /**

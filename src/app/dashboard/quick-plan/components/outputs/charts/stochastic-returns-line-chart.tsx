@@ -41,7 +41,7 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
       <div className="flex flex-col gap-2">
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-3)]/60 px-2 text-sm">
+        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-1)]/60 px-2 text-sm">
           <span className="mr-2">Stocks:</span>
           <span className="ml-1 font-semibold">{`${(payload[0].value * 100).toFixed(2)}%`}</span>
         </p>
@@ -49,9 +49,13 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
           <span className="mr-2">Bonds:</span>
           <span className="ml-1 font-semibold">{`${(payload[1].value * 100).toFixed(2)}%`}</span>
         </p>
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-1)]/60 px-2 text-sm">
+        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-3)]/60 px-2 text-sm">
           <span className="mr-2">Cash:</span>
           <span className="ml-1 font-semibold">{`${(payload[2].value * 100).toFixed(2)}%`}</span>
+        </p>
+        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-1)]/60 px-2 text-sm">
+          <span className="mr-2">Inflation:</span>
+          <span className="ml-1 font-semibold">{`${(payload[3].value * 100).toFixed(2)}%`}</span>
         </p>
       </div>
     </div>
@@ -133,6 +137,7 @@ export default function StochasticReturnsLineChart({ rawChartData, onAgeSelect, 
           <Line type="monotone" dataKey="Stocks" stroke="var(--chart-1)" />
           <Line type="monotone" dataKey="Bonds" stroke="var(--chart-2)" />
           <Line type="monotone" dataKey="Cash" stroke="var(--chart-3)" />
+          <Line type="monotone" dataKey="Inflation" stroke="var(--chart-1)" />
           <Tooltip
             content={<CustomTooltip currentAge={currentAge!} disabled={isSmallScreen && clickedOutsideChart} />}
             cursor={{ stroke: foregroundColor }}

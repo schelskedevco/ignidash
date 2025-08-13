@@ -763,6 +763,13 @@ export const useMonteCarloReturnsChartData = () => {
         });
       }
 
+      results.push({
+        age: data.year + currentAge,
+        name: 'Inflation',
+        rate: data.returns.inflation?.mean ? data.returns.inflation.mean / 100 : null,
+        amount: null,
+      });
+
       return results;
     });
   }, [currentAge, simulation]);
@@ -811,6 +818,13 @@ export const useHistoricalBacktestReturnsChartData = () => {
           amount: cashAmountMean,
         });
       }
+
+      results.push({
+        age: data.year + currentAge,
+        name: 'Inflation',
+        rate: data.returns.inflation?.mean ? data.returns.inflation.mean / 100 : null,
+        amount: null,
+      });
 
       return results;
     });
