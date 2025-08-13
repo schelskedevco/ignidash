@@ -38,6 +38,7 @@ import StochasticPhasePercentAreaChart from '../charts/stochastic-phase-percent-
 import StochasticReturnsChart from '../charts/stochastic-returns-bar-chart';
 import StochasticReturnsLineChart from '../charts/stochastic-returns-line-chart';
 import StochasticWithdrawalsChart from '../charts/stochastic-withdrawals-bar-chart';
+import StochasticWithdrawalsLineChart from '../charts/stochastic-withdrawals-line-chart';
 import ResultsMetrics from '../stochastic-metrics';
 import MonteCarloDataTable from '../tables/monte-carlo-data-table';
 
@@ -115,6 +116,18 @@ export default function MonteCarloOverview() {
   const memoizedWithdrawalsChart = useMemo(
     () => <StochasticWithdrawalsChart age={selectedAge} mode={withdrawalsViewMode} rawChartData={withdrawalsChartData} />,
     [withdrawalsChartData, selectedAge, withdrawalsViewMode]
+  );
+  const memoizedWithdrawalsLineChart = useMemo(
+    () => (
+      <StochasticWithdrawalsLineChart
+        onAgeSelect={(age) => {
+          if (age >= currentAge! + 1) setSelectedAge(age);
+        }}
+        selectedAge={selectedAge}
+        rawChartData={withdrawalsChartData}
+      />
+    ),
+    [withdrawalsChartData, selectedAge, currentAge]
   );
 
   if (chartData.length === 0) {
@@ -250,6 +263,15 @@ export default function MonteCarloOverview() {
               />
             </div>
             {memoizedWithdrawalsChart}
+          </Card>
+          <Card className="my-0">
+            <div className="mb-4 flex items-center justify-between">
+              <h4 className="text-foreground flex items-center text-lg font-semibold">
+                <span className="mr-2">Withdrawal Rate</span>
+                <span className="text-muted-foreground">Time Series</span>
+              </h4>
+            </div>
+            {memoizedWithdrawalsLineChart}
           </Card>
         </div>
       </SectionContainer>

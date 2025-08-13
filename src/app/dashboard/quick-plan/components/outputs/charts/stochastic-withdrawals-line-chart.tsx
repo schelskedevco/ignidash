@@ -7,7 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-interface StochasticReturnsLineChartDataPoint {
+interface StochasticWithdrawalsLineChartDataPoint {
   age: number;
   name: string;
   rate: number | null;
@@ -20,8 +20,8 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof StochasticReturnsLineChartDataPoint;
-    payload: StochasticReturnsLineChartDataPoint;
+    dataKey: keyof StochasticWithdrawalsLineChartDataPoint;
+    payload: StochasticWithdrawalsLineChartDataPoint;
   }>;
   label?: number;
   currentAge: number;
@@ -42,33 +42,21 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
       </p>
       <div className="flex flex-col gap-2">
         <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-1)]/60 px-2 text-sm">
-          <span className="mr-2">Stocks:</span>
-          <span className="ml-1 font-semibold">{`${(payload[0].value * 100).toFixed(2)}%`}</span>
-        </p>
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-2)]/60 px-2 text-sm">
-          <span className="mr-2">Bonds:</span>
-          <span className="ml-1 font-semibold">{`${(payload[1].value * 100).toFixed(2)}%`}</span>
-        </p>
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-3)]/60 px-2 text-sm">
-          <span className="mr-2">Cash:</span>
-          <span className="ml-1 font-semibold">{`${(payload[2].value * 100).toFixed(2)}%`}</span>
-        </p>
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-1)]/60 px-2 text-sm">
-          <span className="mr-2">Inflation:</span>
-          <span className="ml-1 font-semibold">{`${(payload[3].value * 100).toFixed(2)}%`}</span>
+          <span className="mr-2">Withdrawals:</span>
+          <span className="ml-1 font-semibold">{`${payload[0].value.toFixed(2)}%`}</span>
         </p>
       </div>
     </div>
   );
 };
 
-interface StochasticReturnsLineChartProps {
-  rawChartData: StochasticReturnsLineChartDataPoint[];
+interface StochasticWithdrawalsLineChartProps {
+  rawChartData: StochasticWithdrawalsLineChartDataPoint[];
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
 
-export default function StochasticReturnsLineChart({ rawChartData, onAgeSelect, selectedAge }: StochasticReturnsLineChartProps) {
+export default function StochasticWithdrawalsLineChart({ rawChartData, onAgeSelect, selectedAge }: StochasticWithdrawalsLineChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
@@ -95,18 +83,7 @@ export default function StochasticReturnsLineChart({ rawChartData, onAgeSelect, 
     };
   }, []);
 
-  const chartData = Object.values(
-    rawChartData.reduce(
-      (acc, item) => {
-        if (!acc[item.age]) {
-          acc[item.age] = { age: item.age };
-        }
-        acc[item.age][item.name] = item.rate;
-        return acc;
-      },
-      {} as Record<number, { age: number; [key: string]: number | null }>
-    )
-  );
+  const chartData = rawChartData;
   if (chartData.length === 0) {
     return null;
   }
@@ -133,12 +110,9 @@ export default function StochasticReturnsLineChart({ rawChartData, onAgeSelect, 
             tick={{ fill: foregroundMutedColor }}
             axisLine={false}
             hide={isSmallScreen}
-            tickFormatter={(value: number) => `${(value * 100).toFixed(2)}%`}
+            tickFormatter={(value: number) => `${value.toFixed(2)}%`}
           />
-          <Line type="monotone" dataKey="Stocks" stroke="var(--chart-1)" />
-          <Line type="monotone" dataKey="Bonds" stroke="var(--chart-2)" />
-          <Line type="monotone" dataKey="Cash" stroke="var(--chart-3)" />
-          <Line type="monotone" dataKey="Inflation" stroke="var(--chart-1)" />
+          <Line type="monotone" dataKey="rate" stroke="var(--chart-1)" />
           <Tooltip
             content={<CustomTooltip currentAge={currentAge!} disabled={isSmallScreen && clickedOutsideChart} />}
             cursor={{ stroke: foregroundColor }}
