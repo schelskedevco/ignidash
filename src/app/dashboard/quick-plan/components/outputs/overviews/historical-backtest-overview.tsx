@@ -18,7 +18,6 @@ import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import ButtonGroup from '@/components/ui/button-group';
 
-import StochasticCashFlowLineChart from '../charts/stochastic-cash-flow-line-chart';
 import StochasticPhasePercentAreaChart from '../charts/stochastic-phase-percent-area-chart';
 import StochasticReturnsChart from '../charts/stochastic-returns-bar-chart';
 import StochasticReturnsLineChart from '../charts/stochastic-returns-line-chart';
@@ -28,6 +27,7 @@ import ResultsMetrics from '../stochastic-metrics';
 import StochasticPortfolioAreaChartCard from '../cards/stochastic-portfolio-area-chart-card';
 import StochasticPortfolioBarChartCard from '../cards/stochastic-portfolio-bar-chart-card';
 import StochasticCashFlowBarChartCard from '../cards/stochastic-cash-flow-bar-chart-card';
+import StochasticCashFlowLineChartCard from '../cards/stochastic-cash-flow-line-chart-card';
 import StochasticDataTableSection from '../sections/stochastic-data-table-section';
 
 export default function HistoricalBacktestOverview() {
@@ -46,18 +46,6 @@ export default function HistoricalBacktestOverview() {
   const returnsChartData = useHistoricalBacktestReturnsChartData(simulation);
   const withdrawalsChartData = useHistoricalBacktestWithdrawalsChartData(simulation);
 
-  const memoizedCashFlowLineChart = useMemo(
-    () => (
-      <StochasticCashFlowLineChart
-        onAgeSelect={(age) => {
-          if (age >= currentAge! + 1) setSelectedAge(age);
-        }}
-        selectedAge={selectedAge}
-        rawChartData={cashFlowChartData}
-      />
-    ),
-    [cashFlowChartData, currentAge, selectedAge]
-  );
   const memoizedPhasePercentChart = useMemo(
     () => (
       <StochasticPhasePercentAreaChart
@@ -129,15 +117,7 @@ export default function HistoricalBacktestOverview() {
             selectedAge={selectedAge}
           />
           <StochasticCashFlowBarChartCard selectedAge={selectedAge} rawChartData={cashFlowChartData} />
-          <Card className="my-0">
-            <div className="mb-4 flex items-center justify-between">
-              <h4 className="text-foreground flex items-center text-lg font-semibold">
-                <span className="mr-2">Net Cash Flow</span>
-                <span className="text-muted-foreground">Time Series</span>
-              </h4>
-            </div>
-            {memoizedCashFlowLineChart}
-          </Card>
+          <StochasticCashFlowLineChartCard setSelectedAge={setSelectedAge} age={selectedAge} rawChartData={cashFlowChartData} />
           <Card className="my-0">
             <div className="mb-4 flex items-center justify-between">
               <h4 className="text-foreground flex items-center text-lg font-semibold">

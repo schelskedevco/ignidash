@@ -8,7 +8,7 @@ import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-interface StochasticCashFlowLineChartDataPoint {
+export interface StochasticCashFlowLineChartDataPoint {
   age: number;
   name: string;
   amount: number;
@@ -51,10 +51,10 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
 interface StochasticCashFlowChartProps {
   rawChartData: StochasticCashFlowLineChartDataPoint[];
   onAgeSelect: (age: number) => void;
-  selectedAge: number;
+  age: number;
 }
 
-export default function StochasticCashFlowLineChart({ rawChartData, onAgeSelect, selectedAge }: StochasticCashFlowChartProps) {
+export default function StochasticCashFlowLineChart({ rawChartData, onAgeSelect, age }: StochasticCashFlowChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
@@ -123,7 +123,7 @@ export default function StochasticCashFlowLineChart({ rawChartData, onAgeSelect,
             content={<CustomTooltip currentAge={currentAge!} disabled={isSmallScreen && clickedOutsideChart} />}
             cursor={{ stroke: foregroundColor }}
           />
-          {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
+          {age && <ReferenceLine x={age} stroke={foregroundMutedColor} strokeWidth={1} />}
         </LineChart>
       </ResponsiveContainer>
     </div>
