@@ -45,7 +45,7 @@ import {
   LcgHistoricalBacktestSimulationEngine,
   type SimulationResult,
   type MultiSimulationResult,
-  type LcgHistoricalBacktestResult,
+  type HistoricalRangeInfo,
 } from '@/lib/calc/simulation-engine';
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
 import { SimulationAnalyzer, type MultiSimulationStats } from '@/lib/calc/simulation-analyzer';
@@ -1111,7 +1111,7 @@ export const useMonteCarloTableData = (simulation: MultiSimulationResult): Monte
   }, [currentAge, simulation]);
 };
 
-export const useHistoricalBacktestTableData = (simulation: LcgHistoricalBacktestResult): HistoricalBacktestTableRow[] => {
+export const useHistoricalBacktestTableData = (simulation: MultiSimulationResult): HistoricalBacktestTableRow[] => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
@@ -1169,7 +1169,7 @@ export const useHistoricalBacktestTableData = (simulation: LcgHistoricalBacktest
         averageBondsReturn,
         averageCashReturn,
         averageInflationRate,
-        historicalRanges: simulationResult.historicalRanges,
+        historicalRanges: (simulationResult as SimulationResult & HistoricalRangeInfo).historicalRanges,
       };
     });
 
@@ -1237,7 +1237,7 @@ type YearlyProgressionData = MultiSimulationStats & {
   };
 };
 
-export const useHistoricalBacktestYearlyResultsTableData = (simulation: LcgHistoricalBacktestResult): YearlyAggregateTableRow[] => {
+export const useHistoricalBacktestYearlyResultsTableData = (simulation: MultiSimulationResult): YearlyAggregateTableRow[] => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {

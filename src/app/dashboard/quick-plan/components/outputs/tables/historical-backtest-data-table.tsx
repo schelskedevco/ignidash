@@ -17,12 +17,12 @@ import {
   generateSimulationTableColumns,
   generateYearlyAggregateTableColumns,
 } from '@/lib/utils/table-formatters';
-import type { LcgHistoricalBacktestResult } from '@/lib/calc/simulation-engine';
+import type { MultiSimulationResult } from '@/lib/calc/simulation-engine';
 
 import Table from './table';
 
 interface HistoricalBacktestDataTableProps {
-  simulation: LcgHistoricalBacktestResult;
+  simulation: MultiSimulationResult;
   selectedSeed: number | null;
   setSelectedSeed: (seed: number | null) => void;
   viewMode: 'all' | 'yearly';

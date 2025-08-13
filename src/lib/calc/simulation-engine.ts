@@ -184,12 +184,21 @@ export class FinancialSimulationEngine {
 }
 
 /**
+ * Historical Range Info Interface
+ * Contains the historical year ranges used for backtesting simulations
+ * When present, indicates that the simulation used historical data from specific time periods
+ */
+export interface HistoricalRangeInfo {
+  historicalRanges: Array<{ startYear: number; endYear: number }>;
+}
+
+/**
  * Multi-Simulation Result Interface
  * Represents the results of multiple simulations, each with its own seed and corresponding result
  * Used for aggregating Monte Carlo or historical backtest simulations
  */
 export interface MultiSimulationResult {
-  simulations: Array<[number /* seed */, SimulationResult]>;
+  simulations: Array<[number /* seed */, SimulationResult | (SimulationResult & HistoricalRangeInfo)]>;
 }
 
 /**
@@ -235,15 +244,6 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
 }
 
 /**
- * LCG Historical Backtest Result Interface
- * Extends MultiSimulationResult to include historical range information
- * Each simulation includes the historical year ranges used for returns
- */
-export interface LcgHistoricalBacktestResult extends MultiSimulationResult {
-  simulations: Array<[number /* seed */, SimulationResult & { historicalRanges: Array<{ startYear: number; endYear: number }> }]>;
-}
-
-/**
  * LCG Historical Backtest Simulation Engine
  * Extends the base simulation engine to run historical backtests with randomly selected start years
  * Uses Linear Congruential Generator (LCG) to choose start years and supports configurable
@@ -269,8 +269,8 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
    * @param numSimulations - Number of simulations to simulate (each with a random start year)
    * @returns Aggregate results with simulation seeds, results, and historical ranges used
    */
-  runLcgHistoricalBacktest(numSimulations: number): LcgHistoricalBacktestResult {
-    const simulations: Array<[number, SimulationResult & { historicalRanges: Array<{ startYear: number; endYear: number }> }]> = [];
+  runLcgHistoricalBacktest(numSimulations: number): MultiSimulationResult {
+    const simulations: Array<[number, SimulationResult & HistoricalRangeInfo]> = [];
 
     const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(this.inputs);
     const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, this.inputs);

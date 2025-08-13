@@ -1,18 +1,8 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import {
-  ChevronLeftIcon,
-  TableCellsIcon,
-  CalendarDaysIcon,
-  ArrowsUpDownIcon,
-  ScaleIcon,
-  ReceiptPercentIcon,
-  DocumentCurrencyDollarIcon,
-  ChartBarSquareIcon,
-} from '@heroicons/react/20/solid';
+import { useState, useMemo } from 'react';
+import { ArrowsUpDownIcon, ScaleIcon, ReceiptPercentIcon, DocumentCurrencyDollarIcon, ChartBarSquareIcon } from '@heroicons/react/20/solid';
 
-import { Button } from '@/components/catalyst/button';
 import {
   useCurrentAge,
   useHistoricalBacktestChartData,
@@ -44,12 +34,9 @@ import StochasticReturnsLineChart from '../charts/stochastic-returns-line-chart'
 import StochasticWithdrawalsChart from '../charts/stochastic-withdrawals-bar-chart';
 import StochasticWithdrawalsLineChart from '../charts/stochastic-withdrawals-line-chart';
 import ResultsMetrics from '../stochastic-metrics';
-import HistoricalBacktestDataTable from '../tables/historical-backtest-data-table';
+import StochasticDataTableSection from '../sections/stochastic-data-table-section';
 
 export default function HistoricalBacktestOverview() {
-  const [selectedSeed, setSelectedSeed] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<'all' | 'yearly'>('all');
-
   const currentAge = useCurrentAge();
   const isXSmallScreen = useIsXSmallMobile();
 
@@ -72,9 +59,6 @@ export default function HistoricalBacktestOverview() {
   const phasePercentChartData = useHistoricalBacktestPhasePercentAreaChartData();
   const returnsChartData = useHistoricalBacktestReturnsChartData();
   const withdrawalsChartData = useHistoricalBacktestWithdrawalsChartData();
-
-  // Reset selectedSeed when simulation changes
-  useEffect(() => setSelectedSeed(null), [simulation, viewMode]);
 
   const rawPortfolioChartData =
     portfolioDistributionViewMode === 'percentiles' ? portfolioHistogramData : portfolioDistributionHistogramData;
@@ -145,20 +129,6 @@ export default function HistoricalBacktestOverview() {
 
   if (chartData.length === 0) {
     return null;
-  }
-
-  let headerText: string;
-  let headerDesc: string;
-
-  if (selectedSeed !== null) {
-    headerText = `Simulation #${selectedSeed} Details`;
-    headerDesc = 'Year-by-year progression and outcome for this specific simulation.';
-  } else if (viewMode === 'yearly') {
-    headerText = 'Yearly Results';
-    headerDesc = 'Aggregated statistics across all simulations by year.';
-  } else {
-    headerText = 'Simulations Table';
-    headerDesc = 'Browse all simulation runs. Select one to explore further.';
   }
 
   return (
@@ -312,36 +282,7 @@ export default function HistoricalBacktestOverview() {
           <p>Coming soon...</p>
         </div>
       </SectionContainer>
-      <SectionContainer showBottomBorder>
-        <SectionHeader
-          title={headerText}
-          desc={headerDesc}
-          rightAddOn={
-            selectedSeed !== null ? (
-              <Button disabled={selectedSeed === null} onClick={() => setSelectedSeed(null)} plain>
-                <ChevronLeftIcon className="h-5 w-5" />
-                <span>Return</span>
-              </Button>
-            ) : (
-              <ButtonGroup
-                firstButtonText="Simulations"
-                firstButtonIcon={<TableCellsIcon />}
-                firstButtonOnClick={() => setViewMode('all')}
-                lastButtonText="Yearly results"
-                lastButtonIcon={<CalendarDaysIcon />}
-                lastButtonOnClick={() => setViewMode('yearly')}
-                defaultActiveButton="first"
-              />
-            )
-          }
-        />
-        <HistoricalBacktestDataTable
-          simulation={simulation}
-          selectedSeed={selectedSeed}
-          setSelectedSeed={setSelectedSeed}
-          viewMode={viewMode}
-        />
-      </SectionContainer>
+      <StochasticDataTableSection simulation={simulation} simulationType="historicalBacktest" />
     </>
   );
 }
