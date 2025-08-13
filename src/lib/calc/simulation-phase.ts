@@ -175,6 +175,11 @@ export class RetirementPhase implements SimulationPhase {
     const grossWithdrawal = shortfall / (1 - effectiveTaxRate / 100);
     updatedPortfolio = portfolio.withWithdrawal(grossWithdrawal);
 
+    const taxAmount = grossWithdrawal - shortfall;
+    if (taxAmount > 0) {
+      cashFlows.push({ name: 'Withdrawal Taxes', amount: -taxAmount });
+    }
+
     return [updatedPortfolio, cashFlows];
   }
 
