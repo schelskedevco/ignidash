@@ -22,7 +22,7 @@ export default function StochasticPortfolioBarChartCard({
   const [viewMode, setViewMode] = useState<'percentiles' | 'counts'>('percentiles');
 
   let title = '';
-  let rawChartData: StochasticPortfolioBarChartDataPoint[] = [];
+  let rawChartData = [];
 
   switch (viewMode) {
     case 'percentiles':
