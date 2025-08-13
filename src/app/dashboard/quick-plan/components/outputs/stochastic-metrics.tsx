@@ -4,20 +4,20 @@ import { StochasticAnalysis } from '@/lib/stores/quick-plan-store';
 import MetricsCard from './metrics-card';
 
 interface ResultsMetricsProps {
-  fireAnalysis: StochasticAnalysis | null;
+  analysis: StochasticAnalysis | null;
 }
 
-export default function ResultsMetrics({ fireAnalysis }: ResultsMetricsProps) {
-  if (!fireAnalysis) {
+export default function ResultsMetrics({ analysis }: ResultsMetricsProps) {
+  if (!analysis) {
     return <div className="text-muted-foreground text-center">No analysis data available</div>;
   }
 
-  const successRate = `${formatNumber((fireAnalysis.successRate ?? 0) * 100, 0)}%`;
-  const progressToFIRE = `${formatNumber(fireAnalysis.progressToFIRE * 100, 0)}%`;
-  const p50FireAge = fireAnalysis.p50FireAge !== null ? `${formatNumber(fireAnalysis.p50FireAge, 0)}` : '∞';
-  const p50YearsToFIRE = fireAnalysis.p50YearsToFIRE !== null ? `${formatNumber(fireAnalysis.p50YearsToFIRE, 0)}` : '∞';
-  const requiredPortfolio = `$${formatNumber(fireAnalysis.requiredPortfolio)}`;
-  const finalPortfolio = `$${formatNumber(fireAnalysis.finalPortfolio)}`;
+  const successRate = `${formatNumber((analysis.successRate ?? 0) * 100, 0)}%`;
+  const progressToFIRE = `${formatNumber(analysis.progressToFIRE * 100, 0)}%`;
+  const p50FireAge = analysis.p50FireAge !== null ? `${formatNumber(analysis.p50FireAge, 0)}` : '∞';
+  const p50YearsToFIRE = analysis.p50YearsToFIRE !== null ? `${formatNumber(analysis.p50YearsToFIRE, 0)}` : '∞';
+  const requiredPortfolio = `$${formatNumber(analysis.requiredPortfolio)}`;
+  const finalPortfolio = `$${formatNumber(analysis.finalPortfolio)}`;
 
   return (
     <>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import {
   useCurrentAge,
-  useMonteCarloChartData,
+  useMonteCarloPortfolioAreaChartData,
   useMonteCarloAnalysis,
   useMonteCarloSimulation,
   useMonteCarloCashFlowChartData,
@@ -33,8 +33,8 @@ export default function MonteCarloOverview() {
 
   const simulation = useMonteCarloSimulation();
 
-  const chartData = useMonteCarloChartData(simulation);
-  const fireAnalysis = useMonteCarloAnalysis(simulation);
+  const analysis = useMonteCarloAnalysis(simulation);
+  const portfolioAreaChartData = useMonteCarloPortfolioAreaChartData(simulation);
   const cashFlowChartData = useMonteCarloCashFlowChartData(simulation);
   const phasePercentChartData = useMonteCarloPhasePercentAreaChartData(simulation);
   const returnsChartData = useMonteCarloReturnsChartData(simulation);
@@ -44,14 +44,14 @@ export default function MonteCarloOverview() {
     <>
       <SectionContainer showBottomBorder>
         <SectionHeader title="Key Metrics" desc="A snapshot of your simulation's most important results." />
-        <ResultsMetrics fireAnalysis={fireAnalysis} />
+        <ResultsMetrics analysis={analysis} />
       </SectionContainer>
       <SectionContainer showBottomBorder>
         <SectionHeader title="Data Visualization" desc="Interactive charts to explore your projection." />
         <div className="my-4 grid grid-cols-1 gap-2 [@media(min-width:1920px)]:grid-cols-2">
           <StochasticPortfolioAreaChartCard
-            fireAnalysis={fireAnalysis}
-            chartData={chartData}
+            analysis={analysis}
+            rawChartData={portfolioAreaChartData}
             setSelectedAge={setSelectedAge}
             selectedAge={selectedAge}
           />

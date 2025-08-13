@@ -634,7 +634,7 @@ export const useFixedReturnsCashFlowChartData = () => {
   }, [currentAge, simulation]);
 };
 
-export const useMonteCarloChartData = (simulation: MultiSimulationResult) => {
+export const useMonteCarloPortfolioAreaChartData = (simulation: MultiSimulationResult) => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
@@ -902,7 +902,7 @@ export const useHistoricalBacktestWithdrawalsChartData = (simulation: MultiSimul
   }, [currentAge, simulation]);
 };
 
-export const useHistoricalBacktestChartData = (simulation: MultiSimulationResult) => {
+export const useHistoricalBacktestPortfolioAreaChartData = (simulation: MultiSimulationResult) => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {

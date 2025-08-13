@@ -60,16 +60,16 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
 };
 
 interface StochasticPortfolioAreaChartProps {
-  fireAnalysis: StochasticAnalysis | null;
-  chartData: StochasticPortfolioAreaChartDataPoint[];
+  analysis: StochasticAnalysis | null;
+  rawChartData: StochasticPortfolioAreaChartDataPoint[];
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
 
 export default function StochasticPortfolioAreaChart({
-  fireAnalysis,
-  chartData,
+  analysis,
+  rawChartData,
   showReferenceLines,
   onAgeSelect,
   selectedAge,
@@ -100,6 +100,7 @@ export default function StochasticPortfolioAreaChart({
     };
   }, []);
 
+  const chartData = rawChartData;
   if (chartData.length === 0) {
     return null;
   }
@@ -156,12 +157,12 @@ export default function StochasticPortfolioAreaChart({
               content={<CustomTooltip currentAge={currentAge!} disabled={isSmallScreen && clickedOutsideChart} />}
               cursor={{ stroke: foregroundColor }}
             />
-            {fireAnalysis?.p50FireAge && showReferenceLines && (
-              <ReferenceLine x={Math.round(fireAnalysis.p50FireAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+            {analysis?.p50FireAge && showReferenceLines && (
+              <ReferenceLine x={Math.round(analysis.p50FireAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
             )}
             {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
-            {fireAnalysis?.requiredPortfolio && showReferenceLines && (
-              <ReferenceLine y={Math.round(fireAnalysis.requiredPortfolio)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+            {analysis?.requiredPortfolio && showReferenceLines && (
+              <ReferenceLine y={Math.round(analysis.requiredPortfolio)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
             )}
           </AreaChart>
         </ResponsiveContainer>
