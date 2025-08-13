@@ -6,7 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelL
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-interface StochasticWithdrawalsChartDataPoint {
+export interface StochasticWithdrawalsBarChartDataPoint {
   age: number;
   name: string;
   rate: number | null;
@@ -44,13 +44,13 @@ const CustomLabelListContent = (props: any) => {
   );
 };
 
-interface StochasticWithdrawalsChartProps {
+interface StochasticWithdrawalsBarChartProps {
   age: number;
   mode: 'amounts' | 'rates';
-  rawChartData: StochasticWithdrawalsChartDataPoint[];
+  rawChartData: StochasticWithdrawalsBarChartDataPoint[];
 }
 
-export default function StochasticWithdrawalsChart({ age, mode, rawChartData }: StochasticWithdrawalsChartProps) {
+export default function StochasticWithdrawalsBarChart({ age, mode, rawChartData }: StochasticWithdrawalsBarChartProps) {
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 

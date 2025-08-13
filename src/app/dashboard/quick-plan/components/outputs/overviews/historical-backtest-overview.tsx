@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { ReceiptPercentIcon, DocumentCurrencyDollarIcon } from '@heroicons/react/20/solid';
 
 import {
   useCurrentAge,
@@ -16,9 +15,7 @@ import {
 import Card from '@/components/ui/card';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
-import ButtonGroup from '@/components/ui/button-group';
 
-import StochasticWithdrawalsChart from '../charts/stochastic-withdrawals-bar-chart';
 import StochasticWithdrawalsLineChart from '../charts/stochastic-withdrawals-line-chart';
 import ResultsMetrics from '../stochastic-metrics';
 import StochasticPortfolioAreaChartCard from '../cards/stochastic-portfolio-area-chart-card';
@@ -28,14 +25,13 @@ import StochasticCashFlowLineChartCard from '../cards/stochastic-cash-flow-line-
 import StochasticPhasePercentAreaChartCard from '../cards/stochastic-phase-percent-area-chart-card';
 import StochasticReturnsBarChartCard from '../cards/stochastic-returns-bar-chart-card';
 import StochasticReturnsLineChartCard from '../cards/stochastic-returns-line-chart-card';
+import StochasticWithdrawalsBarChartCard from '../cards/stochastic-withdrawals-bar-chart-card';
 import StochasticDataTableSection from '../sections/stochastic-data-table-section';
 
 export default function HistoricalBacktestOverview() {
   const currentAge = useCurrentAge();
 
   const [selectedAge, setSelectedAge] = useState<number>(currentAge! + 1);
-
-  const [withdrawalsViewMode, setWithdrawalsViewMode] = useState<'amounts' | 'rates'>('rates');
 
   const simulation = useHistoricalBacktestSimulation();
   const chartData = useHistoricalBacktestChartData(simulation);
@@ -45,10 +41,6 @@ export default function HistoricalBacktestOverview() {
   const returnsChartData = useHistoricalBacktestReturnsChartData(simulation);
   const withdrawalsChartData = useHistoricalBacktestWithdrawalsChartData(simulation);
 
-  const memoizedWithdrawalsChart = useMemo(
-    () => <StochasticWithdrawalsChart age={selectedAge} mode={withdrawalsViewMode} rawChartData={withdrawalsChartData} />,
-    [withdrawalsChartData, selectedAge, withdrawalsViewMode]
-  );
   const memoizedWithdrawalsLineChart = useMemo(
     () => (
       <StochasticWithdrawalsLineChart
@@ -96,24 +88,7 @@ export default function HistoricalBacktestOverview() {
           />
           <StochasticReturnsBarChartCard selectedAge={selectedAge} rawChartData={returnsChartData} />
           <StochasticReturnsLineChartCard setSelectedAge={setSelectedAge} selectedAge={selectedAge} rawChartData={returnsChartData} />
-          <Card className="my-0">
-            <div className="mb-4 flex items-center justify-between">
-              <h4 className="text-foreground flex items-center text-lg font-semibold">
-                <span className="mr-2">Withdrawals</span>
-                <span className="text-muted-foreground">Age {selectedAge}</span>
-              </h4>
-              <ButtonGroup
-                firstButtonText="Rates"
-                firstButtonIcon={<ReceiptPercentIcon />}
-                firstButtonOnClick={() => setWithdrawalsViewMode('rates')}
-                lastButtonText="Amounts"
-                lastButtonIcon={<DocumentCurrencyDollarIcon />}
-                lastButtonOnClick={() => setWithdrawalsViewMode('amounts')}
-                defaultActiveButton="first"
-              />
-            </div>
-            {memoizedWithdrawalsChart}
-          </Card>
+          <StochasticWithdrawalsBarChartCard selectedAge={selectedAge} rawChartData={withdrawalsChartData} />
           <Card className="my-0">
             <div className="mb-4 flex items-center justify-between">
               <h4 className="text-foreground flex items-center text-lg font-semibold">
