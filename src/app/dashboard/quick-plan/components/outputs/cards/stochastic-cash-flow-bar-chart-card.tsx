@@ -5,12 +5,13 @@ import { ArrowsUpDownIcon, ScaleIcon } from '@heroicons/react/20/solid';
 
 import Card from '@/components/ui/card';
 import ButtonGroup from '@/components/ui/button-group';
+import type { StochasticCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 
-import StochasticCashFlowBarChart, { type StochasticCashFlowBarChartDataPoint } from '../charts/stochastic-cash-flow-bar-chart';
+import StochasticCashFlowBarChart from '../charts/stochastic-cash-flow-bar-chart';
 
 interface StochasticCashFlowBarChartCardProps {
   selectedAge: number;
-  rawChartData: StochasticCashFlowBarChartDataPoint[];
+  rawChartData: StochasticCashFlowChartDataPoint[];
 }
 
 export default function StochasticCashFlowBarChartCard({ selectedAge, rawChartData }: StochasticCashFlowBarChartCardProps) {

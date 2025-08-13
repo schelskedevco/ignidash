@@ -6,13 +6,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-export interface StochasticWithdrawalsLineChartDataPoint {
-  age: number;
-  name: string;
-  rate: number | null;
-  amount: number | null;
-}
+import type { StochasticWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -20,8 +14,8 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof StochasticWithdrawalsLineChartDataPoint;
-    payload: StochasticWithdrawalsLineChartDataPoint;
+    dataKey: keyof StochasticWithdrawalsChartDataPoint;
+    payload: StochasticWithdrawalsChartDataPoint;
   }>;
   label?: number;
   currentAge: number;
@@ -51,7 +45,7 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
 };
 
 interface StochasticWithdrawalsLineChartProps {
-  rawChartData: StochasticWithdrawalsLineChartDataPoint[];
+  rawChartData: StochasticWithdrawalsChartDataPoint[];
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }

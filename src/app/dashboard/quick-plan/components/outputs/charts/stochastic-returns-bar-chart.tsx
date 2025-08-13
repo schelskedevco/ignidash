@@ -5,13 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelL
 
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-export interface StochasticReturnsBarChartDataPoint {
-  age: number;
-  name: string;
-  rate: number | null;
-  amount: number | null;
-}
+import type { StochasticReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomLabelListContent = (props: any) => {
@@ -47,7 +41,7 @@ const CustomLabelListContent = (props: any) => {
 interface StochasticReturnsBarChartProps {
   selectedAge: number;
   mode: 'amounts' | 'rates';
-  rawChartData: StochasticReturnsBarChartDataPoint[];
+  rawChartData: StochasticReturnsChartDataPoint[];
 }
 
 export default function StochasticReturnsBarChart({ selectedAge, mode, rawChartData }: StochasticReturnsBarChartProps) {

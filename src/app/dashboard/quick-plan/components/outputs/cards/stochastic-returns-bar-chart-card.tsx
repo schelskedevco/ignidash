@@ -5,12 +5,13 @@ import { ReceiptPercentIcon, DocumentCurrencyDollarIcon } from '@heroicons/react
 
 import Card from '@/components/ui/card';
 import ButtonGroup from '@/components/ui/button-group';
+import type { StochasticReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 
-import StochasticReturnsBarChart, { type StochasticReturnsBarChartDataPoint } from '../charts/stochastic-returns-bar-chart';
+import StochasticReturnsBarChart from '../charts/stochastic-returns-bar-chart';
 
 interface StochasticReturnsBarChartCardProps {
   selectedAge: number;
-  rawChartData: StochasticReturnsBarChartDataPoint[];
+  rawChartData: StochasticReturnsChartDataPoint[];
 }
 
 export default function StochasticReturnsBarChartCard({ selectedAge, rawChartData }: StochasticReturnsBarChartCardProps) {

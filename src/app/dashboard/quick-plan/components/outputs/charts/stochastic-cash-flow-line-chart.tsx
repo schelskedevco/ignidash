@@ -7,12 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-export interface StochasticCashFlowLineChartDataPoint {
-  age: number;
-  name: string;
-  amount: number;
-}
+import type { StochasticCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -20,8 +15,8 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof StochasticCashFlowLineChartDataPoint;
-    payload: StochasticCashFlowLineChartDataPoint;
+    dataKey: keyof StochasticCashFlowChartDataPoint;
+    payload: StochasticCashFlowChartDataPoint;
   }>;
   label?: number;
   currentAge: number;
@@ -49,7 +44,7 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
 };
 
 interface StochasticCashFlowChartProps {
-  rawChartData: StochasticCashFlowLineChartDataPoint[];
+  rawChartData: StochasticCashFlowChartDataPoint[];
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }

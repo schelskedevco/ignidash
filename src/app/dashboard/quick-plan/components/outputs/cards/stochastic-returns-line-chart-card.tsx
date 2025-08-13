@@ -2,13 +2,14 @@
 
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
+import type { StochasticReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 
-import StochasticReturnsLineChart, { type StochasticReturnsLineChartDataPoint } from '../charts/stochastic-returns-line-chart';
+import StochasticReturnsLineChart from '../charts/stochastic-returns-line-chart';
 
 interface StochasticReturnsLineChartCardProps {
   setSelectedAge: (age: number) => void;
   selectedAge: number;
-  rawChartData: StochasticReturnsLineChartDataPoint[];
+  rawChartData: StochasticReturnsChartDataPoint[];
 }
 
 export default function StochasticReturnsLineChartCard({ setSelectedAge, selectedAge, rawChartData }: StochasticReturnsLineChartCardProps) {

@@ -2,13 +2,14 @@
 
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
+import type { StochasticCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 
-import StochasticCashFlowLineChart, { type StochasticCashFlowLineChartDataPoint } from '../charts/stochastic-cash-flow-line-chart';
+import StochasticCashFlowLineChart from '../charts/stochastic-cash-flow-line-chart';
 
 interface StochasticCashFlowLineChartCardProps {
   setSelectedAge: (age: number) => void;
   selectedAge: number;
-  rawChartData: StochasticCashFlowLineChartDataPoint[];
+  rawChartData: StochasticCashFlowChartDataPoint[];
 }
 
 export default function StochasticCashFlowLineChartCard({

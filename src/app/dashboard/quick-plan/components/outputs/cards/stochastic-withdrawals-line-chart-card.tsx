@@ -2,13 +2,14 @@
 
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
+import type { StochasticWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
 
-import StochasticWithdrawalsLineChart, { type StochasticWithdrawalsLineChartDataPoint } from '../charts/stochastic-withdrawals-line-chart';
+import StochasticWithdrawalsLineChart from '../charts/stochastic-withdrawals-line-chart';
 
 interface StochasticWithdrawalsLineChartCardProps {
   setSelectedAge: (age: number) => void;
   selectedAge: number;
-  rawChartData: StochasticWithdrawalsLineChartDataPoint[];
+  rawChartData: StochasticWithdrawalsChartDataPoint[];
 }
 
 export default function StochasticWithdrawalsLineChartCard({

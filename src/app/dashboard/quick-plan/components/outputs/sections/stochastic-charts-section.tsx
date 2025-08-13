@@ -5,6 +5,11 @@ import { useState } from 'react';
 import { useCurrentAge, type StochasticAnalysis } from '@/lib/stores/quick-plan-store';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
+import type {
+  StochasticCashFlowChartDataPoint,
+  StochasticReturnsChartDataPoint,
+  StochasticWithdrawalsChartDataPoint,
+} from '@/lib/types/chart-data-points';
 
 import StochasticPortfolioAreaChartCard from '../cards/stochastic-portfolio-area-chart-card';
 import StochasticPortfolioBarChartCard from '../cards/stochastic-portfolio-bar-chart-card';
@@ -18,20 +23,17 @@ import StochasticWithdrawalsLineChartCard from '../cards/stochastic-withdrawals-
 
 import type { StochasticPortfolioAreaChartDataPoint } from '../charts/stochastic-portfolio-area-chart';
 import type { StochasticPortfolioBarChartDataPoint } from '../charts/stochastic-portfolio-bar-chart';
-import type { StochasticCashFlowBarChartDataPoint } from '../charts/stochastic-cash-flow-bar-chart'; // TODO: Consolidate with LineChart type
 import type { StochasticPhasePercentAreaChartDataPoint } from '../charts/stochastic-phase-percent-area-chart';
-import type { StochasticReturnsBarChartDataPoint } from '../charts/stochastic-returns-bar-chart'; // TODO: Consolidate with LineChart type
-import type { StochasticWithdrawalsBarChartDataPoint } from '../charts/stochastic-withdrawals-bar-chart'; // TODO: Consolidate with LineChart type
 
 interface StochasticChartsSectionProps {
   analysis: StochasticAnalysis | null;
   portfolioAreaChartData: StochasticPortfolioAreaChartDataPoint[];
   portfolioPercentilesChartData: StochasticPortfolioBarChartDataPoint[];
   portfolioDistributionChartData: StochasticPortfolioBarChartDataPoint[];
-  cashFlowChartData: StochasticCashFlowBarChartDataPoint[];
+  cashFlowChartData: StochasticCashFlowChartDataPoint[];
   phasePercentChartData: StochasticPhasePercentAreaChartDataPoint[];
-  returnsChartData: StochasticReturnsBarChartDataPoint[];
-  withdrawalsChartData: StochasticWithdrawalsBarChartDataPoint[];
+  returnsChartData: StochasticReturnsChartDataPoint[];
+  withdrawalsChartData: StochasticWithdrawalsChartDataPoint[];
 }
 
 export default function StochasticChartsSection({
