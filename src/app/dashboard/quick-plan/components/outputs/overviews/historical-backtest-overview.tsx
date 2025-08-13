@@ -30,7 +30,7 @@ import StochasticReturnsLineChart from '../charts/stochastic-returns-line-chart'
 import StochasticWithdrawalsChart from '../charts/stochastic-withdrawals-bar-chart';
 import StochasticWithdrawalsLineChart from '../charts/stochastic-withdrawals-line-chart';
 import ResultsMetrics from '../stochastic-metrics';
-import StochasticPortfolioAreaChartCard from '../sections/stochastic-portfolio-area-chart-card';
+import StochasticPortfolioAreaChartCard from '../cards/stochastic-portfolio-area-chart-card';
 import StochasticDataTableSection from '../sections/stochastic-data-table-section';
 
 export default function HistoricalBacktestOverview() {
