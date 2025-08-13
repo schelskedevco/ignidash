@@ -20,6 +20,7 @@ import {
   useMonteCarloCashFlowChartData,
   useMonteCarloPhasePercentAreaChartData,
   useMonteCarloReturnsChartData,
+  useMonteCarloWithdrawalsChartData,
   useShowReferenceLinesPreference,
   useUpdatePreferences,
 } from '@/lib/stores/quick-plan-store';
@@ -36,6 +37,7 @@ import StochasticCashFlowLineChart from '../charts/stochastic-cash-flow-line-cha
 import StochasticPhasePercentAreaChart from '../charts/stochastic-phase-percent-area-chart';
 import StochasticReturnsChart from '../charts/stochastic-returns-bar-chart';
 import StochasticReturnsLineChart from '../charts/stochastic-returns-line-chart';
+import StochasticWithdrawalsChart from '../charts/stochastic-withdrawals-bar-chart';
 import ResultsMetrics from '../stochastic-metrics';
 import MonteCarloDataTable from '../tables/monte-carlo-data-table';
 
@@ -50,6 +52,7 @@ export default function MonteCarloOverview() {
   const [cashFlowViewMode, setCashFlowViewMode] = useState<'inflowOutflow' | 'net'>('inflowOutflow');
 
   const [returnsViewMode, setReturnsViewMode] = useState<'amounts' | 'rates'>('rates');
+  const [withdrawalsViewMode, setWithdrawalsViewMode] = useState<'amounts' | 'rates'>('rates');
 
   const showReferenceLines = useShowReferenceLinesPreference();
   const updatePreferences = useUpdatePreferences();
@@ -60,6 +63,7 @@ export default function MonteCarloOverview() {
   const cashFlowChartData = useMonteCarloCashFlowChartData();
   const phasePercentChartData = useMonteCarloPhasePercentAreaChartData();
   const returnsChartData = useMonteCarloReturnsChartData();
+  const withdrawalsChartData = useMonteCarloWithdrawalsChartData();
 
   // Reset selectedSeed when simulation changes
   useEffect(() => setSelectedSeed(null), [simulation, viewMode]);
@@ -107,6 +111,10 @@ export default function MonteCarloOverview() {
       />
     ),
     [returnsChartData, selectedAge, currentAge]
+  );
+  const memoizedWithdrawalsChart = useMemo(
+    () => <StochasticWithdrawalsChart age={selectedAge} mode={withdrawalsViewMode} rawChartData={withdrawalsChartData} />,
+    [withdrawalsChartData, selectedAge, withdrawalsViewMode]
   );
 
   if (chartData.length === 0) {
@@ -224,6 +232,24 @@ export default function MonteCarloOverview() {
               </h4>
             </div>
             {memoizedReturnsLineChart}
+          </Card>
+          <Card className="my-0">
+            <div className="mb-4 flex items-center justify-between">
+              <h4 className="text-foreground flex items-center text-lg font-semibold">
+                <span className="mr-2">Withdrawals</span>
+                <span className="text-muted-foreground">Age {selectedAge}</span>
+              </h4>
+              <ButtonGroup
+                firstButtonText="Rates"
+                firstButtonIcon={<ReceiptPercentIcon />}
+                firstButtonOnClick={() => setWithdrawalsViewMode('rates')}
+                lastButtonText="Amounts"
+                lastButtonIcon={<DocumentCurrencyDollarIcon />}
+                lastButtonOnClick={() => setWithdrawalsViewMode('amounts')}
+                defaultActiveButton="first"
+              />
+            </div>
+            {memoizedWithdrawalsChart}
           </Card>
         </div>
       </SectionContainer>

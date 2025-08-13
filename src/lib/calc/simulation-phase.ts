@@ -130,7 +130,8 @@ export class AccumulationPhase implements SimulationPhase {
       updatedPortfolio = portfolio.withWithdrawal(withdrawalAmount);
     }
 
-    return [updatedPortfolio, cashFlows, { withdrawalAmount, withdrawalPercentage: (withdrawalAmount / portfolio.getTotalValue()) * 100 }];
+    const withdrawalPercentage = !portfolio.getIsDepleted() ? (withdrawalAmount / portfolio.getTotalValue()) * 100 : 0;
+    return [updatedPortfolio, cashFlows, { withdrawalAmount, withdrawalPercentage }];
   }
 
   isSensitiveToSORR(): boolean {
@@ -194,7 +195,8 @@ export class RetirementPhase implements SimulationPhase {
       cashFlows.push({ name: 'Withdrawal Taxes', amount: -taxAmount });
     }
 
-    return [updatedPortfolio, cashFlows, { withdrawalAmount, withdrawalPercentage: (withdrawalAmount / portfolio.getTotalValue()) * 100 }];
+    const withdrawalPercentage = !portfolio.getIsDepleted() ? (withdrawalAmount / portfolio.getTotalValue()) * 100 : 0;
+    return [updatedPortfolio, cashFlows, { withdrawalAmount, withdrawalPercentage }];
   }
 
   isSensitiveToSORR(): boolean {

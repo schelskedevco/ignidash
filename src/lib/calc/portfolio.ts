@@ -76,6 +76,14 @@ export class Portfolio {
   }
 
   /**
+   * Checks if the portfolio is depleted (i.e., has no significant value)
+   * @returns True if the portfolio is considered depleted, false otherwise
+   */
+  getIsDepleted(): boolean {
+    return !(this.getTotalValue() > 0.1);
+  }
+
+  /**
    * Applies market returns to the portfolio, increasing asset values
    * Returns are applied proportionally to each asset's current value
    * @param returns - Asset class return rates as decimals

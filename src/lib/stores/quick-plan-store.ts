@@ -831,6 +831,46 @@ export const useHistoricalBacktestReturnsChartData = () => {
   }, [currentAge, simulation]);
 };
 
+export const useMonteCarloWithdrawalsChartData = () => {
+  const currentAge = useCurrentAge()!;
+  const simulation = useMonteCarloSimulation();
+
+  return useMemo(() => {
+    const analyzer = new SimulationAnalyzer();
+    const simulationData = simulation.simulations.map(([, result]) => result);
+
+    const analysis = analyzer.analyzeSimulations(simulationData);
+    if (!analysis) return [];
+
+    return analysis.yearlyProgression.map((data) => ({
+      age: data.year + currentAge,
+      name: 'Withdrawals',
+      rate: data.withdrawals.percentage?.mean ?? null,
+      amount: data.withdrawals.amount?.mean ?? null,
+    }));
+  }, [currentAge, simulation]);
+};
+
+export const useHistoricalBacktestWithdrawalsChartData = () => {
+  const currentAge = useCurrentAge()!;
+  const simulation = useHistoricalBacktestSimulation();
+
+  return useMemo(() => {
+    const analyzer = new SimulationAnalyzer();
+    const simulationData = simulation.simulations.map(([, result]) => result);
+
+    const analysis = analyzer.analyzeSimulations(simulationData);
+    if (!analysis) return [];
+
+    return analysis.yearlyProgression.map((data) => ({
+      age: data.year + currentAge,
+      name: 'Withdrawals',
+      rate: data.withdrawals.percentage?.mean ?? null,
+      amount: data.withdrawals.amount?.mean ?? null,
+    }));
+  }, [currentAge, simulation]);
+};
+
 export const useHistoricalBacktestChartData = () => {
   const currentAge = useCurrentAge()!;
   const simulation = useHistoricalBacktestSimulation();
