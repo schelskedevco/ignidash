@@ -7,7 +7,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-interface StochasticPhasePercentDataPoint {
+export interface StochasticPhasePercentAreaChartDataPoint {
   age: number;
   percentAccumulation: number;
   percentRetirement: number;
@@ -20,8 +20,8 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof StochasticPhasePercentDataPoint;
-    payload: StochasticPhasePercentDataPoint;
+    dataKey: keyof StochasticPhasePercentAreaChartDataPoint;
+    payload: StochasticPhasePercentAreaChartDataPoint;
   }>;
   label?: number;
   currentAge: number;
@@ -59,7 +59,7 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
 };
 
 interface StochasticPhasePercentAreaChartProps {
-  chartData: StochasticPhasePercentDataPoint[];
+  chartData: StochasticPhasePercentAreaChartDataPoint[];
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }

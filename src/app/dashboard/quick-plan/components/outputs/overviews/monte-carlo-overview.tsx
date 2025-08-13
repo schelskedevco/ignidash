@@ -18,7 +18,6 @@ import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import ButtonGroup from '@/components/ui/button-group';
 
-import StochasticPhasePercentAreaChart from '../charts/stochastic-phase-percent-area-chart';
 import StochasticReturnsChart from '../charts/stochastic-returns-bar-chart';
 import StochasticReturnsLineChart from '../charts/stochastic-returns-line-chart';
 import StochasticWithdrawalsChart from '../charts/stochastic-withdrawals-bar-chart';
@@ -28,6 +27,7 @@ import StochasticPortfolioAreaChartCard from '../cards/stochastic-portfolio-area
 import StochasticPortfolioBarChartCard from '../cards/stochastic-portfolio-bar-chart-card';
 import StochasticCashFlowBarChartCard from '../cards/stochastic-cash-flow-bar-chart-card';
 import StochasticCashFlowLineChartCard from '../cards/stochastic-cash-flow-line-chart-card';
+import StochasticPhasePercentAreaChartCard from '../cards/stochastic-phase-percent-area-chart-card';
 import StochasticDataTableSection from '../sections/stochastic-data-table-section';
 
 export default function MonteCarloOverview() {
@@ -46,18 +46,6 @@ export default function MonteCarloOverview() {
   const returnsChartData = useMonteCarloReturnsChartData(simulation);
   const withdrawalsChartData = useMonteCarloWithdrawalsChartData(simulation);
 
-  const memoizedPhasePercentChart = useMemo(
-    () => (
-      <StochasticPhasePercentAreaChart
-        onAgeSelect={(age) => {
-          if (age >= currentAge! + 1) setSelectedAge(age);
-        }}
-        selectedAge={selectedAge}
-        chartData={phasePercentChartData}
-      />
-    ),
-    [selectedAge, phasePercentChartData, currentAge]
-  );
   const memoizedReturnsChart = useMemo(
     () => <StochasticReturnsChart age={selectedAge} mode={returnsViewMode} rawChartData={returnsChartData} />,
     [returnsChartData, selectedAge, returnsViewMode]
@@ -118,15 +106,11 @@ export default function MonteCarloOverview() {
           />
           <StochasticCashFlowBarChartCard selectedAge={selectedAge} rawChartData={cashFlowChartData} />
           <StochasticCashFlowLineChartCard setSelectedAge={setSelectedAge} selectedAge={selectedAge} rawChartData={cashFlowChartData} />
-          <Card className="my-0">
-            <div className="mb-4 flex items-center justify-between">
-              <h4 className="text-foreground flex items-center text-lg font-semibold">
-                <span className="mr-2">Phase Percent</span>
-                <span className="text-muted-foreground">Time Series</span>
-              </h4>
-            </div>
-            {memoizedPhasePercentChart}
-          </Card>
+          <StochasticPhasePercentAreaChartCard
+            setSelectedAge={setSelectedAge}
+            selectedAge={selectedAge}
+            rawChartData={phasePercentChartData}
+          />
           <Card className="my-0">
             <div className="mb-4 flex items-center justify-between">
               <h4 className="text-foreground flex items-center text-lg font-semibold">
