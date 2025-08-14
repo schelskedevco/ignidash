@@ -494,7 +494,7 @@ export const useMonteCarloSimulationWithWorker = () => {
   const simulationSeed = useSimulationSeed();
 
   return useSWR(
-    ['monteCarlo', inputs, simulationSeed],
+    ['monteCarloSim', inputs, simulationSeed],
     async () => {
       const worker = getSimulationWorker();
       const dto = await worker.runMonteCarloSimulation(inputs, simulationSeed, 100);
@@ -510,7 +510,7 @@ export const useMonteCarloAnalysisWithWorker = () => {
   const simulationSeed = useSimulationSeed();
 
   return useSWR(
-    ['monteCarlo', inputs, simulationSeed],
+    ['monteCarloSimAndAnalyze', inputs, simulationSeed],
     async () => {
       const worker = getSimulationWorker();
       return await worker.analyzeMonteCarloSimulation(inputs, simulationSeed, 100);
@@ -534,7 +534,7 @@ export const useHistoricalBacktestSimulationWithWorker = () => {
   const simulationSeed = useSimulationSeed();
 
   return useSWR(
-    ['historicalBacktest', inputs, simulationSeed],
+    ['historicalBacktestSim', inputs, simulationSeed],
     async () => {
       const worker = getSimulationWorker();
       const dto = await worker.runHistoricalBacktestSimulation(inputs, simulationSeed, 100);
@@ -550,7 +550,7 @@ export const useHistoricalBacktestAnalysisWithWorker = () => {
   const simulationSeed = useSimulationSeed();
 
   return useSWR(
-    ['historicalBacktest', inputs, simulationSeed],
+    ['historicalBacktestSimAndAnalyze', inputs, simulationSeed],
     async () => {
       const worker = getSimulationWorker();
       return await worker.analyzeHistoricalBacktestSimulation(inputs, simulationSeed, 100);
@@ -885,6 +885,9 @@ export const useStochasticTableData = (simulation: MultiSimulationResult): Stoch
         }
       }
 
+      // Get historical ranges (if present)
+      const historicalRanges = (simulationResult as SimulationResult & HistoricalRangeInfo)?.historicalRanges ?? null;
+
       // Get final phase name - last entry in phasesMetadata
       const finalPhaseEntry = simulationResult.phasesMetadata[simulationResult.phasesMetadata.length - 1];
       const finalPhaseName = finalPhaseEntry ? finalPhaseEntry[1].getName() : '';
@@ -921,7 +924,7 @@ export const useStochasticTableData = (simulation: MultiSimulationResult): Stoch
         averageBondsReturn,
         averageCashReturn,
         averageInflationRate,
-        historicalRanges: (simulationResult as SimulationResult & HistoricalRangeInfo).historicalRanges,
+        historicalRanges,
       };
     });
 
