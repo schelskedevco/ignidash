@@ -2,9 +2,9 @@
 
 import { useIsCalculationReady, useMarketAssumptionsData } from '@/lib/stores/quick-plan-store';
 
-import FixedReturnsOverview from './results-pages/fixed-returns-results';
-import MonteCarloOverview from './results-pages/monte-carlo-results';
-import HistoricalBacktestOverview from './results-pages/historical-backtest-results';
+import FixedReturnsResults from './results-pages/fixed-returns-results';
+import MonteCarloResults from './results-pages/monte-carlo-results';
+import HistoricalBacktestResults from './results-pages/historical-backtest-results';
 
 export default function ResultsSections() {
   const isCalculationReady = useIsCalculationReady();
@@ -20,10 +20,10 @@ export default function ResultsSections() {
 
   switch (marketAssumptions.simulationMode) {
     case 'fixedReturns':
-      return <FixedReturnsOverview />;
+      return <FixedReturnsResults />;
     case 'monteCarlo':
-      return <MonteCarloOverview />;
+      return <MonteCarloResults />;
     case 'historicalBacktest':
-      return <HistoricalBacktestOverview />;
+      return <HistoricalBacktestResults />;
   }
 }

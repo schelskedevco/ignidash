@@ -49,7 +49,7 @@ import {
   type HistoricalRangeInfo,
 } from '@/lib/calc/simulation-engine';
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
-import { SimulationAnalyzer, type MultiSimulationStats } from '@/lib/calc/simulation-analyzer';
+import { SimulationAnalyzer, type MultiSimulationStats, type AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 import WithdrawalStrategy from '@/lib/calc/withdrawal-strategy';
 import { getSimulationWorker } from '@/lib/workers/simulation-worker-api';
 import type { MultiSimulationResultDTO } from '@/lib/workers/simulation-dto';
@@ -507,6 +507,20 @@ export const useMonteCarloSimulationWithWorker = () => {
   );
 };
 
+export const useMonteCarloAnalysisWithWorker = () => {
+  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
+  const simulationSeed = useSimulationSeed();
+
+  return useSWR(
+    ['monteCarlo', inputs, simulationSeed],
+    async () => {
+      const worker = getSimulationWorker();
+      return await worker.analyzeMonteCarloSimulation(inputs, simulationSeed, 100);
+    },
+    { revalidateOnFocus: false }
+  );
+};
+
 export const useHistoricalBacktestSimulation = () => {
   const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
   const simulationSeed = useSimulationSeed();
@@ -515,6 +529,36 @@ export const useHistoricalBacktestSimulation = () => {
     const engine = new LcgHistoricalBacktestSimulationEngine(inputs, simulationSeed);
     return engine.runLcgHistoricalBacktest(100);
   }, [inputs, simulationSeed]);
+};
+
+export const useHistoricalBacktestSimulationWithWorker = () => {
+  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
+  const simulationSeed = useSimulationSeed();
+
+  return useSWR(
+    ['historicalBacktest', inputs, simulationSeed],
+    async () => {
+      const worker = getSimulationWorker();
+      const dto = await worker.runHistoricalBacktestSimulation(inputs, simulationSeed, 100);
+
+      return reconstructSimulationResult(dto);
+    },
+    { revalidateOnFocus: false }
+  );
+};
+
+export const useHistoricalBacktestAnalysisWithWorker = () => {
+  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
+  const simulationSeed = useSimulationSeed();
+
+  return useSWR(
+    ['historicalBacktest', inputs, simulationSeed],
+    async () => {
+      const worker = getSimulationWorker();
+      return await worker.analyzeHistoricalBacktestSimulation(inputs, simulationSeed, 100);
+    },
+    { revalidateOnFocus: false }
+  );
 };
 
 export interface FixedReturnsAnalysis {
@@ -564,16 +608,10 @@ export interface StochasticAnalysis {
   finalPortfolio: number;
 }
 
-export const useStochasticAnalysis = (simulation: MultiSimulationResult) => {
+export const useStochasticAnalysis = (analysis: AggregateSimulationStats) => {
   const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
 
   return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return null;
-
     const successRate = analysis.successRate;
     const requiredPortfolio = WithdrawalStrategy.getConstantDollarRequiredPortfolio(inputs);
     const progressToFIRE = Math.min(inputs.basics.investedAssets! / requiredPortfolio, 1);
@@ -614,7 +652,7 @@ export const useStochasticAnalysis = (simulation: MultiSimulationResult) => {
       requiredPortfolio,
       finalPortfolio,
     };
-  }, [inputs, simulation]);
+  }, [inputs, analysis]);
 };
 
 /**
@@ -649,35 +687,23 @@ export const useFixedReturnsCashFlowChartData = (simulation: SimulationResult) =
  * Stochastic Chart Hooks
  * These hooks provide access to stochastic simulation chart data
  */
-export const useStochasticPortfolioAreaChartData = (simulation: MultiSimulationResult) => {
+export const useStochasticPortfolioAreaChartData = (analysis: AggregateSimulationStats) => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
     return analysis.yearlyProgression.map((data) => ({
       age: data.year + currentAge,
       p25: data.percentiles.p25,
       p50: data.percentiles.p50,
       p75: data.percentiles.p75,
     }));
-  }, [currentAge, simulation]);
+  }, [currentAge, analysis]);
 };
 
-export const useStochasticPortfolioPercentilesChartData = (simulation: MultiSimulationResult) => {
+export const useStochasticPortfolioPercentilesChartData = (analysis: AggregateSimulationStats) => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
     return analysis.yearlyProgression.flatMap((data) => [
       { age: data.year + currentAge, name: 'P10', amount: data.percentiles.p10 },
       { age: data.year + currentAge, name: 'P25', amount: data.percentiles.p25 },
@@ -685,19 +711,13 @@ export const useStochasticPortfolioPercentilesChartData = (simulation: MultiSimu
       { age: data.year + currentAge, name: 'P75', amount: data.percentiles.p75 },
       { age: data.year + currentAge, name: 'P90', amount: data.percentiles.p90 },
     ]);
-  }, [currentAge, simulation]);
+  }, [currentAge, analysis]);
 };
 
-export const useStochasticPortfolioDistributionChartData = (simulation: MultiSimulationResult) => {
+export const useStochasticPortfolioDistributionChartData = (analysis: AggregateSimulationStats) => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
     return analysis.yearlyProgression.flatMap((data) => [
       { age: data.year + currentAge, name: '<P10', amount: data.distribution.belowP10 },
       { age: data.year + currentAge, name: 'P10—P25', amount: data.distribution.p10toP25 },
@@ -706,19 +726,13 @@ export const useStochasticPortfolioDistributionChartData = (simulation: MultiSim
       { age: data.year + currentAge, name: 'P75—P90', amount: data.distribution.p75toP90 },
       { age: data.year + currentAge, name: '>P90', amount: data.distribution.aboveP90 },
     ]);
-  }, [currentAge, simulation]);
+  }, [currentAge, analysis]);
 };
 
-export const useStochasticCashFlowChartData = (simulation: MultiSimulationResult) => {
+export const useStochasticCashFlowChartData = (analysis: AggregateSimulationStats) => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
     return analysis.yearlyProgression.flatMap((data) =>
       Object.entries(data.cashFlows.byName)
         .filter(([, stats]) => stats !== null)
@@ -728,38 +742,26 @@ export const useStochasticCashFlowChartData = (simulation: MultiSimulationResult
           amount: stats!.mean,
         }))
     );
-  }, [currentAge, simulation]);
+  }, [currentAge, analysis]);
 };
 
-export const useStochasticPhasePercentAreaChartData = (simulation: MultiSimulationResult) => {
+export const useStochasticPhasePercentAreaChartData = (analysis: AggregateSimulationStats) => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
     return analysis.yearlyProgression.map((data) => ({
       age: data.year + currentAge,
       percentAccumulation: data.phasePercentages.accumulation,
       percentRetirement: data.phasePercentages.retirement,
       percentBankrupt: data.phasePercentages.bankrupt,
     }));
-  }, [currentAge, simulation]);
+  }, [currentAge, analysis]);
 };
 
-export const useStochasticReturnsChartData = (simulation: MultiSimulationResult) => {
+export const useStochasticReturnsChartData = (analysis: AggregateSimulationStats) => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
     return analysis.yearlyProgression.flatMap((data) => {
       const results = [];
 
@@ -802,26 +804,20 @@ export const useStochasticReturnsChartData = (simulation: MultiSimulationResult)
 
       return results;
     });
-  }, [currentAge, simulation]);
+  }, [currentAge, analysis]);
 };
 
-export const useStochasticWithdrawalsChartData = (simulation: MultiSimulationResult) => {
+export const useStochasticWithdrawalsChartData = (analysis: AggregateSimulationStats) => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
     return analysis.yearlyProgression.map((data) => ({
       age: data.year + currentAge,
       name: 'Withdrawals',
       rate: data.withdrawals.percentage?.mean ?? null,
       amount: data.withdrawals.amount?.mean ?? null,
     }));
-  }, [currentAge, simulation]);
+  }, [currentAge, analysis]);
 };
 
 /**

@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useCurrentAge, type StochasticAnalysis } from '@/lib/stores/quick-plan-store';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
-import type { MultiSimulationResult } from '@/lib/calc/simulation-engine';
+import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 import {
   useStochasticPortfolioAreaChartData,
   useStochasticPortfolioPercentilesChartData,
@@ -27,21 +27,21 @@ import StochasticWithdrawalsBarChartCard from '../cards/stochastic-withdrawals-b
 import StochasticWithdrawalsLineChartCard from '../cards/stochastic-withdrawals-line-chart-card';
 
 interface StochasticChartsSectionProps {
+  simStats: AggregateSimulationStats;
   analysis: StochasticAnalysis | null;
-  simulation: MultiSimulationResult;
 }
 
-export default function StochasticChartsSection({ analysis, simulation }: StochasticChartsSectionProps) {
+export default function StochasticChartsSection({ simStats, analysis }: StochasticChartsSectionProps) {
   const currentAge = useCurrentAge();
   const [selectedAge, setSelectedAge] = useState<number>(currentAge! + 1);
 
-  const portfolioAreaChartData = useStochasticPortfolioAreaChartData(simulation);
-  const portfolioPercentilesChartData = useStochasticPortfolioPercentilesChartData(simulation);
-  const portfolioDistributionChartData = useStochasticPortfolioDistributionChartData(simulation);
-  const cashFlowChartData = useStochasticCashFlowChartData(simulation);
-  const phasePercentChartData = useStochasticPhasePercentAreaChartData(simulation);
-  const returnsChartData = useStochasticReturnsChartData(simulation);
-  const withdrawalsChartData = useStochasticWithdrawalsChartData(simulation);
+  const portfolioAreaChartData = useStochasticPortfolioAreaChartData(simStats);
+  const portfolioPercentilesChartData = useStochasticPortfolioPercentilesChartData(simStats);
+  const portfolioDistributionChartData = useStochasticPortfolioDistributionChartData(simStats);
+  const cashFlowChartData = useStochasticCashFlowChartData(simStats);
+  const phasePercentChartData = useStochasticPhasePercentAreaChartData(simStats);
+  const returnsChartData = useStochasticReturnsChartData(simStats);
+  const withdrawalsChartData = useStochasticWithdrawalsChartData(simStats);
 
   return (
     <SectionContainer showBottomBorder>

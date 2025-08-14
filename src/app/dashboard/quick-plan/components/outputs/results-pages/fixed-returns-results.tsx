@@ -11,7 +11,7 @@ import FixedReturnsCashFlowBarChartCard from '../cards/fixed-returns-cash-flow-b
 import FixedReturnsDataTable from '../tables/fixed-returns-data-table';
 import ResultsMetrics from '../fixed-returns-metrics';
 
-export default function FixedReturnsOverview() {
+export default function FixedReturnsResults() {
   const simulation = useFixedReturnsSimulation();
   const analysis = useFixedReturnsAnalysis(simulation);
 

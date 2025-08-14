@@ -25,7 +25,11 @@ const simulationAPI = {
     };
   },
 
-  async runHistoricalBacktest(inputs: QuickPlanInputs, baseSeed: number, numSimulations: number): Promise<MultiSimulationResultDTO> {
+  async runHistoricalBacktestSimulation(
+    inputs: QuickPlanInputs,
+    baseSeed: number,
+    numSimulations: number
+  ): Promise<MultiSimulationResultDTO> {
     const engine = new LcgHistoricalBacktestSimulationEngine(inputs, baseSeed);
     const result = engine.runLcgHistoricalBacktest(numSimulations);
 
