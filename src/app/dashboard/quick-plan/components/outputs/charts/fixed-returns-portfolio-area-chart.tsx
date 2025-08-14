@@ -8,7 +8,7 @@ import { useFixedReturnsChartData, useFixedReturnsAnalysis, useCurrentAge } from
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-interface ChartDataPoint {
+interface FixedReturnsPortfolioAreaChartDataPoint {
   age: number;
   stocks: number;
   bonds: number;
@@ -21,8 +21,8 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof ChartDataPoint;
-    payload: ChartDataPoint;
+    dataKey: keyof FixedReturnsPortfolioAreaChartDataPoint;
+    payload: FixedReturnsPortfolioAreaChartDataPoint;
   }>;
   label?: number;
   currentAge: number;
@@ -69,13 +69,17 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
   );
 };
 
-interface FixedResultsChartProps {
+interface FixedReturnsPortfolioAreaChartProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   showReferenceLines: boolean;
 }
 
-export default function FixedResultsChart({ onAgeSelect, selectedAge, showReferenceLines }: FixedResultsChartProps) {
+export default function FixedReturnsPortfolioAreaChart({
+  onAgeSelect,
+  selectedAge,
+  showReferenceLines,
+}: FixedReturnsPortfolioAreaChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
