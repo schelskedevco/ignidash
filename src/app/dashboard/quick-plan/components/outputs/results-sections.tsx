@@ -4,9 +4,9 @@ import { useIsCalculationReady, useMarketAssumptionsData } from '@/lib/stores/qu
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 
-import FixedReturnsOverview from './overviews/fixed-returns-overview';
-import MonteCarloOverview from './overviews/monte-carlo-overview';
-import HistoricalBacktestOverview from './overviews/historical-backtest-overview';
+import FixedReturnsOverview from './results-pages/fixed-returns-results';
+import MonteCarloOverview from './results-pages/monte-carlo-results';
+import HistoricalBacktestOverview from './results-pages/historical-backtest-results';
 
 export default function ResultsSections() {
   const isCalculationReady = useIsCalculationReady();
