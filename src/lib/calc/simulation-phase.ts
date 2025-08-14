@@ -26,11 +26,16 @@ import { Portfolio } from './portfolio';
 import { CashFlow, AnnualIncome, AnnualExpenses, PassiveRetirementIncome, RetirementExpenses } from './cash-flow';
 import WithdrawalStrategy, { WithdrawalsWithMetadata } from './withdrawal-strategy';
 
+/** Supported simulation phase types */
+export type PhaseType = 'retirement' | 'accumulation';
+
 /**
  * Simulation phase interface defining financial life stage behavior
  * Implements the strategy pattern for different phases of financial planning
  */
 export interface SimulationPhase {
+  readonly type: PhaseType;
+
   /**
    * Gets the cash flow components active during this phase
    * @param inputs - User's financial planning inputs
@@ -87,6 +92,8 @@ export interface SimulationPhase {
  * Models the working years with income generation and expense management
  */
 export class AccumulationPhase implements SimulationPhase {
+  public readonly type: PhaseType = 'accumulation';
+
   getCashFlows(inputs: QuickPlanInputs): CashFlow[] {
     return [new AnnualIncome(inputs), new AnnualExpenses(inputs)];
   }
@@ -145,6 +152,8 @@ export class AccumulationPhase implements SimulationPhase {
  * Includes tax-adjusted withdrawal calculations for sustainable spending
  */
 export class RetirementPhase implements SimulationPhase {
+  public readonly type: PhaseType = 'retirement';
+
   getCashFlows(inputs: QuickPlanInputs): CashFlow[] {
     return [new PassiveRetirementIncome(inputs), new RetirementExpenses(inputs)];
   }

@@ -26,6 +26,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { useShallow } from 'zustand/react/shallow';
+import useSWR from 'swr';
 
 import {
   type QuickPlanInputs,
@@ -50,6 +51,8 @@ import {
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
 import { SimulationAnalyzer, type MultiSimulationStats } from '@/lib/calc/simulation-analyzer';
 import WithdrawalStrategy from '@/lib/calc/withdrawal-strategy';
+import { getSimulationWorker } from '@/lib/workers/simulation-worker-api';
+import type { MultiSimulationResultDTO } from '@/lib/workers/simulation-dto';
 import {
   type SimulationTableRow,
   validateSimulationTableData,
@@ -60,6 +63,8 @@ import {
   type YearlyAggregateTableRow,
   validateYearlyAggregateTableData,
 } from '@/lib/schemas/simulation-table-schema';
+import { Portfolio } from '@/lib/calc/portfolio';
+import { SimulationPhase, AccumulationPhase, RetirementPhase, type PhaseType } from '@/lib/calc/simulation-phase';
 
 // ================================
 // TYPES & HELPERS
@@ -134,6 +139,36 @@ const createSimpleUpdateAction = <T extends keyof QuickPlanInputs>(
     };
   };
 };
+
+/**
+ * Reconstructs the simulation result from the DTO format.
+ * @param dto The DTO to reconstruct.
+ * @returns The reconstructed simulation result.
+ */
+function reconstructSimulationResult(dto: MultiSimulationResultDTO): MultiSimulationResult {
+  function reconstructPhase(phaseType: PhaseType): SimulationPhase {
+    switch (phaseType) {
+      case 'retirement':
+        return new RetirementPhase();
+      case 'accumulation':
+        return new AccumulationPhase();
+    }
+  }
+
+  return {
+    simulations: dto.simulations.map(([seed, sim]) => [
+      seed,
+      {
+        ...sim,
+        data: sim.data.map(([time, portfolioData]) => [
+          time,
+          Portfolio.create(portfolioData.assets, portfolioData.contributions, portfolioData.withdrawals),
+        ]),
+        phasesMetadata: sim.phasesMetadata.map(([time, phaseType]) => [time, reconstructPhase(phaseType)]),
+      },
+    ]),
+  };
+}
 
 // ================================
 // STATE INTERFACE & DEFAULT STATE
@@ -442,6 +477,22 @@ export const useMonteCarloSimulation = (baseSeed?: number) => {
     const engine = new MonteCarloSimulationEngine(inputs, seed);
     return engine.runMonteCarloSimulation(100);
   }, [inputs, baseSeed]);
+};
+
+export const useMonteCarloSimulationWithWorker = (baseSeed?: number) => {
+  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
+
+  return useSWR(
+    ['monteCarlo', inputs, baseSeed],
+    async () => {
+      const seed = baseSeed ?? Math.floor(Math.random() * 1000);
+      const worker = getSimulationWorker();
+      const dto = await worker.runMonteCarloSimulation(inputs, seed, 100);
+
+      return reconstructSimulationResult(dto);
+    },
+    { revalidateOnFocus: false }
+  );
 };
 
 export const useHistoricalBacktestSimulation = (baseSeed?: number) => {
