@@ -22,7 +22,7 @@ import FixedReturnsDataTable from '../tables/fixed-returns-data-table';
 import ResultsMetrics from '../fixed-returns-metrics';
 
 export default function FixedReturnsOverview() {
-  const fireAnalysis = useFixedReturnsAnalysis();
+  const analysis = useFixedReturnsAnalysis();
   const currentAge = useCurrentAge();
   const isXSmallScreen = useIsXSmallMobile();
 
@@ -45,7 +45,7 @@ export default function FixedReturnsOverview() {
     <>
       <SectionContainer showBottomBorder>
         <SectionHeader title="Key Metrics" desc="A snapshot of your simulation's most important results." />
-        <ResultsMetrics fireAnalysis={fireAnalysis} />
+        <ResultsMetrics analysis={analysis} />
       </SectionContainer>
       <SectionContainer showBottomBorder>
         <SectionHeader title="Data Visualization" desc="Interactive charts to explore your projection." />
