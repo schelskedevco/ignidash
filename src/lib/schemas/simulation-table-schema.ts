@@ -63,8 +63,8 @@ export const validateSimulationTableData = (data: unknown[]): SimulationTableRow
   return data.map(validateSimulationTableRow);
 };
 
-// Monte Carlo table schema
-export const monteCarloTableRowSchema = z.object({
+// Zod schema for Stochastic simulation table row data
+export const stochasticTableRowSchema = z.object({
   seed: z.number(),
   success: z.boolean(),
   fireAge: z.number().nullable(),
@@ -75,58 +75,14 @@ export const monteCarloTableRowSchema = z.object({
   averageBondsReturn: z.number().nullable(),
   averageCashReturn: z.number().nullable(),
   averageInflationRate: z.number().nullable(),
+  historicalRanges: z.array(z.object({ startYear: z.number(), endYear: z.number() })).nullable(), // Raw range data
 });
 
-// Infer TypeScript type from Monte Carlo schema
-export type MonteCarloTableRow = z.infer<typeof monteCarloTableRowSchema>;
+// Infer TypeScript type from Stochastic schema
+export type StochasticTableRow = z.infer<typeof stochasticTableRowSchema>;
 
-// Define the Monte Carlo columns structure with metadata
-const MONTE_CARLO_COLUMNS = {
-  seed: { title: 'Seed', format: 'number' },
-  success: { title: 'Success', format: 'string' },
-  fireAge: { title: 'FIRE Age', format: 'number' },
-  bankruptcyAge: { title: 'Bankruptcy Age', format: 'number' },
-  finalPhaseName: { title: 'Final Phase', format: 'string' },
-  finalPortfolioValue: { title: 'Final Portfolio', format: 'currency' },
-  averageStocksReturn: { title: 'Mean Stocks Return', format: 'percentage' },
-  averageBondsReturn: { title: 'Mean Bonds Return', format: 'percentage' },
-  averageCashReturn: { title: 'Mean Cash Return', format: 'percentage' },
-  averageInflationRate: { title: 'Mean Inflation Rate', format: 'percentage' },
-} as const;
-
-// Type-safe config for Monte Carlo table
-export const MONTE_CARLO_TABLE_CONFIG: Record<keyof MonteCarloTableRow, { title: string; format: ColumnFormat }> = MONTE_CARLO_COLUMNS;
-
-// Helper to validate Monte Carlo data at runtime
-export const validateMonteCarloTableRow = (data: unknown): MonteCarloTableRow => {
-  return monteCarloTableRowSchema.parse(data);
-};
-
-// Helper to validate array of Monte Carlo data
-export const validateMonteCarloTableData = (data: unknown[]): MonteCarloTableRow[] => {
-  return data.map(validateMonteCarloTableRow);
-};
-
-// Historical Backtest table schema (extends Monte Carlo with historical periods)
-export const historicalBacktestTableRowSchema = z.object({
-  seed: z.number(),
-  success: z.boolean(),
-  fireAge: z.number().nullable(),
-  bankruptcyAge: z.number().nullable(),
-  finalPhaseName: z.string(),
-  finalPortfolioValue: z.number(),
-  averageStocksReturn: z.number().nullable(),
-  averageBondsReturn: z.number().nullable(),
-  averageCashReturn: z.number().nullable(),
-  averageInflationRate: z.number().nullable(),
-  historicalRanges: z.array(z.object({ startYear: z.number(), endYear: z.number() })), // Raw range data
-});
-
-// Infer TypeScript type from Historical Backtest schema
-export type HistoricalBacktestTableRow = z.infer<typeof historicalBacktestTableRowSchema>;
-
-// Define the Historical Backtest columns structure with metadata
-const HISTORICAL_BACKTEST_COLUMNS = {
+// Define the Stochastic columns structure with metadata
+const STOCHASTIC_COLUMNS = {
   seed: { title: 'Seed', format: 'number' },
   success: { title: 'Success', format: 'string' },
   fireAge: { title: 'FIRE Age', format: 'number' },
@@ -140,18 +96,17 @@ const HISTORICAL_BACKTEST_COLUMNS = {
   historicalRanges: { title: 'Historical Ranges', format: 'historicalRanges' },
 } as const;
 
-// Type-safe config for Historical Backtest table
-export const HISTORICAL_BACKTEST_TABLE_CONFIG: Record<keyof HistoricalBacktestTableRow, { title: string; format: ColumnFormat }> =
-  HISTORICAL_BACKTEST_COLUMNS;
+// Type-safe config for Stochastic table
+export const STOCHASTIC_TABLE_CONFIG: Record<keyof StochasticTableRow, { title: string; format: ColumnFormat }> = STOCHASTIC_COLUMNS;
 
-// Helper to validate Historical Backtest data at runtime
-export const validateHistoricalBacktestTableRow = (data: unknown): HistoricalBacktestTableRow => {
-  return historicalBacktestTableRowSchema.parse(data);
+// Helper to validate Stochastic data at runtime
+export const validateStochasticTableRow = (data: unknown): StochasticTableRow => {
+  return stochasticTableRowSchema.parse(data);
 };
 
-// Helper to validate array of Historical Backtest data
-export const validateHistoricalBacktestTableData = (data: unknown[]): HistoricalBacktestTableRow[] => {
-  return data.map(validateHistoricalBacktestTableRow);
+// Helper to validate array of Stochastic data
+export const validateStochasticTableData = (data: unknown[]): StochasticTableRow[] => {
+  return data.map(validateStochasticTableRow);
 };
 
 // Yearly aggregate table schema

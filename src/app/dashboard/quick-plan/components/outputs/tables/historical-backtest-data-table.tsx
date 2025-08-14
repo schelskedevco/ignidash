@@ -1,19 +1,16 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 
 import {
-  useHistoricalBacktestTableData,
+  useHistoricalBacktestSimulationWithWorker,
+  useStochasticTableData,
   useSimulationDetailTableData,
-  useHistoricalBacktestYearlyResultsTableData,
+  useStochasticYearlyResultsTableData,
 } from '@/lib/stores/quick-plan-store';
+import type { SimulationTableRow, StochasticTableRow, YearlyAggregateTableRow } from '@/lib/schemas/simulation-table-schema';
 import {
-  type SimulationTableRow,
-  type HistoricalBacktestTableRow,
-  type YearlyAggregateTableRow,
-} from '@/lib/schemas/simulation-table-schema';
-import {
-  generateHistoricalBacktestTableColumns,
+  generateStochasticTableColumns,
   generateSimulationTableColumns,
   generateYearlyAggregateTableColumns,
 } from '@/lib/utils/table-formatters';
@@ -21,19 +18,14 @@ import type { MultiSimulationResult } from '@/lib/calc/simulation-engine';
 
 import Table from './table';
 
-interface HistoricalBacktestDataTableProps {
+interface HistoricalBacktestDataTableImplProps {
   simulation: MultiSimulationResult;
   selectedSeed: number | null;
   setSelectedSeed: (seed: number | null) => void;
   viewMode: 'all' | 'yearly';
 }
 
-export default function HistoricalBacktestDataTable({
-  simulation,
-  selectedSeed,
-  setSelectedSeed,
-  viewMode,
-}: HistoricalBacktestDataTableProps) {
+function HistoricalBacktestDataTableImpl({ simulation, selectedSeed, setSelectedSeed, viewMode }: HistoricalBacktestDataTableImplProps) {
   // Find the selected simulation result
   const selectedSimulation = useMemo(() => {
     if (selectedSeed === null) return null;
@@ -42,15 +34,15 @@ export default function HistoricalBacktestDataTable({
     return selectedSimulation ? selectedSimulation[1] : null;
   }, [selectedSeed, simulation]);
 
-  const allSimulationData = useHistoricalBacktestTableData(simulation);
-  const yearlyData = useHistoricalBacktestYearlyResultsTableData(simulation);
+  const allSimulationData = useStochasticTableData(simulation);
+  const yearlyData = useStochasticYearlyResultsTableData(simulation);
   const detailData = useSimulationDetailTableData(selectedSimulation);
 
-  const allSimulationColumns = useMemo(() => generateHistoricalBacktestTableColumns(), []);
+  const allSimulationColumns = useMemo(() => generateStochasticTableColumns(), []);
   const yearlyColumns = useMemo(() => generateYearlyAggregateTableColumns(), []);
   const detailDataColumns = useMemo(() => generateSimulationTableColumns(), []);
 
-  const handleRowClick = (row: HistoricalBacktestTableRow) => setSelectedSeed(row.seed);
+  const handleRowClick = (row: StochasticTableRow) => setSelectedSeed(row.seed);
 
   // When viewing a specific simulation detail
   if (selectedSeed !== null) {
@@ -65,12 +57,43 @@ export default function HistoricalBacktestDataTable({
   }
 
   // Default: viewing all simulations
+  return <Table<StochasticTableRow> columns={allSimulationColumns} data={allSimulationData} keyField="seed" onRowClick={handleRowClick} />;
+}
+
+interface HistoricalBacktestDataTableProps {
+  selectedSeed: number | null;
+  setSelectedSeed: (seed: number | null) => void;
+  viewMode: 'all' | 'yearly';
+}
+
+export default function HistoricalBacktestDataTable({ selectedSeed, setSelectedSeed, viewMode }: HistoricalBacktestDataTableProps) {
+  const { data: simulation, isLoading } = useHistoricalBacktestSimulationWithWorker();
+
+  // Reset selectedSeed when simulation changes
+  useEffect(() => setSelectedSeed(null), [setSelectedSeed, simulation, viewMode]);
+
+  if (isLoading) {
+    return (
+      <div className="text-muted-foreground text-center">
+        <p>Table content is loading...</p>
+      </div>
+    );
+  }
+
+  if (!simulation) {
+    return (
+      <div className="text-muted-foreground text-center">
+        <p>Table content is unavailable</p>
+      </div>
+    );
+  }
+
   return (
-    <Table<HistoricalBacktestTableRow>
-      columns={allSimulationColumns}
-      data={allSimulationData}
-      keyField="seed"
-      onRowClick={handleRowClick}
+    <HistoricalBacktestDataTableImpl
+      simulation={simulation}
+      selectedSeed={selectedSeed}
+      setSelectedSeed={setSelectedSeed}
+      viewMode={viewMode}
     />
   );
 }

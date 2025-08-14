@@ -56,10 +56,8 @@ import type { MultiSimulationResultDTO } from '@/lib/workers/simulation-dto';
 import {
   type SimulationTableRow,
   validateSimulationTableData,
-  type MonteCarloTableRow,
-  validateMonteCarloTableData,
-  type HistoricalBacktestTableRow,
-  validateHistoricalBacktestTableData,
+  type StochasticTableRow,
+  validateStochasticTableData,
   type YearlyAggregateTableRow,
   validateYearlyAggregateTableData,
 } from '@/lib/schemas/simulation-table-schema';
@@ -872,73 +870,7 @@ export const useFixedReturnsTableData = (simulation: SimulationResult): Simulati
  * Stochastic Table Hooks
  * These hooks provide access to stochastic simulation table data
  */
-export const useMonteCarloTableData = (simulation: MultiSimulationResult): MonteCarloTableRow[] => {
-  const currentAge = useCurrentAge()!;
-
-  return useMemo(() => {
-    // Map through each simulation result to create table rows
-    const rawData = simulation.simulations.map(([seed, simulationResult]) => {
-      // Calculate FIRE age - find when retirement phase starts
-      let fireAge: number | null = null;
-      for (const [year, phase] of simulationResult.phasesMetadata) {
-        if (phase.getName() === 'Retirement') {
-          fireAge = currentAge + year;
-          break;
-        }
-      }
-
-      // Get final phase name - last entry in phasesMetadata
-      const finalPhaseEntry = simulationResult.phasesMetadata[simulationResult.phasesMetadata.length - 1];
-      const finalPhaseName = finalPhaseEntry ? finalPhaseEntry[1].getName() : '';
-
-      // Get final portfolio value - last entry in data array
-      const finalPortfolioEntry = simulationResult.data[simulationResult.data.length - 1];
-      const finalPortfolioValue = finalPortfolioEntry ? finalPortfolioEntry[1].getTotalValue() : 0;
-
-      // Use SimulationAnalyzer to get average returns
-      const analyzer = new SimulationAnalyzer();
-      const analysis = analyzer.analyzeSimulation(simulationResult);
-
-      let averageStocksReturn: number | null = null;
-      let averageBondsReturn: number | null = null;
-      let averageCashReturn: number | null = null;
-      let averageInflationRate: number | null = null;
-
-      if (analysis) {
-        // Get mean returns from analyzer (convert from decimal to percentage)
-        averageStocksReturn = analysis.returns.rates.stocks?.mean ? analysis.returns.rates.stocks.mean * 100 : null;
-        averageBondsReturn = analysis.returns.rates.bonds?.mean ? analysis.returns.rates.bonds.mean * 100 : null;
-        averageCashReturn = analysis.returns.rates.cash?.mean ? analysis.returns.rates.cash.mean * 100 : null;
-      }
-
-      // Calculate average inflation rate (not available in analyzer)
-      if (simulationResult.returnsMetadata.length > 0) {
-        const inflationRates = simulationResult.returnsMetadata
-          .map(([, returns]) => returns.metadata.inflationRate)
-          .filter((r) => r !== null && r !== undefined);
-        averageInflationRate = inflationRates.length > 0 ? inflationRates.reduce((sum, r) => sum + r, 0) / inflationRates.length : null;
-      }
-
-      return {
-        seed,
-        success: simulationResult.success,
-        fireAge,
-        bankruptcyAge: simulationResult.bankruptcyAge,
-        finalPhaseName,
-        finalPortfolioValue,
-        averageStocksReturn,
-        averageBondsReturn,
-        averageCashReturn,
-        averageInflationRate,
-      };
-    });
-
-    // Validate data against schema
-    return validateMonteCarloTableData(rawData);
-  }, [currentAge, simulation]);
-};
-
-export const useHistoricalBacktestTableData = (simulation: MultiSimulationResult): HistoricalBacktestTableRow[] => {
+export const useStochasticTableData = (simulation: MultiSimulationResult): StochasticTableRow[] => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
@@ -1001,7 +933,7 @@ export const useHistoricalBacktestTableData = (simulation: MultiSimulationResult
     });
 
     // Validate data against schema
-    return validateHistoricalBacktestTableData(rawData);
+    return validateStochasticTableData(rawData);
   }, [currentAge, simulation]);
 };
 
@@ -1064,39 +996,7 @@ type YearlyProgressionData = MultiSimulationStats & {
   };
 };
 
-export const useHistoricalBacktestYearlyResultsTableData = (simulation: MultiSimulationResult): YearlyAggregateTableRow[] => {
-  const currentAge = useCurrentAge()!;
-
-  return useMemo(() => {
-    // Use SimulationAnalyzer to get yearly progression statistics
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
-    // Transform yearly progression data to match YearlyAggregateTableRow schema
-    const rawData = analysis.yearlyProgression.map((yearData: YearlyProgressionData) => ({
-      year: yearData.year,
-      age: currentAge + yearData.year,
-      percentAccumulation: yearData.phasePercentages.accumulation,
-      percentRetirement: yearData.phasePercentages.retirement,
-      percentBankrupt: yearData.phasePercentages.bankrupt,
-      p10Portfolio: yearData.percentiles.p10,
-      p25Portfolio: yearData.percentiles.p25,
-      p50Portfolio: yearData.percentiles.p50,
-      p75Portfolio: yearData.percentiles.p75,
-      p90Portfolio: yearData.percentiles.p90,
-      minPortfolio: yearData.values.overall?.min ?? null,
-      maxPortfolio: yearData.values.overall?.max ?? null,
-    }));
-
-    // Validate data against schema
-    return validateYearlyAggregateTableData(rawData);
-  }, [currentAge, simulation]);
-};
-
-export const useMonteCarloYearlyResultsTableData = (simulation: MultiSimulationResult): YearlyAggregateTableRow[] => {
+export const useStochasticYearlyResultsTableData = (simulation: MultiSimulationResult): YearlyAggregateTableRow[] => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {

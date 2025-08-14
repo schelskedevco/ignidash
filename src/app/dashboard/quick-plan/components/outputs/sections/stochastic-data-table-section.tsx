@@ -1,28 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ChevronLeftIcon, TableCellsIcon, CalendarDaysIcon } from '@heroicons/react/20/solid';
 
 import { Button } from '@/components/catalyst/button';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import ButtonGroup from '@/components/ui/button-group';
-import type { MultiSimulationResult } from '@/lib/calc/simulation-engine';
 
 import MonteCarloDataTable from '../tables/monte-carlo-data-table';
 import HistoricalBacktestDataTable from '../tables/historical-backtest-data-table';
 
 interface StochasticDataTableSectionProps {
-  simulation: MultiSimulationResult;
   simulationType: 'monteCarlo' | 'historicalBacktest';
 }
 
-export default function StochasticDataTableSection({ simulation, simulationType }: StochasticDataTableSectionProps) {
+export default function StochasticDataTableSection({ simulationType }: StochasticDataTableSectionProps) {
   const [selectedSeed, setSelectedSeed] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'all' | 'yearly'>('all');
-
-  // Reset selectedSeed when simulation changes
-  useEffect(() => setSelectedSeed(null), [simulation, viewMode]);
 
   let headerText: string;
   let headerDesc: string;
@@ -41,19 +36,10 @@ export default function StochasticDataTableSection({ simulation, simulationType 
   let tableComponent;
   switch (simulationType) {
     case 'monteCarlo':
-      tableComponent = (
-        <MonteCarloDataTable simulation={simulation} selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} viewMode={viewMode} />
-      );
+      tableComponent = <MonteCarloDataTable selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} viewMode={viewMode} />;
       break;
     case 'historicalBacktest':
-      tableComponent = (
-        <HistoricalBacktestDataTable
-          simulation={simulation}
-          selectedSeed={selectedSeed}
-          setSelectedSeed={setSelectedSeed}
-          viewMode={viewMode}
-        />
-      );
+      tableComponent = <HistoricalBacktestDataTable selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} viewMode={viewMode} />;
       break;
   }
 

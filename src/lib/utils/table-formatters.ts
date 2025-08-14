@@ -9,10 +9,8 @@ import {
   type SimulationTableRow,
   type ColumnFormat,
   SIMULATION_TABLE_CONFIG,
-  type MonteCarloTableRow,
-  MONTE_CARLO_TABLE_CONFIG,
-  type HistoricalBacktestTableRow,
-  HISTORICAL_BACKTEST_TABLE_CONFIG,
+  type StochasticTableRow,
+  STOCHASTIC_TABLE_CONFIG,
   type YearlyAggregateTableRow,
   YEARLY_AGGREGATE_TABLE_CONFIG,
 } from '@/lib/schemas/simulation-table-schema';
@@ -72,21 +70,12 @@ export const generateSimulationTableColumns = (): TableColumn<SimulationTableRow
   }));
 };
 
-// Generate Monte Carlo table columns from schema configuration
-export const generateMonteCarloTableColumns = (): TableColumn<MonteCarloTableRow>[] => {
-  return Object.entries(MONTE_CARLO_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof MonteCarloTableRow,
+// Generate Stochastic table columns from schema configuration
+export const generateStochasticTableColumns = (): TableColumn<StochasticTableRow>[] => {
+  return Object.entries(STOCHASTIC_TABLE_CONFIG).map(([key, config]) => ({
+    key: key as keyof StochasticTableRow,
     title: config.title,
-    format: (value: MonteCarloTableRow[keyof MonteCarloTableRow]) => formatValue(value, config.format),
-  }));
-};
-
-// Generate Historical Backtest table columns from schema configuration
-export const generateHistoricalBacktestTableColumns = (): TableColumn<HistoricalBacktestTableRow>[] => {
-  return Object.entries(HISTORICAL_BACKTEST_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof HistoricalBacktestTableRow,
-    title: config.title,
-    format: (value: HistoricalBacktestTableRow[keyof HistoricalBacktestTableRow]) => formatValue(value, config.format),
+    format: (value: StochasticTableRow[keyof StochasticTableRow]) => formatValue(value, config.format),
   }));
 };
 
