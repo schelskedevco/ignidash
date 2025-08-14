@@ -581,6 +581,25 @@ export const useFixedReturnsCashFlowChartData = () => {
   }, [currentAge, simulation]);
 };
 
+export const useStochasticPortfolioAreaChartData = (simulation: MultiSimulationResult) => {
+  const currentAge = useCurrentAge()!;
+
+  return useMemo(() => {
+    const analyzer = new SimulationAnalyzer();
+    const simulationData = simulation.simulations.map(([, result]) => result);
+
+    const analysis = analyzer.analyzeSimulations(simulationData);
+    if (!analysis) return [];
+
+    return analysis.yearlyProgression.map((data) => ({
+      age: data.year + currentAge,
+      p25: data.percentiles.p25,
+      p50: data.percentiles.p50,
+      p75: data.percentiles.p75,
+    }));
+  }, [currentAge, simulation]);
+};
+
 export const useStochasticPortfolioPercentilesChartData = (simulation: MultiSimulationResult) => {
   const currentAge = useCurrentAge()!;
 
@@ -597,6 +616,27 @@ export const useStochasticPortfolioPercentilesChartData = (simulation: MultiSimu
       { age: data.year + currentAge, name: 'P50', amount: data.percentiles.p50 },
       { age: data.year + currentAge, name: 'P75', amount: data.percentiles.p75 },
       { age: data.year + currentAge, name: 'P90', amount: data.percentiles.p90 },
+    ]);
+  }, [currentAge, simulation]);
+};
+
+export const useStochasticPortfolioDistributionChartData = (simulation: MultiSimulationResult) => {
+  const currentAge = useCurrentAge()!;
+
+  return useMemo(() => {
+    const analyzer = new SimulationAnalyzer();
+    const simulationData = simulation.simulations.map(([, result]) => result);
+
+    const analysis = analyzer.analyzeSimulations(simulationData);
+    if (!analysis) return [];
+
+    return analysis.yearlyProgression.flatMap((data) => [
+      { age: data.year + currentAge, name: '<P10', amount: data.distribution.belowP10 },
+      { age: data.year + currentAge, name: 'P10—P25', amount: data.distribution.p10toP25 },
+      { age: data.year + currentAge, name: 'P25—P50', amount: data.distribution.p25toP50 },
+      { age: data.year + currentAge, name: 'P50—P75', amount: data.distribution.p50toP75 },
+      { age: data.year + currentAge, name: 'P75—P90', amount: data.distribution.p75toP90 },
+      { age: data.year + currentAge, name: '>P90', amount: data.distribution.aboveP90 },
     ]);
   }, [currentAge, simulation]);
 };
@@ -713,46 +753,6 @@ export const useStochasticWithdrawalsChartData = (simulation: MultiSimulationRes
       rate: data.withdrawals.percentage?.mean ?? null,
       amount: data.withdrawals.amount?.mean ?? null,
     }));
-  }, [currentAge, simulation]);
-};
-
-export const useStochasticPortfolioAreaChartData = (simulation: MultiSimulationResult) => {
-  const currentAge = useCurrentAge()!;
-
-  return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
-    return analysis.yearlyProgression.map((data) => ({
-      age: data.year + currentAge,
-      p25: data.percentiles.p25,
-      p50: data.percentiles.p50,
-      p75: data.percentiles.p75,
-    }));
-  }, [currentAge, simulation]);
-};
-
-export const useStochasticPortfolioDistributionChartData = (simulation: MultiSimulationResult) => {
-  const currentAge = useCurrentAge()!;
-
-  return useMemo(() => {
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
-    return analysis.yearlyProgression.flatMap((data) => [
-      { age: data.year + currentAge, name: '<P10', amount: data.distribution.belowP10 },
-      { age: data.year + currentAge, name: 'P10—P25', amount: data.distribution.p10toP25 },
-      { age: data.year + currentAge, name: 'P25—P50', amount: data.distribution.p25toP50 },
-      { age: data.year + currentAge, name: 'P50—P75', amount: data.distribution.p50toP75 },
-      { age: data.year + currentAge, name: 'P75—P90', amount: data.distribution.p75toP90 },
-      { age: data.year + currentAge, name: '>P90', amount: data.distribution.aboveP90 },
-    ]);
   }, [currentAge, simulation]);
 };
 
