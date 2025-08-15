@@ -497,7 +497,7 @@ export const useMonteCarloSimulationWithWorker = () => {
     ['monteCarloSim', inputs, simulationSeed],
     async () => {
       const worker = getSimulationWorker();
-      const dto = await worker.runMonteCarloSimulation(inputs, simulationSeed, 100);
+      const dto = await worker.runMonteCarloSimulation(inputs, simulationSeed, 500);
 
       return reconstructSimulationResult(dto);
     },
@@ -513,7 +513,7 @@ export const useMonteCarloAnalysisWithWorker = () => {
     ['monteCarloSimAndAnalyze', inputs, simulationSeed],
     async () => {
       const worker = getSimulationWorker();
-      return await worker.analyzeMonteCarloSimulation(inputs, simulationSeed, 100);
+      return await worker.analyzeMonteCarloSimulation(inputs, simulationSeed, 500);
     },
     { revalidateOnFocus: false }
   );
@@ -537,7 +537,7 @@ export const useHistoricalBacktestSimulationWithWorker = () => {
     ['historicalBacktestSim', inputs, simulationSeed],
     async () => {
       const worker = getSimulationWorker();
-      const dto = await worker.runHistoricalBacktestSimulation(inputs, simulationSeed, 100);
+      const dto = await worker.runHistoricalBacktestSimulation(inputs, simulationSeed, 500);
 
       return reconstructSimulationResult(dto);
     },
@@ -553,7 +553,7 @@ export const useHistoricalBacktestAnalysisWithWorker = () => {
     ['historicalBacktestSimAndAnalyze', inputs, simulationSeed],
     async () => {
       const worker = getSimulationWorker();
-      return await worker.analyzeHistoricalBacktestSimulation(inputs, simulationSeed, 100);
+      return await worker.analyzeHistoricalBacktestSimulation(inputs, simulationSeed, 500);
     },
     { revalidateOnFocus: false }
   );
