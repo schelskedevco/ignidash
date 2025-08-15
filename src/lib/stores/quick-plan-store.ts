@@ -46,18 +46,15 @@ import {
   LcgHistoricalBacktestSimulationEngine,
   type SimulationResult,
   type MultiSimulationResult,
-  type HistoricalRangeInfo,
 } from '@/lib/calc/simulation-engine';
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
-import { SimulationAnalyzer, type AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
+import { type AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 import WithdrawalStrategy from '@/lib/calc/withdrawal-strategy';
 import { getSimulationWorker } from '@/lib/workers/simulation-worker-api';
 import type { MultiSimulationResultDTO } from '@/lib/schemas/simulation-dto-schema';
 import {
   type SimulationTableRow,
   validateSimulationTableData,
-  type StochasticTableRow,
-  validateStochasticTableData,
   type YearlyAggregateTableRow,
   validateYearlyAggregateTableData,
 } from '@/lib/schemas/simulation-table-schema';
@@ -892,67 +889,32 @@ export const useFixedReturnsTableData = (simulation: SimulationResult): Simulati
  * Stochastic Table Hooks
  * These hooks provide access to stochastic simulation table data
  */
-export const useStochasticTableData = (simulation: MultiSimulationResult): StochasticTableRow[] => {
-  const currentAge = useCurrentAge()!;
+export const useMonteCarloTableDataWithWorker = () => {
+  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
+  const simulationSeed = useSimulationSeed();
 
-  return useMemo(() => {
-    // Map through each simulation result to create table rows
-    const rawData = simulation.simulations.map(([seed, simulationResult]) => {
-      // Calculate FIRE age - find when retirement phase starts
-      let fireAge: number | null = null;
-      for (const [year, phase] of simulationResult.phasesMetadata) {
-        if (phase.getName() === 'Retirement') {
-          fireAge = currentAge + year;
-          break;
-        }
-      }
+  return useSWR(
+    ['monteCarloTableData', inputs, simulationSeed],
+    async () => {
+      const worker = getSimulationWorker();
+      return await worker.generateMonteCarloTableData(inputs, simulationSeed, 500);
+    },
+    { revalidateOnFocus: false }
+  );
+};
 
-      // Get final phase name - last entry in phasesMetadata
-      const finalPhaseEntry = simulationResult.phasesMetadata[simulationResult.phasesMetadata.length - 1];
-      const finalPhaseName = finalPhaseEntry ? finalPhaseEntry[1].getName() : '';
+export const useHistoricalBacktestTableDataWithWorker = () => {
+  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
+  const simulationSeed = useSimulationSeed();
 
-      // Get final portfolio value - last entry in data array
-      const finalPortfolioEntry = simulationResult.data[simulationResult.data.length - 1];
-      const finalPortfolioValue = finalPortfolioEntry ? finalPortfolioEntry[1].getTotalValue() : 0;
-
-      // Use SimulationAnalyzer to get average returns
-      const analyzer = new SimulationAnalyzer();
-      const analysis = analyzer.analyzeSimulation(simulationResult);
-
-      let averageStocksReturn: number | null = null;
-      let averageBondsReturn: number | null = null;
-      let averageCashReturn: number | null = null;
-      let averageInflationRate: number | null = null;
-
-      if (analysis) {
-        // Get mean returns from analyzer (convert from decimal to percentage)
-        averageStocksReturn = analysis.returns.rates.stocks?.mean ? analysis.returns.rates.stocks.mean * 100 : null;
-        averageBondsReturn = analysis.returns.rates.bonds?.mean ? analysis.returns.rates.bonds.mean * 100 : null;
-        averageCashReturn = analysis.returns.rates.cash?.mean ? analysis.returns.rates.cash.mean * 100 : null;
-        averageInflationRate = analysis.returns.inflation?.mean ? analysis.returns.inflation.mean : null;
-      }
-
-      // Get historical ranges (if present)
-      const historicalRanges = (simulationResult as SimulationResult & HistoricalRangeInfo)?.historicalRanges ?? null;
-
-      return {
-        seed,
-        success: simulationResult.success,
-        fireAge,
-        bankruptcyAge: simulationResult.bankruptcyAge,
-        finalPhaseName,
-        finalPortfolioValue,
-        averageStocksReturn,
-        averageBondsReturn,
-        averageCashReturn,
-        averageInflationRate,
-        historicalRanges,
-      };
-    });
-
-    // Validate data against schema
-    return validateStochasticTableData(rawData);
-  }, [currentAge, simulation]);
+  return useSWR(
+    ['historicalBacktestTableData', inputs, simulationSeed],
+    async () => {
+      const worker = getSimulationWorker();
+      return await worker.generateHistoricalBacktestTableData(inputs, simulationSeed, 500);
+    },
+    { revalidateOnFocus: false }
+  );
 };
 
 /**

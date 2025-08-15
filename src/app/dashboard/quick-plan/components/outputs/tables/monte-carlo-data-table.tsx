@@ -3,9 +3,8 @@
 import { useMemo, useEffect } from 'react';
 
 import {
-  useMonteCarloSimulationWithWorker,
+  useMonteCarloTableDataWithWorker,
   useSingleMonteCarloSimulation,
-  useStochasticTableData,
   useStochasticDrillDownTableData,
   useStochasticYearlyResultsTableData,
 } from '@/lib/stores/quick-plan-store';
@@ -15,23 +14,21 @@ import {
   generateSimulationTableColumns,
   generateYearlyAggregateTableColumns,
 } from '@/lib/utils/table-formatters';
-import type { MultiSimulationResult } from '@/lib/calc/simulation-engine';
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 
 import Table from './table';
 
 interface MonteCarloDataTableImplProps {
-  simulation: MultiSimulationResult;
+  tableData: StochasticTableRow[];
   simStats: AggregateSimulationStats;
   selectedSeed: number | null;
   setSelectedSeed: (seed: number | null) => void;
   viewMode: 'all' | 'yearly';
 }
 
-function MonteCarloDataTableImpl({ simulation, simStats, selectedSeed, setSelectedSeed, viewMode }: MonteCarloDataTableImplProps) {
+function MonteCarloDataTableImpl({ tableData, simStats, selectedSeed, setSelectedSeed, viewMode }: MonteCarloDataTableImplProps) {
   const selectedSimulation = useSingleMonteCarloSimulation(selectedSeed);
 
-  const allSimulationData = useStochasticTableData(simulation);
   const yearlyData = useStochasticYearlyResultsTableData(simStats);
   const detailData = useStochasticDrillDownTableData(selectedSimulation);
 
@@ -54,7 +51,7 @@ function MonteCarloDataTableImpl({ simulation, simStats, selectedSeed, setSelect
   }
 
   // Default: viewing all simulations
-  return <Table<StochasticTableRow> columns={allSimulationColumns} data={allSimulationData} keyField="seed" onRowClick={handleRowClick} />;
+  return <Table<StochasticTableRow> columns={allSimulationColumns} data={tableData} keyField="seed" onRowClick={handleRowClick} />;
 }
 
 interface MonteCarloDataTableProps {
@@ -65,10 +62,10 @@ interface MonteCarloDataTableProps {
 }
 
 export default function MonteCarloDataTable({ simStats, selectedSeed, setSelectedSeed, viewMode }: MonteCarloDataTableProps) {
-  const { data: simulation, isLoading } = useMonteCarloSimulationWithWorker();
+  const { data: tableData, isLoading } = useMonteCarloTableDataWithWorker();
 
   // Reset selectedSeed when simulation changes
-  useEffect(() => setSelectedSeed(null), [setSelectedSeed, simulation, viewMode]);
+  useEffect(() => setSelectedSeed(null), [setSelectedSeed, tableData, viewMode]);
 
   if (isLoading) {
     return (
@@ -78,7 +75,7 @@ export default function MonteCarloDataTable({ simStats, selectedSeed, setSelecte
     );
   }
 
-  if (!simulation) {
+  if (!tableData) {
     return (
       <div className="text-muted-foreground text-center">
         <p>Table content is unavailable</p>
@@ -88,7 +85,7 @@ export default function MonteCarloDataTable({ simStats, selectedSeed, setSelecte
 
   return (
     <MonteCarloDataTableImpl
-      simulation={simulation}
+      tableData={tableData}
       simStats={simStats}
       selectedSeed={selectedSeed}
       setSelectedSeed={setSelectedSeed}

@@ -3,9 +3,8 @@
 import { useMemo, useEffect } from 'react';
 
 import {
-  useHistoricalBacktestSimulationWithWorker,
+  useHistoricalBacktestTableDataWithWorker,
   useSingleHistoricalBacktestSimulation,
-  useStochasticTableData,
   useStochasticDrillDownTableData,
   useStochasticYearlyResultsTableData,
 } from '@/lib/stores/quick-plan-store';
@@ -15,13 +14,12 @@ import {
   generateSimulationTableColumns,
   generateYearlyAggregateTableColumns,
 } from '@/lib/utils/table-formatters';
-import type { MultiSimulationResult } from '@/lib/calc/simulation-engine';
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 
 import Table from './table';
 
 interface HistoricalBacktestDataTableImplProps {
-  simulation: MultiSimulationResult;
+  tableData: StochasticTableRow[];
   simStats: AggregateSimulationStats;
   selectedSeed: number | null;
   setSelectedSeed: (seed: number | null) => void;
@@ -29,7 +27,7 @@ interface HistoricalBacktestDataTableImplProps {
 }
 
 function HistoricalBacktestDataTableImpl({
-  simulation,
+  tableData,
   simStats,
   selectedSeed,
   setSelectedSeed,
@@ -37,7 +35,6 @@ function HistoricalBacktestDataTableImpl({
 }: HistoricalBacktestDataTableImplProps) {
   const selectedSimulation = useSingleHistoricalBacktestSimulation(selectedSeed);
 
-  const allSimulationData = useStochasticTableData(simulation);
   const yearlyData = useStochasticYearlyResultsTableData(simStats);
   const detailData = useStochasticDrillDownTableData(selectedSimulation);
 
@@ -60,7 +57,7 @@ function HistoricalBacktestDataTableImpl({
   }
 
   // Default: viewing all simulations
-  return <Table<StochasticTableRow> columns={allSimulationColumns} data={allSimulationData} keyField="seed" onRowClick={handleRowClick} />;
+  return <Table<StochasticTableRow> columns={allSimulationColumns} data={tableData} keyField="seed" onRowClick={handleRowClick} />;
 }
 
 interface HistoricalBacktestDataTableProps {
@@ -76,10 +73,10 @@ export default function HistoricalBacktestDataTable({
   setSelectedSeed,
   viewMode,
 }: HistoricalBacktestDataTableProps) {
-  const { data: simulation, isLoading } = useHistoricalBacktestSimulationWithWorker();
+  const { data: tableData, isLoading } = useHistoricalBacktestTableDataWithWorker();
 
   // Reset selectedSeed when simulation changes
-  useEffect(() => setSelectedSeed(null), [setSelectedSeed, simulation, viewMode]);
+  useEffect(() => setSelectedSeed(null), [setSelectedSeed, tableData, viewMode]);
 
   if (isLoading) {
     return (
@@ -89,7 +86,7 @@ export default function HistoricalBacktestDataTable({
     );
   }
 
-  if (!simulation) {
+  if (!tableData) {
     return (
       <div className="text-muted-foreground text-center">
         <p>Table content is unavailable</p>
@@ -99,7 +96,7 @@ export default function HistoricalBacktestDataTable({
 
   return (
     <HistoricalBacktestDataTableImpl
-      simulation={simulation}
+      tableData={tableData}
       simStats={simStats}
       selectedSeed={selectedSeed}
       setSelectedSeed={setSelectedSeed}

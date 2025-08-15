@@ -1,8 +1,10 @@
 import * as Comlink from 'comlink';
 import { SimulationAnalyzer, type AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
+import { SimulationTableDataExtractor } from '@/lib/calc/simulation-table-data-extractor';
 import { MonteCarloSimulationEngine, LcgHistoricalBacktestSimulationEngine } from '@/lib/calc/simulation-engine';
 import type { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 import { multiSimulationResultDTOSchema, type MultiSimulationResultDTO } from '@/lib/schemas/simulation-dto-schema';
+import type { StochasticTableRow } from '@/lib/schemas/simulation-table-schema';
 
 const simulationAPI = {
   async runMonteCarloSimulation(inputs: QuickPlanInputs, baseSeed: number, numSimulations: number): Promise<MultiSimulationResultDTO> {
@@ -73,6 +75,30 @@ const simulationAPI = {
     const simulationData = result.simulations.map(([, result]) => result);
 
     return analyzer.analyzeSimulations(simulationData);
+  },
+
+  async generateMonteCarloTableData(inputs: QuickPlanInputs, baseSeed: number, numSimulations: number): Promise<StochasticTableRow[]> {
+    const engine = new MonteCarloSimulationEngine(inputs, baseSeed);
+    const result = engine.runMonteCarloSimulation(numSimulations);
+
+    const extractor = new SimulationTableDataExtractor();
+    const currentAge = inputs.basics.currentAge!;
+
+    return extractor.extractStochasticTableData(result, currentAge);
+  },
+
+  async generateHistoricalBacktestTableData(
+    inputs: QuickPlanInputs,
+    baseSeed: number,
+    numSimulations: number
+  ): Promise<StochasticTableRow[]> {
+    const engine = new LcgHistoricalBacktestSimulationEngine(inputs, baseSeed);
+    const result = engine.runLcgHistoricalBacktest(numSimulations);
+
+    const extractor = new SimulationTableDataExtractor();
+    const currentAge = inputs.basics.currentAge!;
+
+    return extractor.extractStochasticTableData(result, currentAge);
   },
 };
 
