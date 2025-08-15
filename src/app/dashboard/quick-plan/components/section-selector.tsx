@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import IconButton from '@/components/ui/icon-button';
 import Drawer from '@/components/ui/drawer';
-import { useLinkSharing } from '@/hooks/use-link-sharing';
+import { useRegenSimulation } from '@/hooks/use-regen-simulation';
 
 import PreferencesDrawer from './inputs/drawers/preferences-drawer';
 
@@ -32,7 +32,7 @@ interface SectionSelectorProps {
 
 export default function SectionSelector({ activeSection, setActiveSection }: SectionSelectorProps) {
   const [preferencesOpen, setPreferencesOpen] = useState(false);
-  const { icon, label, handleLinkClick } = useLinkSharing();
+  const { icon, label, handleClick, className } = useRegenSimulation();
 
   return (
     <>
@@ -65,7 +65,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
           <IconButton icon={Cog6ToothIcon} label="Preferences" onClick={() => setPreferencesOpen(true)} className="text-muted-foreground" />
         )}
         {activeSection === 'results' && (
-          <IconButton icon={icon} label={label} onClick={handleLinkClick} className="text-muted-foreground" />
+          <IconButton icon={icon} label={label} onClick={handleClick} className={cn(className, 'text-muted-foreground')} />
         )}
       </div>
 
