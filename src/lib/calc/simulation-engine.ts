@@ -221,6 +221,19 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
   }
 
   /**
+   * Runs a single simulation with a specific seed
+   * @param seed - Custom seed for the simulation
+   * @returns Simulation result with the given seed
+   */
+  runSingleSimulation(seed: number): SimulationResult {
+    const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(this.inputs);
+    const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, this.inputs);
+
+    const returnsProvider = new StochasticReturnsProvider(this.inputs, seed);
+    return this.runSimulation(returnsProvider, portfolio, initialPhase);
+  }
+
+  /**
    * Runs multiple simulations for Monte Carlo analysis
    * @param numSimulations - Number of simulations
    * @returns Aggregate results with simulation seeds and their corresponding results
@@ -261,6 +274,24 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
     private baseSeed: number
   ) {
     super(inputs);
+  }
+
+  /**
+   * Runs a single historical backtest simulation with a specific seed
+   * @param seed - Custom seed for selecting the historical start year
+   * @returns Simulation result with historical range information
+   */
+  runSingleSimulation(seed: number): SimulationResult & HistoricalRangeInfo {
+    const portfolio = FinancialSimulationEngine.createDefaultInitialPortfolio(this.inputs);
+    const initialPhase = FinancialSimulationEngine.createDefaultInitialPhase(portfolio, this.inputs);
+
+    const returnsProvider = new LcgHistoricalBacktestReturnsProvider(seed);
+    const result = this.runSimulation(returnsProvider, portfolio, initialPhase);
+
+    // Get historical ranges from the returns provider
+    const historicalRanges = returnsProvider.getHistoricalRanges();
+
+    return { ...result, historicalRanges };
   }
 
   /**
