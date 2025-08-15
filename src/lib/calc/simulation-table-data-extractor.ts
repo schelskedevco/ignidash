@@ -19,9 +19,16 @@
  * - Validates output against schemas for type safety
  */
 
-import { type StochasticTableRow, validateStochasticTableData } from '@/lib/schemas/simulation-table-schema';
+import {
+  type StochasticTableRow,
+  validateStochasticTableData,
+  type SimulationTableRow,
+  validateSimulationTableData,
+  type YearlyAggregateTableRow,
+  validateYearlyAggregateTableData,
+} from '@/lib/schemas/simulation-table-schema';
 
-import { SimulationAnalyzer } from './simulation-analyzer';
+import { SimulationAnalyzer, type AggregateSimulationStats } from './simulation-analyzer';
 import type { SimulationResult, MultiSimulationResult, HistoricalRangeInfo } from './simulation-engine';
 
 /**
@@ -101,5 +108,84 @@ export class SimulationTableDataExtractor {
 
     // Validate data against schema
     return validateStochasticTableData(rawData);
+  }
+
+  /**
+   * Extracts table data from a single SimulationResult
+   * Used for detailed year-by-year view of a specific simulation
+   *
+   * @param simulation - The single simulation result to process
+   * @param currentAge - The user's current age for calculating ages
+   * @returns Array of table rows with year-by-year details
+   */
+  extractSingleSimulationTableData(simulation: SimulationResult | null, currentAge: number): SimulationTableRow[] {
+    if (!simulation) return [];
+
+    // Create a map for efficient phase lookup
+    const phaseMap = new Map<number, string>();
+    for (const [year, phase] of simulation.phasesMetadata) {
+      phaseMap.set(year, phase.getName());
+    }
+
+    // Map through simulation data to create table rows
+    const rawData = simulation.data.map(([year, portfolio], index) => {
+      // Get phase name for this year
+      const phaseName = phaseMap.get(year) || '';
+
+      // Get returns from previous year (returns are applied at end of year)
+      // For year 0, there are no returns yet
+      const returns = index > 0 && simulation.returnsMetadata[index - 1] ? simulation.returnsMetadata[index - 1][1] : null;
+
+      const stocksReturn = returns?.returns.stocks;
+      const bondsReturn = returns?.returns.bonds;
+      const cashReturn = returns?.returns.cash;
+      const inflationRate = returns?.metadata.inflationRate;
+
+      return {
+        year,
+        age: currentAge + year,
+        phaseName,
+        portfolioValue: portfolio.getTotalValue(),
+        stocksValue: portfolio.getAssetValue('stocks'),
+        stocksReturn: stocksReturn ? stocksReturn * 100 : null, // Convert to percentage
+        bondsValue: portfolio.getAssetValue('bonds'),
+        bondsReturn: bondsReturn ? bondsReturn * 100 : null, // Convert to percentage
+        cashValue: portfolio.getAssetValue('cash'),
+        cashReturn: cashReturn ? cashReturn * 100 : null, // Convert to percentage
+        inflationRate: inflationRate ?? null, // Already in percentage form
+      };
+    });
+
+    // Validate data against schema
+    return validateSimulationTableData(rawData);
+  }
+
+  /**
+   * Extracts yearly aggregate table data from AggregateSimulationStats
+   * Shows year-by-year statistics across all simulations
+   *
+   * @param analysis - The aggregate statistics from simulation analysis
+   * @param currentAge - The user's current age for calculating ages
+   * @returns Array of table rows with yearly aggregate statistics
+   */
+  extractYearlyResultsTableData(analysis: AggregateSimulationStats, currentAge: number): YearlyAggregateTableRow[] {
+    // Transform yearly progression data to match YearlyAggregateTableRow schema
+    const rawData = analysis.yearlyProgression.map((yearData) => ({
+      year: yearData.year,
+      age: currentAge + yearData.year,
+      percentAccumulation: yearData.phasePercentages.accumulation,
+      percentRetirement: yearData.phasePercentages.retirement,
+      percentBankrupt: yearData.phasePercentages.bankrupt,
+      p10Portfolio: yearData.percentiles.p10,
+      p25Portfolio: yearData.percentiles.p25,
+      p50Portfolio: yearData.percentiles.p50,
+      p75Portfolio: yearData.percentiles.p75,
+      p90Portfolio: yearData.percentiles.p90,
+      minPortfolio: yearData.values.overall?.min ?? null,
+      maxPortfolio: yearData.values.overall?.max ?? null,
+    }));
+
+    // Validate data against schema
+    return validateYearlyAggregateTableData(rawData);
   }
 }
