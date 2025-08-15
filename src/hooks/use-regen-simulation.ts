@@ -9,5 +9,6 @@ export function useRegenSimulation() {
     icon: ArrowPathIcon,
     label: 'Regenerate simulation',
     handleClick: generateNewSeed,
+    className: 'hover:-rotate-180 transition-transform duration-300',
   };
 }
