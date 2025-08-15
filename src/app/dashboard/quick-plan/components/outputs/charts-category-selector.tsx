@@ -31,7 +31,7 @@ export default function ChartsCategorySelector({ className, onCategoryChange, cu
           onClick={() => onCategoryChange(category)}
           type="button"
           className={cn(
-            'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline relative inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold focus:z-10',
+            'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline relative m-1 inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold focus:z-10',
             { 'text-foreground bg-emphasized-background': currentCategory === category }
           )}
         >
