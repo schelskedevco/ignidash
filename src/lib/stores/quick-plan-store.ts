@@ -479,26 +479,22 @@ export const useFixedReturnsSimulation = () => {
   }, [inputs]);
 };
 
-export const useSingleMonteCarloSimulation = (seed?: number) => {
+export const useSingleMonteCarloSimulation = (seed: number) => {
   const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
-  const simulationSeed = useSimulationSeed();
-  const effectiveSeed = seed ?? simulationSeed;
 
   return useMemo(() => {
-    const engine = new MonteCarloSimulationEngine(inputs, effectiveSeed);
-    return engine.runSingleSimulation(effectiveSeed);
-  }, [inputs, effectiveSeed]);
+    const engine = new MonteCarloSimulationEngine(inputs, seed);
+    return engine.runSingleSimulation(seed);
+  }, [inputs, seed]);
 };
 
-export const useSingleHistoricalBacktestSimulation = (seed?: number) => {
+export const useSingleHistoricalBacktestSimulation = (seed: number) => {
   const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
-  const simulationSeed = useSimulationSeed();
-  const effectiveSeed = seed ?? simulationSeed;
 
   return useMemo(() => {
-    const engine = new LcgHistoricalBacktestSimulationEngine(inputs, effectiveSeed);
-    return engine.runSingleSimulation(effectiveSeed);
-  }, [inputs, effectiveSeed]);
+    const engine = new LcgHistoricalBacktestSimulationEngine(inputs, seed);
+    return engine.runSingleSimulation(seed);
+  }, [inputs, seed]);
 };
 
 export const useMonteCarloSimulation = () => {
