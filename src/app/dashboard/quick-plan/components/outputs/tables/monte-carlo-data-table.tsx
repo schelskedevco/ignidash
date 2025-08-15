@@ -4,6 +4,7 @@ import { useMemo, useEffect } from 'react';
 
 import {
   useMonteCarloSimulationWithWorker,
+  useSingleMonteCarloSimulation,
   useStochasticTableData,
   useSimulationDetailTableData,
   useStochasticYearlyResultsTableData,
@@ -26,13 +27,7 @@ interface MonteCarloDataTableImplProps {
 }
 
 function MonteCarloDataTableImpl({ simulation, selectedSeed, setSelectedSeed, viewMode }: MonteCarloDataTableImplProps) {
-  // Find the selected simulation result
-  const selectedSimulation = useMemo(() => {
-    if (selectedSeed === null) return null;
-
-    const selectedSimulation = simulation.simulations.find(([seed]) => seed === selectedSeed);
-    return selectedSimulation ? selectedSimulation[1] : null;
-  }, [selectedSeed, simulation]);
+  const selectedSimulation = useSingleMonteCarloSimulation(selectedSeed);
 
   const allSimulationData = useStochasticTableData(simulation);
   const yearlyData = useStochasticYearlyResultsTableData(simulation);

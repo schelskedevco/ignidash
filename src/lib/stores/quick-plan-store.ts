@@ -479,19 +479,23 @@ export const useFixedReturnsSimulation = () => {
   }, [inputs]);
 };
 
-export const useSingleMonteCarloSimulation = (seed: number) => {
+export const useSingleMonteCarloSimulation = (seed: number | null) => {
   const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
 
   return useMemo(() => {
+    if (seed === null) return null;
+
     const engine = new MonteCarloSimulationEngine(inputs, seed);
     return engine.runSingleSimulation(seed);
   }, [inputs, seed]);
 };
 
-export const useSingleHistoricalBacktestSimulation = (seed: number) => {
+export const useSingleHistoricalBacktestSimulation = (seed: number | null) => {
   const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
 
   return useMemo(() => {
+    if (seed === null) return null;
+
     const engine = new LcgHistoricalBacktestSimulationEngine(inputs, seed);
     return engine.runSingleSimulation(seed);
   }, [inputs, seed]);

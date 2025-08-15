@@ -4,6 +4,7 @@ import { useMemo, useEffect } from 'react';
 
 import {
   useHistoricalBacktestSimulationWithWorker,
+  useSingleHistoricalBacktestSimulation,
   useStochasticTableData,
   useSimulationDetailTableData,
   useStochasticYearlyResultsTableData,
@@ -26,13 +27,7 @@ interface HistoricalBacktestDataTableImplProps {
 }
 
 function HistoricalBacktestDataTableImpl({ simulation, selectedSeed, setSelectedSeed, viewMode }: HistoricalBacktestDataTableImplProps) {
-  // Find the selected simulation result
-  const selectedSimulation = useMemo(() => {
-    if (selectedSeed === null) return null;
-
-    const selectedSimulation = simulation.simulations.find(([seed]) => seed === selectedSeed);
-    return selectedSimulation ? selectedSimulation[1] : null;
-  }, [selectedSeed, simulation]);
+  const selectedSimulation = useSingleHistoricalBacktestSimulation(selectedSeed);
 
   const allSimulationData = useStochasticTableData(simulation);
   const yearlyData = useStochasticYearlyResultsTableData(simulation);
