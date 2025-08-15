@@ -1005,17 +1005,10 @@ export const useSimulationDetailTableData = (simulation: SimulationResult | null
   }, [currentAge, simulation]);
 };
 
-export const useStochasticYearlyResultsTableData = (simulation: MultiSimulationResult): YearlyAggregateTableRow[] => {
+export const useStochasticYearlyResultsTableData = (analysis: AggregateSimulationStats): YearlyAggregateTableRow[] => {
   const currentAge = useCurrentAge()!;
 
   return useMemo(() => {
-    // Use SimulationAnalyzer to get yearly progression statistics
-    const analyzer = new SimulationAnalyzer();
-    const simulationData = simulation.simulations.map(([, result]) => result);
-
-    const analysis = analyzer.analyzeSimulations(simulationData);
-    if (!analysis) return [];
-
     // Transform yearly progression data to match YearlyAggregateTableRow schema
     const rawData = analysis.yearlyProgression.map((yearData) => ({
       year: yearData.year,
@@ -1034,7 +1027,7 @@ export const useStochasticYearlyResultsTableData = (simulation: MultiSimulationR
 
     // Validate data against schema
     return validateYearlyAggregateTableData(rawData);
-  }, [currentAge, simulation]);
+  }, [analysis, currentAge]);
 };
 
 /**

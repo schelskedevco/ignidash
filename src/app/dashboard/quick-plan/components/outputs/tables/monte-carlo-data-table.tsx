@@ -16,21 +16,23 @@ import {
   generateYearlyAggregateTableColumns,
 } from '@/lib/utils/table-formatters';
 import type { MultiSimulationResult } from '@/lib/calc/simulation-engine';
+import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 
 import Table from './table';
 
 interface MonteCarloDataTableImplProps {
   simulation: MultiSimulationResult;
+  simStats: AggregateSimulationStats;
   selectedSeed: number | null;
   setSelectedSeed: (seed: number | null) => void;
   viewMode: 'all' | 'yearly';
 }
 
-function MonteCarloDataTableImpl({ simulation, selectedSeed, setSelectedSeed, viewMode }: MonteCarloDataTableImplProps) {
+function MonteCarloDataTableImpl({ simulation, simStats, selectedSeed, setSelectedSeed, viewMode }: MonteCarloDataTableImplProps) {
   const selectedSimulation = useSingleMonteCarloSimulation(selectedSeed);
 
   const allSimulationData = useStochasticTableData(simulation);
-  const yearlyData = useStochasticYearlyResultsTableData(simulation);
+  const yearlyData = useStochasticYearlyResultsTableData(simStats);
   const detailData = useSimulationDetailTableData(selectedSimulation);
 
   const allSimulationColumns = useMemo(() => generateStochasticTableColumns(), []);
@@ -56,12 +58,13 @@ function MonteCarloDataTableImpl({ simulation, selectedSeed, setSelectedSeed, vi
 }
 
 interface MonteCarloDataTableProps {
+  simStats: AggregateSimulationStats;
   selectedSeed: number | null;
   setSelectedSeed: (seed: number | null) => void;
   viewMode: 'all' | 'yearly';
 }
 
-export default function MonteCarloDataTable({ selectedSeed, setSelectedSeed, viewMode }: MonteCarloDataTableProps) {
+export default function MonteCarloDataTable({ simStats, selectedSeed, setSelectedSeed, viewMode }: MonteCarloDataTableProps) {
   const { data: simulation, isLoading } = useMonteCarloSimulationWithWorker();
 
   // Reset selectedSeed when simulation changes
@@ -84,6 +87,12 @@ export default function MonteCarloDataTable({ selectedSeed, setSelectedSeed, vie
   }
 
   return (
-    <MonteCarloDataTableImpl simulation={simulation} selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} viewMode={viewMode} />
+    <MonteCarloDataTableImpl
+      simulation={simulation}
+      simStats={simStats}
+      selectedSeed={selectedSeed}
+      setSelectedSeed={setSelectedSeed}
+      viewMode={viewMode}
+    />
   );
 }

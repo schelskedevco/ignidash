@@ -7,15 +7,17 @@ import { Button } from '@/components/catalyst/button';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import ButtonGroup from '@/components/ui/button-group';
+import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 
 import MonteCarloDataTable from '../tables/monte-carlo-data-table';
 import HistoricalBacktestDataTable from '../tables/historical-backtest-data-table';
 
 interface StochasticDataTableSectionProps {
   simulationType: 'monteCarlo' | 'historicalBacktest';
+  simStats: AggregateSimulationStats;
 }
 
-function StochasticDataTableSection({ simulationType }: StochasticDataTableSectionProps) {
+function StochasticDataTableSection({ simulationType, simStats }: StochasticDataTableSectionProps) {
   const [selectedSeed, setSelectedSeed] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'all' | 'yearly'>('all');
 
@@ -36,10 +38,19 @@ function StochasticDataTableSection({ simulationType }: StochasticDataTableSecti
   let tableComponent;
   switch (simulationType) {
     case 'monteCarlo':
-      tableComponent = <MonteCarloDataTable selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} viewMode={viewMode} />;
+      tableComponent = (
+        <MonteCarloDataTable simStats={simStats} selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} viewMode={viewMode} />
+      );
       break;
     case 'historicalBacktest':
-      tableComponent = <HistoricalBacktestDataTable selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} viewMode={viewMode} />;
+      tableComponent = (
+        <HistoricalBacktestDataTable
+          simStats={simStats}
+          selectedSeed={selectedSeed}
+          setSelectedSeed={setSelectedSeed}
+          viewMode={viewMode}
+        />
+      );
       break;
   }
 
