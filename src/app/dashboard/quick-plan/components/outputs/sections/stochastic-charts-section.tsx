@@ -61,8 +61,8 @@ function CashFlowCharts({ simStats, setSelectedAge, selectedAge }: ChartsCategor
 
   return (
     <>
-      <StochasticCashFlowBarChartCard selectedAge={selectedAge} rawChartData={cashFlowChartData} />
       <StochasticCashFlowLineChartCard setSelectedAge={setSelectedAge} selectedAge={selectedAge} rawChartData={cashFlowChartData} />
+      <StochasticCashFlowBarChartCard selectedAge={selectedAge} rawChartData={cashFlowChartData} />
     </>
   );
 }
@@ -80,8 +80,8 @@ function ReturnsCharts({ simStats, setSelectedAge, selectedAge }: ChartsCategory
 
   return (
     <>
-      <StochasticReturnsBarChartCard selectedAge={selectedAge} rawChartData={returnsChartData} />
       <StochasticReturnsLineChartCard setSelectedAge={setSelectedAge} selectedAge={selectedAge} rawChartData={returnsChartData} />
+      <StochasticReturnsBarChartCard selectedAge={selectedAge} rawChartData={returnsChartData} />
     </>
   );
 }
@@ -91,8 +91,8 @@ function WithdrawalsCharts({ simStats, setSelectedAge, selectedAge }: ChartsCate
 
   return (
     <>
-      <StochasticWithdrawalsBarChartCard selectedAge={selectedAge} rawChartData={withdrawalsChartData} />
       <StochasticWithdrawalsLineChartCard setSelectedAge={setSelectedAge} selectedAge={selectedAge} rawChartData={withdrawalsChartData} />
+      <StochasticWithdrawalsBarChartCard selectedAge={selectedAge} rawChartData={withdrawalsChartData} />
     </>
   );
 }
