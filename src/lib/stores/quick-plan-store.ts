@@ -479,6 +479,28 @@ export const useFixedReturnsSimulation = () => {
   }, [inputs]);
 };
 
+export const useSingleMonteCarloSimulation = (seed?: number) => {
+  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
+  const simulationSeed = useSimulationSeed();
+  const effectiveSeed = seed ?? simulationSeed;
+
+  return useMemo(() => {
+    const engine = new MonteCarloSimulationEngine(inputs, effectiveSeed);
+    return engine.runSingleSimulation(effectiveSeed);
+  }, [inputs, effectiveSeed]);
+};
+
+export const useSingleHistoricalBacktestSimulation = (seed?: number) => {
+  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
+  const simulationSeed = useSimulationSeed();
+  const effectiveSeed = seed ?? simulationSeed;
+
+  return useMemo(() => {
+    const engine = new LcgHistoricalBacktestSimulationEngine(inputs, effectiveSeed);
+    return engine.runSingleSimulation(effectiveSeed);
+  }, [inputs, effectiveSeed]);
+};
+
 export const useMonteCarloSimulation = () => {
   const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
   const simulationSeed = useSimulationSeed();
@@ -517,28 +539,6 @@ export const useMonteCarloAnalysisWithWorker = () => {
     },
     { revalidateOnFocus: false }
   );
-};
-
-export const useSingleMonteCarloSimulation = (seed?: number) => {
-  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
-  const simulationSeed = useSimulationSeed();
-  const effectiveSeed = seed ?? simulationSeed;
-
-  return useMemo(() => {
-    const engine = new MonteCarloSimulationEngine(inputs, effectiveSeed);
-    return engine.runSingleSimulation(effectiveSeed);
-  }, [inputs, effectiveSeed]);
-};
-
-export const useSingleHistoricalBacktestSimulation = (seed?: number) => {
-  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
-  const simulationSeed = useSimulationSeed();
-  const effectiveSeed = seed ?? simulationSeed;
-
-  return useMemo(() => {
-    const engine = new LcgHistoricalBacktestSimulationEngine(inputs, effectiveSeed);
-    return engine.runSingleSimulation(effectiveSeed);
-  }, [inputs, effectiveSeed]);
 };
 
 export const useHistoricalBacktestSimulation = () => {
