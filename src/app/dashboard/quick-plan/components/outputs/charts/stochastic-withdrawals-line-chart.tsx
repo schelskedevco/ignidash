@@ -1,11 +1,12 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useRef, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
 
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useClickDetection } from '@/hooks/use-outside-click';
 import type { StochasticWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
 
 interface CustomTooltipProps {
@@ -51,7 +52,6 @@ interface StochasticWithdrawalsLineChartProps {
 }
 
 export default function StochasticWithdrawalsLineChart({ rawChartData, onAgeSelect, selectedAge }: StochasticWithdrawalsLineChartProps) {
-  const chartRef = useRef<HTMLDivElement>(null);
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
   const { resolvedTheme } = useTheme();
@@ -59,23 +59,10 @@ export default function StochasticWithdrawalsLineChart({ rawChartData, onAgeSele
 
   const currentAge = useCurrentAge();
 
-  useEffect(() => {
-    const handleInteractionStart = (event: MouseEvent | TouchEvent) => {
-      if (chartRef.current && !chartRef.current.contains(event.target as Node)) {
-        setClickedOutsideChart(true);
-      } else {
-        setClickedOutsideChart(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleInteractionStart);
-    document.addEventListener('touchstart', handleInteractionStart);
-
-    return () => {
-      document.removeEventListener('mousedown', handleInteractionStart);
-      document.removeEventListener('touchstart', handleInteractionStart);
-    };
-  }, []);
+  const chartRef = useClickDetection<HTMLDivElement>(
+    () => setClickedOutsideChart(true),
+    () => setClickedOutsideChart(false)
+  );
 
   const chartData = rawChartData;
   if (chartData.length === 0) {

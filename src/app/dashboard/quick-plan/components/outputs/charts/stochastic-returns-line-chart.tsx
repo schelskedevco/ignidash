@@ -1,11 +1,12 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useRef, useEffect, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
 
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useClickDetection } from '@/hooks/use-outside-click';
 import type { StochasticReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 
 interface CustomTooltipProps {
@@ -63,7 +64,6 @@ interface StochasticReturnsLineChartProps {
 }
 
 export default function StochasticReturnsLineChart({ rawChartData, onAgeSelect, selectedAge }: StochasticReturnsLineChartProps) {
-  const chartRef = useRef<HTMLDivElement>(null);
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
   const { resolvedTheme } = useTheme();
@@ -71,35 +71,26 @@ export default function StochasticReturnsLineChart({ rawChartData, onAgeSelect, 
 
   const currentAge = useCurrentAge();
 
-  useEffect(() => {
-    const handleInteractionStart = (event: MouseEvent | TouchEvent) => {
-      if (chartRef.current && !chartRef.current.contains(event.target as Node)) {
-        setClickedOutsideChart(true);
-      } else {
-        setClickedOutsideChart(false);
-      }
-    };
+  const chartRef = useClickDetection<HTMLDivElement>(
+    () => setClickedOutsideChart(true),
+    () => setClickedOutsideChart(false)
+  );
 
-    document.addEventListener('mousedown', handleInteractionStart);
-    document.addEventListener('touchstart', handleInteractionStart);
-
-    return () => {
-      document.removeEventListener('mousedown', handleInteractionStart);
-      document.removeEventListener('touchstart', handleInteractionStart);
-    };
-  }, []);
-
-  const chartData = Object.values(
-    rawChartData.reduce(
-      (acc, item) => {
-        if (!acc[item.age]) {
-          acc[item.age] = { age: item.age };
-        }
-        acc[item.age][item.name] = item.rate;
-        return acc;
-      },
-      {} as Record<number, { age: number; [key: string]: number | null }>
-    )
+  const chartData = useMemo(
+    () =>
+      Object.values(
+        rawChartData.reduce(
+          (acc, item) => {
+            if (!acc[item.age]) {
+              acc[item.age] = { age: item.age };
+            }
+            acc[item.age][item.name] = item.rate;
+            return acc;
+          },
+          {} as Record<number, { age: number; [key: string]: number | null }>
+        )
+      ),
+    [rawChartData]
   );
   if (chartData.length === 0) {
     return null;

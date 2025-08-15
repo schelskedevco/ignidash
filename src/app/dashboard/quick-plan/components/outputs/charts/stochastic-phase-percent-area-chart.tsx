@@ -1,11 +1,12 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useRef, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useClickDetection } from '@/hooks/use-outside-click';
 
 export interface StochasticPhasePercentAreaChartDataPoint {
   age: number;
@@ -65,7 +66,6 @@ interface StochasticPhasePercentAreaChartProps {
 }
 
 export default function StochasticPhasePercentAreaChart({ chartData, onAgeSelect, selectedAge }: StochasticPhasePercentAreaChartProps) {
-  const chartRef = useRef<HTMLDivElement>(null);
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
   const { resolvedTheme } = useTheme();
@@ -73,23 +73,10 @@ export default function StochasticPhasePercentAreaChart({ chartData, onAgeSelect
 
   const currentAge = useCurrentAge();
 
-  useEffect(() => {
-    const handleInteractionStart = (event: MouseEvent | TouchEvent) => {
-      if (chartRef.current && !chartRef.current.contains(event.target as Node)) {
-        setClickedOutsideChart(true);
-      } else {
-        setClickedOutsideChart(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleInteractionStart);
-    document.addEventListener('touchstart', handleInteractionStart);
-
-    return () => {
-      document.removeEventListener('mousedown', handleInteractionStart);
-      document.removeEventListener('touchstart', handleInteractionStart);
-    };
-  }, []);
+  const chartRef = useClickDetection<HTMLDivElement>(
+    () => setClickedOutsideChart(true),
+    () => setClickedOutsideChart(false)
+  );
 
   if (chartData.length === 0) {
     return null;
