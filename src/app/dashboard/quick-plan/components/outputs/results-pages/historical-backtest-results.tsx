@@ -6,7 +6,7 @@ import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 
 import ResultsMetrics from '../stochastic-metrics';
-// import StochasticDataTableSection from '../sections/stochastic-data-table-section';
+import StochasticDataTableSection from '../sections/stochastic-data-table-section';
 import StochasticChartsSection from '../sections/stochastic-charts-section';
 
 interface HistoricalBacktestResultsImplProps {
@@ -33,7 +33,7 @@ function HistoricalBacktestResultsImpl({ simStats }: HistoricalBacktestResultsIm
         <SectionHeader title="Quick Stats" desc="A brief overview of your simulation's statistics." />
         {comingSoon}
       </SectionContainer>
-      {/* <StochasticDataTableSection simulationType="historicalBacktest" /> */}
+      <StochasticDataTableSection simulationType="historicalBacktest" />
       <SectionContainer showBottomBorder={false}>
         <SectionHeader title="Summary" desc="AI-powered insights and recommendations based on your simulation results." />
         {comingSoon}

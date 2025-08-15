@@ -907,9 +907,6 @@ export const useStochasticTableData = (simulation: MultiSimulationResult): Stoch
         }
       }
 
-      // Get historical ranges (if present)
-      const historicalRanges = (simulationResult as SimulationResult & HistoricalRangeInfo)?.historicalRanges ?? null;
-
       // Get final phase name - last entry in phasesMetadata
       const finalPhaseEntry = simulationResult.phasesMetadata[simulationResult.phasesMetadata.length - 1];
       const finalPhaseName = finalPhaseEntry ? finalPhaseEntry[1].getName() : '';
@@ -934,6 +931,9 @@ export const useStochasticTableData = (simulation: MultiSimulationResult): Stoch
         averageCashReturn = analysis.returns.rates.cash?.mean ? analysis.returns.rates.cash.mean * 100 : null;
         averageInflationRate = analysis.returns.inflation?.mean ? analysis.returns.inflation.mean : null;
       }
+
+      // Get historical ranges (if present)
+      const historicalRanges = (simulationResult as SimulationResult & HistoricalRangeInfo)?.historicalRanges ?? null;
 
       return {
         seed,
