@@ -136,7 +136,7 @@ function StochasticChartsSection({ simStats, analysis }: StochasticChartsSection
 
   return (
     <SectionContainer showBottomBorder>
-      <SectionHeader title="Data Visualization" desc="Interactive charts to explore your projection." />
+      <SectionHeader title="Data Visualization" desc="Interactive charts to explore your projection." className="mb-4" />
       <ChartsCategorySelector currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} />
       <div className="mb-4 grid grid-cols-1 gap-2 @6xl:grid-cols-2">{chartsComponents}</div>
     </SectionContainer>

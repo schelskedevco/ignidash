@@ -61,7 +61,7 @@ function StochasticDataTableSection({ simulationType, simStats }: StochasticData
 
   return (
     <SectionContainer showBottomBorder>
-      <SectionHeader title={headerText} desc={headerDesc} />
+      <SectionHeader title={headerText} desc={headerDesc} className="mb-4" />
       {selectedSeed !== null ? (
         <Button disabled={selectedSeed === null} onClick={() => setSelectedSeed(null)} plain>
           <ChevronLeftIcon className="h-5 w-5" />

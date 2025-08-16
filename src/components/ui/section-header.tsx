@@ -1,15 +1,16 @@
 import Badge, { BadgeColor } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 export type SectionStatus = 'complete' | 'in-progress' | 'not-started' | 'error' | 'optional';
 
 interface SectionHeaderProps {
+  className?: string;
   title: string | React.ReactNode;
   desc?: string | React.ReactNode;
   status?: SectionStatus;
-  rightAddOn?: React.ReactNode;
 }
 
-export default function SectionHeader({ title, desc, status, rightAddOn }: SectionHeaderProps) {
+export default function SectionHeader({ className, title, desc, status }: SectionHeaderProps) {
   let badgeColor: BadgeColor, badgeText;
   switch (status) {
     case 'complete':
@@ -46,20 +47,8 @@ export default function SectionHeader({ title, desc, status, rightAddOn }: Secti
   );
   const descComponent = desc && <p className="text-muted-foreground mt-1 text-base">{desc}</p>;
 
-  if (rightAddOn) {
-    return (
-      <div className="mx-2 flex items-end justify-between gap-x-2">
-        <div>
-          {headlineComponent}
-          {descComponent}
-        </div>
-        {rightAddOn}
-      </div>
-    );
-  }
-
   return (
-    <div className="mx-2">
+    <div className={cn('mx-2', className)}>
       {headlineComponent}
       {descComponent}
     </div>
