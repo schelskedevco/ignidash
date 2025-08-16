@@ -37,14 +37,14 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
   return (
     <>
       <div className="border-border -mx-4 mb-5 border-b sm:-mx-6 lg:-mx-8 xl:mt-0">
-        <div className="mx-4 flex items-center justify-between sm:mx-6 lg:mx-8">
-          <nav aria-label="Tabs" className="divide-border border-border flex divide-x border-x">
+        <div className="mr-4 flex items-center justify-between sm:mr-6 lg:mr-8">
+          <nav aria-label="Tabs" className="divide-border border-border flex divide-x border-r">
             {tabs.map((tab) => (
               <button
                 key={tab.name}
                 onClick={() => setActiveSection(tab.value)}
                 aria-current={tab.value === activeSection ? 'page' : undefined}
-                className={cn('text-muted-foreground flex items-center gap-2 p-4 text-2xl font-extrabold tracking-tight', {
+                className={cn('text-muted-foreground flex items-center gap-2 px-4 py-6 text-2xl font-extrabold tracking-tight', {
                   'text-foreground bg-emphasized-background': tab.value === activeSection,
                 })}
               >
