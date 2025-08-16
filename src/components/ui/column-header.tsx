@@ -8,7 +8,7 @@ interface ColumnHeaderProps {
 
 export default function ColumnHeader({ title, icon: Icon, iconButton }: ColumnHeaderProps) {
   return (
-    <div className="border-border -mx-4 mb-5 border-b pt-6 pb-5 sm:-mx-6 lg:-mx-8">
+    <div className="border-border bg-emphasized-background -mx-4 mb-5 border-b pt-6 pb-5 sm:-mx-6 lg:-mx-8">
       <div className="mx-4 flex items-center justify-between sm:mx-6 lg:mx-8">
         <h2 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight">
           <Icon className="text-primary h-8 w-8" aria-hidden="true" />

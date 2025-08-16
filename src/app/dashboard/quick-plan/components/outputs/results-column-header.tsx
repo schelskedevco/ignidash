@@ -13,7 +13,7 @@ export default function ResultsColumnHeader() {
     <ColumnHeader
       title="Results"
       icon={PresentationChartLineIcon}
-      iconButton={<IconButton icon={icon} label={label} onClick={handleClick} className={className} />}
+      iconButton={<IconButton icon={icon} label={label} onClick={handleClick} className={className} surfaceColor="emphasized" />}
     />
   );
 }

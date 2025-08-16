@@ -18,12 +18,7 @@ export default function NumbersColumnHeader() {
         title="Numbers"
         icon={CalculatorIcon}
         iconButton={
-          <IconButton
-            icon={Cog6ToothIcon}
-            label="Preferences"
-            onClick={() => setPreferencesOpen(true)}
-            className="transition-transform duration-300 hover:-rotate-180"
-          />
+          <IconButton icon={Cog6ToothIcon} label="Preferences" onClick={() => setPreferencesOpen(true)} surfaceColor="emphasized" />
         }
       />
 
