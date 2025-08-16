@@ -59,10 +59,10 @@ function StochasticDataTableSection({ simulationType, simStats }: StochasticData
 
   if (selectedSeed !== null) {
     headerText = <DrillDownBreadcrumb selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} />;
-    headerDesc = 'Year-by-year progression and outcome for this specific simulation.';
+    headerDesc = 'Year-by-year progression and outcome for this simulation.';
   } else if (currentTableType === TableType.YearlyResults) {
     headerText = 'Yearly Results';
-    headerDesc = 'Aggregated statistics across all simulations by year.';
+    headerDesc = 'View aggregated statistics across all simulations by year.';
   } else {
     headerText = 'All Simulations';
     headerDesc = 'Browse all simulation runs. Select one to explore further.';
