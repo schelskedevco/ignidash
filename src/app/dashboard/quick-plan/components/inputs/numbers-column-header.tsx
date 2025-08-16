@@ -17,7 +17,14 @@ export default function NumbersColumnHeader() {
       <ColumnHeader
         title="Numbers"
         icon={CalculatorIcon}
-        iconButton={<IconButton icon={Cog6ToothIcon} label="Preferences" onClick={() => setPreferencesOpen(true)} />}
+        iconButton={
+          <IconButton
+            icon={Cog6ToothIcon}
+            label="Preferences"
+            onClick={() => setPreferencesOpen(true)}
+            className="transition-transform duration-300 hover:-rotate-180"
+          />
+        }
       />
 
       <Drawer open={preferencesOpen} setOpen={setPreferencesOpen} title="Preferences">
