@@ -34,13 +34,5 @@ export default function ModeToggle() {
     newTheme = 'dark';
   }
 
-  return (
-    <IconButton
-      icon={icon}
-      label={label}
-      onClick={() => setTheme(newTheme)}
-      surfaceColor="emphasized"
-      className="ring-border border-0 hover:ring"
-    />
-  );
+  return <IconButton icon={icon} label={label} onClick={() => setTheme(newTheme)} surfaceColor="emphasized" />;
 }
