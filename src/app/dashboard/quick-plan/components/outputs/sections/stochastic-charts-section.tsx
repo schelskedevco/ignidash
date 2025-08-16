@@ -138,7 +138,7 @@ function StochasticChartsSection({ simStats, analysis }: StochasticChartsSection
     <SectionContainer showBottomBorder>
       <SectionHeader title="Data Visualization" desc="Interactive charts to explore your projection." />
       <ChartsCategorySelector currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} />
-      <div className="mb-4 grid grid-cols-1 gap-2 @7xl:grid-cols-2">{chartsComponents}</div>
+      <div className="mb-4 grid grid-cols-1 gap-2 @6xl:grid-cols-2">{chartsComponents}</div>
     </SectionContainer>
   );
 }
