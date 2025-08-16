@@ -17,13 +17,14 @@ import {
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 
 import Table from './table';
+import { TableType } from '../table-type-selector';
 
 interface HistoricalBacktestDataTableImplProps {
   tableData: StochasticTableRow[];
   simStats: AggregateSimulationStats;
   selectedSeed: number | null;
   setSelectedSeed: (seed: number | null) => void;
-  viewMode: 'all' | 'yearly';
+  currentTableType: TableType;
 }
 
 function HistoricalBacktestDataTableImpl({
@@ -31,7 +32,7 @@ function HistoricalBacktestDataTableImpl({
   simStats,
   selectedSeed,
   setSelectedSeed,
-  viewMode,
+  currentTableType,
 }: HistoricalBacktestDataTableImplProps) {
   const selectedSimulation = useSingleHistoricalBacktestSimulation(selectedSeed);
 
@@ -52,7 +53,7 @@ function HistoricalBacktestDataTableImpl({
   }
 
   // When viewing yearly aggregated results
-  if (viewMode === 'yearly') {
+  if (currentTableType === TableType.YearlyResults) {
     return <Table<YearlyAggregateTableRow> columns={yearlyColumns} data={yearlyData} keyField="year" />;
   }
 
@@ -64,19 +65,19 @@ interface HistoricalBacktestDataTableProps {
   simStats: AggregateSimulationStats;
   selectedSeed: number | null;
   setSelectedSeed: (seed: number | null) => void;
-  viewMode: 'all' | 'yearly';
+  currentTableType: TableType;
 }
 
 export default function HistoricalBacktestDataTable({
   simStats,
   selectedSeed,
   setSelectedSeed,
-  viewMode,
+  currentTableType,
 }: HistoricalBacktestDataTableProps) {
   const { data: tableData, isLoading } = useHistoricalBacktestTableDataWithWorker();
 
   // Reset selectedSeed when simulation changes
-  useEffect(() => setSelectedSeed(null), [setSelectedSeed, tableData, viewMode]);
+  useEffect(() => setSelectedSeed(null), [setSelectedSeed, tableData, currentTableType]);
 
   if (isLoading) {
     return (
@@ -100,7 +101,7 @@ export default function HistoricalBacktestDataTable({
       simStats={simStats}
       selectedSeed={selectedSeed}
       setSelectedSeed={setSelectedSeed}
-      viewMode={viewMode}
+      currentTableType={currentTableType}
     />
   );
 }

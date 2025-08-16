@@ -9,6 +9,7 @@ import Card from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 interface TableProps<T extends Record<string, unknown>> {
+  className?: string;
   columns: TableColumn<T>[];
   data: T[];
   keyField: keyof T;
@@ -26,6 +27,7 @@ interface SortState<T> {
 }
 
 export default function Table<T extends Record<string, unknown>>({
+  className,
   columns,
   data,
   keyField,
@@ -103,7 +105,7 @@ export default function Table<T extends Record<string, unknown>>({
 
   return (
     <>
-      <Card removeInternalPadding className="-mx-4 rounded-none sm:mx-0 sm:rounded-lg">
+      <Card removeInternalPadding className={cn('-mx-4 my-0 rounded-none sm:mx-0 sm:rounded-lg', className)}>
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flow-root">
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

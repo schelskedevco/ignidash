@@ -17,16 +17,17 @@ import {
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 
 import Table from './table';
+import { TableType } from '../table-type-selector';
 
 interface MonteCarloDataTableImplProps {
   tableData: StochasticTableRow[];
   simStats: AggregateSimulationStats;
   selectedSeed: number | null;
   setSelectedSeed: (seed: number | null) => void;
-  viewMode: 'all' | 'yearly';
+  currentTableType: TableType;
 }
 
-function MonteCarloDataTableImpl({ tableData, simStats, selectedSeed, setSelectedSeed, viewMode }: MonteCarloDataTableImplProps) {
+function MonteCarloDataTableImpl({ tableData, simStats, selectedSeed, setSelectedSeed, currentTableType }: MonteCarloDataTableImplProps) {
   const selectedSimulation = useSingleMonteCarloSimulation(selectedSeed);
 
   const yearlyData = useStochasticYearlyResultsTableData(simStats);
@@ -46,7 +47,7 @@ function MonteCarloDataTableImpl({ tableData, simStats, selectedSeed, setSelecte
   }
 
   // When viewing yearly aggregated results
-  if (viewMode === 'yearly') {
+  if (currentTableType === TableType.YearlyResults) {
     return <Table<YearlyAggregateTableRow> columns={yearlyColumns} data={yearlyData} keyField="year" />;
   }
 
@@ -58,14 +59,14 @@ interface MonteCarloDataTableProps {
   simStats: AggregateSimulationStats;
   selectedSeed: number | null;
   setSelectedSeed: (seed: number | null) => void;
-  viewMode: 'all' | 'yearly';
+  currentTableType: TableType;
 }
 
-export default function MonteCarloDataTable({ simStats, selectedSeed, setSelectedSeed, viewMode }: MonteCarloDataTableProps) {
+export default function MonteCarloDataTable({ simStats, selectedSeed, setSelectedSeed, currentTableType }: MonteCarloDataTableProps) {
   const { data: tableData, isLoading } = useMonteCarloTableDataWithWorker();
 
   // Reset selectedSeed when simulation changes
-  useEffect(() => setSelectedSeed(null), [setSelectedSeed, tableData, viewMode]);
+  useEffect(() => setSelectedSeed(null), [setSelectedSeed, tableData, currentTableType]);
 
   if (isLoading) {
     return (
@@ -89,7 +90,7 @@ export default function MonteCarloDataTable({ simStats, selectedSeed, setSelecte
       simStats={simStats}
       selectedSeed={selectedSeed}
       setSelectedSeed={setSelectedSeed}
-      viewMode={viewMode}
+      currentTableType={currentTableType}
     />
   );
 }

@@ -14,5 +14,5 @@ interface FixedReturnsDataTableProps {
 export default function FixedReturnsDataTable({ simulation }: FixedReturnsDataTableProps) {
   const tableData = useFixedReturnsTableData(simulation);
 
-  return <Table<SimulationTableRow> columns={generateSimulationTableColumns()} data={tableData} keyField="year" />;
+  return <Table<SimulationTableRow> columns={generateSimulationTableColumns()} data={tableData} keyField="year" className="my-4" />;
 }

@@ -1,16 +1,16 @@
 'use client';
 
 import { useState, memo } from 'react';
-import { ChevronLeftIcon, TableCellsIcon, CalendarDaysIcon } from '@heroicons/react/20/solid';
+import { ChevronLeftIcon } from '@heroicons/react/20/solid';
 
 import { Button } from '@/components/catalyst/button';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
-import ButtonGroup from '@/components/ui/button-group';
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 
 import MonteCarloDataTable from '../tables/monte-carlo-data-table';
 import HistoricalBacktestDataTable from '../tables/historical-backtest-data-table';
+import TableTypeSelector, { TableType } from '../table-type-selector';
 
 interface StochasticDataTableSectionProps {
   simulationType: 'monteCarlo' | 'historicalBacktest';
@@ -19,7 +19,7 @@ interface StochasticDataTableSectionProps {
 
 function StochasticDataTableSection({ simulationType, simStats }: StochasticDataTableSectionProps) {
   const [selectedSeed, setSelectedSeed] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<'all' | 'yearly'>('all');
+  const [currentTableType, setCurrentTableType] = useState<TableType>(TableType.AllSimulations);
 
   let headerText: string;
   let headerDesc: string;
@@ -27,7 +27,7 @@ function StochasticDataTableSection({ simulationType, simStats }: StochasticData
   if (selectedSeed !== null) {
     headerText = `Simulation #${selectedSeed} Details`;
     headerDesc = 'Year-by-year progression and outcome for this specific simulation.';
-  } else if (viewMode === 'yearly') {
+  } else if (currentTableType === TableType.YearlyResults) {
     headerText = 'Yearly Results';
     headerDesc = 'Aggregated statistics across all simulations by year.';
   } else {
@@ -39,7 +39,12 @@ function StochasticDataTableSection({ simulationType, simStats }: StochasticData
   switch (simulationType) {
     case 'monteCarlo':
       tableComponent = (
-        <MonteCarloDataTable simStats={simStats} selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} viewMode={viewMode} />
+        <MonteCarloDataTable
+          simStats={simStats}
+          selectedSeed={selectedSeed}
+          setSelectedSeed={setSelectedSeed}
+          currentTableType={currentTableType}
+        />
       );
       break;
     case 'historicalBacktest':
@@ -48,7 +53,7 @@ function StochasticDataTableSection({ simulationType, simStats }: StochasticData
           simStats={simStats}
           selectedSeed={selectedSeed}
           setSelectedSeed={setSelectedSeed}
-          viewMode={viewMode}
+          currentTableType={currentTableType}
         />
       );
       break;
@@ -56,28 +61,15 @@ function StochasticDataTableSection({ simulationType, simStats }: StochasticData
 
   return (
     <SectionContainer showBottomBorder>
-      <SectionHeader
-        title={headerText}
-        desc={headerDesc}
-        rightAddOn={
-          selectedSeed !== null ? (
-            <Button disabled={selectedSeed === null} onClick={() => setSelectedSeed(null)} plain>
-              <ChevronLeftIcon className="h-5 w-5" />
-              <span>Return</span>
-            </Button>
-          ) : (
-            <ButtonGroup
-              firstButtonText="Simulations"
-              firstButtonIcon={<TableCellsIcon />}
-              firstButtonOnClick={() => setViewMode('all')}
-              lastButtonText="Yearly results"
-              lastButtonIcon={<CalendarDaysIcon />}
-              lastButtonOnClick={() => setViewMode('yearly')}
-              defaultActiveButton="first"
-            />
-          )
-        }
-      />
+      <SectionHeader title={headerText} desc={headerDesc} />
+      {selectedSeed !== null ? (
+        <Button disabled={selectedSeed === null} onClick={() => setSelectedSeed(null)} plain>
+          <ChevronLeftIcon className="h-5 w-5" />
+          <span>Return</span>
+        </Button>
+      ) : (
+        <TableTypeSelector currentType={currentTableType} setCurrentType={setCurrentTableType} />
+      )}
       {tableComponent}
     </SectionContainer>
   );
