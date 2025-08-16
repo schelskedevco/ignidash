@@ -44,12 +44,15 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
                 key={tab.name}
                 onClick={() => setActiveSection(tab.value)}
                 aria-current={tab.value === activeSection ? 'page' : undefined}
-                className={cn('text-muted-foreground flex items-center gap-2 px-4 py-4 text-2xl font-extrabold tracking-tight lg:py-6', {
-                  'text-foreground bg-emphasized-background': tab.value === activeSection,
-                })}
+                className={cn(
+                  'text-muted-foreground flex items-center gap-2 px-4 py-4 text-lg font-extrabold tracking-tight sm:text-2xl lg:py-6',
+                  {
+                    'text-foreground bg-emphasized-background': tab.value === activeSection,
+                  }
+                )}
               >
                 <tab.icon
-                  className={cn('h-8 w-8', {
+                  className={cn('size-6 sm:size-8', {
                     'text-primary': tab.value === activeSection,
                   })}
                   aria-hidden="true"
