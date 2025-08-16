@@ -50,8 +50,8 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
                   { 'hover:bg-background': tab.value !== activeSection }
                 )}
               >
-                <tab.icon className="text-primary size-5 lg:size-8" aria-hidden="true" />
-                <span className="text-sm/6 font-semibold lg:text-2xl lg:font-extrabold lg:tracking-tight">{tab.name}</span>
+                <tab.icon className="text-primary size-5 lg:size-6" aria-hidden="true" />
+                <span className="text-sm/6 font-semibold lg:text-lg lg:font-bold lg:tracking-tight">{tab.name}</span>
               </button>
             ))}
           </nav>
