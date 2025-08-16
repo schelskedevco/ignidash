@@ -18,14 +18,14 @@ interface ChartsCategorySelectorProps {
 
 export default function ChartsCategorySelector({ className, setCurrentCategory, currentCategory }: ChartsCategorySelectorProps) {
   return (
-    <div className={cn('isolate flex overflow-x-auto py-2', className)}>
+    <div className={cn('isolate flex gap-x-1 overflow-x-auto py-2', className)}>
       {Object.values(ChartsCategory).map((category) => (
         <button
           key={category}
           onClick={() => setCurrentCategory(category)}
           type="button"
           className={cn(
-            'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline relative m-1 inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold focus:z-10',
+            'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border relative inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold focus:z-10',
             { 'text-foreground bg-emphasized-background': currentCategory === category }
           )}
         >

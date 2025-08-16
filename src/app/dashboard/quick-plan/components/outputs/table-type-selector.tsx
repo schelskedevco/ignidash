@@ -15,14 +15,14 @@ interface TableTypeSelectorProps {
 
 export default function TableTypeSelector({ className, setCurrentType, currentType }: TableTypeSelectorProps) {
   return (
-    <div className={cn('isolate flex overflow-x-auto py-2', className)}>
+    <div className={cn('isolate flex gap-x-1 overflow-x-auto py-2', className)}>
       {Object.values(TableType).map((type) => (
         <button
           key={type}
           onClick={() => setCurrentType(type)}
           type="button"
           className={cn(
-            'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline relative m-1 inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold focus:z-10',
+            'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border relative inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold focus:z-10',
             { 'text-foreground bg-emphasized-background': currentType === type }
           )}
         >
