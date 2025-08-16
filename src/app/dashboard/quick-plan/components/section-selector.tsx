@@ -36,16 +36,16 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
 
   return (
     <>
-      <div className="border-border bg-emphasized-background -mx-4 mb-5 border-b sm:-mx-6 lg:-mx-8">
+      <div className="border-border bg-emphasized-background -mx-4 mb-5 border-b py-4 sm:-mx-6 lg:-mx-8">
         <div className="mr-4 flex items-stretch justify-between sm:mr-6 lg:mr-8">
-          <nav aria-label="Tabs" className="divide-border border-border flex divide-x border-r">
+          <nav aria-label="Tabs" className="divide-border border-border -my-4 flex divide-x border-r">
             {tabs.map((tab) => (
               <button
                 key={tab.name}
                 onClick={() => setActiveSection(tab.value)}
                 aria-current={tab.value === activeSection ? 'page' : undefined}
                 className={cn(
-                  'text-muted-foreground flex items-center gap-2',
+                  'text-muted-foreground flex items-center gap-2 p-4',
                   { 'text-foreground': tab.value === activeSection },
                   { 'hover:bg-background': tab.value !== activeSection }
                 )}
