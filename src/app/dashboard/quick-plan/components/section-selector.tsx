@@ -45,7 +45,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
                 onClick={() => setActiveSection(tab.value)}
                 aria-current={tab.value === activeSection ? 'page' : undefined}
                 className={cn(
-                  'text-muted-foreground flex items-center gap-2 p-2 text-lg font-extrabold tracking-tight sm:p-4 sm:text-2xl lg:py-6',
+                  'text-muted-foreground flex items-center gap-2 p-2 text-sm/6 font-semibold tracking-tight lg:px-4 lg:py-6 lg:text-2xl',
                   { 'text-foreground bg-emphasized-background': tab.value === activeSection },
                   { 'hover:bg-emphasized-background': tab.value !== activeSection }
                 )}
