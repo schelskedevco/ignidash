@@ -7,6 +7,7 @@ import { type TableColumn } from '@/lib/types/table';
 import Pagination from '@/components/ui/pagination';
 import Card from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
 
 interface TableProps<T extends Record<string, unknown>> {
   className?: string;
@@ -45,7 +46,8 @@ export default function Table<T extends Record<string, unknown>>({
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
   const tableRef = useRef<HTMLTableElement>(null);
 
-  const handleSort = (column: keyof T) => {
+  const withScrollPreservation = useScrollPreservation();
+  const handleSort = withScrollPreservation((column: keyof T) => {
     setSortState((prev) => {
       if (prev.column === column) {
         if (prev.direction === 'asc') return { column, direction: 'desc' };
@@ -54,7 +56,7 @@ export default function Table<T extends Record<string, unknown>>({
       return { column, direction: 'asc' };
     });
     setCurrentPage(1);
-  };
+  });
 
   const sortedData = useMemo(() => {
     if (!sortState.column || !sortState.direction) return data;
@@ -90,7 +92,9 @@ export default function Table<T extends Record<string, unknown>>({
     return { paginatedData: paginated, totalPages: total, emptyRows: emptyRowCount };
   }, [sortedData, currentPage, itemsPerPage, showPagination]);
 
-  const handlePageChange = (page: number) => setCurrentPage(page);
+  const handlePageChange = withScrollPreservation((page: number) => {
+    setCurrentPage(page);
+  });
 
   // Reset to first page when data changes
   useEffect(() => setCurrentPage(1), [data]);
@@ -99,7 +103,7 @@ export default function Table<T extends Record<string, unknown>>({
   useEffect(() => {
     if (onEscPressed && tableRef.current) {
       const firstRow = tableRef.current.querySelector('tbody tr');
-      if (firstRow) (firstRow as HTMLElement).focus();
+      if (firstRow) (firstRow as HTMLElement).focus({ preventScroll: true });
     }
   }, [onEscPressed]);
 

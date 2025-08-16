@@ -6,6 +6,7 @@ import { ChevronRightIcon } from '@heroicons/react/20/solid';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
+import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
 
 import MonteCarloDataTable from '../tables/monte-carlo-data-table';
 import HistoricalBacktestDataTable from '../tables/historical-backtest-data-table';
@@ -17,6 +18,8 @@ interface DrillDownBreadcrumbProps {
 }
 
 function DrillDownBreadcrumb({ selectedSeed, setSelectedSeed }: DrillDownBreadcrumbProps) {
+  const withScrollPreservation = useScrollPreservation();
+
   return (
     <nav aria-label="Breadcrumb" className="flex">
       <ol role="list" className="flex items-center space-x-2">
@@ -25,7 +28,7 @@ function DrillDownBreadcrumb({ selectedSeed, setSelectedSeed }: DrillDownBreadcr
             <button
               type="button"
               className="text-muted-foreground hover:text-foreground focus-outline"
-              onClick={() => setSelectedSeed(null)}
+              onClick={withScrollPreservation(() => setSelectedSeed(null))}
             >
               <span>All Simulations</span>
             </button>

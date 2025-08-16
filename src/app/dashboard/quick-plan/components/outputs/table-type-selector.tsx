@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
 
 export enum TableType {
   AllSimulations = 'All Simulations',
@@ -14,12 +15,14 @@ interface TableTypeSelectorProps {
 }
 
 export default function TableTypeSelector({ className, setCurrentType, currentType }: TableTypeSelectorProps) {
+  const withScrollPreservation = useScrollPreservation();
+
   return (
     <div className={cn('isolate -ml-1 flex gap-x-1 overflow-x-auto py-2 pl-1', className)}>
       {Object.values(TableType).map((type) => (
         <button
           key={type}
-          onClick={() => setCurrentType(type)}
+          onClick={withScrollPreservation(() => setCurrentType(type))}
           type="button"
           className={cn(
             'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border relative inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold focus:z-10',

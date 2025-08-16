@@ -15,6 +15,7 @@ import {
   generateYearlyAggregateTableColumns,
 } from '@/lib/utils/table-formatters';
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
+import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
 
 import Table from './table';
 import { TableType } from '../table-type-selector';
@@ -37,12 +38,18 @@ function MonteCarloDataTableImpl({ tableData, simStats, selectedSeed, setSelecte
   const yearlyColumns = useMemo(() => generateYearlyAggregateTableColumns(), []);
   const detailDataColumns = useMemo(() => generateSimulationTableColumns(), []);
 
-  const handleRowClick = (row: StochasticTableRow) => setSelectedSeed(row.seed);
+  const withScrollPreservation = useScrollPreservation();
+  const handleRowClick = withScrollPreservation((row: StochasticTableRow) => setSelectedSeed(row.seed));
 
   // When viewing a specific simulation detail
   if (selectedSeed !== null) {
     return (
-      <Table<SimulationTableRow> columns={detailDataColumns} data={detailData} keyField="year" onEscPressed={() => setSelectedSeed(null)} />
+      <Table<SimulationTableRow>
+        columns={detailDataColumns}
+        data={detailData}
+        keyField="year"
+        onEscPressed={withScrollPreservation(() => setSelectedSeed(null))}
+      />
     );
   }
 
