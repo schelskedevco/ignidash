@@ -18,7 +18,7 @@ interface ChartsCategorySelectorProps {
 
 export default function ChartsCategorySelector({ className, setCurrentCategory, currentCategory }: ChartsCategorySelectorProps) {
   return (
-    <div className={cn('isolate flex gap-x-1 overflow-x-auto py-2', className)}>
+    <div className={cn('isolate -ml-1 flex gap-x-1 overflow-x-auto py-2 pl-1', className)}>
       {Object.values(ChartsCategory).map((category) => (
         <button
           key={category}
