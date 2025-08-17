@@ -1,4 +1,4 @@
-import { HouseIcon, LandmarkIcon, HandCoinsIcon, ZapIcon, RocketIcon } from 'lucide-react';
+import { HouseIcon, LandmarkIcon, HandCoinsIcon, ChartNoAxesCombinedIcon, RocketIcon } from 'lucide-react';
 
 export interface NavigationItem {
   name: string;
@@ -13,7 +13,7 @@ export const navigationItems: Omit<NavigationItem, 'current'>[] = [
   { name: 'Dashboard', href: '/dashboard', icon: HouseIcon },
   { name: 'Portfolio', href: '/dashboard/portfolio', icon: LandmarkIcon },
   { name: 'Cash Flow', href: '/dashboard/cash-flow', icon: HandCoinsIcon },
-  { name: 'Quick Plan', href: '/dashboard/quick-plan', icon: ZapIcon },
+  { name: 'Simulator', href: '/dashboard/quick-plan', icon: ChartNoAxesCombinedIcon },
   { name: 'Pro', href: '/dashboard/pro', icon: RocketIcon },
 ];
 
