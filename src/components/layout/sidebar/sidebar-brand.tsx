@@ -2,6 +2,8 @@ import { FireIcon } from '@heroicons/react/24/solid';
 
 import ModeToggle from '@/components/mode-toggle';
 
+import SidebarToggle from './sidebar-toggle';
+
 export default function SidebarBrand() {
   return (
     <div className="border-border -mx-6 mb-4 flex items-center justify-between gap-2 border-b py-4 shadow-xs dark:shadow-black/30">
@@ -12,6 +14,7 @@ export default function SidebarBrand() {
         </div>
         <div className="flex items-center">
           <ModeToggle />
+          <SidebarToggle />
         </div>
       </div>
     </div>
