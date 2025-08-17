@@ -4,7 +4,7 @@ interface SecondaryColumnProps {
 
 export default function SecondaryColumn({ children }: SecondaryColumnProps) {
   return (
-    <aside className="border-border fixed inset-y-0 left-72 hidden w-96 overflow-y-auto border-r px-4 sm:px-6 lg:px-8 xl:block">
+    <aside className="border-border fixed inset-y-0 left-72 hidden w-96 overflow-y-auto border-r px-2 sm:px-3 lg:px-4 xl:block">
       {children}
     </aside>
   );

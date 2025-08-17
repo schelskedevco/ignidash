@@ -14,8 +14,8 @@ export default function SectionContainer({ children, showBottomBorder, location 
       innerXMarginClass = 'mx-4 sm:mx-6';
       break;
     default:
-      outerXMarginClass = '-mx-4 sm:-mx-6 lg:-mx-8';
-      innerXMarginClass = 'mx-4 sm:mx-6 lg:mx-8';
+      outerXMarginClass = '-mx-2 sm:-mx-3 lg:-mx-4';
+      innerXMarginClass = 'mx-2 sm:mx-3 lg:mx-4';
       break;
   }
 
