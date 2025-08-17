@@ -1,4 +1,4 @@
-import { HouseIcon, LandmarkIcon, HandCoinsIcon, ChartNoAxesCombinedIcon, RocketIcon } from 'lucide-react';
+import { HouseIcon, LandmarkIcon, HandCoinsIcon, ChartNoAxesCombinedIcon, Layers2 } from 'lucide-react';
 
 export interface NavigationItem {
   name: string;
@@ -14,7 +14,7 @@ export const navigationItems: Omit<NavigationItem, 'current'>[] = [
   { name: 'Portfolio', href: '/dashboard/portfolio', icon: LandmarkIcon },
   { name: 'Cash Flow', href: '/dashboard/cash-flow', icon: HandCoinsIcon },
   { name: 'Simulator', href: '/dashboard/quick-plan', icon: ChartNoAxesCombinedIcon },
-  { name: 'Pro', href: '/dashboard/pro', icon: RocketIcon },
+  { name: 'Compare', href: '/dashboard/compare', icon: Layers2 },
 ];
 
 export function getNavigation(currentPath: string): NavigationItem[] {
