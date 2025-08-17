@@ -14,8 +14,8 @@ export default function SidebarLink({ href, current, children }: SidebarLinkProp
       href={href}
       className={cn(
         'group focus-outline flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold',
-        { 'bg-background ring-primary ring': current },
-        { 'hover:bg-background': !current }
+        { 'bg-background ring-border ring': current },
+        { 'hover:bg-background hover:ring-border hover:ring': !current }
       )}
     >
       {children}
