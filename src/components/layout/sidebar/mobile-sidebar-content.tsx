@@ -10,10 +10,10 @@ interface MobileSidebarContentProps {
 
 export default function MobileSidebarContent({ navigation, onClose }: MobileSidebarContentProps) {
   return (
-    <div className="bg-emphasized-background border-border flex grow flex-col gap-y-5 overflow-y-auto border-r px-6 pb-2">
+    <div className="bg-emphasized-background border-border flex grow flex-col overflow-y-auto border-r px-6 pb-2">
       <SidebarBrand />
       <nav className="flex flex-1 flex-col">
-        <ul role="list" className="flex flex-1 flex-col gap-y-7">
+        <ul role="list" className="flex flex-1 flex-col">
           <li>
             <ul role="list" className="-mx-2 space-y-2">
               {navigation.map((item) => (
