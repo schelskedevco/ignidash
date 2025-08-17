@@ -1,5 +1,9 @@
-import { redirect } from 'next/navigation';
+import MainArea from '@/components/layout/main-area';
 
 export default function DashboardPage() {
-  redirect('/dashboard/quick-plan');
+  return (
+    <MainArea>
+      <h1 className="text-4xl font-extrabold tracking-tight">Dashboard</h1>
+    </MainArea>
+  );
 }

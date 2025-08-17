@@ -1,4 +1,4 @@
-import { BoltIcon, RocketLaunchIcon } from '@heroicons/react/24/outline';
+import { BoltIcon, RocketLaunchIcon, HomeIcon } from '@heroicons/react/24/outline';
 
 export interface NavigationItem {
   name: string;
@@ -10,6 +10,7 @@ export interface NavigationItem {
 }
 
 export const navigationItems: Omit<NavigationItem, 'current'>[] = [
+  { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Quick Plan', href: '/dashboard/quick-plan', icon: BoltIcon },
   { name: 'Pro', href: '/dashboard/pro', icon: RocketLaunchIcon },
 ];
