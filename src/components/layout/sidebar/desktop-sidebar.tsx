@@ -24,7 +24,7 @@ export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
                       <div className="p-2">
                         <item.icon aria-hidden="true" className="text-primary size-6 shrink-0" />
                       </div>
-                      <span className="inline group-data-[state=collapsed]:hidden">{item.name}</span>
+                      <span className="ml-1 inline group-data-[state=collapsed]:hidden">{item.name}</span>
                     </SidebarLink>
                   </li>
                 ))}
@@ -43,7 +43,7 @@ export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
                   height={32}
                 />
                 <span className="sr-only">Your profile</span>
-                <span className="ml-1 inline group-data-[state=collapsed]:hidden" aria-hidden="true">
+                <span className="ml-2 inline group-data-[state=collapsed]:hidden" aria-hidden="true">
                   Tom Cook
                 </span>
               </a>

@@ -20,7 +20,7 @@ export default function SidebarBrand({ onClose }: SidebarBrandProps) {
           <div className="px-1">
             <FireIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
           </div>
-          <span className="text-2xl font-extrabold tracking-tight">Ignidash</span>
+          <span className="ml-1 text-2xl font-extrabold tracking-tight">Ignidash</span>
         </Link>
         <div className="flex items-center">
           <ModeToggle />

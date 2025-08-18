@@ -22,7 +22,7 @@ export default function MobileSidebarContent({ navigation, onClose }: MobileSide
                     <div className="p-2">
                       <item.icon aria-hidden="true" className="text-primary size-6 shrink-0" />
                     </div>
-                    {item.name}
+                    <span className="ml-1">{item.name}</span>
                   </SidebarLink>
                 </li>
               ))}
