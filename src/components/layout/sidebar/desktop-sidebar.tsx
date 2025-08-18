@@ -22,7 +22,7 @@ export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
                   <li key={item.name}>
                     <SidebarLink href={item.href} current={item.current}>
                       <div className="p-2">
-                        <item.icon aria-hidden="true" className="text-primary size-6 shrink-0" />
+                        <item.icon aria-hidden="true" className="size-6 shrink-0" />
                       </div>
                       <span className="ml-1 inline group-data-[state=collapsed]:hidden">{item.name}</span>
                     </SidebarLink>

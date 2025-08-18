@@ -20,7 +20,7 @@ export default function MobileSidebarContent({ navigation, onClose }: MobileSide
                 <li key={item.name} onClick={onClose}>
                   <SidebarLink href={item.href} current={item.current}>
                     <div className="p-2">
-                      <item.icon aria-hidden="true" className="text-primary size-6 shrink-0" />
+                      <item.icon aria-hidden="true" className="size-6 shrink-0" />
                     </div>
                     <span className="ml-1">{item.name}</span>
                   </SidebarLink>
