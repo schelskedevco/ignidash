@@ -13,12 +13,10 @@ export default function DisclosureSection({ title, icon: Icon, children }: Discl
   return (
     <Disclosure as="div" className="-mx-2 sm:-mx-3 lg:-mx-4">
       <DisclosureButton className="group data-open:border-border focus-outline flex w-full items-center justify-between p-4 data-open:border-b data-open:pb-5">
-        <div className="flex w-full items-center justify-between text-left">
-          <div className="flex flex-col gap-2 transition-opacity duration-150 group-data-hover:opacity-75">
-            <div className="flex items-center gap-2 font-medium">
-              <Icon className="text-primary size-6" aria-hidden="true" />
-              <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
-            </div>
+        <div className="flex w-full items-center justify-between text-left transition-opacity duration-150 group-data-hover:opacity-75">
+          <div className="flex items-center gap-2 font-medium">
+            <Icon className="text-primary size-6" aria-hidden="true" />
+            <h3 className="text-xl font-semibold tracking-tight">{title}</h3>
           </div>
           <ChevronDownIcon
             className="text-muted-foreground ml-2 h-5 w-5 shrink-0 transition-transform duration-100 group-data-open:-rotate-180"
