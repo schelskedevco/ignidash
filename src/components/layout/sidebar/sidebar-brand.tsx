@@ -12,7 +12,9 @@ export default function SidebarBrand() {
       </div>
       <div className="mx-5 flex w-full items-center justify-between group-data-[state=collapsed]:hidden">
         <div className="flex items-center gap-2">
-          <FireIcon className="text-primary h-8 w-8" aria-hidden="true" />
+          <div className="px-2">
+            <FireIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+          </div>
           <span className="text-2xl font-extrabold tracking-tight">Ignidash</span>
         </div>
         <div className="flex items-center">
