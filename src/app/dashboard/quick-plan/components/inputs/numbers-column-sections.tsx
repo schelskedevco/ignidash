@@ -1,4 +1,4 @@
-import { ChartPieIcon, ChartBarIcon, BanknotesIcon, DocumentTextIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { CircleUserRoundIcon, LandmarkIcon, HandCoinsIcon, FileDigitIcon, Settings2Icon } from 'lucide-react';
 
 import DisclosureSection from '@/components/ui/disclosure-section';
 
@@ -11,19 +11,19 @@ export default function NumbersColumnSections() {
   return (
     <>
       <div className="divide-border divide-y">
-        <DisclosureSection title="Basic Info" icon={UserCircleIcon}>
+        <DisclosureSection title="Basic Info" icon={CircleUserRoundIcon}>
           <p>Hello</p>
         </DisclosureSection>
-        <DisclosureSection title="Cash Flow" icon={BanknotesIcon}>
+        <DisclosureSection title="Portfolio" icon={LandmarkIcon}>
           <p>Hello</p>
         </DisclosureSection>
-        <DisclosureSection title="Investments" icon={ChartPieIcon}>
+        <DisclosureSection title="Cash Flow" icon={HandCoinsIcon}>
           <p>Hello</p>
         </DisclosureSection>
-        <DisclosureSection title="Retirement Strategy" icon={DocumentTextIcon}>
+        <DisclosureSection title="Retirement Strategy" icon={FileDigitIcon}>
           <p>Hello</p>
         </DisclosureSection>
-        <DisclosureSection title="Simulation Settings" icon={ChartBarIcon}>
+        <DisclosureSection title="Simulation Settings" icon={Settings2Icon}>
           <p>Hello</p>
         </DisclosureSection>
       </div>
