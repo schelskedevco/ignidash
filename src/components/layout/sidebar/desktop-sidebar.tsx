@@ -17,7 +17,7 @@ export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
         <nav className="flex flex-1 flex-col">
           <ul role="list" className="flex flex-1 flex-col">
             <li>
-              <ul role="list" className="space-y-2">
+              <ul role="list" className="space-y-1">
                 {navigation.map((item) => (
                   <li key={item.name}>
                     <SidebarLink href={item.href} current={item.current}>
