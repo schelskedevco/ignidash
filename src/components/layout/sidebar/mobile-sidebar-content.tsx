@@ -10,9 +10,11 @@ interface MobileSidebarContentProps {
 
 export default function MobileSidebarContent({ navigation, onClose }: MobileSidebarContentProps) {
   return (
-    <div className="bg-emphasized-background border-border flex grow flex-col overflow-y-auto border-r px-3">
-      <SidebarBrand onClose={onClose} />
-      <nav className="flex flex-1 flex-col">
+    <div className="bg-emphasized-background border-border flex grow flex-col border-r">
+      <div className="px-3">
+        <SidebarBrand onClose={onClose} />
+      </div>
+      <nav className="flex flex-1 flex-col overflow-y-auto px-3">
         <ul role="list" className="flex flex-1 flex-col">
           <li>
             <ul role="list" className="space-y-2">
