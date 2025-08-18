@@ -20,7 +20,7 @@ export default function NumbersColumnSections() {
         <DisclosureSection title="Cash Flow" icon={HandCoinsIcon}>
           <p>Hello</p>
         </DisclosureSection>
-        <DisclosureSection title="Retirement Strategy" icon={FileDigitIcon}>
+        <DisclosureSection title="Withdrawal Strategy" icon={FileDigitIcon}>
           <p>Hello</p>
         </DisclosureSection>
         <DisclosureSection title="Simulation Settings" icon={ChartNoAxesColumnIncreasingIcon}>
