@@ -12,26 +12,28 @@ interface DesktopSidebarProps {
 export function DesktopSidebar({ navigation }: DesktopSidebarProps) {
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col group-data-[state=collapsed]:lg:w-20">
-      <div className="border-border bg-emphasized-background flex grow flex-col overflow-y-auto border-r px-6">
+      <div className="border-border bg-emphasized-background flex grow flex-col overflow-y-auto border-r px-5">
         <SidebarBrand />
         <nav className="flex flex-1 flex-col">
           <ul role="list" className="flex flex-1 flex-col">
             <li>
-              <ul role="list" className="-mx-2 space-y-2">
+              <ul role="list" className="space-y-2">
                 {navigation.map((item) => (
                   <li key={item.name}>
                     <SidebarLink href={item.href} current={item.current}>
-                      <item.icon aria-hidden="true" className="text-primary size-6 shrink-0" />
+                      <div className="p-2">
+                        <item.icon aria-hidden="true" className="text-primary size-6 shrink-0" />
+                      </div>
                       <span className="inline group-data-[state=collapsed]:hidden">{item.name}</span>
                     </SidebarLink>
                   </li>
                 ))}
               </ul>
             </li>
-            <li className="-mx-6 mt-auto">
+            <li className="-mx-5 mt-auto">
               <a
                 href="#"
-                className="hover:bg-background focus-outline border-border flex items-center gap-x-4 border-t px-6 py-3 text-sm/6 font-semibold"
+                className="hover:bg-background focus-outline border-border flex items-center gap-x-4 border-t px-5 py-3 text-sm/6 font-semibold"
               >
                 <Image
                   alt=""
