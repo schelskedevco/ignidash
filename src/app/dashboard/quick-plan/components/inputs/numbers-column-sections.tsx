@@ -5,11 +5,28 @@ import { CircleUserRoundIcon, LandmarkIcon, HandCoinsIcon, ArmchairIcon, Trendin
 import { useBasicsData, useUpdateBasics, useRetirementFundingData, useUpdateRetirementFunding } from '@/lib/stores/quick-plan-store';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import NumberInput from '@/components/ui/number-input';
-import { Field, FieldGroup, Fieldset, Label /* Description */ } from '@/components/catalyst/fieldset';
+import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
 
 import BasicsSection from './sections/basics/section';
 import GoalSection from './sections/retirement-goal/section';
 import FineTuneSection from './sections/fine-tune/section';
+
+function getSafeWithdrawalRateDescription() {
+  return (
+    <>
+      Annual portfolio withdrawal percentage. The{' '}
+      <a
+        href="https://www.investopedia.com/terms/f/four-percent-rule.asp"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-foreground hover:text-foreground/80 underline"
+      >
+        4% rule
+      </a>{' '}
+      is standard.
+    </>
+  );
+}
 
 export default function NumbersColumnSections() {
   const basics = useBasicsData();
@@ -57,7 +74,24 @@ export default function NumbersColumnSections() {
         <p>I am cash flow.</p>
       </DisclosureSection>
       <DisclosureSection title="Retirement" icon={ArmchairIcon}>
-        <p>I am retirement.</p>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <Fieldset aria-label="Withdrawal strategy in retirement">
+            <FieldGroup>
+              <Field>
+                <Label>Safe Withdrawal Rate</Label>
+                <NumberInput
+                  id="safe-withdrawal-rate"
+                  value={retirementFunding.safeWithdrawalRate}
+                  onBlur={(value) => updateRetirementFunding('safeWithdrawalRate', value)}
+                  inputMode="decimal"
+                  placeholder="4%"
+                  suffix="%"
+                />
+                <Description className="mt-2">{getSafeWithdrawalRateDescription()}</Description>
+              </Field>
+            </FieldGroup>
+          </Fieldset>
+        </form>
       </DisclosureSection>
       <DisclosureSection title="Assumptions" icon={TrendingUpDownIcon}>
         <p>I am assumptions.</p>
