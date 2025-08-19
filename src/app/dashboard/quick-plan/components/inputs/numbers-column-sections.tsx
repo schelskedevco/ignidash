@@ -70,7 +70,7 @@ export default function NumbersColumnSections() {
                   decimalScale={0}
                 />
               </Field>
-              <Divider soft />
+              <Divider />
               <Field>
                 <Label>Life Expectancy</Label>
                 <NumberInput
@@ -130,7 +130,7 @@ export default function NumbersColumnSections() {
                   suffix="%"
                 />
               </Field>
-              <Divider soft />
+              <Divider />
               <Field>
                 <Label className="flex w-full items-center justify-between">
                   <span>Bond Returns</span>
@@ -145,7 +145,7 @@ export default function NumbersColumnSections() {
                   suffix="%"
                 />
               </Field>
-              <Divider soft />
+              <Divider />
               <Field>
                 <Label className="flex w-full items-center justify-between">
                   <span>Cash Returns</span>
@@ -160,7 +160,7 @@ export default function NumbersColumnSections() {
                   suffix="%"
                 />
               </Field>
-              <Divider soft />
+              <Divider />
               <Field>
                 <Label className="flex w-full items-center justify-between">
                   <span>Inflation Rate</span>
