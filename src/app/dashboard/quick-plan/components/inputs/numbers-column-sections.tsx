@@ -112,10 +112,10 @@ export default function NumbersColumnSections() {
           </Fieldset>
         </form>
       </DisclosureSection>
-      <DisclosureSection title="Assumptions" icon={TrendingUpDownIcon}>
+      <DisclosureSection title="Market Assumptions" icon={TrendingUpDownIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset>
-            <Legend className="mx-2">Market Assumptions</Legend>
+            <Legend className="mx-2">Expected Returns</Legend>
             <Text className="mx-2">Expected inflation rate and nominal returns for each asset class.</Text>
             <Card>
               <FieldGroup>
