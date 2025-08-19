@@ -2,7 +2,17 @@
 
 import { CircleUserRoundIcon, LandmarkIcon, HandCoinsIcon, ArmchairIcon, TrendingUpDownIcon } from 'lucide-react';
 
-import { useBasicsData, useUpdateBasics, useRetirementFundingData, useUpdateRetirementFunding } from '@/lib/stores/quick-plan-store';
+import {
+  useBasicsData,
+  useUpdateBasics,
+  useRetirementFundingData,
+  useUpdateRetirementFunding,
+  useMarketAssumptionsData,
+  useUpdateMarketAssumptions,
+  useStocksRealReturn,
+  useBondsRealReturn,
+  useCashRealReturn,
+} from '@/lib/stores/quick-plan-store';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import NumberInput from '@/components/ui/number-input';
 import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
@@ -34,6 +44,13 @@ export default function NumbersColumnSections() {
 
   const retirementFunding = useRetirementFundingData();
   const updateRetirementFunding = useUpdateRetirementFunding();
+
+  const marketAssumptions = useMarketAssumptionsData();
+  const updateMarketAssumptions = useUpdateMarketAssumptions();
+
+  const stocksRealReturn = useStocksRealReturn();
+  const bondsRealReturn = useBondsRealReturn();
+  const cashRealReturn = useCashRealReturn();
 
   return (
     <>
@@ -94,7 +111,68 @@ export default function NumbersColumnSections() {
         </form>
       </DisclosureSection>
       <DisclosureSection title="Assumptions" icon={TrendingUpDownIcon}>
-        <p>I am assumptions.</p>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <Fieldset aria-label="Market assumptions">
+            <FieldGroup>
+              <Field>
+                <Label className="flex w-full items-center justify-between">
+                  <span>Investment Returns</span>
+                  <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
+                </Label>
+                <NumberInput
+                  id="stock-return"
+                  value={marketAssumptions.stockReturn}
+                  onBlur={(value) => updateMarketAssumptions('stockReturn', value)}
+                  inputMode="decimal"
+                  placeholder="10%"
+                  suffix="%"
+                />
+              </Field>
+              <Field>
+                <Label className="flex w-full items-center justify-between">
+                  <span>Bond Returns</span>
+                  <span className="text-muted-foreground text-sm/6">{bondsRealReturn.toFixed(1)}% real</span>
+                </Label>
+                <NumberInput
+                  id="bond-return"
+                  value={marketAssumptions.bondReturn}
+                  onBlur={(value) => updateMarketAssumptions('bondReturn', value)}
+                  inputMode="decimal"
+                  placeholder="5%"
+                  suffix="%"
+                />
+              </Field>
+              <Field>
+                <Label className="flex w-full items-center justify-between">
+                  <span>Cash Returns</span>
+                  <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
+                </Label>
+                <NumberInput
+                  id="cash-return"
+                  value={marketAssumptions.cashReturn}
+                  onBlur={(value) => updateMarketAssumptions('cashReturn', value)}
+                  inputMode="decimal"
+                  placeholder="3%"
+                  suffix="%"
+                />
+              </Field>
+              <Field>
+                <Label className="flex w-full items-center justify-between">
+                  <span>Inflation Rate</span>
+                  <span className="text-muted-foreground text-sm/6">—</span>
+                </Label>
+                <NumberInput
+                  id="inflation-rate"
+                  value={marketAssumptions.inflationRate}
+                  onBlur={(value) => updateMarketAssumptions('inflationRate', value)}
+                  inputMode="decimal"
+                  placeholder="3%"
+                  suffix="%"
+                />
+              </Field>
+            </FieldGroup>
+          </Fieldset>
+        </form>
       </DisclosureSection>
       <BasicsSection />
       <GoalSection />
