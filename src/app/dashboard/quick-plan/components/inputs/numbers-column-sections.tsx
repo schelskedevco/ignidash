@@ -58,9 +58,9 @@ export default function NumbersColumnSections() {
     <>
       <DisclosureSection title="About You" icon={CircleUserRoundIcon} defaultOpen>
         <form onSubmit={(e) => e.preventDefault()}>
-          <Fieldset aria-label="Age and life expectancy">
-            <Legend className="mx-2">Basic Info</Legend>
-            <Text className="mx-2">Your simulation will start at your current age and end at your life expectancy.</Text>
+          <Fieldset>
+            <Legend className="mx-2">Duration</Legend>
+            <Text className="mx-2">When your simulation should start and end.</Text>
             <Card>
               <FieldGroup>
                 <Field>
