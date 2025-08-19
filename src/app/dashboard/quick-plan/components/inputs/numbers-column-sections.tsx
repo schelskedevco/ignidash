@@ -5,9 +5,7 @@ import { CircleUserRoundIcon, LandmarkIcon, HandCoinsIcon, ArmchairIcon, Trendin
 import { useBasicsData, useUpdateBasics, useRetirementFundingData, useUpdateRetirementFunding } from '@/lib/stores/quick-plan-store';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import NumberInput from '@/components/ui/number-input';
-import { Field, FieldGroup, Fieldset, Label, Legend /* Description */ } from '@/components/catalyst/fieldset';
-// import { Input } from '@/components/catalyst/input';
-import { Text } from '@/components/catalyst/text';
+import { Field, FieldGroup, Fieldset, Label /* Description */ } from '@/components/catalyst/fieldset';
 
 import BasicsSection from './sections/basics/section';
 import GoalSection from './sections/retirement-goal/section';
@@ -24,9 +22,7 @@ export default function NumbersColumnSections() {
     <>
       <DisclosureSection title="Basic Info" icon={CircleUserRoundIcon} defaultOpen>
         <form onSubmit={(e) => e.preventDefault()}>
-          <Fieldset>
-            <Legend>I am basic info.</Legend>
-            <Text>Your most basic of info.</Text>
+          <Fieldset aria-label="Age and life expectancy">
             <FieldGroup>
               <Field>
                 <Label>Age</Label>
@@ -66,7 +62,6 @@ export default function NumbersColumnSections() {
       <DisclosureSection title="Assumptions" icon={TrendingUpDownIcon}>
         <p>I am assumptions.</p>
       </DisclosureSection>
-      <div className="h-lvh"></div>
       <BasicsSection />
       <GoalSection />
       <FineTuneSection />
