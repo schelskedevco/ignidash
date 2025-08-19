@@ -15,7 +15,9 @@ import {
 } from '@/lib/stores/quick-plan-store';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import NumberInput from '@/components/ui/number-input';
-import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
+import { Field, FieldGroup, Fieldset, Label, Description, Legend } from '@/components/catalyst/fieldset';
+import { Text } from '@/components/catalyst/text';
+// import Card from '@/components/ui/card';
 
 import BasicsSection from './sections/basics/section';
 import GoalSection from './sections/retirement-goal/section';
@@ -112,7 +114,9 @@ export default function NumbersColumnSections() {
       </DisclosureSection>
       <DisclosureSection title="Assumptions" icon={TrendingUpDownIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
-          <Fieldset aria-label="Market assumptions">
+          <Fieldset>
+            <Legend>Market Assumptions</Legend>
+            <Text>Expected inflation rate and nominal returns for each asset class.</Text>
             <FieldGroup>
               <Field>
                 <Label className="flex w-full items-center justify-between">
