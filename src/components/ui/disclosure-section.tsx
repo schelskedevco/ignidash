@@ -20,7 +20,7 @@ export default function DisclosureSection({ title, icon: Icon, children, default
             <h3 className="text-xl font-semibold tracking-tight whitespace-nowrap">{title}</h3>
           </div>
           <ChevronDownIcon
-            className="text-muted-foreground ml-2 h-5 w-5 shrink-0 transition-transform duration-100 group-data-open:-rotate-180"
+            className="ml-2 h-5 w-5 shrink-0 transition-transform duration-100 group-data-open:-rotate-180"
             aria-hidden="true"
           />
         </div>
