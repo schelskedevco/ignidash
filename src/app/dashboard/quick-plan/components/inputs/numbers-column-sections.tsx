@@ -17,7 +17,7 @@ import DisclosureSection from '@/components/ui/disclosure-section';
 import NumberInput from '@/components/ui/number-input';
 import { Field, FieldGroup, Fieldset, Label, Description, Legend } from '@/components/catalyst/fieldset';
 import { Text } from '@/components/catalyst/text';
-// import Card from '@/components/ui/card';
+import Card from '@/components/ui/card';
 
 import BasicsSection from './sections/basics/section';
 import GoalSection from './sections/retirement-goal/section';
@@ -117,64 +117,66 @@ export default function NumbersColumnSections() {
           <Fieldset>
             <Legend>Market Assumptions</Legend>
             <Text>Expected inflation rate and nominal returns for each asset class.</Text>
-            <FieldGroup>
-              <Field>
-                <Label className="flex w-full items-center justify-between">
-                  <span>Investment Returns</span>
-                  <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
-                </Label>
-                <NumberInput
-                  id="stock-return"
-                  value={marketAssumptions.stockReturn}
-                  onBlur={(value) => updateMarketAssumptions('stockReturn', value)}
-                  inputMode="decimal"
-                  placeholder="10%"
-                  suffix="%"
-                />
-              </Field>
-              <Field>
-                <Label className="flex w-full items-center justify-between">
-                  <span>Bond Returns</span>
-                  <span className="text-muted-foreground text-sm/6">{bondsRealReturn.toFixed(1)}% real</span>
-                </Label>
-                <NumberInput
-                  id="bond-return"
-                  value={marketAssumptions.bondReturn}
-                  onBlur={(value) => updateMarketAssumptions('bondReturn', value)}
-                  inputMode="decimal"
-                  placeholder="5%"
-                  suffix="%"
-                />
-              </Field>
-              <Field>
-                <Label className="flex w-full items-center justify-between">
-                  <span>Cash Returns</span>
-                  <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
-                </Label>
-                <NumberInput
-                  id="cash-return"
-                  value={marketAssumptions.cashReturn}
-                  onBlur={(value) => updateMarketAssumptions('cashReturn', value)}
-                  inputMode="decimal"
-                  placeholder="3%"
-                  suffix="%"
-                />
-              </Field>
-              <Field>
-                <Label className="flex w-full items-center justify-between">
-                  <span>Inflation Rate</span>
-                  <span className="text-muted-foreground text-sm/6">—</span>
-                </Label>
-                <NumberInput
-                  id="inflation-rate"
-                  value={marketAssumptions.inflationRate}
-                  onBlur={(value) => updateMarketAssumptions('inflationRate', value)}
-                  inputMode="decimal"
-                  placeholder="3%"
-                  suffix="%"
-                />
-              </Field>
-            </FieldGroup>
+            <Card>
+              <FieldGroup>
+                <Field>
+                  <Label className="flex w-full items-center justify-between">
+                    <span>Investment Returns</span>
+                    <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
+                  </Label>
+                  <NumberInput
+                    id="stock-return"
+                    value={marketAssumptions.stockReturn}
+                    onBlur={(value) => updateMarketAssumptions('stockReturn', value)}
+                    inputMode="decimal"
+                    placeholder="10%"
+                    suffix="%"
+                  />
+                </Field>
+                <Field>
+                  <Label className="flex w-full items-center justify-between">
+                    <span>Bond Returns</span>
+                    <span className="text-muted-foreground text-sm/6">{bondsRealReturn.toFixed(1)}% real</span>
+                  </Label>
+                  <NumberInput
+                    id="bond-return"
+                    value={marketAssumptions.bondReturn}
+                    onBlur={(value) => updateMarketAssumptions('bondReturn', value)}
+                    inputMode="decimal"
+                    placeholder="5%"
+                    suffix="%"
+                  />
+                </Field>
+                <Field>
+                  <Label className="flex w-full items-center justify-between">
+                    <span>Cash Returns</span>
+                    <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
+                  </Label>
+                  <NumberInput
+                    id="cash-return"
+                    value={marketAssumptions.cashReturn}
+                    onBlur={(value) => updateMarketAssumptions('cashReturn', value)}
+                    inputMode="decimal"
+                    placeholder="3%"
+                    suffix="%"
+                  />
+                </Field>
+                <Field>
+                  <Label className="flex w-full items-center justify-between">
+                    <span>Inflation Rate</span>
+                    <span className="text-muted-foreground text-sm/6">—</span>
+                  </Label>
+                  <NumberInput
+                    id="inflation-rate"
+                    value={marketAssumptions.inflationRate}
+                    onBlur={(value) => updateMarketAssumptions('inflationRate', value)}
+                    inputMode="decimal"
+                    placeholder="3%"
+                    suffix="%"
+                  />
+                </Field>
+              </FieldGroup>
+            </Card>
           </Fieldset>
         </form>
       </DisclosureSection>

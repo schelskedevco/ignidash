@@ -26,7 +26,7 @@ export default function DisclosureSection({ title, icon: Icon, children, default
         </div>
       </DisclosureButton>
       <DisclosurePanel>
-        <div className="px-4 py-5 sm:p-6">{children}</div>
+        <div className="px-2 py-5 sm:px-3 sm:py-6 lg:px-4">{children}</div>
       </DisclosurePanel>
     </Disclosure>
   );
