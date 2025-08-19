@@ -11,19 +11,19 @@ export default function NumbersColumnSections() {
   return (
     <>
       <DisclosureSection title="Basic Info" icon={CircleUserRoundIcon}>
-        <p>Hello</p>
+        <p>I am basic info.</p>
       </DisclosureSection>
       <DisclosureSection title="Portfolio" icon={LandmarkIcon}>
-        <p>Hello</p>
+        <p>I am portfolio.</p>
       </DisclosureSection>
       <DisclosureSection title="Cash Flow" icon={HandCoinsIcon}>
-        <p>Hello</p>
+        <p>I am cash flow.</p>
       </DisclosureSection>
       <DisclosureSection title="Retirement" icon={ArmchairIcon}>
-        <p>Hello</p>
+        <p>I am retirement.</p>
       </DisclosureSection>
       <DisclosureSection title="Assumptions" icon={TrendingUpDownIcon}>
-        <p>Hello</p>
+        <p>I am assumptions.</p>
       </DisclosureSection>
       <div className="h-lvh"></div>
       <BasicsSection />
