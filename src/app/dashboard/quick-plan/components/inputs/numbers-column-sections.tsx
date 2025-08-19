@@ -26,7 +26,7 @@ import FineTuneSection from './sections/fine-tune/section';
 function getSafeWithdrawalRateDescription() {
   return (
     <>
-      Annual portfolio withdrawal percentage. The{' '}
+      Annual portfolio withdrawal percentage in retirement. The{' '}
       <a
         href="https://www.investopedia.com/terms/f/four-percent-rule.asp"
         target="_blank"
@@ -94,21 +94,25 @@ export default function NumbersColumnSections() {
       </DisclosureSection>
       <DisclosureSection title="Retirement" icon={ArmchairIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
-          <Fieldset aria-label="Withdrawal strategy in retirement">
-            <FieldGroup>
-              <Field>
-                <Label>Safe Withdrawal Rate</Label>
-                <NumberInput
-                  id="safe-withdrawal-rate"
-                  value={retirementFunding.safeWithdrawalRate}
-                  onBlur={(value) => updateRetirementFunding('safeWithdrawalRate', value)}
-                  inputMode="decimal"
-                  placeholder="4%"
-                  suffix="%"
-                />
-                <Description className="mt-2">{getSafeWithdrawalRateDescription()}</Description>
-              </Field>
-            </FieldGroup>
+          <Fieldset>
+            <Legend className="mx-2">Withdrawal Strategy</Legend>
+            <Text className="mx-2">How you&apos;ll withdraw funds to cover retirement expenses.</Text>
+            <Card>
+              <FieldGroup>
+                <Field>
+                  <Label>Safe Withdrawal Rate</Label>
+                  <NumberInput
+                    id="safe-withdrawal-rate"
+                    value={retirementFunding.safeWithdrawalRate}
+                    onBlur={(value) => updateRetirementFunding('safeWithdrawalRate', value)}
+                    inputMode="decimal"
+                    placeholder="4%"
+                    suffix="%"
+                  />
+                  <Description className="mt-2">{getSafeWithdrawalRateDescription()}</Description>
+                </Field>
+              </FieldGroup>
+            </Card>
           </Fieldset>
         </form>
       </DisclosureSection>
