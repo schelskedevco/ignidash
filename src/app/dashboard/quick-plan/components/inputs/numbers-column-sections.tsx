@@ -112,7 +112,7 @@ export default function NumbersColumnSections() {
           </Fieldset>
         </form>
       </DisclosureSection>
-      <DisclosureSection title="Expected Returns " icon={TrendingUpDownIcon}>
+      <DisclosureSection title="Expected Returns" icon={TrendingUpDownIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset>
             <FieldGroup>
@@ -129,6 +129,7 @@ export default function NumbersColumnSections() {
                   placeholder="10%"
                   suffix="%"
                 />
+                <Description className="mt-2">Expected annual return for stocks and other volatile investments.</Description>
               </Field>
               <Divider />
               <Field>
@@ -144,6 +145,7 @@ export default function NumbersColumnSections() {
                   placeholder="5%"
                   suffix="%"
                 />
+                <Description className="mt-2">Expected annual return for bonds.</Description>
               </Field>
               <Divider />
               <Field>
@@ -159,6 +161,7 @@ export default function NumbersColumnSections() {
                   placeholder="3%"
                   suffix="%"
                 />
+                <Description className="mt-2">Expected annual interest rate for cash savings and money market accounts.</Description>
               </Field>
               <Divider />
               <Field>
@@ -174,6 +177,7 @@ export default function NumbersColumnSections() {
                   placeholder="3%"
                   suffix="%"
                 />
+                <Description className="mt-2">Expected annual inflation rate, used to calculate real returns.</Description>
               </Field>
             </FieldGroup>
           </Fieldset>
