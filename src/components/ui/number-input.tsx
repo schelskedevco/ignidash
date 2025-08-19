@@ -7,7 +7,7 @@ import { Input } from '@/components/catalyst/input';
 
 interface NumberInputProps {
   id: string;
-  label: string | React.ReactNode;
+  label?: string | React.ReactNode;
   value: number | null;
   onBlur: (value: string | null) => { success: boolean; error?: string };
   inputMode: 'numeric' | 'decimal';
@@ -60,9 +60,11 @@ export default function NumberInput({
 
   return (
     <div>
-      <label htmlFor={id} className="block text-sm/6 font-medium">
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={id} className="block text-sm/6 font-medium">
+          {label}
+        </label>
+      )}
       <NumericFormat
         id={id}
         value={localValue}
