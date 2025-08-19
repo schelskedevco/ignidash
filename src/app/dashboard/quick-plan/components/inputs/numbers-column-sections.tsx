@@ -112,13 +112,13 @@ export default function NumbersColumnSections() {
           </Fieldset>
         </form>
       </DisclosureSection>
-      <DisclosureSection title="Expected Returns" icon={TrendingUpDownIcon}>
+      <DisclosureSection title="Expected Returns " icon={TrendingUpDownIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset>
             <FieldGroup>
               <Field>
                 <Label className="flex w-full items-center justify-between">
-                  <span>Investment Returns</span>
+                  <span>Investments</span>
                   <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
                 </Label>
                 <NumberInput
@@ -133,7 +133,7 @@ export default function NumbersColumnSections() {
               <Divider />
               <Field>
                 <Label className="flex w-full items-center justify-between">
-                  <span>Bond Returns</span>
+                  <span>Bonds</span>
                   <span className="text-muted-foreground text-sm/6">{bondsRealReturn.toFixed(1)}% real</span>
                 </Label>
                 <NumberInput
@@ -148,7 +148,7 @@ export default function NumbersColumnSections() {
               <Divider />
               <Field>
                 <Label className="flex w-full items-center justify-between">
-                  <span>Cash Returns</span>
+                  <span>Cash</span>
                   <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
                 </Label>
                 <NumberInput
