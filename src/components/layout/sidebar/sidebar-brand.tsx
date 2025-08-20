@@ -23,8 +23,8 @@ export default function SidebarBrand({ onClose }: SidebarBrandProps) {
           <span className="ml-1 text-2xl font-extrabold tracking-tight uppercase">Ignidash</span>
         </Link>
         <div className="flex items-center">
-          <ModeToggle />
           <SidebarToggle />
+          <ModeToggle />
         </div>
       </div>
     </div>
