@@ -12,6 +12,14 @@ import {
   useStocksRealReturn,
   useBondsRealReturn,
   useCashRealReturn,
+  useGrowthRatesData,
+  useUpdateGrowthRates,
+  useIncomeRealGrowthRate,
+  useExpenseRealGrowthRate,
+  useGoalsData,
+  useUpdateGoals,
+  useGoalsTouched,
+  useUpdateGoalsWithoutTouched,
 } from '@/lib/stores/quick-plan-store';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import NumberInput from '@/components/ui/number-input';
@@ -53,6 +61,16 @@ export default function NumbersColumnSections() {
   const bondsRealReturn = useBondsRealReturn();
   const cashRealReturn = useCashRealReturn();
 
+  const goals = useGoalsData();
+  const updateGoals = useUpdateGoals();
+  const goalsAreTouched = useGoalsTouched();
+  const updateGoalsWithoutTouched = useUpdateGoalsWithoutTouched();
+
+  const growthRates = useGrowthRatesData();
+  const updateGrowthRates = useUpdateGrowthRates();
+  const incomeRealGrowthRate = useIncomeRealGrowthRate();
+  const expenseRealGrowthRate = useExpenseRealGrowthRate();
+
   return (
     <>
       <DisclosureSection title="Duration" icon={HourglassIcon} defaultOpen>
@@ -92,7 +110,101 @@ export default function NumbersColumnSections() {
         <p>I am portfolio.</p>
       </DisclosureSection>
       <DisclosureSection title="Cash Flow" icon={HandCoinsIcon}>
-        <p>I am cash flow.</p>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <Fieldset>
+            <FieldGroup>
+              <Field>
+                <Label>Annual Income</Label>
+                <NumberInput
+                  id="annual-income"
+                  value={basics.annualIncome}
+                  onBlur={(value) => updateBasics('annualIncome', value)}
+                  inputMode="decimal"
+                  placeholder="$85,000"
+                  prefix="$"
+                />
+                <Description className="mt-2">Placeholder text.</Description>
+              </Field>
+              <Divider />
+              <Field>
+                <Label>Annual Expenses</Label>
+                <NumberInput
+                  id="annual-expenses"
+                  value={basics.annualExpenses}
+                  onBlur={(value) => {
+                    const result = updateBasics('annualExpenses', value);
+                    if (result.success && !goalsAreTouched) {
+                      updateGoalsWithoutTouched('retirementExpenses', value);
+                    }
+                    return result;
+                  }}
+                  inputMode="decimal"
+                  placeholder="$50,000"
+                  prefix="$"
+                />
+                <Description className="mt-2">Placeholder text.</Description>
+              </Field>
+              <Divider />
+              <Field>
+                <Label>Retirement Income</Label>
+                <NumberInput
+                  id="retirement-income"
+                  value={retirementFunding.retirementIncome}
+                  onBlur={(value) => updateRetirementFunding('retirementIncome', value)}
+                  inputMode="decimal"
+                  placeholder="$0"
+                  prefix="$"
+                />
+                <Description className="mt-2">Placeholder text.</Description>
+              </Field>
+              <Divider />
+              <Field>
+                <Label>Retirement Expenses</Label>
+                <NumberInput
+                  id="retirement-expenses"
+                  value={goals.retirementExpenses}
+                  onBlur={(value) => updateGoals('retirementExpenses', value)}
+                  inputMode="decimal"
+                  placeholder="$50,000"
+                  prefix="$"
+                />
+                <Description className="mt-2">Placeholder text.</Description>
+              </Field>
+              <Divider />
+              <Field>
+                <Label className="flex w-full items-center justify-between">
+                  <span>Income Growth Rate</span>
+                  <span className="text-muted-foreground text-sm/6">{incomeRealGrowthRate.toFixed(1)}% real</span>
+                </Label>
+                <NumberInput
+                  id="income-growth-rate"
+                  value={growthRates.incomeGrowthRate}
+                  onBlur={(value) => updateGrowthRates('incomeGrowthRate', value)}
+                  inputMode="decimal"
+                  placeholder="3%"
+                  suffix="%"
+                />
+                <Description className="mt-2">Placeholder text.</Description>
+              </Field>
+              <Divider />
+              <Field>
+                <Label className="flex w-full items-center justify-between">
+                  <span>Expenses Growth Rate</span>
+                  <span className="text-muted-foreground text-sm/6">{expenseRealGrowthRate.toFixed(1)}% real</span>
+                </Label>
+                <NumberInput
+                  id="expense-growth-rate"
+                  value={growthRates.expenseGrowthRate}
+                  onBlur={(value) => updateGrowthRates('expenseGrowthRate', value)}
+                  inputMode="decimal"
+                  placeholder="3%"
+                  suffix="%"
+                />
+                <Description className="mt-2">Placeholder text.</Description>
+              </Field>
+            </FieldGroup>
+          </Fieldset>
+        </form>
       </DisclosureSection>
       <DisclosureSection title="Withdrawal Strategy" icon={BanknoteArrowDownIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
