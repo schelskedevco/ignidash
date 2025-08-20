@@ -34,10 +34,6 @@ import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/ca
 import { Divider } from '@/components/catalyst/divider';
 import InvalidInputError from '@/components/ui/invalid-input-error';
 
-// import BasicsSection from './sections/basics/section';
-// import GoalSection from './sections/retirement-goal/section';
-// import FineTuneSection from './sections/fine-tune/section';
-
 function getSafeWithdrawalRateDescription() {
   return (
     <>
@@ -162,7 +158,7 @@ export default function NumbersColumnSections() {
           </Fieldset>
         </form>
       </DisclosureSection>
-      <DisclosureSection title="Portfolio" icon={LandmarkIcon}>
+      <DisclosureSection title="Portfolio" icon={LandmarkIcon} defaultOpen>
         <>
           <form onSubmit={(e) => e.preventDefault()}>
             <Fieldset>
@@ -239,7 +235,7 @@ export default function NumbersColumnSections() {
           {allocationError && <InvalidInputError title="Asset Allocation Error" desc={allocationError} />}
         </>
       </DisclosureSection>
-      <DisclosureSection title="Cash Flow" icon={HandCoinsIcon}>
+      <DisclosureSection title="Cash Flow" icon={HandCoinsIcon} defaultOpen>
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset>
             <FieldGroup>
@@ -427,9 +423,6 @@ export default function NumbersColumnSections() {
           </Fieldset>
         </form>
       </DisclosureSection>
-      {/* <BasicsSection />
-      <GoalSection />
-      <FineTuneSection /> */}
     </>
   );
 }
