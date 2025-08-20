@@ -83,8 +83,8 @@ export default function PreferencesDialog() {
                 </Select>
                 <Description>Save your data locally on this device, or work without saving between sessions.</Description>
               </Field>
-              <Divider />
               <Field>
+                <Label>Delete Saved Data</Label>
                 <Button
                   data-slot="control"
                   type="button"
@@ -98,7 +98,7 @@ export default function PreferencesDialog() {
                   className="focus-outline w-full"
                   disabled={isDeleting}
                 >
-                  {isDeleting ? 'Deleting...' : 'Delete Saved Data'}
+                  {isDeleting ? 'Deleting...' : 'Delete'}
                 </Button>
                 <Description>This will permanently delete all saved data and reset to defaults.</Description>
               </Field>
