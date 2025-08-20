@@ -13,9 +13,9 @@ import {
 import Card from '@/components/ui/card';
 import SelectMenu from '@/components/ui/select-menu';
 import { DialogTitle, DialogBody } from '@/components/catalyst/dialog';
-// import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
+import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
 // import { Divider } from '@/components/catalyst/divider';
-// import { Select } from '@/components/catalyst/select';
+import { Select } from '@/components/catalyst/select';
 
 export default function PreferencesDialog() {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -47,25 +47,25 @@ export default function PreferencesDialog() {
     <>
       <DialogTitle>Preferences</DialogTitle>
       <DialogBody>
-        <Card>
-          <form onSubmit={(e) => e.preventDefault()}>
-            <fieldset className="space-y-4">
-              <legend className="sr-only">Simulation methodology</legend>
-              <SelectMenu
-                id="simulation-mode"
-                label="Simulation Mode"
-                value={marketAssumptions.simulationMode}
-                onChange={(e) => updateMarketAssumptions('simulationMode', e.target.value)}
-                options={[
-                  { value: 'fixedReturns', label: 'Fixed Returns' },
-                  { value: 'monteCarlo', label: 'Monte Carlo' },
-                  { value: 'historicalBacktest', label: 'Historical Backtest' },
-                ]}
-                desc={simulationModeDesc}
-              />
-            </fieldset>
-          </form>
-        </Card>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <Fieldset aria-label="Simulation methodology">
+            <FieldGroup>
+              <Field>
+                <Label>Simulation Mode</Label>
+                <Select
+                  name="simulation-mode"
+                  value={marketAssumptions.simulationMode}
+                  onChange={(e) => updateMarketAssumptions('simulationMode', e.target.value)}
+                >
+                  <option value="fixedReturns">Fixed Returns</option>
+                  <option value="monteCarlo">Monte Carlo</option>
+                  <option value="historicalBacktest">Historical Backtest</option>
+                </Select>
+                <Description>{simulationModeDesc}</Description>
+              </Field>
+            </FieldGroup>
+          </Fieldset>
+        </form>
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset className="space-y-4">
             <legend className="sr-only">Data storage configuration</legend>
