@@ -35,11 +35,7 @@ export default function ModeToggle() {
   return <IconButton icon={icon} label={label} onClick={() => setTheme(newTheme)} surfaceColor="emphasized" />;
 }
 
-interface SidebarModeToggleProps {
-  children: React.ReactNode;
-}
-
-export function SidebarModeToggle({ children }: SidebarModeToggleProps) {
+export function SidebarModeToggle() {
   const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
@@ -65,7 +61,10 @@ export function SidebarModeToggle({ children }: SidebarModeToggleProps) {
       onClick={() => setTheme(newTheme)}
       className="group focus-outline hover:bg-background hover:ring-border my-1 flex w-full items-center rounded-md text-sm/6 hover:ring"
     >
-      {children}
+      <div className="p-2">
+        <SunMediumIcon aria-hidden="true" className="size-6 shrink-0" />
+      </div>
+      <span className="ml-1 inline group-data-[state=collapsed]/sidebar:hidden">Dark Mode</span>
     </button>
   );
 }

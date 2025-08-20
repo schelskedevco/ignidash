@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import { SunIcon } from 'lucide-react';
 
 import type { NavigationItem } from '@/lib/navigation';
 import { SidebarModeToggle } from '@/components/mode-toggle';
@@ -38,12 +37,7 @@ export function DesktopSidebar({ navigation, secondaryNavigation }: DesktopSideb
             <li className="mt-auto">
               <ul role="list" className="space-y-1">
                 <li key="dark-mode">
-                  <SidebarModeToggle>
-                    <div className="p-2">
-                      <SunIcon aria-hidden="true" className="size-6 shrink-0" />
-                    </div>
-                    <span className="ml-1 inline group-data-[state=collapsed]/sidebar:hidden">Dark Mode</span>
-                  </SidebarModeToggle>
+                  <SidebarModeToggle />
                 </li>
                 {secondaryNavigation.map((item) => (
                   <li key={item.name}>
