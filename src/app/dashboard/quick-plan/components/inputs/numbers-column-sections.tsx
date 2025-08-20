@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { HourglassIcon, LandmarkIcon, HandCoinsIcon, BanknoteArrowDownIcon, TrendingUpDownIcon } from 'lucide-react';
+import { HourglassIcon, LandmarkIcon, HandCoinsIcon, BanknoteArrowDownIcon, BanknoteArrowUpIcon, TrendingUpDownIcon } from 'lucide-react';
 
 import {
   useBasicsData,
@@ -234,6 +234,50 @@ export default function NumbersColumnSections() {
           </form>
           {allocationError && <InvalidInputError title="Asset Allocation Error" desc={allocationError} />}
         </>
+      </DisclosureSection>
+      <DisclosureSection title="Income" icon={BanknoteArrowUpIcon}>
+        <button
+          type="button"
+          className="focus-outline relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 dark:border-white/15 dark:hover:border-white/25"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 48 48"
+            aria-hidden="true"
+            className="mx-auto size-12 text-gray-400 dark:text-gray-500"
+          >
+            <path
+              d="M8 14v20c0 4.418 7.163 8 16 8 1.381 0 2.721-.087 4-.252M8 14c0 4.418 7.163 8 16 8s16-3.582 16-8M8 14c0-4.418 7.163-8 16-8s16 3.582 16 8m0 0v14m0-4c0 4.418-7.163 8-16 8S8 28.418 8 24m32 10v6m0 0v6m0-6h6m-6 0h-6"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Create an income</span>
+        </button>
+      </DisclosureSection>
+      <DisclosureSection title="Expenses" icon={BanknoteArrowDownIcon}>
+        <button
+          type="button"
+          className="focus-outline relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 dark:border-white/15 dark:hover:border-white/25"
+        >
+          <svg
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 48 48"
+            aria-hidden="true"
+            className="mx-auto size-12 text-gray-400 dark:text-gray-500"
+          >
+            <path
+              d="M8 14v20c0 4.418 7.163 8 16 8 1.381 0 2.721-.087 4-.252M8 14c0 4.418 7.163 8 16 8s16-3.582 16-8M8 14c0-4.418 7.163-8 16-8s16 3.582 16 8m0 0v14m0-4c0 4.418-7.163 8-16 8S8 28.418 8 24m32 10v6m0 0v6m0-6h6m-6 0h-6"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Create an expense</span>
+        </button>
       </DisclosureSection>
       <DisclosureSection title="Cash Flow" icon={HandCoinsIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
