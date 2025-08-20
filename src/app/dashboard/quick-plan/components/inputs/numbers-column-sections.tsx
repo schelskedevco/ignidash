@@ -362,7 +362,7 @@ export default function NumbersColumnSections() {
             <FieldGroup>
               <Field>
                 <Label className="flex w-full items-center justify-between">
-                  <span>Stocks</span>
+                  <span>Stock Return</span>
                   <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
                 </Label>
                 <NumberInput
@@ -378,7 +378,7 @@ export default function NumbersColumnSections() {
               <Divider />
               <Field>
                 <Label className="flex w-full items-center justify-between">
-                  <span>Bonds</span>
+                  <span>Bond Return</span>
                   <span className="text-muted-foreground text-sm/6">{bondsRealReturn.toFixed(1)}% real</span>
                 </Label>
                 <NumberInput
@@ -394,7 +394,7 @@ export default function NumbersColumnSections() {
               <Divider />
               <Field>
                 <Label className="flex w-full items-center justify-between">
-                  <span>Cash</span>
+                  <span>Cash Interest Rate</span>
                   <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
                 </Label>
                 <NumberInput
