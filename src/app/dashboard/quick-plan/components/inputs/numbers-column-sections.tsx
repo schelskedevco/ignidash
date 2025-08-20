@@ -362,7 +362,7 @@ export default function NumbersColumnSections() {
             <FieldGroup>
               <Field>
                 <Label className="flex w-full items-center justify-between">
-                  <span>Investments</span>
+                  <span>Stocks</span>
                   <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
                 </Label>
                 <NumberInput
