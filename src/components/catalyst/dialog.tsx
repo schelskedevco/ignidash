@@ -35,7 +35,7 @@ export function Dialog({
             className={clsx(
               className,
               sizes[size],
-              'row-start-2 w-full min-w-0 rounded-t-3xl bg-white p-(--gutter) shadow-lg ring-1 ring-zinc-950/10 [--gutter:--spacing(8)] sm:mb-auto sm:rounded-2xl dark:bg-zinc-900 dark:ring-white/10 forced-colors:outline',
+              'bg-background row-start-2 w-full min-w-0 rounded-t-3xl p-(--gutter) shadow-lg ring-1 ring-zinc-950/10 [--gutter:--spacing(8)] sm:mb-auto sm:rounded-2xl dark:ring-white/10 forced-colors:outline',
               'transition duration-100 will-change-transform data-closed:translate-y-12 data-closed:opacity-0 data-enter:ease-out data-leave:ease-in sm:data-closed:translate-y-0 sm:data-closed:data-enter:scale-95'
             )}
           >
@@ -49,10 +49,7 @@ export function Dialog({
 
 export function DialogTitle({ className, ...props }: { className?: string } & Omit<Headless.DialogTitleProps, 'as' | 'className'>) {
   return (
-    <Headless.DialogTitle
-      {...props}
-      className={clsx(className, 'text-lg/6 font-semibold text-balance text-zinc-950 sm:text-base/6 dark:text-white')}
-    />
+    <Headless.DialogTitle {...props} className={clsx(className, 'text-foreground text-lg/6 font-semibold text-balance sm:text-base/6')} />
   );
 }
 
