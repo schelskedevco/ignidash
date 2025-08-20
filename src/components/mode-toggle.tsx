@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useTheme } from 'next-themes';
-import { SunMediumIcon } from 'lucide-react';
+import { SunMediumIcon, MoonIcon } from 'lucide-react';
 
 import IconButton from '@/components/ui/icon-button';
 
@@ -50,10 +50,17 @@ export function SidebarModeToggle() {
   }
 
   let newTheme;
+  let label = '';
+  let iconComponent = null;
+
   if (isDark) {
     newTheme = 'light';
+    label = 'Light mode';
+    iconComponent = <SunMediumIcon aria-hidden="true" className="size-6 shrink-0" />;
   } else {
     newTheme = 'dark';
+    label = 'Dark mode';
+    iconComponent = <MoonIcon aria-hidden="true" className="size-6 shrink-0" />;
   }
 
   return (
@@ -61,10 +68,8 @@ export function SidebarModeToggle() {
       onClick={() => setTheme(newTheme)}
       className="group focus-outline hover:bg-background hover:ring-border my-1 flex w-full items-center rounded-md text-sm/6 hover:ring"
     >
-      <div className="p-2">
-        <SunMediumIcon aria-hidden="true" className="size-6 shrink-0" />
-      </div>
-      <span className="ml-1 inline group-data-[state=collapsed]/sidebar:hidden">Dark Mode</span>
+      <div className="p-2">{iconComponent}</div>
+      <span className="ml-1 inline group-data-[state=collapsed]/sidebar:hidden">{label}</span>
     </button>
   );
 }
