@@ -48,9 +48,7 @@ export function Dialog({
 }
 
 export function DialogTitle({ className, ...props }: { className?: string } & Omit<Headless.DialogTitleProps, 'as' | 'className'>) {
-  return (
-    <Headless.DialogTitle {...props} className={clsx(className, 'text-foreground text-lg/6 font-semibold text-balance sm:text-base/6')} />
-  );
+  return <Headless.DialogTitle {...props} className={clsx(className, 'text-foreground text-2xl/6 font-semibold text-balance')} />;
 }
 
 export function DialogDescription({
