@@ -1,8 +1,6 @@
 import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 
-import ModeToggle from '@/components/mode-toggle';
-
 import SidebarToggle from './sidebar-toggle';
 
 interface SidebarBrandProps {
@@ -22,10 +20,7 @@ export default function SidebarBrand({ onClose }: SidebarBrandProps) {
           </div>
           <span className="ml-1 text-2xl font-extrabold tracking-tight uppercase">Ignidash</span>
         </Link>
-        <div className="flex items-center">
-          <SidebarToggle />
-          <ModeToggle />
-        </div>
+        <SidebarToggle />
       </div>
     </div>
   );
