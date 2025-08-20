@@ -390,7 +390,7 @@ export default function NumbersColumnSections() {
               <Divider />
               <Field>
                 <Label htmlFor="cash-return" className="flex w-full items-center justify-between">
-                  <span>Cash Interest Rate</span>
+                  <span>Cash Return</span>
                   <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
                 </Label>
                 <NumberInput
