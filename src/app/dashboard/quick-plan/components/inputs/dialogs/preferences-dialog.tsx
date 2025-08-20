@@ -13,7 +13,7 @@ import {
 // import Card from '@/components/ui/card';
 import { DialogTitle, DialogBody } from '@/components/catalyst/dialog';
 import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
-// import { Divider } from '@/components/catalyst/divider';
+import { Divider } from '@/components/catalyst/divider';
 import { Select } from '@/components/catalyst/select';
 
 export default function PreferencesDialog() {
@@ -45,7 +45,7 @@ export default function PreferencesDialog() {
   return (
     <>
       <DialogTitle>Preferences</DialogTitle>
-      <DialogBody>
+      <DialogBody className="space-y-4">
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset aria-label="Simulation methodology">
             <FieldGroup>
@@ -66,6 +66,7 @@ export default function PreferencesDialog() {
             </FieldGroup>
           </Fieldset>
         </form>
+        <Divider />
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset aria-label="Data storage configuration">
             <FieldGroup>
@@ -82,21 +83,25 @@ export default function PreferencesDialog() {
                 </Select>
                 <Description>Save your data locally on this device, or work without saving between sessions.</Description>
               </Field>
-              <Button
-                type="button"
-                color="red"
-                onClick={async () => {
-                  setIsDeleting(true);
-                  await new Promise((resolve) => setTimeout(resolve, 500));
-                  resetStore();
-                  setIsDeleting(false);
-                }}
-                className="focus-outline w-full"
-                disabled={isDeleting}
-              >
-                {isDeleting ? 'Deleting...' : 'Delete Saved Data'}
-              </Button>
-              <p className="text-muted-foreground mt-2 text-sm">This will permanently delete all saved data and reset to defaults.</p>
+              <Divider />
+              <Field>
+                <Button
+                  data-slot="control"
+                  type="button"
+                  color="red"
+                  onClick={async () => {
+                    setIsDeleting(true);
+                    await new Promise((resolve) => setTimeout(resolve, 500));
+                    resetStore();
+                    setIsDeleting(false);
+                  }}
+                  className="focus-outline w-full"
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? 'Deleting...' : 'Delete Saved Data'}
+                </Button>
+                <Description>This will permanently delete all saved data and reset to defaults.</Description>
+              </Field>
             </FieldGroup>
           </Fieldset>
         </form>
