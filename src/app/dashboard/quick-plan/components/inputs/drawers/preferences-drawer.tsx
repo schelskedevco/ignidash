@@ -16,40 +16,8 @@ export default function PreferencesDrawer() {
   const updatePreferences = useUpdatePreferences();
   const resetStore = useResetStore();
 
-  let displayFormatDesc;
-  switch (preferences.displayFormat) {
-    case 'today':
-      displayFormatDesc = "Display results in today's dollars, adjusted for inflation to show constant purchasing power.";
-      break;
-    case 'future':
-      displayFormatDesc = 'Display results in future dollars, showing actual amounts without adjusting for inflation.';
-      break;
-  }
-
   return (
     <>
-      <SectionContainer showBottomBorder location="drawer">
-        <SectionHeader title="Display" desc="Choose how to display currency values in your projections." />
-        <Card>
-          <form onSubmit={(e) => e.preventDefault()}>
-            <fieldset className="space-y-4">
-              <legend className="sr-only">Display format configuration</legend>
-              <SelectMenu
-                id="display-format"
-                label="Currency Display"
-                value={preferences.displayFormat}
-                onChange={(e) => updatePreferences('displayFormat', e.target.value)}
-                options={[
-                  { value: 'today', label: "Today's Currency" },
-                  { value: 'future', label: 'Future Inflated Currency' },
-                ]}
-                desc={displayFormatDesc}
-              />
-            </fieldset>
-          </form>
-        </Card>
-      </SectionContainer>
-
       <SectionContainer showBottomBorder={false} location="drawer">
         <SectionHeader title="Data Storage" desc="Control how your data is saved and managed." />
         <form onSubmit={(e) => e.preventDefault()}>

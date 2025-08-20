@@ -50,10 +50,9 @@ export default function Drawer({ open, setOpen, title = 'Settings', children }: 
                     <X aria-hidden="true" className="size-6" />
                   </button>
                 </div>
-                <div className="bg-background relative flex-1 px-2 py-6 sm:px-3">{children}</div>
+                <div className="bg-background relative flex-1 px-2 sm:px-3">{children}</div>
               </div>
             </DialogPanel>
-            {/* Checked through here. */}
           </div>
         </div>
       </div>

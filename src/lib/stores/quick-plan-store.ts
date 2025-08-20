@@ -171,7 +171,6 @@ interface QuickPlanState {
   errors: ErrorState;
 
   preferences: {
-    displayFormat: 'today' | 'future';
     dataStorage: 'localStorage' | 'none';
     showReferenceLines: boolean;
     simulationSeed: number;
@@ -250,7 +249,6 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
   },
   errors: {},
   preferences: {
-    displayFormat: 'today',
     dataStorage: 'localStorage',
     showReferenceLines: true,
     simulationSeed: Math.floor(Math.random() * 1000),
@@ -341,9 +339,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
           /** Preferences actions */
           updatePreferences: (field, value) =>
             set((state) => {
-              if (field === 'displayFormat') {
-                state.preferences.displayFormat = value as 'today' | 'future';
-              } else if (field === 'dataStorage') {
+              if (field === 'dataStorage') {
                 state.preferences.dataStorage = value as 'localStorage' | 'none';
               } else if (field === 'showReferenceLines') {
                 state.preferences.showReferenceLines = value as boolean;
