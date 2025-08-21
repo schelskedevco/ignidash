@@ -53,8 +53,10 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                     <Select id="frequency" name="frequency">
                       <option value="yearly">Yearly</option>
                       <option value="one-time">One-time</option>
-                      <option value="monthly">Monthly</option>
                       <option value="quarterly">Quarterly</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="biweekly">Biweekly</option>
+                      <option value="weekly">Weekly</option>
                     </Select>
                   </Field>
                 </div>
