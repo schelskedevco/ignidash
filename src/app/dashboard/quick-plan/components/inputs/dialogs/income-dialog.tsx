@@ -57,10 +57,10 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
               <Field>
                 <Label htmlFor="frequency">Frequency</Label>
                 <Select id="frequency" name="frequency">
+                  <option value="yearly">Yearly</option>
                   <option value="one-time">One-time</option>
                   <option value="monthly">Monthly</option>
                   <option value="quarterly">Quarterly</option>
-                  <option value="yearly">Yearly</option>
                 </Select>
               </Field>
             </FieldGroup>
