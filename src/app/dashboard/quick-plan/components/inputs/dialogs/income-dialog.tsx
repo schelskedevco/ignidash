@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/income-form-schema';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
-import NumberInput from '@/components/ui/number-input';
+import NumberInputV2 from '@/components/ui/number-input-v2';
 import { Field, Fieldset, Label, ErrorMessage /* Description */ } from '@/components/catalyst/fieldset';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
@@ -60,17 +60,8 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
               </Field>
               <Field>
                 <Label htmlFor="amount">Amount</Label>
-                <NumberInput
-                  {...register('amount')}
-                  id="amount"
-                  value={null}
-                  onBlur={(value) => {
-                    return { success: true };
-                  }}
-                  inputMode="decimal"
-                  placeholder="$85,000"
-                  prefix="$"
-                />
+                <NumberInputV2 {...register('amount')} id="amount" inputMode="decimal" placeholder="$85,000" prefix="$" />
+                {errors.amount && <ErrorMessage>{errors.amount?.message}</ErrorMessage>}
               </Field>
               <div className="col-span-2">
                 <Field>
@@ -118,33 +109,21 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                         <span>Growth Rate</span>
                         <span className="text-muted-foreground text-sm/6">{Number(3).toFixed(1)}% real</span>
                       </Label>
-                      <NumberInput
-                        {...register('growth.growthRate')}
-                        id="growth-rate"
-                        value={null}
-                        onBlur={(value) => {
-                          return { success: true };
-                        }}
-                        inputMode="decimal"
-                        placeholder="3%"
-                        suffix="%"
-                      />
+                      <NumberInputV2 {...register('growth.growthRate')} id="growth-rate" inputMode="decimal" placeholder="3%" suffix="%" />
+                      {errors.growth?.growthRate && <ErrorMessage>{errors.growth?.growthRate?.message}</ErrorMessage>}
                     </Field>
                   </div>
                   <div className="col-span-2">
                     <Field>
                       <Label htmlFor="growth-limit">Limit</Label>
-                      <NumberInput
+                      <NumberInputV2
                         {...register('growth.growthLimit')}
                         id="growth-limit"
-                        value={null}
-                        onBlur={(value) => {
-                          return { success: true };
-                        }}
                         inputMode="decimal"
                         placeholder="$120,000"
                         prefix="$"
                       />
+                      {errors.growth?.growthLimit && <ErrorMessage>{errors.growth?.growthLimit?.message}</ErrorMessage>}
                     </Field>
                   </div>
                 </div>
