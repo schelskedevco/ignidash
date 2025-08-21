@@ -72,7 +72,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                 </DisclosureButton>
                 <DisclosurePanel className="py-4">...</DisclosurePanel>
               </Disclosure>
-              <Disclosure as="div" className="border-border/50 border-b pb-4">
+              <Disclosure as="div">
                 <DisclosureButton className="group data-open:border-border/50 flex w-full items-start justify-between text-left data-open:border-b data-open:pb-4">
                   <div className="flex items-center gap-2">
                     <ArrowTrendingUpIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
