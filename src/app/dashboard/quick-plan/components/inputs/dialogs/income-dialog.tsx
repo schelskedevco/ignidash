@@ -7,7 +7,6 @@ import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, FieldGroup, Fieldset, Label /* Description */ } from '@/components/catalyst/fieldset';
-import { Divider } from '@/components/catalyst/divider';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
@@ -60,8 +59,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                   </Field>
                 </div>
               </div>
-              <Divider />
-              <Disclosure as="div">
+              <Disclosure as="div" className="border-border/50 border-y py-4">
                 <DisclosureButton className="group data-open:border-border/50 flex w-full items-start justify-between text-left data-open:border-b data-open:pb-4">
                   <div className="flex items-center gap-2">
                     <CalendarIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
@@ -74,8 +72,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                 </DisclosureButton>
                 <DisclosurePanel className="py-4">...</DisclosurePanel>
               </Disclosure>
-              <Divider />
-              <Disclosure as="div">
+              <Disclosure as="div" className="border-border/50 border-b pb-4">
                 <DisclosureButton className="group data-open:border-border/50 flex w-full items-start justify-between text-left data-open:border-b data-open:pb-4">
                   <div className="flex items-center gap-2">
                     <ArrowTrendingUpIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
