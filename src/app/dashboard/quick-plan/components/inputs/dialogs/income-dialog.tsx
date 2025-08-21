@@ -4,6 +4,9 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react
 import { MinusIcon, PlusIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
 import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react';
 
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/income-form-schema';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, FieldGroup, Fieldset, Label /* Description */ } from '@/components/catalyst/fieldset';
@@ -17,6 +20,14 @@ interface IncomeDialogProps {
 }
 
 export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: IncomeDialogProps) {
+  const { register, handleSubmit } = useForm({
+    resolver: zodResolver(incomeFormSchema),
+  });
+
+  const onSubmit = (data: IncomeInputs) => {
+    console.log('Form submitted:', data);
+  };
+
   return (
     <>
       <DialogTitle>
@@ -25,18 +36,19 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
           <span>New Income</span>
         </div>
       </DialogTitle>
-      <DialogBody className="space-y-4">
-        <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogBody className="space-y-4">
           <Fieldset aria-label="Income details">
             <FieldGroup>
               <div className="mb-8 grid grid-cols-2 gap-4">
                 <Field>
                   <Label htmlFor="name">Name</Label>
-                  <Input id="name" name="name" placeholder="My Salary" autoComplete="off" inputMode="text" />
+                  <Input {...register('name')} id="name" name="name" placeholder="My Salary" autoComplete="off" inputMode="text" />
                 </Field>
                 <Field>
                   <Label htmlFor="amount">Amount</Label>
                   <NumberInput
+                    {...register('amount')}
                     id="amount"
                     value={null}
                     onBlur={(value) => {
@@ -50,7 +62,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                 <div className="col-span-2">
                   <Field>
                     <Label htmlFor="frequency">Frequency</Label>
-                    <Select id="frequency" name="frequency">
+                    <Select {...register('frequency')} id="frequency" name="frequency">
                       <option value="yearly">Yearly</option>
                       <option value="one-time">One-time</option>
                       <option value="quarterly">Quarterly</option>
@@ -94,6 +106,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                           <span className="text-muted-foreground text-sm/6">{Number(3).toFixed(1)}% real</span>
                         </Label>
                         <NumberInput
+                          {...register('growth.growthRate')}
                           id="growth-rate"
                           value={null}
                           onBlur={(value) => {
@@ -109,6 +122,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                       <Field>
                         <Label htmlFor="growth-limit">Limit</Label>
                         <NumberInput
+                          {...register('growth.growthLimit')}
                           id="growth-limit"
                           value={null}
                           onBlur={(value) => {
@@ -123,31 +137,18 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                   </div>
                 </DisclosurePanel>
               </Disclosure>
-              {/* <Disclosure as="div">
-                <DisclosureButton className="group data-open:border-border/25 flex w-full items-start justify-between text-left data-open:border-b data-open:pb-4">
-                  <div className="flex items-center gap-2">
-                    <CoinsIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
-                    <span className="text-base/7 font-semibold">Taxes</span>
-                  </div>
-                  <span className="text-muted-foreground ml-6 flex h-7 items-center">
-                    <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
-                    <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
-                  </span>
-                </DisclosureButton>
-                <DisclosurePanel className="py-4">...</DisclosurePanel>
-              </Disclosure> */}
             </FieldGroup>
           </Fieldset>
-        </form>
-      </DialogBody>
-      <DialogActions>
-        <Button plain onClick={() => setIncomeDialogOpen(false)}>
-          Cancel
-        </Button>
-        <Button color="rose" onClick={() => setIncomeDialogOpen(false)}>
-          Save
-        </Button>
-      </DialogActions>
+        </DialogBody>
+        <DialogActions>
+          <Button plain onClick={() => setIncomeDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button color="rose" type="submit">
+            Save
+          </Button>
+        </DialogActions>
+      </form>
     </>
   );
 }

@@ -81,4 +81,4 @@ export const incomeFormSchema = z
     }
   );
 
-export type FormSchema = z.infer<typeof incomeFormSchema>;
+export type IncomeInputs = z.infer<typeof incomeFormSchema>;
