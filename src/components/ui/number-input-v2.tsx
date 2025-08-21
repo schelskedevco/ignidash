@@ -1,6 +1,6 @@
 import { NumericFormat, type NumberFormatValues } from 'react-number-format';
 import { Input } from '@/components/catalyst/input';
-import type { UseFormRegisterReturn } from 'react-hook-form';
+import { useController, type UseControllerProps, type FieldValues, type FieldPath } from 'react-hook-form';
 
 interface NumberInputV2Props {
   id: string;
@@ -9,31 +9,49 @@ interface NumberInputV2Props {
   prefix?: string;
   suffix?: string;
   decimalScale?: number;
-  invalid?: boolean;
 }
 
-export default function NumberInputV2({
+export default function NumberInputV2<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({
   id,
   inputMode,
   placeholder,
   prefix,
   suffix,
   decimalScale = 2,
-  invalid,
-  ref,
-  onChange,
-  ...otherProps
-}: NumberInputV2Props & UseFormRegisterReturn) {
+  name,
+  rules,
+  shouldUnregister,
+  defaultValue,
+  control,
+  disabled,
+}: NumberInputV2Props & UseControllerProps<TFieldValues, TName>) {
+  const {
+    field: { onChange, onBlur, value, ref },
+    fieldState: { error },
+  } = useController<TFieldValues, TName>({
+    name,
+    rules,
+    shouldUnregister,
+    defaultValue,
+    control,
+    disabled,
+  });
+
   const handleValueChange = (values: NumberFormatValues) => {
-    onChange({ target: { name: otherProps.name, value: values.value } });
+    onChange(values.value);
   };
 
   return (
     <NumericFormat
-      {...otherProps}
+      value={value}
       onValueChange={handleValueChange}
+      onBlur={onBlur}
       getInputRef={ref}
       id={id}
+      name={name}
       placeholder={placeholder}
       inputMode={inputMode}
       autoComplete="off"
@@ -45,8 +63,9 @@ export default function NumberInputV2({
       allowNegative={true}
       allowLeadingZeros={false}
       customInput={Input}
-      aria-invalid={invalid}
-      invalid={invalid}
+      disabled={disabled}
+      aria-invalid={!!error}
+      invalid={!!error}
       isAllowed={({ value }) => value.length <= 12}
     />
   );
