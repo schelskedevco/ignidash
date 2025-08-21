@@ -25,7 +25,7 @@ export default function IncomeSection() {
       </DisclosureSection>
 
       <Dialog open={incomeDialogOpen} onClose={setIncomeDialogOpen}>
-        <IncomeDialog />
+        <IncomeDialog incomeDialogOpen={incomeDialogOpen} setIncomeDialogOpen={setIncomeDialogOpen} />
       </Dialog>
     </>
   );
