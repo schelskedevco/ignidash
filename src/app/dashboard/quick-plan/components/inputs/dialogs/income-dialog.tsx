@@ -2,6 +2,7 @@
 
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
+import { CoinsIcon, CalendarIcon } from 'lucide-react';
 
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
@@ -58,6 +59,20 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
               <Disclosure as="div">
                 <DisclosureButton className="group data-open:border-border/50 flex w-full items-start justify-between text-left data-open:border-b data-open:pb-4">
                   <div className="flex items-center gap-2">
+                    <CalendarIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
+                    <span className="text-base/7 font-semibold">Timeframe</span>
+                  </div>
+                  <span className="text-muted-foreground ml-6 flex h-7 items-center">
+                    <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
+                    <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
+                  </span>
+                </DisclosureButton>
+                <DisclosurePanel className="py-4">...</DisclosurePanel>
+              </Disclosure>
+              <Divider />
+              <Disclosure as="div">
+                <DisclosureButton className="group data-open:border-border/50 flex w-full items-start justify-between text-left data-open:border-b data-open:pb-4">
+                  <div className="flex items-center gap-2">
                     <ArrowTrendingUpIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
                     <span className="text-base/7 font-semibold">Rate of Change</span>
                   </div>
@@ -103,6 +118,20 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                     </div>
                   </div>
                 </DisclosurePanel>
+              </Disclosure>
+              <Divider />
+              <Disclosure as="div">
+                <DisclosureButton className="group data-open:border-border/50 flex w-full items-start justify-between text-left data-open:border-b data-open:pb-4">
+                  <div className="flex items-center gap-2">
+                    <CoinsIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
+                    <span className="text-base/7 font-semibold">Taxes</span>
+                  </div>
+                  <span className="text-muted-foreground ml-6 flex h-7 items-center">
+                    <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
+                    <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
+                  </span>
+                </DisclosureButton>
+                <DisclosurePanel className="py-4">...</DisclosurePanel>
               </Disclosure>
               <Divider />
             </FieldGroup>
