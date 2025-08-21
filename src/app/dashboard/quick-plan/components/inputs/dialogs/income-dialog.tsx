@@ -38,7 +38,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                   <Label htmlFor="amount">Amount</Label>
                   <NumberInput
                     id="amount"
-                    value={85000}
+                    value={null}
                     onBlur={(value) => {
                       return { success: true };
                     }}
@@ -93,7 +93,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                         </Label>
                         <NumberInput
                           id="growth-rate"
-                          value={3}
+                          value={null}
                           onBlur={(value) => {
                             return { success: true };
                           }}
