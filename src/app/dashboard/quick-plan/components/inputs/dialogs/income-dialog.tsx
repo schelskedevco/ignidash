@@ -21,7 +21,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset aria-label="Income details">
             <FieldGroup>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <Field>
                   <Label htmlFor="name">Name</Label>
                   <Input id="name" name="name" placeholder="My Salary" autoComplete="off" inputMode="text" />
@@ -39,9 +39,20 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                     prefix="$"
                   />
                 </Field>
+                <div className="col-span-2">
+                  <Field>
+                    <Label htmlFor="frequency">Frequency</Label>
+                    <Select id="frequency" name="frequency">
+                      <option value="yearly">Yearly</option>
+                      <option value="one-time">One-time</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="quarterly">Quarterly</option>
+                    </Select>
+                  </Field>
+                </div>
               </div>
               <Divider />
-              <div className="grid grid-cols-5 gap-6">
+              <div className="grid grid-cols-5 gap-4">
                 <div className="col-span-3">
                   <Field>
                     <Label htmlFor="growth-rate" className="flex w-full items-center justify-between">
@@ -77,15 +88,6 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                 </div>
               </div>
               <Divider />
-              <Field>
-                <Label htmlFor="frequency">Frequency</Label>
-                <Select id="frequency" name="frequency">
-                  <option value="yearly">Yearly</option>
-                  <option value="one-time">One-time</option>
-                  <option value="monthly">Monthly</option>
-                  <option value="quarterly">Quarterly</option>
-                </Select>
-              </Field>
             </FieldGroup>
           </Fieldset>
         </form>
