@@ -60,7 +60,14 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
               </Field>
               <Field>
                 <Label htmlFor="amount">Amount</Label>
-                <NumberInputV2 {...register('amount')} id="amount" inputMode="decimal" placeholder="$85,000" prefix="$" />
+                <NumberInputV2
+                  {...register('amount')}
+                  id="amount"
+                  inputMode="decimal"
+                  placeholder="$85,000"
+                  prefix="$"
+                  invalid={!!errors.amount}
+                />
                 {errors.amount && <ErrorMessage>{errors.amount?.message}</ErrorMessage>}
               </Field>
               <div className="col-span-2">
@@ -109,7 +116,14 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                         <span>Growth Rate</span>
                         <span className="text-muted-foreground text-sm/6">{Number(3).toFixed(1)}% real</span>
                       </Label>
-                      <NumberInputV2 {...register('growth.growthRate')} id="growth-rate" inputMode="decimal" placeholder="3%" suffix="%" />
+                      <NumberInputV2
+                        {...register('growth.growthRate')}
+                        id="growth-rate"
+                        inputMode="decimal"
+                        placeholder="3%"
+                        suffix="%"
+                        invalid={!!errors.growth?.growthRate}
+                      />
                       {errors.growth?.growthRate && <ErrorMessage>{errors.growth?.growthRate?.message}</ErrorMessage>}
                     </Field>
                   </div>
@@ -122,6 +136,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                         inputMode="decimal"
                         placeholder="$120,000"
                         prefix="$"
+                        invalid={!!errors.growth?.growthLimit}
                       />
                       {errors.growth?.growthLimit && <ErrorMessage>{errors.growth?.growthLimit?.message}</ErrorMessage>}
                     </Field>

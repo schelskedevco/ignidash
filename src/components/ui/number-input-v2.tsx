@@ -9,6 +9,7 @@ interface NumberInputV2Props {
   prefix?: string;
   suffix?: string;
   decimalScale?: number;
+  invalid?: boolean;
 }
 
 export default function NumberInputV2({
@@ -18,6 +19,7 @@ export default function NumberInputV2({
   prefix,
   suffix,
   decimalScale = 2,
+  invalid,
   ref,
   onChange,
   ...otherProps
@@ -43,6 +45,8 @@ export default function NumberInputV2({
       allowNegative={true}
       allowLeadingZeros={false}
       customInput={Input}
+      aria-invalid={invalid}
+      invalid={invalid}
       isAllowed={({ value }) => value.length <= 12}
     />
   );
