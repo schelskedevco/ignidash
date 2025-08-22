@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
 import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react';
@@ -87,16 +87,19 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
   const years = Array.from({ length: 2100 - currentYear + 1 }, (_, i) => currentYear + i);
 
   const [activeDisclosure, setActiveDisclosure] = useState<DisclosureState | null>(null);
-  function toggleDisclosure(newDisclosure: DisclosureState) {
-    if (activeDisclosure?.open && activeDisclosure.key !== newDisclosure.key) {
-      activeDisclosure.close();
-    }
+  const toggleDisclosure = useCallback(
+    (newDisclosure: DisclosureState) => {
+      if (activeDisclosure?.open && activeDisclosure.key !== newDisclosure.key) {
+        activeDisclosure.close();
+      }
 
-    setActiveDisclosure({
-      ...newDisclosure,
-      open: !newDisclosure.open,
-    });
-  }
+      setActiveDisclosure({
+        ...newDisclosure,
+        open: !newDisclosure.open,
+      });
+    },
+    [activeDisclosure]
+  );
 
   return (
     <>
