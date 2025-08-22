@@ -29,7 +29,7 @@ export default function IncomeSection() {
                   <div className="border-foreground/50 flex w-16 shrink-0 items-center justify-center rounded-l-md border bg-rose-500 text-sm font-medium text-white">
                     {income.name.charAt(0).toUpperCase()}
                   </div>
-                  <div className="bg-emphasized-background/25 border-border/50 flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b">
+                  <div className="bg-emphasized-background/25 border-border flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b">
                     <div className="flex-1 truncate px-4 py-2 text-sm">
                       <a href="#" className="font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-gray-200">
                         {income.name}
