@@ -54,6 +54,7 @@ import WithdrawalStrategy from '@/lib/calc/withdrawal-strategy';
 import { getSimulationWorker } from '@/lib/workers/simulation-worker-api';
 import type { MultiSimulationResultDTO } from '@/lib/schemas/simulation-dto-schema';
 import { type SimulationTableRow, type YearlyAggregateTableRow } from '@/lib/schemas/simulation-table-schema';
+import { type IncomeInputs } from '@/lib/schemas/income-form-schema';
 import { Portfolio } from '@/lib/calc/portfolio';
 import { SimulationPhase, AccumulationPhase, RetirementPhase, type PhaseType } from '@/lib/calc/simulation-phase';
 
@@ -181,14 +182,14 @@ interface QuickPlanState {
     // Basic input actions with validation and error reporting
     updateBasics: (field: keyof BasicsInputs, value: unknown) => UpdateResult;
     updateGrowthRates: (field: keyof GrowthRatesInputs, value: unknown) => UpdateResult;
-    updateAllocation: (data: {
-      [K in keyof AllocationInputs]: unknown;
-    }) => UpdateResult;
+    updateAllocation: (data: { [K in keyof AllocationInputs]: unknown }) => UpdateResult;
     updateGoals: (field: keyof GoalsInputs, value: unknown) => UpdateResult;
     updateGoalsWithoutTouched: (field: keyof GoalsInputs, value: unknown) => UpdateResult;
     updateMarketAssumptions: (field: keyof MarketAssumptionsInputs, value: unknown) => UpdateResult;
     updateRetirementFunding: (field: keyof RetirementFundingInputs, value: unknown) => UpdateResult;
     updateFlexiblePaths: (field: keyof FlexiblePathsInputs, value: unknown) => UpdateResult;
+    updateIncomes: (data: IncomeInputs) => UpdateResult;
+    deleteIncome: (id: string) => UpdateResult;
 
     // Preferences actions
     updatePreferences: (field: keyof QuickPlanState['preferences'], value: unknown) => void;
@@ -237,6 +238,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
       targetRetirementAge: null,
       partTimeIncome: null, // Real $ - "Part-time income (today's dollars)"
     },
+    incomes: {},
   },
   touched: {
     basics: false,
@@ -246,6 +248,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
     marketAssumptions: false,
     retirementFunding: false,
     flexiblePaths: false,
+    incomes: false,
   },
   errors: {},
   preferences: {
@@ -319,7 +322,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
               state.touched.allocation = true;
 
               if (result.valid && result.data) {
-                state.inputs.allocation = result.data!;
+                state.inputs.allocation = result.data;
                 state.errors.allocation = {};
               } else {
                 state.errors.allocation = {
@@ -334,6 +337,24 @@ export const useQuickPlanStore = create<QuickPlanState>()(
               success: result.valid,
               error: result.error,
             };
+          },
+
+          updateIncomes: (data) => {
+            set((state) => {
+              state.touched.incomes = true;
+              state.inputs.incomes = { ...state.inputs.incomes, [data.name]: data };
+            });
+
+            return { success: true };
+          },
+
+          deleteIncome: (name) => {
+            set((state) => {
+              state.touched.incomes = true;
+              delete state.inputs.incomes[name];
+            });
+
+            return { success: true };
           },
 
           /** Preferences actions */
@@ -415,6 +436,7 @@ export const useGoalsData = () => useQuickPlanStore((state) => state.inputs.goal
 export const useMarketAssumptionsData = () => useQuickPlanStore((state) => state.inputs.marketAssumptions);
 export const useRetirementFundingData = () => useQuickPlanStore((state) => state.inputs.retirementFunding);
 export const useFlexiblePathsData = () => useQuickPlanStore((state) => state.inputs.flexiblePaths);
+export const useIncomesData = () => useQuickPlanStore((state) => state.inputs.incomes);
 
 /**
  * Individual field selectors for performance optimization
@@ -439,6 +461,8 @@ export const useUpdateGoalsWithoutTouched = () => useQuickPlanStore((state) => s
 export const useUpdateMarketAssumptions = () => useQuickPlanStore((state) => state.actions.updateMarketAssumptions);
 export const useUpdateRetirementFunding = () => useQuickPlanStore((state) => state.actions.updateRetirementFunding);
 export const useUpdateFlexiblePaths = () => useQuickPlanStore((state) => state.actions.updateFlexiblePaths);
+export const useUpdateIncomes = () => useQuickPlanStore((state) => state.actions.updateIncomes);
+export const useDeleteIncome = () => useQuickPlanStore((state) => state.actions.deleteIncome);
 
 /**
  * Preferences selectors

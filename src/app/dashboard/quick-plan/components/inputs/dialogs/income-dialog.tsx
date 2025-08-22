@@ -6,7 +6,7 @@ import { MinusIcon, PlusIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/ou
 import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCurrentAge, useLifeExpectancy } from '@/lib/stores/quick-plan-store';
+import { useCurrentAge, useLifeExpectancy, useUpdateIncomes } from '@/lib/stores/quick-plan-store';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/income-form-schema';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -48,8 +48,10 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
     },
   });
 
+  const updateIncomes = useUpdateIncomes();
   const onSubmit = (data: IncomeInputs) => {
-    console.log('Form submitted:', data);
+    const res = updateIncomes(data);
+    console.log('Form submitted:', res);
   };
 
   const frequency = useWatch({ control, name: 'frequency' });
