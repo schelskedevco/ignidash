@@ -5,7 +5,7 @@ import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-schem
 const timePointSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('semantic'),
-    value: z.enum(['now', 'at-retirement']),
+    value: z.enum(['now', 'at-retirement', 'at-life-expectancy']),
   }),
   z.object({
     type: z.literal('specific'),
