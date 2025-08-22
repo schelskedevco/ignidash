@@ -50,8 +50,8 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
 
   const updateIncomes = useUpdateIncomes();
   const onSubmit = (data: IncomeInputs) => {
-    const res = updateIncomes(data);
-    console.log('Form submitted:', res);
+    updateIncomes(data);
+    setIncomeDialogOpen(false);
   };
 
   const frequency = useWatch({ control, name: 'frequency' });
