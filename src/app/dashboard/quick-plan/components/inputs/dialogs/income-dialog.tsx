@@ -243,6 +243,31 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                           </Field>
                         </>
                       )}
+                      {startType === 'custom-age' && (
+                        <Field>
+                          <Label className="sr-only">Age</Label>
+                          <Controller
+                            name="timeframe.start.age"
+                            defaultValue={currentAge}
+                            control={control}
+                            render={({ field: { onChange, value, name } }) => (
+                              <Combobox
+                                name={name}
+                                options={ages}
+                                displayValue={(age) => String(age || currentAge) + ' y/o'}
+                                value={value || currentAge}
+                                onChange={(age) => onChange(age || currentAge)}
+                              >
+                                {(age) => (
+                                  <ComboboxOption value={age}>
+                                    <ComboboxLabel>{age}</ComboboxLabel>
+                                  </ComboboxOption>
+                                )}
+                              </Combobox>
+                            )}
+                          />
+                        </Field>
+                      )}
                     </div>
                     {frequency !== 'one-time' && (
                       <div className="mt-4 grid grid-cols-2 items-end gap-2">
@@ -319,7 +344,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                                 <Combobox
                                   name={name}
                                   options={ages}
-                                  displayValue={(age) => String(age || currentAge)}
+                                  displayValue={(age) => String(age || currentAge) + ' y/o'}
                                   value={value || currentAge}
                                   onChange={(age) => onChange(age || currentAge)}
                                 >
