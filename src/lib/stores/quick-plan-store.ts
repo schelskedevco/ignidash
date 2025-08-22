@@ -425,6 +425,8 @@ export const useAnnualIncome = () => useQuickPlanStore((state) => state.inputs.b
 export const useAnnualExpenses = () => useQuickPlanStore((state) => state.inputs.basics.annualExpenses);
 export const useInvestedAssets = () => useQuickPlanStore((state) => state.inputs.basics.investedAssets);
 
+export const useLifeExpectancy = () => useQuickPlanStore((state) => state.inputs.retirementFunding.lifeExpectancy);
+
 /**
  * Action selectors
  * These hooks provide access to update functions with built-in validation
