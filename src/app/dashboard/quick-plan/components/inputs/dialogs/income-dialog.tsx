@@ -382,66 +382,68 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
                 </>
               )}
             </Disclosure>
-            <Disclosure as="div">
-              {/* From: https://stackoverflow.com/questions/72131620/group-disclosures-accordian-from-headless-ui */}
-              {({ open, close }) => (
-                <>
-                  <DisclosureButton
-                    onClick={() => {
-                      if (!open) close();
-                      toggleDisclosure({ open, close, key: 'rateOfChange' });
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
+            {frequency !== 'one-time' && (
+              <Disclosure as="div">
+                {/* From: https://stackoverflow.com/questions/72131620/group-disclosures-accordian-from-headless-ui */}
+                {({ open, close }) => (
+                  <>
+                    <DisclosureButton
+                      onClick={() => {
                         if (!open) close();
                         toggleDisclosure({ open, close, key: 'rateOfChange' });
-                      }
-                    }}
-                    className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
-                  >
-                    <div className="flex items-center gap-2">
-                      <ArrowTrendingUpIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
-                      <span className="text-base/7 font-semibold">Rate of Change</span>
-                    </div>
-                    <span className="text-muted-foreground ml-6 flex h-7 items-center">
-                      <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
-                      <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
-                    </span>
-                  </DisclosureButton>
-                  <DisclosurePanel className="py-4">
-                    <div className="grid grid-cols-5 gap-4">
-                      <Field className="col-span-3">
-                        <Label htmlFor="growth-rate" className="flex w-full items-center justify-between">
-                          <span>Growth Rate</span>
-                          <span className="text-muted-foreground text-sm/6">{Number(3).toFixed(1)}% real</span>
-                        </Label>
-                        <NumberInputV2
-                          name="growth.growthRate"
-                          control={control}
-                          id="growth-rate"
-                          inputMode="decimal"
-                          placeholder="3%"
-                          suffix="%"
-                        />
-                        {errors.growth?.growthRate && <ErrorMessage>{errors.growth?.growthRate?.message}</ErrorMessage>}
-                      </Field>
-                      <Field className="col-span-2">
-                        <Label htmlFor="growth-limit">Limit</Label>
-                        <NumberInputV2
-                          name="growth.growthLimit"
-                          control={control}
-                          id="growth-limit"
-                          inputMode="decimal"
-                          placeholder="$120,000"
-                          prefix="$"
-                        />
-                        {errors.growth?.growthLimit && <ErrorMessage>{errors.growth?.growthLimit?.message}</ErrorMessage>}
-                      </Field>
-                    </div>
-                  </DisclosurePanel>
-                </>
-              )}
-            </Disclosure>
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          if (!open) close();
+                          toggleDisclosure({ open, close, key: 'rateOfChange' });
+                        }
+                      }}
+                      className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
+                    >
+                      <div className="flex items-center gap-2">
+                        <ArrowTrendingUpIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
+                        <span className="text-base/7 font-semibold">Rate of Change</span>
+                      </div>
+                      <span className="text-muted-foreground ml-6 flex h-7 items-center">
+                        <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
+                        <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
+                      </span>
+                    </DisclosureButton>
+                    <DisclosurePanel className="py-4">
+                      <div className="grid grid-cols-5 gap-4">
+                        <Field className="col-span-3">
+                          <Label htmlFor="growth-rate" className="flex w-full items-center justify-between">
+                            <span>Growth Rate</span>
+                            <span className="text-muted-foreground text-sm/6">{Number(3).toFixed(1)}% real</span>
+                          </Label>
+                          <NumberInputV2
+                            name="growth.growthRate"
+                            control={control}
+                            id="growth-rate"
+                            inputMode="decimal"
+                            placeholder="3%"
+                            suffix="%"
+                          />
+                          {errors.growth?.growthRate && <ErrorMessage>{errors.growth?.growthRate?.message}</ErrorMessage>}
+                        </Field>
+                        <Field className="col-span-2">
+                          <Label htmlFor="growth-limit">Limit</Label>
+                          <NumberInputV2
+                            name="growth.growthLimit"
+                            control={control}
+                            id="growth-limit"
+                            inputMode="decimal"
+                            placeholder="$120,000"
+                            prefix="$"
+                          />
+                          {errors.growth?.growthLimit && <ErrorMessage>{errors.growth?.growthLimit?.message}</ErrorMessage>}
+                        </Field>
+                      </div>
+                    </DisclosurePanel>
+                  </>
+                )}
+              </Disclosure>
+            )}
           </DialogBody>
         </Fieldset>
         <DialogActions>

@@ -57,13 +57,13 @@ export const incomeFormSchema = z
   .object({
     name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
     amount: currencyFieldForbidsZero('Income cannot be negative or zero'),
-    growth: growthSchema,
+    growth: growthSchema.optional(),
   })
   .extend(frequencyTimeframeSchema.shape)
   .refine(
     (data) => {
       // Skip if no limit, growth is 0, or growth is negative
-      if (!data.growth.growthLimit || data.growth.growthRate <= 0) {
+      if (!data.growth?.growthLimit || data.growth.growthRate <= 0) {
         return true;
       }
 
@@ -78,7 +78,7 @@ export const incomeFormSchema = z
   .refine(
     (data) => {
       // Skip if no limit, growth is 0, or growth is positive
-      if (!data.growth.growthLimit || data.growth.growthRate >= 0) {
+      if (!data.growth?.growthLimit || data.growth.growthRate >= 0) {
         return true;
       }
 
