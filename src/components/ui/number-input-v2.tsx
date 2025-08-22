@@ -9,6 +9,7 @@ interface NumberInputV2Props {
   prefix?: string;
   suffix?: string;
   decimalScale?: number;
+  autoFocus?: boolean;
 }
 
 export default function NumberInputV2<
@@ -21,6 +22,7 @@ export default function NumberInputV2<
   prefix,
   suffix,
   decimalScale = 2,
+  autoFocus,
   name,
   rules,
   shouldUnregister,
@@ -67,6 +69,7 @@ export default function NumberInputV2<
       aria-invalid={!!error}
       invalid={!!error}
       isAllowed={({ value }) => value.length <= 12}
+      autoFocus={autoFocus}
     />
   );
 }

@@ -138,12 +138,21 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
                   inputMode="text"
                   invalid={!!errors.name}
                   aria-invalid={!!errors.name}
+                  autoFocus={selectedIncomeID === null}
                 />
                 {errors.name && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
               </Field>
               <Field>
                 <Label htmlFor="amount">Amount</Label>
-                <NumberInputV2 name="amount" control={control} id="amount" inputMode="decimal" placeholder="$85,000" prefix="$" />
+                <NumberInputV2
+                  name="amount"
+                  control={control}
+                  id="amount"
+                  inputMode="decimal"
+                  placeholder="$85,000"
+                  prefix="$"
+                  autoFocus={selectedIncomeID !== null}
+                />
                 {errors.amount && <ErrorMessage>{errors.amount?.message}</ErrorMessage>}
               </Field>
               <Field>
