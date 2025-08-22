@@ -9,6 +9,7 @@ import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
+import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 import { useIncomesData, useDeleteIncome } from '@/lib/stores/quick-plan-store';
 import { cn, formatNumber } from '@/lib/utils';
 
@@ -19,6 +20,9 @@ const colors = ['bg-rose-500/50', 'bg-rose-500/75', 'bg-rose-500'];
 export default function IncomeSection() {
   const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
   const [selectedIncomeID, setSelectedIncomeID] = useState<string | null>(null);
+
+  const [deleteIncomeAlertOpen, setDeleteIncomeAlertOpen] = useState(false);
+  const [incomeIDToDelete, setIncomeIDToDelete] = useState<string | null>(null);
 
   const incomes = useIncomesData();
   const hasIncomes = Object.keys(incomes).length > 0;
@@ -62,7 +66,14 @@ export default function IncomeSection() {
                           >
                             Edit
                           </DropdownItem>
-                          <DropdownItem onClick={() => deleteIncome(id)}>Delete</DropdownItem>
+                          <DropdownItem
+                            onClick={() => {
+                              setDeleteIncomeAlertOpen(true);
+                              setIncomeIDToDelete(id);
+                            }}
+                          >
+                            Delete
+                          </DropdownItem>
                         </DropdownMenu>
                       </Dropdown>
                     </div>
@@ -100,6 +111,30 @@ export default function IncomeSection() {
       >
         <IncomeDialog setIncomeDialogOpen={setIncomeDialogOpen} selectedIncomeID={selectedIncomeID} />
       </Dialog>
+      <Alert
+        open={deleteIncomeAlertOpen}
+        onClose={() => {
+          setIncomeIDToDelete(null);
+          setDeleteIncomeAlertOpen(false);
+        }}
+      >
+        <AlertTitle>Are you sure you want to delete this income?</AlertTitle>
+        <AlertDescription>This action cannot be undone.</AlertDescription>
+        <AlertActions>
+          <Button plain onClick={() => setDeleteIncomeAlertOpen(false)}>
+            Cancel
+          </Button>
+          <Button
+            color="red"
+            onClick={() => {
+              deleteIncome(incomeIDToDelete!);
+              setDeleteIncomeAlertOpen(false);
+            }}
+          >
+            Delete
+          </Button>
+        </AlertActions>
+      </Alert>
     </>
   );
 }
