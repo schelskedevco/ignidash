@@ -180,7 +180,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                     </span>
                   </DisclosureButton>
                   <DisclosurePanel className="py-4">
-                    <div className="grid grid-cols-2 items-end gap-4">
+                    <div className="grid grid-cols-2 items-end gap-2">
                       <Field className={getStartColSpan()}>
                         <Label htmlFor="start">Start</Label>
                         <Select {...register('timeframe.start.type')} id="start" name="timeframe.start.type">
@@ -243,100 +243,98 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                           </Field>
                         </>
                       )}
-                      {frequency !== 'one-time' && (
-                        <>
-                          <Field className={getEndColSpan()}>
-                            <Label htmlFor="end">End</Label>
-                            <Select {...register('timeframe.end.type')} id="end" name="timeframe.end.type">
-                              <option value="at-retirement">At Retirement</option>
-                              <option value="at-life-expectancy">At Life Expectancy</option>
-                              <option value="custom-date">Custom Date</option>
-                              <option value="custom-age">Custom Age</option>
-                            </Select>
-                          </Field>
-                          {endType === 'custom-date' && (
-                            <>
-                              <Field>
-                                <Label className="sr-only">Month</Label>
-                                <Controller
-                                  name="timeframe.end.month"
-                                  defaultValue={currentMonth.value}
-                                  control={control}
-                                  render={({ field: { onChange, value, name } }) => (
-                                    <Combobox
-                                      name={name}
-                                      options={months}
-                                      displayValue={(month) => month?.name || currentMonth.name}
-                                      value={months.find((m) => m.value === value) || currentMonth}
-                                      onChange={(month) => onChange(month?.value || currentMonth.value)}
-                                      filter={(month, query) =>
-                                        month.name.toLowerCase().includes(query.toLowerCase()) || String(month.value).includes(query)
-                                      }
-                                    >
-                                      {(month) => (
-                                        <ComboboxOption value={month}>
-                                          <ComboboxLabel>{month.name}</ComboboxLabel>
-                                        </ComboboxOption>
-                                      )}
-                                    </Combobox>
-                                  )}
-                                />
-                              </Field>
-                              <Field>
-                                <Label className="sr-only">Year</Label>
-                                <Controller
-                                  name="timeframe.end.year"
-                                  defaultValue={currentYear}
-                                  control={control}
-                                  render={({ field: { onChange, value, name } }) => (
-                                    <Combobox
-                                      name={name}
-                                      options={years}
-                                      displayValue={(year) => String(year || currentYear)}
-                                      value={value || currentYear}
-                                      onChange={(year) => onChange(year || currentYear)}
-                                    >
-                                      {(year) => (
-                                        <ComboboxOption value={year}>
-                                          <ComboboxLabel>{year}</ComboboxLabel>
-                                        </ComboboxOption>
-                                      )}
-                                    </Combobox>
-                                  )}
-                                />
-                              </Field>
-                            </>
-                          )}
-                          {endType === 'custom-age' && (
-                            <>
-                              <Field>
-                                <Label className="sr-only">Age</Label>
-                                <Controller
-                                  name="timeframe.end.age"
-                                  defaultValue={currentAge}
-                                  control={control}
-                                  render={({ field: { onChange, value, name } }) => (
-                                    <Combobox
-                                      name={name}
-                                      options={ages}
-                                      displayValue={(age) => String(age || currentAge)}
-                                      value={value || currentAge}
-                                      onChange={(age) => onChange(age || currentAge)}
-                                    >
-                                      {(age) => (
-                                        <ComboboxOption value={age}>
-                                          <ComboboxLabel>{age}</ComboboxLabel>
-                                        </ComboboxOption>
-                                      )}
-                                    </Combobox>
-                                  )}
-                                />
-                              </Field>
-                            </>
-                          )}
-                        </>
-                      )}
                     </div>
+                    {frequency !== 'one-time' && (
+                      <div className="mt-6 grid grid-cols-2 items-end gap-2">
+                        <Field className={getEndColSpan()}>
+                          <Label htmlFor="end">End</Label>
+                          <Select {...register('timeframe.end.type')} id="end" name="timeframe.end.type">
+                            <option value="at-retirement">At Retirement</option>
+                            <option value="at-life-expectancy">At Life Expectancy</option>
+                            <option value="custom-date">Custom Date</option>
+                            <option value="custom-age">Custom Age</option>
+                          </Select>
+                        </Field>
+                        {endType === 'custom-date' && (
+                          <>
+                            <Field>
+                              <Label className="sr-only">Month</Label>
+                              <Controller
+                                name="timeframe.end.month"
+                                defaultValue={currentMonth.value}
+                                control={control}
+                                render={({ field: { onChange, value, name } }) => (
+                                  <Combobox
+                                    name={name}
+                                    options={months}
+                                    displayValue={(month) => month?.name || currentMonth.name}
+                                    value={months.find((m) => m.value === value) || currentMonth}
+                                    onChange={(month) => onChange(month?.value || currentMonth.value)}
+                                    filter={(month, query) =>
+                                      month.name.toLowerCase().includes(query.toLowerCase()) || String(month.value).includes(query)
+                                    }
+                                  >
+                                    {(month) => (
+                                      <ComboboxOption value={month}>
+                                        <ComboboxLabel>{month.name}</ComboboxLabel>
+                                      </ComboboxOption>
+                                    )}
+                                  </Combobox>
+                                )}
+                              />
+                            </Field>
+                            <Field>
+                              <Label className="sr-only">Year</Label>
+                              <Controller
+                                name="timeframe.end.year"
+                                defaultValue={currentYear}
+                                control={control}
+                                render={({ field: { onChange, value, name } }) => (
+                                  <Combobox
+                                    name={name}
+                                    options={years}
+                                    displayValue={(year) => String(year || currentYear)}
+                                    value={value || currentYear}
+                                    onChange={(year) => onChange(year || currentYear)}
+                                  >
+                                    {(year) => (
+                                      <ComboboxOption value={year}>
+                                        <ComboboxLabel>{year}</ComboboxLabel>
+                                      </ComboboxOption>
+                                    )}
+                                  </Combobox>
+                                )}
+                              />
+                            </Field>
+                          </>
+                        )}
+                        {endType === 'custom-age' && (
+                          <Field>
+                            <Label className="sr-only">Age</Label>
+                            <Controller
+                              name="timeframe.end.age"
+                              defaultValue={currentAge}
+                              control={control}
+                              render={({ field: { onChange, value, name } }) => (
+                                <Combobox
+                                  name={name}
+                                  options={ages}
+                                  displayValue={(age) => String(age || currentAge)}
+                                  value={value || currentAge}
+                                  onChange={(age) => onChange(age || currentAge)}
+                                >
+                                  {(age) => (
+                                    <ComboboxOption value={age}>
+                                      <ComboboxLabel>{age}</ComboboxLabel>
+                                    </ComboboxOption>
+                                  )}
+                                </Combobox>
+                              )}
+                            />
+                          </Field>
+                        )}
+                      </div>
+                    )}
                   </DisclosurePanel>
                 </>
               )}
