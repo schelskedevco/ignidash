@@ -17,6 +17,7 @@ const colors = ['bg-rose-500/50', 'bg-rose-500/75', 'bg-rose-500'];
 
 export default function IncomeSection() {
   const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
+  const [selectedIncomeName, setSelectedIncomeName] = useState<string | null>(null);
 
   const incomes = useIncomesData();
   const hasIncomes = Object.keys(incomes).length > 0;
@@ -52,7 +53,14 @@ export default function IncomeSection() {
                           <EllipsisVerticalIcon />
                         </DropdownButton>
                         <DropdownMenu>
-                          <DropdownItem onClick={() => setIncomeDialogOpen(true)}>Edit</DropdownItem>
+                          <DropdownItem
+                            onClick={() => {
+                              setIncomeDialogOpen(true);
+                              setSelectedIncomeName(income.name);
+                            }}
+                          >
+                            Edit
+                          </DropdownItem>
                           <DropdownItem onClick={() => deleteIncome(income.name)}>Delete</DropdownItem>
                         </DropdownMenu>
                       </Dropdown>
@@ -80,8 +88,15 @@ export default function IncomeSection() {
         )}
       </DisclosureSection>
 
-      <Dialog size="xl" open={incomeDialogOpen} onClose={setIncomeDialogOpen}>
-        <IncomeDialog incomeDialogOpen={incomeDialogOpen} setIncomeDialogOpen={setIncomeDialogOpen} />
+      <Dialog
+        size="xl"
+        open={incomeDialogOpen}
+        onClose={() => {
+          setIncomeDialogOpen(false);
+          setSelectedIncomeName(null);
+        }}
+      >
+        <IncomeDialog setIncomeDialogOpen={setIncomeDialogOpen} selectedIncomeName={selectedIncomeName} />
       </Dialog>
     </>
   );

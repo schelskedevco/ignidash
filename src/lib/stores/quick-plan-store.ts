@@ -437,6 +437,7 @@ export const useMarketAssumptionsData = () => useQuickPlanStore((state) => state
 export const useRetirementFundingData = () => useQuickPlanStore((state) => state.inputs.retirementFunding);
 export const useFlexiblePathsData = () => useQuickPlanStore((state) => state.inputs.flexiblePaths);
 export const useIncomesData = () => useQuickPlanStore((state) => state.inputs.incomes);
+export const useIncomeData = (name: string | null) => useQuickPlanStore((state) => (name !== null ? state.inputs.incomes[name] : null));
 
 /**
  * Individual field selectors for performance optimization

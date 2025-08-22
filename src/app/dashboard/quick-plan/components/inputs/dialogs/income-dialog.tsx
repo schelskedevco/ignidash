@@ -6,7 +6,7 @@ import { MinusIcon, PlusIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/ou
 import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCurrentAge, useLifeExpectancy, useUpdateIncomes } from '@/lib/stores/quick-plan-store';
+import { useCurrentAge, useLifeExpectancy, useUpdateIncomes, useIncomeData } from '@/lib/stores/quick-plan-store';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/income-form-schema';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -17,6 +17,17 @@ import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
 
+const newIncomeDefaultValues = {
+  frequency: 'yearly',
+  timeframe: {
+    start: { type: 'now' },
+    end: { type: 'at-retirement' },
+  },
+  growth: {
+    growthRate: 3,
+  },
+} as const satisfies Partial<IncomeInputs>;
+
 interface DisclosureState {
   open: boolean;
   close: () => void;
@@ -24,11 +35,14 @@ interface DisclosureState {
 }
 
 interface IncomeDialogProps {
-  incomeDialogOpen: boolean;
   setIncomeDialogOpen: (open: boolean) => void;
+  selectedIncomeName: string | null;
 }
 
-export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: IncomeDialogProps) {
+export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeName }: IncomeDialogProps) {
+  const existingIncomeData = useIncomeData(selectedIncomeName);
+  const defaultValues = existingIncomeData || newIncomeDefaultValues;
+
   const {
     register,
     control,
@@ -36,16 +50,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
     formState: { errors },
   } = useForm({
     resolver: zodResolver(incomeFormSchema),
-    defaultValues: {
-      frequency: 'yearly',
-      timeframe: {
-        start: { type: 'now' },
-        end: { type: 'at-retirement' },
-      },
-      growth: {
-        growthRate: 3,
-      },
-    },
+    defaultValues,
   });
 
   const updateIncomes = useUpdateIncomes();
