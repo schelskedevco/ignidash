@@ -35,7 +35,7 @@ export function Alert({
             className={clsx(
               className,
               sizes[size],
-              'bg-background row-start-2 w-full rounded-2xl p-8 shadow-lg ring-1 ring-zinc-950/10 sm:rounded-2xl sm:p-6 dark:ring-white/10 forced-colors:outline',
+              'ring-border/50 bg-background row-start-2 w-full rounded-2xl p-8 shadow-lg ring-1 sm:rounded-2xl sm:p-6 forced-colors:outline',
               'transition duration-100 will-change-transform data-closed:opacity-0 data-enter:ease-out data-closed:data-enter:scale-95 data-leave:ease-in'
             )}
           >
