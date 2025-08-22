@@ -21,7 +21,6 @@ export default function IncomeSection() {
   const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
   const [selectedIncomeID, setSelectedIncomeID] = useState<string | null>(null);
 
-  const [deleteIncomeAlertOpen, setDeleteIncomeAlertOpen] = useState(false);
   const [incomeToDelete, setIncomeToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const incomes = useIncomesData();
@@ -68,7 +67,6 @@ export default function IncomeSection() {
                           </DropdownItem>
                           <DropdownItem
                             onClick={() => {
-                              setDeleteIncomeAlertOpen(true);
                               setIncomeToDelete({ id, name: income.name });
                             }}
                           >
@@ -112,23 +110,22 @@ export default function IncomeSection() {
         <IncomeDialog setIncomeDialogOpen={setIncomeDialogOpen} selectedIncomeID={selectedIncomeID} />
       </Dialog>
       <Alert
-        open={deleteIncomeAlertOpen}
+        open={!!incomeToDelete}
         onClose={() => {
           setIncomeToDelete(null);
-          setDeleteIncomeAlertOpen(false);
         }}
       >
-        <AlertTitle>Are you sure you want to delete {`"${incomeToDelete?.name}"` || 'this income'}?</AlertTitle>
+        <AlertTitle>Are you sure you want to delete {incomeToDelete ? `"${incomeToDelete.name}"` : 'this income'}?</AlertTitle>
         <AlertDescription>This action cannot be undone.</AlertDescription>
         <AlertActions>
-          <Button plain onClick={() => setDeleteIncomeAlertOpen(false)}>
+          <Button plain onClick={() => setIncomeToDelete(null)}>
             Cancel
           </Button>
           <Button
             color="red"
             onClick={() => {
               deleteIncome(incomeToDelete!.id);
-              setDeleteIncomeAlertOpen(false);
+              setIncomeToDelete(null);
             }}
           >
             Delete
