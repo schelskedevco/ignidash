@@ -120,7 +120,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
               </Field>
               <Field className="col-span-2">
                 <Label htmlFor="frequency">Frequency</Label>
-                <Select {...register('frequency')} id="frequency" name="frequency" defaultValue="yearly">
+                <Select {...register('frequency')} id="frequency" name="frequency">
                   <optgroup label="Single Payment">
                     <option value="one-time">One-time</option>
                   </optgroup>
@@ -149,7 +149,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                 <div className="grid grid-cols-3 gap-4">
                   <Field className={getStartColSpan()}>
                     <Label htmlFor="start">Start</Label>
-                    <Select {...register('timeframe.start.type')} id="start" name="timeframe.start.type" defaultValue="now">
+                    <Select {...register('timeframe.start.type')} id="start" name="timeframe.start.type">
                       <option value="now">Now</option>
                       <option value="at-retirement">At Retirement</option>
                       <option value="custom-date">Custom Date</option>
@@ -213,7 +213,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                     <>
                       <Field className={getEndColSpan()}>
                         <Label htmlFor="end">End</Label>
-                        <Select {...register('timeframe.end.type')} id="end" name="timeframe.end.type" defaultValue="at-retirement">
+                        <Select {...register('timeframe.end.type')} id="end" name="timeframe.end.type">
                           <option value="at-retirement">At Retirement</option>
                           <option value="at-life-expectancy">At Life Expectancy</option>
                           <option value="custom-date">Custom Date</option>
