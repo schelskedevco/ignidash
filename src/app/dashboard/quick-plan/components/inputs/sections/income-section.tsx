@@ -2,29 +2,62 @@
 
 import { useState } from 'react';
 import { BanknoteArrowUpIcon } from 'lucide-react';
+import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
-// import { useIncomesData } from '@/lib/stores/quick-plan-store';
+import { useIncomesData } from '@/lib/stores/quick-plan-store';
+import { formatNumber } from '@/lib/utils';
 
 import IncomeDialog from '../dialogs/income-dialog';
 
 export default function IncomeSection() {
   const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
-  // const incomes = useIncomesData();
+
+  const incomes = useIncomesData();
+  const hasIncomes = Object.keys(incomes).length > 0;
 
   return (
     <>
       <DisclosureSection title="Income" icon={BanknoteArrowUpIcon}>
-        {/* <p>{Object.keys(incomes).length > 0 ? JSON.stringify(incomes) : 'No income sources added.'}</p> */}
-        <button
-          type="button"
-          className="focus-outline relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 dark:border-white/15 dark:hover:border-white/25"
-          onClick={() => setIncomeDialogOpen(true)}
-        >
-          <BanknoteArrowUpIcon aria-hidden="true" className="text-primary mx-auto size-12" />
-          <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Create an income</span>
-        </button>
+        {hasIncomes && (
+          <ul role="list" className="mt-3 grid grid-cols-1 gap-5">
+            {Object.entries(incomes).map(([name, income]) => (
+              <li key={name} className="col-span-1 flex rounded-md shadow-xs dark:shadow-none">
+                <div className="flex w-16 shrink-0 items-center justify-center rounded-l-md bg-rose-500 text-sm font-medium text-white">
+                  {income.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b border-gray-200 bg-white dark:border-white/10 dark:bg-gray-800/50">
+                  <div className="flex-1 truncate px-4 py-2 text-sm">
+                    <a href="#" className="font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-gray-200">
+                      {income.name}
+                    </a>
+                    <p className="text-gray-500 dark:text-gray-400">{formatNumber(income.amount, 2, '$')}</p>
+                  </div>
+                  <div className="shrink-0 pr-2">
+                    <button
+                      type="button"
+                      className="inline-flex size-8 items-center justify-center rounded-full text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-600 dark:hover:text-white dark:focus:outline-white"
+                    >
+                      <span className="sr-only">Open options</span>
+                      <EllipsisVerticalIcon aria-hidden="true" className="size-5" />
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+        {!hasIncomes && (
+          <button
+            type="button"
+            className="focus-outline relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 dark:border-white/15 dark:hover:border-white/25"
+            onClick={() => setIncomeDialogOpen(true)}
+          >
+            <BanknoteArrowUpIcon aria-hidden="true" className="text-primary mx-auto size-12" />
+            <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Create an income</span>
+          </button>
+        )}
       </DisclosureSection>
 
       <Dialog size="xl" open={incomeDialogOpen} onClose={setIncomeDialogOpen}>
