@@ -188,7 +188,7 @@ interface QuickPlanState {
     updateMarketAssumptions: (field: keyof MarketAssumptionsInputs, value: unknown) => UpdateResult;
     updateRetirementFunding: (field: keyof RetirementFundingInputs, value: unknown) => UpdateResult;
     updateFlexiblePaths: (field: keyof FlexiblePathsInputs, value: unknown) => UpdateResult;
-    updateIncomes: (data: IncomeInputs) => UpdateResult;
+    updateIncomes: (id: string, data: IncomeInputs) => UpdateResult;
     deleteIncome: (id: string) => UpdateResult;
 
     // Preferences actions
@@ -339,10 +339,10 @@ export const useQuickPlanStore = create<QuickPlanState>()(
             };
           },
 
-          updateIncomes: (data) => {
+          updateIncomes: (id: string, data: IncomeInputs) => {
             set((state) => {
               state.touched.incomes = true;
-              state.inputs.incomes = { ...state.inputs.incomes, [data.name]: data };
+              state.inputs.incomes = { ...state.inputs.incomes, [id]: data };
             });
 
             return { success: true };

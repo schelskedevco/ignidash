@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
 import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react';
@@ -36,11 +37,11 @@ interface DisclosureState {
 
 interface IncomeDialogProps {
   setIncomeDialogOpen: (open: boolean) => void;
-  selectedIncomeName: string | null;
+  selectedIncomeID: string | null;
 }
 
-export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeName }: IncomeDialogProps) {
-  const existingIncomeData = useIncomeData(selectedIncomeName);
+export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: IncomeDialogProps) {
+  const existingIncomeData = useIncomeData(selectedIncomeID);
   const defaultValues = existingIncomeData || newIncomeDefaultValues;
 
   const {
@@ -55,7 +56,8 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeName }
 
   const updateIncomes = useUpdateIncomes();
   const onSubmit = (data: IncomeInputs) => {
-    updateIncomes(data);
+    const incomeID = selectedIncomeID ?? uuidv4();
+    updateIncomes(incomeID, data);
     setIncomeDialogOpen(false);
   };
 

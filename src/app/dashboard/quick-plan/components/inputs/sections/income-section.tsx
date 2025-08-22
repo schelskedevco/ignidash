@@ -17,7 +17,7 @@ const colors = ['bg-rose-500/50', 'bg-rose-500/75', 'bg-rose-500'];
 
 export default function IncomeSection() {
   const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
-  const [selectedIncomeName, setSelectedIncomeName] = useState<string | null>(null);
+  const [selectedIncomeID, setSelectedIncomeID] = useState<string | null>(null);
 
   const incomes = useIncomesData();
   const hasIncomes = Object.keys(incomes).length > 0;
@@ -30,8 +30,8 @@ export default function IncomeSection() {
         {hasIncomes && (
           <>
             <ul role="list" className="grid grid-cols-1 gap-3">
-              {Object.entries(incomes).map(([name, income], index) => (
-                <li key={name} className="col-span-1 flex rounded-md shadow-xs dark:shadow-none">
+              {Object.entries(incomes).map(([id, income], index) => (
+                <li key={id} className="col-span-1 flex rounded-md shadow-xs dark:shadow-none">
                   <div
                     className={cn(
                       'border-foreground/50 flex w-16 shrink-0 items-center justify-center rounded-l-md border text-sm font-medium text-white',
@@ -56,12 +56,12 @@ export default function IncomeSection() {
                           <DropdownItem
                             onClick={() => {
                               setIncomeDialogOpen(true);
-                              setSelectedIncomeName(income.name);
+                              setSelectedIncomeID(id);
                             }}
                           >
                             Edit
                           </DropdownItem>
-                          <DropdownItem onClick={() => deleteIncome(income.name)}>Delete</DropdownItem>
+                          <DropdownItem onClick={() => deleteIncome(id)}>Delete</DropdownItem>
                         </DropdownMenu>
                       </Dropdown>
                     </div>
@@ -92,11 +92,11 @@ export default function IncomeSection() {
         size="xl"
         open={incomeDialogOpen}
         onClose={() => {
+          setSelectedIncomeID(null);
           setIncomeDialogOpen(false);
-          setSelectedIncomeName(null);
         }}
       >
-        <IncomeDialog setIncomeDialogOpen={setIncomeDialogOpen} selectedIncomeName={selectedIncomeName} />
+        <IncomeDialog setIncomeDialogOpen={setIncomeDialogOpen} selectedIncomeID={selectedIncomeID} />
       </Dialog>
     </>
   );
