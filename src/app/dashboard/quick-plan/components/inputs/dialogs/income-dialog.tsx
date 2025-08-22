@@ -117,7 +117,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Fieldset aria-label="Income details">
           <DialogBody data-slot="control" className="space-y-4">
-            <div className="mb-8 grid grid-cols-2 gap-x-2 gap-y-4">
+            <div className="mb-8 grid grid-cols-2 gap-4">
               <Field className="col-span-2">
                 <Label htmlFor="name">Name</Label>
                 <Input
@@ -180,7 +180,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                     </span>
                   </DisclosureButton>
                   <DisclosurePanel className="py-4">
-                    <div className="grid grid-cols-2 items-end gap-2">
+                    <div className="grid grid-cols-2 items-end gap-x-4 gap-y-2">
                       <Field className={getStartColSpan()}>
                         <Label htmlFor="start">Start</Label>
                         <Select {...register('timeframe.start.type')} id="start" name="timeframe.start.type">
@@ -270,7 +270,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                       )}
                     </div>
                     {frequency !== 'one-time' && (
-                      <div className="mt-4 grid grid-cols-2 items-end gap-2">
+                      <div className="mt-4 grid grid-cols-2 items-end gap-x-4 gap-y-2">
                         <Field className={getEndColSpan()}>
                           <Label htmlFor="end">End</Label>
                           <Select {...register('timeframe.end.type')} id="end" name="timeframe.end.type">
@@ -391,7 +391,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                     </span>
                   </DisclosureButton>
                   <DisclosurePanel className="py-4">
-                    <div className="grid grid-cols-5 gap-2">
+                    <div className="grid grid-cols-5 gap-4">
                       <Field className="col-span-3">
                         <Label htmlFor="growth-rate" className="flex w-full items-center justify-between">
                           <span>Growth Rate</span>
