@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { BanknoteArrowUpIcon } from 'lucide-react';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
+import { PlusIcon } from '@heroicons/react/16/solid';
 
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
@@ -34,7 +35,7 @@ export default function IncomeSection() {
                 <li key={id} className="col-span-1 flex rounded-md shadow-xs dark:shadow-none">
                   <div
                     className={cn(
-                      'border-foreground/50 flex w-16 shrink-0 items-center justify-center rounded-l-md border text-sm font-medium text-white',
+                      'border-foreground/50 flex w-16 shrink-0 items-center justify-center rounded-l-md border text-xl font-medium text-white',
                       colors[index % colors.length]
                     )}
                   >
@@ -71,6 +72,7 @@ export default function IncomeSection() {
             </ul>
             <div className="mt-6 flex items-center justify-end">
               <Button color="rose" onClick={() => setIncomeDialogOpen(true)}>
+                <PlusIcon />
                 Add Income
               </Button>
             </div>
