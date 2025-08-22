@@ -177,7 +177,7 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
                         toggleDisclosure({ open, close, key: 'timeframe' });
                       }
                     }}
-                    className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left data-open:border-b data-open:pb-4"
+                    className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
                   >
                     <div className="flex items-center gap-2">
                       <CalendarIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
@@ -388,7 +388,7 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
                         toggleDisclosure({ open, close, key: 'rateOfChange' });
                       }
                     }}
-                    className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left data-open:border-b data-open:pb-4"
+                    className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
                   >
                     <div className="flex items-center gap-2">
                       <ArrowTrendingUpIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
