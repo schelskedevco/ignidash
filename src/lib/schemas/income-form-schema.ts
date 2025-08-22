@@ -2,17 +2,27 @@ import { z } from 'zod';
 
 import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-schema-helpers';
 
-const timePointSchema = z.discriminatedUnion('type', [
-  z.object({
-    type: z.literal('semantic'),
-    value: z.enum(['now', 'at-retirement', 'at-life-expectancy']),
-  }),
-  z.object({
-    type: z.literal('specific'),
-    month: z.number().int().min(1).max(12),
-    year: z.number().int().min(new Date().getFullYear()).max(2100),
-  }),
-]);
+const timePointSchema = z
+  .object({
+    type: z.enum(['now', 'at-retirement', 'at-life-expectancy', 'custom-date', 'custom-age']),
+    month: z.number().int().min(1).max(12).optional(),
+    year: z.number().int().min(1900).max(2100).optional(),
+    age: z.number().int().min(0).max(120).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.type === 'custom-date') {
+        return data.month !== undefined && data.year !== undefined;
+      }
+      if (data.type === 'custom-age') {
+        return data.age !== undefined;
+      }
+      return true;
+    },
+    {
+      message: 'Custom fields are required when custom option is selected',
+    }
+  );
 
 const frequencyTimeframeSchema = z
   .object({

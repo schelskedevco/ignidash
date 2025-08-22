@@ -5,7 +5,7 @@ import { MinusIcon, PlusIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/ou
 import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/income-form-schema';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInputV2 from '@/components/ui/number-input-v2';
@@ -32,6 +32,24 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
 
   const onSubmit = (data: IncomeInputs) => {
     console.log('Form submitted:', data);
+  };
+
+  const frequency = useWatch({ control, name: 'frequency' });
+  const startType = useWatch({ control, name: 'timeframe.start.type' });
+  const endType = useWatch({ control, name: 'timeframe.end.type' });
+
+  const getStartColSpan = () => {
+    console.log(startType);
+    if (startType === 'custom-date') return 'col-span-1';
+    if (startType === 'custom-age') return 'col-span-2';
+    return 'col-span-3';
+  };
+
+  const getEndColSpan = () => {
+    console.log(endType);
+    if (endType === 'custom-date') return 'col-span-1';
+    if (endType === 'custom-age') return 'col-span-2';
+    return 'col-span-3';
   };
 
   return (
@@ -94,24 +112,26 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
               </DisclosureButton>
               <DisclosurePanel className="py-4">
                 <div className="grid grid-cols-3 gap-4">
-                  <Field className="col-span-3">
+                  <Field className={getStartColSpan()}>
                     <Label htmlFor="start">Start</Label>
-                    <Select {...register('timeframe.start')} id="start" name="timeframe.start" defaultValue="now">
+                    <Select {...register('timeframe.start.type')} id="start" name="timeframe.start.type" defaultValue="now">
                       <option value="now">Now</option>
                       <option value="at-retirement">At Retirement</option>
                       <option value="custom-date">Custom Date</option>
                       <option value="custom-age">Custom Age</option>
                     </Select>
                   </Field>
-                  <Field className="col-span-3">
-                    <Label htmlFor="end">End</Label>
-                    <Select {...register('timeframe.end')} id="end" name="timeframe.end" defaultValue="at-retirement">
-                      <option value="at-retirement">At Retirement</option>
-                      <option value="at-life-expectancy">At Life Expectancy</option>
-                      <option value="custom-date">Custom Date</option>
-                      <option value="custom-age">Custom Age</option>
-                    </Select>
-                  </Field>
+                  {frequency !== 'one-time' && (
+                    <Field className={getEndColSpan()}>
+                      <Label htmlFor="end">End</Label>
+                      <Select {...register('timeframe.end.type')} id="end" name="timeframe.end.type" defaultValue="at-retirement">
+                        <option value="at-retirement">At Retirement</option>
+                        <option value="at-life-expectancy">At Life Expectancy</option>
+                        <option value="custom-date">Custom Date</option>
+                        <option value="custom-age">Custom Age</option>
+                      </Select>
+                    </Field>
+                  )}
                 </div>
               </DisclosurePanel>
             </Disclosure>
