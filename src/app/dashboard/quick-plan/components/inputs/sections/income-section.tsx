@@ -8,9 +8,11 @@ import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { useIncomesData } from '@/lib/stores/quick-plan-store';
-import { formatNumber } from '@/lib/utils';
+import { cn, formatNumber } from '@/lib/utils';
 
 import IncomeDialog from '../dialogs/income-dialog';
+
+const colors = ['bg-rose-500/50', 'bg-rose-500/75', 'bg-rose-500'];
 
 export default function IncomeSection() {
   const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
@@ -24,9 +26,14 @@ export default function IncomeSection() {
         {hasIncomes && (
           <>
             <ul role="list" className="grid grid-cols-1 gap-3">
-              {Object.entries(incomes).map(([name, income]) => (
+              {Object.entries(incomes).map(([name, income], index) => (
                 <li key={name} className="col-span-1 flex rounded-md shadow-xs dark:shadow-none">
-                  <div className="border-foreground/50 flex w-16 shrink-0 items-center justify-center rounded-l-md border bg-rose-500 text-sm font-medium text-white">
+                  <div
+                    className={cn(
+                      'border-foreground/50 flex w-16 shrink-0 items-center justify-center rounded-l-md border text-sm font-medium text-white',
+                      colors[index % colors.length]
+                    )}
+                  >
                     {income.name.charAt(0).toUpperCase()}
                   </div>
                   <div className="bg-emphasized-background/25 border-border flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b">
