@@ -72,7 +72,7 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
                     <optgroup label="Single Payment">
                       <option value="one-time">One-time</option>
                     </optgroup>
-                    <optgroup label="Pay Schedule">
+                    <optgroup label="Income Schedule">
                       <option value="yearly">Yearly</option>
                       <option value="quarterly">Quarterly</option>
                       <option value="monthly">Monthly</option>
