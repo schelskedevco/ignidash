@@ -7,7 +7,6 @@ import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-// import { useCurrentAge, useLifeExpectancy } from '@/lib/stores/quick-plan-store';
 import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/income-form-schema';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInputV2 from '@/components/ui/number-input-v2';
@@ -87,15 +86,9 @@ export default function IncomeDialog({ incomeDialogOpen, setIncomeDialogOpen }: 
 
   const currentMonth = months[new Date().getMonth()];
   const currentYear = new Date().getFullYear();
-
   const years = Array.from({ length: 2100 - currentYear + 1 }, (_, i) => currentYear + i);
 
-  // const currentAge = useCurrentAge()!;
-  // const lifeExpectancy = useLifeExpectancy()!;
-  // const ages = Array.from({ length: lifeExpectancy - currentAge + 1 }, (_, i) => currentAge + i);
-
   const [activeDisclosurePanel, setActiveDisclosurePanel] = useState<ActiveDisclosurePanelData | null>(null);
-
   function togglePanels(newPanel: ActiveDisclosurePanelData) {
     if (activeDisclosurePanel) {
       if (activeDisclosurePanel.key !== newPanel.key && activeDisclosurePanel.open) {
