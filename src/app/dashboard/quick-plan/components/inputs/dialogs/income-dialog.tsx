@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef, MutableRefObject } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
@@ -31,8 +31,8 @@ const newIncomeDefaultValues = {
 
 interface DisclosureState {
   open: boolean;
-  close: () => void;
-  key: string;
+  close: (focusableElement?: HTMLElement | MutableRefObject<HTMLElement | null> | undefined) => void;
+  key: 'timeframe' | 'rateOfChange';
 }
 
 interface IncomeDialogProps {
@@ -135,11 +135,24 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
   const lifeExpectancy = useLifeExpectancy();
   const ages = Array.from({ length: lifeExpectancy - currentAge + 1 }, (_, i) => currentAge + i);
 
+  const timeFrameButtonRef = useRef<HTMLButtonElement>(null);
+  const rateOfChangeButtonRef = useRef<HTMLButtonElement>(null);
+
   const [activeDisclosure, setActiveDisclosure] = useState<DisclosureState | null>(null);
   const toggleDisclosure = useCallback(
     (newDisclosure: DisclosureState) => {
       if (activeDisclosure?.open && activeDisclosure.key !== newDisclosure.key) {
-        activeDisclosure.close();
+        let targetRef = undefined;
+        switch (newDisclosure.key) {
+          case 'timeframe':
+            targetRef = timeFrameButtonRef.current;
+            break;
+          case 'rateOfChange':
+            targetRef = rateOfChangeButtonRef.current;
+            break;
+        }
+
+        activeDisclosure.close(targetRef || undefined);
       }
 
       setActiveDisclosure({
@@ -212,6 +225,7 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
               {({ open, close }) => (
                 <>
                   <DisclosureButton
+                    ref={timeFrameButtonRef}
                     onClick={() => {
                       if (!open) close();
                       toggleDisclosure({ open, close, key: 'timeframe' });
@@ -424,6 +438,7 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
                 {({ open, close }) => (
                   <>
                     <DisclosureButton
+                      ref={rateOfChangeButtonRef}
                       onClick={() => {
                         if (!open) close();
                         toggleDisclosure({ open, close, key: 'rateOfChange' });
