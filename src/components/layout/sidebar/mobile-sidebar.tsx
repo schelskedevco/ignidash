@@ -16,7 +16,7 @@ interface MobileSidebarProps {
 
 export default function MobileSidebar({ open, onClose, navigation, secondaryNavigation }: MobileSidebarProps) {
   return (
-    <Dialog open={open} onClose={onClose} className="relative z-50 font-mono lg:hidden">
+    <Dialog open={open} onClose={onClose} className="relative z-50 lg:hidden">
       <DialogBackdrop
         transition
         className="fixed inset-0 bg-stone-100/80 transition-opacity duration-300 ease-linear data-closed:opacity-0 dark:bg-stone-900/80"

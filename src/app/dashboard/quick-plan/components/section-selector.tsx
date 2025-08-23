@@ -36,7 +36,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
 
   return (
     <>
-      <div className="border-border bg-emphasized-background -mx-2 border-b py-2 font-mono shadow-md sm:-mx-3 lg:sticky lg:top-0 lg:z-30 lg:-mx-4 lg:py-4 dark:shadow-black/30">
+      <div className="border-border bg-emphasized-background -mx-2 border-b py-2 shadow-md sm:-mx-3 lg:sticky lg:top-0 lg:z-30 lg:-mx-4 lg:py-4 dark:shadow-black/30">
         <div className="mr-4 flex items-stretch justify-between sm:mr-6 lg:mr-8">
           <nav aria-label="Tabs" className="divide-border border-border -my-2 flex divide-x border-r lg:-my-4">
             {tabs.map((tab) => (
