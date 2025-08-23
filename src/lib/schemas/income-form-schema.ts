@@ -80,7 +80,7 @@ export const incomeFormSchema = z
       return data.growth.growthLimit > data.amount;
     },
     {
-      message: 'Growth limit must be greater than current amount for positive growth',
+      message: 'Growth limit must be greater than Amount for positive growth',
       path: ['growth', 'growthLimit'],
     }
   )
@@ -93,7 +93,7 @@ export const incomeFormSchema = z
       return data.growth.growthLimit < data.amount;
     },
     {
-      message: 'Growth limit must be less than current amount for negative growth',
+      message: 'Growth limit must be less than Amount for negative growth',
       path: ['growth', 'growthLimit'],
     }
   );
