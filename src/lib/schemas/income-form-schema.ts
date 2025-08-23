@@ -99,3 +99,29 @@ export const incomeFormSchema = z
   );
 
 export type IncomeInputs = z.infer<typeof incomeFormSchema>;
+
+export const timeFrameForDisplay = (
+  startType: IncomeInputs['timeframe']['start']['type'],
+  endType?: NonNullable<IncomeInputs['timeframe']['end']>['type']
+) => {
+  function labelFromType(type: IncomeInputs['timeframe']['start']['type']) {
+    switch (type) {
+      case 'now':
+        return 'Now';
+      case 'at-retirement':
+        return 'Retirement';
+      case 'at-life-expectancy':
+        return 'Life Expectancy';
+      case 'custom-date':
+        return 'Custom Date';
+      case 'custom-age':
+        return 'Custom Age';
+    }
+  }
+
+  const startLabel = labelFromType(startType);
+  const endLabel = endType ? labelFromType(endType) : undefined;
+
+  if (!endLabel) return startLabel;
+  return `${startLabel} to ${endLabel}`;
+};

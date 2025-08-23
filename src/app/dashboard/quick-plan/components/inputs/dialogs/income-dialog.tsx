@@ -9,7 +9,7 @@ import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCurrentAge, useLifeExpectancy, useUpdateIncomes, useIncomeData } from '@/lib/stores/quick-plan-store';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/income-form-schema';
+import { incomeFormSchema, type IncomeInputs, timeFrameForDisplay } from '@/lib/schemas/income-form-schema';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInputV2 from '@/components/ui/number-input-v2';
 import { Field, Fieldset, Label, ErrorMessage /* Description */ } from '@/components/catalyst/fieldset';
@@ -241,6 +241,8 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
                     <div className="flex items-center gap-2">
                       <CalendarIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
                       <span className="text-base/7 font-semibold">Timeframe</span>
+                      <span className="hidden sm:inline">|</span>
+                      <span className="text-muted-foreground hidden truncate sm:inline">{timeFrameForDisplay(startType, endType)}</span>
                     </div>
                     <span className="text-muted-foreground ml-6 flex h-7 items-center">
                       <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
