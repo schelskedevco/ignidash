@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { formatNumber } from '@/lib/utils';
 import { coerceNumber, currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-schema-helpers';
 
 const timePointSchema = z
@@ -124,4 +125,16 @@ export const timeFrameForDisplay = (
 
   if (!endLabel) return startLabel;
   return `${startLabel} to ${endLabel}`;
+};
+
+export const growthForDisplay = (
+  growthRate: NonNullable<IncomeInputs['growth']>['growthRate'],
+  growthLimit: NonNullable<IncomeInputs['growth']>['growthLimit']
+) => {
+  if (growthRate === undefined) return 'No Growth';
+
+  const rate = formatNumber(growthRate, 1);
+  if (growthLimit === undefined) return `Rate: ${rate}%, No Limit`;
+
+  return `Rate: ${rate}%, Limit: ${formatNumber(growthLimit, 0, '$')}`;
 };

@@ -9,7 +9,7 @@ import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCurrentAge, useLifeExpectancy, useUpdateIncomes, useIncomeData } from '@/lib/stores/quick-plan-store';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { incomeFormSchema, type IncomeInputs, timeFrameForDisplay } from '@/lib/schemas/income-form-schema';
+import { incomeFormSchema, type IncomeInputs, timeFrameForDisplay, growthForDisplay } from '@/lib/schemas/income-form-schema';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInputV2 from '@/components/ui/number-input-v2';
 import { Field, Fieldset, Label, ErrorMessage /* Description */ } from '@/components/catalyst/fieldset';
@@ -65,6 +65,8 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
   const frequency = useWatch({ control, name: 'frequency' });
   const startType = useWatch({ control, name: 'timeframe.start.type' });
   const endType = useWatch({ control, name: 'timeframe.end.type' });
+  const growthRate = useWatch({ control, name: 'growth.growthRate' }) as number | undefined;
+  const growthLimit = useWatch({ control, name: 'growth.growthLimit' }) as number | undefined;
 
   useEffect(() => {
     if (frequency === 'one-time') {
@@ -456,6 +458,8 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
                       <div className="flex items-center gap-2">
                         <ArrowTrendingUpIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
                         <span className="text-base/7 font-semibold">Rate of Change</span>
+                        <span className="hidden sm:inline">|</span>
+                        <span className="text-muted-foreground hidden truncate sm:inline">{growthForDisplay(growthRate, growthLimit)}</span>
                       </div>
                       <span className="text-muted-foreground ml-6 flex h-7 items-center">
                         <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
