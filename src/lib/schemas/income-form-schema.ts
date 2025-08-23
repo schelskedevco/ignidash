@@ -34,13 +34,10 @@ const frequencyTimeframeSchema = z
   })
   .refine(
     (data) => {
-      // One-time should not have an end date
-      if (data.frequency === 'one-time') {
-        return !data.timeframe.end;
-      }
+      const isOneTime = data.frequency === 'one-time';
+      const hasEndTime = !!data.timeframe.end;
 
-      // All other frequencies require an end date
-      return !!data.timeframe.end;
+      return isOneTime ? !hasEndTime : hasEndTime;
     },
     {
       message: 'One-time frequency should not have an end date, recurring frequencies require an end date',
