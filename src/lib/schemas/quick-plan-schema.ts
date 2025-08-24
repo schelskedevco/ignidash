@@ -26,6 +26,7 @@ import { z } from 'zod';
 import { currencyFieldAllowsZero, currencyFieldForbidsZero, percentageField, ageField } from '@/lib/utils/zod-schema-helpers';
 
 import { incomeFormSchema } from './income-form-schema';
+import { accountFormSchema } from './account-form-schema';
 
 // ================================
 // SCHEMA DEFINITIONS
@@ -136,6 +137,7 @@ export const quickPlanSchema = z.object({
   retirementFunding: retirementFundingSchema,
   flexiblePaths: flexiblePathsSchema,
   incomes: z.record(z.string(), incomeFormSchema),
+  accounts: z.record(z.string(), accountFormSchema),
 });
 
 // ================================
