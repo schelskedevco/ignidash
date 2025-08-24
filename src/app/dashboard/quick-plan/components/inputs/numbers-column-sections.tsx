@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { HourglassIcon, LandmarkIcon, HandCoinsIcon, BanknoteArrowDownIcon, TrendingUpDownIcon } from 'lucide-react';
+// import { useState, useEffect } from 'react';
+import { HourglassIcon /* LandmarkIcon */, HandCoinsIcon, BanknoteArrowDownIcon, TrendingUpDownIcon } from 'lucide-react';
 
 import {
   useBasicsData,
@@ -21,21 +21,22 @@ import {
   useUpdateGoals,
   useGoalsTouched,
   useUpdateGoalsWithoutTouched,
-  useAllocationData,
-  useUpdateAllocation,
-  useStocksDollarAmount,
-  useBondsDollarAmount,
-  useCashDollarAmount,
+  // useAllocationData,
+  // useUpdateAllocation,
+  // useStocksDollarAmount,
+  // useBondsDollarAmount,
+  // useCashDollarAmount,
 } from '@/lib/stores/quick-plan-store';
-import { formatNumber } from '@/lib/utils';
+// import { formatNumber } from '@/lib/utils';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import NumberInput from '@/components/ui/number-input';
 import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
 import { Divider } from '@/components/catalyst/divider';
-import InvalidInputError from '@/components/ui/invalid-input-error';
+// import InvalidInputError from '@/components/ui/invalid-input-error';
 
 import IncomeSection from './sections/income-section';
 import ExpensesSection from './sections/expenses-section';
+import PortfolioSection from './sections/portfolio-section';
 
 function getSafeWithdrawalRateDescription() {
   return (
@@ -78,53 +79,53 @@ export default function NumbersColumnSections() {
   const incomeRealGrowthRate = useIncomeRealGrowthRate();
   const expenseRealGrowthRate = useExpenseRealGrowthRate();
 
-  const allocation = useAllocationData();
-  const updateAllocation = useUpdateAllocation();
-  const stocksDollarAmount = useStocksDollarAmount();
-  const bondsDollarAmount = useBondsDollarAmount();
-  const cashDollarAmount = useCashDollarAmount();
+  // const allocation = useAllocationData();
+  // const updateAllocation = useUpdateAllocation();
+  // const stocksDollarAmount = useStocksDollarAmount();
+  // const bondsDollarAmount = useBondsDollarAmount();
+  // const cashDollarAmount = useCashDollarAmount();
 
-  // Local state for allocation tracking
-  const [localAllocation, setLocalAllocation] = useState({
-    stockAllocation: allocation.stockAllocation,
-    bondAllocation: allocation.bondAllocation,
-    cashAllocation: allocation.cashAllocation,
-  });
+  // // Local state for allocation tracking
+  // const [localAllocation, setLocalAllocation] = useState({
+  //   stockAllocation: allocation.stockAllocation,
+  //   bondAllocation: allocation.bondAllocation,
+  //   cashAllocation: allocation.cashAllocation,
+  // });
 
-  // Sync store changes to local state
-  useEffect(() => {
-    setLocalAllocation({
-      stockAllocation: allocation.stockAllocation,
-      bondAllocation: allocation.bondAllocation,
-      cashAllocation: allocation.cashAllocation,
-    });
-  }, [allocation]);
+  // // Sync store changes to local state
+  // useEffect(() => {
+  //   setLocalAllocation({
+  //     stockAllocation: allocation.stockAllocation,
+  //     bondAllocation: allocation.bondAllocation,
+  //     cashAllocation: allocation.cashAllocation,
+  //   });
+  // }, [allocation]);
 
-  // Error state for allocation validation
-  const [allocationError, setAllocationError] = useState<string | undefined>(undefined);
+  // // Error state for allocation validation
+  // const [allocationError, setAllocationError] = useState<string | undefined>(undefined);
 
-  // Handler for allocation field changes
-  const handleAllocationBlur = (field: keyof typeof localAllocation, value: unknown) => {
-    const updatedAllocation = {
-      ...localAllocation,
-      [field]: value,
-    };
+  // // Handler for allocation field changes
+  // const handleAllocationBlur = (field: keyof typeof localAllocation, value: unknown) => {
+  //   const updatedAllocation = {
+  //     ...localAllocation,
+  //     [field]: value,
+  //   };
 
-    setLocalAllocation(updatedAllocation);
+  //   setLocalAllocation(updatedAllocation);
 
-    const result = updateAllocation(updatedAllocation);
-    if (!result.success) {
-      setAllocationError(result.error);
-    } else {
-      setAllocationError(undefined);
-    }
+  //   const result = updateAllocation(updatedAllocation);
+  //   if (!result.success) {
+  //     setAllocationError(result.error);
+  //   } else {
+  //     setAllocationError(undefined);
+  //   }
 
-    /*
-     * HACK: Always return success to prevent field-level errors, relying on section-level validation instead.
-     * TODO: Properly route field-specific vs form-level errors to appropriate UI locations.
-     */
-    return { success: true };
-  };
+  //   /*
+  //    * HACK: Always return success to prevent field-level errors, relying on section-level validation instead.
+  //    * TODO: Properly route field-specific vs form-level errors to appropriate UI locations.
+  //    */
+  //   return { success: true };
+  // };
 
   return (
     <>
@@ -161,7 +162,7 @@ export default function NumbersColumnSections() {
           </Fieldset>
         </form>
       </DisclosureSection>
-      <DisclosureSection title="Portfolio" icon={LandmarkIcon}>
+      {/* <DisclosureSection title="Portfolio" icon={LandmarkIcon}>
         <>
           <form onSubmit={(e) => e.preventDefault()}>
             <Fieldset>
@@ -237,9 +238,10 @@ export default function NumbersColumnSections() {
           </form>
           {allocationError && <InvalidInputError title="Asset Allocation Error" desc={allocationError} />}
         </>
-      </DisclosureSection>
+      </DisclosureSection> */}
       <IncomeSection />
       <ExpensesSection />
+      <PortfolioSection />
       <DisclosureSection title="Cash Flow" icon={HandCoinsIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset>
