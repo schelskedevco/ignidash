@@ -88,10 +88,14 @@ export default function PortfolioSection() {
                 </li>
               ))}
             </ul>
-            <div className="mt-6 flex items-center justify-end">
-              <Button color="rose" onClick={() => setSavingsDialogOpen(true)}>
+            <div className="mt-6 flex items-center justify-end gap-x-2">
+              <Button outline onClick={() => setSavingsDialogOpen(true)}>
                 <PlusIcon />
-                Add Savings
+                Savings
+              </Button>
+              <Button color="rose" onClick={() => setAccountDialogOpen(true)}>
+                <PlusIcon />
+                Investment
               </Button>
             </div>
           </>
