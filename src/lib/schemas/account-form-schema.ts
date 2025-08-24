@@ -22,14 +22,14 @@ export const accountFormSchema = z.discriminatedUnion('type', [
   z.object({
     ...investmentAccountSchema.shape,
     type: z.literal('taxable-brokerage'),
-    costBasis: currencyFieldAllowsZero('Cost basis cannot be negative'),
+    costBasis: currencyFieldAllowsZero('Cost basis cannot be negative').optional(),
   }),
 
   // Roth - investments with contributions
   z.object({
     ...investmentAccountSchema.shape,
     type: z.enum(['roth-401k', 'roth-ira']),
-    contributions: currencyFieldAllowsZero('Contributions cannot be negative'),
+    contributions: currencyFieldAllowsZero('Contributions cannot be negative').optional(),
   }),
 
   // Traditional - investments, no basis needed
