@@ -38,6 +38,11 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
 
   const type = useWatch({ control, name: 'type' });
 
+  const getBalanceColSpan = () => {
+    if (type === 'taxable-brokerage' || type === 'roth-401k' || type === 'roth-ira') return 'col-span-1';
+    return 'col-span-2';
+  };
+
   return (
     <>
       <DialogTitle>
@@ -77,7 +82,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                   <option value="hsa">HSA</option>
                 </Select>
               </Field>
-              <Field className="col-span-2">
+              <Field className={getBalanceColSpan()}>
                 <Label htmlFor="balance">Balance</Label>
                 <NumberInputV2
                   name="balance"
