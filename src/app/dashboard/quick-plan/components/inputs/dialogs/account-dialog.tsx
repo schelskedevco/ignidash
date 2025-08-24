@@ -72,7 +72,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                   {...register('name')}
                   id="name"
                   name="name"
-                  placeholder="My Salary"
+                  placeholder="My Account"
                   autoComplete="off"
                   inputMode="text"
                   invalid={!!errors.name}
