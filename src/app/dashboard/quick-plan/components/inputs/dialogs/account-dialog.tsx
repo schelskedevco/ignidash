@@ -189,7 +189,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
           </DialogBody>
         </Fieldset>
         <DialogActions>
-          <Button plain onClick={() => {}}>
+          <Button plain onClick={() => setAccountDialogOpen(false)}>
             Cancel
           </Button>
           <Button color="rose" type="submit">

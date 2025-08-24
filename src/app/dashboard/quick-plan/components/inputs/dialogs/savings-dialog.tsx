@@ -76,7 +76,7 @@ export default function SavingsDialog({ setSavingsDialogOpen, selectedAccountID 
           </DialogBody>
         </Fieldset>
         <DialogActions>
-          <Button plain onClick={() => {}}>
+          <Button plain onClick={() => setSavingsDialogOpen(false)}>
             Cancel
           </Button>
           <Button color="rose" type="submit">
