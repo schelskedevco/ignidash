@@ -94,7 +94,7 @@ export default function IncomeSection() {
             onClick={() => setIncomeDialogOpen(true)}
           >
             <BanknoteArrowUpIcon aria-hidden="true" className="text-primary mx-auto size-12" />
-            <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Add an income</span>
+            <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Add income</span>
           </button>
         )}
       </DisclosureSection>
