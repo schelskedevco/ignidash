@@ -36,7 +36,9 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
   };
 
   const type = useWatch({ control, name: 'type' });
-  const percentBonds = Number(useWatch({ control, name: 'percentBonds' }) || 0);
+
+  const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+  const percentBonds = clamp(Number(useWatch({ control, name: 'percentBonds' }) || 0), 0, 100);
 
   const getBalanceColSpan = () => {
     if (type === 'taxable-brokerage' || type === 'roth-401k' || type === 'roth-ira') return 'col-span-1';
@@ -160,9 +162,12 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                         placeholder="20%"
                         suffix="%"
                         decimalScale={0}
+                        step={1}
+                        min={0}
+                        max={100}
                       />
                     </Field>
-                    <div aria-hidden="true" className="mt-4">
+                    <div aria-hidden="true" className="mt-2">
                       <div className="overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
                         <div style={{ width: `${percentBonds}%` }} className="bg-primary h-2 rounded-full" />
                       </div>

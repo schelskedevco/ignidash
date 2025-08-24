@@ -9,6 +9,9 @@ interface NumberInputV2Props {
   prefix?: string;
   suffix?: string;
   decimalScale?: number;
+  step?: number;
+  min?: number;
+  max?: number;
   autoFocus?: boolean;
 }
 
@@ -22,6 +25,9 @@ export default function NumberInputV2<
   prefix,
   suffix,
   decimalScale = 2,
+  step,
+  min,
+  max,
   autoFocus,
   name,
   rules,
@@ -47,9 +53,26 @@ export default function NumberInputV2<
     onChange(value !== '' ? value : undefined);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (step === undefined || min === undefined || max === undefined) return;
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      const currentValue = parseFloat(value || '0');
+      const newValue = Math.min(currentValue + step, max);
+      onChange(newValue);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const currentValue = parseFloat(value || '0');
+      const newValue = Math.max(currentValue - step, min);
+      onChange(newValue);
+    }
+  };
+
   return (
     <NumericFormat
       value={value}
+      onKeyDown={handleKeyDown}
       onValueChange={handleValueChange}
       onBlur={onBlur}
       getInputRef={ref}
