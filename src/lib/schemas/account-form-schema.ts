@@ -54,5 +54,5 @@ export type InvestmentAccountType = Exclude<AccountInputs['type'], 'savings'>;
 
 // Helper functions
 export const isRothAccount = (type: AccountInputs['type']): type is RothAccountType => type === 'roth-401k' || type === 'roth-ira';
-
+export const isInvestmentAccount = (type: AccountInputs['type']): type is InvestmentAccountType => type !== 'savings';
 export const hasContributionLimit = (type: AccountInputs['type']): boolean => type !== 'savings' && type !== 'taxable-brokerage';
