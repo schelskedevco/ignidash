@@ -10,7 +10,13 @@ import { useForm, useWatch, type FieldErrors } from 'react-hook-form';
 
 import { useUpdateAccounts, useInvestmentData } from '@/lib/stores/quick-plan-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
-import { accountFormSchema, type AccountInputs, isRothAccount, type RothAccountType } from '@/lib/schemas/account-form-schema';
+import {
+  accountFormSchema,
+  type AccountInputs,
+  isRothAccount,
+  type RothAccountType,
+  type InvestmentAccountType,
+} from '@/lib/schemas/account-form-schema';
 import NumberInputV2 from '@/components/ui/number-input-v2';
 import { Fieldset, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
 import { Select } from '@/components/catalyst/select';
@@ -188,6 +194,11 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                         min={0}
                         max={100}
                       />
+                      {(errors as FieldErrors<Extract<AccountInputs, { type: InvestmentAccountType }>>).percentBonds?.message && (
+                        <ErrorMessage>
+                          {(errors as FieldErrors<Extract<AccountInputs, { type: InvestmentAccountType }>>).percentBonds?.message}
+                        </ErrorMessage>
+                      )}
                     </Field>
                     <div aria-hidden="true" className="mt-2">
                       <div className="overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
