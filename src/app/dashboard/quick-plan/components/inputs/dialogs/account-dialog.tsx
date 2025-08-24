@@ -36,6 +36,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
   };
 
   const type = useWatch({ control, name: 'type' });
+  //   const percentBonds = useWatch({ control, name: 'percentBonds' });
 
   const getBalanceColSpan = () => {
     if (type === 'taxable-brokerage' || type === 'roth-401k' || type === 'roth-ira') return 'col-span-1';
@@ -146,7 +147,16 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                       <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
                     </span>
                   </DisclosureButton>
-                  <DisclosurePanel className="py-4"></DisclosurePanel>
+                  <DisclosurePanel className="py-4">
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">Bond Allocation</p>
+                      <div aria-hidden="true" className="mt-6">
+                        <div className="overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
+                          <div style={{ width: '37.5%' }} className="bg-primary h-2 rounded-full" />
+                        </div>
+                      </div>
+                    </div>
+                  </DisclosurePanel>
                 </>
               )}
             </Disclosure>
