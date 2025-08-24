@@ -5,10 +5,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
 import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react';
-
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCurrentAge, useLifeExpectancy, useUpdateIncomes, useIncomeData } from '@/lib/stores/quick-plan-store';
 import { useForm, useWatch, Controller } from 'react-hook-form';
+
+import { useCurrentAge, useLifeExpectancy, useUpdateIncomes, useIncomeData } from '@/lib/stores/quick-plan-store';
 import { incomeFormSchema, type IncomeInputs, timeFrameForDisplay, growthForDisplay } from '@/lib/schemas/income-form-schema';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInputV2 from '@/components/ui/number-input-v2';
