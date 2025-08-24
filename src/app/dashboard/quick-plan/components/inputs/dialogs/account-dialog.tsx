@@ -55,7 +55,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
         <Fieldset aria-label="Account details">
           <DialogBody data-slot="control" className="space-y-4">
             <div className="mb-8 grid grid-cols-2 gap-4">
-              <Field>
+              <Field className="col-span-2">
                 <Label htmlFor="name">Name</Label>
                 <Input
                   {...register('name')}
@@ -70,7 +70,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                 />
                 {errors.name && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
               </Field>
-              <Field>
+              <Field className="col-span-2">
                 <Label htmlFor="type">Account Type</Label>
                 <Select {...register('type')} id="type" name="type">
                   <option value="savings">Savings</option>
@@ -107,6 +107,24 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                         id="costBasis"
                         inputMode="decimal"
                         placeholder="$15,000"
+                        prefix="$"
+                      />
+                      {error && <ErrorMessage>{error}</ErrorMessage>}
+                    </Field>
+                  );
+                })()}
+              {(type === 'roth-401k' || type === 'roth-ira') &&
+                (() => {
+                  const error = (errors as FieldErrors<Extract<AccountInputs, { type: 'roth-401k' | 'roth-ira' }>>).contributions?.message;
+                  return (
+                    <Field>
+                      <Label htmlFor="contributions">Contributions</Label>
+                      <NumberInputV2
+                        name="contributions"
+                        control={control}
+                        id="contributions"
+                        inputMode="decimal"
+                        placeholder="$5,000"
                         prefix="$"
                       />
                       {error && <ErrorMessage>{error}</ErrorMessage>}
