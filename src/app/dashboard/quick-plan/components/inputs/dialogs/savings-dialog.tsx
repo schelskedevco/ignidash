@@ -1,10 +1,11 @@
 'use client';
 
 import { PiggyBankIcon } from 'lucide-react';
-// import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
+import { useUpdateAccounts } from '@/lib/stores/quick-plan-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs } from '@/lib/schemas/account-form-schema';
 import NumberInputV2 from '@/components/ui/number-input-v2';
@@ -30,8 +31,11 @@ export default function SavingsDialog({ setSavingsDialogOpen, selectedAccountID 
     },
   });
 
+  const updateAccounts = useUpdateAccounts();
   const onSubmit = (data: AccountInputs) => {
-    console.log(data);
+    const accountID = selectedAccountID ?? uuidv4();
+    updateAccounts(accountID, data);
+    setSavingsDialogOpen(false);
   };
 
   return (
