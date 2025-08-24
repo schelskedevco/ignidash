@@ -8,7 +8,7 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, type FieldErrors } from 'react-hook-form';
 
-import { useUpdateAccounts /* useInvestmentData */ } from '@/lib/stores/quick-plan-store';
+import { useUpdateAccounts, useInvestmentData } from '@/lib/stores/quick-plan-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs, isRothAccount, type RothAccountType } from '@/lib/schemas/account-form-schema';
 import NumberInputV2 from '@/components/ui/number-input-v2';
@@ -17,13 +17,18 @@ import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
 
+const newAccountDefaultValues = {
+  type: 'taxable-brokerage' as AccountInputs['type'],
+};
+
 interface AccountDialogProps {
   setAccountDialogOpen: (open: boolean) => void;
   selectedAccountID: string | null;
 }
 
 export default function AccountDialog({ setAccountDialogOpen, selectedAccountID }: AccountDialogProps) {
-  // const existingAccountData = useInvestmentData(selectedAccountID);
+  const existingAccountData = useInvestmentData(selectedAccountID);
+  const defaultValues = (existingAccountData || newAccountDefaultValues) as never;
 
   const {
     register,
@@ -33,9 +38,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
     formState: { errors },
   } = useForm({
     resolver: zodResolver(accountFormSchema),
-    defaultValues: {
-      type: 'taxable-brokerage',
-    },
+    defaultValues,
   });
 
   const updateAccounts = useUpdateAccounts();
