@@ -131,14 +131,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                   return (
                     <Field>
                       <Label htmlFor="costBasis">Cost Basis</Label>
-                      <NumberInputV2
-                        name="costBasis"
-                        control={control}
-                        id="costBasis"
-                        inputMode="decimal"
-                        placeholder="$15,000"
-                        prefix="$"
-                      />
+                      <NumberInputV2 name="costBasis" control={control} id="costBasis" inputMode="decimal" placeholder="—" prefix="$" />
                       {error && <ErrorMessage>{error}</ErrorMessage>}
                     </Field>
                   );
@@ -154,7 +147,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                         control={control}
                         id="contributions"
                         inputMode="decimal"
-                        placeholder="$5,000"
+                        placeholder="—"
                         prefix="$"
                       />
                       {error && <ErrorMessage>{error}</ErrorMessage>}
