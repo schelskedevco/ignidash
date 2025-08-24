@@ -461,10 +461,27 @@ export const useGoalsData = () => useQuickPlanStore((state) => state.inputs.goal
 export const useMarketAssumptionsData = () => useQuickPlanStore((state) => state.inputs.marketAssumptions);
 export const useRetirementFundingData = () => useQuickPlanStore((state) => state.inputs.retirementFunding);
 export const useFlexiblePathsData = () => useQuickPlanStore((state) => state.inputs.flexiblePaths);
+
 export const useIncomesData = () => useQuickPlanStore((state) => state.inputs.incomes);
-export const useIncomeData = (name: string | null) => useQuickPlanStore((state) => (name !== null ? state.inputs.incomes[name] : null));
+export const useIncomeData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.incomes[id] : null));
+
 export const useAccountsData = () => useQuickPlanStore((state) => state.inputs.accounts);
-export const useAccountData = (name: string | null) => useQuickPlanStore((state) => (name !== null ? state.inputs.accounts[name] : null));
+export const useAccountData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.accounts[id] : null));
+
+export const useSavingsData = (id: string | null) =>
+  useQuickPlanStore((state) => {
+    if (id === null) return null;
+
+    const account = state.inputs.accounts[id];
+    return account?.type === 'savings' ? account : null;
+  });
+export const useInvestmentData = (id: string | null) =>
+  useQuickPlanStore((state) => {
+    if (id === null) return null;
+
+    const account = state.inputs.accounts[id];
+    return account?.type !== 'savings' ? account : null;
+  });
 
 /**
  * Individual field selectors for performance optimization

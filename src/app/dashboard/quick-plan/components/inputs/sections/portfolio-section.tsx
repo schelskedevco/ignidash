@@ -61,7 +61,19 @@ export default function PortfolioSection() {
                           <EllipsisVerticalIcon />
                         </DropdownButton>
                         <DropdownMenu>
-                          <DropdownItem onClick={() => {}}>Edit</DropdownItem>
+                          <DropdownItem
+                            onClick={() => {
+                              if (account.type === 'savings') {
+                                setSavingsDialogOpen(true);
+                                setSelectedSavingsID(id);
+                              } else {
+                                setAccountDialogOpen(true);
+                                setSelectedAccountID(id);
+                              }
+                            }}
+                          >
+                            Edit
+                          </DropdownItem>
                           <DropdownItem
                             onClick={() => {
                               setAccountToDelete({ id, name: account.name });

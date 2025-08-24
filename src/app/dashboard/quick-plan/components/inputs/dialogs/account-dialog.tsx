@@ -8,7 +8,7 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, type FieldErrors } from 'react-hook-form';
 
-import { useUpdateAccounts } from '@/lib/stores/quick-plan-store';
+import { useUpdateAccounts /* useInvestmentData */ } from '@/lib/stores/quick-plan-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs, isRothAccount, type RothAccountType } from '@/lib/schemas/account-form-schema';
 import NumberInputV2 from '@/components/ui/number-input-v2';
@@ -23,6 +23,8 @@ interface AccountDialogProps {
 }
 
 export default function AccountDialog({ setAccountDialogOpen, selectedAccountID }: AccountDialogProps) {
+  // const existingAccountData = useInvestmentData(selectedAccountID);
+
   const {
     register,
     unregister,

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { useUpdateAccounts } from '@/lib/stores/quick-plan-store';
+import { useUpdateAccounts, useSavingsData } from '@/lib/stores/quick-plan-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs } from '@/lib/schemas/account-form-schema';
 import NumberInputV2 from '@/components/ui/number-input-v2';
@@ -19,6 +19,8 @@ interface SavingsDialogProps {
 }
 
 export default function SavingsDialog({ setSavingsDialogOpen, selectedAccountID }: SavingsDialogProps) {
+  const existingAccountData = useSavingsData(selectedAccountID);
+
   const {
     register,
     control,
@@ -26,7 +28,7 @@ export default function SavingsDialog({ setSavingsDialogOpen, selectedAccountID 
     formState: { errors },
   } = useForm({
     resolver: zodResolver(accountFormSchema),
-    defaultValues: {
+    defaultValues: existingAccountData || {
       type: 'savings',
     },
   });
