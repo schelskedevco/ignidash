@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { TrendingUpIcon, HandshakeIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
@@ -24,7 +25,7 @@ interface AccountDialogProps {
 export default function AccountDialog({ setAccountDialogOpen, selectedAccountID }: AccountDialogProps) {
   const {
     register,
-    //  unregister,
+    unregister,
     control,
     handleSubmit,
     formState: { errors },
@@ -43,6 +44,16 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
   };
 
   const type = useWatch({ control, name: 'type' });
+
+  useEffect(() => {
+    if (!isRothAccount(type)) {
+      unregister('contributions');
+    }
+
+    if (type !== 'taxable-brokerage') {
+      unregister('costBasis');
+    }
+  }, [type, unregister]);
 
   const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
   const percentBonds = clamp(Number(useWatch({ control, name: 'percentBonds' }) || 0), 0, 100);
