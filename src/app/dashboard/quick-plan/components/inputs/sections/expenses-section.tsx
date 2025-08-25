@@ -13,12 +13,12 @@ import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/
 import { useExpensesData, useDeleteExpense } from '@/lib/stores/quick-plan-store';
 import { cn, formatNumber } from '@/lib/utils';
 
-import ExpensesDialog from '../dialogs/expenses-dialog';
+import ExpenseDialog from '../dialogs/expense-dialog';
 
 const colors = ['bg-rose-500/50', 'bg-rose-500/75', 'bg-rose-500'];
 
 export default function ExpensesSection() {
-  const [expensesDialogOpen, setExpensesDialogOpen] = useState(false);
+  const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
   const [selectedExpenseID, setSelectedExpenseID] = useState<string | null>(null);
 
   const [expenseToDelete, setExpenseToDelete] = useState<{ id: string; name: string } | null>(null);
@@ -59,7 +59,7 @@ export default function ExpensesSection() {
                         <DropdownMenu>
                           <DropdownItem
                             onClick={() => {
-                              setExpensesDialogOpen(true);
+                              setExpenseDialogOpen(true);
                               setSelectedExpenseID(id);
                             }}
                           >
@@ -80,7 +80,7 @@ export default function ExpensesSection() {
               ))}
             </ul>
             <div className="mt-6 flex items-center justify-end">
-              <Button outline onClick={() => setExpensesDialogOpen(true)}>
+              <Button outline onClick={() => setExpenseDialogOpen(true)}>
                 <PlusIcon />
                 Expenses
               </Button>
@@ -91,7 +91,7 @@ export default function ExpensesSection() {
           <button
             type="button"
             className="focus-outline relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-8 text-center hover:border-gray-400 sm:p-12 dark:border-white/15 dark:hover:border-white/25"
-            onClick={() => setExpensesDialogOpen(true)}
+            onClick={() => setExpenseDialogOpen(true)}
           >
             <BanknoteArrowDownIcon aria-hidden="true" className="text-primary mx-auto size-12" />
             <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Add expense</span>
@@ -101,13 +101,13 @@ export default function ExpensesSection() {
 
       <Dialog
         size="xl"
-        open={expensesDialogOpen}
+        open={expenseDialogOpen}
         onClose={() => {
           setSelectedExpenseID(null);
-          setExpensesDialogOpen(false);
+          setExpenseDialogOpen(false);
         }}
       >
-        <ExpensesDialog setExpenseDialogOpen={setExpensesDialogOpen} selectedExpenseID={selectedExpenseID} />
+        <ExpenseDialog setExpenseDialogOpen={setExpenseDialogOpen} selectedExpenseID={selectedExpenseID} />
       </Dialog>
       <Alert
         open={!!expenseToDelete}
