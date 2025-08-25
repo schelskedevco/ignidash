@@ -183,7 +183,7 @@ export default function ExpenseDialog({ setExpenseDialogOpen, selectedExpenseID 
                   {...register('name')}
                   id="name"
                   name="name"
-                  placeholder="My Salary"
+                  placeholder="My Living Expenses"
                   autoComplete="off"
                   inputMode="text"
                   invalid={!!errors.name}
@@ -199,7 +199,7 @@ export default function ExpenseDialog({ setExpenseDialogOpen, selectedExpenseID 
                   control={control}
                   id="amount"
                   inputMode="decimal"
-                  placeholder="$85,000"
+                  placeholder="$50,000"
                   prefix="$"
                   autoFocus={selectedExpenseID !== null}
                 />
@@ -490,7 +490,7 @@ export default function ExpenseDialog({ setExpenseDialogOpen, selectedExpenseID 
                             control={control}
                             id="growth-limit"
                             inputMode="decimal"
-                            placeholder="$120,000"
+                            placeholder="$60,000"
                             prefix="$"
                           />
                           {errors.growth?.growthLimit && <ErrorMessage>{errors.growth?.growthLimit?.message}</ErrorMessage>}
