@@ -1,7 +1,7 @@
 'use client';
 
 // import { useState, useEffect } from 'react';
-import { HourglassIcon /* LandmarkIcon */, HandCoinsIcon, BanknoteArrowDownIcon, TrendingUpDownIcon } from 'lucide-react';
+import { HourglassIcon /* LandmarkIcon, HandCoinsIcon, */, BanknoteArrowDownIcon, TrendingUpDownIcon } from 'lucide-react';
 
 import {
   useBasicsData,
@@ -13,14 +13,14 @@ import {
   useStocksRealReturn,
   useBondsRealReturn,
   useCashRealReturn,
-  useGrowthRatesData,
-  useUpdateGrowthRates,
-  useIncomeRealGrowthRate,
-  useExpenseRealGrowthRate,
-  useGoalsData,
-  useUpdateGoals,
-  useGoalsTouched,
-  useUpdateGoalsWithoutTouched,
+  // useGrowthRatesData,
+  // useUpdateGrowthRates,
+  // useIncomeRealGrowthRate,
+  // useExpenseRealGrowthRate,
+  // useGoalsData,
+  // useUpdateGoals,
+  // useGoalsTouched,
+  // useUpdateGoalsWithoutTouched,
   // useAllocationData,
   // useUpdateAllocation,
   // useStocksDollarAmount,
@@ -37,6 +37,7 @@ import { Divider } from '@/components/catalyst/divider';
 import IncomeSection from './sections/income-section';
 import ExpensesSection from './sections/expenses-section';
 import PortfolioSection from './sections/portfolio-section';
+import ContributionsSection from './sections/contributions-section';
 
 function getSafeWithdrawalRateDescription() {
   return (
@@ -69,15 +70,15 @@ export default function NumbersColumnSections() {
   const bondsRealReturn = useBondsRealReturn();
   const cashRealReturn = useCashRealReturn();
 
-  const goals = useGoalsData();
-  const updateGoals = useUpdateGoals();
-  const goalsAreTouched = useGoalsTouched();
-  const updateGoalsWithoutTouched = useUpdateGoalsWithoutTouched();
+  // const goals = useGoalsData();
+  // const updateGoals = useUpdateGoals();
+  // const goalsAreTouched = useGoalsTouched();
+  // const updateGoalsWithoutTouched = useUpdateGoalsWithoutTouched();
 
-  const growthRates = useGrowthRatesData();
-  const updateGrowthRates = useUpdateGrowthRates();
-  const incomeRealGrowthRate = useIncomeRealGrowthRate();
-  const expenseRealGrowthRate = useExpenseRealGrowthRate();
+  // const growthRates = useGrowthRatesData();
+  // const updateGrowthRates = useUpdateGrowthRates();
+  // const incomeRealGrowthRate = useIncomeRealGrowthRate();
+  // const expenseRealGrowthRate = useExpenseRealGrowthRate();
 
   // const allocation = useAllocationData();
   // const updateAllocation = useUpdateAllocation();
@@ -242,7 +243,8 @@ export default function NumbersColumnSections() {
       <IncomeSection />
       <ExpensesSection />
       <PortfolioSection />
-      <DisclosureSection title="Cash Flow" icon={HandCoinsIcon}>
+      <ContributionsSection />
+      {/* <DisclosureSection title="Cash Flow" icon={HandCoinsIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset>
             <FieldGroup>
@@ -338,7 +340,7 @@ export default function NumbersColumnSections() {
             </FieldGroup>
           </Fieldset>
         </form>
-      </DisclosureSection>
+      </DisclosureSection> */}
       <DisclosureSection title="Withdrawal Strategy" icon={BanknoteArrowDownIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset>
