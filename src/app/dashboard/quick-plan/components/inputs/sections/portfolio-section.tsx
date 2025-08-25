@@ -93,7 +93,7 @@ export default function PortfolioSection() {
                 <PlusIcon />
                 Savings
               </Button>
-              <Button color="rose" onClick={() => setAccountDialogOpen(true)}>
+              <Button outline onClick={() => setAccountDialogOpen(true)}>
                 <PlusIcon />
                 Investment
               </Button>

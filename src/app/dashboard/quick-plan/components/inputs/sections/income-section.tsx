@@ -80,7 +80,7 @@ export default function IncomeSection() {
               ))}
             </ul>
             <div className="mt-6 flex items-center justify-end">
-              <Button color="rose" onClick={() => setIncomeDialogOpen(true)}>
+              <Button outline onClick={() => setIncomeDialogOpen(true)}>
                 <PlusIcon />
                 Income
               </Button>
