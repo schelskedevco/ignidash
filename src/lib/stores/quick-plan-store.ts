@@ -56,6 +56,7 @@ import type { MultiSimulationResultDTO } from '@/lib/schemas/simulation-dto-sche
 import type { SimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/simulation-table-schema';
 import type { IncomeInputs } from '@/lib/schemas/income-form-schema';
 import type { AccountInputs } from '@/lib/schemas/account-form-schema';
+import type { ExpenseInputs } from '@/lib/schemas/expenses-form-schema';
 import { Portfolio } from '@/lib/calc/portfolio';
 import { SimulationPhase, AccumulationPhase, RetirementPhase, type PhaseType } from '@/lib/calc/simulation-phase';
 
@@ -193,6 +194,9 @@ interface QuickPlanState {
     updateIncomes: (id: string, data: IncomeInputs) => UpdateResult;
     deleteIncome: (id: string) => UpdateResult;
 
+    updateExpenses: (id: string, data: ExpenseInputs) => UpdateResult;
+    deleteExpense: (id: string) => UpdateResult;
+
     updateAccounts: (id: string, data: AccountInputs) => UpdateResult;
     deleteAccount: (id: string) => UpdateResult;
 
@@ -244,6 +248,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
       partTimeIncome: null, // Real $ - "Part-time income (today's dollars)"
     },
     incomes: {},
+    expenses: {},
     accounts: {},
   },
   touched: {
@@ -255,6 +260,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
     retirementFunding: false,
     flexiblePaths: false,
     incomes: false,
+    expenses: false,
     accounts: false,
   },
   errors: {},
@@ -382,6 +388,24 @@ export const useQuickPlanStore = create<QuickPlanState>()(
             return { success: true };
           },
 
+          updateExpenses: (id: string, data: ExpenseInputs) => {
+            set((state) => {
+              state.touched.expenses = true;
+              state.inputs.expenses = { ...state.inputs.expenses, [id]: data };
+            });
+
+            return { success: true };
+          },
+
+          deleteExpense: (id: string) => {
+            set((state) => {
+              state.touched.expenses = true;
+              delete state.inputs.expenses[id];
+            });
+
+            return { success: true };
+          },
+
           /** Preferences actions */
           updatePreferences: (field, value) =>
             set((state) => {
@@ -465,6 +489,9 @@ export const useFlexiblePathsData = () => useQuickPlanStore((state) => state.inp
 export const useIncomesData = () => useQuickPlanStore((state) => state.inputs.incomes);
 export const useIncomeData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.incomes[id] : null));
 
+export const useExpensesData = () => useQuickPlanStore((state) => state.inputs.expenses);
+export const useExpenseData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.expenses[id] : null));
+
 export const useAccountsData = () => useQuickPlanStore((state) => state.inputs.accounts);
 export const useAccountData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.accounts[id] : null));
 
@@ -508,6 +535,8 @@ export const useUpdateRetirementFunding = () => useQuickPlanStore((state) => sta
 export const useUpdateFlexiblePaths = () => useQuickPlanStore((state) => state.actions.updateFlexiblePaths);
 export const useUpdateIncomes = () => useQuickPlanStore((state) => state.actions.updateIncomes);
 export const useDeleteIncome = () => useQuickPlanStore((state) => state.actions.deleteIncome);
+export const useUpdateExpenses = () => useQuickPlanStore((state) => state.actions.updateExpenses);
+export const useDeleteExpense = () => useQuickPlanStore((state) => state.actions.deleteExpense);
 export const useUpdateAccounts = () => useQuickPlanStore((state) => state.actions.updateAccounts);
 export const useDeleteAccount = () => useQuickPlanStore((state) => state.actions.deleteAccount);
 

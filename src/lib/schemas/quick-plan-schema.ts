@@ -27,6 +27,7 @@ import { currencyFieldAllowsZero, currencyFieldForbidsZero, percentageField, age
 
 import { incomeFormSchema } from './income-form-schema';
 import { accountFormSchema } from './account-form-schema';
+import { expensesFormSchema } from './expenses-form-schema';
 
 // ================================
 // SCHEMA DEFINITIONS
@@ -138,6 +139,7 @@ export const quickPlanSchema = z.object({
   flexiblePaths: flexiblePathsSchema,
   incomes: z.record(z.string(), incomeFormSchema),
   accounts: z.record(z.string(), accountFormSchema),
+  expenses: z.record(z.string(), expensesFormSchema),
 });
 
 // ================================
