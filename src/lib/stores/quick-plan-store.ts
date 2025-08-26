@@ -211,10 +211,10 @@ interface QuickPlanState {
 export const defaultState: Omit<QuickPlanState, 'actions'> = {
   inputs: {
     basics: {
-      currentAge: null,
-      annualIncome: null,
-      annualExpenses: null,
-      investedAssets: null,
+      currentAge: 28,
+      annualIncome: 85000,
+      annualExpenses: 50000,
+      investedAssets: 75000,
     },
     growthRates: {
       incomeGrowthRate: 3, // Nominal % - "My salary increases by X% per year"
@@ -226,7 +226,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
       cashAllocation: 5,
     },
     goals: {
-      retirementExpenses: null, // Real $ - "What I'd spend in retirement (today's dollars)"
+      retirementExpenses: 50000, // Real $ - "What I'd spend in retirement (today's dollars)"
     },
     marketAssumptions: {
       stockReturn: 10, // Nominal % - matches market reporting
@@ -436,7 +436,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
       })),
       {
         name: 'quick-plan-storage',
-        version: 2,
+        version: 1,
         // Simple migration: just use defaults for any version change
         migrate: () => ({ ...defaultState }),
         // Only persist the inputs and preferences state, not the actions

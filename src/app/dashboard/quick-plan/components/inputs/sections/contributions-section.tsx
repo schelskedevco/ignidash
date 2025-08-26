@@ -23,7 +23,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
         disclosureButtonRef={disclosureButtonRef}
         disclosureKey={disclosureKey}
       >
-        <p>Manage your contributions to different accounts.</p>
+        <p>Manage your contributions to different accounts...</p>
       </DisclosureSection>
     </>
   );
