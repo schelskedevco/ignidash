@@ -34,7 +34,7 @@ export default function PortfolioSection() {
 
   return (
     <>
-      <DisclosureSection title="Portfolio" icon={LandmarkIcon}>
+      <DisclosureSection title="Portfolio" icon={LandmarkIcon} centerPanelContent={!hasAccounts}>
         {hasAccounts && (
           <>
             <ul role="list" className="grid grid-cols-1 gap-3">

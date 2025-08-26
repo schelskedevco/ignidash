@@ -16,7 +16,7 @@ export default function TimelineSection() {
   const updateRetirementFunding = useUpdateRetirementFunding();
 
   return (
-    <DisclosureSection title="Timeline" icon={HourglassIcon}>
+    <DisclosureSection title="Timeline" icon={HourglassIcon} centerPanelContent={true}>
       <form onSubmit={(e) => e.preventDefault()}>
         <Fieldset>
           <FieldGroup>

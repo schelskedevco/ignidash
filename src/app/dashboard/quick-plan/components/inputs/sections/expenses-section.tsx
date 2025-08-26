@@ -30,7 +30,7 @@ export default function ExpensesSection() {
 
   return (
     <>
-      <DisclosureSection title="Expenses" icon={BanknoteArrowDownIcon}>
+      <DisclosureSection title="Expenses" icon={BanknoteArrowDownIcon} centerPanelContent={!hasExpenses}>
         {hasExpenses && (
           <>
             <ul role="list" className="grid grid-cols-1 gap-3">

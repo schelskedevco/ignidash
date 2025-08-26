@@ -30,7 +30,7 @@ export default function IncomeSection() {
 
   return (
     <>
-      <DisclosureSection title="Income" icon={BanknoteArrowUpIcon}>
+      <DisclosureSection title="Income" icon={BanknoteArrowUpIcon} centerPanelContent={!hasIncomes}>
         {hasIncomes && (
           <>
             <ul role="list" className="grid grid-cols-1 gap-3">
