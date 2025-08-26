@@ -27,7 +27,7 @@ export default function DisclosureSection({ title, icon: Icon, children, default
           </div>
         </DisclosureButton>
       </div>
-      <DisclosurePanel>
+      <DisclosurePanel className="border-border/50 -mx-2 border-b sm:-mx-3 lg:-mx-4">
         <div className="px-4 py-5 sm:py-6">{children}</div>
       </DisclosurePanel>
     </Disclosure>
