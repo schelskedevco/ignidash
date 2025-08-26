@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, RefObject } from 'react';
 import { LandmarkIcon, PiggyBankIcon, TrendingUpIcon } from 'lucide-react';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 import { PlusIcon } from '@heroicons/react/16/solid';
@@ -12,13 +12,20 @@ import { Button } from '@/components/catalyst/button';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 import { cn, formatNumber } from '@/lib/utils';
+import type { DisclosureState } from '@/lib/types/disclosure-state';
 
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
 
 const colors = ['bg-rose-500/50', 'bg-rose-500/75', 'bg-rose-500'];
 
-export default function PortfolioSection() {
+interface PortfolioSectionProps {
+  toggleDisclosure: (newDisclosure: DisclosureState) => void;
+  disclosureButtonRef: RefObject<HTMLButtonElement | null>;
+  disclosureKey: string;
+}
+
+export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef, disclosureKey }: PortfolioSectionProps) {
   const [accountDialogOpen, setAccountDialogOpen] = useState(false);
   const [selectedAccountID, setSelectedAccountID] = useState<string | null>(null);
 
@@ -34,7 +41,14 @@ export default function PortfolioSection() {
 
   return (
     <>
-      <DisclosureSection title="Portfolio" icon={LandmarkIcon} centerPanelContent={!hasAccounts}>
+      <DisclosureSection
+        title="Portfolio"
+        icon={LandmarkIcon}
+        centerPanelContent={!hasAccounts}
+        toggleDisclosure={toggleDisclosure}
+        disclosureButtonRef={disclosureButtonRef}
+        disclosureKey={disclosureKey}
+      >
         {hasAccounts && (
           <>
             <ul role="list" className="grid grid-cols-1 gap-3">

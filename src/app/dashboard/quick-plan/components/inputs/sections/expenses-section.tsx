@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, RefObject } from 'react';
 import { BanknoteArrowDownIcon } from 'lucide-react';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 import { PlusIcon } from '@heroicons/react/16/solid';
@@ -12,12 +12,19 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/componen
 import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 import { useExpensesData, useDeleteExpense } from '@/lib/stores/quick-plan-store';
 import { cn, formatNumber } from '@/lib/utils';
+import type { DisclosureState } from '@/lib/types/disclosure-state';
 
 import ExpenseDialog from '../dialogs/expense-dialog';
 
 const colors = ['bg-rose-500/50', 'bg-rose-500/75', 'bg-rose-500'];
 
-export default function ExpensesSection() {
+interface ExpensesSectionProps {
+  toggleDisclosure: (newDisclosure: DisclosureState) => void;
+  disclosureButtonRef: RefObject<HTMLButtonElement | null>;
+  disclosureKey: string;
+}
+
+export default function ExpensesSection({ toggleDisclosure, disclosureButtonRef, disclosureKey }: ExpensesSectionProps) {
   const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
   const [selectedExpenseID, setSelectedExpenseID] = useState<string | null>(null);
 
@@ -30,7 +37,14 @@ export default function ExpensesSection() {
 
   return (
     <>
-      <DisclosureSection title="Expenses" icon={BanknoteArrowDownIcon} centerPanelContent={!hasExpenses}>
+      <DisclosureSection
+        title="Expenses"
+        icon={BanknoteArrowDownIcon}
+        centerPanelContent={!hasExpenses}
+        toggleDisclosure={toggleDisclosure}
+        disclosureButtonRef={disclosureButtonRef}
+        disclosureKey={disclosureKey}
+      >
         {hasExpenses && (
           <>
             <ul role="list" className="grid grid-cols-1 gap-3">

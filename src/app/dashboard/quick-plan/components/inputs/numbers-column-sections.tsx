@@ -1,6 +1,6 @@
-// 'use client';
+'use client';
 
-// import { useState, useEffect } from 'react';
+import { useState, useCallback, useRef } from 'react';
 // import { HourglassIcon /* LandmarkIcon, HandCoinsIcon, BanknoteArrowDownIcon, TrendingUpDownIcon */ } from 'lucide-react';
 
 // import {
@@ -33,6 +33,8 @@
 // import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
 // import { Divider } from '@/components/catalyst/divider';
 // import InvalidInputError from '@/components/ui/invalid-input-error';
+
+import type { DisclosureState } from '@/lib/types/disclosure-state';
 
 import TimelineSection from './sections/timeline-section';
 import IncomeSection from './sections/income-section';
@@ -123,6 +125,41 @@ export default function NumbersColumnSections() {
   //   return { success: true };
   // };
 
+  const timelineButtonRef = useRef<HTMLButtonElement | null>(null);
+  const incomeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const expensesButtonRef = useRef<HTMLButtonElement | null>(null);
+  const portfolioButtonRef = useRef<HTMLButtonElement | null>(null);
+  const contributionsButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  const [activeDisclosure, setActiveDisclosure] = useState<DisclosureState | null>(null);
+  const toggleDisclosure = useCallback(
+    (newDisclosure: DisclosureState) => {
+      if (activeDisclosure?.open && activeDisclosure.key !== newDisclosure.key) {
+        let targetRef = undefined;
+
+        if (newDisclosure.key === 'timeline') {
+          targetRef = timelineButtonRef.current;
+        } else if (newDisclosure.key === 'income') {
+          targetRef = incomeButtonRef.current;
+        } else if (newDisclosure.key === 'expenses') {
+          targetRef = expensesButtonRef.current;
+        } else if (newDisclosure.key === 'portfolio') {
+          targetRef = portfolioButtonRef.current;
+        } else if (newDisclosure.key === 'contributions') {
+          targetRef = contributionsButtonRef.current;
+        }
+
+        activeDisclosure.close(targetRef || undefined);
+      }
+
+      setActiveDisclosure({
+        ...newDisclosure,
+        open: !newDisclosure.open,
+      });
+    },
+    [activeDisclosure]
+  );
+
   return (
     <>
       {/* <DisclosureSection title="Portfolio" icon={LandmarkIcon}>
@@ -202,11 +239,15 @@ export default function NumbersColumnSections() {
           {allocationError && <InvalidInputError title="Asset Allocation Error" desc={allocationError} />}
         </>
       </DisclosureSection> */}
-      <TimelineSection />
-      <IncomeSection />
-      <ExpensesSection />
-      <PortfolioSection />
-      <ContributionsSection />
+      <TimelineSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={timelineButtonRef} disclosureKey="timeline" />
+      <IncomeSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={incomeButtonRef} disclosureKey="income" />
+      <ExpensesSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={expensesButtonRef} disclosureKey="expenses" />
+      <PortfolioSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={portfolioButtonRef} disclosureKey="portfolio" />
+      <ContributionsSection
+        toggleDisclosure={toggleDisclosure}
+        disclosureButtonRef={contributionsButtonRef}
+        disclosureKey="contributions"
+      />
       {/* <DisclosureSection title="Cash Flow" icon={HandCoinsIcon}>
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset>

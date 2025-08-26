@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, RefObject } from 'react';
 import { BanknoteArrowUpIcon } from 'lucide-react';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 import { PlusIcon } from '@heroicons/react/16/solid';
@@ -12,12 +12,19 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/componen
 import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 import { useIncomesData, useDeleteIncome } from '@/lib/stores/quick-plan-store';
 import { cn, formatNumber } from '@/lib/utils';
+import type { DisclosureState } from '@/lib/types/disclosure-state';
 
 import IncomeDialog from '../dialogs/income-dialog';
 
 const colors = ['bg-rose-500/50', 'bg-rose-500/75', 'bg-rose-500'];
 
-export default function IncomeSection() {
+interface IncomeSectionProps {
+  toggleDisclosure: (newDisclosure: DisclosureState) => void;
+  disclosureButtonRef: RefObject<HTMLButtonElement | null>;
+  disclosureKey: string;
+}
+
+export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, disclosureKey }: IncomeSectionProps) {
   const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
   const [selectedIncomeID, setSelectedIncomeID] = useState<string | null>(null);
 
@@ -30,7 +37,14 @@ export default function IncomeSection() {
 
   return (
     <>
-      <DisclosureSection title="Income" icon={BanknoteArrowUpIcon} centerPanelContent={!hasIncomes}>
+      <DisclosureSection
+        title="Income"
+        icon={BanknoteArrowUpIcon}
+        centerPanelContent={!hasIncomes}
+        toggleDisclosure={toggleDisclosure}
+        disclosureButtonRef={disclosureButtonRef}
+        disclosureKey={disclosureKey}
+      >
         {hasIncomes && (
           <>
             <ul role="list" className="grid grid-cols-1 gap-3">

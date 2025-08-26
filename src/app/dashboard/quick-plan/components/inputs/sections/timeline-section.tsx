@@ -1,5 +1,6 @@
 'use client';
 
+import { RefObject } from 'react';
 import { HourglassIcon } from 'lucide-react';
 
 import { useBasicsData, useUpdateBasics, useRetirementFundingData, useUpdateRetirementFunding } from '@/lib/stores/quick-plan-store';
@@ -7,8 +8,15 @@ import DisclosureSection from '@/components/ui/disclosure-section';
 import NumberInput from '@/components/ui/number-input';
 import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
 import { Divider } from '@/components/catalyst/divider';
+import type { DisclosureState } from '@/lib/types/disclosure-state';
 
-export default function TimelineSection() {
+interface TimelineSectionProps {
+  toggleDisclosure: (newDisclosure: DisclosureState) => void;
+  disclosureButtonRef: RefObject<HTMLButtonElement | null>;
+  disclosureKey: string;
+}
+
+export default function TimelineSection({ toggleDisclosure, disclosureButtonRef, disclosureKey }: TimelineSectionProps) {
   const basics = useBasicsData();
   const updateBasics = useUpdateBasics();
 
@@ -16,7 +24,14 @@ export default function TimelineSection() {
   const updateRetirementFunding = useUpdateRetirementFunding();
 
   return (
-    <DisclosureSection title="Timeline" icon={HourglassIcon} centerPanelContent={true}>
+    <DisclosureSection
+      title="Timeline"
+      icon={HourglassIcon}
+      centerPanelContent={true}
+      toggleDisclosure={toggleDisclosure}
+      disclosureButtonRef={disclosureButtonRef}
+      disclosureKey={disclosureKey}
+    >
       <form onSubmit={(e) => e.preventDefault()}>
         <Fieldset>
           <FieldGroup>
