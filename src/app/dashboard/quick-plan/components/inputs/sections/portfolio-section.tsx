@@ -101,7 +101,7 @@ export default function PortfolioSection() {
           </>
         )}
         {!hasAccounts && (
-          <div className="flex items-stretch gap-2">
+          <div className="flex flex-col gap-2">
             <button
               type="button"
               className="focus-outline relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-8 text-center hover:border-gray-400 sm:p-12 dark:border-white/15 dark:hover:border-white/25"
