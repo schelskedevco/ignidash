@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+// import { useState } from 'react';
 
-import { Button } from '@/components/catalyst/button';
+// import { Button } from '@/components/catalyst/button';
 import {
-  usePreferencesData,
-  useUpdatePreferences,
-  useResetStore,
+  // usePreferencesData,
+  // useUpdatePreferences,
+  // useResetStore,
   useMarketAssumptionsData,
   useUpdateMarketAssumptions,
   useStocksRealReturn,
@@ -22,11 +22,11 @@ import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/ca
 import { Divider } from '@/components/catalyst/divider';
 
 export default function PreferencesDrawer() {
-  const [isDeleting, setIsDeleting] = useState(false);
+  // const [isDeleting, setIsDeleting] = useState(false);
 
-  const preferences = usePreferencesData();
-  const updatePreferences = useUpdatePreferences();
-  const resetStore = useResetStore();
+  // const preferences = usePreferencesData();
+  // const updatePreferences = useUpdatePreferences();
+  // const resetStore = useResetStore();
 
   const marketAssumptions = useMarketAssumptionsData();
   const updateMarketAssumptions = useUpdateMarketAssumptions();
@@ -78,7 +78,7 @@ export default function PreferencesDrawer() {
           </form>
         </Card>
       </SectionContainer>
-      <SectionContainer showBottomBorder location="drawer">
+      <SectionContainer showBottomBorder={false} location="drawer">
         <SectionHeader title="Expected Returns" />
         <Card>
           <form onSubmit={(e) => e.preventDefault()}>
@@ -152,7 +152,7 @@ export default function PreferencesDrawer() {
           </form>
         </Card>
       </SectionContainer>
-      <SectionContainer showBottomBorder={false} location="drawer">
+      {/* <SectionContainer showBottomBorder={false} location="drawer">
         <SectionHeader title="Data Storage" />
         <Card>
           <form onSubmit={(e) => e.preventDefault()}>
@@ -195,7 +195,7 @@ export default function PreferencesDrawer() {
             </Fieldset>
           </form>
         </Card>
-      </SectionContainer>
+      </SectionContainer> */}
     </>
   );
 }
