@@ -63,7 +63,7 @@ export default function TimelineSection({ toggleDisclosure, disclosureButtonRef,
                       <span className="font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-gray-200">
                         {'Timeline ' + (index + 1)}
                       </span>
-                      <p className="text-muted-foreground">{`${timeline.currentAge} to ${timeline.lifeExpectancy}`}</p>
+                      <p className="text-muted-foreground">{`Age ${timeline.currentAge} to Age ${timeline.lifeExpectancy}`}</p>
                     </div>
                     <div className="shrink-0 pr-2">
                       <Dropdown>
