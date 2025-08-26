@@ -48,7 +48,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
         <Fieldset aria-label="Timeline details">
           <DialogBody data-slot="control" className="space-y-4">
             <Field>
-              <Label htmlFor="currentAge">Age</Label>
+              <Label htmlFor="currentAge">Current Age</Label>
               <NumberInputV2 name="currentAge" control={control} id="currentAge" inputMode="numeric" placeholder="35" autoFocus />
               {errors.currentAge && <ErrorMessage>{errors.currentAge?.message}</ErrorMessage>}
               <Description>The age your simulation will start at.</Description>
