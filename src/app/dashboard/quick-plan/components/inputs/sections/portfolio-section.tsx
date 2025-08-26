@@ -13,6 +13,7 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/componen
 import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 import { cn, formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
+import { accountTypeForDisplay } from '@/lib/schemas/account-form-schema';
 
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
@@ -67,7 +68,7 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
                       <span className="font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-gray-200">
                         {account.name}
                       </span>
-                      <p className="text-muted-foreground">{formatNumber(account.balance, 2, '$')}</p>
+                      <p className="text-muted-foreground">{`${formatNumber(account.balance, 2, '$')} | ${accountTypeForDisplay(account.type)}`}</p>
                     </div>
                     <div className="shrink-0 pr-2">
                       <Dropdown>

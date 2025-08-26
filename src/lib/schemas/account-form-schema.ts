@@ -56,3 +56,22 @@ export type InvestmentAccountType = Exclude<AccountInputs['type'], 'savings'>;
 export const isRothAccount = (type: AccountInputs['type']): type is RothAccountType => type === 'roth-401k' || type === 'roth-ira';
 export const isInvestmentAccount = (type: AccountInputs['type']): type is InvestmentAccountType => type !== 'savings';
 export const hasContributionLimit = (type: AccountInputs['type']): boolean => type !== 'savings' && type !== 'taxable-brokerage';
+
+export const accountTypeForDisplay = (type: AccountInputs['type']): string => {
+  switch (type) {
+    case 'savings':
+      return 'Savings';
+    case 'taxable-brokerage':
+      return 'Taxable Brokerage';
+    case 'roth-401k':
+      return 'Roth 401(k)';
+    case 'roth-ira':
+      return 'Roth IRA';
+    case '401k':
+      return '401(k)';
+    case 'ira':
+      return 'IRA';
+    case 'hsa':
+      return 'Health Savings Account';
+  }
+};
