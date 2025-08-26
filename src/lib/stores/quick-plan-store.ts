@@ -36,7 +36,6 @@ import {
   type GoalsInputs,
   type MarketAssumptionsInputs,
   type RetirementFundingInputs,
-  type FlexiblePathsInputs,
   validateField,
   validateSection,
 } from '@/lib/schemas/quick-plan-schema';
@@ -189,7 +188,6 @@ interface QuickPlanState {
     updateGoalsWithoutTouched: (field: keyof GoalsInputs, value: unknown) => UpdateResult;
     updateMarketAssumptions: (field: keyof MarketAssumptionsInputs, value: unknown) => UpdateResult;
     updateRetirementFunding: (field: keyof RetirementFundingInputs, value: unknown) => UpdateResult;
-    updateFlexiblePaths: (field: keyof FlexiblePathsInputs, value: unknown) => UpdateResult;
 
     updateIncomes: (id: string, data: IncomeInputs) => UpdateResult;
     deleteIncome: (id: string) => UpdateResult;
@@ -243,10 +241,6 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
       lifeExpectancy: 78,
       effectiveTaxRate: 0,
     },
-    flexiblePaths: {
-      targetRetirementAge: null,
-      partTimeIncome: null, // Real $ - "Part-time income (today's dollars)"
-    },
     incomes: {},
     expenses: {},
     accounts: {},
@@ -258,7 +252,6 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
     goals: false,
     marketAssumptions: false,
     retirementFunding: false,
-    flexiblePaths: false,
     incomes: false,
     expenses: false,
     accounts: false,
@@ -325,7 +318,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
           updateGoalsWithoutTouched: createSimpleUpdateAction('goals', set, get, false),
           updateMarketAssumptions: createSimpleUpdateAction('marketAssumptions', set, get),
           updateRetirementFunding: createSimpleUpdateAction('retirementFunding', set, get),
-          updateFlexiblePaths: createSimpleUpdateAction('flexiblePaths', set, get),
 
           // Special case for allocation - uses validateSection instead of validateField
           updateAllocation: (data) => {
@@ -484,7 +476,6 @@ export const useAllocationData = () => useQuickPlanStore((state) => state.inputs
 export const useGoalsData = () => useQuickPlanStore((state) => state.inputs.goals);
 export const useMarketAssumptionsData = () => useQuickPlanStore((state) => state.inputs.marketAssumptions);
 export const useRetirementFundingData = () => useQuickPlanStore((state) => state.inputs.retirementFunding);
-export const useFlexiblePathsData = () => useQuickPlanStore((state) => state.inputs.flexiblePaths);
 
 export const useIncomesData = () => useQuickPlanStore((state) => state.inputs.incomes);
 export const useIncomeData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.incomes[id] : null));
@@ -532,7 +523,6 @@ export const useUpdateGoals = () => useQuickPlanStore((state) => state.actions.u
 export const useUpdateGoalsWithoutTouched = () => useQuickPlanStore((state) => state.actions.updateGoalsWithoutTouched);
 export const useUpdateMarketAssumptions = () => useQuickPlanStore((state) => state.actions.updateMarketAssumptions);
 export const useUpdateRetirementFunding = () => useQuickPlanStore((state) => state.actions.updateRetirementFunding);
-export const useUpdateFlexiblePaths = () => useQuickPlanStore((state) => state.actions.updateFlexiblePaths);
 export const useUpdateIncomes = () => useQuickPlanStore((state) => state.actions.updateIncomes);
 export const useDeleteIncome = () => useQuickPlanStore((state) => state.actions.deleteIncome);
 export const useUpdateExpenses = () => useQuickPlanStore((state) => state.actions.updateExpenses);
@@ -1114,7 +1104,6 @@ export const useAllocationTouched = () => useQuickPlanStore((state) => state.tou
 export const useGoalsTouched = () => useQuickPlanStore((state) => state.touched.goals);
 export const useMarketAssumptionsTouched = () => useQuickPlanStore((state) => state.touched.marketAssumptions);
 export const useRetirementFundingTouched = () => useQuickPlanStore((state) => state.touched.retirementFunding);
-export const useFlexiblePathsTouched = () => useQuickPlanStore((state) => state.touched.flexiblePaths);
 
 /**
  * Error State Selectors
@@ -1129,4 +1118,3 @@ export const useAllocationHasErrors = () => useSectionHasErrors('allocation');
 export const useGoalsHasErrors = () => useSectionHasErrors('goals');
 export const useMarketAssumptionsHasErrors = () => useSectionHasErrors('marketAssumptions');
 export const useRetirementFundingHasErrors = () => useSectionHasErrors('retirementFunding');
-export const useFlexiblePathsHasErrors = () => useSectionHasErrors('flexiblePaths');
