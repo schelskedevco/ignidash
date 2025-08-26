@@ -10,6 +10,7 @@ import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/di
 import { timelineFormSchema, type TimelineInputs } from '@/lib/schemas/timeline-form-schema';
 import NumberInputV2 from '@/components/ui/number-input-v2';
 import { Fieldset, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
+import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 
 interface TimelineDialogProps {
@@ -21,6 +22,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
   const existingTimelineData = useTimelineData(selectedTimelineID);
 
   const {
+    register,
     control,
     handleSubmit,
     formState: { errors },
@@ -58,6 +60,13 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
               <NumberInputV2 name="lifeExpectancy" control={control} id="lifeExpectancy" inputMode="numeric" placeholder="78" />
               {errors.lifeExpectancy && <ErrorMessage>{errors.lifeExpectancy?.message}</ErrorMessage>}
               <Description>The age your simulation will end at.</Description>
+            </Field>
+            <Field>
+              <Label htmlFor="retirementStrategy.type">Retirement Age</Label>
+              <Select {...register('retirementStrategy.type')} id="retirementStrategy.type" name="retirementStrategy.type">
+                <option value="fixed-age">Fixed Age</option>
+                <option value="dynamic-age">Dynamic Age</option>
+              </Select>
             </Field>
           </DialogBody>
         </Fieldset>

@@ -17,12 +17,12 @@ export const timelineFormSchema = z.object({
         min: 'Retirement age must be at least 17 years',
         max: 'Retirement age must be at most 73 years',
       }),
-      type: z.literal('fixedAge'),
+      type: z.literal('fixed-age'),
     }),
     z.object({
       safeWithdrawalRate: percentageField(2, 6, 'Safe withdrawal rate'),
       expenseMetric: z.enum(['median', 'mean']),
-      type: z.literal('computedAge'),
+      type: z.literal('dynamic-age'),
     }),
   ]),
 });
