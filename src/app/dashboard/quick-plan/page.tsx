@@ -14,8 +14,10 @@ export default function QuickPlanPage() {
         <DesktopMainArea />
       </MainArea>
       <SecondaryColumn>
-        <NumbersColumnHeader />
-        <NumbersColumnSections />
+        <div className="flex h-full flex-col">
+          <NumbersColumnHeader />
+          <NumbersColumnSections />
+        </div>
       </SecondaryColumn>
     </>
   );

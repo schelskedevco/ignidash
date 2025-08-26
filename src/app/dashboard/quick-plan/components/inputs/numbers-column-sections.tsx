@@ -1,39 +1,40 @@
-'use client';
+// 'use client';
 
 // import { useState, useEffect } from 'react';
-import { HourglassIcon /* LandmarkIcon, HandCoinsIcon, BanknoteArrowDownIcon, TrendingUpDownIcon */ } from 'lucide-react';
+// import { HourglassIcon /* LandmarkIcon, HandCoinsIcon, BanknoteArrowDownIcon, TrendingUpDownIcon */ } from 'lucide-react';
 
-import {
-  useBasicsData,
-  useUpdateBasics,
-  useRetirementFundingData,
-  useUpdateRetirementFunding,
-  // useMarketAssumptionsData,
-  // useUpdateMarketAssumptions,
-  // useStocksRealReturn,
-  // useBondsRealReturn,
-  // useCashRealReturn,
-  // useGrowthRatesData,
-  // useUpdateGrowthRates,
-  // useIncomeRealGrowthRate,
-  // useExpenseRealGrowthRate,
-  // useGoalsData,
-  // useUpdateGoals,
-  // useGoalsTouched,
-  // useUpdateGoalsWithoutTouched,
-  // useAllocationData,
-  // useUpdateAllocation,
-  // useStocksDollarAmount,
-  // useBondsDollarAmount,
-  // useCashDollarAmount,
-} from '@/lib/stores/quick-plan-store';
+// import {
+//   // useBasicsData,
+//   // useUpdateBasics,
+//   // useRetirementFundingData,
+//   // useUpdateRetirementFunding,
+//   // useMarketAssumptionsData,
+//   // useUpdateMarketAssumptions,
+//   // useStocksRealReturn,
+//   // useBondsRealReturn,
+//   // useCashRealReturn,
+//   // useGrowthRatesData,
+//   // useUpdateGrowthRates,
+//   // useIncomeRealGrowthRate,
+//   // useExpenseRealGrowthRate,
+//   // useGoalsData,
+//   // useUpdateGoals,
+//   // useGoalsTouched,
+//   // useUpdateGoalsWithoutTouched,
+//   // useAllocationData,
+//   // useUpdateAllocation,
+//   // useStocksDollarAmount,
+//   // useBondsDollarAmount,
+//   // useCashDollarAmount,
+// } from '@/lib/stores/quick-plan-store';
 // import { formatNumber } from '@/lib/utils';
-import DisclosureSection from '@/components/ui/disclosure-section';
-import NumberInput from '@/components/ui/number-input';
-import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
-import { Divider } from '@/components/catalyst/divider';
+// import DisclosureSection from '@/components/ui/disclosure-section';
+// import NumberInput from '@/components/ui/number-input';
+// import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
+// import { Divider } from '@/components/catalyst/divider';
 // import InvalidInputError from '@/components/ui/invalid-input-error';
 
+import TimelineSection from './sections/timeline-section';
 import IncomeSection from './sections/income-section';
 import ExpensesSection from './sections/expenses-section';
 import PortfolioSection from './sections/portfolio-section';
@@ -57,12 +58,6 @@ import ContributionsSection from './sections/contributions-section';
 // }
 
 export default function NumbersColumnSections() {
-  const basics = useBasicsData();
-  const updateBasics = useUpdateBasics();
-
-  const retirementFunding = useRetirementFundingData();
-  const updateRetirementFunding = useUpdateRetirementFunding();
-
   // const marketAssumptions = useMarketAssumptionsData();
   // const updateMarketAssumptions = useUpdateMarketAssumptions();
 
@@ -130,39 +125,6 @@ export default function NumbersColumnSections() {
 
   return (
     <>
-      <DisclosureSection title="Timeline" icon={HourglassIcon}>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <Fieldset>
-            <FieldGroup>
-              <Field>
-                <Label htmlFor="current-age">Age</Label>
-                <NumberInput
-                  id="current-age"
-                  value={basics.currentAge}
-                  onBlur={(value) => updateBasics('currentAge', value)}
-                  inputMode="numeric"
-                  placeholder="28"
-                  decimalScale={0}
-                />
-                <Description>The age your simulation will start at.</Description>
-              </Field>
-              <Divider />
-              <Field>
-                <Label htmlFor="life-expectancy">Life Expectancy</Label>
-                <NumberInput
-                  id="life-expectancy"
-                  value={retirementFunding.lifeExpectancy}
-                  onBlur={(value) => updateRetirementFunding('lifeExpectancy', value)}
-                  inputMode="numeric"
-                  placeholder="85"
-                  decimalScale={0}
-                />
-                <Description>The age your simulation will end at.</Description>
-              </Field>
-            </FieldGroup>
-          </Fieldset>
-        </form>
-      </DisclosureSection>
       {/* <DisclosureSection title="Portfolio" icon={LandmarkIcon}>
         <>
           <form onSubmit={(e) => e.preventDefault()}>
@@ -240,6 +202,7 @@ export default function NumbersColumnSections() {
           {allocationError && <InvalidInputError title="Asset Allocation Error" desc={allocationError} />}
         </>
       </DisclosureSection> */}
+      <TimelineSection />
       <IncomeSection />
       <ExpensesSection />
       <PortfolioSection />
