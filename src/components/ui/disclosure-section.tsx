@@ -47,7 +47,7 @@ export default function DisclosureSection({
                   toggleDisclosure({ open, close, key: disclosureKey });
                 }
               }}
-              className="group focus-outline from-emphasized-background flex w-full items-center justify-between bg-gradient-to-r px-4 py-4 hover:to-rose-500/50 lg:py-8"
+              className="group from-emphasized-background [&:focus-visible>div]:ring-primary flex w-full items-center justify-between bg-gradient-to-r px-4 py-4 hover:to-rose-500/50 focus-visible:outline-none lg:py-8 [&:focus-visible>div]:ring-2"
             >
               <div className="flex w-full items-center justify-between text-left">
                 <div className="flex items-center gap-2 font-medium">
