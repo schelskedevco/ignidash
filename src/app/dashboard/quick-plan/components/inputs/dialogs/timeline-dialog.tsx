@@ -106,6 +106,8 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
     }
   };
 
+  console.log(errors);
+
   return (
     <>
       <DialogTitle>
@@ -163,9 +165,13 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                             inputMode="numeric"
                             placeholder="62"
                           />
-                          {(errors as FieldErrors<Extract<RetirementStrategyInputs, { type: 'fixed-age' }>>).retirementAge?.message && (
+                          {(errors.retirementStrategy as FieldErrors<Extract<RetirementStrategyInputs, { type: 'fixed-age' }>>)
+                            .retirementAge?.message && (
                             <ErrorMessage>
-                              {(errors as FieldErrors<Extract<RetirementStrategyInputs, { type: 'fixed-age' }>>).retirementAge?.message}
+                              {
+                                (errors.retirementStrategy as FieldErrors<Extract<RetirementStrategyInputs, { type: 'fixed-age' }>>)
+                                  .retirementAge?.message
+                              }
                             </ErrorMessage>
                           )}
                         </Field>
@@ -182,12 +188,12 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                               placeholder="4"
                               suffix="%"
                             />
-                            {(errors as FieldErrors<Extract<RetirementStrategyInputs, { type: 'dynamic-age' }>>).safeWithdrawalRate
-                              ?.message && (
+                            {(errors.retirementStrategy as FieldErrors<Extract<RetirementStrategyInputs, { type: 'dynamic-age' }>>)
+                              .safeWithdrawalRate?.message && (
                               <ErrorMessage>
                                 {
-                                  (errors as FieldErrors<Extract<RetirementStrategyInputs, { type: 'dynamic-age' }>>).safeWithdrawalRate
-                                    ?.message
+                                  (errors.retirementStrategy as FieldErrors<Extract<RetirementStrategyInputs, { type: 'dynamic-age' }>>)
+                                    .safeWithdrawalRate?.message
                                 }
                               </ErrorMessage>
                             )}
