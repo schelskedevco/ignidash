@@ -15,7 +15,27 @@ import NumberInputV2 from '@/components/ui/number-input-v2';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
-import { Divider } from '@/components/catalyst/divider';
+
+function getRetirementStrategyDesc(retirementStrategyType: 'fixed-age' | 'dynamic-age') {
+  switch (retirementStrategyType) {
+    case 'fixed-age':
+      return <>Your simulations will always retire at this age.</>;
+    case 'dynamic-age':
+      return (
+        <>
+          Your simulations will retire when your portfolio can sustainably support your typical annual expenses at this withdrawal rate.{' '}
+          <a
+            href="https://www.investopedia.com/terms/s/safe-withdrawal-rate-swr-method.asp"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            Learn more →
+          </a>
+        </>
+      );
+  }
+}
 
 const newTimelineDefaultValues = {
   retirementStrategy: {
@@ -139,7 +159,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                     </span>
                   </DisclosureButton>
                   <DisclosurePanel className="py-4">
-                    <FieldGroup>
+                    <div data-slot="control" className="grid grid-cols-2 gap-x-4 gap-y-6">
                       <Field>
                         <Label htmlFor="retirementStrategy.type">Retirement Strategy</Label>
                         <Select {...register('retirementStrategy.type')} id="retirementStrategy.type" name="retirementStrategy.type">
@@ -147,7 +167,6 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                           <option value="dynamic-age">Dynamic Age</option>
                         </Select>
                       </Field>
-                      <Divider soft />
                       {retirementStrategyType === 'fixed-age' && (
                         <Field>
                           <Label htmlFor="retirementStrategy.retirementAge">Retirement Age</Label>
@@ -167,13 +186,12 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                               }
                             </ErrorMessage>
                           )}
-                          <Description>Your simulations will always retire at this age.</Description>
                         </Field>
                       )}
                       {retirementStrategyType === 'dynamic-age' && (
                         <>
                           <Field>
-                            <Label htmlFor="retirementStrategy.safeWithdrawalRate">Safe Withdrawal Rate</Label>
+                            <Label htmlFor="retirementStrategy.safeWithdrawalRate">Withdrawal Rate</Label>
                             <NumberInputV2
                               name="retirementStrategy.safeWithdrawalRate"
                               control={control}
@@ -191,18 +209,6 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                                 }
                               </ErrorMessage>
                             )}
-                            <Description>
-                              Your simulations will retire when your portfolio can sustainably support your typical annual expenses at this
-                              withdrawal rate.{' '}
-                              <a
-                                href="https://www.investopedia.com/terms/s/safe-withdrawal-rate-swr-method.asp"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-primary hover:underline"
-                              >
-                                Learn more →
-                              </a>
-                            </Description>
                           </Field>
                           {/* <Field>
                             <Label htmlFor="retirementStrategy.expenseMetric">Expense Metric</Label>
@@ -218,7 +224,10 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                           </Field> */}
                         </>
                       )}
-                    </FieldGroup>
+                    </div>
+                    <p className="mt-2 text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400">
+                      {getRetirementStrategyDesc(retirementStrategyType)}
+                    </p>
                   </DisclosurePanel>
                 </>
               )}
