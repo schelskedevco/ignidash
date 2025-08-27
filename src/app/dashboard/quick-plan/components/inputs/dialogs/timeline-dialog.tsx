@@ -159,7 +159,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                     </span>
                   </DisclosureButton>
                   <DisclosurePanel className="py-4">
-                    <div data-slot="control" className="grid grid-cols-5 items-end gap-4">
+                    <div data-slot="control" className="grid grid-cols-5 gap-4">
                       <Field className="col-span-3">
                         <Label htmlFor="retirementStrategy.type">Retirement Trigger</Label>
                         <Select {...register('retirementStrategy.type')} id="retirementStrategy.type" name="retirementStrategy.type">
