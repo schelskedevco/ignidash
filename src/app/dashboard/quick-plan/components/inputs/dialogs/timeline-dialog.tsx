@@ -15,6 +15,7 @@ import NumberInputV2 from '@/components/ui/number-input-v2';
 import { Fieldset, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
+import { Divider } from '@/components/catalyst/divider';
 
 const newTimelineDefaultValues = {
   retirementStrategy: {
@@ -82,15 +83,6 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
       unregister('retirementStrategy.retirementAge');
     }
   }, [retirementStrategyType, unregister]);
-
-  const getRetirementStrategyTypeSpan = () => {
-    switch (retirementStrategyType) {
-      case 'fixed-age':
-        return 'col-span-1';
-      case 'dynamic-age':
-        return 'col-span-2';
-    }
-  };
 
   const getRetirementDisclosureDesc = () => {
     switch (retirementStrategyType) {
@@ -162,15 +154,15 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                     </span>
                   </DisclosureButton>
                   <DisclosurePanel className="py-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <Field className={getRetirementStrategyTypeSpan()}>
+                    <div className="grid grid-cols-1 gap-4">
+                      <Field>
                         <Label htmlFor="retirementStrategy.type">Strategy</Label>
                         <Select {...register('retirementStrategy.type')} id="retirementStrategy.type" name="retirementStrategy.type">
                           <option value="fixed-age">Fixed Age</option>
                           <option value="dynamic-age">Dynamic Age</option>
                         </Select>
-                        <Description>Placeholder Text.</Description>
                       </Field>
+                      <Divider />
                       {retirementStrategyType === 'fixed-age' && (
                         <Field>
                           <Label htmlFor="retirementStrategy.retirementAge">Retirement Age</Label>
@@ -190,6 +182,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                               }
                             </ErrorMessage>
                           )}
+                          <Description>Your simulation will always retire at this age.</Description>
                         </Field>
                       )}
                       {retirementStrategyType === 'dynamic-age' && (
