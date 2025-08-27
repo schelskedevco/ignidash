@@ -159,8 +159,8 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                     </span>
                   </DisclosureButton>
                   <DisclosurePanel className="py-4">
-                    <div data-slot="control" className="grid grid-cols-2 gap-x-4 gap-y-6">
-                      <Field>
+                    <div data-slot="control" className="grid grid-cols-3 gap-4">
+                      <Field className="col-span-2">
                         <Label htmlFor="retirementStrategy.type">Retirement Strategy</Label>
                         <Select {...register('retirementStrategy.type')} id="retirementStrategy.type" name="retirementStrategy.type">
                           <option value="fixed-age">Fixed Age</option>
