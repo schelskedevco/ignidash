@@ -84,6 +84,20 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
               </Select>
               <Description>Placeholder Text.</Description>
             </Field>
+            {retirementStrategyType === 'fixed-age' && (
+              <Field>
+                <Label htmlFor="retirementStrategy.retirementAge">Retirement Age</Label>
+                <NumberInputV2
+                  name="retirementStrategy.retirementAge"
+                  control={control}
+                  id="retirementStrategy.retirementAge"
+                  inputMode="numeric"
+                  placeholder="62"
+                />
+                {errors.retirementStrategy && <ErrorMessage>{errors.retirementStrategy?.message}</ErrorMessage>}
+                <Description>Placeholder Text.</Description>
+              </Field>
+            )}
             {retirementStrategyType === 'dynamic-age' && (
               <>
                 <Field>
