@@ -191,7 +191,15 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                             )}
                             <Description>
                               Your simulations will retire when your portfolio can sustainably support your typical annual expenses at this
-                              withdrawal rate.
+                              withdrawal rate.{' '}
+                              <a
+                                href="https://www.investopedia.com/terms/s/safe-withdrawal-rate-swr-method.asp"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline"
+                              >
+                                Learn more →
+                              </a>
                             </Description>
                           </Field>
                           {/* <Field>
