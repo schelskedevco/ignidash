@@ -85,7 +85,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Fieldset aria-label="Account details">
           <DialogBody data-slot="control" className="space-y-4">
-            <div className="mb-8 grid grid-cols-2 gap-4">
+            <div className="mb-6 grid grid-cols-2 gap-4">
               <Field className="col-span-2">
                 <Label htmlFor="name">Name</Label>
                 <Input

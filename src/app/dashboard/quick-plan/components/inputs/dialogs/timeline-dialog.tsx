@@ -109,7 +109,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
       <form onSubmit={handleSubmit(onSubmit)}>
         <Fieldset aria-label="Timeline details">
           <DialogBody>
-            <FieldGroup className="mb-8">
+            <FieldGroup className="mb-6">
               <Field>
                 <Label htmlFor="currentAge">Current Age</Label>
                 <NumberInputV2 name="currentAge" control={control} id="currentAge" inputMode="numeric" placeholder="35" autoFocus />
