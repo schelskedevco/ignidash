@@ -186,6 +186,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                             id="retirementStrategy.retirementAge"
                             inputMode="numeric"
                             placeholder="62"
+                            ariaDescribedby="retirement-trigger-desc"
                           />
                         </Field>
                       )}
@@ -200,6 +201,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                               inputMode="decimal"
                               placeholder="4%"
                               suffix="%"
+                              ariaDescribedby="retirement-trigger-desc"
                             />
                           </Field>
                           {/* <Field>
@@ -219,11 +221,14 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                     </div>
                     <div className="mt-2">
                       {getRetirementStrategyError(errors, retirementStrategyType) ? (
-                        <p className="text-base/6 text-red-600 data-disabled:opacity-50 sm:text-sm/6 dark:text-red-500">
+                        <p role="alert" className="text-base/6 text-red-600 data-disabled:opacity-50 sm:text-sm/6 dark:text-red-500">
                           {getRetirementStrategyError(errors, retirementStrategyType)}
                         </p>
                       ) : null}
-                      <p className="text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400">
+                      <p
+                        id="retirement-trigger-desc"
+                        className="text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400"
+                      >
                         {getRetirementStrategyDesc(retirementStrategyType)}
                       </p>
                     </div>

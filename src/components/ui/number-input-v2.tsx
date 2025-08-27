@@ -13,6 +13,7 @@ interface NumberInputV2Props {
   min?: number;
   max?: number;
   autoFocus?: boolean;
+  ariaDescribedby?: string;
 }
 
 export default function NumberInputV2<
@@ -29,6 +30,7 @@ export default function NumberInputV2<
   min,
   max,
   autoFocus,
+  ariaDescribedby,
   name,
   rules,
   shouldUnregister,
@@ -91,6 +93,7 @@ export default function NumberInputV2<
       customInput={Input}
       disabled={disabled}
       aria-invalid={!!error}
+      aria-describedby={ariaDescribedby}
       invalid={!!error}
       isAllowed={({ value }) => value.length <= 12}
       autoFocus={autoFocus}
