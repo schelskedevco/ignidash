@@ -96,7 +96,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
               {errors.lifeExpectancy && <ErrorMessage>{errors.lifeExpectancy?.message}</ErrorMessage>}
               <Description>The age your simulation will end at.</Description>
             </Field>
-            <Disclosure as="div" className="border-border/50 border-y py-4">
+            <Disclosure as="div" className="border-border/50 border-t py-4">
               {({ open, close }) => (
                 <>
                   <DisclosureButton className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4">
