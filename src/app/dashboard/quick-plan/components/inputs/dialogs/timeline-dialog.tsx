@@ -1,9 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
 import { HourglassIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 
 import { useUpdateTimelines, useTimelineData } from '@/lib/stores/quick-plan-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -23,6 +24,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
 
   const {
     register,
+    unregister,
     control,
     handleSubmit,
     formState: { errors },
@@ -37,6 +39,19 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
     updateTimelines(timelineID, data);
     setTimelineDialogOpen(false);
   };
+
+  const retirementStrategyType = useWatch({ control, name: 'retirementStrategy.type' });
+
+  useEffect(() => {
+    if (retirementStrategyType !== 'dynamic-age') {
+      unregister('retirementStrategy.safeWithdrawalRate');
+      unregister('retirementStrategy.expenseMetric');
+    }
+
+    if (retirementStrategyType !== 'fixed-age') {
+      unregister('retirementStrategy.retirementAge');
+    }
+  }, [retirementStrategyType, unregister]);
 
   return (
     <>
@@ -67,7 +82,37 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                 <option value="fixed-age">Fixed Age</option>
                 <option value="dynamic-age">Dynamic Age</option>
               </Select>
+              <Description>Placeholder Text.</Description>
             </Field>
+            {retirementStrategyType === 'dynamic-age' && (
+              <>
+                <Field>
+                  <Label htmlFor="retirementStrategy.safeWithdrawalRate">Safe Withdrawal Rate</Label>
+                  <NumberInputV2
+                    name="retirementStrategy.safeWithdrawalRate"
+                    control={control}
+                    id="retirementStrategy.safeWithdrawalRate"
+                    inputMode="decimal"
+                    placeholder="4"
+                    suffix="%"
+                  />
+                  {errors.retirementStrategy && <ErrorMessage>{errors.retirementStrategy?.message}</ErrorMessage>}
+                  <Description>Placeholder Text.</Description>
+                </Field>
+                <Field>
+                  <Label htmlFor="retirementStrategy.expenseMetric">Expense Metric</Label>
+                  <Select
+                    {...register('retirementStrategy.expenseMetric')}
+                    id="retirementStrategy.expenseMetric"
+                    name="retirementStrategy.expenseMetric"
+                  >
+                    <option value="median">Median</option>
+                    <option value="mean">Mean</option>
+                  </Select>
+                  <Description>Placeholder Text.</Description>
+                </Field>
+              </>
+            )}
           </DialogBody>
         </Fieldset>
         <DialogActions>
