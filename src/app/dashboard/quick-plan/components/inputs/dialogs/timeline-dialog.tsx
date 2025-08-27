@@ -24,6 +24,23 @@ const newTimelineDefaultValues = {
   },
 } as const satisfies Partial<TimelineInputs>;
 
+function getSafeWithdrawalRateDescription() {
+  return (
+    <>
+      Annual portfolio withdrawal percentage in retirement. The{' '}
+      <a
+        href="https://www.investopedia.com/terms/f/four-percent-rule.asp"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-foreground hover:text-foreground/80 underline"
+      >
+        4% rule
+      </a>{' '}
+      is standard.
+    </>
+  );
+}
+
 interface TimelineDialogProps {
   setTimelineDialogOpen: (open: boolean) => void;
   selectedTimelineID: string | null;
@@ -184,7 +201,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                               control={control}
                               id="retirementStrategy.safeWithdrawalRate"
                               inputMode="decimal"
-                              placeholder="4"
+                              placeholder="4%"
                               suffix="%"
                             />
                             {(errors.retirementStrategy as FieldErrors<Extract<RetirementStrategyInputs, { type: 'dynamic-age' }>>)
@@ -196,7 +213,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                                 }
                               </ErrorMessage>
                             )}
-                            <Description>Placeholder Text.</Description>
+                            <Description>{getSafeWithdrawalRateDescription()}</Description>
                           </Field>
                           <Field>
                             <Label htmlFor="retirementStrategy.expenseMetric">Expense Metric</Label>
