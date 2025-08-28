@@ -177,7 +177,10 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                   </DisclosureButton>
                   <DisclosurePanel className="py-4">
                     <Field>
-                      <Label htmlFor="percentBonds">Bond Allocation</Label>
+                      <Label htmlFor="percentBonds" className="flex w-full items-center justify-between">
+                        <span className="whitespace-nowrap">Bond Allocation</span>
+                        <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                      </Label>
                       <NumberInputV2
                         name="percentBonds"
                         control={control}
