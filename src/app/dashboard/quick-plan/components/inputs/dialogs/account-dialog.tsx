@@ -130,7 +130,10 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                   const error = (errors as FieldErrors<Extract<AccountInputs, { type: 'taxableBrokerage' }>>).costBasis?.message;
                   return (
                     <Field>
-                      <Label htmlFor="costBasis">Cost Basis</Label>
+                      <Label htmlFor="costBasis" className="flex w-full items-center justify-between">
+                        <span>Cost Basis</span>
+                        <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                      </Label>
                       <NumberInputV2 name="costBasis" control={control} id="costBasis" inputMode="decimal" placeholder="—" prefix="$" />
                       {error && <ErrorMessage>{error}</ErrorMessage>}
                     </Field>
