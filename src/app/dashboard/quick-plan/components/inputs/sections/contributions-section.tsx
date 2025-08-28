@@ -41,7 +41,16 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
         disclosureKey={disclosureKey}
       >
         <div className="flex h-full flex-col">
-          <Field>
+          <button
+            type="button"
+            className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-gray-300 p-4 text-center hover:border-gray-400 dark:border-white/15 dark:hover:border-white/25"
+            onClick={() => setContributionRuleDialogOpen(true)}
+          >
+            <HandCoinsIcon aria-hidden="true" className="text-primary mx-auto size-12" />
+            <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Add contribution rule</span>
+          </button>
+          <Divider className="my-4" />
+          <Field className="mb-4">
             <Label className="sr-only">Base Rule</Label>
             <Listbox name="status" defaultValue="spend">
               <ListboxOption value="spend">
@@ -57,15 +66,6 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
             </Listbox>
             <Description>Allocate any leftover cash after your contribution rules are applied.</Description>
           </Field>
-          <Divider className="my-4" />
-          <button
-            type="button"
-            className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-gray-300 p-4 text-center hover:border-gray-400 dark:border-white/15 dark:hover:border-white/25"
-            onClick={() => setContributionRuleDialogOpen(true)}
-          >
-            <HandCoinsIcon aria-hidden="true" className="text-primary mx-auto size-12" />
-            <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Add contribution rule</span>
-          </button>
         </div>
       </DisclosureSection>
 
