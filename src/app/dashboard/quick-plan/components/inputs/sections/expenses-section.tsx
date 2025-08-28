@@ -105,7 +105,7 @@ export default function ExpensesSection({ toggleDisclosure, disclosureButtonRef,
           <div className="flex h-full flex-col">
             <button
               type="button"
-              className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-gray-300 p-8 text-center hover:border-gray-400 sm:p-12 dark:border-white/15 dark:hover:border-white/25"
+              className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-gray-300 p-4 text-center hover:border-gray-400 dark:border-white/15 dark:hover:border-white/25"
               onClick={() => setExpenseDialogOpen(true)}
             >
               <BanknoteArrowDownIcon aria-hidden="true" className="text-primary mx-auto size-12" />
