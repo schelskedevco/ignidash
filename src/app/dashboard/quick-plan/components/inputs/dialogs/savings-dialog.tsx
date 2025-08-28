@@ -71,17 +71,17 @@ export default function SavingsDialog({ setSavingsDialogOpen, selectedAccountID 
                 {errors.name && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
               </Field>
               <Field>
-                <Label htmlFor="balance">Balance</Label>
+                <Label htmlFor="currentValue">Current Balance</Label>
                 <NumberInputV2
-                  name="balance"
+                  name="currentValue"
                   control={control}
-                  id="balance"
+                  id="currentValue"
                   inputMode="decimal"
                   placeholder="$15,000"
                   prefix="$"
                   autoFocus={selectedAccountID !== null}
                 />
-                {errors.balance && <ErrorMessage>{errors.balance?.message}</ErrorMessage>}
+                {errors.currentValue && <ErrorMessage>{errors.currentValue?.message}</ErrorMessage>}
               </Field>
             </FieldGroup>
           </DialogBody>

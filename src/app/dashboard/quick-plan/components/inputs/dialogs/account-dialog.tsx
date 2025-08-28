@@ -113,17 +113,17 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                 </Select>
               </Field>
               <Field className={getBalanceColSpan()}>
-                <Label htmlFor="balance">Balance</Label>
+                <Label htmlFor="currentValue">Market Value</Label>
                 <NumberInputV2
-                  name="balance"
+                  name="currentValue"
                   control={control}
-                  id="balance"
+                  id="currentValue"
                   inputMode="decimal"
                   placeholder="$15,000"
                   prefix="$"
                   autoFocus={selectedAccountID !== null}
                 />
-                {errors.balance && <ErrorMessage>{errors.balance?.message}</ErrorMessage>}
+                {errors.currentValue && <ErrorMessage>{errors.currentValue?.message}</ErrorMessage>}
               </Field>
               {type === 'taxableBrokerage' &&
                 (() => {

@@ -4,7 +4,7 @@ import { currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-schema
 
 const baseAccountSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
-  balance: currencyFieldAllowsZero('Balance cannot be negative'),
+  currentValue: currencyFieldAllowsZero('Value cannot be negative'),
 });
 
 const investmentAccountSchema = baseAccountSchema.extend({
