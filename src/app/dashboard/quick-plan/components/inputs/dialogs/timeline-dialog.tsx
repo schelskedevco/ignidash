@@ -187,7 +187,6 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                             id="retirementStrategy.retirementAge"
                             inputMode="numeric"
                             placeholder="62"
-                            ariaDescribedby="retirement-trigger-desc"
                           />
                           <ErrorMessage>{getRetirementStrategyError(errors, retirementStrategyType)}</ErrorMessage>
                           <Description>{getRetirementStrategyDesc(retirementStrategyType)}</Description>
@@ -204,7 +203,6 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                               inputMode="decimal"
                               placeholder="4%"
                               suffix="%"
-                              ariaDescribedby="retirement-trigger-desc"
                             />
                             <ErrorMessage>{getRetirementStrategyError(errors, retirementStrategyType)}</ErrorMessage>
                             <Description>{getRetirementStrategyDesc(retirementStrategyType)}</Description>
