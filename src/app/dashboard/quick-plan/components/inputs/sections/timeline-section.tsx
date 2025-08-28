@@ -54,6 +54,7 @@ export default function TimelineSection({ toggleDisclosure, disclosureButtonRef,
         toggleDisclosure={toggleDisclosure}
         disclosureButtonRef={disclosureButtonRef}
         disclosureKey={disclosureKey}
+        defaultOpen
       >
         {hasTimelines && (
           <div className="flex h-full flex-col">
