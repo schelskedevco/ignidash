@@ -6,7 +6,7 @@ import { HandCoinsIcon, PiggyBankIcon, BanknoteArrowDownIcon } from 'lucide-reac
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { DisclosureState } from '@/lib/types/disclosure-state';
 import { Divider } from '@/components/catalyst/divider';
-import { Field } from '@/components/catalyst/fieldset';
+import { Field, Label, Description } from '@/components/catalyst/fieldset';
 import { Listbox, ListboxLabel, ListboxDescription, ListboxOption } from '@/components/catalyst/listbox';
 
 interface ContributionsSectionProps {
@@ -28,7 +28,9 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
       >
         <div className="flex h-full flex-col">
           <Field>
-            <Listbox name="status" defaultValue="spend" aria-label="Leftover contribution rule">
+            <Label>Base Contribution Rule</Label>
+            <Description>Allocate any leftover cash after your contribution rules are applied.</Description>
+            <Listbox name="status" defaultValue="spend">
               <ListboxOption value="spend">
                 <BanknoteArrowDownIcon data-slot="icon" className="text-primary" />
                 <ListboxLabel>Spend</ListboxLabel>
@@ -47,7 +49,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
             className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-gray-300 p-4 text-center hover:border-gray-400 dark:border-white/15 dark:hover:border-white/25"
           >
             <HandCoinsIcon aria-hidden="true" className="text-primary mx-auto size-12" />
-            <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Add contribution</span>
+            <span className="mt-2 block text-sm font-semibold text-gray-900 dark:text-white">Add contribution rule</span>
           </button>
         </div>
       </DisclosureSection>
