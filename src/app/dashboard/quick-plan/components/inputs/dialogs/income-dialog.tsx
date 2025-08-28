@@ -469,14 +469,14 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
                     <DisclosurePanel className="py-4">
                       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <Field>
-                          <Label htmlFor="growth-rate" className="flex w-full items-center justify-between">
+                          <Label htmlFor="growthRate" className="flex w-full items-center justify-between">
                             <span>Growth Rate</span>
                             <span className="text-muted-foreground text-sm/6">{Number(3).toFixed(1)}% real</span>
                           </Label>
                           <NumberInputV2
                             name="growth.growthRate"
                             control={control}
-                            id="growth-rate"
+                            id="growthRate"
                             inputMode="decimal"
                             placeholder="3%"
                             suffix="%"
@@ -484,14 +484,14 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
                           {errors.growth?.growthRate && <ErrorMessage>{errors.growth?.growthRate?.message}</ErrorMessage>}
                         </Field>
                         <Field>
-                          <Label htmlFor="growth-limit" className="flex w-full items-center justify-between">
+                          <Label htmlFor="growthLimit" className="flex w-full items-center justify-between">
                             <span className="whitespace-nowrap">Limit</span>
                             <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
                           </Label>
                           <NumberInputV2
                             name="growth.growthLimit"
                             control={control}
-                            id="growth-limit"
+                            id="growthLimit"
                             inputMode="decimal"
                             placeholder="$120,000"
                             prefix="$"
