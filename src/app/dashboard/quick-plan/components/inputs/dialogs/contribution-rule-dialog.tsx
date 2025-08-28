@@ -8,9 +8,10 @@ import { useForm, Controller } from 'react-hook-form';
 import { useUpdateContributionRules, useContributionRuleData, useAccountsData } from '@/lib/stores/quick-plan-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { contributionFormSchema, type ContributionInputs } from '@/lib/schemas/contribution-form-schema';
+import { accountTypeForDisplay } from '@/lib/schemas/account-form-schema';
 import NumberInputV2 from '@/components/ui/number-input-v2';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
-import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/combobox';
+import { Combobox, ComboboxLabel, ComboboxDescription, ComboboxOption } from '@/components/catalyst/combobox';
 import { Button } from '@/components/catalyst/button';
 
 interface ContributionRuleDialogProps {
@@ -78,6 +79,7 @@ export default function ContributionRuleDialog({ setContributionRuleDialogOpen, 
                       {(account) => (
                         <ComboboxOption value={account}>
                           <ComboboxLabel>{account.name}</ComboboxLabel>
+                          <ComboboxDescription>{accountTypeForDisplay(account.type)}</ComboboxDescription>
                         </ComboboxOption>
                       )}
                     </Combobox>
