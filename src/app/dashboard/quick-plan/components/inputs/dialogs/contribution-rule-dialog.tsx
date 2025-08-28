@@ -11,10 +11,11 @@ import {
   useContributionRuleData,
   useContributionRulesData,
   useAccountsData,
+  useIncomesData,
 } from '@/lib/stores/quick-plan-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { contributionFormSchema, type ContributionInputs } from '@/lib/schemas/contribution-form-schema';
-import { accountTypeForDisplay } from '@/lib/schemas/account-form-schema';
+import { accountTypeForDisplay, accountTypeRequiresIncomeForContributions } from '@/lib/schemas/account-form-schema';
 import NumberInputV2 from '@/components/ui/number-input-v2';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import { Combobox, ComboboxLabel, ComboboxDescription, ComboboxOption } from '@/components/catalyst/combobox';
@@ -58,6 +59,7 @@ export default function ContributionRuleDialog({ setContributionRuleDialogOpen, 
   };
 
   const allocationType = useWatch({ control, name: 'allocationType' });
+  const accountId = useWatch({ control, name: 'accountId' });
 
   useEffect(() => {
     if (allocationType === 'unlimited') unregister('amount');
@@ -70,6 +72,10 @@ export default function ContributionRuleDialog({ setContributionRuleDialogOpen, 
 
   const accounts = useAccountsData();
   const accountOptions = Object.entries(accounts).map(([id, account]) => ({ id, name: account.name, type: account.type }));
+  const selectedAccount = accountId ? accounts[accountId] : null;
+
+  const incomes = useIncomesData();
+  const incomeOptions = Object.entries(incomes).map(([id, income]) => ({ id, name: income.name }));
 
   return (
     <>
@@ -116,6 +122,18 @@ export default function ContributionRuleDialog({ setContributionRuleDialogOpen, 
                   )}
                 />
               </Field>
+              {selectedAccount && accountTypeRequiresIncomeForContributions(selectedAccount.type) && (
+                <Field>
+                  <Label htmlFor="incomeIds">With Income(s)</Label>
+                  <Select {...register('incomeIds')} id="incomeIds" name="incomeIds" multiple>
+                    {incomeOptions.map((income) => (
+                      <option key={income.id} value={income.id}>
+                        {income.name}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+              )}
               <div className="grid grid-cols-2 items-end gap-x-4 gap-y-2">
                 <Field className={getAllocationTypeColSpan()}>
                   <Label htmlFor="allocationType">Allocation Strategy</Label>

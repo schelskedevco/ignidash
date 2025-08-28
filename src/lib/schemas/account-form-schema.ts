@@ -75,3 +75,17 @@ export const accountTypeForDisplay = (type: AccountInputs['type']): string => {
       return 'HSA';
   }
 };
+
+export const accountTypeRequiresIncomeForContributions = (type: AccountInputs['type']): boolean => {
+  switch (type) {
+    case 'savings':
+    case 'taxableBrokerage':
+    case 'hsa':
+      return false;
+    case 'roth401k':
+    case 'rothIra':
+    case '401k':
+    case 'ira':
+      return true;
+  }
+};

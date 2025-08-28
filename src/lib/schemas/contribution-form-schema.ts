@@ -5,7 +5,7 @@ const baseContributionSchema = z.object({
   accountId: z.string(),
   rank: z.number().int().min(0),
   maxValue: currencyFieldAllowsZero('Max value cannot be negative').optional(),
-  incomeId: z.string().optional(),
+  incomeIds: z.array(z.string()).optional(),
 });
 
 export const contributionFormSchema = z.discriminatedUnion('allocationType', [
