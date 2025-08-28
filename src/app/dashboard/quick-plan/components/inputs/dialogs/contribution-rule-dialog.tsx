@@ -55,12 +55,13 @@ export default function ContributionRuleDialog({ setContributionRuleDialogOpen, 
           <DialogBody>
             <FieldGroup>
               <Field>
-                <Label>For Account</Label>
+                <Label>To Account</Label>
                 <Controller
                   name="accountId"
                   control={control}
                   render={({ field: { onChange, value, name } }) => (
                     <Combobox
+                      autoFocus={selectedContributionRuleID === null}
                       name={name}
                       options={accountOptions}
                       displayValue={(account) => account?.name || ''}
