@@ -66,6 +66,14 @@ export default function ContributionRuleDialog({ setContributionRuleDialogOpen, 
                       value={accountOptions.find((account) => account.id === value) || null}
                       onChange={(account) => onChange(account?.id || null)}
                       placeholder="Select account&hellip;"
+                      filter={(account, query) => {
+                        if (!account) return false;
+
+                        return (
+                          account.name.toLowerCase().includes(query.toLowerCase()) ||
+                          account.type.toLowerCase().includes(query.toLowerCase())
+                        );
+                      }}
                     >
                       {(account) => (
                         <ComboboxOption value={account}>
