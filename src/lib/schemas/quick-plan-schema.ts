@@ -29,6 +29,7 @@ import { timelineFormSchema } from './timeline-form-schema';
 import { incomeFormSchema } from './income-form-schema';
 import { accountFormSchema } from './account-form-schema';
 import { expenseFormSchema } from './expense-form-schema';
+import { contributionFormSchema } from './contribution-form-schema';
 
 // ================================
 // SCHEMA DEFINITIONS
@@ -129,6 +130,7 @@ export const quickPlanSchema = z.object({
   incomes: z.record(z.string(), incomeFormSchema),
   accounts: z.record(z.string(), accountFormSchema),
   expenses: z.record(z.string(), expenseFormSchema),
+  contributionRules: z.record(z.string(), contributionFormSchema),
 });
 
 // ================================

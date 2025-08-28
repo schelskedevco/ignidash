@@ -55,7 +55,7 @@ export default function SavingsDialog({ setSavingsDialogOpen, selectedAccountID 
         <Fieldset aria-label="Account details">
           <DialogBody>
             <FieldGroup>
-              <Field className="col-span-2">
+              <Field>
                 <Label htmlFor="name">Name</Label>
                 <Input
                   {...register('name')}

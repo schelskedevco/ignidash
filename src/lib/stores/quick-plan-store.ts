@@ -57,6 +57,7 @@ import type { IncomeInputs } from '@/lib/schemas/income-form-schema';
 import type { AccountInputs } from '@/lib/schemas/account-form-schema';
 import type { ExpenseInputs } from '@/lib/schemas/expense-form-schema';
 import type { TimelineInputs } from '@/lib/schemas/timeline-form-schema';
+import type { ContributionInputs } from '@/lib/schemas/contribution-form-schema';
 import { Portfolio } from '@/lib/calc/portfolio';
 import { SimulationPhase, AccumulationPhase, RetirementPhase, type PhaseType } from '@/lib/calc/simulation-phase';
 
@@ -202,6 +203,9 @@ interface QuickPlanState {
     updateAccounts: (id: string, data: AccountInputs) => UpdateResult;
     deleteAccount: (id: string) => UpdateResult;
 
+    updateContributionRules: (id: string, data: ContributionInputs) => UpdateResult;
+    deleteContributionRule: (id: string) => UpdateResult;
+
     // Preferences actions
     updatePreferences: (field: keyof QuickPlanState['preferences'], value: unknown) => void;
     generateNewSeed: () => void;
@@ -249,6 +253,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
     incomes: {},
     expenses: {},
     accounts: {},
+    contributionRules: {},
   },
   touched: {
     basics: false,
@@ -261,6 +266,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
     incomes: false,
     expenses: false,
     accounts: false,
+    contributionRules: false,
   },
   errors: {},
   preferences: {
@@ -422,6 +428,24 @@ export const useQuickPlanStore = create<QuickPlanState>()(
             return { success: true };
           },
 
+          updateContributionRules: (id: string, data: ContributionInputs) => {
+            set((state) => {
+              state.touched.contributionRules = true;
+              state.inputs.contributionRules = { ...state.inputs.contributionRules, [id]: data };
+            });
+
+            return { success: true };
+          },
+
+          deleteContributionRule: (id: string) => {
+            set((state) => {
+              state.touched.contributionRules = true;
+              delete state.inputs.contributionRules[id];
+            });
+
+            return { success: true };
+          },
+
           /** Preferences actions */
           updatePreferences: (field, value) =>
             set((state) => {
@@ -460,7 +484,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
       })),
       {
         name: 'quick-plan-storage',
-        version: 2,
+        version: 1,
         // Simple migration: just use defaults for any version change
         migrate: () => ({ ...defaultState }),
         // Only persist the inputs and preferences state, not the actions
@@ -528,6 +552,10 @@ export const useInvestmentData = (id: string | null) =>
     return account?.type !== 'savings' ? account : null;
   });
 
+export const useContributionRulesData = () => useQuickPlanStore((state) => state.inputs.contributionRules);
+export const useContributionRuleData = (id: string | null) =>
+  useQuickPlanStore((state) => (id !== null ? state.inputs.contributionRules[id] : null));
+
 /**
  * Individual field selectors for performance optimization
  * Use these for components that only need specific fields to minimize re-renders
@@ -558,6 +586,8 @@ export const useUpdateExpenses = () => useQuickPlanStore((state) => state.action
 export const useDeleteExpense = () => useQuickPlanStore((state) => state.actions.deleteExpense);
 export const useUpdateAccounts = () => useQuickPlanStore((state) => state.actions.updateAccounts);
 export const useDeleteAccount = () => useQuickPlanStore((state) => state.actions.deleteAccount);
+export const useUpdateContributionRules = () => useQuickPlanStore((state) => state.actions.updateContributionRules);
+export const useDeleteContributionRule = () => useQuickPlanStore((state) => state.actions.deleteContributionRule);
 
 /**
  * Preferences selectors
