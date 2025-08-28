@@ -3,13 +3,14 @@
 import { PiggyBankIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 
-import { useUpdateContributionRules, useContributionRuleData } from '@/lib/stores/quick-plan-store';
+import { useUpdateContributionRules, useContributionRuleData, useAccountsData } from '@/lib/stores/quick-plan-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { contributionFormSchema, type ContributionInputs } from '@/lib/schemas/contribution-form-schema';
 import NumberInputV2 from '@/components/ui/number-input-v2';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
+import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/combobox';
 import { Button } from '@/components/catalyst/button';
 
 interface ContributionRuleDialogProps {
@@ -37,6 +38,9 @@ export default function ContributionRuleDialog({ setContributionRuleDialogOpen, 
     setContributionRuleDialogOpen(false);
   };
 
+  const accounts = useAccountsData();
+  const accountOptions = Object.entries(accounts).map(([id, account]) => ({ id, name: account.name, type: account.type }));
+
   return (
     <>
       <DialogTitle>
@@ -49,6 +53,29 @@ export default function ContributionRuleDialog({ setContributionRuleDialogOpen, 
         <Fieldset aria-label="Contribution Rule details">
           <DialogBody>
             <FieldGroup>
+              <Field>
+                <Label>For Account</Label>
+                <Controller
+                  name="accountId"
+                  control={control}
+                  render={({ field: { onChange, value, name } }) => (
+                    <Combobox
+                      name={name}
+                      options={accountOptions}
+                      displayValue={(account) => account?.name || ''}
+                      value={accountOptions.find((account) => account.id === value) || null}
+                      onChange={(account) => onChange(account?.id || null)}
+                      placeholder="Select account&hellip;"
+                    >
+                      {(account) => (
+                        <ComboboxOption value={account}>
+                          <ComboboxLabel>{account.name}</ComboboxLabel>
+                        </ComboboxOption>
+                      )}
+                    </Combobox>
+                  )}
+                />
+              </Field>
               <Field>
                 <Label htmlFor="maxValue">Maximum Value</Label>
                 <NumberInputV2

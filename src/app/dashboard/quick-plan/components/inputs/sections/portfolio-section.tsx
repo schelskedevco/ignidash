@@ -68,7 +68,7 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
                       <span className="font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-gray-200">
                         {account.name}
                       </span>
-                      <p className="text-muted-foreground">{`${formatNumber(account.balance, 2, '$')} | ${accountTypeForDisplay(account.type)}`}</p>
+                      <p className="text-muted-foreground">{`${formatNumber(account.currentValue, 2, '$')} | ${accountTypeForDisplay(account.type)}`}</p>
                     </div>
                     <div className="shrink-0 pr-2">
                       <Dropdown>
