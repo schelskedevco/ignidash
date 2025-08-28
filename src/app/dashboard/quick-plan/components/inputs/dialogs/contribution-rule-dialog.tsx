@@ -61,10 +61,6 @@ export default function ContributionRuleDialog({ setContributionRuleDialogOpen, 
   const allocationType = useWatch({ control, name: 'allocationType' });
   const accountId = useWatch({ control, name: 'accountId' });
 
-  useEffect(() => {
-    if (allocationType === 'unlimited') unregister('amount');
-  }, [allocationType, unregister]);
-
   const getAllocationTypeColSpan = () => {
     if (allocationType === 'fixed' || allocationType === 'percentage') return 'col-span-1';
     return 'col-span-2';
@@ -76,6 +72,16 @@ export default function ContributionRuleDialog({ setContributionRuleDialogOpen, 
 
   const incomes = useIncomesData();
   const incomeOptions = Object.entries(incomes).map(([id, income]) => ({ id, name: income.name }));
+
+  useEffect(() => {
+    if (allocationType === 'unlimited') {
+      unregister('amount');
+    }
+
+    if (!(selectedAccount && accountTypeRequiresIncomeForContributions(selectedAccount.type))) {
+      unregister('incomeIds');
+    }
+  }, [allocationType, unregister, selectedAccount]);
 
   return (
     <>
