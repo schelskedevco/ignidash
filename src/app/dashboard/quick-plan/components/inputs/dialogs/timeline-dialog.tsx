@@ -159,7 +159,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                   <DisclosureButton className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4">
                     <div className="flex items-center gap-2">
                       <ArmchairIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
-                      <span className="text-base/7 font-semibold">Retirement Age</span>
+                      <span className="text-base/7 font-semibold">Retirement</span>
                       <span className="hidden sm:inline">|</span>
                       <span className="text-muted-foreground hidden truncate sm:inline">{getRetirementDisclosureDesc()}</span>
                     </div>
