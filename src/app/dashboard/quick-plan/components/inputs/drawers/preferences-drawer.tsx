@@ -67,9 +67,13 @@ export default function PreferencesDrawer() {
                     value={marketAssumptions.simulationMode}
                     onChange={(e) => updateMarketAssumptions('simulationMode', e.target.value)}
                   >
-                    <option value="fixedReturns">Fixed Returns</option>
-                    <option value="monteCarlo">Monte Carlo</option>
-                    <option value="historicalBacktest">Historical Backtest</option>
+                    <optgroup label="Deterministic">
+                      <option value="fixedReturns">Fixed Returns</option>
+                    </optgroup>
+                    <optgroup label="Stochastic">
+                      <option value="monteCarlo">Monte Carlo</option>
+                      <option value="historicalBacktest">Historical Backtest</option>
+                    </optgroup>
                   </Select>
                   <Description>{simulationModeDesc}</Description>
                 </Field>
