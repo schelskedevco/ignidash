@@ -170,7 +170,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                     </span>
                   </DisclosureButton>
                   <DisclosurePanel className="py-4">
-                    <div data-slot="control" className="grid grid-cols-2 gap-4">
+                    <FieldGroup>
                       <Field>
                         <Label htmlFor="retirementStrategy.type">Trigger</Label>
                         <Select {...register('retirementStrategy.type')} id="retirementStrategy.type" name="retirementStrategy.type">
@@ -189,6 +189,8 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                             placeholder="62"
                             ariaDescribedby="retirement-trigger-desc"
                           />
+                          <ErrorMessage>{getRetirementStrategyError(errors, retirementStrategyType)}</ErrorMessage>
+                          <Description>{getRetirementStrategyDesc(retirementStrategyType)}</Description>
                         </Field>
                       )}
                       {retirementStrategyType === 'swrTarget' && (
@@ -204,6 +206,8 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                               suffix="%"
                               ariaDescribedby="retirement-trigger-desc"
                             />
+                            <ErrorMessage>{getRetirementStrategyError(errors, retirementStrategyType)}</ErrorMessage>
+                            <Description>{getRetirementStrategyDesc(retirementStrategyType)}</Description>
                           </Field>
                           {/* <Field>
                             <Label htmlFor="retirementStrategy.expenseMetric">Expense Metric</Label>
@@ -219,20 +223,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                           </Field> */}
                         </>
                       )}
-                    </div>
-                    <div className="mt-2">
-                      {getRetirementStrategyError(errors, retirementStrategyType) ? (
-                        <p role="alert" className="text-base/6 text-red-600 data-disabled:opacity-50 sm:text-sm/6 dark:text-red-500">
-                          {getRetirementStrategyError(errors, retirementStrategyType)}
-                        </p>
-                      ) : null}
-                      <p
-                        id="retirement-trigger-desc"
-                        className="text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400"
-                      >
-                        {getRetirementStrategyDesc(retirementStrategyType)}
-                      </p>
-                    </div>
+                    </FieldGroup>
                   </DisclosurePanel>
                 </>
               )}
