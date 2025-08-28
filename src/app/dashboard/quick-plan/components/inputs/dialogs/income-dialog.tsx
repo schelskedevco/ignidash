@@ -484,7 +484,10 @@ export default function IncomeDialog({ setIncomeDialogOpen, selectedIncomeID }: 
                           {errors.growth?.growthRate && <ErrorMessage>{errors.growth?.growthRate?.message}</ErrorMessage>}
                         </Field>
                         <Field>
-                          <Label htmlFor="growth-limit">Limit</Label>
+                          <Label htmlFor="growth-limit" className="flex w-full items-center justify-between">
+                            <span className="whitespace-nowrap">Limit</span>
+                            <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                          </Label>
                           <NumberInputV2
                             name="growth.growthLimit"
                             control={control}
