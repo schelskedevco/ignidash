@@ -28,7 +28,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
       >
         <div className="flex h-full flex-col">
           <Field>
-            <Label>Base Contribution Rule</Label>
+            <Label>Base Rule</Label>
             <Listbox name="status" defaultValue="spend">
               <ListboxOption value="spend">
                 <BanknoteArrowDownIcon data-slot="icon" className="text-primary" />
