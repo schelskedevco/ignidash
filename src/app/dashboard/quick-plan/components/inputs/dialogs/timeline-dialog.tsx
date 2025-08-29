@@ -152,7 +152,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                 {errors.lifeExpectancy && <ErrorMessage>{errors.lifeExpectancy?.message}</ErrorMessage>}
               </Field>
             </FieldGroup>
-            <Disclosure as="div" className="border-border/50 border-t py-4">
+            <Disclosure as="div" className="border-border/50 border-t pt-4">
               {({ open, close }) => (
                 <>
                   <DisclosureButton className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4">
@@ -167,7 +167,7 @@ export default function TimelineDialog({ setTimelineDialogOpen, selectedTimeline
                       <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
                     </span>
                   </DisclosureButton>
-                  <DisclosurePanel className="py-4">
+                  <DisclosurePanel className="pt-4">
                     <FieldGroup>
                       <Field>
                         <Label htmlFor="retirementStrategy.type">Trigger</Label>

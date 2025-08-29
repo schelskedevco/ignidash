@@ -158,7 +158,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                   );
                 })()}
             </div>
-            <Disclosure as="div" className="border-border/50 border-t py-4">
+            <Disclosure as="div" className="border-border/50 border-t pt-4">
               {({ open, close }) => (
                 <>
                   <DisclosureButton className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4">
@@ -175,7 +175,7 @@ export default function AccountDialog({ setAccountDialogOpen, selectedAccountID 
                       <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
                     </span>
                   </DisclosureButton>
-                  <DisclosurePanel className="py-4">
+                  <DisclosurePanel className="pt-4">
                     <Field>
                       <Label htmlFor="percentBonds" className="flex w-full items-center justify-between">
                         <span className="whitespace-nowrap">Bond Allocation</span>
