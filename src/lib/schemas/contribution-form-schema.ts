@@ -10,21 +10,18 @@ const baseContributionSchema = z.object({
 });
 
 export const contributionFormSchema = z.discriminatedUnion('allocationType', [
-  // Fixed amount allocation
   z.object({
     ...baseContributionSchema.shape,
     allocationType: z.literal('fixed'),
     amount: currencyFieldAllowsZero('Amount must be positive'),
   }),
 
-  // Percentage of remaining allocation
   z.object({
     ...baseContributionSchema.shape,
-    allocationType: z.literal('percentage'),
+    allocationType: z.literal('percentageRemaining'),
     amount: percentageField(0, 100, 'Percentage of remaining funds'),
   }),
 
-  // Unlimited allocation
   z.object({
     ...baseContributionSchema.shape,
     allocationType: z.literal('unlimited'),

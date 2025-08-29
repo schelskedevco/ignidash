@@ -63,7 +63,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
   const accountId = useWatch({ control, name: 'accountId' });
 
   const getAllocationTypeColSpan = () => {
-    if (allocationType === 'fixed' || allocationType === 'percentage') return 'col-span-1';
+    if (allocationType === 'fixed' || allocationType === 'percentageRemaining') return 'col-span-1';
     return 'col-span-2';
   };
 
@@ -146,7 +146,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                   <Label htmlFor="allocationType">Allocation Strategy</Label>
                   <Select {...register('allocationType')} id="allocationType" name="allocationType">
                     <option value="fixed">Dollar Amount</option>
-                    <option value="percentage">Percent Remaining</option>
+                    <option value="percentageRemaining">Percentage Remaining</option>
                     <option value="unlimited">Unlimited</option>
                   </Select>
                 </Field>
@@ -157,9 +157,9 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                     {/* {errors.amount && <ErrorMessage>{errors.amount?.message}</ErrorMessage>} */}
                   </Field>
                 )}
-                {allocationType === 'percentage' && (
+                {allocationType === 'percentageRemaining' && (
                   <Field>
-                    <Label className="sr-only">Percent Remaining</Label>
+                    <Label className="sr-only">Percentage Remaining</Label>
                     <NumberInputV2 name="amount" control={control} id="amount" inputMode="decimal" placeholder="25%" suffix="%" />
                     {/* {errors.amount && <ErrorMessage>{errors.amount?.message}</ErrorMessage>} */}
                   </Field>
