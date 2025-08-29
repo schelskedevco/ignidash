@@ -7,13 +7,13 @@ import { PlusIcon } from '@heroicons/react/16/solid';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
-import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 import { useExpensesData, useDeleteExpense } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 
 import ExpenseDialog from '../dialogs/expense-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';
+import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 
 interface ExpensesSectionProps {
   toggleDisclosure: (newDisclosure: DisclosureState) => void;
@@ -95,29 +95,7 @@ export default function ExpensesSection({ toggleDisclosure, disclosureButtonRef,
       >
         <ExpenseDialog setExpenseDialogOpen={setExpenseDialogOpen} selectedExpenseID={selectedExpenseID} />
       </Dialog>
-      <Alert
-        open={!!expenseToDelete}
-        onClose={() => {
-          setExpenseToDelete(null);
-        }}
-      >
-        <AlertTitle>Are you sure you want to delete {expenseToDelete ? `"${expenseToDelete.name}"` : 'this expense'}?</AlertTitle>
-        <AlertDescription>This action cannot be undone.</AlertDescription>
-        <AlertActions>
-          <Button plain onClick={() => setExpenseToDelete(null)}>
-            Cancel
-          </Button>
-          <Button
-            color="red"
-            onClick={() => {
-              deleteExpense(expenseToDelete!.id);
-              setExpenseToDelete(null);
-            }}
-          >
-            Delete
-          </Button>
-        </AlertActions>
-      </Alert>
+      <DisclosureSectionDeleteDataAlert dataToDelete={expenseToDelete} setDataToDelete={setExpenseToDelete} deleteData={deleteExpense} />
     </>
   );
 }

@@ -65,7 +65,7 @@ import { SimulationPhase, AccumulationPhase, RetirementPhase, type PhaseType } f
 // TYPES & HELPERS
 // ================================
 
-type UpdateResult = {
+export type UpdateResult = {
   success: boolean;
   error?: string;
 };

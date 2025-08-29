@@ -7,13 +7,13 @@ import { PlusIcon } from '@heroicons/react/16/solid';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
-import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 import { useIncomesData, useDeleteIncome } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 
 import IncomeDialog from '../dialogs/income-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';
+import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 
 interface IncomeSectionProps {
   toggleDisclosure: (newDisclosure: DisclosureState) => void;
@@ -95,29 +95,7 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
       >
         <IncomeDialog setIncomeDialogOpen={setIncomeDialogOpen} selectedIncomeID={selectedIncomeID} />
       </Dialog>
-      <Alert
-        open={!!incomeToDelete}
-        onClose={() => {
-          setIncomeToDelete(null);
-        }}
-      >
-        <AlertTitle>Are you sure you want to delete {incomeToDelete ? `"${incomeToDelete.name}"` : 'this income'}?</AlertTitle>
-        <AlertDescription>This action cannot be undone.</AlertDescription>
-        <AlertActions>
-          <Button plain onClick={() => setIncomeToDelete(null)}>
-            Cancel
-          </Button>
-          <Button
-            color="red"
-            onClick={() => {
-              deleteIncome(incomeToDelete!.id);
-              setIncomeToDelete(null);
-            }}
-          >
-            Delete
-          </Button>
-        </AlertActions>
-      </Alert>
+      <DisclosureSectionDeleteDataAlert dataToDelete={incomeToDelete} setDataToDelete={setIncomeToDelete} deleteData={deleteIncome} />
     </>
   );
 }

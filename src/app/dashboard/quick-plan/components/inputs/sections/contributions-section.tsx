@@ -9,13 +9,13 @@ import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { DisclosureState } from '@/lib/types/disclosure-state';
 import { Divider } from '@/components/catalyst/divider';
-import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 import { Field, Label, Description } from '@/components/catalyst/fieldset';
 import { Listbox, ListboxLabel, ListboxDescription, ListboxOption } from '@/components/catalyst/listbox';
 import { useContributionRulesData, useDeleteContributionRule } from '@/lib/stores/quick-plan-store';
 
 import ContributionRuleDialog from '../dialogs/contribution-rule-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';
+import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 
 interface ContributionsSectionProps {
   toggleDisclosure: (newDisclosure: DisclosureState) => void;
@@ -117,31 +117,11 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
           selectedContributionRuleID={selectedContributionRuleID}
         />
       </Dialog>
-      <Alert
-        open={!!contributionRuleToDelete}
-        onClose={() => {
-          setContributionRuleToDelete(null);
-        }}
-      >
-        <AlertTitle>
-          Are you sure you want to delete {contributionRuleToDelete ? `"${contributionRuleToDelete.name}"` : 'this contribution rule'}?
-        </AlertTitle>
-        <AlertDescription>This action cannot be undone.</AlertDescription>
-        <AlertActions>
-          <Button plain onClick={() => setContributionRuleToDelete(null)}>
-            Cancel
-          </Button>
-          <Button
-            color="red"
-            onClick={() => {
-              deleteContributionRule(contributionRuleToDelete!.id);
-              setContributionRuleToDelete(null);
-            }}
-          >
-            Delete
-          </Button>
-        </AlertActions>
-      </Alert>
+      <DisclosureSectionDeleteDataAlert
+        dataToDelete={contributionRuleToDelete}
+        setDataToDelete={setContributionRuleToDelete}
+        deleteData={deleteContributionRule}
+      />
     </>
   );
 }

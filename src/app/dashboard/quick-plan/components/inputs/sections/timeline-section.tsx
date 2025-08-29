@@ -9,11 +9,11 @@ import { type RetirementStrategyInputs } from '@/lib/schemas/timeline-form-schem
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
-import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 
 import TimelineDialog from '../dialogs/timeline-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';
+import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 
 function getRetirementStrategyDesc(retirementStrategy: RetirementStrategyInputs) {
   switch (retirementStrategy.type) {
@@ -103,29 +103,7 @@ export default function TimelineSection({ toggleDisclosure, disclosureButtonRef,
       >
         <TimelineDialog setTimelineDialogOpen={setTimelineDialogOpen} selectedTimelineID={selectedTimelineID} />
       </Dialog>
-      <Alert
-        open={!!timelineToDelete}
-        onClose={() => {
-          setTimelineToDelete(null);
-        }}
-      >
-        <AlertTitle>Are you sure you want to delete {timelineToDelete ? `"${timelineToDelete.name}"` : 'this timeline'}?</AlertTitle>
-        <AlertDescription>This action cannot be undone.</AlertDescription>
-        <AlertActions>
-          <Button plain onClick={() => setTimelineToDelete(null)}>
-            Cancel
-          </Button>
-          <Button
-            color="red"
-            onClick={() => {
-              deleteTimeline(timelineToDelete!.id);
-              setTimelineToDelete(null);
-            }}
-          >
-            Delete
-          </Button>
-        </AlertActions>
-      </Alert>
+      <DisclosureSectionDeleteDataAlert dataToDelete={timelineToDelete} setDataToDelete={setTimelineToDelete} deleteData={deleteTimeline} />
     </>
   );
 }

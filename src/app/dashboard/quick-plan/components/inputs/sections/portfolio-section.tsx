@@ -8,7 +8,6 @@ import { useAccountsData, useDeleteAccount } from '@/lib/stores/quick-plan-store
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
-import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { accountTypeForDisplay } from '@/lib/schemas/account-form-schema';
@@ -16,6 +15,7 @@ import { accountTypeForDisplay } from '@/lib/schemas/account-form-schema';
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';
+import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 
 interface PortfolioSectionProps {
   toggleDisclosure: (newDisclosure: DisclosureState) => void;
@@ -126,29 +126,7 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
       >
         <SavingsDialog setSavingsDialogOpen={setSavingsDialogOpen} selectedAccountID={selectedSavingsID} />
       </Dialog>
-      <Alert
-        open={!!accountToDelete}
-        onClose={() => {
-          setAccountToDelete(null);
-        }}
-      >
-        <AlertTitle>Are you sure you want to delete {accountToDelete ? `"${accountToDelete.name}"` : 'this account'}?</AlertTitle>
-        <AlertDescription>This action cannot be undone.</AlertDescription>
-        <AlertActions>
-          <Button plain onClick={() => setAccountToDelete(null)}>
-            Cancel
-          </Button>
-          <Button
-            color="red"
-            onClick={() => {
-              deleteAccount(accountToDelete!.id);
-              setAccountToDelete(null);
-            }}
-          >
-            Delete
-          </Button>
-        </AlertActions>
-      </Alert>
+      <DisclosureSectionDeleteDataAlert dataToDelete={accountToDelete} setDataToDelete={setAccountToDelete} deleteData={deleteAccount} />
     </>
   );
 }
