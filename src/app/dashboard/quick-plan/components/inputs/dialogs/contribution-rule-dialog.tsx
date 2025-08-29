@@ -66,7 +66,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
   const contributionType = useWatch({ control, name: 'contributionType' });
   const accountId = useWatch({ control, name: 'accountId' });
 
-  const getAllocationTypeColSpan = () => {
+  const getContributionTypeColSpan = () => {
     if (contributionType === 'dollarAmount' || contributionType === 'percentRemaining') return 'col-span-1';
     return 'col-span-2';
   };
@@ -152,8 +152,8 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                 </Field>
               )}
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                <Field className={getAllocationTypeColSpan()}>
-                  <Label htmlFor="contributionType">Contribution Strategy</Label>
+                <Field className={getContributionTypeColSpan()}>
+                  <Label htmlFor="contributionType">Type</Label>
                   <Select {...register('contributionType')} id="contributionType" name="contributionType">
                     <option value="dollarAmount">Dollar Amount</option>
                     <option value="percentRemaining">% Remaining</option>
@@ -162,7 +162,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                 </Field>
                 {contributionType === 'dollarAmount' && (
                   <Field>
-                    <Label>Amount</Label>
+                    <Label>Dollar Amount</Label>
                     <NumberInputV2
                       name="dollarAmount"
                       control={control}
@@ -181,7 +181,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                 )}
                 {contributionType === 'percentRemaining' && (
                   <Field>
-                    <Label>Percent</Label>
+                    <Label>% Remaining</Label>
                     <NumberInputV2
                       name="percentRemaining"
                       control={control}
