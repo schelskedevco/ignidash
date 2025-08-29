@@ -20,7 +20,6 @@ import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/c
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
-import { Divider } from '@/components/catalyst/divider';
 
 const newAccountDefaultValues = {
   id: '',
@@ -66,8 +65,8 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
     }
   }, [type, unregister]);
 
-  const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
-  const percentBonds = clamp(Number(useWatch({ control, name: 'percentBonds' }) || 0), 0, 100);
+  // const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+  // const percentBonds = clamp(Number(useWatch({ control, name: 'percentBonds' }) || 0), 0, 100);
 
   const getBalanceColSpan = () => {
     if (type === 'taxableBrokerage' || type === 'roth401k' || type === 'rothIra') return 'col-span-1';
@@ -158,37 +157,36 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
                       </Field>
                     );
                   })()}
+                <Field className="col-span-2">
+                  <Label htmlFor="percentBonds" className="flex w-full items-center justify-between">
+                    <span className="whitespace-nowrap">% Bonds</span>
+                    <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                  </Label>
+                  <NumberInputV2
+                    name="percentBonds"
+                    control={control}
+                    id="percentBonds"
+                    inputMode="numeric"
+                    placeholder="20%"
+                    suffix="%"
+                    decimalScale={0}
+                    step={1}
+                    min={0}
+                    max={100}
+                  />
+                  {(errors as FieldErrors<Extract<AccountInputs, { type: InvestmentAccountType }>>).percentBonds?.message && (
+                    <ErrorMessage>
+                      {(errors as FieldErrors<Extract<AccountInputs, { type: InvestmentAccountType }>>).percentBonds?.message}
+                    </ErrorMessage>
+                  )}
+                </Field>
+                {/* <div aria-hidden="true" className="mt-2">
+                  <div className="overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
+                    <div style={{ width: `${percentBonds}%` }} className="bg-primary h-2 rounded-full" />
+                  </div>
+                </div> */}
               </div>
-              <Divider />
-              <Field>
-                <Label htmlFor="percentBonds" className="flex w-full items-center justify-between">
-                  <span className="whitespace-nowrap">Bond Allocation</span>
-                  <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
-                </Label>
-                <NumberInputV2
-                  name="percentBonds"
-                  control={control}
-                  id="percentBonds"
-                  inputMode="numeric"
-                  placeholder="20%"
-                  suffix="%"
-                  decimalScale={0}
-                  step={1}
-                  min={0}
-                  max={100}
-                />
-                {(errors as FieldErrors<Extract<AccountInputs, { type: InvestmentAccountType }>>).percentBonds?.message && (
-                  <ErrorMessage>
-                    {(errors as FieldErrors<Extract<AccountInputs, { type: InvestmentAccountType }>>).percentBonds?.message}
-                  </ErrorMessage>
-                )}
-              </Field>
             </FieldGroup>
-            <div aria-hidden="true" className="mt-2">
-              <div className="overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
-                <div style={{ width: `${percentBonds}%` }} className="bg-primary h-2 rounded-full" />
-              </div>
-            </div>
           </DialogBody>
         </Fieldset>
         <DialogActions>
