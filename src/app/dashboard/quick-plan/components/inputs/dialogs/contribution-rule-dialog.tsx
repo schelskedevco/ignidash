@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { PiggyBankIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useWatch, Controller } from 'react-hook-form';
+import { useForm, useWatch, Controller, FieldErrors } from 'react-hook-form';
 
 import {
   useUpdateContributionRules,
@@ -128,6 +128,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                     </Combobox>
                   )}
                 />
+                {errors.accountId && <ErrorMessage>{errors.accountId?.message}</ErrorMessage>}
               </Field>
               {selectedAccount && accountTypeRequiresIncomeForContributions(selectedAccount.type) && (
                 <Field>
@@ -154,14 +155,22 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                   <Field>
                     <Label className="sr-only">Dollar Amount</Label>
                     <NumberInputV2 name="amount" control={control} id="amount" inputMode="decimal" placeholder="$2,500" prefix="$" />
-                    {/* {errors.amount && <ErrorMessage>{errors.amount?.message}</ErrorMessage>} */}
+                    {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'dollarAmount' }>>).amount?.message && (
+                      <ErrorMessage>
+                        {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'dollarAmount' }>>).amount?.message}
+                      </ErrorMessage>
+                    )}
                   </Field>
                 )}
                 {contributionType === 'percentageRemaining' && (
                   <Field>
                     <Label className="sr-only">Percentage Remaining</Label>
                     <NumberInputV2 name="amount" control={control} id="amount" inputMode="decimal" placeholder="25%" suffix="%" />
-                    {/* {errors.amount && <ErrorMessage>{errors.amount?.message}</ErrorMessage>} */}
+                    {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'percentageRemaining' }>>).amount?.message && (
+                      <ErrorMessage>
+                        {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'percentageRemaining' }>>).amount?.message}
+                      </ErrorMessage>
+                    )}
                   </Field>
                 )}
               </div>
