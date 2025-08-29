@@ -43,44 +43,44 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
         disclosureButtonRef={disclosureButtonRef}
         disclosureKey={disclosureKey}
       >
-        {hasIncomes && (
-          <div className="flex h-full flex-col">
-            <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
-              {Object.entries(incomes).map(([id, income], index) => (
-                <DisclosureSectionDataItem
-                  key={id}
-                  id={id}
-                  index={index}
-                  name={income.name}
-                  desc={formatNumber(income.amount, 2, '$') + ` ${income.frequency}`}
-                  leftAddOnCharacter={income.name.charAt(0).toUpperCase()}
-                  onDropdownClickEdit={() => {
-                    setIncomeDialogOpen(true);
-                    setSelectedIncomeID(id);
-                  }}
-                  onDropdownClickDelete={() => {
-                    setIncomeToDelete({ id, name: income.name });
-                  }}
-                />
-              ))}
-            </ul>
-            <div className="mt-auto flex items-center justify-end">
-              <Button outline onClick={() => setIncomeDialogOpen(true)}>
-                <PlusIcon />
-                Income
-              </Button>
-            </div>
-          </div>
-        )}
-        {!hasIncomes && (
-          <div className="flex h-full flex-col">
+        <div className="flex h-full flex-col">
+          {hasIncomes && (
+            <>
+              <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
+                {Object.entries(incomes).map(([id, income], index) => (
+                  <DisclosureSectionDataItem
+                    key={id}
+                    id={id}
+                    index={index}
+                    name={income.name}
+                    desc={formatNumber(income.amount, 2, '$') + ` ${income.frequency}`}
+                    leftAddOnCharacter={income.name.charAt(0).toUpperCase()}
+                    onDropdownClickEdit={() => {
+                      setIncomeDialogOpen(true);
+                      setSelectedIncomeID(id);
+                    }}
+                    onDropdownClickDelete={() => {
+                      setIncomeToDelete({ id, name: income.name });
+                    }}
+                  />
+                ))}
+              </ul>
+              <div className="mt-auto flex items-center justify-end">
+                <Button outline onClick={() => setIncomeDialogOpen(true)}>
+                  <PlusIcon />
+                  Income
+                </Button>
+              </div>
+            </>
+          )}
+          {!hasIncomes && (
             <DisclosureSectionEmptyStateButton
               onClick={() => setIncomeDialogOpen(true)}
               icon={BanknoteArrowUpIcon}
               buttonText="Add income"
             />
-          </div>
-        )}
+          )}
+        </div>
       </DisclosureSection>
 
       <Dialog

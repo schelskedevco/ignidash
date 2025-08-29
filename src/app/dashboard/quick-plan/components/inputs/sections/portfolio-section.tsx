@@ -48,54 +48,56 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
         disclosureButtonRef={disclosureButtonRef}
         disclosureKey={disclosureKey}
       >
-        {hasAccounts && (
-          <div className="flex h-full flex-col">
-            <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
-              {Object.entries(accounts).map(([id, account], index) => (
-                <DisclosureSectionDataItem
-                  key={id}
-                  id={id}
-                  index={index}
-                  name={account.name}
-                  desc={`${formatNumber(account.currentValue, 2, '$')} | ${accountTypeForDisplay(account.type)}`}
-                  leftAddOnCharacter={account.name.charAt(0).toUpperCase()}
-                  onDropdownClickEdit={() => {
-                    if (account.type === 'savings') {
-                      setSavingsDialogOpen(true);
-                      setSelectedSavingsID(id);
-                    } else {
-                      setAccountDialogOpen(true);
-                      setSelectedAccountID(id);
-                    }
-                  }}
-                  onDropdownClickDelete={() => {
-                    setAccountToDelete({ id, name: account.name });
-                  }}
-                />
-              ))}
-            </ul>
-            <div className="mt-auto flex items-center justify-end gap-x-2">
-              <Button outline onClick={() => setSavingsDialogOpen(true)}>
-                <PlusIcon />
-                Savings
-              </Button>
-              <Button outline onClick={() => setAccountDialogOpen(true)}>
-                <PlusIcon />
-                Investment
-              </Button>
-            </div>
-          </div>
-        )}
-        {!hasAccounts && (
-          <div className="flex h-full flex-col gap-2">
-            <DisclosureSectionEmptyStateButton onClick={() => setSavingsDialogOpen(true)} icon={PiggyBankIcon} buttonText="Add savings" />
-            <DisclosureSectionEmptyStateButton
-              onClick={() => setAccountDialogOpen(true)}
-              icon={TrendingUpIcon}
-              buttonText="Add investment"
-            />
-          </div>
-        )}
+        <div className="flex h-full flex-col gap-2">
+          {hasAccounts && (
+            <>
+              <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
+                {Object.entries(accounts).map(([id, account], index) => (
+                  <DisclosureSectionDataItem
+                    key={id}
+                    id={id}
+                    index={index}
+                    name={account.name}
+                    desc={`${formatNumber(account.currentValue, 2, '$')} | ${accountTypeForDisplay(account.type)}`}
+                    leftAddOnCharacter={account.name.charAt(0).toUpperCase()}
+                    onDropdownClickEdit={() => {
+                      if (account.type === 'savings') {
+                        setSavingsDialogOpen(true);
+                        setSelectedSavingsID(id);
+                      } else {
+                        setAccountDialogOpen(true);
+                        setSelectedAccountID(id);
+                      }
+                    }}
+                    onDropdownClickDelete={() => {
+                      setAccountToDelete({ id, name: account.name });
+                    }}
+                  />
+                ))}
+              </ul>
+              <div className="mt-auto flex items-center justify-end gap-x-2">
+                <Button outline onClick={() => setSavingsDialogOpen(true)}>
+                  <PlusIcon />
+                  Savings
+                </Button>
+                <Button outline onClick={() => setAccountDialogOpen(true)}>
+                  <PlusIcon />
+                  Investment
+                </Button>
+              </div>
+            </>
+          )}
+          {!hasAccounts && (
+            <>
+              <DisclosureSectionEmptyStateButton onClick={() => setSavingsDialogOpen(true)} icon={PiggyBankIcon} buttonText="Add savings" />
+              <DisclosureSectionEmptyStateButton
+                onClick={() => setAccountDialogOpen(true)}
+                icon={TrendingUpIcon}
+                buttonText="Add investment"
+              />
+            </>
+          )}
+        </div>
       </DisclosureSection>
       <Dialog
         size="xl"

@@ -52,40 +52,40 @@ export default function TimelineSection({ toggleDisclosure, disclosureButtonRef,
         disclosureButtonRef={disclosureButtonRef}
         disclosureKey={disclosureKey}
       >
-        {hasTimelines && (
-          <div className="flex h-full flex-col">
-            <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
-              {Object.entries(timelines).map(([id, timeline], index) => (
-                <DisclosureSectionDataItem
-                  key={id}
-                  id={id}
-                  index={index}
-                  name={'Timeline ' + (index + 1)}
-                  desc={`${timeline.currentAge} to ${timeline.lifeExpectancy} | ${getRetirementStrategyDesc(timeline.retirementStrategy)}`}
-                  leftAddOnCharacter={String(index + 1)}
-                  onDropdownClickEdit={() => {
-                    setTimelineDialogOpen(true);
-                    setSelectedTimelineID(id);
-                  }}
-                  onDropdownClickDelete={() => {
-                    setTimelineToDelete({ id, name: 'Timeline ' + (index + 1) });
-                  }}
-                />
-              ))}
-            </ul>
-            <div className="mt-auto flex items-center justify-end gap-x-2">
-              <Button outline onClick={() => setTimelineDialogOpen(true)}>
-                <PlusIcon />
-                Timeline
-              </Button>
-            </div>
-          </div>
-        )}
-        {!hasTimelines && (
-          <div className="flex h-full flex-col gap-2">
+        <div className="flex h-full flex-col">
+          {hasTimelines && (
+            <>
+              <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
+                {Object.entries(timelines).map(([id, timeline], index) => (
+                  <DisclosureSectionDataItem
+                    key={id}
+                    id={id}
+                    index={index}
+                    name={'Timeline ' + (index + 1)}
+                    desc={`${timeline.currentAge} to ${timeline.lifeExpectancy} | ${getRetirementStrategyDesc(timeline.retirementStrategy)}`}
+                    leftAddOnCharacter={String(index + 1)}
+                    onDropdownClickEdit={() => {
+                      setTimelineDialogOpen(true);
+                      setSelectedTimelineID(id);
+                    }}
+                    onDropdownClickDelete={() => {
+                      setTimelineToDelete({ id, name: 'Timeline ' + (index + 1) });
+                    }}
+                  />
+                ))}
+              </ul>
+              <div className="mt-auto flex items-center justify-end">
+                <Button outline onClick={() => setTimelineDialogOpen(true)}>
+                  <PlusIcon />
+                  Timeline
+                </Button>
+              </div>
+            </>
+          )}
+          {!hasTimelines && (
             <DisclosureSectionEmptyStateButton onClick={() => setTimelineDialogOpen(true)} icon={HourglassIcon} buttonText="Add timeline" />
-          </div>
-        )}
+          )}
+        </div>
       </DisclosureSection>
       <Dialog
         size="xl"

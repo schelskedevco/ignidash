@@ -43,44 +43,44 @@ export default function ExpensesSection({ toggleDisclosure, disclosureButtonRef,
         disclosureButtonRef={disclosureButtonRef}
         disclosureKey={disclosureKey}
       >
-        {hasExpenses && (
-          <div className="flex h-full flex-col">
-            <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
-              {Object.entries(expenses).map(([id, expense], index) => (
-                <DisclosureSectionDataItem
-                  key={id}
-                  id={id}
-                  index={index}
-                  name={expense.name}
-                  desc={formatNumber(expense.amount, 2, '$') + ` ${expense.frequency}`}
-                  leftAddOnCharacter={expense.name.charAt(0).toUpperCase()}
-                  onDropdownClickEdit={() => {
-                    setExpenseDialogOpen(true);
-                    setSelectedExpenseID(id);
-                  }}
-                  onDropdownClickDelete={() => {
-                    setExpenseToDelete({ id, name: expense.name });
-                  }}
-                />
-              ))}
-            </ul>
-            <div className="mt-auto flex items-center justify-end">
-              <Button outline onClick={() => setExpenseDialogOpen(true)}>
-                <PlusIcon />
-                Expenses
-              </Button>
-            </div>
-          </div>
-        )}
-        {!hasExpenses && (
-          <div className="flex h-full flex-col">
+        <div className="flex h-full flex-col">
+          {hasExpenses && (
+            <>
+              <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
+                {Object.entries(expenses).map(([id, expense], index) => (
+                  <DisclosureSectionDataItem
+                    key={id}
+                    id={id}
+                    index={index}
+                    name={expense.name}
+                    desc={formatNumber(expense.amount, 2, '$') + ` ${expense.frequency}`}
+                    leftAddOnCharacter={expense.name.charAt(0).toUpperCase()}
+                    onDropdownClickEdit={() => {
+                      setExpenseDialogOpen(true);
+                      setSelectedExpenseID(id);
+                    }}
+                    onDropdownClickDelete={() => {
+                      setExpenseToDelete({ id, name: expense.name });
+                    }}
+                  />
+                ))}
+              </ul>
+              <div className="mt-auto flex items-center justify-end">
+                <Button outline onClick={() => setExpenseDialogOpen(true)}>
+                  <PlusIcon />
+                  Expenses
+                </Button>
+              </div>
+            </>
+          )}
+          {!hasExpenses && (
             <DisclosureSectionEmptyStateButton
               onClick={() => setExpenseDialogOpen(true)}
               icon={BanknoteArrowDownIcon}
               buttonText="Add expense"
             />
-          </div>
-        )}
+          )}
+        </div>
       </DisclosureSection>
 
       <Dialog

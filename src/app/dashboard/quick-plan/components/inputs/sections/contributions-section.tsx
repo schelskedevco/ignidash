@@ -47,7 +47,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
       >
         <div className="flex h-full flex-col">
           {hasContributionRules && (
-            <div className="flex h-full flex-col">
+            <>
               <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
                 {Object.entries(contributionRules).map(([id, contributionRule], index) => (
                   <DisclosureSectionDataItem
@@ -73,7 +73,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                   Contribution Rule
                 </Button>
               </div>
-            </div>
+            </>
           )}
           {!hasContributionRules && (
             <DisclosureSectionEmptyStateButton
