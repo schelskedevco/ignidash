@@ -9,7 +9,7 @@ import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { DisclosureState } from '@/lib/types/disclosure-state';
 import { Divider } from '@/components/catalyst/divider';
-import { Field, Label, Description } from '@/components/catalyst/fieldset';
+import { Field, Label /* Description */ } from '@/components/catalyst/fieldset';
 import { Listbox, ListboxLabel, ListboxDescription, ListboxOption } from '@/components/catalyst/listbox';
 import { useContributionRulesData, useDeleteContributionRule } from '@/lib/stores/quick-plan-store';
 
@@ -46,6 +46,23 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
         disclosureKey={disclosureKey}
       >
         <div className="flex h-full flex-col">
+          <Field>
+            <Label className="sr-only">Base Rule</Label>
+            <Listbox name="status" defaultValue="spend">
+              <ListboxOption value="spend">
+                <BanknoteArrowDownIcon data-slot="icon" className="text-primary" />
+                <ListboxLabel>Spend</ListboxLabel>
+                <ListboxDescription>Spend anything left</ListboxDescription>
+              </ListboxOption>
+              <ListboxOption value="save">
+                <PiggyBankIcon data-slot="icon" className="text-primary" />
+                <ListboxLabel>Save</ListboxLabel>
+                <ListboxDescription>Save anything left</ListboxDescription>
+              </ListboxOption>
+            </Listbox>
+            {/* <Description>Allocate any leftover cash after your contribution rules are applied.</Description> */}
+          </Field>
+          <Divider className="my-4" />
           {hasContributionRules && (
             <>
               <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
@@ -82,23 +99,6 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
               buttonText="Add contribution rule"
             />
           )}
-          <Divider className="my-4" />
-          <Field className="mb-4">
-            <Label className="sr-only">Base Rule</Label>
-            <Listbox name="status" defaultValue="spend">
-              <ListboxOption value="spend">
-                <BanknoteArrowDownIcon data-slot="icon" className="text-primary" />
-                <ListboxLabel>Spend</ListboxLabel>
-                <ListboxDescription>Spend anything left</ListboxDescription>
-              </ListboxOption>
-              <ListboxOption value="save">
-                <PiggyBankIcon data-slot="icon" className="text-primary" />
-                <ListboxLabel>Save</ListboxLabel>
-                <ListboxDescription>Save anything left</ListboxDescription>
-              </ListboxOption>
-            </Listbox>
-            <Description>Allocate any leftover cash after your contribution rules are applied.</Description>
-          </Field>
         </div>
       </DisclosureSection>
 
