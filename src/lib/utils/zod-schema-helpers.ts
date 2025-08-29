@@ -55,6 +55,7 @@ export const currencyFieldForbidsZero = (customMessage?: string) => {
 
 /**
  * Creates a percentage field validator with configurable range
+ * Expects percentage as a number (e.g., 50 for 50%, not 0.5)
  * Used for growth rates, allocation percentages, etc.
  *
  * @param min - Minimum allowed percentage value (default: 0)
