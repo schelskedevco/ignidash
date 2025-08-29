@@ -166,6 +166,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                       inputMode="decimal"
                       placeholder="$2,500"
                       prefix="$"
+                      autoFocus={selectedContributionRuleID !== null}
                     />
                     {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'dollarAmount' }>>).dollarAmount?.message && (
                       <ErrorMessage>
@@ -184,6 +185,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                       inputMode="decimal"
                       placeholder="25%"
                       suffix="%"
+                      autoFocus={selectedContributionRuleID !== null}
                     />
                     {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'percentRemaining' }>>).percentRemaining
                       ?.message && (
@@ -202,15 +204,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                   <span className="whitespace-nowrap">Max Total Value</span>
                   <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
                 </Label>
-                <NumberInputV2
-                  name="maxValue"
-                  control={control}
-                  id="maxValue"
-                  inputMode="decimal"
-                  placeholder="$15,000"
-                  prefix="$"
-                  autoFocus={selectedContributionRuleID !== null}
-                />
+                <NumberInputV2 name="maxValue" control={control} id="maxValue" inputMode="decimal" placeholder="$15,000" prefix="$" />
                 {errors.maxValue && <ErrorMessage>{errors.maxValue?.message}</ErrorMessage>}
                 <Description>Set a limit on the total value of this account. Contributions stop once reached.</Description>
               </Field>
