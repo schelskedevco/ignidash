@@ -139,7 +139,7 @@ export default function TimelineDialog({ onClose, selectedTimelineID }: Timeline
               )}
               {retirementStrategyType === 'swrTarget' && (
                 <Field>
-                  <Label htmlFor="retirementStrategy.safeWithdrawalRate">Safe Withdrawal Rate (SWR)</Label>
+                  <Label htmlFor="retirementStrategy.safeWithdrawalRate">Safe Withdrawal Rate</Label>
                   <NumberInputV2
                     name="retirementStrategy.safeWithdrawalRate"
                     control={control}
