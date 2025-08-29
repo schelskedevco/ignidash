@@ -63,7 +63,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
   const accountId = useWatch({ control, name: 'accountId' });
 
   const getAllocationTypeColSpan = () => {
-    if (contributionType === 'dollarAmount' || contributionType === 'percentageRemaining') return 'col-span-1';
+    if (contributionType === 'dollarAmount' || contributionType === 'percentRemaining') return 'col-span-1';
     return 'col-span-2';
   };
 
@@ -142,18 +142,18 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                   </Select>
                 </Field>
               )}
-              <div className="grid grid-cols-2 items-end gap-x-4 gap-y-2">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                 <Field className={getAllocationTypeColSpan()}>
                   <Label htmlFor="contributionType">Contribution Strategy</Label>
                   <Select {...register('contributionType')} id="contributionType" name="contributionType">
                     <option value="dollarAmount">Dollar Amount</option>
-                    <option value="percentageRemaining">% Remaining</option>
+                    <option value="percentRemaining">% Remaining</option>
                     <option value="unlimited">Unlimited</option>
                   </Select>
                 </Field>
                 {contributionType === 'dollarAmount' && (
                   <Field>
-                    <Label className="sr-only">Dollar Amount</Label>
+                    <Label>Amount</Label>
                     <NumberInputV2 name="amount" control={control} id="amount" inputMode="decimal" placeholder="$2,500" prefix="$" />
                     {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'dollarAmount' }>>).amount?.message && (
                       <ErrorMessage>
@@ -162,13 +162,13 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                     )}
                   </Field>
                 )}
-                {contributionType === 'percentageRemaining' && (
+                {contributionType === 'percentRemaining' && (
                   <Field>
-                    <Label className="sr-only">Percentage Remaining</Label>
+                    <Label>Percent</Label>
                     <NumberInputV2 name="amount" control={control} id="amount" inputMode="decimal" placeholder="25%" suffix="%" />
-                    {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'percentageRemaining' }>>).amount?.message && (
+                    {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'percentRemaining' }>>).amount?.message && (
                       <ErrorMessage>
-                        {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'percentageRemaining' }>>).amount?.message}
+                        {(errors as FieldErrors<Extract<ContributionInputs, { contributionType: 'percentRemaining' }>>).amount?.message}
                       </ErrorMessage>
                     )}
                   </Field>

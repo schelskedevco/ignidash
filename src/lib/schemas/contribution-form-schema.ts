@@ -18,7 +18,7 @@ export const contributionFormSchema = z.discriminatedUnion('contributionType', [
 
   z.object({
     ...baseContributionSchema.shape,
-    contributionType: z.literal('percentageRemaining'),
+    contributionType: z.literal('percentRemaining'),
     amount: percentageField(0, 100, 'Percentage of remaining funds'),
   }),
 
