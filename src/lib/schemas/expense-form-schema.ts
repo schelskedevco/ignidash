@@ -53,7 +53,6 @@ const growthSchema = z
   })
   .refine(
     (data) => {
-      // If there's a growth limit, there must be a growth rate
       if (data.growthLimit !== undefined) {
         return data.growthRate !== undefined;
       }
