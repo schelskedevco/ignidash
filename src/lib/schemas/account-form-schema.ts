@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-schema-helpers';
 
 const baseAccountSchema = z.object({
-  id: z.uuid(),
+  id: z.string(),
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
   currentValue: currencyFieldAllowsZero('Value cannot be negative'),
 });

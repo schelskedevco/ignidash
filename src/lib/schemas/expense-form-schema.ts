@@ -67,7 +67,7 @@ const growthSchema = z
 
 export const expenseFormSchema = z
   .object({
-    id: z.uuid(),
+    id: z.string(),
     name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
     amount: currencyFieldForbidsZero('Expense cannot be negative or zero'),
     growth: growthSchema.optional(),
