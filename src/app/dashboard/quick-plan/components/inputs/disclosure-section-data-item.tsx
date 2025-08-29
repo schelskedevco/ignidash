@@ -34,7 +34,7 @@ export default function DisclosureSectionDataItem({
       >
         {leftAddOnCharacter}
       </div>
-      <div className="bg-emphasized-background border-border flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b">
+      <div className="bg-emphasized-background/50 border-border flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b">
         <div className="flex-1 truncate px-4 py-2 text-sm">
           <span className="font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-gray-200">{name}</span>
           <p className="text-muted-foreground">{desc}</p>
