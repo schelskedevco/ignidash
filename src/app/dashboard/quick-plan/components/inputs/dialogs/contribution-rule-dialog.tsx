@@ -36,7 +36,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
   const newContributionRuleDefaultValues = {
     id: '',
     rank: defaultRank,
-    allocationType: 'fixed' as ContributionInputs['allocationType'],
+    contributionType: 'dollarAmount' as ContributionInputs['contributionType'],
   } as const satisfies Partial<ContributionInputs>;
 
   const defaultValues = (existingContributionRuleData || newContributionRuleDefaultValues) as never;
@@ -59,11 +59,11 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
     onClose();
   };
 
-  const allocationType = useWatch({ control, name: 'allocationType' });
+  const contributionType = useWatch({ control, name: 'contributionType' });
   const accountId = useWatch({ control, name: 'accountId' });
 
   const getAllocationTypeColSpan = () => {
-    if (allocationType === 'fixed' || allocationType === 'percentageRemaining') return 'col-span-1';
+    if (contributionType === 'dollarAmount' || contributionType === 'percentageRemaining') return 'col-span-1';
     return 'col-span-2';
   };
 
@@ -75,14 +75,14 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
   const incomeOptions = Object.entries(incomes).map(([id, income]) => ({ id, name: income.name }));
 
   useEffect(() => {
-    if (allocationType === 'unlimited') {
+    if (contributionType === 'unlimited') {
       unregister('amount');
     }
 
     if (!(selectedAccount && accountTypeRequiresIncomeForContributions(selectedAccount.type))) {
       unregister('incomeIds');
     }
-  }, [allocationType, unregister, selectedAccount]);
+  }, [contributionType, unregister, selectedAccount]);
 
   return (
     <>
@@ -143,21 +143,21 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
               )}
               <div className="grid grid-cols-2 items-end gap-x-4 gap-y-2">
                 <Field className={getAllocationTypeColSpan()}>
-                  <Label htmlFor="allocationType">Allocation Strategy</Label>
-                  <Select {...register('allocationType')} id="allocationType" name="allocationType">
-                    <option value="fixed">Dollar Amount</option>
-                    <option value="percentageRemaining">Percentage Remaining</option>
+                  <Label htmlFor="contributionType">Contribution Strategy</Label>
+                  <Select {...register('contributionType')} id="contributionType" name="contributionType">
+                    <option value="dollarAmount">Dollar Amount</option>
+                    <option value="percentageRemaining">% Remaining</option>
                     <option value="unlimited">Unlimited</option>
                   </Select>
                 </Field>
-                {allocationType === 'fixed' && (
+                {contributionType === 'dollarAmount' && (
                   <Field>
                     <Label className="sr-only">Dollar Amount</Label>
                     <NumberInputV2 name="amount" control={control} id="amount" inputMode="decimal" placeholder="$2,500" prefix="$" />
                     {/* {errors.amount && <ErrorMessage>{errors.amount?.message}</ErrorMessage>} */}
                   </Field>
                 )}
-                {allocationType === 'percentageRemaining' && (
+                {contributionType === 'percentageRemaining' && (
                   <Field>
                     <Label className="sr-only">Percentage Remaining</Label>
                     <NumberInputV2 name="amount" control={control} id="amount" inputMode="decimal" placeholder="25%" suffix="%" />

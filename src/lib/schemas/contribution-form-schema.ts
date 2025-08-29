@@ -9,22 +9,22 @@ const baseContributionSchema = z.object({
   incomeIds: z.array(z.string()).optional(),
 });
 
-export const contributionFormSchema = z.discriminatedUnion('allocationType', [
+export const contributionFormSchema = z.discriminatedUnion('contributionType', [
   z.object({
     ...baseContributionSchema.shape,
-    allocationType: z.literal('fixed'),
-    amount: currencyFieldForbidsZero('Amount must be greater than zero'),
+    contributionType: z.literal('dollarAmount'),
+    amount: currencyFieldForbidsZero('Dollar amount must be greater than zero'),
   }),
 
   z.object({
     ...baseContributionSchema.shape,
-    allocationType: z.literal('percentageRemaining'),
+    contributionType: z.literal('percentageRemaining'),
     amount: percentageField(0, 100, 'Percentage of remaining funds'),
   }),
 
   z.object({
     ...baseContributionSchema.shape,
-    allocationType: z.literal('unlimited'),
+    contributionType: z.literal('unlimited'),
   }),
 ]);
 
