@@ -98,14 +98,14 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
             </>
           )}
           {!hasAccounts && (
-            <>
+            <div className="flex h-full gap-2 sm:flex-col">
               <DisclosureSectionEmptyStateButton onClick={() => setSavingsDialogOpen(true)} icon={PiggyBankIcon} buttonText="Add savings" />
               <DisclosureSectionEmptyStateButton
                 onClick={() => setAccountDialogOpen(true)}
                 icon={TrendingUpIcon}
                 buttonText="Add investment"
               />
-            </>
+            </div>
           )}
         </div>
       </DisclosureSection>
