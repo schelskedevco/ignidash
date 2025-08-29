@@ -66,15 +66,15 @@ export default function TimelineSection({ toggleDisclosure, disclosureButtonRef,
                     key={id}
                     id={id}
                     index={index}
-                    name={'Timeline ' + (index + 1)}
+                    name={timeline.name}
                     desc={`${timeline.currentAge} to ${timeline.lifeExpectancy} | ${getRetirementStrategyDesc(timeline.retirementStrategy)}`}
-                    leftAddOnCharacter={String(index + 1)}
+                    leftAddOnCharacter={timeline.name.charAt(0).toUpperCase()}
                     onDropdownClickEdit={() => {
                       setTimelineDialogOpen(true);
                       setSelectedTimelineID(id);
                     }}
                     onDropdownClickDelete={() => {
-                      setTimelineToDelete({ id, name: 'Timeline ' + (index + 1) });
+                      setTimelineToDelete({ id, name: timeline.name });
                     }}
                   />
                 ))}
