@@ -110,6 +110,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                       value={accountOptions.find((account) => account.id === value) || null}
                       onChange={(account) => onChange(account?.id || null)}
                       autoFocus={selectedContributionRuleID === null}
+                      invalid={!!errors.accountId}
                       filter={(account, query) => {
                         if (!account) return false;
 
