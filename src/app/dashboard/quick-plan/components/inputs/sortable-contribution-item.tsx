@@ -14,13 +14,12 @@ interface SortableContributionItemProps {
 }
 
 export default function SortableContributionItem(props: SortableContributionItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: props.id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
   };
 
-  return <ContributionItem ref={setNodeRef} style={style} {...attributes} {...listeners} isDragging={isDragging} {...props} />;
+  return <ContributionItem ref={setNodeRef} style={style} {...attributes} {...listeners} {...props} />;
 }

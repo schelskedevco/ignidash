@@ -10,7 +10,6 @@ interface ContributionItemProps {
   leftAddOnCharacter: string;
   onDropdownClickEdit: () => void;
   onDropdownClickDelete: () => void;
-  isDragging: boolean;
   style?: React.CSSProperties;
 }
 

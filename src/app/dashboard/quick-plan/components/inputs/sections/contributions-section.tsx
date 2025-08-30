@@ -169,7 +169,6 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                 <DragOverlay>
                   {activeId && activeContributionRule ? (
                     <ContributionItem
-                      isDragging
                       key={activeId}
                       id={activeId}
                       index={0} // TODO: Use correct index
