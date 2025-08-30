@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, RefObject, useCallback } from 'react';
+import { useState, RefObject, useCallback, useEffect } from 'react';
 import { HandCoinsIcon, PiggyBankIcon, BanknoteArrowDownIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 import {
@@ -15,6 +15,7 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { restrictToParentElement } from '@dnd-kit/modifiers';
 
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
@@ -71,6 +72,10 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
   const [items, setItems] = useState(Object.values(contributionRules));
   const activeIndex = items.findIndex((item) => item.id === activeId);
   const activeContributionRule = hasContributionRules && activeId ? contributionRules[activeId] : null;
+
+  useEffect(() => {
+    setItems(Object.values(contributionRules));
+  }, [contributionRules]);
 
   const baseContributionRule = useBaseContributionRuleData();
   const updateBaseContributionRule = useUpdateBaseContributionRule();
@@ -142,7 +147,13 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
           <Divider className="my-4" />
           {hasContributionRules && (
             <>
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                modifiers={[restrictToParentElement]}
+              >
                 {/* @ts-expect-error | React 19 type compatibility */}
                 <SortableContext items={items} strategy={verticalListSortingStrategy}>
                   <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
