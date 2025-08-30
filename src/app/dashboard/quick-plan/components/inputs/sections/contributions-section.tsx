@@ -68,8 +68,8 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const contributionRules = useContributionRulesData();
-  const contributionRuleKeys = Object.keys(contributionRules);
-  const contributionRuleValues = Object.values(contributionRules);
+  const contributionRuleKeys = Object.keys(contributionRules).sort((a, b) => contributionRules[a].rank - contributionRules[b].rank);
+  const contributionRuleValues = Object.values(contributionRules).sort((a, b) => a.rank - b.rank);
 
   const hasContributionRules = contributionRuleKeys.length > 0;
 
