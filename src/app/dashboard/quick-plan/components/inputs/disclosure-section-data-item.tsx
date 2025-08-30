@@ -36,20 +36,15 @@ export default function DisclosureSectionDataItem({
     <li key={id} className="col-span-1 flex rounded-md shadow-xs dark:shadow-none" ref={ref} style={style}>
       <div
         className={cn(
-          'border-foreground/50 flex w-16 shrink-0 items-center justify-center rounded-l-md border text-xl font-medium text-white',
-          colors[index % colors.length]
+          'border-foreground/50 flex w-16 shrink-0 items-center justify-center gap-1 rounded-l-md border text-xl font-medium text-white',
+          colors[index % colors.length],
+          showDragHandle &&
+            'cursor-grab touch-none focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset'
         )}
+        {...(showDragHandle ? otherProps : {})}
       >
-        {showDragHandle && (
-          <button
-            className="flex h-full w-full cursor-grab touch-none items-center justify-center gap-1 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-            {...otherProps}
-          >
-            <GripVerticalIcon className="size-5 shrink-0" />
-            {leftAddOnCharacter}
-          </button>
-        )}
-        {!showDragHandle && leftAddOnCharacter}
+        {showDragHandle && <GripVerticalIcon className="size-5 shrink-0" />}
+        {leftAddOnCharacter}
       </div>
       <div className="bg-emphasized-background border-border flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b">
         <div className="flex-1 truncate px-4 py-2 text-sm">
