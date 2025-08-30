@@ -1,4 +1,5 @@
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
+import { GripVerticalIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
@@ -15,6 +16,7 @@ interface DisclosureSectionDataItemProps {
   onDropdownClickDelete: () => void;
   ref?: React.Ref<HTMLLIElement>;
   style?: React.CSSProperties;
+  showDragHandle?: boolean;
 }
 
 export default function DisclosureSectionDataItem({
@@ -27,16 +29,25 @@ export default function DisclosureSectionDataItem({
   onDropdownClickDelete,
   ref,
   style,
+  showDragHandle,
   ...otherProps
 }: DisclosureSectionDataItemProps) {
   return (
-    <li key={id} className="col-span-1 flex rounded-md shadow-xs dark:shadow-none" ref={ref} style={style} {...otherProps}>
+    <li key={id} className="col-span-1 flex rounded-md shadow-xs dark:shadow-none" ref={ref} style={style}>
       <div
         className={cn(
           'border-foreground/50 flex w-16 shrink-0 items-center justify-center rounded-l-md border text-xl font-medium text-white',
           colors[index % colors.length]
         )}
       >
+        {showDragHandle && (
+          <button
+            className="mr-2 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            {...otherProps}
+          >
+            <GripVerticalIcon className="size-5 shrink-0" />
+          </button>
+        )}
         {leftAddOnCharacter}
       </div>
       <div className="bg-emphasized-background border-border flex flex-1 items-center justify-between truncate rounded-r-md border-t border-r border-b">

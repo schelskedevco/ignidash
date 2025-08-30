@@ -14,7 +14,7 @@ interface ContributionItemProps {
 }
 
 export const ContributionItem = forwardRef<HTMLLIElement, ContributionItemProps>(({ id, ...props }, ref) => {
-  return <DisclosureSectionDataItem id={id} {...props} ref={ref} />;
+  return <DisclosureSectionDataItem id={id} {...props} ref={ref} showDragHandle />;
 });
 
 ContributionItem.displayName = 'ContributionItem';
