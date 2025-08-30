@@ -67,10 +67,10 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
 
   const contributionRules = useContributionRulesData();
   const hasContributionRules = Object.keys(contributionRules).length > 0;
-  const activeContributionRule = hasContributionRules && activeId ? contributionRules[activeId] : null;
 
-  const contributionRuleIds = Object.keys(contributionRules);
-  const [items, setItems] = useState(contributionRuleIds);
+  const [items, setItems] = useState(Object.values(contributionRules));
+  const activeIndex = items.findIndex((item) => item.id === activeId);
+  const activeContributionRule = hasContributionRules && activeId ? contributionRules[activeId] : null;
 
   const baseContributionRule = useBaseContributionRuleData();
   const updateBaseContributionRule = useUpdateBaseContributionRule();
@@ -102,8 +102,8 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
 
     if (over && active.id !== over.id) {
       setItems((items) => {
-        const oldIndex = items.indexOf(active.id.toString());
-        const newIndex = items.indexOf(over.id.toString());
+        const oldIndex = items.findIndex((item) => item.id === active.id.toString());
+        const newIndex = items.findIndex((item) => item.id === over.id.toString());
 
         return arrayMove(items, oldIndex, newIndex);
       });
@@ -146,14 +146,14 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                 {/* @ts-expect-error | React 19 type compatibility */}
                 <SortableContext items={items} strategy={verticalListSortingStrategy}>
                   <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
-                    {Object.entries(contributionRules).map(([id, contributionRule], index) => (
+                    {items.map(({ id, ...contributionRule }, index) => (
                       <SortableContributionItem
                         key={id}
                         id={id}
                         index={index}
                         name={`To "${accounts[contributionRule.accountId]?.name || 'Unknown'}" (${accountTypeForDisplay(accounts[contributionRule.accountId]?.type)})`}
-                        desc={getContributionRuleDesc(contributionRule)}
-                        leftAddOnCharacter={String(contributionRule.rank)}
+                        desc={getContributionRuleDesc({ id, ...contributionRule })}
+                        leftAddOnCharacter={String(index + 1)}
                         onDropdownClickEdit={() => {
                           setContributionRuleDialogOpen(true);
                           setSelectedContributionRuleID(id);
@@ -171,16 +171,16 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                     <ContributionItem
                       key={activeId}
                       id={activeId}
-                      index={0} // TODO: Use correct index
+                      index={activeIndex}
                       name={`To "${accounts[activeContributionRule.accountId]?.name || 'Unknown'}" (${accountTypeForDisplay(accounts[activeContributionRule.accountId]?.type)})`}
                       desc={getContributionRuleDesc(activeContributionRule)}
-                      leftAddOnCharacter={String(activeContributionRule.rank)}
+                      leftAddOnCharacter={String(activeIndex + 1)}
                       onDropdownClickEdit={() => {
                         setContributionRuleDialogOpen(true);
                         setSelectedContributionRuleID(activeId);
                       }}
                       onDropdownClickDelete={() => {
-                        setContributionRuleToDelete({ id: activeId, name: 'Contribution Rule ' + (0 + 1) }); // TODO: Use correct index
+                        setContributionRuleToDelete({ id: activeId, name: 'Contribution Rule ' + (activeIndex + 1) });
                       }}
                     />
                   ) : null}
