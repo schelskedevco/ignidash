@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, RefObject, useCallback } from 'react';
+import { useState, RefObject, useCallback, useMemo } from 'react';
 import { HandCoinsIcon, PiggyBankIcon, BanknoteArrowDownIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 import {
@@ -68,13 +68,13 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const contributionRules = useContributionRulesData();
-  const contributionRuleKeys = Object.keys(contributionRules).sort((a, b) => contributionRules[a].rank - contributionRules[b].rank);
-  const contributionRuleValues = Object.values(contributionRules).sort((a, b) => a.rank - b.rank);
+  const sortedRules = useMemo(() => Object.values(contributionRules).sort((a, b) => a.rank - b.rank), [contributionRules]);
+  const sortedRuleIds = useMemo(() => sortedRules.map((rule) => rule.id), [sortedRules]);
 
-  const hasContributionRules = contributionRuleKeys.length > 0;
+  const hasContributionRules = sortedRuleIds.length > 0;
 
-  const activeIndex = contributionRuleValues.findIndex((rule) => rule.id === activeId);
-  const activeContributionRule = activeIndex !== -1 ? contributionRuleValues[activeIndex] : null;
+  const activeIndex = sortedRules.findIndex((rule) => rule.id === activeId);
+  const activeContributionRule = activeIndex !== -1 ? sortedRules[activeIndex] : null;
 
   const baseContributionRule = useBaseContributionRuleData();
   const updateBaseContributionRule = useUpdateBaseContributionRule();
@@ -98,7 +98,6 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
-
     setActiveId(active.id.toString());
   };
 
@@ -106,10 +105,10 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = contributionRuleKeys.indexOf(active.id.toString());
-      const newIndex = contributionRuleKeys.indexOf(over.id.toString());
+      const oldIndex = sortedRuleIds.indexOf(active.id.toString());
+      const newIndex = sortedRuleIds.indexOf(over.id.toString());
 
-      const newOrder = arrayMove(contributionRuleKeys, oldIndex, newIndex);
+      const newOrder = arrayMove(sortedRuleIds, oldIndex, newIndex);
       reorderContributionRules(newOrder);
     }
 
@@ -154,9 +153,9 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                 modifiers={[restrictToParentElement]}
               >
                 {/* @ts-expect-error | React 19 type compatibility */}
-                <SortableContext items={contributionRuleValues} strategy={verticalListSortingStrategy}>
+                <SortableContext items={sortedRules} strategy={verticalListSortingStrategy}>
                   <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
-                    {contributionRuleValues.map(({ id, ...contributionRule }, index) => (
+                    {sortedRules.map(({ id, ...contributionRule }, index) => (
                       <SortableContributionItem
                         key={id}
                         id={id}
