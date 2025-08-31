@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { CalculatorIcon, AdjustmentsHorizontalIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
 
 import IconButton from '@/components/ui/icon-button';
@@ -14,18 +14,24 @@ export default function NumbersColumnHeader() {
   const [marketAssumptionsOpen, setMarketAssumptionsOpen] = useState(false);
   const [simulationPreferencesOpen, setSimulationPreferencesOpen] = useState(false);
 
-  const marketAssumptionsTitleComponent = (
-    <div className="flex items-center gap-2">
-      <ArrowTrendingUpIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
-      <span>Market Assumptions</span>
-    </div>
+  const marketAssumptionsTitleComponent = useMemo(
+    () => (
+      <div className="flex items-center gap-2">
+        <ArrowTrendingUpIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+        <span>Market Assumptions</span>
+      </div>
+    ),
+    []
   );
 
-  const simulationPreferencesTitleComponent = (
-    <div className="flex items-center gap-2">
-      <AdjustmentsHorizontalIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
-      <span>Preferences</span>
-    </div>
+  const simulationPreferencesTitleComponent = useMemo(
+    () => (
+      <div className="flex items-center gap-2">
+        <AdjustmentsHorizontalIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+        <span>Preferences</span>
+      </div>
+    ),
+    []
   );
 
   return (
