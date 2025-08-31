@@ -7,13 +7,10 @@ import IconButton from '@/components/ui/icon-button';
 import Drawer from '@/components/ui/drawer';
 import ColumnHeader from '@/components/ui/column-header';
 
-import PreferencesDrawer from './drawers/preferences-drawer';
 import MarketAssumptionsDrawer from './drawers/market-assumptions-drawer';
 import SimulationPreferencesDrawer from './drawers/simulation-preferences-drawer';
 
 export default function NumbersColumnHeader() {
-  const [preferencesOpen, setPreferencesOpen] = useState(false);
-
   const [marketAssumptionsOpen, setMarketAssumptionsOpen] = useState(false);
   const [simulationPreferencesOpen, setSimulationPreferencesOpen] = useState(false);
 
@@ -30,7 +27,7 @@ export default function NumbersColumnHeader() {
         title="Numbers"
         icon={CalculatorIcon}
         iconButton={
-          <div className="flex items-center">
+          <div className="flex items-center gap-1">
             <IconButton
               icon={ArrowTrendingUpIcon}
               label="Market Assumptions"
@@ -39,18 +36,14 @@ export default function NumbersColumnHeader() {
             />
             <IconButton
               icon={AdjustmentsHorizontalIcon}
-              label="Preferences"
-              onClick={() => setPreferencesOpen(true)}
+              label="Simulation Preferences"
+              onClick={() => setSimulationPreferencesOpen(true)}
               surfaceColor="emphasized"
             />
           </div>
         }
         className="left-76 w-96 border-r group-data-[state=collapsed]/sidebar:left-20"
       />
-
-      <Drawer open={preferencesOpen} setOpen={setPreferencesOpen} title={titleComponent}>
-        <PreferencesDrawer />
-      </Drawer>
 
       <Drawer open={marketAssumptionsOpen} setOpen={setMarketAssumptionsOpen} title={titleComponent}>
         <MarketAssumptionsDrawer />
