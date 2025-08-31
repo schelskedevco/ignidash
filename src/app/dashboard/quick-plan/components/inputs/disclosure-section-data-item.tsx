@@ -4,14 +4,13 @@ import { GripVerticalIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 
-const colors = ['bg-rose-400', 'bg-rose-500', 'bg-rose-600', 'bg-rose-700', 'bg-rose-800'];
-
 interface DisclosureSectionDataItemProps {
   id: string;
   index: number;
   name: string | React.ReactNode;
   desc: string | React.ReactNode;
   leftAddOnCharacter: string;
+  leftAddOnColor: string;
   onDropdownClickEdit: () => void;
   onDropdownClickDelete: () => void;
   ref?: React.Ref<HTMLLIElement>;
@@ -25,6 +24,7 @@ export default function DisclosureSectionDataItem({
   name,
   desc,
   leftAddOnCharacter,
+  leftAddOnColor,
   onDropdownClickEdit,
   onDropdownClickDelete,
   ref,
@@ -37,7 +37,7 @@ export default function DisclosureSectionDataItem({
       <div
         className={cn(
           'border-foreground/50 flex w-16 shrink-0 items-center justify-center gap-1 rounded-l-md border text-xl font-medium text-white',
-          colors[index % colors.length],
+          leftAddOnColor,
           showDragHandle &&
             'cursor-grab touch-none focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset'
         )}

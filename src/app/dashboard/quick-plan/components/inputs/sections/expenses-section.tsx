@@ -60,6 +60,7 @@ export default function ExpensesSection({ toggleDisclosure, disclosureButtonRef,
                     name={expense.name}
                     desc={formatNumber(expense.amount, 2, '$') + ` ${expense.frequency}`}
                     leftAddOnCharacter={expense.name.charAt(0).toUpperCase()}
+                    leftAddOnColor="bg-rose-700"
                     onDropdownClickEdit={() => {
                       setExpenseDialogOpen(true);
                       setSelectedExpenseID(id);

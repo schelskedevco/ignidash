@@ -69,6 +69,7 @@ export default function TimelineSection({ toggleDisclosure, disclosureButtonRef,
                     name={timeline.name}
                     desc={`${timeline.currentAge} to ${timeline.lifeExpectancy} | ${getRetirementStrategyDesc(timeline.retirementStrategy)}`}
                     leftAddOnCharacter={timeline.name.charAt(0).toUpperCase()}
+                    leftAddOnColor="bg-rose-600"
                     onDropdownClickEdit={() => {
                       setTimelineDialogOpen(true);
                       setSelectedTimelineID(id);

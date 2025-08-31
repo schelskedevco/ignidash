@@ -70,6 +70,7 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
                     name={account.name}
                     desc={`${formatNumber(account.currentValue, 2, '$')} | ${accountTypeForDisplay(account.type)}`}
                     leftAddOnCharacter={account.name.charAt(0).toUpperCase()}
+                    leftAddOnColor="bg-rose-400"
                     onDropdownClickEdit={() => {
                       if (account.type === 'savings') {
                         setSavingsDialogOpen(true);

@@ -60,6 +60,7 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
                     name={income.name}
                     desc={formatNumber(income.amount, 2, '$') + ` ${income.frequency}`}
                     leftAddOnCharacter={income.name.charAt(0).toUpperCase()}
+                    leftAddOnColor="bg-rose-500"
                     onDropdownClickEdit={() => {
                       setIncomeDialogOpen(true);
                       setSelectedIncomeID(id);
