@@ -79,7 +79,7 @@ export default function SavingsDialog({ onClose, selectedAccountID }: SavingsDia
                 {errors.name && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
               </Field>
               <Field>
-                <Label htmlFor="currentValue">Current Balance</Label>
+                <Label htmlFor="currentValue">Balance</Label>
                 <NumberInputV2
                   name="currentValue"
                   control={control}
