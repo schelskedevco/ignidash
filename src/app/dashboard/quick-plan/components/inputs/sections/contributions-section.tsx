@@ -162,7 +162,6 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                         name={`${accounts[contributionRule.accountId]?.name || 'Unknown'} | ${accountTypeForDisplay(accounts[contributionRule.accountId]?.type)}`}
                         desc={getContributionRuleDesc({ id, ...contributionRule })}
                         leftAddOnCharacter={String(index + 1)}
-                        leftAddOnColor="bg-rose-800"
                         onDropdownClickEdit={() => {
                           setContributionRuleDialogOpen(true);
                           setSelectedContributionRuleID(id);
@@ -185,7 +184,6 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                       name={`${accounts[activeContributionRule.accountId]?.name || 'Unknown'} | ${accountTypeForDisplay(accounts[activeContributionRule.accountId]?.type)}`}
                       desc={getContributionRuleDesc(activeContributionRule)}
                       leftAddOnCharacter={String(activeIndex + 1)}
-                      leftAddOnColor="bg-rose-800"
                       onDropdownClickEdit={() => {
                         setContributionRuleDialogOpen(true);
                         setSelectedContributionRuleID(activeId);
