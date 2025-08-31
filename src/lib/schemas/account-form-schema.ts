@@ -9,7 +9,7 @@ const baseAccountSchema = z.object({
 });
 
 const investmentAccountSchema = baseAccountSchema.extend({
-  percentBonds: percentageField(0, 100, 'Percent of bonds').optional(),
+  percentBonds: percentageField(0, 100, 'Percentage of bonds').optional(),
 });
 
 export const accountFormSchema = z.discriminatedUnion('type', [
