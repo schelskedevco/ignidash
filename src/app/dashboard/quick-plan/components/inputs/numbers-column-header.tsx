@@ -14,7 +14,14 @@ export default function NumbersColumnHeader() {
   const [marketAssumptionsOpen, setMarketAssumptionsOpen] = useState(false);
   const [simulationPreferencesOpen, setSimulationPreferencesOpen] = useState(false);
 
-  const titleComponent = (
+  const marketAssumptionsTitleComponent = (
+    <div className="flex items-center gap-2">
+      <ArrowTrendingUpIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+      <span>Market Assumptions</span>
+    </div>
+  );
+
+  const simulationPreferencesTitleComponent = (
     <div className="flex items-center gap-2">
       <AdjustmentsHorizontalIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
       <span>Preferences</span>
@@ -45,11 +52,11 @@ export default function NumbersColumnHeader() {
         className="left-76 w-96 border-r group-data-[state=collapsed]/sidebar:left-20"
       />
 
-      <Drawer open={marketAssumptionsOpen} setOpen={setMarketAssumptionsOpen} title={titleComponent}>
+      <Drawer open={marketAssumptionsOpen} setOpen={setMarketAssumptionsOpen} title={marketAssumptionsTitleComponent}>
         <MarketAssumptionsDrawer />
       </Drawer>
 
-      <Drawer open={simulationPreferencesOpen} setOpen={setSimulationPreferencesOpen} title={titleComponent}>
+      <Drawer open={simulationPreferencesOpen} setOpen={setSimulationPreferencesOpen} title={simulationPreferencesTitleComponent}>
         <SimulationPreferencesDrawer />
       </Drawer>
     </>
