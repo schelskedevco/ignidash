@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, RefObject, useCallback, useMemo } from 'react';
-import { HandCoinsIcon, PiggyBankIcon, BanknoteArrowDownIcon } from 'lucide-react';
+import { HandCoinsIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 import {
   closestCenter,
@@ -23,8 +23,8 @@ import { Button } from '@/components/catalyst/button';
 import { formatNumber } from '@/lib/utils';
 import { DisclosureState } from '@/lib/types/disclosure-state';
 import { Divider } from '@/components/catalyst/divider';
+import { Select } from '@/components/catalyst/select';
 import { Field, Label, Description } from '@/components/catalyst/fieldset';
-import { Listbox, ListboxLabel, ListboxDescription, ListboxOption } from '@/components/catalyst/listbox';
 import {
   useContributionRulesData,
   useBaseContributionRuleData,
@@ -126,18 +126,10 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
         <div className="flex h-full flex-col">
           <Field>
             <Label className="sr-only">Base Rule</Label>
-            <Listbox name="status" value={baseContributionRule.type} onChange={(value) => updateBaseContributionRule('type', value)}>
-              <ListboxOption value="spend">
-                <BanknoteArrowDownIcon data-slot="icon" className="text-primary" />
-                <ListboxLabel>Spend</ListboxLabel>
-                <ListboxDescription>Spend anything left</ListboxDescription>
-              </ListboxOption>
-              <ListboxOption value="save">
-                <PiggyBankIcon data-slot="icon" className="text-primary" />
-                <ListboxLabel>Save</ListboxLabel>
-                <ListboxDescription>Save anything left</ListboxDescription>
-              </ListboxOption>
-            </Listbox>
+            <Select name="status" value={baseContributionRule.type} onChange={(e) => updateBaseContributionRule('type', e.target.value)}>
+              <option value="spend">Spend</option>
+              <option value="save">Save</option>
+            </Select>
             <Description className="sr-only">Allocate any leftover cash after your contribution rules are applied.</Description>
           </Field>
           <Divider className="my-4" />
