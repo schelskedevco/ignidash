@@ -190,7 +190,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                 </Label>
                 <NumberInputV2 name="maxValue" control={control} id="maxValue" inputMode="decimal" placeholder="$15,000" prefix="$" />
                 {errors.maxValue && <ErrorMessage>{errors.maxValue?.message}</ErrorMessage>}
-                <Description>Limit on the total value of this account. Contributions stop once reached.</Description>
+                <Description>Limit on the total value of this account. Contributions will stop once reached.</Description>
               </Field>
             </FieldGroup>
           </DialogBody>
