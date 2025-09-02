@@ -107,9 +107,9 @@ export class FinancialSimulationEngine {
     for (let period = 1; period <= totalPeriods; period++) {
       this.incrementSimulationTime(simulationState);
 
-      returnsProcessor.process(); // No dependencies
-      incomesProcessor.process(); // No dependencies
-      expensesProcessor.process(); // No dependencies
+      const _returnsData = returnsProcessor.process();
+      incomesProcessor.process();
+      expensesProcessor.process();
       portfolioProcessor.process(); // See function for dependencies
       taxProcessor.process(); // Needs incomes, withdrawals, rebalance
 
