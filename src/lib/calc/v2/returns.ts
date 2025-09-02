@@ -33,6 +33,7 @@ export class ReturnsProcessor {
           bonds: Math.pow(1 + returnRates.bonds, 1 / 12) - 1,
           cash: Math.pow(1 + returnRates.cash, 1 / 12) - 1,
         };
+
         return { amounts: this.simulationState.portfolio.applyReturns(monthlyReturns), rates: returnRates };
       case 'year':
         return { amounts: this.simulationState.portfolio.applyReturns(returnRates), rates: returnRates };
