@@ -25,18 +25,6 @@ export class ReturnsProcessor {
     }
 
     const returnRates: AssetReturnRates = this.returnRates!;
-
-    switch (this.simulationState.interval) {
-      case 'month':
-        const monthlyReturns: AssetReturnRates = {
-          stocks: Math.pow(1 + returnRates.stocks, 1 / 12) - 1,
-          bonds: Math.pow(1 + returnRates.bonds, 1 / 12) - 1,
-          cash: Math.pow(1 + returnRates.cash, 1 / 12) - 1,
-        };
-
-        return { amounts: this.simulationState.portfolio.applyReturns(monthlyReturns), rates: returnRates };
-      case 'year':
-        return { amounts: this.simulationState.portfolio.applyReturns(returnRates), rates: returnRates };
-    }
+    return { amounts: this.simulationState.portfolio.applyReturns(returnRates), rates: returnRates };
   }
 }

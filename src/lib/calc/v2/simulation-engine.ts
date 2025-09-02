@@ -14,8 +14,6 @@ import { TaxProcessor } from './taxes';
 
 type ISODateString = string;
 
-type SimulationTimeInterval = 'month' | 'year';
-
 interface IncomesData {
   temp: string;
 }
@@ -54,7 +52,6 @@ export interface SimulationResult {
 
 export interface SimulationState {
   date: Date;
-  interval: SimulationTimeInterval;
   age: number;
   year: number;
   period: number;
@@ -68,10 +65,9 @@ export interface SimulationState {
 export class FinancialSimulationEngine {
   constructor(protected inputs: QuickPlanInputs) {}
 
-  runSimulation(returnsProvider: ReturnsProvider, timeline: TimelineInputs, interval: SimulationTimeInterval): SimulationResult {
+  runSimulation(returnsProvider: ReturnsProvider, timeline: TimelineInputs): SimulationResult {
     const simulationState: SimulationState = {
       date: new Date(),
-      interval: interval,
       age: timeline.currentAge,
       year: 0,
       period: 0,
@@ -103,8 +99,7 @@ export class FinancialSimulationEngine {
     const portfolioProcessor = new PortfolioProcessor(simulationState);
 
     const simulationYears = Math.ceil(simulationState.lifeExpectancy - simulationState.age);
-    const totalPeriods = interval === 'month' ? simulationYears * 12 : simulationYears;
-    for (let period = 1; period <= totalPeriods; period++) {
+    for (let year = 1; year <= simulationYears; year++) {
       this.incrementSimulationTime(simulationState);
 
       const _returnsData = returnsProcessor.process();
@@ -142,21 +137,10 @@ export class FinancialSimulationEngine {
   }
 
   private incrementSimulationTime(simulationState: SimulationState): void {
-    switch (simulationState.interval) {
-      case 'month':
-        simulationState.date = new Date(simulationState.date.getFullYear(), simulationState.date.getMonth() + 1, 1);
-        simulationState.age += 1 / 12;
-        simulationState.year += 1 / 12;
-        simulationState.period += 1;
-        break;
-
-      case 'year':
-        simulationState.date = new Date(simulationState.date.getFullYear() + 1, simulationState.date.getMonth(), 1);
-        simulationState.age += 1;
-        simulationState.year += 1;
-        simulationState.period += 1;
-        break;
-    }
+    simulationState.date = new Date(simulationState.date.getFullYear() + 1, simulationState.date.getMonth(), 1);
+    simulationState.age += 1;
+    simulationState.year += 1;
+    simulationState.period += 1;
   }
 }
 
@@ -179,7 +163,7 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
   runSingleSimulation(seed: number): SimulationResult {
     const returnsProvider = new StochasticReturnsProvider(this.inputs, seed);
     const timeline = Object.values(this.inputs.timelines)[0]; // TODO: Use selected timeline. Handle nulls.
-    return this.runSimulation(returnsProvider, timeline, 'year');
+    return this.runSimulation(returnsProvider, timeline);
   }
 
   runMonteCarloSimulation(numSimulations: number): MultiSimulationResult {
@@ -189,7 +173,7 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
       const simulationSeed = this.baseSeed + i * 1009;
       const returnsProvider = new StochasticReturnsProvider(this.inputs, simulationSeed);
       const timeline = Object.values(this.inputs.timelines)[0]; // TODO: Use selected timeline. Handle nulls.
-      const result = this.runSimulation(returnsProvider, timeline, 'year');
+      const result = this.runSimulation(returnsProvider, timeline);
 
       simulations.push([simulationSeed, result]);
     }
@@ -211,7 +195,7 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
   runSingleSimulation(seed: number): SimulationResult & HistoricalRangeInfo {
     const returnsProvider = new LcgHistoricalBacktestReturnsProvider(seed);
     const timeline = Object.values(this.inputs.timelines)[0]; // TODO: Use selected timeline. Handle nulls.
-    const result = this.runSimulation(returnsProvider, timeline, 'year');
+    const result = this.runSimulation(returnsProvider, timeline);
 
     const historicalRanges = returnsProvider.getHistoricalRanges();
 
@@ -225,7 +209,7 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
       const simulationSeed = this.baseSeed + i * 1009;
       const returnsProvider = new LcgHistoricalBacktestReturnsProvider(simulationSeed);
       const timeline = Object.values(this.inputs.timelines)[0]; // TODO: Use selected timeline. Handle nulls.
-      const result = this.runSimulation(returnsProvider, timeline, 'year');
+      const result = this.runSimulation(returnsProvider, timeline);
 
       const historicalRanges = returnsProvider.getHistoricalRanges();
       simulations.push([simulationSeed, { ...result, historicalRanges }]);
