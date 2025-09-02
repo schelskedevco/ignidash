@@ -124,14 +124,16 @@ export const quickPlanSchema = z.object({
   growthRates: growthRatesSchema,
   allocation: allocationSchema,
   goals: goalsSchema,
-  marketAssumptions: marketAssumptionsSchema,
   retirementFunding: retirementFundingSchema,
+
+  // Needed for V2 simulation engine
   timelines: z.record(z.string(), timelineFormSchema),
   incomes: z.record(z.string(), incomeFormSchema),
   accounts: z.record(z.string(), accountFormSchema),
   expenses: z.record(z.string(), expenseFormSchema),
   contributionRules: z.record(z.string(), contributionFormSchema),
   baseContributionRule: baseContributionSchema,
+  marketAssumptions: marketAssumptionsSchema,
 });
 
 // ================================
