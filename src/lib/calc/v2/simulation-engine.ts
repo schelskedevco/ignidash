@@ -40,6 +40,7 @@ interface ReturnsData {
   temp: string;
 }
 
+// NOTE: SimulationDataPoint must be serializable for web workers.
 export interface SimulationDataPoint {
   date: ISODateString;
   portfolio: PortfolioData;
@@ -57,9 +58,10 @@ export interface SimulationResult {
 }
 
 export interface SimulationState {
-  date: ISODateString;
+  date: Date;
   interval: SimulationTimeInterval;
   age: number;
+  years: number;
   lifeExpectancy: number;
   portfolio: Portfolio;
   incomes: Incomes;
@@ -72,9 +74,10 @@ export class FinancialSimulationEngine {
 
   runSimulation(returnsProvider: ReturnsProvider, timeline: TimelineInputs, interval: SimulationTimeInterval): SimulationResult {
     const simulationState: SimulationState = {
-      date: new Date().toISOString().split('T')[0],
+      date: new Date(),
       interval: interval,
       age: timeline.currentAge,
+      years: 0,
       lifeExpectancy: timeline.lifeExpectancy,
       portfolio: new Portfolio(Object.values(this.inputs.accounts)),
       incomes: new Incomes(Object.values(this.inputs.incomes)),
@@ -105,6 +108,8 @@ export class FinancialSimulationEngine {
     const simulationYears = Math.ceil(simulationState.lifeExpectancy - simulationState.age);
     const totalPeriods = interval === 'month' ? simulationYears * 12 : simulationYears;
     for (let period = 1; period <= totalPeriods; period++) {
+      this.incrementSimulationTime(simulationState);
+
       returnsProcessor.process(); // No dependencies
       incomesProcessor.process(); // No dependencies
       expensesProcessor.process(); // No dependencies
@@ -127,7 +132,7 @@ export class FinancialSimulationEngine {
 
   private getDataPointFromSimulationState(simulationState: SimulationState): SimulationDataPoint {
     return {
-      date: simulationState.date,
+      date: simulationState.date.toISOString().split('T')[0],
       portfolio: { totalValue: simulationState.portfolio.getTotalValue() },
       incomes: null,
       expenses: null,
@@ -137,6 +142,22 @@ export class FinancialSimulationEngine {
       withdrawals: null,
       returns: null,
     };
+  }
+
+  private incrementSimulationTime(simulationState: SimulationState): void {
+    switch (simulationState.interval) {
+      case 'month':
+        simulationState.date = new Date(simulationState.date.getFullYear(), simulationState.date.getMonth() + 1, 1);
+        simulationState.age += 1 / 12;
+        simulationState.years += 1 / 12;
+        break;
+
+      case 'year':
+        simulationState.date = new Date(simulationState.date.getFullYear() + 1, simulationState.date.getMonth(), 1);
+        simulationState.age += 1;
+        simulationState.years += 1;
+        break;
+    }
   }
 }
 
