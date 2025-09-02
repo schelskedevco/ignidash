@@ -14,14 +14,6 @@ import { TaxProcessor, type IncomeTaxesData, type TaxesData } from './taxes';
 
 type ISODateString = string;
 
-interface ContributionsData {
-  temp: string;
-}
-
-interface WithdrawalsData {
-  temp: string;
-}
-
 export interface SimulationDataPoint {
   date: ISODateString;
   portfolio: PortfolioData;
@@ -30,8 +22,6 @@ export interface SimulationDataPoint {
   expenses: ExpensesData | null;
   phase: PhaseData;
   taxes: TaxesData | null;
-  contributions: ContributionsData | null;
-  withdrawals: WithdrawalsData | null;
   returns: ReturnsData | null;
 }
 
@@ -74,8 +64,6 @@ export class FinancialSimulationEngine {
         expenses: null,
         phase: simulationState.phase.getCurrentPhase(simulationState),
         taxes: null,
-        contributions: null,
-        withdrawals: null,
         returns: null,
       },
     ];
@@ -95,19 +83,17 @@ export class FinancialSimulationEngine {
       const incomeTaxesData = taxProcessor.processIncomeTax(incomesData);
       const expensesData = expensesProcessor.process(returnsData);
       const netCashFlow = incomeTaxesData.netIncome - expensesData.totalExpenses;
-      const _portfolioData = portfolioProcessor.process(netCashFlow);
+      const portfolioData = portfolioProcessor.process(netCashFlow);
       taxProcessor.process(); // Needs incomes, withdrawals, rebalance
 
       resultData.push({
         date: simulationState.date.toISOString().split('T')[0],
-        portfolio: { totalValue: simulationState.portfolio.getTotalValue() },
+        portfolio: portfolioData,
         incomes: incomesData,
         incomeTaxes: incomeTaxesData,
         expenses: expensesData,
         phase: simulationState.phase.getCurrentPhase(simulationState),
         taxes: null,
-        contributions: null,
-        withdrawals: null,
         returns: returnsData,
       });
     }
