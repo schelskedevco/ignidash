@@ -72,7 +72,8 @@ export abstract class Account {
   constructor(
     protected currentValue: number,
     protected name: string,
-    protected id: string
+    protected id: string,
+    protected totalReturns: AssetReturnAmounts
   ) {}
 
   getCurrentValue(): number {
@@ -84,12 +85,14 @@ export abstract class Account {
 
 export class SavingsAccount extends Account {
   constructor(data: AccountInputs) {
-    super(data.currentValue, data.name, data.id);
+    super(data.currentValue, data.name, data.id, { cash: 0, bonds: 0, stocks: 0 });
   }
 
   applyReturns(returns: AssetReturnRates): AssetReturnAmounts {
     const cashReturnsAmount = this.currentValue * returns.cash;
+
     this.currentValue += cashReturnsAmount;
+    this.totalReturns.cash += cashReturnsAmount;
 
     return {
       cash: cashReturnsAmount,
@@ -105,7 +108,7 @@ export class InvestmentAccount extends Account {
   private contributions: number | undefined;
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
-    super(data.currentValue, data.name, data.id);
+    super(data.currentValue, data.name, data.id, { cash: 0, bonds: 0, stocks: 0 });
     this.percentBonds = data.percentBonds ?? 0;
 
     if ('costBasis' in data) this.costBasis = data.costBasis;
@@ -120,9 +123,11 @@ export class InvestmentAccount extends Account {
     const currentStocksValue = this.currentValue * stocksPercent;
 
     const bondReturnsAmount = currentBondsValue * returns.bonds;
+    this.totalReturns.bonds += bondReturnsAmount;
     const newBondsValue = currentBondsValue + bondReturnsAmount;
 
     const stockReturnsAmount = currentStocksValue * returns.stocks;
+    this.totalReturns.stocks += stockReturnsAmount;
     const newStocksValue = currentStocksValue + stockReturnsAmount;
 
     this.currentValue = newBondsValue + newStocksValue;
