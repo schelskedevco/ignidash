@@ -1,7 +1,7 @@
 import type { AccountInputs, InvestmentAccountType } from '@/lib/schemas/account-form-schema';
 
 import type { SimulationState } from './simulation-engine';
-import type { AssetReturnRates } from '../asset';
+import type { AssetReturnRates, AssetReturnAmounts } from '../asset';
 
 export interface PortfolioData {
   totalValue: number;
@@ -36,10 +36,22 @@ export class Portfolio {
     return this.accounts.reduce((acc, account) => acc + account.getCurrentValue(), 0);
   }
 
-  applyReturns(returns: AssetReturnRates): void {
+  applyReturns(returns: AssetReturnRates): AssetReturnAmounts {
+    const totalReturns: AssetReturnAmounts = {
+      cash: 0,
+      bonds: 0,
+      stocks: 0,
+    };
+
     this.accounts.forEach((account) => {
-      account.applyReturns(returns);
+      const accountReturns = account.applyReturns(returns);
+
+      totalReturns.cash += accountReturns.cash;
+      totalReturns.bonds += accountReturns.bonds;
+      totalReturns.stocks += accountReturns.stocks;
     });
+
+    return totalReturns;
   }
 }
 
@@ -55,7 +67,7 @@ export abstract class Account {
     return this.currentValue;
   }
 
-  abstract applyReturns(returns: AssetReturnRates): void;
+  abstract applyReturns(returns: AssetReturnRates): AssetReturnAmounts;
 }
 
 export class SavingsAccount extends Account {
@@ -63,9 +75,14 @@ export class SavingsAccount extends Account {
     super(data.currentValue);
   }
 
-  applyReturns(returns: AssetReturnRates): void {
+  applyReturns(returns: AssetReturnRates): AssetReturnAmounts {
     const cashReturnsAmount = this.currentValue * returns.cash;
     this.currentValue += cashReturnsAmount;
+    return {
+      cash: cashReturnsAmount,
+      bonds: 0,
+      stocks: 0,
+    };
   }
 }
 
@@ -77,7 +94,7 @@ export class InvestmentAccount extends Account {
     this.percentBonds = data.percentBonds ?? 0;
   }
 
-  applyReturns(returns: AssetReturnRates): void {
+  applyReturns(returns: AssetReturnRates): AssetReturnAmounts {
     const bondsPercent = this.percentBonds / 100;
     const stocksPercent = 1 - bondsPercent;
 
@@ -92,5 +109,11 @@ export class InvestmentAccount extends Account {
 
     this.currentValue = newBondsValue + newStocksValue;
     this.percentBonds = (newBondsValue / this.currentValue) * 100;
+
+    return {
+      cash: 0,
+      bonds: bondReturnsAmount,
+      stocks: stockReturnsAmount,
+    };
   }
 }
