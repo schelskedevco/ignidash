@@ -5,10 +5,12 @@ import type { AssetReturnRates, AssetReturnAmounts } from '../asset';
 export interface ReturnsData {
   amounts: AssetReturnAmounts;
   rates: AssetReturnRates;
+  inflationRate: number;
 }
 
 export class ReturnsProcessor {
   private returnRates: AssetReturnRates | null = null;
+  private inflationRate: number | null = null;
   private lastSimulationYear: number | null = null;
 
   constructor(
@@ -20,11 +22,19 @@ export class ReturnsProcessor {
     const simulationYear = Math.floor(this.simulationState.year);
 
     if (this.lastSimulationYear !== simulationYear) {
-      this.returnRates = this.returnsProvider.getReturns(simulationYear).returns;
+      const returns = this.returnsProvider.getReturns(simulationYear);
+
+      this.returnRates = returns.returns;
+      this.inflationRate = returns.metadata.inflationRate;
       this.lastSimulationYear = simulationYear;
     }
 
     const returnRates: AssetReturnRates = this.returnRates!;
-    return { amounts: this.simulationState.portfolio.applyReturns(returnRates), rates: returnRates };
+
+    return {
+      amounts: this.simulationState.portfolio.applyReturns(returnRates),
+      rates: returnRates,
+      inflationRate: this.inflationRate!,
+    };
   }
 }

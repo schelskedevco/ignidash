@@ -1,16 +1,26 @@
-import { IncomeInputs } from '@/lib/schemas/income-form-schema';
+import type { IncomeInputs } from '@/lib/schemas/income-form-schema';
 
-import { SimulationState } from './simulation-engine';
+import type { ReturnsData } from './returns';
+import type { SimulationState } from './simulation-engine';
 
 export interface IncomesData {
-  temp: string;
+  totalGrossIncome: number;
 }
 
 export class IncomesProcessor {
-  constructor(private simulationState: SimulationState) {}
+  constructor(
+    private simulationState: SimulationState,
+    private incomes: Incomes
+  ) {}
 
-  process(): void {
-    return;
+  process(returnsData: ReturnsData): IncomesData {
+    const activeIncomes = this.incomes.getActiveIncomesByTimeFrame(this.simulationState);
+
+    const totalGrossIncome = activeIncomes.reduce((sum, income) => {
+      return sum + income.calculateAnnualAmount(returnsData.inflationRate, this.simulationState.year);
+    }, 0);
+
+    return { totalGrossIncome };
   }
 }
 
@@ -21,8 +31,8 @@ export class Incomes {
     this.incomes = data.map((income) => new Income(income));
   }
 
-  getActiveIncomes(simulationState: SimulationState): Income[] {
-    return this.incomes.filter((income) => income.getIsActive(simulationState));
+  getActiveIncomesByTimeFrame(simulationState: SimulationState): Income[] {
+    return this.incomes.filter((income) => income.getIsActiveByTimeFrame(simulationState));
   }
 }
 
@@ -33,10 +43,10 @@ export class Income {
     this.hasOneTimeIncomeOccurred = false;
   }
 
-  calculateAmount(inflationRate: number, year: number): number {
-    let amount = this.data.amount;
+  calculateAnnualAmount(inflationRate: number, year: number): number {
+    let amount = this.data.amount * this.getTimesToApplyPerYear();
 
-    const nominalGrowthRate = this.data.growth?.growthRate ?? 0; // Growth rate set by user.
+    const nominalGrowthRate = this.data.growth?.growthRate ?? 0;
     const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate / 100) - 1;
 
     amount *= Math.pow(1 + realGrowthRate, year);
@@ -51,7 +61,7 @@ export class Income {
     return amount;
   }
 
-  getIsActive(simulationState: SimulationState): boolean {
+  getIsActiveByTimeFrame(simulationState: SimulationState): boolean {
     const simDate = new Date(simulationState.date);
     const simAge = simulationState.age;
 
@@ -82,12 +92,9 @@ export class Income {
         break;
     }
 
-    if (this.data.frequency === 'oneTime' && !this.hasOneTimeIncomeOccurred && simTimeIsAfterStart) {
-      this.hasOneTimeIncomeOccurred = true;
-      return true;
-    }
+    const timeFrameEnd = this.data.timeframe?.end;
+    if (!timeFrameEnd) return simTimeIsAfterStart;
 
-    const timeFrameEnd = this.data.timeframe.end!;
     switch (timeFrameEnd.type) {
       case 'customAge':
         simTimeIsBeforeEnd = simAge <= timeFrameEnd.age!;
@@ -112,5 +119,24 @@ export class Income {
     }
 
     return simTimeIsAfterStart && simTimeIsBeforeEnd;
+  }
+
+  getTimesToApplyPerYear(): number {
+    switch (this.data.frequency) {
+      case 'yearly':
+        return 1;
+      case 'oneTime':
+        if (this.hasOneTimeIncomeOccurred) return 0;
+        this.hasOneTimeIncomeOccurred = true;
+        return 1;
+      case 'quarterly':
+        return 4;
+      case 'monthly':
+        return 12;
+      case 'biweekly':
+        return 26;
+      case 'weekly':
+        return 52;
+    }
   }
 }
