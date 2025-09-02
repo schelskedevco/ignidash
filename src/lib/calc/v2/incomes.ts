@@ -86,7 +86,7 @@ export class Income {
         simTimeIsAfterStart = true; // TODO: Use actual date comparison.
         break;
       case 'atRetirement':
-        simTimeIsAfterStart = simulationState.phase.getCurrentPhaseName(simulationState) === 'retirement';
+        simTimeIsAfterStart = simulationState.phase.getCurrentPhase(simulationState).name === 'retirement';
         break;
       case 'atLifeExpectancy':
         simTimeIsAfterStart = false; // TODO: Use actual date comparison.
@@ -112,7 +112,7 @@ export class Income {
         simTimeIsBeforeEnd = false; // TODO: Use actual date comparison.
         break;
       case 'atRetirement':
-        simTimeIsBeforeEnd = simulationState.phase.getCurrentPhaseName(simulationState) !== 'retirement';
+        simTimeIsBeforeEnd = simulationState.phase.getCurrentPhase(simulationState).name !== 'retirement';
         break;
       case 'atLifeExpectancy':
         simTimeIsBeforeEnd = true; // TODO: Use actual date comparison.

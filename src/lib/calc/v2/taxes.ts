@@ -9,6 +9,7 @@ export interface TaxesData {
 export interface IncomeTaxesData {
   taxRate: number;
   taxAmount: number;
+  netIncome: number;
 }
 
 export class TaxProcessor {
@@ -21,6 +22,7 @@ export class TaxProcessor {
   processIncomeTax(incomesData: IncomesData): IncomeTaxesData {
     const taxRate = 0.2; // TODO: Implement progressive tax rates.
     const taxAmount = incomesData.totalGrossIncome * taxRate;
-    return { taxRate, taxAmount };
+    const netIncome = incomesData.totalGrossIncome - taxAmount;
+    return { taxRate, taxAmount, netIncome };
   }
 }
