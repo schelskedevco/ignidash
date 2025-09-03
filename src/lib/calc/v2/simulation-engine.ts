@@ -37,6 +37,10 @@ export interface SimulationContext {
   readonly birthDate: Date;
 }
 
+interface AnnualAccumulator {
+  temp: string;
+}
+
 export interface SimulationState {
   time: {
     date: Date;
@@ -45,6 +49,7 @@ export interface SimulationState {
   };
   portfolio: Portfolio;
   phaseName: PhaseName;
+  accumulator?: AnnualAccumulator;
 }
 
 export class FinancialSimulationEngine {
@@ -70,28 +75,25 @@ export class FinancialSimulationEngine {
     let monthCount = 0;
     while (simulationState.time.date < simulationContext.endDate) {
       monthCount++;
-
       this.incrementSimulationTime(simulationState);
 
-      const returnsData = returnsProcessor.process();
-      const incomesData = incomesProcessor.process(returnsData);
-      const expensesData = expensesProcessor.process(returnsData);
+      const returnsData = returnsProcessor.process(); // annualize once
+      const incomesData = incomesProcessor.process(returnsData); // accumulate (sum)
+      const expensesData = expensesProcessor.process(returnsData); // accumulate (sum)
       const grossCashFlow = incomesData.totalGrossIncome - expensesData.totalExpenses;
-      const portfolioData = portfolioProcessor.process(grossCashFlow);
-      const taxesData = taxProcessor.process(incomesData);
-
-      resultData.push({
-        date: simulationState.time.date.toISOString().split('T')[0],
-        portfolio: portfolioData,
-        incomes: incomesData,
-        expenses: expensesData,
-        phase: phaseIdentifier.getCurrentPhase(simulationState.time.date),
-        taxes: taxesData,
-        returns: returnsData,
-      });
+      const portfolioData = portfolioProcessor.process(grossCashFlow); // accumulate (sum)
+      const taxesData = taxProcessor.process(incomesData); // accumulate (sum)
 
       if (monthCount % 12 === 0) {
-        // Capture data point
+        resultData.push({
+          date: simulationState.time.date.toISOString().split('T')[0],
+          portfolio: portfolioData,
+          incomes: incomesData,
+          expenses: expensesData,
+          phase: phaseIdentifier.getCurrentPhase(simulationState.time.date),
+          taxes: taxesData,
+          returns: returnsData,
+        });
       }
     }
 
