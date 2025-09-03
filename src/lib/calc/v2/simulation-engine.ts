@@ -78,12 +78,12 @@ export class FinancialSimulationEngine {
       monthCount++;
       this.incrementSimulationTime(simulationState);
 
-      const returnsData = returnsProcessor.process(); // annualize once
-      const incomesData = incomesProcessor.process(returnsData); // accumulate (sum)
-      const expensesData = expensesProcessor.process(returnsData); // accumulate (sum)
+      const returnsData = returnsProcessor.process();
+      const incomesData = incomesProcessor.process(returnsData);
+      const expensesData = expensesProcessor.process(returnsData);
       const grossCashFlow = incomesData.totalGrossIncome - expensesData.totalExpenses;
-      const portfolioData = portfolioProcessor.process(grossCashFlow); // accumulate (sum)
-      const taxesData = taxProcessor.process(incomesData); // accumulate (sum)
+      const portfolioData = portfolioProcessor.process(grossCashFlow);
+      const taxesData = taxProcessor.process(incomesData);
 
       simulationState.annualData.returns.push(returnsData);
       simulationState.annualData.incomes.push(incomesData);
