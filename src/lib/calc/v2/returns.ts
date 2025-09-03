@@ -4,8 +4,10 @@ import type { AssetReturnRates, AssetReturnAmounts } from '../asset';
 
 export interface ReturnsData {
   returnAmounts: AssetReturnAmounts;
-  returnRates: AssetReturnRates;
-  inflationRate: number;
+  monthlyReturnRates: AssetReturnRates;
+  monthlyInflationRate: number;
+  annualReturnRates: AssetReturnRates;
+  annualInflationRate: number;
 }
 
 export class ReturnsProcessor {
@@ -40,8 +42,14 @@ export class ReturnsProcessor {
       cash: Math.pow(1 + this.annualReturnRates.cash, 1 / 12) - 1,
     };
     const monthlyInflationRate = Math.pow(1 + this.annualInflationRate, 1 / 12) - 1;
-    const monthlyReturnAmounts = this.simulationState.portfolio.applyReturns(monthlyReturnRates);
+    const returnAmounts = this.simulationState.portfolio.applyReturns(monthlyReturnRates);
 
-    return { returnAmounts: monthlyReturnAmounts, returnRates: monthlyReturnRates, inflationRate: monthlyInflationRate };
+    return {
+      returnAmounts,
+      monthlyReturnRates,
+      monthlyInflationRate,
+      annualReturnRates: this.annualReturnRates,
+      annualInflationRate: this.annualInflationRate,
+    };
   }
 }

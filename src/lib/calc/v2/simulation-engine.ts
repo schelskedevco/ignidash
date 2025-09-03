@@ -91,14 +91,56 @@ export class FinancialSimulationEngine {
       simulationState.annualData.portfolio.push(portfolioData);
 
       if (monthCount % 12 === 0) {
+        const annualData = simulationState.annualData;
+
+        const annualPortfolioData = annualData.portfolio.reduce(
+          (acc, curr) => {
+            acc.totalValue += curr.totalValue;
+            acc.totalContributions += curr.totalContributions;
+            acc.totalWithdrawals += curr.totalWithdrawals;
+            return acc;
+          },
+          { totalValue: 0, totalContributions: 0, totalWithdrawals: 0 }
+        );
+        const annualIncomesData = annualData.incomes.reduce(
+          (acc, curr) => {
+            acc.totalGrossIncome += curr.totalGrossIncome;
+            return acc;
+          },
+          { totalGrossIncome: 0 }
+        );
+        const annualExpensesData = annualData.expenses.reduce(
+          (acc, curr) => {
+            acc.totalExpenses += curr.totalExpenses;
+            return acc;
+          },
+          { totalExpenses: 0 }
+        );
+        const annualReturnsData = annualData.returns.reduce(
+          (acc, curr) => {
+            return {
+              ...acc,
+              returnAmounts: {
+                stocks: acc.returnAmounts.stocks + curr.returnAmounts.stocks,
+                bonds: acc.returnAmounts.bonds + curr.returnAmounts.bonds,
+                cash: acc.returnAmounts.cash + curr.returnAmounts.cash,
+              },
+            };
+          },
+          {
+            ...annualData.returns[0],
+            returnAmounts: { stocks: 0, bonds: 0, cash: 0 },
+          }
+        );
+
         resultData.push({
           date: simulationState.time.date.toISOString().split('T')[0],
-          portfolio: portfolioData,
-          incomes: incomesData,
-          expenses: expensesData,
+          portfolio: annualPortfolioData,
+          incomes: annualIncomesData,
+          expenses: annualExpensesData,
           phase: phaseIdentifier.getCurrentPhase(simulationState.time.date),
           taxes: taxesData,
-          returns: returnsData,
+          returns: annualReturnsData,
         });
 
         simulationState.annualData = {
