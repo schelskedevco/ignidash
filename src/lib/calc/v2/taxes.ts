@@ -3,26 +3,18 @@ import { SimulationState } from './simulation-engine';
 import { IncomesData } from './incomes';
 
 export interface TaxesData {
-  temp: string;
-}
-
-export interface IncomeTaxesData {
-  taxRate: number;
-  taxAmount: number;
+  incomeTaxRate: number;
+  incomeTaxAmount: number;
   netIncome: number;
 }
 
 export class TaxProcessor {
   constructor(private simulationState: SimulationState) {}
 
-  process(): TaxesData {
-    return { temp: 'taxes' };
-  }
-
-  processIncomeTax(incomesData: IncomesData): IncomeTaxesData {
-    const taxRate = 0.2; // TODO: Implement progressive tax rates.
-    const taxAmount = incomesData.totalGrossIncome * taxRate;
-    const netIncome = incomesData.totalGrossIncome - taxAmount;
-    return { taxRate, taxAmount, netIncome };
+  process(incomesData: IncomesData): TaxesData {
+    const incomeTaxRate = 0.2; // TODO: Implement progressive tax rates.
+    const incomeTaxAmount = incomesData.totalGrossIncome * incomeTaxRate;
+    const netIncome = incomesData.totalGrossIncome - incomeTaxAmount;
+    return { incomeTaxRate, incomeTaxAmount, netIncome };
   }
 }

@@ -12,14 +12,14 @@ export interface PortfolioData {
 export class PortfolioProcessor {
   constructor(private simulationState: SimulationState) {}
 
-  process(netCashFlow: number): PortfolioData {
+  process(grossCashFlow: number): PortfolioData {
     // Process contributions (Needs income, taxes, expenses)
     // Process withdrawals (Needs net cash flow)
     // Process rebalance (Needs final portfolio state)
 
-    if (netCashFlow > 0) {
+    if (grossCashFlow > 0) {
       // Handle contributions
-    } else if (netCashFlow < 0) {
+    } else if (grossCashFlow < 0) {
       // Handle withdrawals
     }
 

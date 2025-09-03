@@ -10,7 +10,7 @@ import { PhaseIdentifier, PhaseData, PhaseName } from './phase';
 import { ReturnsProcessor, type ReturnsData } from './returns';
 import { Incomes, IncomesProcessor, type IncomesData } from './incomes';
 import { Expenses, ExpensesProcessor, type ExpensesData } from './expenses';
-import { TaxProcessor, type IncomeTaxesData, type TaxesData } from './taxes';
+import { TaxProcessor, type TaxesData } from './taxes';
 
 type ISODateString = string;
 
@@ -18,7 +18,6 @@ export interface SimulationDataPoint {
   date: ISODateString;
   portfolio: PortfolioData;
   incomes: IncomesData | null;
-  incomeTaxes: IncomeTaxesData | null;
   expenses: ExpensesData | null;
   phase: PhaseData;
   taxes: TaxesData | null;
@@ -70,17 +69,15 @@ export class FinancialSimulationEngine {
 
       const returnsData = returnsProcessor.process();
       const incomesData = incomesProcessor.process(returnsData);
-      const incomeTaxesData = taxProcessor.processIncomeTax(incomesData);
       const expensesData = expensesProcessor.process(returnsData);
-      const netCashFlow = incomeTaxesData.netIncome - expensesData.totalExpenses;
-      const portfolioData = portfolioProcessor.process(netCashFlow);
-      const taxesData = taxProcessor.process();
+      const grossCashFlow = incomesData.totalGrossIncome - expensesData.totalExpenses;
+      const portfolioData = portfolioProcessor.process(grossCashFlow);
+      const taxesData = taxProcessor.process(incomesData);
 
       resultData.push({
         date: simulationState.time.date.toISOString().split('T')[0],
         portfolio: portfolioData,
         incomes: incomesData,
-        incomeTaxes: incomeTaxesData,
         expenses: expensesData,
         phase: phaseIdentifier.getCurrentPhase(simulationState.time.date),
         taxes: taxesData,
@@ -129,7 +126,6 @@ export class FinancialSimulationEngine {
       date: new Date().toISOString().split('T')[0],
       portfolio: { totalValue: initialSimulationState.portfolio.getTotalValue(), totalContributions: 0, totalWithdrawals: 0 },
       incomes: null,
-      incomeTaxes: null,
       expenses: null,
       phase: phaseIdentifier.getCurrentPhase(initialSimulationState.time.date),
       taxes: null,
