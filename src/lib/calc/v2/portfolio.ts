@@ -21,13 +21,8 @@ export class PortfolioProcessor {
     // Process withdrawals (Needs net cash flow)
     // Process rebalance (Needs final portfolio state)
 
-    let totalWithdrawals = 0;
     const totalContributions = this.processContributions(grossCashFlow);
-
-    if (grossCashFlow < 0) {
-      totalWithdrawals = grossCashFlow;
-      // Handle withdrawals
-    }
+    const totalWithdrawals = this.processWithdrawals(grossCashFlow);
 
     return { totalValue: this.simulationState.portfolio.getTotalValue(), totalWithdrawals, totalContributions };
   }
@@ -72,6 +67,15 @@ export class PortfolioProcessor {
     }
 
     return totalContributions;
+  }
+
+  private processWithdrawals(grossCashFlow: number): number {
+    if (!(grossCashFlow < 0)) {
+      return 0;
+    }
+
+    const totalWithdrawals = grossCashFlow;
+    return totalWithdrawals;
   }
 }
 
