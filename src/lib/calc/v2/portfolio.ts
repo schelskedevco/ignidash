@@ -2,6 +2,7 @@ import type { AccountInputs, InvestmentAccountType } from '@/lib/schemas/account
 
 import type { SimulationState } from './simulation-engine';
 import type { AssetReturnRates, AssetReturnAmounts } from '../asset';
+import { ContributionRules } from './contribution-rules';
 
 export interface PortfolioData {
   totalValue: number;
@@ -10,7 +11,10 @@ export interface PortfolioData {
 }
 
 export class PortfolioProcessor {
-  constructor(private simulationState: SimulationState) {}
+  constructor(
+    private simulationState: SimulationState,
+    private contributionRules: ContributionRules
+  ) {}
 
   process(grossCashFlow: number): PortfolioData {
     // Process contributions (Needs income, taxes, expenses)
@@ -18,7 +22,38 @@ export class PortfolioProcessor {
     // Process rebalance (Needs final portfolio state)
 
     if (grossCashFlow > 0) {
-      // Handle contributions
+      const contributionRules = this.contributionRules.getRules();
+
+      let cashLeftToAllocate = grossCashFlow;
+      let currentRuleIndex = 0;
+      while (cashLeftToAllocate > 0 && currentRuleIndex < contributionRules.length) {
+        const rule = contributionRules[currentRuleIndex];
+        if (!rule.canApply()) {
+          currentRuleIndex++;
+          continue;
+        }
+
+        const contributionAmount = rule.getContributionAmount(cashLeftToAllocate);
+        const contributeToAccountID = rule.getAccountID();
+        const contributeToAccount = this.simulationState.portfolio.getAccountById(contributeToAccountID)!;
+
+        contributeToAccount.applyContribution(contributionAmount);
+
+        cashLeftToAllocate -= contributionAmount;
+        currentRuleIndex++;
+      }
+
+      if (cashLeftToAllocate > 0) {
+        const baseRule = this.contributionRules.getBaseRuleType();
+        switch (baseRule) {
+          case 'spend':
+            // Handle remaining cash for spend
+            break;
+          case 'save':
+            // Handle remaining cash for save
+            break;
+        }
+      }
     } else if (grossCashFlow < 0) {
       // Handle withdrawals
     }
@@ -42,6 +77,10 @@ export class Portfolio {
 
   getTotalValue(): number {
     return this.accounts.reduce((acc, account) => acc + account.getCurrentValue(), 0);
+  }
+
+  getAccountById(accountID: string): Account | undefined {
+    return this.accounts.find((account) => account.getAccountID() === accountID);
   }
 
   applyReturns(returns: AssetReturnRates): AssetReturnAmounts {
@@ -76,11 +115,16 @@ export abstract class Account {
     protected totalReturns: AssetReturnAmounts
   ) {}
 
+  getAccountID(): string {
+    return this.id;
+  }
+
   getCurrentValue(): number {
     return this.currentValue;
   }
 
   abstract applyReturns(returns: AssetReturnRates): AssetReturnAmounts;
+  abstract applyContribution(amount: number): void;
 }
 
 export class SavingsAccount extends Account {
@@ -100,23 +144,29 @@ export class SavingsAccount extends Account {
       stocks: 0,
     };
   }
+
+  applyContribution(amount: number): void {
+    this.currentValue += amount;
+  }
 }
 
 export class InvestmentAccount extends Account {
-  private percentBonds: number;
+  private initialPercentBonds: number;
+  private currPercentBonds: number;
   private costBasis: number | undefined;
   private contributions: number | undefined;
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
     super(data.currentValue, data.name, data.id, { cash: 0, bonds: 0, stocks: 0 });
-    this.percentBonds = data.percentBonds ?? 0;
+    this.initialPercentBonds = data.percentBonds ?? 0;
+    this.currPercentBonds = data.percentBonds ?? 0;
 
     if ('costBasis' in data) this.costBasis = data.costBasis;
     if ('contributions' in data) this.contributions = data.contributions;
   }
 
   applyReturns(returns: AssetReturnRates): AssetReturnAmounts {
-    const bondsPercent = this.percentBonds / 100;
+    const bondsPercent = this.currPercentBonds / 100;
     const stocksPercent = 1 - bondsPercent;
 
     const currentBondsValue = this.currentValue * bondsPercent;
@@ -131,12 +181,21 @@ export class InvestmentAccount extends Account {
     const newStocksValue = currentStocksValue + stockReturnsAmount;
 
     this.currentValue = newBondsValue + newStocksValue;
-    this.percentBonds = (newBondsValue / this.currentValue) * 100;
+    this.currPercentBonds = (newBondsValue / this.currentValue) * 100;
 
     return {
       cash: 0,
       bonds: bondReturnsAmount,
       stocks: stockReturnsAmount,
     };
+  }
+
+  applyContribution(amount: number): void {
+    // TODO: Handle percentBonds allocation with contributions.
+
+    this.currentValue += amount;
+
+    if (this.costBasis !== undefined) this.costBasis += amount;
+    if (this.contributions !== undefined) this.contributions += amount;
   }
 }

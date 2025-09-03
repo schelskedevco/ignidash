@@ -6,6 +6,7 @@ import { StochasticReturnsProvider } from '../stochastic-returns-provider';
 import { LcgHistoricalBacktestReturnsProvider } from '../lcg-historical-backtest-returns-provider';
 
 import { Portfolio, PortfolioData, PortfolioProcessor } from './portfolio';
+import { ContributionRules } from './contribution-rules';
 import { PhaseIdentifier, PhaseData, PhaseName } from './phase';
 import { ReturnsProcessor, type ReturnsData } from './returns';
 import { Incomes, IncomesProcessor, type IncomesData } from './incomes';
@@ -66,11 +67,12 @@ export class FinancialSimulationEngine {
 
     const incomes = new Incomes(Object.values(this.inputs.incomes));
     const expenses = new Expenses(Object.values(this.inputs.expenses));
+    const contributionRules = new ContributionRules(Object.values(this.inputs.contributionRules), this.inputs.baseContributionRule);
 
     const returnsProcessor = new ReturnsProcessor(simulationState, returnsProvider);
     const incomesProcessor = new IncomesProcessor(simulationState, incomes);
     const expensesProcessor = new ExpensesProcessor(simulationState, expenses);
-    const portfolioProcessor = new PortfolioProcessor(simulationState);
+    const portfolioProcessor = new PortfolioProcessor(simulationState, contributionRules);
     const taxProcessor = new TaxProcessor(simulationState);
 
     let monthCount = 0;
