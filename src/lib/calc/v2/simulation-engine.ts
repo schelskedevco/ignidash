@@ -85,6 +85,8 @@ export class FinancialSimulationEngine {
       const portfolioData = portfolioProcessor.process(grossCashFlow);
       const taxesData = taxProcessor.process(incomesData);
 
+      simulationState.phaseName = phaseIdentifier.getCurrentPhase(simulationState.time.date).name;
+
       simulationState.annualData.returns.push(returnsData);
       simulationState.annualData.incomes.push(incomesData);
       simulationState.annualData.expenses.push(expensesData);
