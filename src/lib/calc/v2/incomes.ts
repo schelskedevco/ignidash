@@ -87,68 +87,50 @@ export class Income {
     const simDate = simulationState.time.date;
     const simAge = simulationState.time.age;
 
-    let simTimeIsAfterIncomeStart = false;
-
     const timeFrameStart = this.timeFrameStart;
     switch (timeFrameStart.type) {
       case 'customAge':
-        simTimeIsAfterIncomeStart = simAge >= timeFrameStart.age!;
-        break;
+        return simAge >= timeFrameStart.age!;
       case 'customDate':
         const customDateYear = timeFrameStart.year!;
         const customDateMonth = timeFrameStart.month! - 1;
 
         const customStartDate = new Date(customDateYear, customDateMonth);
 
-        simTimeIsAfterIncomeStart = simDate >= customStartDate;
-        break;
+        return simDate >= customStartDate;
       case 'now':
-        simTimeIsAfterIncomeStart = true;
-        break;
+        return true;
       case 'atRetirement':
-        simTimeIsAfterIncomeStart = simulationState.phaseName === 'retirement';
-        break;
+        return simulationState.phaseName === 'retirement';
       case 'atLifeExpectancy':
-        simTimeIsAfterIncomeStart = false;
-        break;
+        return false;
     }
-
-    return simTimeIsAfterIncomeStart;
   }
 
   private getIsSimTimeBeforeIncomeEnd(simulationState: SimulationState): boolean {
     const simDate = simulationState.time.date;
     const simAge = simulationState.time.age;
 
-    let simTimeIsBeforeIncomeEnd = false;
-
     const timeFrameEnd = this.timeFrameEnd;
     if (!timeFrameEnd) return true; // If no end time frame is set, consider it active
 
     switch (timeFrameEnd.type) {
       case 'customAge':
-        simTimeIsBeforeIncomeEnd = simAge <= timeFrameEnd.age!;
-        break;
+        return simAge <= timeFrameEnd.age!;
       case 'customDate':
         const customDateYear = timeFrameEnd.year!;
         const customDateMonth = timeFrameEnd.month! - 1;
 
         const customEndDate = new Date(customDateYear, customDateMonth);
 
-        simTimeIsBeforeIncomeEnd = simDate <= customEndDate;
-        break;
+        return simDate <= customEndDate;
       case 'now':
-        simTimeIsBeforeIncomeEnd = false;
-        break;
+        return false;
       case 'atRetirement':
-        simTimeIsBeforeIncomeEnd = simulationState.phaseName !== 'retirement';
-        break;
+        return simulationState.phaseName !== 'retirement';
       case 'atLifeExpectancy':
-        simTimeIsBeforeIncomeEnd = true;
-        break;
+        return true;
     }
-
-    return simTimeIsBeforeIncomeEnd;
   }
 
   private getTimesToApplyPerYear(): number {
