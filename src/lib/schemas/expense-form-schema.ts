@@ -25,6 +25,8 @@ const timePointSchema = z
     }
   );
 
+export type TimePoint = z.infer<typeof timePointSchema>;
+
 const frequencyTimeframeSchema = z
   .object({
     frequency: z.enum(['yearly', 'oneTime', 'quarterly', 'monthly', 'biweekly', 'weekly']),

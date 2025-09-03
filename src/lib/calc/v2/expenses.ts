@@ -1,4 +1,4 @@
-import type { ExpenseInputs } from '@/lib/schemas/expense-form-schema';
+import type { ExpenseInputs, TimePoint } from '@/lib/schemas/expense-form-schema';
 
 import type { ReturnsData } from './returns';
 import type { SimulationState } from './simulation-engine';
@@ -17,8 +17,7 @@ export class ExpensesProcessor {
     const activeExpenses = this.expenses.getActiveExpensesByTimeFrame(this.simulationState);
 
     const totalExpenses = activeExpenses.reduce((sum, expense) => {
-      // TODO: Fix partial year timeframe expense application
-      return sum + expense.calculateAnnualAmount(returnsData.annualInflationRate, this.simulationState.time.year);
+      return sum + expense.processMonthlyAmount(returnsData.annualInflationRate, this.simulationState.time.year);
     }, 0);
 
     return { totalExpenses };
@@ -28,7 +27,7 @@ export class ExpensesProcessor {
 export class Expenses {
   private readonly expenses: Expense[];
 
-  constructor(private data: ExpenseInputs[]) {
+  constructor(data: ExpenseInputs[]) {
     this.expenses = data.map((expense) => new Expense(expense));
   }
 
@@ -39,40 +38,61 @@ export class Expenses {
 
 export class Expense {
   private hasOneTimeExpenseOccurred: boolean;
+  private amount: number;
+  private growthRate: number | undefined;
+  private growthLimit: number | undefined;
+  private timeFrameStart: TimePoint;
+  private timeFrameEnd: TimePoint | undefined;
+  private frequency: 'yearly' | 'oneTime' | 'quarterly' | 'monthly' | 'biweekly' | 'weekly';
 
-  constructor(private data: ExpenseInputs) {
+  constructor(data: ExpenseInputs) {
     this.hasOneTimeExpenseOccurred = false;
+    this.amount = data.amount;
+    this.growthRate = data.growth?.growthRate;
+    this.growthLimit = data.growth?.growthLimit;
+    this.timeFrameStart = data.timeframe.start;
+    this.timeFrameEnd = data.timeframe.end;
+    this.frequency = data.frequency;
   }
 
-  calculateAnnualAmount(inflationRate: number, year: number): number {
-    let amount = this.data.amount * this.getTimesToApplyPerYear();
+  processMonthlyAmount(inflationRate: number, year: number): number {
+    const rawAmount = this.amount;
+    let annualAmount = rawAmount * this.getTimesToApplyPerYear();
 
-    const nominalGrowthRate = this.data.growth?.growthRate ?? 0;
+    const nominalGrowthRate = this.growthRate ?? 0;
     const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate / 100) - 1;
 
-    amount *= Math.pow(1 + realGrowthRate, year);
+    annualAmount *= Math.pow(1 + realGrowthRate, year);
 
-    const growthLimit = this.data.growth?.growthLimit;
+    const growthLimit = this.growthLimit;
     if (growthLimit !== undefined && nominalGrowthRate > 0) {
-      amount = Math.min(amount, growthLimit);
+      annualAmount = Math.min(annualAmount, growthLimit);
     } else if (growthLimit !== undefined && nominalGrowthRate < 0) {
-      amount = Math.max(amount, growthLimit);
+      annualAmount = Math.max(annualAmount, growthLimit);
     }
 
-    return amount;
+    const monthlyAmount = Math.max((annualAmount / this.getTimesToApplyPerYear()) * this.getTimesToApplyPerMonth(), 0);
+    if (this.frequency === 'oneTime') this.hasOneTimeExpenseOccurred = true;
+    return monthlyAmount;
   }
 
   getIsActiveByTimeFrame(simulationState: SimulationState): boolean {
-    const simDate = new Date(simulationState.time.date);
+    const simTimeIsAfterExpenseStart = this.getIsSimTimeAfterExpenseStart(simulationState);
+    const simTimeIsBeforeExpenseEnd = this.getIsSimTimeBeforeExpenseEnd(simulationState);
+
+    return simTimeIsAfterExpenseStart && simTimeIsBeforeExpenseEnd;
+  }
+
+  private getIsSimTimeAfterExpenseStart(simulationState: SimulationState): boolean {
+    const simDate = simulationState.time.date;
     const simAge = simulationState.time.age;
 
-    let simTimeIsAfterStart = false;
-    let simTimeIsBeforeEnd = false;
+    let simTimeIsAfterExpenseStart = false;
 
-    const timeFrameStart = this.data.timeframe.start;
+    const timeFrameStart = this.timeFrameStart;
     switch (timeFrameStart.type) {
       case 'customAge':
-        simTimeIsAfterStart = simAge >= timeFrameStart.age!;
+        simTimeIsAfterExpenseStart = simAge >= timeFrameStart.age!;
         break;
       case 'customDate':
         const customDateYear = timeFrameStart.year!;
@@ -80,25 +100,34 @@ export class Expense {
 
         const customStartDate = new Date(customDateYear, customDateMonth);
 
-        simTimeIsAfterStart = simDate >= customStartDate;
+        simTimeIsAfterExpenseStart = simDate >= customStartDate;
         break;
       case 'now':
-        simTimeIsAfterStart = true; // TODO: Use actual date comparison.
+        simTimeIsAfterExpenseStart = true;
         break;
       case 'atRetirement':
-        simTimeIsAfterStart = simulationState.phaseName === 'retirement';
+        simTimeIsAfterExpenseStart = simulationState.phaseName === 'retirement';
         break;
       case 'atLifeExpectancy':
-        simTimeIsAfterStart = false; // TODO: Use actual date comparison.
+        simTimeIsAfterExpenseStart = false;
         break;
     }
 
-    const timeFrameEnd = this.data.timeframe?.end;
-    if (!timeFrameEnd) return simTimeIsAfterStart;
+    return simTimeIsAfterExpenseStart;
+  }
+
+  private getIsSimTimeBeforeExpenseEnd(simulationState: SimulationState): boolean {
+    const simDate = simulationState.time.date;
+    const simAge = simulationState.time.age;
+
+    let simTimeIsBeforeExpenseEnd = false;
+
+    const timeFrameEnd = this.timeFrameEnd;
+    if (!timeFrameEnd) return true; // If no end time frame is set, consider it active
 
     switch (timeFrameEnd.type) {
       case 'customAge':
-        simTimeIsBeforeEnd = simAge <= timeFrameEnd.age!;
+        simTimeIsBeforeExpenseEnd = simAge <= timeFrameEnd.age!;
         break;
       case 'customDate':
         const customDateYear = timeFrameEnd.year!;
@@ -106,29 +135,28 @@ export class Expense {
 
         const customEndDate = new Date(customDateYear, customDateMonth);
 
-        simTimeIsBeforeEnd = simDate <= customEndDate;
+        simTimeIsBeforeExpenseEnd = simDate <= customEndDate;
         break;
       case 'now':
-        simTimeIsBeforeEnd = false; // TODO: Use actual date comparison.
+        simTimeIsBeforeExpenseEnd = false;
         break;
       case 'atRetirement':
-        simTimeIsBeforeEnd = simulationState.phaseName !== 'retirement';
+        simTimeIsBeforeExpenseEnd = simulationState.phaseName !== 'retirement';
         break;
       case 'atLifeExpectancy':
-        simTimeIsBeforeEnd = true; // TODO: Use actual date comparison.
+        simTimeIsBeforeExpenseEnd = true;
         break;
     }
 
-    return simTimeIsAfterStart && simTimeIsBeforeEnd;
+    return simTimeIsBeforeExpenseEnd;
   }
 
-  getTimesToApplyPerYear(): number {
-    switch (this.data.frequency) {
+  private getTimesToApplyPerYear(): number {
+    switch (this.frequency) {
       case 'yearly':
         return 1;
       case 'oneTime':
         if (this.hasOneTimeExpenseOccurred) return 0;
-        this.hasOneTimeExpenseOccurred = true;
         return 1;
       case 'quarterly':
         return 4;
@@ -141,13 +169,12 @@ export class Expense {
     }
   }
 
-  getTimesToApplyPerMonth(): number {
-    switch (this.data.frequency) {
+  private getTimesToApplyPerMonth(): number {
+    switch (this.frequency) {
       case 'yearly':
         return 1 / 12;
       case 'oneTime':
         if (this.hasOneTimeExpenseOccurred) return 0;
-        this.hasOneTimeExpenseOccurred = true;
         return 1;
       case 'quarterly':
         return 4 / 12;
