@@ -18,7 +18,7 @@ export class ExpensesProcessor {
 
     const totalExpenses = activeExpenses.reduce((sum, expense) => {
       // TODO: Fix partial year timeframe expense application
-      return sum + expense.calculateAnnualAmount(returnsData.inflationRate, this.simulationState.time.year);
+      return sum + expense.calculateAnnualAmount(returnsData.annualInflationRate, this.simulationState.time.year);
     }, 0);
 
     return { totalExpenses };

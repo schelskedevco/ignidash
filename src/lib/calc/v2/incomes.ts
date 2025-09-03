@@ -18,7 +18,7 @@ export class IncomesProcessor {
 
     const totalGrossIncome = activeIncomes.reduce((sum, income) => {
       // TODO: Fix partial year timeframe income application
-      return sum + income.calculateAnnualAmount(returnsData.inflationRate, this.simulationState.time.year);
+      return sum + income.calculateAnnualAmount(returnsData.annualInflationRate, this.simulationState.time.year);
     }, 0);
 
     return { totalGrossIncome };
