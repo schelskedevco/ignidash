@@ -77,11 +77,17 @@ export class Income {
   }
 
   getIsActiveByTimeFrame(simulationState: SimulationState): boolean {
+    const simTimeIsAfterIncomeStart = this.getIsSimTimeAfterIncomeStart(simulationState);
+    const simTimeIsBeforeIncomeEnd = this.getIsSimTimeBeforeIncomeEnd(simulationState);
+
+    return simTimeIsAfterIncomeStart && simTimeIsBeforeIncomeEnd;
+  }
+
+  private getIsSimTimeAfterIncomeStart(simulationState: SimulationState): boolean {
     const simDate = simulationState.time.date;
     const simAge = simulationState.time.age;
 
     let simTimeIsAfterIncomeStart = false;
-    let simTimeIsBeforeIncomeEnd = false;
 
     const timeFrameStart = this.timeFrameStart;
     switch (timeFrameStart.type) {
@@ -107,8 +113,17 @@ export class Income {
         break;
     }
 
+    return simTimeIsAfterIncomeStart;
+  }
+
+  private getIsSimTimeBeforeIncomeEnd(simulationState: SimulationState): boolean {
+    const simDate = simulationState.time.date;
+    const simAge = simulationState.time.age;
+
+    let simTimeIsBeforeIncomeEnd = false;
+
     const timeFrameEnd = this.timeFrameEnd;
-    if (!timeFrameEnd) return simTimeIsAfterIncomeStart;
+    if (!timeFrameEnd) return true; // If no end time frame is set, consider it active
 
     switch (timeFrameEnd.type) {
       case 'customAge':
@@ -133,10 +148,10 @@ export class Income {
         break;
     }
 
-    return simTimeIsAfterIncomeStart && simTimeIsBeforeIncomeEnd;
+    return simTimeIsBeforeIncomeEnd;
   }
 
-  getTimesToApplyPerYear(): number {
+  private getTimesToApplyPerYear(): number {
     switch (this.frequency) {
       case 'yearly':
         return 1;
@@ -154,7 +169,7 @@ export class Income {
     }
   }
 
-  getTimesToApplyPerMonth(): number {
+  private getTimesToApplyPerMonth(): number {
     switch (this.frequency) {
       case 'yearly':
         return 1 / 12;
