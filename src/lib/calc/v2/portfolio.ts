@@ -8,7 +8,7 @@ export interface PortfolioData {
   totalValue: number;
   totalWithdrawals: number;
   totalContributions: number;
-  accountsData: Record<string, AccountData & { contributions: number; withdrawals: number }>;
+  perAccountData: Record<string, AccountData & { contributions: number; withdrawals: number }>;
 }
 
 export class PortfolioProcessor {
@@ -22,7 +22,7 @@ export class PortfolioProcessor {
     const { totalWithdrawals, withdrawalsByAccount } = this.processWithdrawals(grossCashFlow);
     // TODO: Process rebalance.
 
-    const accountsData: Record<string, AccountData & { contributions: number; withdrawals: number }> = Object.fromEntries(
+    const perAccountData: Record<string, AccountData & { contributions: number; withdrawals: number }> = Object.fromEntries(
       this.simulationState.portfolio.getAccounts().map((account) => {
         const accountData = account.getAccountData();
         const contributions = contributionsByAccount[account.getAccountID()] || 0;
@@ -32,7 +32,7 @@ export class PortfolioProcessor {
       })
     );
 
-    return { totalValue: this.simulationState.portfolio.getTotalValue(), totalWithdrawals, totalContributions, accountsData };
+    return { totalValue: this.simulationState.portfolio.getTotalValue(), totalWithdrawals, totalContributions, perAccountData };
   }
 
   private processContributions(grossCashFlow: number): {
