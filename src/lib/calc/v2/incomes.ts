@@ -3,11 +3,19 @@ import type { IncomeInputs, TimePoint } from '@/lib/schemas/income-form-schema';
 import type { ReturnsData } from './returns';
 import type { SimulationState } from './simulation-engine';
 
+export interface IncomeData {
+  id: string;
+  name: string;
+  grossIncome: number;
+  amountWithheld: number;
+  incomeAfterWithholding: number;
+}
+
 export interface IncomesData {
   totalGrossIncome: number;
   totalAmountWithheld: number;
   totalIncomeAfterWithholding: number;
-  perIncomeData: Record<string, { grossIncome: number; amountWithheld: number; incomeAfterWithholding: number }>;
+  perIncomeData: Record<string, IncomeData>;
 }
 
 export class IncomesProcessor {
@@ -80,10 +88,7 @@ export class Income {
   }
 
   // TODO: Might be cleaner to convert annual growth rate & growth limit to monthly...
-  processMonthlyAmount(
-    inflationRate: number,
-    year: number
-  ): { id: string; name: string; grossIncome: number; amountWithheld: number; incomeAfterWithholding: number } {
+  processMonthlyAmount(inflationRate: number, year: number): IncomeData {
     const rawAmount = this.amount;
     let annualAmount = rawAmount * this.getTimesToApplyPerYear();
 

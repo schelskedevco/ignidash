@@ -3,9 +3,15 @@ import type { ExpenseInputs, TimePoint } from '@/lib/schemas/expense-form-schema
 import type { ReturnsData } from './returns';
 import type { SimulationState } from './simulation-engine';
 
+export interface ExpenseData {
+  id: string;
+  name: string;
+  amount: number;
+}
+
 export interface ExpensesData {
   totalExpenses: number;
-  perExpenseData: Record<string, { amount: number }>;
+  perExpenseData: Record<string, ExpenseData>;
 }
 
 export class ExpensesProcessor {
@@ -66,7 +72,7 @@ export class Expense {
   }
 
   // TODO: Might be cleaner to convert annual growth rate & growth limit to monthly...
-  processMonthlyAmount(inflationRate: number, year: number): { id: string; name: string; amount: number } {
+  processMonthlyAmount(inflationRate: number, year: number): ExpenseData {
     const rawAmount = this.amount;
     let annualAmount = rawAmount * this.getTimesToApplyPerYear();
 
