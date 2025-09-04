@@ -278,7 +278,7 @@ export class InvestmentAccount extends Account {
     const newStocksValue = currentStocksValue + stockReturnsAmount;
 
     this.currentValue = newBondsValue + newStocksValue;
-    this.currPercentBonds = (newBondsValue / this.currentValue) * 100;
+    this.currPercentBonds = this.currentValue ? (newBondsValue / this.currentValue) * 100 : this.initialPercentBonds;
 
     return { cash: 0, bonds: bondReturnsAmount, stocks: stockReturnsAmount };
   }
@@ -293,7 +293,7 @@ export class InvestmentAccount extends Account {
     bondContribution = Math.max(0, Math.min(amount, bondContribution));
 
     this.currentValue = newTotalValue;
-    this.currPercentBonds = (currentBondValue + bondContribution) / newTotalValue;
+    this.currPercentBonds = newTotalValue ? (currentBondValue + bondContribution) / newTotalValue : this.initialPercentBonds;
 
     this.totalContributions += amount;
     if (this.costBasis !== undefined) this.costBasis += amount;
@@ -312,12 +312,7 @@ export class InvestmentAccount extends Account {
     bondWithdrawal = Math.max(0, Math.min(amount, bondWithdrawal, currentBondValue));
 
     this.currentValue = newTotalValue;
-
-    if (newTotalValue > 0) {
-      this.currPercentBonds = (currentBondValue - bondWithdrawal) / newTotalValue;
-    } else {
-      this.currPercentBonds = this.initialPercentBonds;
-    }
+    this.currPercentBonds = newTotalValue ? (currentBondValue - bondWithdrawal) / newTotalValue : this.initialPercentBonds;
 
     this.totalWithdrawals += amount;
     if (this.costBasis !== undefined) this.costBasis -= amount;
