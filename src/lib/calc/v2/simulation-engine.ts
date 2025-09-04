@@ -64,7 +64,7 @@ export class FinancialSimulationEngine {
     const portfolioProcessor = new PortfolioProcessor(simulationState, contributionRules);
     const taxProcessor = new TaxProcessor(simulationState);
 
-    const phaseIdentifier = new PhaseIdentifier(simulationState, timeline, expenses);
+    const phaseIdentifier = new PhaseIdentifier(simulationState, timeline);
     simulationState.phase = phaseIdentifier.getCurrentPhase();
 
     let monthCount = 0;
