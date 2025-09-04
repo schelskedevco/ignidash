@@ -24,7 +24,21 @@ export class PhaseIdentifier {
 
         return { name: age < this.timeline.retirementStrategy.retirementAge ? 'accumulation' : 'retirement' };
       case 'swrTarget':
-        return { name: 'retirement' };
+        const currPhase = this.simulationState.phase;
+        if (currPhase?.name === 'retirement') {
+          return { ...currPhase };
+        }
+
+        const totalPortfolioValue = this.simulationState.portfolio.getTotalValue();
+        const swr = this.timeline.retirementStrategy.safeWithdrawalRate / 100;
+
+        const annualExpensesData = this.simulationState.annualData.expenses;
+        const averageAnnualExpenses =
+          annualExpensesData.length !== 0
+            ? annualExpensesData.reduce((acc, curr) => acc + curr.totalExpenses, 0) / annualExpensesData.length
+            : 0;
+
+        return averageAnnualExpenses < totalPortfolioValue * swr ? { name: 'retirement' } : { name: 'accumulation' };
     }
   }
 
