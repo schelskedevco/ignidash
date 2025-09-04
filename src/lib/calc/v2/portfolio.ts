@@ -81,6 +81,7 @@ export class PortfolioProcessor {
       switch (baseRule) {
         case 'spend':
           // Handle remaining cash for spend - do nothing, money is spent
+          // TODO (?): Should create SYSTEM expense for this?
           break;
         case 'save':
           const portfolioHasExtraSavingsAccount = this.simulationState.portfolio
