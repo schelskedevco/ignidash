@@ -217,14 +217,11 @@ export class FinancialSimulationEngine {
   }
 
   private initSimulationDataPoint(initialSimulationState: SimulationState, phaseIdentifier: PhaseIdentifier): SimulationDataPoint {
+    const totalPortfolioValue = initialSimulationState.portfolio.getTotalValue();
+
     return {
       date: new Date().toISOString().split('T')[0],
-      portfolio: {
-        totalValue: initialSimulationState.portfolio.getTotalValue(),
-        totalContributions: 0,
-        totalWithdrawals: 0,
-        perAccountData: {},
-      },
+      portfolio: { totalValue: totalPortfolioValue, totalContributions: 0, totalWithdrawals: 0, perAccountData: {} },
       incomes: null,
       expenses: null,
       phase: phaseIdentifier.getCurrentPhase(initialSimulationState.time.date),
