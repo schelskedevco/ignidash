@@ -1,4 +1,5 @@
 import type { AccountInputs, InvestmentAccountType } from '@/lib/schemas/account-form-schema';
+import { v4 as uuidv4 } from 'uuid';
 
 import type { SimulationState } from './simulation-engine';
 import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation } from '../asset';
@@ -12,15 +13,23 @@ export interface PortfolioData {
 }
 
 export class PortfolioProcessor {
+  private extraSavingsAccount: SavingsAccount;
+
   constructor(
     private simulationState: SimulationState,
     private contributionRules: ContributionRules
-  ) {}
+  ) {
+    this.extraSavingsAccount = new SavingsAccount({
+      type: 'savings' as const,
+      id: uuidv4(),
+      name: '[SYSTEM] Extra Savings',
+      currentValue: 0,
+    });
+  }
 
   process(grossCashFlow: number): PortfolioData {
     const { totalContributions, contributionsByAccount } = this.processContributions(grossCashFlow);
     const { totalWithdrawals, withdrawalsByAccount } = this.processWithdrawals(grossCashFlow);
-    // TODO: Process rebalance.
 
     const perAccountData: Record<string, AccountData & { contributions: number; withdrawals: number }> = Object.fromEntries(
       this.simulationState.portfolio.getAccounts().map((account) => {
@@ -71,10 +80,20 @@ export class PortfolioProcessor {
       const baseRule = this.contributionRules.getBaseRuleType();
       switch (baseRule) {
         case 'spend':
-          // Handle remaining cash for spend
+          // Handle remaining cash for spend - do nothing, money is spent
           break;
         case 'save':
-          // Handle remaining cash for save
+          const portfolioHasExtraSavingsAccount = this.simulationState.portfolio
+            .getAccounts()
+            .some((account) => account.getAccountID() === this.extraSavingsAccount.getAccountID());
+          if (!portfolioHasExtraSavingsAccount) {
+            this.simulationState.portfolio.addExtraSavingsAccount(this.extraSavingsAccount);
+          }
+
+          this.extraSavingsAccount.applyContribution(remainingToContribute);
+          contributionsByAccount[this.extraSavingsAccount.getAccountID()] =
+            (contributionsByAccount[this.extraSavingsAccount.getAccountID()] || 0) + remainingToContribute;
+
           break;
       }
     }
@@ -130,6 +149,10 @@ export class Portfolio {
         return new SavingsAccount(accountData);
       }
     });
+  }
+
+  addExtraSavingsAccount(extraSavingsAccount: SavingsAccount): void {
+    this.accounts.push(extraSavingsAccount);
   }
 
   getAccounts(): Account[] {
