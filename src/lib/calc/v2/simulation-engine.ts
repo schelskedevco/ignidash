@@ -102,7 +102,7 @@ export class FinancialSimulationEngine {
 
             return acc;
           },
-          { totalValue: 0, totalContributions: 0, totalWithdrawals: 0, perAccountData: {}, totalAssetAllocation: null }
+          { totalValue: 0, totalContributions: 0, totalWithdrawals: 0, perAccountData: {}, totalAssetAllocation: null, totalDebt: 0 }
         );
 
         const annualIncomesData = monthlyData.incomes.reduce(
@@ -227,6 +227,7 @@ export class FinancialSimulationEngine {
         totalWithdrawals: 0,
         perAccountData: {},
         totalAssetAllocation,
+        totalDebt: 0,
       },
       incomes: null,
       expenses: null,

@@ -9,8 +9,9 @@ export interface PortfolioData {
   totalValue: number;
   totalWithdrawals: number;
   totalContributions: number;
-  totalAssetAllocation: AssetAllocation | null;
   perAccountData: Record<string, AccountData & { contributions: number; withdrawals: number }>;
+  totalAssetAllocation: AssetAllocation | null;
+  totalDebt: number;
 }
 
 export class PortfolioProcessor {
@@ -30,7 +31,7 @@ export class PortfolioProcessor {
 
   process(grossCashFlow: number): PortfolioData {
     const { totalContributions, contributionsByAccount } = this.processContributions(grossCashFlow);
-    const { totalWithdrawals, withdrawalsByAccount } = this.processWithdrawals(grossCashFlow);
+    const { totalWithdrawals, withdrawalsByAccount, totalDebt } = this.processWithdrawals(grossCashFlow);
 
     const perAccountData: Record<string, AccountData & { contributions: number; withdrawals: number }> = Object.fromEntries(
       this.simulationState.portfolio.getAccounts().map((account) => {
@@ -44,7 +45,7 @@ export class PortfolioProcessor {
     const totalValue = this.simulationState.portfolio.getTotalValue();
     const totalAssetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
 
-    return { totalValue, totalWithdrawals, totalContributions, perAccountData, totalAssetAllocation };
+    return { totalValue, totalWithdrawals, totalContributions, perAccountData, totalAssetAllocation, totalDebt };
   }
 
   private processContributions(grossCashFlow: number): {
@@ -108,10 +109,11 @@ export class PortfolioProcessor {
   private processWithdrawals(grossCashFlow: number): {
     totalWithdrawals: number;
     withdrawalsByAccount: Record<string, number>;
+    totalDebt: number;
   } {
     const withdrawalsByAccount: Record<string, number> = {};
     if (!(grossCashFlow < 0)) {
-      return { totalWithdrawals: 0, withdrawalsByAccount };
+      return { totalWithdrawals: 0, withdrawalsByAccount, totalDebt: 0 };
     }
 
     const withdrawalOrder = ['savings', 'taxableBrokerage', 'roth401k', 'rothIra', '401k', 'ira', 'hsa'] as const;
@@ -133,12 +135,7 @@ export class PortfolioProcessor {
       }
     }
 
-    if (remainingToWithdraw > 0) {
-      // Handle remaining cash for withdrawals with debt.
-    }
-
-    const totalWithdrawals = grossCashFlow;
-    return { totalWithdrawals, withdrawalsByAccount };
+    return { totalWithdrawals: grossCashFlow, withdrawalsByAccount, totalDebt: remainingToWithdraw > 0 ? remainingToWithdraw : 0 };
   }
 }
 
