@@ -209,19 +209,10 @@ export class FinancialSimulationEngine {
 
   private initSimulationState(timeline: TimelineInputs, phaseIdentifier: PhaseIdentifier): SimulationState {
     return {
-      time: {
-        date: new Date(),
-        age: timeline.currentAge,
-        year: 0,
-      },
+      time: { date: new Date(), age: timeline.currentAge, year: 0 },
       portfolio: new Portfolio(Object.values(this.inputs.accounts)),
       phaseName: phaseIdentifier.getCurrentPhase(new Date()).name,
-      annualData: {
-        returns: [],
-        incomes: [],
-        expenses: [],
-        portfolio: [],
-      },
+      annualData: { returns: [], incomes: [], expenses: [], portfolio: [] },
     };
   }
 
