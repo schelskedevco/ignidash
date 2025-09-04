@@ -120,9 +120,18 @@ export class FinancialSimulationEngine {
             acc.totalGrossIncome += curr.totalGrossIncome;
             acc.totalAmountWithheld += curr.totalAmountWithheld;
             acc.totalIncomeAfterWithholding += curr.totalIncomeAfterWithholding;
+
+            Object.entries(curr.perIncomeData).forEach(([incomeID, incomeData]) => {
+              acc.perIncomeData[incomeID] = {
+                grossIncome: (acc.perIncomeData[incomeID]?.grossIncome ?? 0) + incomeData.grossIncome,
+                amountWithheld: (acc.perIncomeData[incomeID]?.amountWithheld ?? 0) + incomeData.amountWithheld,
+                incomeAfterWithholding: (acc.perIncomeData[incomeID]?.incomeAfterWithholding ?? 0) + incomeData.incomeAfterWithholding,
+              };
+            });
+
             return acc;
           },
-          { totalGrossIncome: 0, totalAmountWithheld: 0, totalIncomeAfterWithholding: 0 }
+          { totalGrossIncome: 0, totalAmountWithheld: 0, totalIncomeAfterWithholding: 0, perIncomeData: {} }
         );
 
         const annualExpensesData = annualData.expenses.reduce(

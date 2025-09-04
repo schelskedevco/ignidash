@@ -7,6 +7,7 @@ export interface IncomesData {
   totalGrossIncome: number;
   totalAmountWithheld: number;
   totalIncomeAfterWithholding: number;
+  perIncomeData: Record<string, { grossIncome: number; amountWithheld: number; incomeAfterWithholding: number }>;
 }
 
 export class IncomesProcessor {
@@ -21,7 +22,8 @@ export class IncomesProcessor {
     const processedIncomes = activeIncomes.map((income) =>
       income.processMonthlyAmount(returnsData.annualInflationRate, this.simulationState.time.year)
     );
-    const incomesData = processedIncomes.reduce(
+
+    const totals = processedIncomes.reduce(
       (acc, curr) => {
         acc.totalGrossIncome += curr.grossIncome;
         acc.totalAmountWithheld += curr.amountWithheld;
@@ -34,8 +36,9 @@ export class IncomesProcessor {
         totalIncomeAfterWithholding: 0,
       }
     );
+    const perIncomeData = Object.fromEntries(processedIncomes.map((income) => [income.id, income]));
 
-    return incomesData;
+    return { ...totals, perIncomeData };
   }
 }
 
@@ -55,6 +58,8 @@ export class Income {
   static readonly WITHHOLDING_TAX_RATE = 0.2;
 
   private hasOneTimeIncomeOccurred: boolean;
+  private id: string;
+  private name: string;
   private amount: number;
   private growthRate: number | undefined;
   private growthLimit: number | undefined;
@@ -64,6 +69,8 @@ export class Income {
 
   constructor(data: IncomeInputs) {
     this.hasOneTimeIncomeOccurred = false;
+    this.id = data.id;
+    this.name = data.name;
     this.amount = data.amount;
     this.growthRate = data.growth?.growthRate;
     this.growthLimit = data.growth?.growthLimit;
@@ -76,7 +83,7 @@ export class Income {
   processMonthlyAmount(
     inflationRate: number,
     year: number
-  ): { grossIncome: number; amountWithheld: number; incomeAfterWithholding: number } {
+  ): { id: string; name: string; grossIncome: number; amountWithheld: number; incomeAfterWithholding: number } {
     const rawAmount = this.amount;
     let annualAmount = rawAmount * this.getTimesToApplyPerYear();
 
@@ -97,7 +104,7 @@ export class Income {
     const incomeAfterWithholding = grossIncome - amountWithheld;
 
     if (this.frequency === 'oneTime') this.hasOneTimeIncomeOccurred = true;
-    return { grossIncome, amountWithheld, incomeAfterWithholding };
+    return { id: this.id, name: this.name, grossIncome, amountWithheld, incomeAfterWithholding };
   }
 
   getIsActiveByTimeFrame(simulationState: SimulationState): boolean {
