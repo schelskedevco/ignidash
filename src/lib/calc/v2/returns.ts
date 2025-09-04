@@ -3,16 +3,17 @@ import { ReturnsProvider } from '../returns-provider';
 import type { AssetReturnRates, AssetReturnAmounts } from '../asset';
 
 export interface ReturnsData {
-  returnAmounts: AssetReturnAmounts;
+  monthlyReturnAmounts: AssetReturnAmounts;
   monthlyReturnRates: AssetReturnRates;
   monthlyInflationRate: number;
+
   annualReturnRates: AssetReturnRates;
   annualInflationRate: number;
 }
 
 export class ReturnsProcessor {
-  private annualReturnRates: AssetReturnRates;
-  private annualInflationRate: number;
+  private cachedAnnualReturnRates: AssetReturnRates;
+  private cachedAnnualInflationRate: number;
   private lastYear: number;
   private monthlyData: ReturnsData[] = [];
 
@@ -22,8 +23,8 @@ export class ReturnsProcessor {
   ) {
     const returns = this.returnsProvider.getReturns(this.simulationState.time.year);
 
-    this.annualReturnRates = returns.returns;
-    this.annualInflationRate = returns.metadata.inflationRate;
+    this.cachedAnnualReturnRates = returns.returns;
+    this.cachedAnnualInflationRate = returns.metadata.inflationRate;
     this.lastYear = this.simulationState.time.year;
   }
 
@@ -32,25 +33,25 @@ export class ReturnsProcessor {
     if (currentYear !== this.lastYear) {
       const returns = this.returnsProvider.getReturns(currentYear);
 
-      this.annualReturnRates = returns.returns;
-      this.annualInflationRate = returns.metadata.inflationRate;
+      this.cachedAnnualReturnRates = returns.returns;
+      this.cachedAnnualInflationRate = returns.metadata.inflationRate;
       this.lastYear = currentYear;
     }
 
     const monthlyReturnRates: AssetReturnRates = {
-      stocks: Math.pow(1 + this.annualReturnRates.stocks, 1 / 12) - 1,
-      bonds: Math.pow(1 + this.annualReturnRates.bonds, 1 / 12) - 1,
-      cash: Math.pow(1 + this.annualReturnRates.cash, 1 / 12) - 1,
+      stocks: Math.pow(1 + this.cachedAnnualReturnRates.stocks, 1 / 12) - 1,
+      bonds: Math.pow(1 + this.cachedAnnualReturnRates.bonds, 1 / 12) - 1,
+      cash: Math.pow(1 + this.cachedAnnualReturnRates.cash, 1 / 12) - 1,
     };
-    const monthlyInflationRate = Math.pow(1 + this.annualInflationRate, 1 / 12) - 1;
-    const returnAmounts = this.simulationState.portfolio.applyReturns(monthlyReturnRates);
+    const monthlyInflationRate = Math.pow(1 + this.cachedAnnualInflationRate, 1 / 12) - 1;
+    const monthlyReturnAmounts = this.simulationState.portfolio.applyReturns(monthlyReturnRates);
 
     const result = {
-      returnAmounts,
+      monthlyReturnAmounts,
       monthlyReturnRates,
       monthlyInflationRate,
-      annualReturnRates: this.annualReturnRates,
-      annualInflationRate: this.annualInflationRate,
+      annualReturnRates: this.cachedAnnualReturnRates,
+      annualInflationRate: this.cachedAnnualInflationRate,
     };
 
     this.monthlyData.push(result);
@@ -70,16 +71,16 @@ export class ReturnsProcessor {
       (acc, curr) => {
         return {
           ...acc,
-          returnAmounts: {
-            stocks: acc.returnAmounts.stocks + curr.returnAmounts.stocks,
-            bonds: acc.returnAmounts.bonds + curr.returnAmounts.bonds,
-            cash: acc.returnAmounts.cash + curr.returnAmounts.cash,
+          monthlyReturnAmounts: {
+            stocks: acc.monthlyReturnAmounts.stocks + curr.monthlyReturnAmounts.stocks,
+            bonds: acc.monthlyReturnAmounts.bonds + curr.monthlyReturnAmounts.bonds,
+            cash: acc.monthlyReturnAmounts.cash + curr.monthlyReturnAmounts.cash,
           },
         };
       },
       {
         ...this.monthlyData[0],
-        returnAmounts: { stocks: 0, bonds: 0, cash: 0 },
+        monthlyReturnAmounts: { stocks: 0, bonds: 0, cash: 0 },
       }
     );
   }
