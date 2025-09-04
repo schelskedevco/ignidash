@@ -3,10 +3,12 @@ import { ReturnsProvider } from '../returns-provider';
 import type { AssetReturnRates, AssetReturnAmounts } from '../asset';
 
 export interface ReturnsData {
+  // Monthly return data
   monthlyReturnAmounts: AssetReturnAmounts;
   monthlyReturnRates: AssetReturnRates;
   monthlyInflationRate: number;
 
+  // Annual return data
   annualReturnRates: AssetReturnRates;
   annualInflationRate: number;
 }
