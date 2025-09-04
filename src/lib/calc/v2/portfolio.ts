@@ -18,12 +18,9 @@ export class PortfolioProcessor {
   ) {}
 
   process(grossCashFlow: number): PortfolioData {
-    // Process contributions (Needs income, taxes, expenses)
-    // Process withdrawals (Needs net cash flow)
-    // Process rebalance (Needs final portfolio state)
-
     const { totalContributions, contributionsByAccount } = this.processContributions(grossCashFlow);
     const { totalWithdrawals, withdrawalsByAccount } = this.processWithdrawals(grossCashFlow);
+    // TODO: Process rebalance.
 
     const accountsData: Record<string, AccountData & { contributions: number; withdrawals: number }> = Object.fromEntries(
       this.simulationState.portfolio.getAccounts().map((account) => {
