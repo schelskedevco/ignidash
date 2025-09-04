@@ -26,7 +26,7 @@ export class ReturnsProcessor {
     const returns = this.returnsProvider.getReturns(this.simulationState.time.year);
 
     this.cachedAnnualReturnRates = returns.returns;
-    this.cachedAnnualInflationRate = returns.metadata.inflationRate;
+    this.cachedAnnualInflationRate = returns.metadata.inflationRate / 100;
     this.lastYear = this.simulationState.time.year;
   }
 
@@ -36,7 +36,7 @@ export class ReturnsProcessor {
       const returns = this.returnsProvider.getReturns(currentYear);
 
       this.cachedAnnualReturnRates = returns.returns;
-      this.cachedAnnualInflationRate = returns.metadata.inflationRate;
+      this.cachedAnnualInflationRate = returns.metadata.inflationRate / 100;
       this.lastYear = currentYear;
     }
 

@@ -128,7 +128,7 @@ export class Income {
     let annualAmount = rawAmount * this.getTimesToApplyPerYear();
 
     const nominalGrowthRate = this.growthRate ?? 0;
-    const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate / 100) - 1;
+    const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate) - 1;
 
     annualAmount *= Math.pow(1 + realGrowthRate, year);
 
