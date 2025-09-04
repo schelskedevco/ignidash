@@ -53,7 +53,7 @@ export class FinancialSimulationEngine {
     const simulationContext: SimulationContext = this.initSimulationContext(timeline);
     const simulationState: SimulationState = this.initSimulationState(timeline, phaseIdentifier);
 
-    const resultData: Array<SimulationDataPoint> = [this.initSimulationDataPoint(simulationState, phaseIdentifier)];
+    const resultData: Array<SimulationDataPoint> = [this.initSimulationDataPoint(simulationState)];
 
     const incomes = new Incomes(Object.values(this.inputs.incomes));
     const expenses = new Expenses(Object.values(this.inputs.expenses));
@@ -211,7 +211,7 @@ export class FinancialSimulationEngine {
     };
   }
 
-  private initSimulationDataPoint(initialSimulationState: SimulationState, phaseIdentifier: PhaseIdentifier): SimulationDataPoint {
+  private initSimulationDataPoint(initialSimulationState: SimulationState): SimulationDataPoint {
     const totalPortfolioValue = initialSimulationState.portfolio.getTotalValue();
 
     return {
