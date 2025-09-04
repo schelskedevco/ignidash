@@ -35,7 +35,6 @@ export interface SimulationContext {
   readonly yearsToSimulate: number;
   readonly startDate: Date;
   readonly endDate: Date;
-  readonly birthDate: Date;
 }
 
 export interface SimulationState {
@@ -213,9 +212,8 @@ export class FinancialSimulationEngine {
 
     const startDate = new Date();
     const endDate = new Date(startDate.getFullYear() + yearsToSimulate, startDate.getMonth(), 1);
-    const birthDate = new Date(startDate.getFullYear() - startAge, startDate.getMonth(), 1); // TODO: Use user input birth date.
 
-    return { startAge, endAge, yearsToSimulate, startDate, endDate, birthDate };
+    return { startAge, endAge, yearsToSimulate, startDate, endDate };
   }
 
   private initSimulationState(timeline: TimelineInputs, phaseIdentifier: PhaseIdentifier): SimulationState {
