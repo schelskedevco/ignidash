@@ -190,7 +190,9 @@ export class FinancialSimulationEngine {
   private initSimulationContext(timeline: TimelineInputs): SimulationContext {
     const startAge = timeline.currentAge;
     const endAge = timeline.lifeExpectancy;
+
     const yearsToSimulate = Math.ceil(endAge - startAge);
+
     const startDate = new Date();
     const endDate = new Date(startDate.getFullYear() + yearsToSimulate, startDate.getMonth(), 1);
     const birthDate = new Date(startDate.getFullYear() - startAge, startDate.getMonth(), 1); // TODO: Use user input birth date.
