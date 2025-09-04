@@ -245,8 +245,8 @@ export class InvestmentAccount extends Account {
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
     super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0);
-    this.initialPercentBonds = data.percentBonds ?? 0 / 100;
-    this.currPercentBonds = data.percentBonds ?? 0 / 100;
+    this.initialPercentBonds = (data.percentBonds ?? 0) / 100;
+    this.currPercentBonds = (data.percentBonds ?? 0) / 100;
 
     if ('costBasis' in data) this.costBasis = data.costBasis;
     if ('contributions' in data) this.contributions = data.contributions;
