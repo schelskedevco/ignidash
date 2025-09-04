@@ -67,21 +67,16 @@ export class ReturnsProcessor {
   }
 
   getAnnualData(): ReturnsData {
-    return this.monthlyData.reduce(
-      (acc, curr) => {
-        return {
-          ...acc,
-          monthlyReturnAmounts: {
-            stocks: acc.monthlyReturnAmounts.stocks + curr.monthlyReturnAmounts.stocks,
-            bonds: acc.monthlyReturnAmounts.bonds + curr.monthlyReturnAmounts.bonds,
-            cash: acc.monthlyReturnAmounts.cash + curr.monthlyReturnAmounts.cash,
-          },
-        };
-      },
-      {
-        ...this.monthlyData[0],
-        monthlyReturnAmounts: { stocks: 0, bonds: 0, cash: 0 },
-      }
-    );
+    return {
+      ...this.monthlyData[0],
+      monthlyReturnAmounts: this.monthlyData.reduce(
+        (acc, curr) => ({
+          stocks: acc.stocks + curr.monthlyReturnAmounts.stocks,
+          bonds: acc.bonds + curr.monthlyReturnAmounts.bonds,
+          cash: acc.cash + curr.monthlyReturnAmounts.cash,
+        }),
+        { stocks: 0, bonds: 0, cash: 0 }
+      ),
+    };
   }
 }
