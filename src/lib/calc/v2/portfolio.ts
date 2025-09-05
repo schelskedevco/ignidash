@@ -88,7 +88,8 @@ export class PortfolioProcessor {
       const baseRule = this.contributionRules.getBaseRuleType();
       switch (baseRule) {
         case 'spend':
-          // TODO: Create SYSTEM expense for remainingToContribute with spend base rule
+          // TODO: Create [SYSTEM] expense for remainingToContribute with spend base rule
+
           break;
         case 'save':
           const portfolioHasExtraSavingsAccount = this.simulationState.portfolio
@@ -114,7 +115,8 @@ export class PortfolioProcessor {
       return { totalForPeriod: 0, byAccount };
     }
 
-    // TODO: Create more sophisticated drawdown strategy
+    // TODO: Create more sophisticated drawdown strategy based on tax, penalty efficiency
+
     const withdrawalOrder = ['savings', 'taxableBrokerage', 'roth401k', 'rothIra', '401k', 'ira', 'hsa'] as const;
     let remainingToWithdraw = grossCashFlow;
 
@@ -136,7 +138,7 @@ export class PortfolioProcessor {
       }
     }
 
-    // TODO: Handle going into debt (totalDebt: remainingToWithdraw > 0 ? remainingToWithdraw : 0)
+    // TODO: Handle going into debt (remainingToWithdraw > 0 after drawdown loop)
 
     return { totalForPeriod: grossCashFlow, byAccount };
   }
