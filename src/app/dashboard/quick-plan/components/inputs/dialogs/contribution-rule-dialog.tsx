@@ -97,11 +97,11 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
       <DialogTitle>
         <div className="flex items-center gap-4">
           <HandCoinsIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
-          <span>{selectedContributionRuleID ? 'Edit Contribution Rule' : 'New Contribution Rule'}</span>
+          <span>{selectedContributionRuleID ? 'Edit Contribution' : 'New Contribution'}</span>
         </div>
       </DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Fieldset aria-label="Contribution Rule details">
+        <Fieldset aria-label="Contribution details">
           <DialogBody>
             <FieldGroup>
               <Field>

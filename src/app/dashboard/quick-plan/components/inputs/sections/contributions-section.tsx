@@ -116,7 +116,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
   return (
     <>
       <DisclosureSection
-        title="Contributions"
+        title="Contribution Order"
         icon={HandCoinsIcon}
         centerPanelContent
         toggleDisclosure={toggleDisclosure}
@@ -159,7 +159,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                           setSelectedContributionRuleID(id);
                         }}
                         onDropdownClickDelete={() => {
-                          setContributionRuleToDelete({ id, name: 'Contribution Rule ' + (index + 1) });
+                          setContributionRuleToDelete({ id, name: 'Contribution ' + (index + 1) });
                         }}
                       />
                     ))}
@@ -181,7 +181,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                         setSelectedContributionRuleID(activeId);
                       }}
                       onDropdownClickDelete={() => {
-                        setContributionRuleToDelete({ id: activeId, name: 'Contribution Rule ' + (activeIndex + 1) });
+                        setContributionRuleToDelete({ id: activeId, name: 'Contribution ' + (activeIndex + 1) });
                       }}
                     />
                   ) : null}
@@ -190,7 +190,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
               <div className="mt-auto flex items-center justify-end">
                 <Button outline onClick={() => setContributionRuleDialogOpen(true)} disabled={!!selectedContributionRuleID}>
                   <PlusIcon />
-                  Contribution Rule
+                  Contribution
                 </Button>
               </div>
             </>
