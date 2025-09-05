@@ -40,7 +40,15 @@ export class ContributionRule {
     const currentAccountValue = account.getTotalValue();
 
     const remainingToMaxAccountValue = this.contributionInput.maxValue ? this.contributionInput.maxValue - currentAccountValue : Infinity;
-    const maxContribution = Math.min(remainingToMaxAccountValue, cashLeftToAllocate, remainingContributionLimit);
+    let maxContribution = Math.min(remainingToMaxAccountValue, cashLeftToAllocate, remainingContributionLimit);
+
+    const eligibleIncomeIds = new Set(this.contributionInput?.incomeIds);
+    if (eligibleIncomeIds.size > 0) {
+      const eligibleIncomes = Object.values(incomesData.perIncomeData).filter((income) => eligibleIncomeIds.has(income.id));
+      const totalEligibleGrossIncome = eligibleIncomes.reduce((sum, income) => sum + income.grossIncome, 0);
+
+      maxContribution = Math.min(maxContribution, totalEligibleGrossIncome);
+    }
 
     let contributionAmount;
     switch (this.contributionInput.contributionType) {
