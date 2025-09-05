@@ -34,10 +34,6 @@ export class ContributionRule {
 
   constructor(private contributionInput: ContributionInputs) {}
 
-  canApply(): boolean {
-    return true;
-  }
-
   getContributionAmount(
     remainingToContribute: number,
     account: Account,

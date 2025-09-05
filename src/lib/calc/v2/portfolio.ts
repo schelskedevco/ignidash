@@ -76,15 +76,15 @@ export class PortfolioProcessor {
     let currentRuleIndex = 0;
     while (remainingToContribute > 0 && currentRuleIndex < contributionRules.length) {
       const rule = contributionRules[currentRuleIndex];
-      if (!rule.canApply()) {
-        currentRuleIndex++;
-        continue;
-      }
 
       const contributeToAccountID = rule.getAccountID();
       const contributeToAccount = this.simulationState.portfolio.getAccountById(contributeToAccountID)!;
 
       const contributionAmount = rule.getContributionAmount(remainingToContribute, contributeToAccount, incomesData, this.monthlyData, age);
+      if (contributionAmount <= 0) {
+        currentRuleIndex++;
+        continue;
+      }
 
       contributeToAccount.applyContribution(contributionAmount);
       byAccount[contributeToAccountID] = contributionAmount;
