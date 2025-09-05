@@ -38,7 +38,7 @@ export interface SimulationContext {
 }
 
 export interface SimulationState {
-  time: { date: Date; age: number; year: number };
+  time: { date: Date; age: number; year: number; month: number };
   portfolio: Portfolio;
   phase: PhaseData | null;
   annualData: { expenses: ExpensesData[] };
@@ -73,9 +73,7 @@ export class FinancialSimulationEngine {
     const phaseIdentifier = new PhaseIdentifier(simulationState, timeline);
     simulationState.phase = phaseIdentifier.getCurrentPhase();
 
-    let monthCount = 0;
     while (simulationState.time.date < simulationContext.endDate) {
-      monthCount++;
       this.incrementSimulationTime(simulationState);
 
       // Process one month of simulation
@@ -84,7 +82,7 @@ export class FinancialSimulationEngine {
       const expensesData = expensesProcessor.process(returnsData);
       portfolioProcessor.process(incomesData.totalGrossIncome - expensesData.totalExpenses);
 
-      if (monthCount % 12 === 0) {
+      if (simulationState.time.month % 12 === 0) {
         // Get annual data from processors
         const annualPortfolioData = portfolioProcessor.getAnnualData();
         const annualIncomesData = incomesProcessor.getAnnualData();
@@ -130,6 +128,7 @@ export class FinancialSimulationEngine {
 
     simulationState.time.age = Math.abs(newAge - Math.round(newAge)) < epsilon ? Math.round(newAge) : newAge;
     simulationState.time.year = Math.abs(newYear - Math.round(newYear)) < epsilon ? Math.round(newYear) : newYear;
+    simulationState.time.month += 1;
   }
 
   private initSimulationContext(timeline: TimelineInputs): SimulationContext {
@@ -146,7 +145,7 @@ export class FinancialSimulationEngine {
 
   private initSimulationState(timeline: TimelineInputs): SimulationState {
     return {
-      time: { date: new Date(), age: timeline.currentAge, year: 0 },
+      time: { date: new Date(), age: timeline.currentAge, year: 0, month: 0 },
       portfolio: new Portfolio(Object.values(this.inputs.accounts)),
       phase: null,
       annualData: { expenses: [] },
