@@ -86,7 +86,12 @@ export class PortfolioProcessor {
       const contributeToAccount = this.simulationState.portfolio.getAccountById(contributeToAccountID)!;
 
       const remainingContributionLimit = this.annualContributionTracker.getRemainingLimit(contributeToAccount.getAccountType());
-      const contributionAmount = rule.getContributionAmount(remainingToContribute, remainingContributionLimit);
+      const contributionAmount = rule.getContributionAmount(
+        remainingToContribute,
+        remainingContributionLimit,
+        contributeToAccount,
+        incomesData
+      );
 
       contributeToAccount.applyContribution(contributionAmount, this.annualContributionTracker);
       byAccount[contributeToAccountID] = contributionAmount;

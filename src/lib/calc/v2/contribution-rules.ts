@@ -2,6 +2,8 @@ import type { ContributionInputs } from '@/lib/schemas/contribution-form-schema'
 import type { AccountInputs } from '@/lib/schemas/account-form-schema';
 
 import type { SimulationState } from './simulation-engine';
+import type { Account } from './portfolio';
+import type { IncomesData } from './incomes';
 
 export class ContributionRules {
   private readonly contributionRules: ContributionRule[];
@@ -29,8 +31,28 @@ export class ContributionRule {
     return true;
   }
 
-  getContributionAmount(cashLeftToAllocate: number, remainingContributionLimit: number): number {
-    return Math.min(cashLeftToAllocate, remainingContributionLimit);
+  getContributionAmount(
+    cashLeftToAllocate: number,
+    remainingContributionLimit: number,
+    account: Account,
+    incomesData: IncomesData
+  ): number {
+    const currentAccountValue = account.getTotalValue();
+
+    const remainingToMaxAccountValue = this.contributionInput.maxValue ? this.contributionInput.maxValue - currentAccountValue : Infinity;
+    const maxContribution = Math.min(remainingToMaxAccountValue, cashLeftToAllocate, remainingContributionLimit);
+
+    let contributionAmount;
+    switch (this.contributionInput.contributionType) {
+      case 'dollarAmount':
+        contributionAmount = this.contributionInput.dollarAmount;
+        return Math.min(contributionAmount, maxContribution);
+      case 'percentRemaining':
+        contributionAmount = cashLeftToAllocate * (this.contributionInput.percentRemaining / 100);
+        return Math.min(contributionAmount, maxContribution);
+      case 'unlimited':
+        return maxContribution;
+    }
   }
 
   getAccountID(): string {
