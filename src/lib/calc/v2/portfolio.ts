@@ -5,7 +5,7 @@ import type { SimulationState } from './simulation-engine';
 import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation } from '../asset';
 import { ContributionRules } from './contribution-rules';
 
-type CashFlowBreakdown = { total: number; byAccount: Record<string, number> };
+type TransactionsBreakdown = { totalForPeriod: number; byAccount: Record<string, number> };
 
 export class PortfolioProcessor {
   private extraSavingsAccount: SavingsAccount;
@@ -24,8 +24,8 @@ export class PortfolioProcessor {
   }
 
   process(grossCashFlow: number): PortfolioData {
-    const { total: contributionsForPeriod, byAccount: contributionsByAccount } = this.processContributions(grossCashFlow);
-    const { total: withdrawalsForPeriod, byAccount: withdrawalsByAccount } = this.processWithdrawals(grossCashFlow);
+    const { totalForPeriod: contributionsForPeriod, byAccount: contributionsByAccount } = this.processContributions(grossCashFlow);
+    const { totalForPeriod: withdrawalsForPeriod, byAccount: withdrawalsByAccount } = this.processWithdrawals(grossCashFlow);
 
     const perAccountData: Record<string, AccountData & { contributions: number; withdrawals: number }> = Object.fromEntries(
       this.simulationState.portfolio.getAccounts().map((account) => {
@@ -45,13 +45,13 @@ export class PortfolioProcessor {
     return result;
   }
 
-  private processContributions(grossCashFlow: number): CashFlowBreakdown {
+  private processContributions(grossCashFlow: number): TransactionsBreakdown {
     const byAccount: Record<string, number> = {};
     if (!(grossCashFlow > 0)) {
-      return { total: 0, byAccount };
+      return { totalForPeriod: 0, byAccount };
     }
 
-    const total = grossCashFlow;
+    const totalForPeriod = grossCashFlow;
     const contributionRules = this.contributionRules.getRules().sort((a, b) => a.getRank() - b.getRank());
 
     let remainingToContribute = grossCashFlow;
@@ -95,13 +95,13 @@ export class PortfolioProcessor {
       }
     }
 
-    return { total, byAccount };
+    return { totalForPeriod, byAccount };
   }
 
-  private processWithdrawals(grossCashFlow: number): CashFlowBreakdown {
+  private processWithdrawals(grossCashFlow: number): TransactionsBreakdown {
     const byAccount: Record<string, number> = {};
     if (!(grossCashFlow < 0)) {
-      return { total: 0, byAccount };
+      return { totalForPeriod: 0, byAccount };
     }
 
     // TODO: Create more sophisticated drawdown strategy
@@ -128,7 +128,7 @@ export class PortfolioProcessor {
 
     // TODO: Handle going into debt (totalDebt: remainingToWithdraw > 0 ? remainingToWithdraw : 0)
 
-    return { total: grossCashFlow, byAccount };
+    return { totalForPeriod: grossCashFlow, byAccount };
   }
 
   getMonthlyData(): PortfolioData[] {
