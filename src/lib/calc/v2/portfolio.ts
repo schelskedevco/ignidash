@@ -37,9 +37,19 @@ export class PortfolioProcessor {
       })
     );
     const totalValue = this.simulationState.portfolio.getTotalValue();
+    const totalWithdrawals = this.simulationState.portfolio.getTotalWithdrawals();
+    const totalContributions = this.simulationState.portfolio.getTotalContributions();
     const assetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
 
-    const result = { totalValue, withdrawalsForPeriod, contributionsForPeriod, perAccountData, assetAllocation };
+    const result = {
+      totalValue,
+      totalWithdrawals,
+      totalContributions,
+      withdrawalsForPeriod,
+      contributionsForPeriod,
+      perAccountData,
+      assetAllocation,
+    };
 
     this.monthlyData.push(result);
     return result;
@@ -171,6 +181,8 @@ export class PortfolioProcessor {
 
 export interface PortfolioData {
   totalValue: number;
+  totalWithdrawals: number;
+  totalContributions: number;
   withdrawalsForPeriod: number;
   contributionsForPeriod: number;
   perAccountData: Record<string, AccountData & { contributions: number; withdrawals: number }>;
@@ -222,6 +234,28 @@ export class Portfolio {
     return this.accounts.reduce((acc, account) => acc + account.getCurrentValue(), 0);
   }
 
+  getTotalWithdrawals(): number {
+    return this.accounts.reduce((acc, account) => acc + account.getTotalWithdrawals(), 0);
+  }
+
+  getTotalContributions(): number {
+    return this.accounts.reduce((acc, account) => acc + account.getTotalContributions(), 0);
+  }
+
+  getTotalReturns(): AssetReturnAmounts {
+    return this.accounts.reduce(
+      (acc, curr) => {
+        const currTotalReturns = curr.getTotalReturns();
+        return {
+          cash: acc.cash + currTotalReturns.cash,
+          bonds: acc.bonds + currTotalReturns.bonds,
+          stocks: acc.stocks + currTotalReturns.stocks,
+        };
+      },
+      { cash: 0, bonds: 0, stocks: 0 } as AssetReturnAmounts
+    );
+  }
+
   getAccountById(accountID: string): Account | undefined {
     return this.accounts.find((account) => account.getAccountID() === accountID);
   }
@@ -246,10 +280,12 @@ export class Portfolio {
 }
 
 export interface AccountData {
+  currentValue: number;
+  totalWithdrawals: number;
+  totalContributions: number;
   name: string;
   id: string;
   type: 'savings' | 'taxableBrokerage' | 'roth401k' | 'rothIra' | '401k' | 'ira' | 'hsa';
-  currentValue: number;
   assetAllocation: AssetAllocation;
 }
 
@@ -276,8 +312,19 @@ export abstract class Account {
     return this.currentValue;
   }
 
-  abstract getAccountData(): AccountData;
+  getTotalWithdrawals(): number {
+    return this.totalWithdrawals;
+  }
 
+  getTotalContributions(): number {
+    return this.totalContributions;
+  }
+
+  getTotalReturns(): AssetReturnAmounts {
+    return this.totalReturns;
+  }
+
+  abstract getAccountData(): AccountData;
   abstract applyReturns(returns: AssetReturnRates): AssetReturnAmounts;
   abstract applyContribution(amount: number): void;
   abstract applyWithdrawal(amount: number): void;
@@ -295,7 +342,15 @@ export class SavingsAccount extends Account {
       stocks: 0,
     };
 
-    return { name: this.name, id: this.id, type: this.type, currentValue: this.currentValue, assetAllocation };
+    return {
+      currentValue: this.currentValue,
+      totalWithdrawals: this.totalWithdrawals,
+      totalContributions: this.totalContributions,
+      name: this.name,
+      id: this.id,
+      type: this.type,
+      assetAllocation,
+    };
   }
 
   applyReturns(returns: AssetReturnRates): AssetReturnAmounts {
@@ -322,6 +377,7 @@ export class SavingsAccount extends Account {
 export class InvestmentAccount extends Account {
   private initialPercentBonds: number;
   private currPercentBonds: number;
+
   private costBasis: number | undefined;
   private contributions: number | undefined;
 
@@ -341,7 +397,15 @@ export class InvestmentAccount extends Account {
       stocks: 1 - this.currPercentBonds,
     };
 
-    return { name: this.name, id: this.id, type: this.type, currentValue: this.currentValue, assetAllocation };
+    return {
+      currentValue: this.currentValue,
+      totalWithdrawals: this.totalWithdrawals,
+      totalContributions: this.totalContributions,
+      name: this.name,
+      id: this.id,
+      type: this.type,
+      assetAllocation,
+    };
   }
 
   applyReturns(returns: AssetReturnRates): AssetReturnAmounts {

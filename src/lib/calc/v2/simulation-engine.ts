@@ -160,6 +160,8 @@ export class FinancialSimulationEngine {
       date: new Date().toISOString().split('T')[0],
       portfolio: {
         totalValue: totalPortfolioValue,
+        totalContributions: 0,
+        totalWithdrawals: 0,
         contributionsForPeriod: 0,
         withdrawalsForPeriod: 0,
         perAccountData: {},
