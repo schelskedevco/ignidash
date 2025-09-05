@@ -89,12 +89,12 @@ export class FinancialSimulationEngine {
         const annualExpensesData = expensesProcessor.getAnnualData();
         const annualReturnsData = returnsProcessor.getAnnualData();
 
+        // Process taxes
+        const annualTaxesData = taxProcessor.process(annualIncomesData);
+
         // Update simulation state
         simulationState.annualData.expenses.push(annualExpensesData);
         simulationState.phase = phaseIdentifier.getCurrentPhase();
-
-        // Process taxes
-        const annualTaxesData = taxProcessor.process(annualIncomesData);
 
         // Store annual data in results
         resultData.push({
