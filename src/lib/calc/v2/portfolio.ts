@@ -27,16 +27,15 @@ export class PortfolioProcessor {
     const { totalForPeriod: contributionsForPeriod, byAccount: contributionsByAccount } = this.processContributions(grossCashFlow);
     const { totalForPeriod: withdrawalsForPeriod, byAccount: withdrawalsByAccount } = this.processWithdrawals(grossCashFlow);
 
-    const perAccountData: Record<string, AccountData & { contributionsForPeriod: number; withdrawalsForPeriod: number }> =
-      Object.fromEntries(
-        this.simulationState.portfolio.getAccounts().map((account) => {
-          const accountData = account.getAccountData();
-          const contributionsForPeriod = contributionsByAccount[account.getAccountID()] || 0;
-          const withdrawalsForPeriod = withdrawalsByAccount[account.getAccountID()] || 0;
+    const perAccountData: Record<string, AccountDataWithTransactions> = Object.fromEntries(
+      this.simulationState.portfolio.getAccounts().map((account) => {
+        const accountData = account.getAccountData();
+        const contributionsForPeriod = contributionsByAccount[account.getAccountID()] || 0;
+        const withdrawalsForPeriod = withdrawalsByAccount[account.getAccountID()] || 0;
 
-          return [account.getAccountID(), { ...accountData, contributionsForPeriod, withdrawalsForPeriod }];
-        })
-      );
+        return [account.getAccountID(), { ...accountData, contributionsForPeriod, withdrawalsForPeriod }];
+      })
+    );
     const totalValue = this.simulationState.portfolio.getTotalValue();
     const totalWithdrawals = this.simulationState.portfolio.getTotalWithdrawals();
     const totalContributions = this.simulationState.portfolio.getTotalContributions();
@@ -173,7 +172,7 @@ export class PortfolioProcessor {
         {
           contributionsForPeriod: 0,
           withdrawalsForPeriod: 0,
-          perAccountData: {} as Record<string, AccountData & { contributionsForPeriod: number; withdrawalsForPeriod: number }>,
+          perAccountData: {} as Record<string, AccountDataWithTransactions>,
         }
       ),
     };
@@ -186,7 +185,7 @@ export interface PortfolioData {
   totalContributions: number;
   withdrawalsForPeriod: number;
   contributionsForPeriod: number;
-  perAccountData: Record<string, AccountData & { contributionsForPeriod: number; withdrawalsForPeriod: number }>;
+  perAccountData: Record<string, AccountDataWithTransactions>;
   assetAllocation: AssetAllocation | null;
 }
 
@@ -288,6 +287,11 @@ export interface AccountData {
   id: string;
   type: 'savings' | 'taxableBrokerage' | 'roth401k' | 'rothIra' | '401k' | 'ira' | 'hsa';
   assetAllocation: AssetAllocation;
+}
+
+export interface AccountDataWithTransactions extends AccountData {
+  contributionsForPeriod: number;
+  withdrawalsForPeriod: number;
 }
 
 export abstract class Account {
