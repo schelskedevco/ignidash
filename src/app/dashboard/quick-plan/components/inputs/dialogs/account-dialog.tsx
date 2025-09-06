@@ -64,7 +64,7 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
 
   useEffect(() => {
     if (!isRothAccount(type)) {
-      unregister('contributions');
+      unregister('contributionBasis');
     }
 
     if (type !== 'taxableBrokerage') {
@@ -147,21 +147,21 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
                 )}
                 {isRothAccount(type) && (
                   <Field>
-                    <Label htmlFor="contributions" className="flex w-full items-center justify-between">
+                    <Label htmlFor="contributionBasis" className="flex w-full items-center justify-between">
                       <span className="whitespace-nowrap">Contributions</span>
                       <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
                     </Label>
                     <NumberInputV2
-                      name="contributions"
+                      name="contributionBasis"
                       control={control}
-                      id="contributions"
+                      id="contributionBasis"
                       inputMode="decimal"
                       placeholder="—"
                       prefix="$"
                     />
-                    {(errors as FieldErrors<Extract<AccountInputs, { type: RothAccountType }>>).contributions?.message && (
+                    {(errors as FieldErrors<Extract<AccountInputs, { type: RothAccountType }>>).contributionBasis?.message && (
                       <ErrorMessage>
-                        {(errors as FieldErrors<Extract<AccountInputs, { type: RothAccountType }>>).contributions?.message}
+                        {(errors as FieldErrors<Extract<AccountInputs, { type: RothAccountType }>>).contributionBasis?.message}
                       </ErrorMessage>
                     )}
                   </Field>

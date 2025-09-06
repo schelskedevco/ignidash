@@ -30,7 +30,7 @@ export const accountFormSchema = z.discriminatedUnion('type', [
   z.object({
     ...investmentAccountSchema.shape,
     type: z.enum(['roth401k', 'rothIra']),
-    contributions: currencyFieldAllowsZero('Contributions cannot be negative').optional(),
+    contributionBasis: currencyFieldAllowsZero('Contribution basis cannot be negative').optional(),
   }),
 
   // Tax Deferred

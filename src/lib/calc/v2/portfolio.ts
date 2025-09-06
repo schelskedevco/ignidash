@@ -439,7 +439,7 @@ export class InvestmentAccount extends Account {
   private currPercentBonds: number;
 
   private costBasis: number | undefined;
-  private contributions: number | undefined;
+  private contributionBasis: number | undefined;
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
     super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0);
@@ -447,7 +447,7 @@ export class InvestmentAccount extends Account {
     this.currPercentBonds = (data.percentBonds ?? 0) / 100;
 
     if ('costBasis' in data) this.costBasis = data.costBasis;
-    if ('contributions' in data) this.contributions = data.contributions;
+    if ('contributionBasis' in data) this.contributionBasis = data.contributionBasis;
   }
 
   getAccountData(): AccountData {
@@ -503,7 +503,7 @@ export class InvestmentAccount extends Account {
 
     this.totalContributions += amount;
     if (this.costBasis !== undefined) this.costBasis += amount;
-    if (this.contributions !== undefined) this.contributions += amount;
+    if (this.contributionBasis !== undefined) this.contributionBasis += amount;
   }
 
   applyWithdrawal(amount: number): void {
@@ -517,12 +517,20 @@ export class InvestmentAccount extends Account {
     let bondWithdrawal = currentBondValue - targetBondValue;
     bondWithdrawal = Math.max(0, Math.min(amount, bondWithdrawal, currentBondValue));
 
+    if (this.costBasis !== undefined) {
+      const basisProportion = Math.min(1, this.costBasis / this.totalValue);
+      const basisWithdrawn = amount * basisProportion;
+      this.costBasis -= basisWithdrawn;
+    }
+
+    if (this.contributionBasis !== undefined) {
+      const contributionWithdrawn = Math.min(amount, this.contributionBasis);
+      this.contributionBasis -= contributionWithdrawn;
+    }
+
     this.totalValue = newTotalValue;
     this.currPercentBonds = newTotalValue ? (currentBondValue - bondWithdrawal) / newTotalValue : this.initialPercentBonds;
 
     this.totalWithdrawals += amount;
-    // TODO: Fix cost basis, contributions handling on withdrawals
-    if (this.costBasis !== undefined) this.costBasis -= amount;
-    if (this.contributions !== undefined) this.contributions -= amount;
   }
 }
