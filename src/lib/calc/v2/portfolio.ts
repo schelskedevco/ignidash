@@ -44,6 +44,7 @@ export class PortfolioProcessor {
         return [account.getAccountID(), { ...accountData, contributionsForPeriod, withdrawalsForPeriod }];
       })
     );
+
     const totalValue = this.simulationState.portfolio.getTotalValue();
     const totalWithdrawals = this.simulationState.portfolio.getTotalWithdrawals();
     const totalContributions = this.simulationState.portfolio.getTotalContributions();
@@ -64,7 +65,47 @@ export class PortfolioProcessor {
   }
 
   processTaxes(taxesData: TaxesData): PortfolioData {
-    throw new Error('Not implemented');
+    let withdrawalsForPeriod = 0;
+    let contributionsForPeriod = 0;
+    let contributionsByAccount: Record<string, number> = {};
+    let withdrawalsByAccount: Record<string, number> = {};
+
+    if (taxesData.taxesRefund > 0) {
+      const res = this.processContributions(taxesData.taxesRefund);
+      contributionsForPeriod = res.totalForPeriod;
+      contributionsByAccount = res.byAccount;
+    }
+
+    if (taxesData.taxesDue > 0) {
+      const res = this.processWithdrawals(taxesData.taxesDue);
+      withdrawalsForPeriod = res.totalForPeriod;
+      withdrawalsByAccount = res.byAccount;
+    }
+
+    const perAccountData: Record<string, AccountDataWithTransactions> = Object.fromEntries(
+      this.simulationState.portfolio.getAccounts().map((account) => {
+        const accountData = account.getAccountData();
+        const contributionsForPeriod = contributionsByAccount[account.getAccountID()] || 0;
+        const withdrawalsForPeriod = withdrawalsByAccount[account.getAccountID()] || 0;
+
+        return [account.getAccountID(), { ...accountData, contributionsForPeriod, withdrawalsForPeriod }];
+      })
+    );
+
+    const totalValue = this.simulationState.portfolio.getTotalValue();
+    const totalWithdrawals = this.simulationState.portfolio.getTotalWithdrawals();
+    const totalContributions = this.simulationState.portfolio.getTotalContributions();
+    const assetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
+
+    return {
+      totalValue,
+      totalWithdrawals,
+      totalContributions,
+      withdrawalsForPeriod,
+      contributionsForPeriod,
+      perAccountData,
+      assetAllocation,
+    };
   }
 
   private processContributions(grossCashFlow: number, incomesData?: IncomesData): TransactionsBreakdown {
