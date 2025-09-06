@@ -477,6 +477,7 @@ export class InvestmentAccount extends Account {
     this.currPercentBonds = newTotalValue ? (currentBondValue - bondWithdrawal) / newTotalValue : this.initialPercentBonds;
 
     this.totalWithdrawals += amount;
+    // TODO: Fix cost basis, contributions handling on withdrawals
     if (this.costBasis !== undefined) this.costBasis -= amount;
     if (this.contributions !== undefined) this.contributions -= amount;
   }
