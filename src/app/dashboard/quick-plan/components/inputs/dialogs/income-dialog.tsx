@@ -186,7 +186,7 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
 
   return (
     <>
-      <DialogTitle>
+      <DialogTitle onClose={onClose}>
         <div className="flex items-center gap-4">
           <BanknoteArrowUpIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
           <span>{selectedIncomeID ? 'Edit Income' : 'New Income'}</span>
@@ -526,7 +526,7 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
           </DialogBody>
         </Fieldset>
         <DialogActions>
-          <Button plain onClick={onClose}>
+          <Button plain onClick={onClose} className="hidden sm:inline-flex">
             Cancel
           </Button>
           <Button color="rose" type="submit">

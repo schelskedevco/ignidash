@@ -2,6 +2,7 @@ import * as Headless from '@headlessui/react';
 import clsx from 'clsx';
 import type React from 'react';
 import { Text } from './text';
+import { X } from 'lucide-react';
 
 const sizes = {
   xs: 'sm:max-w-xs',
@@ -47,8 +48,23 @@ export function Dialog({
   );
 }
 
-export function DialogTitle({ className, ...props }: { className?: string } & Omit<Headless.DialogTitleProps, 'as' | 'className'>) {
-  return <Headless.DialogTitle {...props} className={clsx(className, 'text-foreground text-2xl/6 font-semibold text-balance')} />;
+export function DialogTitle({
+  className,
+  children,
+  onClose,
+  ...props
+}: { className?: string; children?: React.ReactNode; onClose: () => void } & Omit<Headless.DialogTitleProps, 'as' | 'className'>) {
+  return (
+    <Headless.DialogTitle {...props} className={clsx(className, 'text-foreground text-2xl/6 font-semibold text-balance')}>
+      <div className="flex items-center justify-between">
+        {children}
+        <button type="button" onClick={onClose} className="focus-outline hover:text-muted-foreground rounded-md">
+          <span className="sr-only">Close panel</span>
+          <X aria-hidden="true" className="size-6" />
+        </button>
+      </div>
+    </Headless.DialogTitle>
+  );
 }
 
 export function DialogDescription({

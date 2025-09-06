@@ -54,7 +54,7 @@ export default function SavingsDialog({ onClose, selectedAccountID }: SavingsDia
 
   return (
     <>
-      <DialogTitle>
+      <DialogTitle onClose={onClose}>
         <div className="flex items-center gap-4">
           <PiggyBankIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
           <span>{selectedAccountID ? 'Edit Savings' : 'New Savings'}</span>
@@ -95,7 +95,7 @@ export default function SavingsDialog({ onClose, selectedAccountID }: SavingsDia
           </DialogBody>
         </Fieldset>
         <DialogActions>
-          <Button plain onClick={onClose}>
+          <Button plain onClick={onClose} className="hidden sm:inline-flex">
             Cancel
           </Button>
           <Button color="rose" type="submit">

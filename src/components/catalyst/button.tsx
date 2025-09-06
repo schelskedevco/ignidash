@@ -172,8 +172,8 @@ export const Button = forwardRef(function Button(
   ref: React.ForwardedRef<HTMLElement>
 ) {
   const classes = cn(
-    className,
     styles.base,
+    className,
     outline ? styles.outline : plain ? styles.plain : cn(styles.solid, styles.colors[color ?? 'dark/zinc'])
   );
 

@@ -94,7 +94,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
 
   return (
     <>
-      <DialogTitle>
+      <DialogTitle onClose={onClose}>
         <div className="flex items-center gap-4">
           <HandCoinsIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
           <span>{selectedContributionRuleID ? 'Edit Contribution' : 'New Contribution'}</span>
@@ -196,7 +196,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
           </DialogBody>
         </Fieldset>
         <DialogActions>
-          <Button plain onClick={onClose}>
+          <Button plain onClick={onClose} className="hidden sm:inline-flex">
             Cancel
           </Button>
           <Button color="rose" type="submit">

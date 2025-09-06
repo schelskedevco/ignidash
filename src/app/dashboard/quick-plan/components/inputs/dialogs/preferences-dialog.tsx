@@ -43,7 +43,7 @@ export default function PreferencesDialog() {
 
   return (
     <>
-      <DialogTitle>Preferences</DialogTitle>
+      <DialogTitle onClose={() => {}}>Preferences</DialogTitle>
       <DialogBody className="space-y-4">
         <form onSubmit={(e) => e.preventDefault()}>
           <Fieldset aria-label="Simulation methodology">
