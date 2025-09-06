@@ -37,9 +37,9 @@ export class ContributionRule {
   getContributionAmount(
     remainingToContribute: number,
     account: Account,
-    incomesData: IncomesData,
     monthlyPortfolioData: PortfolioData[],
-    age: number
+    age: number,
+    incomesData?: IncomesData
   ): number {
     const currentAccountValue = account.getTotalValue();
 
@@ -49,7 +49,7 @@ export class ContributionRule {
 
     const eligibleIncomeIds = new Set(this.contributionInput?.incomeIds);
     if (eligibleIncomeIds.size > 0) {
-      const eligibleIncomes = Object.values(incomesData.perIncomeData).filter((income) => eligibleIncomeIds.has(income.id));
+      const eligibleIncomes = Object.values(incomesData?.perIncomeData || {}).filter((income) => eligibleIncomeIds.has(income.id));
       const totalEligibleGrossIncome = eligibleIncomes.reduce((sum, income) => sum + income.grossIncome, 0);
 
       maxContribution = Math.min(maxContribution, totalEligibleGrossIncome);

@@ -30,8 +30,8 @@ export class PortfolioProcessor {
     const grossCashFlow = incomesData.totalGrossIncome - expensesData.totalExpenses;
 
     const { totalForPeriod: contributionsForPeriod, byAccount: contributionsByAccount } = this.processContributions(
-      incomesData,
-      grossCashFlow
+      grossCashFlow,
+      incomesData
     );
     const { totalForPeriod: withdrawalsForPeriod, byAccount: withdrawalsByAccount } = this.processWithdrawals(grossCashFlow);
 
@@ -67,7 +67,7 @@ export class PortfolioProcessor {
     throw new Error('Not implemented');
   }
 
-  private processContributions(incomesData: IncomesData, grossCashFlow: number): TransactionsBreakdown {
+  private processContributions(grossCashFlow: number, incomesData?: IncomesData): TransactionsBreakdown {
     const byAccount: Record<string, number> = {};
     if (!(grossCashFlow > 0)) {
       return { totalForPeriod: 0, byAccount };
@@ -85,7 +85,7 @@ export class PortfolioProcessor {
       const contributeToAccountID = rule.getAccountID();
       const contributeToAccount = this.simulationState.portfolio.getAccountById(contributeToAccountID)!;
 
-      const contributionAmount = rule.getContributionAmount(remainingToContribute, contributeToAccount, incomesData, this.monthlyData, age);
+      const contributionAmount = rule.getContributionAmount(remainingToContribute, contributeToAccount, this.monthlyData, age, incomesData);
       if (contributionAmount <= 0) {
         currentRuleIndex++;
         continue;
