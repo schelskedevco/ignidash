@@ -7,12 +7,12 @@ export interface IncomeTaxesData {
   incomeTaxRate: number;
   incomeTaxAmount: number;
   netIncome: number;
-  taxesDue: number;
-  taxesRefund: number;
 }
 
 export interface TaxesData {
   incomeTaxes: IncomeTaxesData;
+  taxesDue: number;
+  taxesRefund: number;
 }
 
 export class TaxProcessor {
@@ -28,6 +28,6 @@ export class TaxProcessor {
     const taxesDue = difference > 0 ? difference : 0;
     const taxesRefund = difference < 0 ? Math.abs(difference) : 0;
 
-    return { incomeTaxes: { incomeTaxRate, incomeTaxAmount, netIncome, taxesDue, taxesRefund } };
+    return { incomeTaxes: { incomeTaxRate, incomeTaxAmount, netIncome }, taxesDue, taxesRefund };
   }
 }
