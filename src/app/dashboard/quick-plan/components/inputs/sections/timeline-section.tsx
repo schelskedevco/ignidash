@@ -50,6 +50,7 @@ export default function TimelineSection({ toggleDisclosure, disclosureButtonRef,
   return (
     <>
       <DisclosureSection
+        defaultOpen
         title="Timeline"
         icon={HourglassIcon}
         centerPanelContent={!hasTimelines}

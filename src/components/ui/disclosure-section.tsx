@@ -1,6 +1,6 @@
 'use client';
 
-import { RefObject } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
@@ -13,6 +13,7 @@ interface DisclosureSectionContentProps {
     React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & { title?: string; titleId?: string } & React.RefAttributes<SVGSVGElement>
   >;
   children: React.ReactNode;
+  defaultOpen?: boolean;
   centerPanelContent: boolean;
   toggleDisclosure: (newDisclosure: DisclosureState) => void;
   disclosureButtonRef: RefObject<HTMLButtonElement | null>;
@@ -25,6 +26,7 @@ function DisclosureSectionContent({
   title,
   icon: Icon,
   children,
+  defaultOpen,
   centerPanelContent,
   toggleDisclosure,
   disclosureButtonRef,
@@ -32,6 +34,14 @@ function DisclosureSectionContent({
   open,
   close,
 }: DisclosureSectionContentProps) {
+  const hasInitialized = useRef<boolean>(false);
+  useEffect(() => {
+    if (defaultOpen && !hasInitialized.current) {
+      toggleDisclosure({ open: false, close, key: disclosureKey });
+      hasInitialized.current = true;
+    }
+  }, [defaultOpen, toggleDisclosure, close, disclosureKey]);
+
   return (
     <div className="contents">
       <div className="border-border/50 -mx-2 border-b sm:-mx-3 lg:-mx-4">
@@ -99,6 +109,7 @@ export default function DisclosureSection({
         <DisclosureSectionContent
           title={title}
           icon={Icon}
+          defaultOpen={defaultOpen}
           centerPanelContent={centerPanelContent}
           toggleDisclosure={toggleDisclosure}
           disclosureButtonRef={disclosureButtonRef}
