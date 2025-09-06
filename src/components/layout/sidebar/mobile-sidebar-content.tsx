@@ -18,7 +18,7 @@ export default function MobileSidebarContent({ navigation, secondaryNavigation, 
       </div>
       <nav className="flex flex-1 flex-col overflow-y-auto px-3">
         <ul role="list" className="flex flex-1 flex-col">
-          <li>
+          <li className="mt-1">
             <ul role="list" className="space-y-1.5">
               {navigation.map((item) => (
                 <li key={item.name} onClick={onClose}>
@@ -32,7 +32,7 @@ export default function MobileSidebarContent({ navigation, secondaryNavigation, 
               ))}
             </ul>
           </li>
-          <li className="mt-auto">
+          <li className="mt-auto mb-1">
             <ul role="list" className="space-y-1.5">
               <li key="dark-mode">
                 <SidebarModeToggle />
