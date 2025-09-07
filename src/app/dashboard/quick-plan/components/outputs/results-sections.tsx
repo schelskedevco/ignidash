@@ -2,9 +2,12 @@
 
 import { useIsCalculationReady, useMarketAssumptionsData } from '@/lib/stores/quick-plan-store';
 
+import SingleSimulationResults from './results-pages/singe-simulation-results';
 import FixedReturnsResults from './results-pages/fixed-returns-results';
 import MonteCarloResults from './results-pages/monte-carlo-results';
 import HistoricalBacktestResults from './results-pages/historical-backtest-results';
+
+const USE_V2 = true;
 
 export default function ResultsSections() {
   const isCalculationReady = useIsCalculationReady();
@@ -18,12 +21,24 @@ export default function ResultsSections() {
     );
   }
 
+  if (!USE_V2) {
+    switch (marketAssumptions.simulationMode) {
+      case 'fixedReturns':
+        return <FixedReturnsResults />;
+      case 'monteCarlo':
+        return <MonteCarloResults />;
+      case 'historicalBacktest':
+        return <HistoricalBacktestResults />;
+    }
+  }
+
   switch (marketAssumptions.simulationMode) {
     case 'fixedReturns':
-      return <FixedReturnsResults />;
+    case 'historicalReturns':
+    case 'stochasticReturns':
+      return <SingleSimulationResults />;
     case 'monteCarlo':
-      return <MonteCarloResults />;
     case 'historicalBacktest':
-      return <HistoricalBacktestResults />;
+      return null;
   }
 }

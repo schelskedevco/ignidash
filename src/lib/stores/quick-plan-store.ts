@@ -46,6 +46,10 @@ import {
   type SimulationResult,
   type MultiSimulationResult,
 } from '@/lib/calc/simulation-engine';
+import {
+  FinancialSimulationEngine as FinancialSimulationEngineV2,
+  type SimulationResult as SimulationResultV2,
+} from '@/lib/calc/v2/simulation-engine';
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 import { SimulationTableDataExtractor } from '@/lib/calc/simulation-table-data-extractor';
@@ -588,7 +592,6 @@ export const useCurrentAge = () => useQuickPlanStore((state) => state.inputs.bas
 export const useAnnualIncome = () => useQuickPlanStore((state) => state.inputs.basics.annualIncome);
 export const useAnnualExpenses = () => useQuickPlanStore((state) => state.inputs.basics.annualExpenses);
 export const useInvestedAssets = () => useQuickPlanStore((state) => state.inputs.basics.investedAssets);
-
 export const useLifeExpectancy = () => useQuickPlanStore((state) => state.inputs.retirementFunding.lifeExpectancy);
 
 /**
@@ -648,6 +651,19 @@ export const useFixedReturnsSimulation = () => {
 
     return engine.runSimulation(returnsProvider, initialPortfolio, initialPhase);
   }, [inputs]);
+};
+
+export const useFixedReturnsSimulationV2 = (): SimulationResultV2 | null => {
+  // TODO: Add memoization.
+  const inputs = useQuickPlanStore((state) => state.inputs);
+
+  if (!Object.values(inputs.timelines).length) return null;
+
+  const engine = new FinancialSimulationEngineV2(inputs);
+  const returnsProvider = new FixedReturnsProvider(inputs);
+  const timeline = Object.values(inputs.timelines)[0];
+
+  return engine.runSimulation(returnsProvider, timeline);
 };
 
 export const useSingleMonteCarloSimulation = (seed: number | null) => {
