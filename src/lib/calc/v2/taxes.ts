@@ -48,19 +48,19 @@ export class TaxProcessor {
     const grossRealizedGains = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod;
 
     const capitalLossDeduction = Math.min(0, Math.max(-3000, grossRealizedGains));
-    const ordinaryIncomeAfterDeductions = Math.max(0, grossOrdinaryIncome + capitalLossDeduction);
+    const grossOrdinaryIncomeAfterCapitalLoss = Math.max(0, grossOrdinaryIncome + capitalLossDeduction);
 
-    const deductionUsedForOrdinary = Math.min(STANDARD_DEDUCTION_SINGLE, ordinaryIncomeAfterDeductions);
+    const deductionUsedForOrdinary = Math.min(STANDARD_DEDUCTION_SINGLE, grossOrdinaryIncomeAfterCapitalLoss);
     const deductionUsedForGains = STANDARD_DEDUCTION_SINGLE - deductionUsedForOrdinary;
 
-    const taxableOrdinaryIncome = Math.max(0, ordinaryIncomeAfterDeductions - deductionUsedForOrdinary);
+    const taxableOrdinaryIncome = Math.max(0, grossOrdinaryIncomeAfterCapitalLoss - deductionUsedForOrdinary);
     const taxableCapitalGains = Math.max(0, grossRealizedGains - deductionUsedForGains);
 
     const incomeTaxAmount = this.processIncomeTaxes(taxableOrdinaryIncome);
     const incomeTaxes: IncomeTaxesData = {
       incomeTaxAmount,
-      effectiveIncomeTaxRate: ordinaryIncomeAfterDeductions > 0 ? incomeTaxAmount / ordinaryIncomeAfterDeductions : 0,
-      netIncome: ordinaryIncomeAfterDeductions - incomeTaxAmount,
+      effectiveIncomeTaxRate: grossOrdinaryIncomeAfterCapitalLoss > 0 ? incomeTaxAmount / grossOrdinaryIncomeAfterCapitalLoss : 0,
+      netIncome: grossOrdinaryIncomeAfterCapitalLoss - incomeTaxAmount,
     };
 
     const capitalGainsTaxAmount = this.processCapitalGainsTaxes(taxableCapitalGains, taxableOrdinaryIncome);
@@ -71,12 +71,14 @@ export class TaxProcessor {
     };
 
     const totalTaxLiability = incomeTaxes.incomeTaxAmount + capitalGainsTaxes.capitalGainsTaxAmount;
-
     const difference = totalTaxLiability - annualIncomesData.totalAmountWithheld;
-    const totalTaxesDue = difference > 0 ? difference : 0;
-    const totalTaxesRefund = difference < 0 ? Math.abs(difference) : 0;
 
-    return { incomeTaxes, capitalGainsTaxes, totalTaxesDue, totalTaxesRefund };
+    return {
+      incomeTaxes,
+      capitalGainsTaxes,
+      totalTaxesDue: difference > 0 ? difference : 0,
+      totalTaxesRefund: difference < 0 ? Math.abs(difference) : 0,
+    };
   }
 
   private processCapitalGainsTaxes(taxableCapitalGains: number, taxableOrdinaryIncome: number): number {
