@@ -88,9 +88,8 @@ export class TaxProcessor {
     return { capitalGainsTaxRate, capitalGainsTaxAmount };
   }
 
-  private processIncomeTaxes(grossOrdinaryIncome: number, taxableOrdinaryIncome: number): IncomeTaxesData {
+  private processIncomeTaxes(adjustedGrossOrdinaryIncome: number, taxableOrdinaryIncome: number): IncomeTaxesData {
     let incomeTaxAmount = 0;
-
     for (const bracket of INCOME_TAX_BRACKETS_SINGLE) {
       if (taxableOrdinaryIncome <= bracket.min) break;
 
@@ -98,8 +97,8 @@ export class TaxProcessor {
       incomeTaxAmount += taxableInBracket * bracket.rate;
     }
 
-    const incomeTaxRate = grossOrdinaryIncome > 0 ? incomeTaxAmount / grossOrdinaryIncome : 0;
-    const netIncome = grossOrdinaryIncome - incomeTaxAmount;
+    const incomeTaxRate = adjustedGrossOrdinaryIncome > 0 ? incomeTaxAmount / adjustedGrossOrdinaryIncome : 0;
+    const netIncome = adjustedGrossOrdinaryIncome - incomeTaxAmount;
 
     return { incomeTaxRate, incomeTaxAmount, netIncome };
   }
