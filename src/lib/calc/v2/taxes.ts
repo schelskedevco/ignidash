@@ -16,6 +16,7 @@ export interface IncomeTaxesData {
   effectiveIncomeTaxRate: number;
   topMarginalTaxRate: number;
   netIncome: number;
+  capitalLossDeduction?: number;
 }
 
 export interface TaxesData {
@@ -65,6 +66,7 @@ export class TaxProcessor {
       effectiveIncomeTaxRate: grossOrdinaryIncome > 0 ? incomeTaxAmount / grossOrdinaryIncome : 0,
       topMarginalTaxRate,
       netIncome: grossOrdinaryIncome - incomeTaxAmount,
+      capitalLossDeduction: capitalLossDeduction !== 0 ? capitalLossDeduction : undefined,
     };
 
     const { capitalGainsTaxAmount, topMarginalCapitalGainsTaxRate } = this.processCapitalGainsTaxes(
