@@ -24,6 +24,7 @@ export interface TaxesData {
   capitalGainsTaxes: CapitalGainsTaxesData;
   totalTaxesDue: number;
   totalTaxesRefund: number;
+  totalTaxableIncome: number;
 }
 
 const STANDARD_DEDUCTION_SINGLE = 15000;
@@ -88,6 +89,7 @@ export class TaxProcessor {
       capitalGainsTaxes,
       totalTaxesDue: difference > 0 ? difference : 0,
       totalTaxesRefund: difference < 0 ? Math.abs(difference) : 0,
+      totalTaxableIncome: taxableOrdinaryIncome + taxableCapitalGains,
     };
   }
 
