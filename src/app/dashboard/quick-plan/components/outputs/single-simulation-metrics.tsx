@@ -10,22 +10,42 @@ interface SingleSimulationMetricsProps {
 
 export default function SingleSimulationMetrics({ result }: SingleSimulationMetricsProps) {
   const timelines = useTimelinesData();
-  const currentAge = Object.values(timelines)[0].currentAge;
+  const timeline = Object.values(timelines)[0];
+
+  const currentAge = timeline.currentAge;
+  const retirementStrategy = timeline.retirementStrategy;
 
   let yearsToRetirement: number | null = null;
   let retirementAge: number | null = null;
   let portfolioAtRetirement: number | null = null;
 
-  for (const dp of result.data) {
-    const phase = dp.phase;
-    if (phase?.name === 'retirement') {
-      const retirementDate = new Date(dp.date);
+  switch (retirementStrategy.type) {
+    case 'fixedAge':
+      retirementAge = retirementStrategy.retirementAge;
+      yearsToRetirement = retirementAge - currentAge;
 
-      yearsToRetirement = retirementDate.getFullYear() - new Date().getFullYear();
-      retirementAge = currentAge + yearsToRetirement;
-      portfolioAtRetirement = dp.portfolio.totalValue;
+      for (const dp of result.data) {
+        const phase = dp.phase;
+        if (phase?.name === 'retirement') {
+          portfolioAtRetirement = dp.portfolio.totalValue;
+          break;
+        }
+      }
+
       break;
-    }
+    case 'swrTarget':
+      for (const dp of result.data) {
+        const phase = dp.phase;
+        if (phase?.name === 'retirement') {
+          const retirementDate = new Date(dp.date);
+
+          yearsToRetirement = retirementDate.getFullYear() - new Date().getFullYear();
+          retirementAge = currentAge + yearsToRetirement;
+          portfolioAtRetirement = dp.portfolio.totalValue;
+          break;
+        }
+      }
+      break;
   }
 
   const initialPortfolio = result.data[0].portfolio.totalValue;
