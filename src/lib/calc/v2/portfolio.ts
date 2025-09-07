@@ -226,6 +226,7 @@ export class PortfolioProcessor {
 
   private getWithdrawalOrder(): AccountInputs['type'][] {
     // TODO: Create more sophisticated drawdown strategy based on tax, penalty efficiency
+
     const age = this.simulationState.time.age;
     const retirementAge = 59.5;
 
