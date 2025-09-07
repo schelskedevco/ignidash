@@ -27,11 +27,15 @@ export class PhaseIdentifier {
           return { ...currPhase };
         }
 
+        const annualExpensesData = this.simulationState.annualData.expenses;
+        if (annualExpensesData.length === 0) {
+          return { name: 'accumulation' };
+        }
+
         const totalPortfolioValue = this.simulationState.portfolio.getTotalValue();
         const safeWithdrawalRate = this.timeline.retirementStrategy.safeWithdrawalRate / 100;
         const safeWithdrawalAmount = totalPortfolioValue * safeWithdrawalRate;
 
-        const annualExpensesData = this.simulationState.annualData.expenses;
         const averageAnnualExpenses =
           annualExpensesData.length !== 0
             ? annualExpensesData.reduce((acc, curr) => acc + curr.totalExpenses, 0) / annualExpensesData.length

@@ -657,13 +657,15 @@ export const useFixedReturnsSimulationV2 = (): SimulationResultV2 | null => {
   // TODO: Add memoization.
   const inputs = useQuickPlanStore((state) => state.inputs);
 
-  if (!Object.values(inputs.timelines).length) return null;
+  return useMemo(() => {
+    if (!Object.values(inputs.timelines).length) return null;
 
-  const engine = new FinancialSimulationEngineV2(inputs);
-  const returnsProvider = new FixedReturnsProvider(inputs);
-  const timeline = Object.values(inputs.timelines)[0];
+    const engine = new FinancialSimulationEngineV2(inputs);
+    const returnsProvider = new FixedReturnsProvider(inputs);
+    const timeline = Object.values(inputs.timelines)[0];
 
-  return engine.runSimulation(returnsProvider, timeline);
+    return engine.runSimulation(returnsProvider, timeline);
+  }, [inputs]);
 };
 
 export const useSingleMonteCarloSimulation = (seed: number | null) => {
