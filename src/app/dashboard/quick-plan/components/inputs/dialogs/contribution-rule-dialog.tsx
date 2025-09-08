@@ -38,7 +38,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
       ({
         id: '',
         rank: defaultRank,
-        contributionType: 'dollarAmount' as ContributionInputs['contributionType'],
+        contributionType: 'unlimited' as ContributionInputs['contributionType'],
       }) as const satisfies Partial<ContributionInputs>,
     [defaultRank]
   );
