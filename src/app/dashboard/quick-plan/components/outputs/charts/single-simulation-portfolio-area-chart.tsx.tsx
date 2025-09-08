@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-import { useSingleSimulationPortfolioAreaChartData } from '@/lib/stores/quick-plan-store';
+import { useSingleSimulationPortfolioAreaChartData, type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -73,12 +73,16 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomT
 
 interface SingleSimulationPortfolioAreaChartProps {
   simulation: SimulationResult;
+  keyMetrics: FixedReturnsKeyMetricsV2;
+  showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
 
 export default function SingleSimulationPortfolioAreaChart({
   simulation,
+  keyMetrics,
+  showReferenceLines,
   onAgeSelect,
   selectedAge,
 }: SingleSimulationPortfolioAreaChartProps) {

@@ -24,7 +24,12 @@ export default function SingleSimulationResults() {
       </SectionContainer>
       <SectionContainer showBottomBorder>
         <div className="mb-4 grid grid-cols-1">
-          <SingleSimulationAreaChartCard simulation={simulationResult} setSelectedAge={setSelectedAge} selectedAge={selectedAge} />
+          <SingleSimulationAreaChartCard
+            simulation={simulationResult}
+            keyMetrics={keyMetrics}
+            setSelectedAge={setSelectedAge}
+            selectedAge={selectedAge}
+          />
         </div>
       </SectionContainer>
     </>
