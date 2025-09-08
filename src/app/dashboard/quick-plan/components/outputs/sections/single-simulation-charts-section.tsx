@@ -9,6 +9,8 @@ import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { SingleSimulationCategory } from '../single-simulation-category-selector';
 import SingleSimulationPortfolioAssetTypeAreaChartCard from '../cards/single-simulation/single-simulation-portfolio-asset-type-area-chart-card';
 import SingleSimulationPortfolioAccountTypeAreaChartCard from '../cards/single-simulation/single-simulation-portfolio-account-type-area-chart-card';
+import SingleSimulationPortfolioAssetTypePieChartCard from '../cards/single-simulation/single-simulation-portfolio-asset-type-pie-chart-card';
+import SingleSimulationPortfolioAccountTypePieChartCard from '../cards/single-simulation/single-simulation-portfolio-account-type-pie-chart-card';
 
 interface ChartsCategoryProps {
   simulation: SimulationResult;
@@ -26,12 +28,14 @@ function PortfolioCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }
         setSelectedAge={setSelectedAge}
         selectedAge={selectedAge}
       />
+      <SingleSimulationPortfolioAssetTypePieChartCard simulation={simulation} setSelectedAge={setSelectedAge} selectedAge={selectedAge} />
       <SingleSimulationPortfolioAccountTypeAreaChartCard
         simulation={simulation}
         keyMetrics={keyMetrics}
         setSelectedAge={setSelectedAge}
         selectedAge={selectedAge}
       />
+      <SingleSimulationPortfolioAccountTypePieChartCard simulation={simulation} setSelectedAge={setSelectedAge} selectedAge={selectedAge} />
     </>
   );
 }
