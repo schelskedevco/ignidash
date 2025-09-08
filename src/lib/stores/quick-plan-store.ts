@@ -674,25 +674,31 @@ export interface FixedReturnsKeyMetricsV2 {
   portfolioAtRetirement: number | null;
   initialPortfolio: number;
   finalPortfolio: number;
+  progressToRetirement: number | null;
 }
 
 export const useFixedReturnsKeyMetricsV2 = (simulationResult: SimulationResultV2 | null): FixedReturnsKeyMetricsV2 | null => {
   return useMemo(() => {
     if (!simulationResult) return null;
-
     const { data, context } = simulationResult;
 
     const startAge = context.startAge;
     const retirementStrategy = context.retirementStrategy;
 
+    const initialPortfolio = data[0].portfolio.totalValue;
+    const finalPortfolio = data[data.length - 1].portfolio.totalValue;
+
     let yearsToRetirement: number | null = null;
     let retirementAge: number | null = null;
     let portfolioAtRetirement: number | null = null;
+    let progressToRetirement: number | null = null;
 
     switch (retirementStrategy.type) {
       case 'fixedAge':
         retirementAge = retirementStrategy.retirementAge;
         yearsToRetirement = retirementAge - startAge;
+
+        progressToRetirement = Math.min(startAge / retirementAge, 1);
 
         for (const dp of data) {
           const phase = dp.phase;
@@ -715,11 +721,12 @@ export const useFixedReturnsKeyMetricsV2 = (simulationResult: SimulationResultV2
             break;
           }
         }
+
+        if (portfolioAtRetirement !== null) {
+          progressToRetirement = Math.min(initialPortfolio / portfolioAtRetirement, 1);
+        }
         break;
     }
-
-    const initialPortfolio = data[0].portfolio.totalValue;
-    const finalPortfolio = data[data.length - 1].portfolio.totalValue;
 
     return {
       startAge,
@@ -728,6 +735,7 @@ export const useFixedReturnsKeyMetricsV2 = (simulationResult: SimulationResultV2
       portfolioAtRetirement,
       initialPortfolio,
       finalPortfolio,
+      progressToRetirement,
     };
   }, [simulationResult]);
 };

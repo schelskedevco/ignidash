@@ -10,10 +10,9 @@ interface SingleSimulationMetricsProps {
 }
 
 export default function SingleSimulationMetrics({ keyMetrics }: SingleSimulationMetricsProps) {
-  const { initialPortfolio, finalPortfolio, portfolioAtRetirement, retirementAge, yearsToRetirement } = keyMetrics;
+  const { finalPortfolio, portfolioAtRetirement, retirementAge, yearsToRetirement, progressToRetirement } = keyMetrics;
 
-  const progressToRetirementForDisplay =
-    portfolioAtRetirement !== null ? `${formatNumber(Math.min(initialPortfolio / portfolioAtRetirement, 1) * 100, 0)}%` : 'N/A';
+  const progressToRetirementForDisplay = progressToRetirement !== null ? `${formatNumber(progressToRetirement * 100, 0)}%` : 'N/A';
   const retirementAgeForDisplay = retirementAge !== null ? `${formatNumber(retirementAge, 0)}` : '∞';
   const yearsToRetirementForDisplay = yearsToRetirement !== null ? `${formatNumber(yearsToRetirement, 0)}` : '∞';
   const portfolioAtRetirementForDisplay = portfolioAtRetirement !== null ? `$${formatNumber(portfolioAtRetirement, 2)}` : 'N/A';
