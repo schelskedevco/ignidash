@@ -27,15 +27,15 @@ interface CustomTooltipProps {
     payload: SingleSimulationPortfolioAreaChartDataPoint;
   }>;
   label?: number;
-  currentAge: number;
+  startAge: number;
   disabled: boolean;
 }
 
-const CustomTooltip = ({ active, payload, label, currentAge, disabled }: CustomTooltipProps) => {
+const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
   const currentYear = new Date().getFullYear();
-  const yearForAge = currentYear + (label! - currentAge);
+  const yearForAge = currentYear + (label! - startAge);
 
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
@@ -152,10 +152,16 @@ export default function SingleSimulationPortfolioAreaChart({
             <Area type="monotone" dataKey="bonds" stackId="1" stroke="var(--chart-2)" fill="url(#colorBonds)" activeDot={false} />
             <Area type="monotone" dataKey="cash" stackId="1" stroke="var(--chart-1)" fill="url(#colorCash)" activeDot={false} />
             <Tooltip
-              content={<CustomTooltip currentAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
+              content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
               cursor={{ stroke: foregroundColor }}
             />
+            {keyMetrics.retirementAge && showReferenceLines && (
+              <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+            )}
             {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
+            {keyMetrics.portfolioAtRetirement && showReferenceLines && (
+              <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+            )}
           </AreaChart>
         </ResponsiveContainer>
       </div>
