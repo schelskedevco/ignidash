@@ -34,7 +34,17 @@ export const timelineFormSchema = z
   .refine((data) => data.currentAge < data.lifeExpectancy, {
     message: 'Life expectancy must be greater than current age',
     path: ['currentAge'],
-  });
+  })
+  .refine(
+    (data) => {
+      if (data.retirementStrategy.type !== 'fixedAge') return true;
+      return data.currentAge <= data.retirementStrategy.retirementAge && data.retirementStrategy.retirementAge < data.lifeExpectancy;
+    },
+    {
+      message: 'Retirement age must be between current age and life expectancy',
+      path: ['retirementStrategy', 'retirementAge'],
+    }
+  );
 
 export type RetirementStrategyInputs = z.infer<typeof retirementStrategySchema>;
 export type TimelineInputs = z.infer<typeof timelineFormSchema>;
