@@ -890,9 +890,9 @@ export const useSingleSimulationPortfolioAreaChartData = (simulation: Simulation
       const totalValue = portfolio.totalValue;
 
       const assetAllocation = portfolio.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
-      const stocksAllocation = assetAllocation.stocks;
-      const bondsAllocation = assetAllocation.bonds;
-      const cashAllocation = assetAllocation.cash;
+      const stocksAllocation = assetAllocation.stocks / 100;
+      const bondsAllocation = assetAllocation.bonds / 100;
+      const cashAllocation = assetAllocation.cash / 100;
 
       return {
         age: currDateYear - startDateYear + currentAge,
