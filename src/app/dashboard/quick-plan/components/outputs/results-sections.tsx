@@ -2,7 +2,7 @@
 
 import { useIsCalculationReady, useMarketAssumptionsData } from '@/lib/stores/quick-plan-store';
 
-import SingleSimulationResults from './results-pages/singe-simulation-results';
+import SingleSimulationResults from './results-pages/single-simulation-results';
 import FixedReturnsResults from './results-pages/fixed-returns-results';
 import MonteCarloResults from './results-pages/monte-carlo-results';
 import HistoricalBacktestResults from './results-pages/historical-backtest-results';
