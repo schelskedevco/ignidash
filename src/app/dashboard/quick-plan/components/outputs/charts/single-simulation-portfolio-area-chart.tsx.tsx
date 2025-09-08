@@ -140,7 +140,7 @@ export default function SingleSimulationPortfolioAreaChart({
                 <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={1} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
             <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
             <YAxis
               tick={{ fill: foregroundMutedColor }}
