@@ -1,0 +1,1 @@
+- Growth should be applied from when the income / expense starts, NOT the years we are into the simulation.

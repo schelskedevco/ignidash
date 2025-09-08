@@ -10,6 +10,7 @@ import { Button } from '@/components/catalyst/button';
 import { useIncomesData, useDeleteIncome } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
+import { frequencyForDisplay } from '@/lib/schemas/income-form-schema';
 
 import IncomeDialog from '../dialogs/income-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';
@@ -58,7 +59,7 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
                     id={id}
                     index={index}
                     name={income.name}
-                    desc={formatNumber(income.amount, 2, '$') + ` ${income.frequency}`}
+                    desc={formatNumber(income.amount, 2, '$') + ` ${frequencyForDisplay(income.frequency)}`}
                     leftAddOnCharacter={income.name.charAt(0).toUpperCase()}
                     onDropdownClickEdit={() => {
                       setIncomeDialogOpen(true);
@@ -87,7 +88,6 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
           )}
         </div>
       </DisclosureSection>
-
       <Dialog size="xl" open={incomeDialogOpen} onClose={handleClose}>
         <IncomeDialog selectedIncomeID={selectedIncomeID} onClose={handleClose} />
       </Dialog>

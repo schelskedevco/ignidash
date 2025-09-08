@@ -140,3 +140,20 @@ export const growthForDisplay = (
 
   return `Rate: ${rate}%, Limit: ${formatNumber(growthLimit, 0, '$')}`;
 };
+
+export const frequencyForDisplay = (frequency: NonNullable<IncomeInputs['frequency']>) => {
+  switch (frequency) {
+    case 'yearly':
+      return 'yearly';
+    case 'oneTime':
+      return 'one time';
+    case 'quarterly':
+      return 'quarterly';
+    case 'monthly':
+      return 'monthly';
+    case 'biweekly':
+      return 'biweekly';
+    case 'weekly':
+      return 'weekly';
+  }
+};
