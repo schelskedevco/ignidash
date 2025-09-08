@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-import { type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';

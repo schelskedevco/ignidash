@@ -44,21 +44,21 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
       <div className="flex flex-col gap-2">
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-3)]/60 px-2 text-sm">
-          <span className="mr-2">Taxable:</span>
-          <span className="ml-1 font-semibold">{formatNumber(payload[0].value, 3, '$')}</span>
-        </p>
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-2)]/60 px-2 text-sm">
-          <span className="mr-2">Tax Deferred:</span>
-          <span className="ml-1 font-semibold">{formatNumber(payload[1].value, 3, '$')}</span>
+        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-4)]/60 px-2 text-sm">
+          <span className="mr-2">Savings:</span>
+          <span className="ml-1 font-semibold">{formatNumber(payload[3].value, 3, '$')}</span>
         </p>
         <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-1)]/60 px-2 text-sm">
           <span className="mr-2">Tax Free:</span>
           <span className="ml-1 font-semibold">{formatNumber(payload[2].value, 3, '$')}</span>
         </p>
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-4)]/60 px-2 text-sm">
-          <span className="mr-2">Savings:</span>
-          <span className="ml-1 font-semibold">{formatNumber(payload[3].value, 3, '$')}</span>
+        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-2)]/60 px-2 text-sm">
+          <span className="mr-2">Tax Deferred:</span>
+          <span className="ml-1 font-semibold">{formatNumber(payload[1].value, 3, '$')}</span>
+        </p>
+        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-3)]/60 px-2 text-sm">
+          <span className="mr-2">Taxable:</span>
+          <span className="ml-1 font-semibold">{formatNumber(payload[0].value, 3, '$')}</span>
         </p>
       </div>
       <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
