@@ -4,13 +4,12 @@ import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-import { useSingleSimulationPortfolioAreaChartData, type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
-import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import { type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 
-interface SingleSimulationPortfolioAreaChartDataPoint {
+interface SingleSimulationPortfolioAssetTypeAreaChartDataPoint {
   age: number;
   stocks: number;
   bonds: number;
@@ -23,8 +22,8 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof SingleSimulationPortfolioAreaChartDataPoint;
-    payload: SingleSimulationPortfolioAreaChartDataPoint;
+    dataKey: keyof SingleSimulationPortfolioAssetTypeAreaChartDataPoint;
+    payload: SingleSimulationPortfolioAssetTypeAreaChartDataPoint;
   }>;
   label?: number;
   startAge: number;
@@ -71,28 +70,29 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
   );
 };
 
-interface SingleSimulationPortfolioAreaChartProps {
-  simulation: SimulationResult;
+interface SingleSimulationPortfolioAssetTypeAreaChartProps {
+  rawChartData: SingleSimulationPortfolioAssetTypeAreaChartDataPoint[];
+  startAge: number;
   keyMetrics: FixedReturnsKeyMetricsV2;
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
 
-export default function SingleSimulationPortfolioAreaChart({
-  simulation,
+export default function SingleSimulationPortfolioAssetTypeAreaChart({
+  rawChartData,
+  startAge,
   keyMetrics,
   showReferenceLines,
   onAgeSelect,
   selectedAge,
-}: SingleSimulationPortfolioAreaChartProps) {
+}: SingleSimulationPortfolioAssetTypeAreaChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
-  const chartData = useSingleSimulationPortfolioAreaChartData(simulation);
-  const startAge = simulation.context.startAge;
+  const chartData = rawChartData;
 
   const chartRef = useClickDetection<HTMLDivElement>(
     () => setClickedOutsideChart(true),

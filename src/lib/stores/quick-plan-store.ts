@@ -945,7 +945,7 @@ export const useStochasticAnalysis = (analysis: AggregateSimulationStats) => {
  * Single Simulation Chart Hooks
  * These hooks provide access to single simulation chart data
  */
-export const useSingleSimulationPortfolioAreaChartData = (simulation: SimulationResultV2) => {
+export const useSingleSimulationPortfolioAssetTypeAreaChartData = (simulation: SimulationResultV2) => {
   return useMemo(() => {
     return simulation.data.map((data) => {
       const startAge = simulation.context.startAge;

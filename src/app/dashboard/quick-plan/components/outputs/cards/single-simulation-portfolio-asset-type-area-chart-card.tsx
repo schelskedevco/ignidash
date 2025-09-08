@@ -1,26 +1,32 @@
 'use client';
 
-import { useShowReferenceLinesPreference, useUpdatePreferences, type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import {
+  useShowReferenceLinesPreference,
+  useUpdatePreferences,
+  useSingleSimulationPortfolioAssetTypeAreaChartData,
+  type FixedReturnsKeyMetricsV2,
+} from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { Switch } from '@/components/catalyst/switch';
 
-import SingleSimulationPortfolioAreaChart from '../charts/single-simulation-portfolio-area-chart.tsx';
+import SingleSimulationPortfolioAssetTypeAreaChart from '../charts/single-simulation-portfolio-asset-type-area-chart';
 
-interface SingleSimulationPortfolioAreaChartCardProps {
+interface SingleSimulationPortfolioAssetTypeAreaChartCardProps {
   simulation: SimulationResult;
   keyMetrics: FixedReturnsKeyMetricsV2;
   setSelectedAge: (age: number) => void;
   selectedAge: number;
 }
 
-export default function SingleSimulationPortfolioAreaChartCard({
+export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
   simulation,
   keyMetrics,
   setSelectedAge,
   selectedAge,
-}: SingleSimulationPortfolioAreaChartCardProps) {
+}: SingleSimulationPortfolioAssetTypeAreaChartCardProps) {
   const startAge = simulation.context.startAge;
+  const rawChartData = useSingleSimulationPortfolioAssetTypeAreaChartData(simulation);
 
   const showReferenceLines = useShowReferenceLinesPreference();
   const updatePreferences = useUpdatePreferences();
@@ -29,7 +35,7 @@ export default function SingleSimulationPortfolioAreaChartCard({
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
         <h4 className="text-foreground flex items-center text-lg font-semibold">
-          <span className="mr-2">Portfolio Projection</span>
+          <span className="mr-2">Portfolio by Asset Type</span>
         </h4>
         <Switch
           className="focus-outline"
@@ -42,8 +48,9 @@ export default function SingleSimulationPortfolioAreaChartCard({
           aria-label="Toggle reference lines"
         />
       </div>
-      <SingleSimulationPortfolioAreaChart
-        simulation={simulation}
+      <SingleSimulationPortfolioAssetTypeAreaChart
+        rawChartData={rawChartData}
+        startAge={startAge}
         keyMetrics={keyMetrics}
         showReferenceLines={showReferenceLines}
         onAgeSelect={(age) => {

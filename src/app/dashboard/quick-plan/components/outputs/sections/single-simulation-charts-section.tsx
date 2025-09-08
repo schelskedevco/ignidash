@@ -7,7 +7,7 @@ import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
 import { SingleSimulationCategory } from '../single-simulation-category-selector';
-import SingleSimulationPortfolioAreaChartCard from '../cards/single-simulation-portfolio-area-chart-card';
+import SingleSimulationPortfolioAssetTypeAreaChartCard from '../cards/single-simulation-portfolio-asset-type-area-chart-card';
 import SingleSimulationPortfolioAccountTypeAreaChartCard from '../cards/single-simulation-portfolio-account-type-area-chart-card';
 
 interface ChartsCategoryProps {
@@ -20,7 +20,7 @@ interface ChartsCategoryProps {
 function PortfolioCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }: ChartsCategoryProps) {
   return (
     <>
-      <SingleSimulationPortfolioAreaChartCard
+      <SingleSimulationPortfolioAssetTypeAreaChartCard
         simulation={simulation}
         keyMetrics={keyMetrics}
         setSelectedAge={setSelectedAge}
