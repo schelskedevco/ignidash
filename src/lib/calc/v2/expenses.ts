@@ -104,7 +104,11 @@ export class Expense {
 
   processMonthlyAmount(inflationRate: number, year: number): ExpenseData {
     const rawAmount = this.amount;
-    let annualAmount = rawAmount * this.getTimesToApplyPerYear();
+
+    const timesToApplyPerYear = this.getTimesToApplyPerYear();
+    const timesToApplyPerMonth = this.getTimesToApplyPerMonth();
+
+    let annualAmount = rawAmount * timesToApplyPerYear;
 
     const nominalGrowthRate = this.growthRate ?? 0;
     const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate) - 1;
@@ -118,7 +122,8 @@ export class Expense {
       annualAmount = Math.max(annualAmount, growthLimit);
     }
 
-    const monthlyAmount = Math.max((annualAmount / this.getTimesToApplyPerYear()) * this.getTimesToApplyPerMonth(), 0);
+    if (timesToApplyPerYear === 0) return { id: this.id, name: this.name, amount: 0 };
+    const monthlyAmount = Math.max((annualAmount / timesToApplyPerYear) * timesToApplyPerMonth, 0);
 
     if (this.frequency === 'oneTime') this.hasOneTimeExpenseOccurred = true;
     return { id: this.id, name: this.name, amount: monthlyAmount };

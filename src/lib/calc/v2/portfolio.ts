@@ -193,7 +193,7 @@ export class PortfolioProcessor {
     let realizedGainsForPeriod = 0;
 
     const withdrawalOrder = this.getWithdrawalOrder();
-    let remainingToWithdraw = grossCashFlow;
+    let remainingToWithdraw = Math.abs(grossCashFlow);
 
     for (const accountType of withdrawalOrder) {
       if (remainingToWithdraw <= 0) break;
