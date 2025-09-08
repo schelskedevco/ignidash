@@ -50,7 +50,11 @@ function SingleSimulationChartsSection({
       );
       break;
     default:
-      chartsComponents = <div>No charts available</div>;
+      chartsComponents = (
+        <div className="text-muted-foreground ml-2 py-10 text-center font-semibold italic">
+          <p>Coming soon...</p>
+        </div>
+      );
       break;
   }
 
