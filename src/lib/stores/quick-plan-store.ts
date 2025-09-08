@@ -552,6 +552,13 @@ export const useMarketAssumptionsData = () => useQuickPlanStore((state) => state
 export const useRetirementFundingData = () => useQuickPlanStore((state) => state.inputs.retirementFunding);
 
 export const useTimelinesData = () => useQuickPlanStore((state) => state.inputs.timelines);
+export const useFirstTimelineCurrentAge = () =>
+  useQuickPlanStore((state) => {
+    const timeline = Object.values(state.inputs.timelines)[0];
+    if (!timeline) return null;
+
+    return timeline.currentAge;
+  });
 export const useTimelineData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.timelines[id] : null));
 
 export const useIncomesData = () => useQuickPlanStore((state) => state.inputs.incomes);
@@ -865,6 +872,37 @@ export const useStochasticAnalysis = (analysis: AggregateSimulationStats) => {
       finalPortfolio,
     };
   }, [inputs, analysis]);
+};
+
+/**
+ * Single Simulation Chart Hooks
+ * These hooks provide access to single simulation chart data
+ */
+export const useSingleSimulationPortfolioAreaChartData = (simulation: SimulationResultV2) => {
+  const currentAge = useFirstTimelineCurrentAge()!;
+
+  return useMemo(() => {
+    return simulation.data.map((data) => {
+      const startDateYear = new Date().getFullYear();
+      const currDateYear = new Date(data.date).getFullYear();
+
+      const portfolio = data.portfolio;
+      const totalValue = portfolio.totalValue;
+
+      const assetAllocation = portfolio.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
+      const stocksAllocation = assetAllocation.stocks;
+      const bondsAllocation = assetAllocation.bonds;
+      const cashAllocation = assetAllocation.cash;
+
+      return {
+        age: currDateYear - startDateYear + currentAge,
+        stocks: totalValue * stocksAllocation,
+        bonds: totalValue * bondsAllocation,
+        cash: totalValue * cashAllocation,
+        portfolioValue: totalValue,
+      };
+    });
+  }, [currentAge, simulation]);
 };
 
 /**
