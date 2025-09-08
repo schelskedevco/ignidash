@@ -6,7 +6,8 @@ import { useFixedReturnsSimulationV2, useFixedReturnsKeyMetricsV2 } from '@/lib/
 import SectionContainer from '@/components/ui/section-container';
 
 import SingleSimulationMetrics from '../single-simulation-metrics';
-import SingleSimulationAreaChartCard from '../cards/single-simulation-portfolio-area-chart-card';
+import SingleSimulationCategorySelector, { SingleSimulationCategory } from '../single-simulation-category-selector';
+import SingleSimulationChartsSection from '../sections/single-simulation-charts-section';
 
 export default function SingleSimulationResults() {
   const simulationResult = useFixedReturnsSimulationV2();
@@ -14,6 +15,7 @@ export default function SingleSimulationResults() {
 
   const startAge = simulationResult?.context.startAge;
   const [selectedAge, setSelectedAge] = useState<number>(startAge! + 1);
+  const [currentCategory, setCurrentCategory] = useState<SingleSimulationCategory>(SingleSimulationCategory.Portfolio);
 
   if (!simulationResult || !keyMetrics) return null;
 
@@ -22,16 +24,14 @@ export default function SingleSimulationResults() {
       <SectionContainer showBottomBorder>
         <SingleSimulationMetrics keyMetrics={keyMetrics} />
       </SectionContainer>
-      <SectionContainer showBottomBorder>
-        <div className="mb-4 grid grid-cols-1">
-          <SingleSimulationAreaChartCard
-            simulation={simulationResult}
-            keyMetrics={keyMetrics}
-            setSelectedAge={setSelectedAge}
-            selectedAge={selectedAge}
-          />
-        </div>
-      </SectionContainer>
+      <SingleSimulationCategorySelector currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} />
+      <SingleSimulationChartsSection
+        simulation={simulationResult}
+        keyMetrics={keyMetrics}
+        setSelectedAge={setSelectedAge}
+        selectedAge={selectedAge}
+        currentCategory={currentCategory}
+      />
     </>
   );
 }
