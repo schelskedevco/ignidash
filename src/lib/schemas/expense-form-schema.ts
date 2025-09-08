@@ -146,7 +146,7 @@ export const frequencyForDisplay = (frequency: NonNullable<ExpenseInputs['freque
     case 'yearly':
       return 'yearly';
     case 'oneTime':
-      return 'one time';
+      return 'one-time';
     case 'quarterly':
       return 'quarterly';
     case 'monthly':
