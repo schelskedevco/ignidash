@@ -24,7 +24,9 @@ export default function SingleSimulationResults() {
       <SectionContainer showBottomBorder>
         <SingleSimulationMetrics keyMetrics={keyMetrics} />
       </SectionContainer>
-      <SingleSimulationCategorySelector currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} />
+      <div>
+        <SingleSimulationCategorySelector currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} />
+      </div>
       <SingleSimulationChartsSection
         simulation={simulationResult}
         keyMetrics={keyMetrics}
