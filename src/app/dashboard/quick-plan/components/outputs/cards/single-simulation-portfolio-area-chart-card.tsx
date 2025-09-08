@@ -1,6 +1,5 @@
 'use client';
 
-import { useFirstTimelineCurrentAge } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
@@ -17,7 +16,7 @@ export default function SingleSimulationPortfolioAreaChartCard({
   setSelectedAge,
   selectedAge,
 }: SingleSimulationPortfolioAreaChartCardProps) {
-  const currentAge = useFirstTimelineCurrentAge();
+  const startAge = simulation.context.startAge;
 
   return (
     <Card className="my-0">
@@ -29,7 +28,7 @@ export default function SingleSimulationPortfolioAreaChartCard({
       <SingleSimulationPortfolioAreaChart
         simulation={simulation}
         onAgeSelect={(age) => {
-          if (age >= currentAge! + 1) setSelectedAge(age);
+          if (age >= startAge + 1) setSelectedAge(age);
         }}
         selectedAge={selectedAge}
       />

@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-import { useSingleSimulationPortfolioAreaChartData, useFirstTimelineCurrentAge } from '@/lib/stores/quick-plan-store';
+import { useSingleSimulationPortfolioAreaChartData } from '@/lib/stores/quick-plan-store';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -88,7 +88,7 @@ export default function SingleSimulationPortfolioAreaChart({
   const isSmallScreen = useIsMobile();
 
   const chartData = useSingleSimulationPortfolioAreaChartData(simulation);
-  const currentAge = useFirstTimelineCurrentAge();
+  const startAge = simulation.context.startAge;
 
   const chartRef = useClickDetection<HTMLDivElement>(
     () => setClickedOutsideChart(true),
@@ -148,7 +148,7 @@ export default function SingleSimulationPortfolioAreaChart({
             <Area type="monotone" dataKey="bonds" stackId="1" stroke="var(--chart-2)" fill="url(#colorBonds)" activeDot={false} />
             <Area type="monotone" dataKey="cash" stackId="1" stroke="var(--chart-1)" fill="url(#colorCash)" activeDot={false} />
             <Tooltip
-              content={<CustomTooltip currentAge={currentAge!} disabled={isSmallScreen && clickedOutsideChart} />}
+              content={<CustomTooltip currentAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
               cursor={{ stroke: foregroundColor }}
             />
             {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}

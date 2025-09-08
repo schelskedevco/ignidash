@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { useFixedReturnsSimulationV2 } from '@/lib/stores/quick-plan-store';
 import SectionContainer from '@/components/ui/section-container';
-import { useFirstTimelineCurrentAge } from '@/lib/stores/quick-plan-store';
 
 import SingleSimulationMetrics from '../single-simulation-metrics';
 import SingleSimulationAreaChartCard from '../cards/single-simulation-portfolio-area-chart-card';
@@ -12,8 +11,8 @@ import SingleSimulationAreaChartCard from '../cards/single-simulation-portfolio-
 export default function SingleSimulationResults() {
   const simulationResult = useFixedReturnsSimulationV2();
 
-  const currentAge = useFirstTimelineCurrentAge();
-  const [selectedAge, setSelectedAge] = useState<number>(currentAge! + 1);
+  const startAge = simulationResult?.context.startAge;
+  const [selectedAge, setSelectedAge] = useState<number>(startAge! + 1);
 
   if (!simulationResult) return null;
 
