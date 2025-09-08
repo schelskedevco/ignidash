@@ -972,7 +972,7 @@ export const useSingleSimulationPortfolioAssetTypeAreaChartData = (simulation: S
 
 export const useSingleSimulationPortfolioAccountTypeAreaChartData = (simulation: SimulationResultV2) => {
   return useMemo(() => {
-    return simulation.data.slice(1).map((data) => {
+    return simulation.data.map((data) => {
       const startAge = simulation.context.startAge;
       const startDateYear = new Date().getFullYear();
       const currDateYear = new Date(data.date).getFullYear();
