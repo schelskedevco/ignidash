@@ -10,7 +10,7 @@ import Card from '@/components/ui/card';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { Switch } from '@/components/catalyst/switch';
 
-import SingleSimulationPortfolioAssetTypeAreaChart from '../charts/single-simulation-portfolio-asset-type-area-chart';
+import SingleSimulationPortfolioAssetTypeAreaChart from '../../charts/single-simulation/single-simulation-portfolio-asset-type-area-chart';
 
 interface SingleSimulationPortfolioAssetTypeAreaChartCardProps {
   simulation: SimulationResult;
