@@ -1,8 +1,8 @@
 'use client';
 
-import { useShowReferenceLinesPreference, useUpdatePreferences, type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import { useShowReferenceLinesPreference, /* useUpdatePreferences */ type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
-import { Switch } from '@/components/catalyst/switch';
+// import { Switch } from '@/components/catalyst/switch';
 import { Select } from '@/components/catalyst/select';
 
 import SingleSimulationPortfolioAssetTypeAreaChart, {
@@ -29,25 +29,26 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
   startAge,
 }: SingleSimulationPortfolioAssetTypeAreaChartCardProps) {
   const showReferenceLines = useShowReferenceLinesPreference();
-  const updatePreferences = useUpdatePreferences();
+  // const updatePreferences = useUpdatePreferences();
 
   return (
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
-        <h4 className="text-foreground flex items-center text-lg font-semibold">
-          <span className="mr-2 whitespace-nowrap">Net Worth by</span>
-          <Select
-            className="max-w-36"
-            id="data-view"
-            name="data-view"
-            value={dataView}
-            onChange={(e) => setDataView(e.target.value as 'asset' | 'account')}
-          >
-            <option value="asset">Asset Class</option>
-            <option value="account">Account Type</option>
-          </Select>
+        <h4 className="text-foreground flex items-center text-lg font-semibold whitespace-nowrap">
+          <span className="mr-2">Net Worth</span>
+          <span className="text-muted-foreground">Time Series</span>
         </h4>
-        <Switch
+        <Select
+          className="max-w-40"
+          id="data-view"
+          name="data-view"
+          value={dataView}
+          onChange={(e) => setDataView(e.target.value as 'asset' | 'account')}
+        >
+          <option value="asset">Asset Class</option>
+          <option value="account">Account Type</option>
+        </Select>
+        {/* <Switch
           className="focus-outline"
           color="rose"
           checked={showReferenceLines}
@@ -56,7 +57,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
           }}
           onChange={() => updatePreferences('showReferenceLines', !showReferenceLines)}
           aria-label="Toggle reference lines"
-        />
+        /> */}
       </div>
       <SingleSimulationPortfolioAssetTypeAreaChart
         rawChartData={rawChartData}
