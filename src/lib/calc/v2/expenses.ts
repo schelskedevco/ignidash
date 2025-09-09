@@ -110,19 +110,22 @@ export class Expense {
 
     let annualAmount = rawAmount * timesToApplyPerYear;
 
-    const nominalGrowthRate = this.growthRate ?? 0;
-    const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate) - 1;
+    const nominalGrowthRate = this.growthRate;
+    if (nominalGrowthRate) {
+      const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate) - 1;
 
-    annualAmount *= Math.pow(1 + realGrowthRate, Math.floor(year));
+      annualAmount *= Math.pow(1 + realGrowthRate, Math.floor(year));
 
-    const growthLimit = this.growthLimit;
-    if (growthLimit !== undefined && nominalGrowthRate > 0) {
-      annualAmount = Math.min(annualAmount, growthLimit);
-    } else if (growthLimit !== undefined && nominalGrowthRate < 0) {
-      annualAmount = Math.max(annualAmount, growthLimit);
+      const growthLimit = this.growthLimit;
+      if (growthLimit !== undefined && nominalGrowthRate > 0) {
+        annualAmount = Math.min(annualAmount, growthLimit);
+      } else if (growthLimit !== undefined && nominalGrowthRate < 0) {
+        annualAmount = Math.max(annualAmount, growthLimit);
+      }
     }
 
     if (timesToApplyPerYear === 0) return { id: this.id, name: this.name, amount: 0 };
+
     const monthlyAmount = Math.max((annualAmount / timesToApplyPerYear) * timesToApplyPerMonth, 0);
 
     if (this.frequency === 'oneTime') this.hasOneTimeExpenseOccurred = true;
