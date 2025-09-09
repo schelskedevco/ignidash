@@ -1,6 +1,25 @@
 'use client';
 
-import { Pie, PieChart, ResponsiveContainer, Sector, SectorProps } from 'recharts';
+import { Pie, PieChart, ResponsiveContainer, Sector, SectorProps, Cell } from 'recharts';
+
+interface SingleSimulationPortfolioAccountTypePieChartDataPoint {
+  age: number;
+  taxable: number;
+  taxDeferred: number;
+  taxFree: number;
+  savings: number;
+}
+
+interface SingleSimulationPortfolioAssetTypePieChartDataPoint {
+  age: number;
+  stocks: number;
+  bonds: number;
+  cash: number;
+}
+
+type SingleSimulationPortfolioPieChartDataPoint =
+  | SingleSimulationPortfolioAccountTypePieChartDataPoint
+  | SingleSimulationPortfolioAssetTypePieChartDataPoint;
 
 type Coordinate = {
   x: number;
@@ -22,12 +41,7 @@ type PieSectorData = {
 
 type PieSectorDataItem = React.SVGProps<SVGPathElement> & Partial<SectorProps> & PieSectorData;
 
-const data = [
-  { name: 'Group A', value: 400 },
-  { name: 'Group B', value: 300 },
-  { name: 'Group C', value: 300 },
-  { name: 'Group D', value: 200 },
-];
+const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
 
 const renderActiveShape = ({
   cx,
@@ -78,21 +92,29 @@ const renderActiveShape = ({
   );
 };
 
-export default function SingleSimulationPortfolioPieChart() {
+interface SingleSimulationPortfolioPieChartProps {
+  rawChartData: SingleSimulationPortfolioPieChartDataPoint[];
+}
+
+export default function SingleSimulationPortfolioPieChart({ rawChartData }: SingleSimulationPortfolioPieChartProps) {
   return (
     <div className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart className="text-xs">
           <Pie
             activeShape={renderActiveShape}
-            data={data}
+            data={rawChartData}
             cx="50%"
             cy="50%"
             innerRadius={60}
             outerRadius={80}
             fill="#8884d8"
             dataKey="value"
-          />
+          >
+            {rawChartData.map((entry, index) => (
+              <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
         </PieChart>
       </ResponsiveContainer>
     </div>

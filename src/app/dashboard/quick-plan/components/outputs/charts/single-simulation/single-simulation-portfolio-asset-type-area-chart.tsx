@@ -9,7 +9,7 @@ import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 
-interface SingleSimulationPortfolioAssetTypeAreaChartDataPoint {
+export interface SingleSimulationPortfolioAssetTypeAreaChartDataPoint {
   age: number;
   stocks: number;
   bonds: number;

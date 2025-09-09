@@ -3,7 +3,11 @@
 import { memo } from 'react';
 
 import SectionContainer from '@/components/ui/section-container';
-import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import {
+  type FixedReturnsKeyMetricsV2,
+  useSingleSimulationPortfolioAssetTypeAreaChartData,
+  useSingleSimulationPortfolioAccountTypeAreaChartData,
+} from '@/lib/stores/quick-plan-store';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
 import { SingleSimulationCategory } from '../single-simulation-category-selector';
@@ -20,20 +24,27 @@ interface ChartsCategoryProps {
 }
 
 function PortfolioCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }: ChartsCategoryProps) {
+  const startAge = simulation.context.startAge;
+
+  const assetTypeRawChartData = useSingleSimulationPortfolioAssetTypeAreaChartData(simulation);
+  const accountTypeRawChartData = useSingleSimulationPortfolioAccountTypeAreaChartData(simulation);
+
   return (
     <>
       <SingleSimulationPortfolioAssetTypeAreaChartCard
-        simulation={simulation}
+        rawChartData={assetTypeRawChartData}
         keyMetrics={keyMetrics}
         setSelectedAge={setSelectedAge}
         selectedAge={selectedAge}
+        startAge={startAge}
       />
       <SingleSimulationPortfolioAssetTypePieChartCard simulation={simulation} setSelectedAge={setSelectedAge} selectedAge={selectedAge} />
       <SingleSimulationPortfolioAccountTypeAreaChartCard
-        simulation={simulation}
+        rawChartData={accountTypeRawChartData}
         keyMetrics={keyMetrics}
         setSelectedAge={setSelectedAge}
         selectedAge={selectedAge}
+        startAge={startAge}
       />
       <SingleSimulationPortfolioAccountTypePieChartCard simulation={simulation} setSelectedAge={setSelectedAge} selectedAge={selectedAge} />
     </>

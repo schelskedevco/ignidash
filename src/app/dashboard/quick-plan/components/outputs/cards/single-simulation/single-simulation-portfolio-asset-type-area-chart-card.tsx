@@ -1,33 +1,28 @@
 'use client';
 
-import {
-  useShowReferenceLinesPreference,
-  useUpdatePreferences,
-  useSingleSimulationPortfolioAssetTypeAreaChartData,
-  type FixedReturnsKeyMetricsV2,
-} from '@/lib/stores/quick-plan-store';
+import { useShowReferenceLinesPreference, useUpdatePreferences, type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
-import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { Switch } from '@/components/catalyst/switch';
 
-import SingleSimulationPortfolioAssetTypeAreaChart from '../../charts/single-simulation/single-simulation-portfolio-asset-type-area-chart';
+import SingleSimulationPortfolioAssetTypeAreaChart, {
+  type SingleSimulationPortfolioAssetTypeAreaChartDataPoint,
+} from '../../charts/single-simulation/single-simulation-portfolio-asset-type-area-chart';
 
 interface SingleSimulationPortfolioAssetTypeAreaChartCardProps {
-  simulation: SimulationResult;
+  rawChartData: SingleSimulationPortfolioAssetTypeAreaChartDataPoint[];
   keyMetrics: FixedReturnsKeyMetricsV2;
   setSelectedAge: (age: number) => void;
   selectedAge: number;
+  startAge: number;
 }
 
 export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
-  simulation,
+  rawChartData,
   keyMetrics,
   setSelectedAge,
   selectedAge,
+  startAge,
 }: SingleSimulationPortfolioAssetTypeAreaChartCardProps) {
-  const startAge = simulation.context.startAge;
-  const rawChartData = useSingleSimulationPortfolioAssetTypeAreaChartData(simulation);
-
   const showReferenceLines = useShowReferenceLinesPreference();
   const updatePreferences = useUpdatePreferences();
 
