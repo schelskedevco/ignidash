@@ -115,7 +115,7 @@ export default function SingleSimulationPortfolioPieChart({ rawChartData, select
 
   return (
     <div className="flex items-center">
-      <div className="h-64 w-full sm:h-72 lg:h-80 @3xl:w-3/4 [&_svg:focus]:outline-none">
+      <div className="h-64 w-full sm:h-72 lg:h-80 @3xl/card:w-3/4 [&_svg:focus]:outline-none">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart className="text-xs">
             <Pie
@@ -135,7 +135,7 @@ export default function SingleSimulationPortfolioPieChart({ rawChartData, select
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div className="hidden w-1/4 @3xl:block">
+      <div className="hidden w-1/4 @3xl/card:block">
         <DescriptionList>
           <Subheading level={5} className="mb-2 whitespace-nowrap">
             Breakdown
