@@ -7,7 +7,7 @@ import Card from '@/components/ui/card';
 import ButtonGroup from '@/components/ui/button-group';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 
-import FixedReturnsCashFlowBarChart from '../charts/fixed-returns-cash-flow-bar-chart';
+import FixedReturnsCashFlowBarChart from '../../charts/legacy/fixed-returns-cash-flow-bar-chart';
 
 interface FixedReturnsCashFlowBarChartCardProps {
   simulation: SimulationResult;

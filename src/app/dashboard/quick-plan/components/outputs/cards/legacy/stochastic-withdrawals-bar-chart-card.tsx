@@ -5,23 +5,23 @@ import { ReceiptPercentIcon, DocumentCurrencyDollarIcon } from '@heroicons/react
 
 import Card from '@/components/ui/card';
 import ButtonGroup from '@/components/ui/button-group';
-import type { StochasticReturnsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { StochasticWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
 
-import StochasticReturnsBarChart from '../charts/stochastic-returns-bar-chart';
+import StochasticWithdrawalsBarChart from '../../charts/legacy/stochastic-withdrawals-bar-chart';
 
-interface StochasticReturnsBarChartCardProps {
+interface StochasticWithdrawalsBarChartCardProps {
   selectedAge: number;
-  rawChartData: StochasticReturnsChartDataPoint[];
+  rawChartData: StochasticWithdrawalsChartDataPoint[];
 }
 
-export default function StochasticReturnsBarChartCard({ selectedAge, rawChartData }: StochasticReturnsBarChartCardProps) {
+export default function StochasticWithdrawalsBarChartCard({ selectedAge, rawChartData }: StochasticWithdrawalsBarChartCardProps) {
   const [viewMode, setViewMode] = useState<'amounts' | 'rates'>('rates');
 
   return (
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
         <h4 className="text-foreground flex items-center text-lg font-semibold">
-          <span className="mr-2">Returns</span>
+          <span className="mr-2">Withdrawals</span>
           <span className="text-muted-foreground">Age {selectedAge}</span>
         </h4>
         <ButtonGroup
@@ -34,7 +34,7 @@ export default function StochasticReturnsBarChartCard({ selectedAge, rawChartDat
           defaultActiveButton="first"
         />
       </div>
-      <StochasticReturnsBarChart selectedAge={selectedAge} mode={viewMode} rawChartData={rawChartData} />
+      <StochasticWithdrawalsBarChart age={selectedAge} mode={viewMode} rawChartData={rawChartData} />
     </Card>
   );
 }

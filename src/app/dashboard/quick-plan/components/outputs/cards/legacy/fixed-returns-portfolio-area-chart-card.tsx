@@ -5,7 +5,7 @@ import Card from '@/components/ui/card';
 import { Switch } from '@/components/catalyst/switch';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 
-import FixedReturnsPortfolioAreaChart from '../charts/fixed-returns-portfolio-area-chart';
+import FixedReturnsPortfolioAreaChart from '../../charts/legacy/fixed-returns-portfolio-area-chart';
 
 interface FixedReturnsPortfolioAreaChartCardProps {
   simulation: SimulationResult;

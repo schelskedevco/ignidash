@@ -7,7 +7,7 @@ import Card from '@/components/ui/card';
 import ButtonGroup from '@/components/ui/button-group';
 import type { StochasticCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 
-import StochasticCashFlowBarChart from '../charts/stochastic-cash-flow-bar-chart';
+import StochasticCashFlowBarChart from '../../charts/legacy/stochastic-cash-flow-bar-chart';
 
 interface StochasticCashFlowBarChartCardProps {
   selectedAge: number;

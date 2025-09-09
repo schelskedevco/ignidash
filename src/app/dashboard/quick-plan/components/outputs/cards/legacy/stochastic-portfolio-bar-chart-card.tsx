@@ -6,7 +6,7 @@ import { ReceiptPercentIcon, ChartBarSquareIcon } from '@heroicons/react/20/soli
 import Card from '@/components/ui/card';
 import ButtonGroup from '@/components/ui/button-group';
 
-import StochasticPortfolioBarChart, { type StochasticPortfolioBarChartDataPoint } from '../charts/stochastic-portfolio-bar-chart';
+import StochasticPortfolioBarChart, { type StochasticPortfolioBarChartDataPoint } from '../../charts/legacy/stochastic-portfolio-bar-chart';
 
 interface StochasticPortfolioBarChartCardProps {
   percentilesData: StochasticPortfolioBarChartDataPoint[];

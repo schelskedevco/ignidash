@@ -2,38 +2,37 @@
 
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
+import type { StochasticWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
 
-import StochasticPhasePercentAreaChart, {
-  type StochasticPhasePercentAreaChartDataPoint,
-} from '../charts/stochastic-phase-percent-area-chart';
+import StochasticWithdrawalsLineChart from '../../charts/legacy/stochastic-withdrawals-line-chart';
 
-interface StochasticPhasePercentAreaChartCardProps {
+interface StochasticWithdrawalsLineChartCardProps {
   setSelectedAge: (age: number) => void;
   selectedAge: number;
-  rawChartData: StochasticPhasePercentAreaChartDataPoint[];
+  rawChartData: StochasticWithdrawalsChartDataPoint[];
 }
 
-export default function StochasticPhasePercentAreaChartCard({
+export default function StochasticWithdrawalsLineChartCard({
   setSelectedAge,
   selectedAge,
   rawChartData,
-}: StochasticPhasePercentAreaChartCardProps) {
+}: StochasticWithdrawalsLineChartCardProps) {
   const currentAge = useCurrentAge();
 
   return (
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
         <h4 className="text-foreground flex items-center text-lg font-semibold">
-          <span className="mr-2">Phase Percent</span>
+          <span className="mr-2">Withdrawal Rate</span>
           <span className="text-muted-foreground">Time Series</span>
         </h4>
       </div>
-      <StochasticPhasePercentAreaChart
+      <StochasticWithdrawalsLineChart
         onAgeSelect={(age) => {
           if (age >= currentAge! + 1) setSelectedAge(age);
         }}
         selectedAge={selectedAge}
-        chartData={rawChartData}
+        rawChartData={rawChartData}
       />
     </Card>
   );

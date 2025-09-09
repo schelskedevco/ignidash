@@ -9,7 +9,9 @@ import {
 import Card from '@/components/ui/card';
 import { Switch } from '@/components/catalyst/switch';
 
-import StochasticPortfolioAreaChart, { type StochasticPortfolioAreaChartDataPoint } from '../charts/stochastic-portfolio-area-chart';
+import StochasticPortfolioAreaChart, {
+  type StochasticPortfolioAreaChartDataPoint,
+} from '../../charts/legacy/stochastic-portfolio-area-chart';
 
 interface StochasticPortfolioAreaChartCardProps {
   analysis: StochasticAnalysis | null;
