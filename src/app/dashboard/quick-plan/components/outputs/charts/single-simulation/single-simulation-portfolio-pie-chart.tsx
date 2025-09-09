@@ -114,6 +114,7 @@ export default function SingleSimulationPortfolioPieChart({ rawChartData, select
             innerRadius={60}
             outerRadius={80}
             fill="#8884d8"
+            paddingAngle={10}
             dataKey="value"
           >
             {chartData.map((entry, index) => (
