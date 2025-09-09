@@ -1009,6 +1009,83 @@ export const useSingleSimulationPortfolioAccountTypeAreaChartData = (simulation:
   }, [simulation]);
 };
 
+export const useSingleSimulationCashFlowChartData = (simulation: SimulationResultV2) => {
+  // export interface IncomesData {
+  //   totalGrossIncome: number;
+  //   totalAmountWithheld: number;
+  //   totalIncomeAfterWithholding: number;
+  //   perIncomeData: Record<string, IncomeData>;
+  // }
+
+  // export interface IncomeData {
+  //   id: string;
+  //   name: string;
+  //   grossIncome: number;
+  //   amountWithheld: number;
+  //   incomeAfterWithholding: number;
+  // }
+
+  // export interface ExpensesData {
+  //   totalExpenses: number;
+  //   perExpenseData: Record<string, ExpenseData>;
+  // }
+
+  // export interface ExpenseData {
+  //   id: string;
+  //   name: string;
+  //   amount: number;
+  // }
+
+  // export interface CapitalGainsTaxesData {
+  //   capitalGainsTaxAmount: number;
+  //   effectiveCapitalGainsTaxRate: number;
+  //   topMarginalCapitalGainsTaxRate: number;
+  //   netCapitalGains: number;
+  // }
+
+  // export interface IncomeTaxesData {
+  //   incomeTaxAmount: number;
+  //   effectiveIncomeTaxRate: number;
+  //   topMarginalTaxRate: number;
+  //   netIncome: number;
+  //   capitalLossDeduction?: number;
+  // }
+
+  // export interface TaxesData {
+  //   incomeTaxes: IncomeTaxesData;
+  //   capitalGainsTaxes: CapitalGainsTaxesData;
+  //   totalTaxesDue: number;
+  //   totalTaxesRefund: number;
+  //   totalTaxableIncome: number;
+  // }
+
+  return useMemo(() => {
+    return simulation.data.slice(1).map((data) => {
+      const startAge = simulation.context.startAge;
+      const startDateYear = new Date().getFullYear();
+      const currDateYear = new Date(data.date).getFullYear();
+
+      const incomes = data.incomes!;
+      const expenses = data.expenses!;
+      const taxes = data.taxes!;
+
+      const totalNetIncome = taxes.incomeTaxes.netIncome;
+      const totalGrossIncome = incomes.totalGrossIncome;
+      const totalExpenses = expenses.totalExpenses;
+
+      return {
+        age: currDateYear - startDateYear + startAge,
+        perIncomeData: Object.values(incomes.perIncomeData),
+        perExpenseData: Object.values(expenses.perExpenseData),
+        totalNetIncome,
+        totalGrossIncome,
+        totalExpenses,
+        totalNetCashFlow: totalNetIncome - totalExpenses,
+      };
+    });
+  }, [simulation]);
+};
+
 /**
  * Fixed Returns Chart Hooks
  * These hooks provide access to fixed returns simulation chart data

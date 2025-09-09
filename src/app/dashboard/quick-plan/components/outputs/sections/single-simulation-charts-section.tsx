@@ -7,6 +7,7 @@ import {
   type FixedReturnsKeyMetricsV2,
   useSingleSimulationPortfolioAssetTypeAreaChartData,
   useSingleSimulationPortfolioAccountTypeAreaChartData,
+  useSingleSimulationCashFlowChartData,
 } from '@/lib/stores/quick-plan-store';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
@@ -15,6 +16,7 @@ import SingleSimulationPortfolioAssetTypeAreaChartCard from '../cards/single-sim
 import SingleSimulationPortfolioAccountTypeAreaChartCard from '../cards/single-simulation/single-simulation-portfolio-account-type-area-chart-card';
 import SingleSimulationPortfolioAssetTypePieChartCard from '../cards/single-simulation/single-simulation-portfolio-asset-type-pie-chart-card';
 import SingleSimulationPortfolioAccountTypePieChartCard from '../cards/single-simulation/single-simulation-portfolio-account-type-pie-chart-card';
+import SingleSimulationCashFlowLineChartCard from '../cards/single-simulation/single-simulation-cash-flow-line-chart-card';
 
 interface ChartsCategoryProps {
   simulation: SimulationResult;
@@ -66,9 +68,20 @@ function PortfolioCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }
 }
 
 function CashFlowCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }: ChartsCategoryProps) {
-  const _startAge = simulation.context.startAge;
+  const startAge = simulation.context.startAge;
 
-  return <div>Cash Flow Charts - Coming Soon</div>;
+  const rawChartData = useSingleSimulationCashFlowChartData(simulation);
+
+  return (
+    <>
+      <SingleSimulationCashFlowLineChartCard
+        setSelectedAge={setSelectedAge}
+        selectedAge={selectedAge}
+        rawChartData={rawChartData}
+        startAge={startAge}
+      />
+    </>
+  );
 }
 
 interface SingleSimulationChartsSectionProps {
