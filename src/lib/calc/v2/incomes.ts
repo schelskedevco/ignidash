@@ -124,7 +124,11 @@ export class Income {
 
   processMonthlyAmount(inflationRate: number, year: number): IncomeData {
     const rawAmount = this.amount;
-    let annualAmount = rawAmount * this.getTimesToApplyPerYear();
+
+    const timesToApplyPerYear = this.getTimesToApplyPerYear();
+    const timesToApplyPerMonth = this.getTimesToApplyPerMonth();
+
+    let annualAmount = rawAmount * timesToApplyPerYear;
 
     const nominalGrowthRate = this.growthRate ?? 0;
     const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate) - 1;
@@ -138,7 +142,8 @@ export class Income {
       annualAmount = Math.max(annualAmount, growthLimit);
     }
 
-    const grossIncome = Math.max((annualAmount / this.getTimesToApplyPerYear()) * this.getTimesToApplyPerMonth(), 0);
+    if (timesToApplyPerYear === 0) return { id: this.id, name: this.name, grossIncome: 0, amountWithheld: 0, incomeAfterWithholding: 0 };
+    const grossIncome = Math.max((annualAmount / timesToApplyPerYear) * timesToApplyPerMonth, 0);
     const amountWithheld = grossIncome * Income.WITHHOLDING_TAX_RATE;
     const incomeAfterWithholding = grossIncome - amountWithheld;
 
