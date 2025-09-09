@@ -92,9 +92,9 @@ const renderActiveShape = ({
         textAnchor={textAnchor}
         fill="currentColor"
         fontSize="16"
-      >{`${formatString(payload.name)}: ${value !== undefined ? formatNumber(value, 2, '$') : 'N/A'}`}</text>
+      >{`${value !== undefined ? formatNumber(value, 2, '$') : 'N/A'}`}</text>
       <text x={ex + (cos >= 0 ? 1 : -1) * 12} y={ey} dy={18} textAnchor={textAnchor} fill="var(--muted-foreground)" fontSize="14">
-        {`${((percent ?? 1) * 100).toFixed(2)}% of Net Worth`}
+        {`${((percent ?? 1) * 100).toFixed(2)}%`}
       </text>
     </g>
   );
