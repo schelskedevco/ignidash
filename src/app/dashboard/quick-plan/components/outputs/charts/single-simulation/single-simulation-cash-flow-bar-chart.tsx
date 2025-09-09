@@ -40,43 +40,19 @@ export default function SingleSimulationCashFlowBarChart({ age, dataView, rawCha
 
   const yAxisDomain: [number, number] | undefined = undefined;
   const chartData = rawChartData.filter((item) => item.age === age);
-  let transformedChartData: { name: string; amount: number }[] = [];
-  let bar = null;
 
+  let transformedChartData: { name: string; amount: number }[] = [];
   switch (dataView) {
     case 'cashFlow':
-      transformedChartData = chartData.map((item) => ({ name: 'totalNetCashFlow', amount: item.totalNetCashFlow }));
-      console.log('transformedChartData', transformedChartData);
-      bar = (
-        <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
-          {transformedChartData.map((entry, index) => {
-            return <Cell key={`cell-${index}`} fill="var(--chart-3)" stroke="var(--chart-1)" />;
-          })}
-          <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
-        </Bar>
-      );
+      transformedChartData = chartData.map((item) => ({ name: 'Net Cash Flow', amount: item.totalNetCashFlow }));
       break;
     case 'incomes':
-      transformedChartData = chartData.map((item) => ({ name: 'totalNetIncome', amount: item.totalNetIncome }));
-      bar = (
-        <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
-          {transformedChartData.map((entry, index) => {
-            return <Cell key={`cell-${index}`} fill="var(--chart-3)" stroke="var(--chart-1)" />;
-          })}
-          <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
-        </Bar>
+      transformedChartData = chartData.flatMap(({ perIncomeData }) =>
+        perIncomeData.map(({ name, grossIncome }) => ({ name, amount: grossIncome }))
       );
       break;
     case 'expenses':
-      transformedChartData = chartData.map((item) => ({ name: 'totalExpenses', amount: item.totalExpenses }));
-      bar = (
-        <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
-          {transformedChartData.map((entry, index) => {
-            return <Cell key={`cell-${index}`} fill="var(--chart-3)" stroke="var(--chart-1)" />;
-          })}
-          <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
-        </Bar>
-      );
+      transformedChartData = chartData.flatMap(({ perExpenseData }) => perExpenseData.map(({ name, amount }) => ({ name, amount })));
       break;
   }
 
@@ -101,7 +77,12 @@ export default function SingleSimulationCashFlowBarChart({ age, dataView, rawCha
               tickFormatter={(value: number) => formatNumber(value, 1, '$')}
               domain={yAxisDomain}
             />
-            {bar}
+            <Bar dataKey="amount" maxBarSize={75} minPointSize={20}>
+              {transformedChartData.map((_, index) => (
+                <Cell key={`cell-${index}`} fill="var(--chart-3)" stroke="var(--chart-1)" />
+              ))}
+              <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
