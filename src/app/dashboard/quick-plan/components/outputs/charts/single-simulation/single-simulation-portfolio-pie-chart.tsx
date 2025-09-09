@@ -113,6 +113,8 @@ export default function SingleSimulationPortfolioPieChart({ rawChartData, select
     .filter((data) => data.age === selectedAge)
     .flatMap(({ age, ...rest }) => Object.entries(rest).map(([name, value]) => ({ name, value })));
 
+  const totalValue = chartData.reduce((acc, curr) => acc + curr.value, 0);
+
   return (
     <div className="flex items-center">
       <div className="h-64 w-full sm:h-72 lg:h-80 @3xl/card:w-3/4 [&_svg:focus]:outline-none">
@@ -138,7 +140,7 @@ export default function SingleSimulationPortfolioPieChart({ rawChartData, select
       <div className="hidden w-1/4 @3xl/card:block">
         <DescriptionList>
           <Subheading level={5} className="mb-2 whitespace-nowrap">
-            Net Worth Breakdown
+            {`${formatNumber(totalValue, 2, '$')} Net Worth`}
           </Subheading>
           {chartData.toReversed().map((entry) => (
             <Fragment key={entry.name}>
