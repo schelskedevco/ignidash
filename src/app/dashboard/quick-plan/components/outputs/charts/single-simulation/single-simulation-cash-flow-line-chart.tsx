@@ -89,7 +89,7 @@ export default function SingleSimulationCashFlowLineChart({
       dataKeys.push('totalNetCashFlow');
       break;
     case 'incomes':
-      dataKeys.push('totalGrossIncome', 'totalNetIncome');
+      dataKeys.push('totalNetIncome');
       break;
     case 'expenses':
       dataKeys.push('totalExpenses');
@@ -115,7 +115,7 @@ export default function SingleSimulationCashFlowLineChart({
     <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }} tabIndex={-1} onClick={onClick}>
-          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
           <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
           <YAxis
             tick={{ fill: foregroundMutedColor }}
