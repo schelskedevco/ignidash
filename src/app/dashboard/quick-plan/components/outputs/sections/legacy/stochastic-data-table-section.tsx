@@ -8,9 +8,9 @@ import SectionContainer from '@/components/ui/section-container';
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
 
-import MonteCarloDataTable from '../tables/monte-carlo-data-table';
-import HistoricalBacktestDataTable from '../tables/historical-backtest-data-table';
-import TableTypeSelector, { TableType } from '../table-type-selector';
+import MonteCarloDataTable from '../../tables/monte-carlo-data-table';
+import HistoricalBacktestDataTable from '../../tables/historical-backtest-data-table';
+import TableTypeSelector, { TableType } from '../../table-type-selector';
 
 interface DrillDownBreadcrumbProps {
   selectedSeed: number | null;

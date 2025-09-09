@@ -16,16 +16,16 @@ import {
   useStochasticWithdrawalsChartData,
 } from '@/lib/stores/quick-plan-store';
 
-import StochasticPortfolioAreaChartCard from '../cards/legacy/stochastic-portfolio-area-chart-card';
-import StochasticPortfolioBarChartCard from '../cards/legacy/stochastic-portfolio-bar-chart-card';
-import StochasticCashFlowBarChartCard from '../cards/legacy/stochastic-cash-flow-bar-chart-card';
-import StochasticCashFlowLineChartCard from '../cards/legacy/stochastic-cash-flow-line-chart-card';
-import StochasticPhasePercentAreaChartCard from '../cards/legacy/stochastic-phase-percent-area-chart-card';
-import StochasticReturnsBarChartCard from '../cards/legacy/stochastic-returns-bar-chart-card';
-import StochasticReturnsLineChartCard from '../cards/legacy/stochastic-returns-line-chart-card';
-import StochasticWithdrawalsBarChartCard from '../cards/legacy/stochastic-withdrawals-bar-chart-card';
-import StochasticWithdrawalsLineChartCard from '../cards/legacy/stochastic-withdrawals-line-chart-card';
-import ChartsCategorySelector, { ChartsCategory } from '../charts-category-selector';
+import StochasticPortfolioAreaChartCard from '../../cards/legacy/stochastic-portfolio-area-chart-card';
+import StochasticPortfolioBarChartCard from '../../cards/legacy/stochastic-portfolio-bar-chart-card';
+import StochasticCashFlowBarChartCard from '../../cards/legacy/stochastic-cash-flow-bar-chart-card';
+import StochasticCashFlowLineChartCard from '../../cards/legacy/stochastic-cash-flow-line-chart-card';
+import StochasticPhasePercentAreaChartCard from '../../cards/legacy/stochastic-phase-percent-area-chart-card';
+import StochasticReturnsBarChartCard from '../../cards/legacy/stochastic-returns-bar-chart-card';
+import StochasticReturnsLineChartCard from '../../cards/legacy/stochastic-returns-line-chart-card';
+import StochasticWithdrawalsBarChartCard from '../../cards/legacy/stochastic-withdrawals-bar-chart-card';
+import StochasticWithdrawalsLineChartCard from '../../cards/legacy/stochastic-withdrawals-line-chart-card';
+import ChartsCategorySelector, { ChartsCategory } from '../../charts-category-selector';
 
 interface ChartsCategoryProps {
   simStats: AggregateSimulationStats;
