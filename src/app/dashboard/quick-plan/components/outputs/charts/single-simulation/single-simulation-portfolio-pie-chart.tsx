@@ -99,6 +99,35 @@ const renderActiveShape = ({
   );
 };
 
+type GeometrySector = {
+  cx: number;
+  cy: number;
+  innerRadius: number;
+  outerRadius: number;
+  startAngle: number;
+  endAngle: number;
+};
+
+type PieLabelProps = PieSectorData &
+  GeometrySector & {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    tooltipPayload?: any;
+  };
+
+const RADIAN = Math.PI / 180;
+
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, tooltipPayload }: PieLabelProps) => {
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+  const y = cy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
+
+  return (
+    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central">
+      {`${((percent ?? 1) * 100).toFixed(0)}%`}
+    </text>
+  );
+};
+
 interface SingleSimulationPortfolioPieChartProps {
   rawChartData: SingleSimulationPortfolioPieChartDataPoint[];
   selectedAge: number;
@@ -115,11 +144,13 @@ export default function SingleSimulationPortfolioPieChart({ rawChartData, select
         <PieChart className="text-xs">
           <Pie
             activeShape={renderActiveShape}
+            labelLine={false}
+            label={renderCustomizedLabel}
             data={chartData}
             cx="50%"
             cy="50%"
-            innerRadius={60}
-            outerRadius={120}
+            innerRadius={40}
+            outerRadius={80}
             paddingAngle={10}
             dataKey="value"
           >
