@@ -1,19 +1,19 @@
 'use client';
 
-import { useMonteCarloAnalysisWithWorker, useStochasticAnalysis } from '@/lib/stores/quick-plan-store';
+import { useHistoricalBacktestAnalysisWithWorker, useStochasticAnalysis } from '@/lib/stores/quick-plan-store';
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 
-import ResultsMetrics from '../stochastic-metrics';
-import StochasticDataTableSection from '../sections/stochastic-data-table-section';
-import StochasticChartsSection from '../sections/stochastic-charts-section';
+import ResultsMetrics from '../../stochastic-metrics';
+import StochasticDataTableSection from '../../sections/stochastic-data-table-section';
+import StochasticChartsSection from '../../sections/stochastic-charts-section';
 
-interface MonteCarloResultsImplProps {
+interface HistoricalBacktestResultsImplProps {
   simStats: AggregateSimulationStats;
 }
 
-function MonteCarloResultsImpl({ simStats }: MonteCarloResultsImplProps) {
+function HistoricalBacktestResultsImpl({ simStats }: HistoricalBacktestResultsImplProps) {
   const analysis = useStochasticAnalysis(simStats);
 
   const comingSoon = (
@@ -33,7 +33,7 @@ function MonteCarloResultsImpl({ simStats }: MonteCarloResultsImplProps) {
         <SectionHeader title="Quick Stats" desc="A brief overview of your simulation's statistics." />
         {comingSoon}
       </SectionContainer>
-      <StochasticDataTableSection simulationType="monteCarlo" simStats={simStats} />
+      <StochasticDataTableSection simulationType="historicalBacktest" simStats={simStats} />
       <SectionContainer showBottomBorder={false}>
         <SectionHeader title="Summary" desc="AI-powered insights and recommendations based on your simulation results." />
         {comingSoon}
@@ -42,8 +42,8 @@ function MonteCarloResultsImpl({ simStats }: MonteCarloResultsImplProps) {
   );
 }
 
-export default function MonteCarloResults() {
-  const { data, isLoading } = useMonteCarloAnalysisWithWorker();
+export default function HistoricalBacktestResults() {
+  const { data, isLoading } = useHistoricalBacktestAnalysisWithWorker();
 
   if (isLoading) {
     return (
@@ -61,5 +61,5 @@ export default function MonteCarloResults() {
     );
   }
 
-  return <MonteCarloResultsImpl simStats={data} />;
+  return <HistoricalBacktestResultsImpl simStats={data} />;
 }

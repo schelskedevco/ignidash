@@ -6,10 +6,10 @@ import { useFixedReturnsSimulation, useFixedReturnsAnalysis, useCurrentAge } fro
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 
-import FixedReturnsPortfolioAreaChartCard from '../cards/legacy/fixed-returns-portfolio-area-chart-card';
-import FixedReturnsCashFlowBarChartCard from '../cards/legacy/fixed-returns-cash-flow-bar-chart-card';
-import FixedReturnsDataTable from '../tables/fixed-returns-data-table';
-import ResultsMetrics from '../fixed-returns-metrics';
+import FixedReturnsPortfolioAreaChartCard from '../../cards/legacy/fixed-returns-portfolio-area-chart-card';
+import FixedReturnsCashFlowBarChartCard from '../../cards/legacy/fixed-returns-cash-flow-bar-chart-card';
+import FixedReturnsDataTable from '../../tables/fixed-returns-data-table';
+import ResultsMetrics from '../../fixed-returns-metrics';
 
 export default function FixedReturnsResults() {
   const simulation = useFixedReturnsSimulation();

@@ -3,9 +3,9 @@
 import { useIsCalculationReady, useMarketAssumptionsData } from '@/lib/stores/quick-plan-store';
 
 import SingleSimulationResults from './results-pages/single-simulation-results';
-import FixedReturnsResults from './results-pages/fixed-returns-results';
-import MonteCarloResults from './results-pages/monte-carlo-results';
-import HistoricalBacktestResults from './results-pages/historical-backtest-results';
+import FixedReturnsResults from './results-pages/legacy/fixed-returns-results';
+import MonteCarloResults from './results-pages/legacy/monte-carlo-results';
+import HistoricalBacktestResults from './results-pages/legacy/historical-backtest-results';
 
 const USE_V2 = true;
 
