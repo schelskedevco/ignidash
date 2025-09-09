@@ -39,14 +39,14 @@ export default function SingleSimulationPortfolioAccountTypeAreaChartCard({
           <span className="text-muted-foreground">Time Series</span>
         </h4>
         <Select
-          className="max-w-40"
+          className="max-w-44"
           id="data-view"
           name="data-view"
           value={dataView}
           onChange={(e) => setDataView(e.target.value as 'asset' | 'account')}
         >
           <option value="asset">Asset Class</option>
-          <option value="account">Account Type</option>
+          <option value="account">Account Category</option>
         </Select>
         {/* <Switch
           className="focus-outline"

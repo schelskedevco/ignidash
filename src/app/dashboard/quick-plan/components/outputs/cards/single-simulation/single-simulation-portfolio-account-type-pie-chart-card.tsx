@@ -18,7 +18,7 @@ export default function SingleSimulationPortfolioAccountTypePieChartCard({
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
         <h4 className="text-foreground flex items-center text-lg font-semibold">
-          <span className="mr-2">By Account Type</span>
+          <span className="mr-2">By Account Category</span>
           <span className="text-muted-foreground">Age {selectedAge}</span>
         </h4>
       </div>
