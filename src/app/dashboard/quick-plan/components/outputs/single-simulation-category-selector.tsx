@@ -5,7 +5,6 @@ import { cn } from '@/lib/utils';
 export enum SingleSimulationCategory {
   Portfolio = 'Portfolio',
   CashFlow = 'Cash Flow',
-  Phases = 'Phases',
   Taxes = 'Taxes',
   Returns = 'Returns',
   Contributions = 'Contributions',
