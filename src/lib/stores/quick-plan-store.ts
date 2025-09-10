@@ -1065,22 +1065,22 @@ export const useSingleSimulationCashFlowChartData = (simulation: SimulationResul
       const startDateYear = new Date().getFullYear();
       const currDateYear = new Date(data.date).getFullYear();
 
-      const incomes = data.incomes!;
-      const expenses = data.expenses!;
-      const taxes = data.taxes!;
+      const incomesData = data.incomes!;
+      const expensesData = data.expenses!;
+      const taxesData = data.taxes!;
 
-      const totalNetIncome = taxes.incomeTaxes.netIncome;
-      const totalGrossIncome = incomes.totalGrossIncome;
-      const totalExpenses = expenses.totalExpenses;
+      const netIncome = taxesData.incomeTaxes.netIncome;
+      const grossIncome = incomesData.totalGrossIncome;
+      const expenses = expensesData.totalExpenses;
 
       return {
         age: currDateYear - startDateYear + startAge,
-        perIncomeData: Object.values(incomes.perIncomeData),
-        perExpenseData: Object.values(expenses.perExpenseData),
-        totalNetIncome,
-        totalGrossIncome,
-        totalExpenses,
-        totalNetCashFlow: totalNetIncome - totalExpenses,
+        perIncomeData: Object.values(incomesData.perIncomeData),
+        perExpenseData: Object.values(expensesData.perExpenseData),
+        netIncome,
+        grossIncome,
+        expenses,
+        netCashFlow: netIncome - expenses,
       };
     });
   }, [simulation]);

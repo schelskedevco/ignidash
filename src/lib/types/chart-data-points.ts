@@ -25,8 +25,8 @@ export interface SingleSimulationCashFlowChartDataPoint {
   age: number;
   perIncomeData: IncomeData[];
   perExpenseData: ExpenseData[];
-  totalNetIncome: number;
-  totalGrossIncome: number;
-  totalExpenses: number;
-  totalNetCashFlow: number;
+  netIncome: number;
+  grossIncome: number;
+  expenses: number;
+  netCashFlow: number;
 }

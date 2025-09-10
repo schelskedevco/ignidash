@@ -86,16 +86,16 @@ export default function SingleSimulationCashFlowLineChart({
   const dataKeys: (keyof SingleSimulationCashFlowChartDataPoint)[] = [];
   switch (dataView) {
     case 'net':
-      dataKeys.push('totalNetCashFlow');
+      dataKeys.push('netCashFlow');
       break;
     case 'incomes':
-      dataKeys.push('totalNetIncome');
+      dataKeys.push('netIncome');
       break;
     case 'expenses':
-      dataKeys.push('totalExpenses');
+      dataKeys.push('expenses');
       break;
     default:
-      dataKeys.push('totalNetCashFlow');
+      dataKeys.push('netCashFlow');
       break;
   }
 
