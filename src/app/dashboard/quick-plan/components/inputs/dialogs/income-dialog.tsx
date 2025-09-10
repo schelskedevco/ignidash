@@ -3,8 +3,8 @@
 import { useState, useCallback, useEffect, useRef, MutableRefObject, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
-import { MinusIcon, PlusIcon, ArrowTrendingUpIcon } from '@heroicons/react/24/outline';
-import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon } from 'lucide-react';
+import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon, TrendingUpIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
@@ -472,7 +472,7 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
                         className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
                       >
                         <div className="flex items-center gap-2">
-                          <ArrowTrendingUpIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
+                          <TrendingUpIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
                           <span className="text-base/7 font-semibold">Rate of Change</span>
                           <span className="hidden sm:inline">|</span>
                           <span className="text-muted-foreground hidden truncate sm:inline">

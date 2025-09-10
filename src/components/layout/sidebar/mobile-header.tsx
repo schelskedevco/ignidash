@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+import { MenuIcon } from 'lucide-react';
 
 import type { NavigationItem } from '@/lib/navigation';
 
@@ -17,7 +17,7 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
     <div className="bg-emphasized-background border-border fixed top-0 z-40 flex w-full items-center gap-x-6 border-b px-4 py-4 sm:px-6 lg:hidden">
       <button type="button" onClick={onMenuClick} className="focus-outline -m-2.5 p-2.5 lg:hidden">
         <span className="sr-only">Open sidebar</span>
-        <Bars3Icon aria-hidden="true" className="size-6" />
+        <MenuIcon aria-hidden="true" className="size-6" />
       </button>
       <div className="flex flex-1 items-center gap-2 text-base/6 font-semibold">
         <Icon aria-hidden="true" className="text-primary size-5" />

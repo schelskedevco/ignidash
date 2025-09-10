@@ -1,6 +1,6 @@
 'use client';
 
-import { AdjustmentsHorizontalIcon, CalculatorIcon, PresentationChartLineIcon } from '@heroicons/react/24/outline';
+import { CalculatorIcon, SlidersHorizontalIcon, PresentationIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -20,7 +20,7 @@ const tabs = [
   },
   {
     name: 'Results',
-    icon: PresentationChartLineIcon,
+    icon: PresentationIcon,
     value: 'results' as ActiveSection,
   },
 ];
@@ -36,7 +36,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
 
   const titleComponent = (
     <div className="flex items-center gap-2">
-      <AdjustmentsHorizontalIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+      <SlidersHorizontalIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
       <span>Preferences</span>
     </div>
   );
@@ -64,7 +64,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
           </nav>
           {activeSection === 'your-numbers' && (
             <IconButton
-              icon={AdjustmentsHorizontalIcon}
+              icon={SlidersHorizontalIcon}
               label="Preferences"
               onClick={() => setPreferencesOpen(true)}
               surfaceColor="emphasized"
