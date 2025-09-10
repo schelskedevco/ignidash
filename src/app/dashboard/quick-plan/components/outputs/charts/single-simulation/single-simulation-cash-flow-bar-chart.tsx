@@ -73,14 +73,14 @@ export default function SingleSimulationCashFlowBarChart({ age, dataView, rawCha
       ]);
       break;
     case 'incomes':
-      transformedChartData = chartData.flatMap(({ perIncomeData }) =>
-        perIncomeData.map(({ name, grossIncome }) => ({ name, amount: grossIncome, type: 'income' }))
-      );
+      transformedChartData = chartData
+        .flatMap(({ perIncomeData }) => perIncomeData.map(({ name, grossIncome }) => ({ name, amount: grossIncome, type: 'income' })))
+        .filter(({ amount }) => amount !== 0);
       break;
     case 'expenses':
-      transformedChartData = chartData.flatMap(({ perExpenseData }) =>
-        perExpenseData.map(({ name, amount }) => ({ name, amount, type: 'expense' }))
-      );
+      transformedChartData = chartData
+        .flatMap(({ perExpenseData }) => perExpenseData.map(({ name, amount }) => ({ name, amount, type: 'expense' })))
+        .filter(({ amount }) => amount !== 0);
       break;
   }
 
@@ -114,7 +114,7 @@ export default function SingleSimulationCashFlowBarChart({ age, dataView, rawCha
               tickFormatter={(value: number) => formatNumber(value, 1, '$')}
               domain={yAxisDomain}
             />
-            <Bar dataKey="amount" maxBarSize={150} minPointSize={20}>
+            <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
               {transformedChartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill="var(--chart-3)" stroke="var(--chart-1)" fillOpacity={entry.type === 'income' ? 1 : 0.5} />
               ))}
