@@ -8,13 +8,15 @@ import SingleSimulationCashFlowBarChart from '../../charts/single-simulation/sin
 interface SingleSimulationCashFlowBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
-  dataView: 'net' | 'incomes' | 'expenses';
+  dataView: 'net' | 'incomes' | 'expenses' | 'custom';
+  customDataName?: string;
 }
 
 export default function SingleSimulationCashFlowBarChartCard({
   selectedAge,
   rawChartData,
   dataView,
+  customDataName,
 }: SingleSimulationCashFlowBarChartCardProps) {
   let title;
   switch (dataView) {
@@ -37,7 +39,7 @@ export default function SingleSimulationCashFlowBarChartCard({
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </h4>
       </div>
-      <SingleSimulationCashFlowBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} />
+      <SingleSimulationCashFlowBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} customDataName={customDataName} />
     </Card>
   );
 }

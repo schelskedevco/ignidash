@@ -45,15 +45,20 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationCashFlowBarChartProps {
   age: number;
-  dataView: 'net' | 'incomes' | 'expenses';
+  dataView: 'net' | 'incomes' | 'expenses' | 'custom';
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
+  customDataName?: string;
 }
 
-export default function SingleSimulationCashFlowBarChart({ age, dataView, rawChartData }: SingleSimulationCashFlowBarChartProps) {
+export default function SingleSimulationCashFlowBarChart({
+  age,
+  dataView,
+  rawChartData,
+  customDataName,
+}: SingleSimulationCashFlowBarChartProps) {
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
-  const yAxisDomain: [number, number] | undefined = undefined;
   const chartData = rawChartData.filter((item) => item.age === age);
 
   let transformedChartData: { name: string; amount: number; type: string }[] = [];
@@ -81,6 +86,24 @@ export default function SingleSimulationCashFlowBarChart({ age, dataView, rawCha
       transformedChartData = chartData
         .flatMap(({ perExpenseData }) => perExpenseData.map(({ name, amount }) => ({ name, amount, type: 'expense' })))
         .filter(({ amount }) => amount !== 0);
+      break;
+    case 'custom':
+      if (!customDataName) {
+        console.warn('Custom data name is required for custom data view');
+        transformedChartData = [];
+        break;
+      }
+
+      transformedChartData = [
+        ...chartData
+          .flatMap(({ perIncomeData }) =>
+            perIncomeData.map(({ id, name, grossIncome }) => ({ id, name, amount: grossIncome, type: 'income' }))
+          )
+          .filter(({ id, amount }) => amount !== 0 && id === customDataName),
+        ...chartData
+          .flatMap(({ perExpenseData }) => perExpenseData.map(({ id, name, amount }) => ({ id, name, amount, type: 'expense' })))
+          .filter(({ id, amount }) => amount !== 0 && id === customDataName),
+      ];
       break;
   }
 
@@ -112,7 +135,6 @@ export default function SingleSimulationCashFlowBarChart({ age, dataView, rawCha
               axisLine={false}
               hide={isSmallScreen}
               tickFormatter={(value: number) => formatNumber(value, 1, '$')}
-              domain={yAxisDomain}
             />
             <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
               {transformedChartData.map((entry, index) => (

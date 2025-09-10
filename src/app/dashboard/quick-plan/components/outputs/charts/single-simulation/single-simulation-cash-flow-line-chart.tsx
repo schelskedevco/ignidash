@@ -9,6 +9,8 @@ import { formatNumber, formatChartString } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
+import type { IncomeData } from '@/lib/calc/v2/incomes';
+import type { ExpenseData } from '@/lib/calc/v2/expenses';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -57,7 +59,8 @@ interface SingleSimulationCashFlowLineChartProps {
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'net' | 'incomes' | 'expenses';
+  dataView: 'net' | 'incomes' | 'expenses' | 'custom';
+  customDataName?: string;
 }
 
 export default function SingleSimulationCashFlowLineChart({
@@ -65,6 +68,7 @@ export default function SingleSimulationCashFlowLineChart({
   onAgeSelect,
   selectedAge,
   dataView,
+  customDataName,
 }: SingleSimulationCashFlowLineChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
@@ -78,12 +82,14 @@ export default function SingleSimulationCashFlowLineChart({
     () => setClickedOutsideChart(false)
   );
 
-  const chartData = rawChartData;
+  let chartData: SingleSimulationCashFlowChartDataPoint[] | Array<{ age: number } & IncomeData> | Array<{ age: number } & ExpenseData> =
+    rawChartData;
   if (chartData.length === 0) {
     return null;
   }
 
-  const dataKeys: (keyof SingleSimulationCashFlowChartDataPoint)[] = [];
+  const dataKeys: (keyof SingleSimulationCashFlowChartDataPoint | keyof IncomeData | keyof ExpenseData)[] = [];
+  let yAxisDomain: [number, number] | undefined = undefined;
   switch (dataView) {
     case 'net':
       dataKeys.push('netCashFlow');
@@ -94,6 +100,45 @@ export default function SingleSimulationCashFlowLineChart({
     case 'expenses':
       dataKeys.push('expenses');
       break;
+    case 'custom':
+      if (!customDataName) {
+        console.warn('Custom data name is required for custom data view');
+        break;
+      }
+
+      const perIncomeData = chartData.flatMap(({ age, perIncomeData }) => {
+        return Object.values(perIncomeData)
+          .map((income) => ({ age, ...income }))
+          .filter((income) => income.id === customDataName);
+      });
+
+      if (perIncomeData.length > 0) {
+        yAxisDomain = [
+          Math.min(0, ...perIncomeData.map((d) => d.grossIncome * 1.25)),
+          Math.max(0, ...perIncomeData.map((d) => d.grossIncome * 1.25)),
+        ];
+        chartData = perIncomeData;
+        dataKeys.push('grossIncome');
+        break;
+      }
+
+      const perExpenseData = chartData.flatMap(({ age, perExpenseData }) => {
+        return Object.values(perExpenseData)
+          .map((expense) => ({ age, ...expense }))
+          .filter((expense) => expense.id === customDataName);
+      });
+
+      if (perExpenseData.length > 0) {
+        yAxisDomain = [
+          Math.min(0, ...perExpenseData.map((d) => d.amount * 1.25)),
+          Math.max(0, ...perExpenseData.map((d) => d.amount * 1.25)),
+        ];
+        chartData = perExpenseData;
+        dataKeys.push('amount');
+        break;
+      }
+
+      break;
     default:
       dataKeys.push('netCashFlow');
       break;
@@ -103,7 +148,11 @@ export default function SingleSimulationCashFlowLineChart({
   const foregroundColor = resolvedTheme === 'dark' ? '#f3f4f6' : '#111827'; // gray-100 : gray-900
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
 
-  const interval = 5;
+  const calculateInterval = (dataLength: number, desiredTicks = 8) => {
+    if (dataLength <= desiredTicks) return 0;
+    return Math.ceil(dataLength / desiredTicks);
+  };
+  const interval = calculateInterval(chartData.length);
 
   const onClick = (data: { activeLabel: string | undefined }) => {
     if (data.activeLabel !== undefined && onAgeSelect) {
@@ -122,6 +171,7 @@ export default function SingleSimulationCashFlowLineChart({
             axisLine={false}
             hide={isSmallScreen}
             tickFormatter={(value: number) => formatNumber(value, 1, '$')}
+            domain={yAxisDomain}
           />
           {dataKeys.map((dataKey, index) => (
             <Line key={dataKey} type="monotone" dataKey={dataKey} stroke={COLORS[index % COLORS.length]} />

@@ -73,7 +73,8 @@ function CashFlowCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }:
 
   const rawChartData = useSingleSimulationCashFlowChartData(simulation);
 
-  const [dataView, setDataView] = useState<'net' | 'incomes' | 'expenses'>('net');
+  const [dataView, setDataView] = useState<'net' | 'incomes' | 'expenses' | 'custom'>('net');
+  const [customDataName, setCustomDataName] = useState<string>('');
 
   return (
     <>
@@ -82,10 +83,17 @@ function CashFlowCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }:
         selectedAge={selectedAge}
         setDataView={setDataView}
         dataView={dataView}
+        setCustomDataName={setCustomDataName}
+        customDataName={customDataName}
         rawChartData={rawChartData}
         startAge={startAge}
       />
-      <SingleSimulationCashFlowBarChartCard selectedAge={selectedAge} rawChartData={rawChartData} dataView={dataView} />
+      <SingleSimulationCashFlowBarChartCard
+        selectedAge={selectedAge}
+        rawChartData={rawChartData}
+        dataView={dataView}
+        customDataName={customDataName}
+      />
     </>
   );
 }

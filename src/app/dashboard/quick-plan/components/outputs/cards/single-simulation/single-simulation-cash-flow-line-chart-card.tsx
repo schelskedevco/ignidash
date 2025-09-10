@@ -9,8 +9,10 @@ import SingleSimulationCashFlowLineChart from '../../charts/single-simulation/si
 interface SingleSimulationCashFlowLineChartCardProps {
   setSelectedAge: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'net' | 'incomes' | 'expenses') => void;
-  dataView: 'net' | 'incomes' | 'expenses';
+  setDataView: (view: 'net' | 'incomes' | 'expenses' | 'custom') => void;
+  dataView: 'net' | 'incomes' | 'expenses' | 'custom';
+  setCustomDataName: (name: string) => void;
+  customDataName: string;
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
   startAge: number;
 }
@@ -20,9 +22,18 @@ export default function SingleSimulationCashFlowLineChartCard({
   selectedAge,
   setDataView,
   dataView,
+  setCustomDataName,
+  customDataName,
   rawChartData,
   startAge,
 }: SingleSimulationCashFlowLineChartCardProps) {
+  const getUniqueItems = (items: Array<{ id: string; name: string }>) => {
+    return Array.from(new Map(items.map((item) => [item.id, { id: item.id, name: item.name }])).values());
+  };
+
+  const uniqueIncomes = getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perIncomeData));
+  const uniqueExpenses = getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perExpenseData));
+
   return (
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
@@ -34,12 +45,37 @@ export default function SingleSimulationCashFlowLineChartCard({
           className="max-w-48"
           id="data-view"
           name="data-view"
-          value={dataView}
-          onChange={(e) => setDataView(e.target.value as 'net' | 'incomes' | 'expenses')}
+          value={dataView === 'custom' ? customDataName : dataView}
+          onChange={(e) => {
+            const isCustomSelection = e.target.value !== 'net' && e.target.value !== 'incomes' && e.target.value !== 'expenses';
+            if (isCustomSelection) {
+              setDataView('custom');
+              setCustomDataName(e.target.value);
+            } else {
+              setDataView(e.target.value as 'net' | 'incomes' | 'expenses');
+              setCustomDataName('');
+            }
+          }}
         >
-          <option value="net">Net Cash Flow</option>
-          <option value="incomes">Incomes</option>
-          <option value="expenses">Expenses</option>
+          <optgroup label="Aggregate">
+            <option value="net">Net Cash Flow</option>
+            <option value="incomes">Total Income</option>
+            <option value="expenses">Total Expenses</option>
+          </optgroup>
+          <optgroup label="Custom Income">
+            {uniqueIncomes.map((income) => (
+              <option key={income.id} value={income.id}>
+                {income.name}
+              </option>
+            ))}
+          </optgroup>
+          <optgroup label="Custom Expense">
+            {uniqueExpenses.map((expense) => (
+              <option key={expense.id} value={expense.id}>
+                {expense.name}
+              </option>
+            ))}
+          </optgroup>
         </Select>
       </div>
       <SingleSimulationCashFlowLineChart
@@ -49,6 +85,7 @@ export default function SingleSimulationCashFlowLineChartCard({
         selectedAge={selectedAge}
         rawChartData={rawChartData}
         dataView={dataView}
+        customDataName={customDataName}
       />
     </Card>
   );
