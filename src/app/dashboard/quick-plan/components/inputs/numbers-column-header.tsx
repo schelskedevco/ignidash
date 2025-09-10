@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CalculatorIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import { CalculatorIcon, SlidersHorizontalIcon } from 'lucide-react';
 
 import IconButton from '@/components/ui/icon-button';
 import Drawer from '@/components/ui/drawer';
@@ -14,7 +14,7 @@ export default function NumbersColumnHeader() {
 
   const titleComponent = (
     <div className="flex items-center gap-2">
-      <AdjustmentsHorizontalIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+      <SlidersHorizontalIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
       <span>Preferences</span>
     </div>
   );
@@ -25,12 +25,7 @@ export default function NumbersColumnHeader() {
         title="Numbers"
         icon={CalculatorIcon}
         iconButton={
-          <IconButton
-            icon={AdjustmentsHorizontalIcon}
-            label="Preferences"
-            onClick={() => setPreferencesOpen(true)}
-            surfaceColor="emphasized"
-          />
+          <IconButton icon={SlidersHorizontalIcon} label="Preferences" onClick={() => setPreferencesOpen(true)} surfaceColor="emphasized" />
         }
         className="left-76 w-96 border-r group-data-[state=collapsed]/sidebar:left-20"
       />
