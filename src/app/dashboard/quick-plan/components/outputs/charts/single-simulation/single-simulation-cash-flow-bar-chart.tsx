@@ -44,7 +44,13 @@ export default function SingleSimulationCashFlowBarChart({ age, dataView, rawCha
   let transformedChartData: { name: string; amount: number }[] = [];
   switch (dataView) {
     case 'cashFlow':
-      transformedChartData = chartData.map((item) => ({ name: 'Net Cash Flow', amount: item.totalNetCashFlow }));
+      transformedChartData = chartData
+        .flatMap(({ perIncomeData, perExpenseData }) =>
+          perIncomeData
+            .map(({ name, grossIncome }) => ({ name, amount: grossIncome, type: 'income' }))
+            .concat(perExpenseData.map(({ name, amount }) => ({ name, amount: -amount, type: 'expense' })))
+        )
+        .sort((a, b) => Math.abs(b.amount) - Math.abs(a.amount));
       break;
     case 'incomes':
       transformedChartData = chartData.flatMap(({ perIncomeData }) =>
