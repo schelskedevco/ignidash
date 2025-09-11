@@ -1,6 +1,6 @@
 'use client';
 
-import { CalculatorIcon, SlidersHorizontalIcon, PresentationIcon, TrendingUpIcon } from 'lucide-react';
+import { CalculatorIcon, SlidersHorizontalIcon, PresentationIcon, TrendingUpIcon, ReceiptIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -9,6 +9,7 @@ import Drawer from '@/components/ui/drawer';
 import { useRegenSimulation } from '@/hooks/use-regen-simulation';
 
 import ExpectedReturnsDrawer from './inputs/drawers/expected-returns-drawer';
+import TaxSettingsDrawer from './inputs/drawers/tax-settings-drawer';
 import SimulationSettingsDrawer from './outputs/drawers/simulation-settings-drawer';
 
 type ActiveSection = 'results' | 'your-numbers';
@@ -34,6 +35,7 @@ interface SectionSelectorProps {
 export default function SectionSelector({ activeSection, setActiveSection }: SectionSelectorProps) {
   const [simulationSettingsOpen, setSimulationSettingsOpen] = useState(false);
   const [expectedReturnsOpen, setExpectedReturnsOpen] = useState(false);
+  const [taxSettingsOpen, setTaxSettingsOpen] = useState(false);
 
   const { icon, label, handleClick, className } = useRegenSimulation();
 
@@ -41,6 +43,12 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
     <div className="flex items-center gap-2">
       <TrendingUpIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
       <span>Expected Returns</span>
+    </div>
+  );
+  const taxSettingsTitleComponent = (
+    <div className="flex items-center gap-2">
+      <ReceiptIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+      <span>Tax Settings</span>
     </div>
   );
   const simulationSettingsTitleComponent = (
@@ -72,12 +80,15 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
             ))}
           </nav>
           {activeSection === 'your-numbers' && (
-            <IconButton
-              icon={TrendingUpIcon}
-              label="Expected Returns"
-              onClick={() => setExpectedReturnsOpen(true)}
-              surfaceColor="emphasized"
-            />
+            <div className="flex items-center gap-2">
+              <IconButton
+                icon={TrendingUpIcon}
+                label="Expected Returns"
+                onClick={() => setExpectedReturnsOpen(true)}
+                surfaceColor="emphasized"
+              />
+              <IconButton icon={ReceiptIcon} label="Tax Settings" onClick={() => setTaxSettingsOpen(true)} surfaceColor="emphasized" />
+            </div>
           )}
           {activeSection === 'results' && (
             <div className="flex items-center gap-2">
@@ -95,6 +106,9 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
 
       <Drawer open={expectedReturnsOpen} setOpen={setExpectedReturnsOpen} title={expectedReturnsTitleComponent}>
         <ExpectedReturnsDrawer />
+      </Drawer>
+      <Drawer open={taxSettingsOpen} setOpen={setTaxSettingsOpen} title={taxSettingsTitleComponent}>
+        <TaxSettingsDrawer />
       </Drawer>
       <Drawer open={simulationSettingsOpen} setOpen={setSimulationSettingsOpen} title={simulationSettingsTitleComponent}>
         <SimulationSettingsDrawer />
