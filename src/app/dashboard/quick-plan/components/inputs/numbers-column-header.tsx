@@ -11,13 +11,13 @@ import SimulationSettingsDrawer from './drawers/simulation-settings-drawer';
 import ExpectedReturnsDrawer from './drawers/expected-returns-drawer';
 
 export default function NumbersColumnHeader() {
-  const [preferencesOpen, setPreferencesOpen] = useState(false);
+  const [simulationSettingsOpen, setSimulationSettingsOpen] = useState(false);
   const [expectedReturnsOpen, setExpectedReturnsOpen] = useState(false);
 
-  const titleComponent = (
+  const simulationSettingsTitleComponent = (
     <div className="flex items-center gap-2">
       <SlidersHorizontalIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
-      <span>Preferences</span>
+      <span>Simulation Settings</span>
     </div>
   );
   const expectedReturnsTitleComponent = (
@@ -36,8 +36,8 @@ export default function NumbersColumnHeader() {
           <div className="flex items-center gap-2">
             <IconButton
               icon={SlidersHorizontalIcon}
-              label="Preferences"
-              onClick={() => setPreferencesOpen(true)}
+              label="Simulation Settings"
+              onClick={() => setSimulationSettingsOpen(true)}
               surfaceColor="emphasized"
             />
             <IconButton
@@ -51,7 +51,7 @@ export default function NumbersColumnHeader() {
         className="left-76 w-96 border-r group-data-[state=collapsed]/sidebar:left-20"
       />
 
-      <Drawer open={preferencesOpen} setOpen={setPreferencesOpen} title={titleComponent}>
+      <Drawer open={simulationSettingsOpen} setOpen={setSimulationSettingsOpen} title={simulationSettingsTitleComponent}>
         <SimulationSettingsDrawer />
       </Drawer>
 

@@ -31,13 +31,13 @@ interface SectionSelectorProps {
 }
 
 export default function SectionSelector({ activeSection, setActiveSection }: SectionSelectorProps) {
-  const [preferencesOpen, setPreferencesOpen] = useState(false);
+  const [simulationSettingsOpen, setSimulationSettingsOpen] = useState(false);
   const { icon, label, handleClick, className } = useRegenSimulation();
 
-  const titleComponent = (
+  const simulationSettingsTitleComponent = (
     <div className="flex items-center gap-2">
       <SlidersHorizontalIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
-      <span>Preferences</span>
+      <span>Simulation Settings</span>
     </div>
   );
 
@@ -65,8 +65,8 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
           {activeSection === 'your-numbers' && (
             <IconButton
               icon={SlidersHorizontalIcon}
-              label="Preferences"
-              onClick={() => setPreferencesOpen(true)}
+              label="Simulation Settings"
+              onClick={() => setSimulationSettingsOpen(true)}
               surfaceColor="emphasized"
             />
           )}
@@ -76,7 +76,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
         </div>
       </div>
 
-      <Drawer open={preferencesOpen} setOpen={setPreferencesOpen} title={titleComponent}>
+      <Drawer open={simulationSettingsOpen} setOpen={setSimulationSettingsOpen} title={simulationSettingsTitleComponent}>
         <SimulationSettingsDrawer />
       </Drawer>
     </>
