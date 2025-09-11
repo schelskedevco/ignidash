@@ -140,7 +140,7 @@ export default function SingleSimulationPortfolioPieChart({ rawChartData, select
       <div className="hidden w-1/4 @3xl/card:block">
         <DescriptionList>
           <Subheading level={5} className="mb-2 whitespace-nowrap">
-            {` Net Worth | ${formatNumber(totalValue, 2, '$')}`}
+            {`Net Worth | ${formatNumber(totalValue, 2, '$')}`}
           </Subheading>
           {chartData.toReversed().map((entry) => (
             <Fragment key={entry.name}>
