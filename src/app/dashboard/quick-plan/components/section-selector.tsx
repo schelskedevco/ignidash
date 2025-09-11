@@ -8,7 +8,7 @@ import IconButton from '@/components/ui/icon-button';
 import Drawer from '@/components/ui/drawer';
 import { useRegenSimulation } from '@/hooks/use-regen-simulation';
 
-import SimulationSettingsDrawer from './inputs/drawers/simulation-settings-drawer';
+import SimulationSettingsDrawer from './outputs/drawers/simulation-settings-drawer';
 
 type ActiveSection = 'results' | 'your-numbers';
 
