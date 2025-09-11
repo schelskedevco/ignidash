@@ -3,6 +3,9 @@ import { ReturnsProvider } from '../returns-provider';
 import type { AssetReturnRates, AssetReturnAmounts } from '../asset';
 
 export interface ReturnsData {
+  // Total return data
+  totalReturnAmounts: AssetReturnAmounts;
+
   // Monthly return data
   returnAmountsForPeriod: AssetReturnAmounts;
   returnRatesForPeriod: AssetReturnRates;
@@ -47,9 +50,11 @@ export class ReturnsProcessor {
     };
     const inflationRateForPeriod = Math.pow(1 + this.cachedAnnualInflationRate, 1 / 12) - 1;
 
-    const returnAmountsForPeriod = this.simulationState.portfolio.applyReturns(returnRatesForPeriod);
+    const { returnsForPeriod: returnAmountsForPeriod, totalReturns: totalReturnAmounts } =
+      this.simulationState.portfolio.applyReturns(returnRatesForPeriod);
 
     const result = {
+      totalReturnAmounts,
       returnAmountsForPeriod,
       returnRatesForPeriod,
       inflationRateForPeriod,

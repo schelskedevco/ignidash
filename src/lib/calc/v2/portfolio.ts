@@ -371,7 +371,12 @@ export class Portfolio {
     return this.accounts.find((account) => account.getAccountID() === accountID);
   }
 
-  applyReturns(returns: AssetReturnRates): AssetReturnAmounts {
+  applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts } {
+    const returnsForPeriod: AssetReturnAmounts = {
+      cash: 0,
+      bonds: 0,
+      stocks: 0,
+    };
     const totalReturns: AssetReturnAmounts = {
       cash: 0,
       bonds: 0,
@@ -379,14 +384,18 @@ export class Portfolio {
     };
 
     this.accounts.forEach((account) => {
-      const accountReturns = account.applyReturns(returns);
+      const { returnsForPeriod: accountReturnsForPeriod, totalReturns: accountTotalReturns } = account.applyReturns(returns);
 
-      totalReturns.cash += accountReturns.cash;
-      totalReturns.bonds += accountReturns.bonds;
-      totalReturns.stocks += accountReturns.stocks;
+      returnsForPeriod.cash += accountReturnsForPeriod.cash;
+      returnsForPeriod.bonds += accountReturnsForPeriod.bonds;
+      returnsForPeriod.stocks += accountReturnsForPeriod.stocks;
+
+      totalReturns.cash += accountTotalReturns.cash;
+      totalReturns.bonds += accountTotalReturns.bonds;
+      totalReturns.stocks += accountTotalReturns.stocks;
     });
 
-    return totalReturns;
+    return { returnsForPeriod, totalReturns };
   }
 }
 
@@ -449,7 +458,7 @@ export abstract class Account {
 
   abstract getAccountData(): AccountData;
 
-  abstract applyReturns(returns: AssetReturnRates): AssetReturnAmounts;
+  abstract applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts };
   abstract applyContribution(amount: number): void;
   abstract applyWithdrawal(amount: number): { realizedGains: number };
 }
@@ -478,13 +487,13 @@ export class SavingsAccount extends Account {
     };
   }
 
-  applyReturns(returns: AssetReturnRates): AssetReturnAmounts {
+  applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts } {
     const cashReturnsAmount = this.totalValue * returns.cash;
 
     this.totalValue += cashReturnsAmount;
     this.totalReturns.cash += cashReturnsAmount;
 
-    return { cash: cashReturnsAmount, bonds: 0, stocks: 0 };
+    return { returnsForPeriod: { cash: cashReturnsAmount, bonds: 0, stocks: 0 }, totalReturns: { ...this.totalReturns } };
   }
 
   applyContribution(amount: number): void {
@@ -536,7 +545,7 @@ export class InvestmentAccount extends Account {
     };
   }
 
-  applyReturns(returns: AssetReturnRates): AssetReturnAmounts {
+  applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts } {
     const bondsPercent = this.currPercentBonds;
     const stocksPercent = 1 - bondsPercent;
 
@@ -554,7 +563,7 @@ export class InvestmentAccount extends Account {
     this.totalValue = newBondsValue + newStocksValue;
     this.currPercentBonds = this.totalValue ? newBondsValue / this.totalValue : this.initialPercentBonds;
 
-    return { cash: 0, bonds: bondReturnsAmount, stocks: stockReturnsAmount };
+    return { returnsForPeriod: { cash: 0, bonds: bondReturnsAmount, stocks: stockReturnsAmount }, totalReturns: { ...this.totalReturns } };
   }
 
   applyContribution(amount: number): void {
