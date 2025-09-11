@@ -7,7 +7,7 @@ import IconButton from '@/components/ui/icon-button';
 import Drawer from '@/components/ui/drawer';
 import ColumnHeader from '@/components/ui/column-header';
 
-import PreferencesDrawer from './drawers/preferences-drawer';
+import SimulationSettingsDrawer from './drawers/simulation-settings-drawer';
 import ExpectedReturnsDrawer from './drawers/expected-returns-drawer';
 
 export default function NumbersColumnHeader() {
@@ -52,7 +52,7 @@ export default function NumbersColumnHeader() {
       />
 
       <Drawer open={preferencesOpen} setOpen={setPreferencesOpen} title={titleComponent}>
-        <PreferencesDrawer />
+        <SimulationSettingsDrawer />
       </Drawer>
 
       <Drawer open={expectedReturnsOpen} setOpen={setExpectedReturnsOpen} title={expectedReturnsTitleComponent}>

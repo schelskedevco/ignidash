@@ -8,7 +8,7 @@ import IconButton from '@/components/ui/icon-button';
 import Drawer from '@/components/ui/drawer';
 import { useRegenSimulation } from '@/hooks/use-regen-simulation';
 
-import PreferencesDrawer from './inputs/drawers/preferences-drawer';
+import SimulationSettingsDrawer from './inputs/drawers/simulation-settings-drawer';
 
 type ActiveSection = 'results' | 'your-numbers';
 
@@ -77,7 +77,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
       </div>
 
       <Drawer open={preferencesOpen} setOpen={setPreferencesOpen} title={titleComponent}>
-        <PreferencesDrawer />
+        <SimulationSettingsDrawer />
       </Drawer>
     </>
   );

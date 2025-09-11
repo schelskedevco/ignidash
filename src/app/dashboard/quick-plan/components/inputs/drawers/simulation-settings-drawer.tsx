@@ -7,7 +7,7 @@ import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
 
-export default function PreferencesDrawer() {
+export default function SimulationSettingsDrawer() {
   const marketAssumptions = useMarketAssumptionsData();
   const updateMarketAssumptions = useUpdateMarketAssumptions();
 
