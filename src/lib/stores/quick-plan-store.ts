@@ -1086,6 +1086,32 @@ export const useSingleSimulationCashFlowChartData = (simulation: SimulationResul
   }, [simulation]);
 };
 
+export const useSingleSimulationReturnsChartData = (simulation: SimulationResultV2) => {
+  return useMemo(() => {
+    return simulation.data.slice(1).map((data) => {
+      const startAge = simulation.context.startAge;
+      const startDateYear = new Date().getFullYear();
+      const currDateYear = new Date(data.date).getFullYear();
+
+      const returnsData = data.returns!;
+
+      return {
+        age: currDateYear - startDateYear + startAge,
+        stocksRate: returnsData.annualReturnRates.stocks,
+        bondsRate: returnsData.annualReturnRates.bonds,
+        cashRate: returnsData.annualReturnRates.cash,
+        inflationRate: returnsData.annualInflationRate,
+        totalStocksAmount: returnsData.totalReturnAmounts.stocks,
+        totalBondsAmount: returnsData.totalReturnAmounts.bonds,
+        totalCashAmount: returnsData.totalReturnAmounts.cash,
+        stocksAmount: returnsData.returnAmountsForPeriod.stocks,
+        bondsAmount: returnsData.returnAmountsForPeriod.bonds,
+        cashAmount: returnsData.returnAmountsForPeriod.cash,
+      };
+    });
+  }, [simulation]);
+};
+
 /**
  * Fixed Returns Chart Hooks
  * These hooks provide access to fixed returns simulation chart data

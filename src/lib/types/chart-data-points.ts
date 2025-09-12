@@ -30,3 +30,17 @@ export interface SingleSimulationCashFlowChartDataPoint {
   expenses: number;
   netCashFlow: number;
 }
+
+export interface SingleSimulationReturnsChartDataPoint {
+  age: number;
+  stocksRate: number;
+  bondsRate: number;
+  cashRate: number;
+  inflationRate: number;
+  totalStocksAmount: number;
+  totalBondsAmount: number;
+  totalCashAmount: number;
+  stocksAmount: number;
+  bondsAmount: number;
+  cashAmount: number;
+}

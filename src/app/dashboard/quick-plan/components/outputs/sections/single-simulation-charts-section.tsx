@@ -8,6 +8,7 @@ import {
   useSingleSimulationPortfolioAssetTypeAreaChartData,
   useSingleSimulationPortfolioAccountTypeAreaChartData,
   useSingleSimulationCashFlowChartData,
+  useSingleSimulationReturnsChartData,
 } from '@/lib/stores/quick-plan-store';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
@@ -18,6 +19,7 @@ import SingleSimulationPortfolioAssetTypePieChartCard from '../cards/single-simu
 import SingleSimulationPortfolioAccountTypePieChartCard from '../cards/single-simulation/single-simulation-portfolio-account-type-pie-chart-card';
 import SingleSimulationCashFlowLineChartCard from '../cards/single-simulation/single-simulation-cash-flow-line-chart-card';
 import SingleSimulationCashFlowBarChartCard from '../cards/single-simulation/single-simulation-cash-flow-bar-chart-card';
+import SingleSimulationReturnsLineChartCard from '../cards/single-simulation/single-simulation-returns-line-chart-card';
 
 interface ChartsCategoryProps {
   simulation: SimulationResult;
@@ -98,6 +100,25 @@ function CashFlowCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }:
   );
 }
 
+function ReturnsCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }: ChartsCategoryProps) {
+  const startAge = simulation.context.startAge;
+
+  const rawChartData = useSingleSimulationReturnsChartData(simulation);
+
+  const [dataView, setDataView] = useState<'rates' | 'annualAmounts' | 'totalAmounts'>('rates');
+
+  return (
+    <SingleSimulationReturnsLineChartCard
+      rawChartData={rawChartData}
+      setSelectedAge={setSelectedAge}
+      selectedAge={selectedAge}
+      dataView={dataView}
+      setDataView={setDataView}
+      startAge={startAge}
+    />
+  );
+}
+
 interface SingleSimulationChartsSectionProps {
   simulation: SimulationResult;
   keyMetrics: FixedReturnsKeyMetricsV2;
@@ -123,6 +144,11 @@ function SingleSimulationChartsSection({
     case SingleSimulationCategory.CashFlow:
       chartsComponents = (
         <CashFlowCharts simulation={simulation} keyMetrics={keyMetrics} setSelectedAge={setSelectedAge} selectedAge={selectedAge} />
+      );
+      break;
+    case SingleSimulationCategory.Returns:
+      chartsComponents = (
+        <ReturnsCharts simulation={simulation} keyMetrics={keyMetrics} setSelectedAge={setSelectedAge} selectedAge={selectedAge} />
       );
       break;
     default:
