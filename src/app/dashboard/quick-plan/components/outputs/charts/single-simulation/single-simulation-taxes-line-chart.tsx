@@ -22,7 +22,7 @@ interface CustomTooltipProps {
   label?: number;
   currentAge: number;
   disabled: boolean;
-  dataView: 'marginalRates' | 'effectiveRates' | 'amounts';
+  dataView: 'marginalRates' | 'effectiveRates' | 'amounts' | 'net';
 }
 
 const CustomTooltip = ({ active, payload, label, currentAge, disabled, dataView }: CustomTooltipProps) => {
@@ -31,12 +31,13 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled, dataView 
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - currentAge);
 
-  const formatValue = (value: number, mode: 'marginalRates' | 'effectiveRates' | 'amounts') => {
+  const formatValue = (value: number, mode: 'marginalRates' | 'effectiveRates' | 'amounts' | 'net') => {
     switch (mode) {
       case 'marginalRates':
       case 'effectiveRates':
         return `${(value * 100).toFixed(2)}%`;
       case 'amounts':
+      case 'net':
         return formatNumber(value, 1, '$');
       default:
         return value;
@@ -70,7 +71,7 @@ interface SingleSimulationTaxesLineChartProps {
   rawChartData: SingleSimulationTaxesChartDataPoint[];
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'marginalRates' | 'effectiveRates' | 'amounts';
+  dataView: 'marginalRates' | 'effectiveRates' | 'amounts' | 'net';
 }
 
 export default function SingleSimulationTaxesLineChart({
@@ -96,15 +97,7 @@ export default function SingleSimulationTaxesLineChart({
     return null;
   }
 
-  //   incomeTaxAmount: number;
-  //   effectiveIncomeTaxRate: number;
-  //   topMarginalTaxRate: number;
-  //   netIncome: number;
   //   capitalLossDeduction: number | undefined;
-  //   capitalGainsTaxAmount: number;
-  //   effectiveCapitalGainsTaxRate: number;
-  //   topMarginalCapitalGainsTaxRate: number;
-  //   netCapitalGains: number;
   //   totalTaxesDue: number;
   //   totalTaxesRefund: number;
   //   totalTaxableIncome: number;
@@ -124,6 +117,10 @@ export default function SingleSimulationTaxesLineChart({
     case 'amounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys.push('incomeTaxAmount', 'capitalGainsTaxAmount');
+      break;
+    case 'net':
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      dataKeys.push('netIncome', 'netCapitalGains');
       break;
   }
 

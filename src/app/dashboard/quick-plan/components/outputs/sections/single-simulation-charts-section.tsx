@@ -108,7 +108,7 @@ function TaxesCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }: Ch
 
   const rawChartData = useSingleSimulationTaxesChartData(simulation);
 
-  const [dataView, setDataView] = useState<'marginalRates' | 'effectiveRates' | 'amounts'>('effectiveRates');
+  const [dataView, setDataView] = useState<'marginalRates' | 'effectiveRates' | 'amounts' | 'net'>('effectiveRates');
 
   return (
     <SingleSimulationTaxesLineChartCard
