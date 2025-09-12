@@ -100,7 +100,7 @@ export class FinancialSimulationEngine {
 
         // Process taxes
         const annualTaxesData = taxProcessor.process(annualPortfolioDataBeforeTaxes, annualIncomesData);
-        const annualPortfolioDataAfterTaxes = portfolioProcessor.processTaxes(annualTaxesData);
+        const annualPortfolioDataAfterTaxes = portfolioProcessor.processTaxes(annualPortfolioDataBeforeTaxes, annualTaxesData);
 
         // Update simulation state
         simulationState.annualData.expenses.push(annualExpensesData);

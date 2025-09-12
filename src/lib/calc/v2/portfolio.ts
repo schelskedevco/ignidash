@@ -73,10 +73,12 @@ export class PortfolioProcessor {
     return result;
   }
 
-  processTaxes(taxesData: TaxesData): PortfolioData {
-    let withdrawalsForPeriod = 0;
-    let contributionsForPeriod = 0;
-    let realizedGainsForPeriod = 0;
+  processTaxes(annualPortfolioDataBeforeTaxes: PortfolioData, taxesData: TaxesData): PortfolioData {
+    const perAccountDataBeforeTaxes = annualPortfolioDataBeforeTaxes.perAccountData;
+
+    let withdrawalsForPeriod = annualPortfolioDataBeforeTaxes.withdrawalsForPeriod;
+    let contributionsForPeriod = annualPortfolioDataBeforeTaxes.contributionsForPeriod;
+    let realizedGainsForPeriod = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod;
 
     let contributionsByAccount: Record<string, number> = {};
     let withdrawalsByAccount: Record<string, number> = {};
@@ -84,24 +86,30 @@ export class PortfolioProcessor {
 
     if (taxesData.totalTaxesRefund > 0) {
       const res = this.processContributions(taxesData.totalTaxesRefund);
-      contributionsForPeriod = res.totalForPeriod;
+      contributionsForPeriod += res.totalForPeriod;
       contributionsByAccount = res.byAccount;
     }
 
     if (taxesData.totalTaxesDue > 0) {
       const res = this.processWithdrawals(taxesData.totalTaxesDue);
-      withdrawalsForPeriod = res.totalForPeriod;
+      withdrawalsForPeriod += res.totalForPeriod;
       withdrawalsByAccount = res.byAccount;
-      realizedGainsForPeriod = res.realizedGainsForPeriod;
+      realizedGainsForPeriod += res.realizedGainsForPeriod;
       realizedGainsByAccount = res.realizedGainsByAccount;
     }
 
     const perAccountData: Record<string, AccountDataWithTransactions> = Object.fromEntries(
       this.simulationState.portfolio.getAccounts().map((account) => {
         const accountData = account.getAccountData();
-        const contributionsForPeriod = contributionsByAccount[account.getAccountID()] || 0;
-        const withdrawalsForPeriod = withdrawalsByAccount[account.getAccountID()] || 0;
-        const realizedGainsForPeriod = realizedGainsByAccount[account.getAccountID()] || 0;
+
+        const contributionsForPeriodBeforeTaxes = perAccountDataBeforeTaxes[account.getAccountID()]?.contributionsForPeriod || 0;
+        const contributionsForPeriod = (contributionsByAccount[account.getAccountID()] || 0) + contributionsForPeriodBeforeTaxes;
+
+        const withdrawalsForPeriodBeforeTaxes = perAccountDataBeforeTaxes[account.getAccountID()]?.withdrawalsForPeriod || 0;
+        const withdrawalsForPeriod = (withdrawalsByAccount[account.getAccountID()] || 0) + withdrawalsForPeriodBeforeTaxes;
+
+        const realizedGainsForPeriodBeforeTaxes = perAccountDataBeforeTaxes[account.getAccountID()]?.realizedGainsForPeriod || 0;
+        const realizedGainsForPeriod = (realizedGainsByAccount[account.getAccountID()] || 0) + realizedGainsForPeriodBeforeTaxes;
 
         return [account.getAccountID(), { ...accountData, contributionsForPeriod, withdrawalsForPeriod, realizedGainsForPeriod }];
       })
