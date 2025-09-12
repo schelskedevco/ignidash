@@ -1102,11 +1102,40 @@ export const useSingleSimulationContributionsChartData = (simulation: Simulation
 
       const portfolioData = data.portfolio!;
 
+      let savings = 0;
+      let taxable = 0;
+      let taxDeferred = 0;
+      let taxFree = 0;
+
+      for (const account of Object.values(portfolioData.perAccountData)) {
+        switch (account.type) {
+          case 'savings':
+            savings += account.totalValue;
+            break;
+          case 'taxableBrokerage':
+            taxable += account.totalValue;
+            break;
+          case '401k':
+          case 'ira':
+          case 'hsa':
+            taxDeferred += account.totalValue;
+            break;
+          case 'roth401k':
+          case 'rothIra':
+            taxFree += account.totalValue;
+            break;
+        }
+      }
+
       return {
         age: currDateYear - startDateYear + startAge,
         totalContributions: portfolioData.totalContributions,
         contributionsForPeriod: portfolioData.contributionsForPeriod,
         perAccountData: Object.values(portfolioData.perAccountData),
+        taxable,
+        taxDeferred,
+        taxFree,
+        savings,
       };
     });
   }, [simulation]);

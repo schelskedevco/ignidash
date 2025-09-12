@@ -69,6 +69,10 @@ export interface SingleSimulationContributionsChartDataPoint {
   totalContributions: number;
   contributionsForPeriod: number;
   perAccountData: AccountDataWithTransactions[];
+  taxable: number;
+  taxDeferred: number;
+  taxFree: number;
+  savings: number;
 }
 
 export interface SingleSimulationWithdrawalsChartDataPoint {

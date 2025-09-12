@@ -93,6 +93,7 @@ export default function SingleSimulationContributionsLineChart({
       dataKeys.push('totalContributions');
       break;
     case 'account':
+      dataKeys.push('taxable', 'taxDeferred', 'taxFree', 'savings');
       break;
   }
 
