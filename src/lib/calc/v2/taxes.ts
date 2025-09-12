@@ -5,6 +5,7 @@ import type { IncomesData } from './incomes';
 import type { PortfolioData } from './portfolio';
 
 export interface CapitalGainsTaxesData {
+  taxableCapitalGains: number;
   capitalGainsTaxAmount: number;
   effectiveCapitalGainsTaxRate: number;
   topMarginalCapitalGainsTaxRate: number;
@@ -12,6 +13,7 @@ export interface CapitalGainsTaxesData {
 }
 
 export interface IncomeTaxesData {
+  taxableOrdinaryIncome: number;
   incomeTaxAmount: number;
   effectiveIncomeTaxRate: number;
   topMarginalTaxRate: number;
@@ -63,6 +65,7 @@ export class TaxProcessor {
 
     const { incomeTaxAmount, topMarginalTaxRate } = this.processIncomeTaxes(taxableOrdinaryIncome);
     const incomeTaxes: IncomeTaxesData = {
+      taxableOrdinaryIncome,
       incomeTaxAmount,
       effectiveIncomeTaxRate: grossOrdinaryIncome > 0 ? incomeTaxAmount / grossOrdinaryIncome : 0,
       topMarginalTaxRate,
@@ -75,6 +78,7 @@ export class TaxProcessor {
       taxableOrdinaryIncome
     );
     const capitalGainsTaxes: CapitalGainsTaxesData = {
+      taxableCapitalGains,
       capitalGainsTaxAmount,
       effectiveCapitalGainsTaxRate: grossRealizedGains > 0 ? capitalGainsTaxAmount / grossRealizedGains : 0,
       topMarginalCapitalGainsTaxRate,

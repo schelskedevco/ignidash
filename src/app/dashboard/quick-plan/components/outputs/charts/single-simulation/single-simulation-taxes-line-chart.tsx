@@ -22,7 +22,7 @@ interface CustomTooltipProps {
   label?: number;
   currentAge: number;
   disabled: boolean;
-  dataView: 'marginalRates' | 'effectiveRates' | 'amounts' | 'net';
+  dataView: 'marginalRates' | 'effectiveRates' | 'amounts' | 'net' | 'taxableIncome';
 }
 
 const CustomTooltip = ({ active, payload, label, currentAge, disabled, dataView }: CustomTooltipProps) => {
@@ -31,13 +31,14 @@ const CustomTooltip = ({ active, payload, label, currentAge, disabled, dataView 
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - currentAge);
 
-  const formatValue = (value: number, mode: 'marginalRates' | 'effectiveRates' | 'amounts' | 'net') => {
+  const formatValue = (value: number, mode: 'marginalRates' | 'effectiveRates' | 'amounts' | 'net' | 'taxableIncome') => {
     switch (mode) {
       case 'marginalRates':
       case 'effectiveRates':
         return `${(value * 100).toFixed(2)}%`;
       case 'amounts':
       case 'net':
+      case 'taxableIncome':
         return formatNumber(value, 1, '$');
       default:
         return value;
@@ -71,7 +72,7 @@ interface SingleSimulationTaxesLineChartProps {
   rawChartData: SingleSimulationTaxesChartDataPoint[];
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'marginalRates' | 'effectiveRates' | 'amounts' | 'net';
+  dataView: 'marginalRates' | 'effectiveRates' | 'amounts' | 'net' | 'taxableIncome';
 }
 
 export default function SingleSimulationTaxesLineChart({
@@ -121,6 +122,10 @@ export default function SingleSimulationTaxesLineChart({
     case 'net':
       formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys.push('netIncome', 'netCapitalGains');
+      break;
+    case 'taxableIncome':
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      dataKeys.push('taxableOrdinaryIncome', 'taxableCapitalGains', 'totalTaxableIncome');
       break;
   }
 

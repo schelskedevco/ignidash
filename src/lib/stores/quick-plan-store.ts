@@ -1074,11 +1074,13 @@ export const useSingleSimulationTaxesChartData = (simulation: SimulationResultV2
 
       return {
         age: currDateYear - startDateYear + startAge,
+        taxableOrdinaryIncome: taxesData.incomeTaxes.taxableOrdinaryIncome,
         incomeTaxAmount: taxesData.incomeTaxes.incomeTaxAmount,
         effectiveIncomeTaxRate: taxesData.incomeTaxes.effectiveIncomeTaxRate,
         topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalTaxRate,
         netIncome: taxesData.incomeTaxes.netIncome,
         capitalLossDeduction: taxesData.incomeTaxes.capitalLossDeduction,
+        taxableCapitalGains: taxesData.capitalGainsTaxes.taxableCapitalGains,
         capitalGainsTaxAmount: taxesData.capitalGainsTaxes.capitalGainsTaxAmount,
         effectiveCapitalGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
         topMarginalCapitalGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
