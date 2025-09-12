@@ -1,6 +1,6 @@
 'use client';
 
-import { CalculatorIcon, SlidersHorizontalIcon, PresentationIcon, TrendingUpIcon, CircleDollarSignIcon } from 'lucide-react';
+import { CalculatorIcon, SlidersHorizontalIcon, PresentationIcon, TrendingUpIcon, BanknoteXIcon } from 'lucide-react';
 import { useState } from 'react';
 
 import { cn } from '@/lib/utils';
@@ -47,7 +47,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
   );
   const taxSettingsTitleComponent = (
     <div className="flex items-center gap-2">
-      <CircleDollarSignIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+      <BanknoteXIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
       <span>Tax Settings</span>
     </div>
   );
@@ -87,12 +87,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
                 onClick={() => setExpectedReturnsOpen(true)}
                 surfaceColor="emphasized"
               />
-              <IconButton
-                icon={CircleDollarSignIcon}
-                label="Tax Settings"
-                onClick={() => setTaxSettingsOpen(true)}
-                surfaceColor="emphasized"
-              />
+              <IconButton icon={BanknoteXIcon} label="Tax Settings" onClick={() => setTaxSettingsOpen(true)} surfaceColor="emphasized" />
             </div>
           )}
           {activeSection === 'results' && (
