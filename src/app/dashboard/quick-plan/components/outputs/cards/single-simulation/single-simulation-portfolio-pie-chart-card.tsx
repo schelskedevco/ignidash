@@ -1,5 +1,6 @@
 'use client';
 
+import { useTheme } from 'next-themes';
 import { Fragment } from 'react';
 
 import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
@@ -8,6 +9,8 @@ import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/componen
 import { formatNumber, formatChartString } from '@/lib/utils';
 
 import SingleSimulationPortfolioPieChart from '../../charts/single-simulation/single-simulation-portfolio-pie-chart';
+
+const COLORS = ['var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)', 'var(--chart-4)'];
 
 interface SingleSimulationPortfolioAssetTypePieChartCardProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
@@ -50,6 +53,9 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
 
   const totalValue = chartData.reduce((acc, curr) => acc + curr.value, 0);
 
+  const { resolvedTheme } = useTheme();
+  const legendStrokeColor = resolvedTheme === 'dark' ? 'white' : 'black';
+
   return (
     <div className="grid grid-cols-1 gap-2 @5xl:grid-cols-3">
       <Card className="my-0 @5xl:col-span-2">
@@ -70,9 +76,14 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
         </div>
         <div className="flex h-64 w-full flex-col justify-center sm:h-72 lg:h-80">
           <DescriptionList>
-            {chartData.toReversed().map((entry) => (
+            {chartData.map((entry, index) => (
               <Fragment key={entry.name}>
-                <DescriptionTerm>{formatChartString(entry.name)}</DescriptionTerm>
+                <DescriptionTerm className="flex items-center gap-1">
+                  <svg viewBox="0 0 6 6" aria-hidden="true" className={`size-5 fill-[${COLORS[index % COLORS.length]}]`}>
+                    <circle r={2.5} cx={3} cy={3} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
+                  </svg>
+                  {formatChartString(entry.name)}
+                </DescriptionTerm>
                 <DescriptionDetails>{formatNumber(entry.value, 2, '$')}</DescriptionDetails>
               </Fragment>
             ))}
