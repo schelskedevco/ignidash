@@ -1,31 +1,8 @@
 'use client';
 
-import { Fragment } from 'react';
 import { Pie, PieChart, ResponsiveContainer, Sector, SectorProps, Cell } from 'recharts';
 
-import { Subheading } from '@/components/catalyst/heading';
-import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { formatNumber, formatChartString } from '@/lib/utils';
-import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
-
-interface SingleSimulationPortfolioAccountTypePieChartDataPoint {
-  age: number;
-  taxable: number;
-  taxDeferred: number;
-  taxFree: number;
-  savings: number;
-}
-
-interface SingleSimulationPortfolioAssetTypePieChartDataPoint {
-  age: number;
-  stocks: number;
-  bonds: number;
-  cash: number;
-}
-
-type SingleSimulationPortfolioPieChartDataPoint =
-  | SingleSimulationPortfolioAccountTypePieChartDataPoint
-  | SingleSimulationPortfolioAssetTypePieChartDataPoint;
 
 type Coordinate = {
   x: number;
@@ -105,35 +82,15 @@ const renderActiveShape = ({
 };
 
 interface SingleSimulationPortfolioPieChartProps {
-  rawChartData: SingleSimulationPortfolioPieChartDataPoint[];
+  chartData: { name: string; value: number }[];
   selectedAge: number;
   dataView: 'asset' | 'account';
 }
 
-export default function SingleSimulationPortfolioPieChart({ rawChartData, selectedAge, dataView }: SingleSimulationPortfolioPieChartProps) {
-  const chartData = rawChartData
-    .filter((data) => data.age === selectedAge)
-    .flatMap(({ age, ...rest }) => {
-      const dataKeys: (keyof SingleSimulationPortfolioChartDataPoint)[] = [];
-      switch (dataView) {
-        case 'asset':
-          dataKeys.push('stocks', 'bonds', 'cash');
-          break;
-        case 'account':
-          dataKeys.push('taxable', 'taxDeferred', 'taxFree', 'savings');
-          break;
-      }
-
-      return Object.entries(rest)
-        .filter(([name]) => dataKeys.includes(name as keyof SingleSimulationPortfolioChartDataPoint))
-        .map(([name, value]) => ({ name, value }));
-    });
-
-  const totalValue = chartData.reduce((acc, curr) => acc + curr.value, 0);
-
+export default function SingleSimulationPortfolioPieChart({ chartData, selectedAge, dataView }: SingleSimulationPortfolioPieChartProps) {
   return (
     <div className="flex items-center">
-      <div className="h-64 w-full sm:h-72 lg:h-80 @3xl/card:w-3/4 [&_svg:focus]:outline-none">
+      <div className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart className="text-xs">
             <Pie
@@ -152,19 +109,6 @@ export default function SingleSimulationPortfolioPieChart({ rawChartData, select
             </Pie>
           </PieChart>
         </ResponsiveContainer>
-      </div>
-      <div className="hidden w-1/4 @3xl/card:block">
-        <DescriptionList>
-          <Subheading level={5} className="mb-2 whitespace-nowrap">
-            {`Net Worth | ${formatNumber(totalValue, 2, '$')}`}
-          </Subheading>
-          {chartData.toReversed().map((entry) => (
-            <Fragment key={entry.name}>
-              <DescriptionTerm>{formatChartString(entry.name)}</DescriptionTerm>
-              <DescriptionDetails>{formatNumber(entry.value, 2, '$')}</DescriptionDetails>
-            </Fragment>
-          ))}
-        </DescriptionList>
       </div>
     </div>
   );
