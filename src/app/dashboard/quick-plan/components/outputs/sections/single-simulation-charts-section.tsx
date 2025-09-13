@@ -5,8 +5,7 @@ import { useState, memo } from 'react';
 import SectionContainer from '@/components/ui/section-container';
 import {
   type FixedReturnsKeyMetricsV2,
-  useSingleSimulationPortfolioAssetTypeAreaChartData,
-  useSingleSimulationPortfolioAccountTypeAreaChartData,
+  useSingleSimulationPortfolioChartData,
   useSingleSimulationCashFlowChartData,
   useSingleSimulationReturnsChartData,
   useSingleSimulationTaxesChartData,
@@ -17,9 +16,7 @@ import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
 import { SingleSimulationCategory } from '../single-simulation-category-selector';
 import SingleSimulationPortfolioAssetTypeAreaChartCard from '../cards/single-simulation/single-simulation-portfolio-asset-type-area-chart-card';
-import SingleSimulationPortfolioAccountTypeAreaChartCard from '../cards/single-simulation/single-simulation-portfolio-account-type-area-chart-card';
 import SingleSimulationPortfolioAssetTypePieChartCard from '../cards/single-simulation/single-simulation-portfolio-asset-type-pie-chart-card';
-import SingleSimulationPortfolioAccountTypePieChartCard from '../cards/single-simulation/single-simulation-portfolio-account-type-pie-chart-card';
 import SingleSimulationCashFlowLineChartCard from '../cards/single-simulation/single-simulation-cash-flow-line-chart-card';
 import SingleSimulationCashFlowBarChartCard from '../cards/single-simulation/single-simulation-cash-flow-bar-chart-card';
 import SingleSimulationReturnsLineChartCard from '../cards/single-simulation/single-simulation-returns-line-chart-card';
@@ -41,43 +38,24 @@ interface ChartsCategoryProps {
 function PortfolioCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }: ChartsCategoryProps) {
   const startAge = simulation.context.startAge;
 
-  const assetTypeRawChartData = useSingleSimulationPortfolioAssetTypeAreaChartData(simulation);
-  const accountTypeRawChartData = useSingleSimulationPortfolioAccountTypeAreaChartData(simulation);
+  const rawChartData = useSingleSimulationPortfolioChartData(simulation);
 
   const [dataView, setDataView] = useState<'asset' | 'account'>('asset');
 
-  switch (dataView) {
-    case 'asset':
-      return (
-        <>
-          <SingleSimulationPortfolioAssetTypeAreaChartCard
-            rawChartData={assetTypeRawChartData}
-            keyMetrics={keyMetrics}
-            setSelectedAge={setSelectedAge}
-            selectedAge={selectedAge}
-            setDataView={setDataView}
-            dataView={dataView}
-            startAge={startAge}
-          />
-          <SingleSimulationPortfolioAssetTypePieChartCard rawChartData={assetTypeRawChartData} selectedAge={selectedAge} />
-        </>
-      );
-    case 'account':
-      return (
-        <>
-          <SingleSimulationPortfolioAccountTypeAreaChartCard
-            rawChartData={accountTypeRawChartData}
-            keyMetrics={keyMetrics}
-            setSelectedAge={setSelectedAge}
-            selectedAge={selectedAge}
-            setDataView={setDataView}
-            dataView={dataView}
-            startAge={startAge}
-          />
-          <SingleSimulationPortfolioAccountTypePieChartCard rawChartData={accountTypeRawChartData} selectedAge={selectedAge} />
-        </>
-      );
-  }
+  return (
+    <>
+      <SingleSimulationPortfolioAssetTypeAreaChartCard
+        rawChartData={rawChartData}
+        keyMetrics={keyMetrics}
+        setSelectedAge={setSelectedAge}
+        selectedAge={selectedAge}
+        setDataView={setDataView}
+        dataView={dataView}
+        startAge={startAge}
+      />
+      <SingleSimulationPortfolioAssetTypePieChartCard rawChartData={rawChartData} selectedAge={selectedAge} dataView={dataView} />
+    </>
+  );
 }
 
 function CashFlowCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }: ChartsCategoryProps) {

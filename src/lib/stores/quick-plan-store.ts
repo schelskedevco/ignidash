@@ -945,7 +945,7 @@ export const useStochasticAnalysis = (analysis: AggregateSimulationStats) => {
  * Single Simulation Chart Hooks
  * These hooks provide access to single simulation chart data
  */
-export const useSingleSimulationPortfolioAssetTypeAreaChartData = (simulation: SimulationResultV2) => {
+export const useSingleSimulationPortfolioChartData = (simulation: SimulationResultV2) => {
   return useMemo(() => {
     return simulation.data.map((data) => {
       const startAge = simulation.context.startAge;
@@ -959,25 +959,6 @@ export const useSingleSimulationPortfolioAssetTypeAreaChartData = (simulation: S
       const stocksAllocation = assetAllocation.stocks;
       const bondsAllocation = assetAllocation.bonds;
       const cashAllocation = assetAllocation.cash;
-
-      return {
-        age: currDateYear - startDateYear + startAge,
-        stocks: totalValue * stocksAllocation,
-        bonds: totalValue * bondsAllocation,
-        cash: totalValue * cashAllocation,
-      };
-    });
-  }, [simulation]);
-};
-
-export const useSingleSimulationPortfolioAccountTypeAreaChartData = (simulation: SimulationResultV2) => {
-  return useMemo(() => {
-    return simulation.data.map((data) => {
-      const startAge = simulation.context.startAge;
-      const startDateYear = new Date().getFullYear();
-      const currDateYear = new Date(data.date).getFullYear();
-
-      const portfolio = data.portfolio;
 
       let savings = 0;
       let taxable = 0;
@@ -1004,7 +985,16 @@ export const useSingleSimulationPortfolioAccountTypeAreaChartData = (simulation:
         }
       }
 
-      return { age: currDateYear - startDateYear + startAge, taxable, taxDeferred, taxFree, savings };
+      return {
+        age: currDateYear - startDateYear + startAge,
+        stocks: totalValue * stocksAllocation,
+        bonds: totalValue * bondsAllocation,
+        cash: totalValue * cashAllocation,
+        taxable,
+        taxDeferred,
+        taxFree,
+        savings,
+      };
     });
   }, [simulation]);
 };

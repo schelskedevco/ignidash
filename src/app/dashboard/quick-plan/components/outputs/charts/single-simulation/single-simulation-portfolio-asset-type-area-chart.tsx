@@ -5,16 +5,10 @@ import { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
-import { formatNumber } from '@/lib/utils';
+import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
+import { formatNumber, formatChartString } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
-
-export interface SingleSimulationPortfolioAssetTypeAreaChartDataPoint {
-  age: number;
-  stocks: number;
-  bonds: number;
-  cash: number;
-}
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -22,8 +16,8 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof SingleSimulationPortfolioAssetTypeAreaChartDataPoint;
-    payload: SingleSimulationPortfolioAssetTypeAreaChartDataPoint;
+    dataKey: keyof SingleSimulationPortfolioChartDataPoint;
+    payload: SingleSimulationPortfolioChartDataPoint;
   }>;
   label?: number;
   startAge: number;
@@ -43,18 +37,15 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
       <div className="flex flex-col gap-2">
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-1)]/60 px-2 text-sm">
-          <span className="mr-2">Cash:</span>
-          <span className="ml-1 font-semibold">{formatNumber(payload[2].value, 3, '$')}</span>
-        </p>
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-2)]/60 px-2 text-sm">
-          <span className="mr-2">Bonds:</span>
-          <span className="ml-1 font-semibold">{formatNumber(payload[1].value, 3, '$')}</span>
-        </p>
-        <p className="border-foreground/50 flex justify-between rounded-lg border bg-[var(--chart-3)]/60 px-2 text-sm">
-          <span className="mr-2">Stocks:</span>
-          <span className="ml-1 font-semibold">{formatNumber(payload[0].value, 3, '$')}</span>
-        </p>
+        {payload.map((entry) => (
+          <p
+            key={entry.dataKey}
+            className={`border-foreground/50 flex justify-between rounded-lg border bg-[${entry.color}]/60 px-2 text-sm`}
+          >
+            <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
+            <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
+          </p>
+        ))}
       </div>
       <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
         <span className="mr-2">Total:</span>
@@ -70,11 +61,14 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
   );
 };
 
+const COLORS = ['var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)', 'var(--chart-4)'];
+
 interface SingleSimulationPortfolioAssetTypeAreaChartProps {
-  rawChartData: SingleSimulationPortfolioAssetTypeAreaChartDataPoint[];
+  rawChartData: SingleSimulationPortfolioChartDataPoint[];
   startAge: number;
   keyMetrics: FixedReturnsKeyMetricsV2;
   showReferenceLines: boolean;
+  dataView: 'asset' | 'account';
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
@@ -84,6 +78,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
   startAge,
   keyMetrics,
   showReferenceLines,
+  dataView,
   onAgeSelect,
   selectedAge,
 }: SingleSimulationPortfolioAssetTypeAreaChartProps) {
@@ -101,6 +96,16 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
 
   if (chartData.length === 0) {
     return null;
+  }
+
+  const dataKeys: (keyof SingleSimulationPortfolioChartDataPoint)[] = [];
+  switch (dataView) {
+    case 'asset':
+      dataKeys.push('stocks', 'bonds', 'cash');
+      break;
+    case 'account':
+      dataKeys.push('taxable', 'taxDeferred', 'taxFree', 'savings');
+      break;
   }
 
   const gridColor = resolvedTheme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
@@ -128,18 +133,12 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
             onClick={onClick}
           >
             <defs>
-              <linearGradient id="colorStocks" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--chart-3)" stopOpacity={1} />
-                <stop offset="95%" stopColor="var(--chart-3)" stopOpacity={1} />
-              </linearGradient>
-              <linearGradient id="colorBonds" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={1} />
-                <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={1} />
-              </linearGradient>
-              <linearGradient id="colorCash" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={1} />
-                <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={1} />
-              </linearGradient>
+              {dataKeys.map((dataKey, index) => (
+                <linearGradient key={dataKey} id={`color${formatChartString(dataKey)}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={COLORS[index % COLORS.length]} stopOpacity={1} />
+                  <stop offset="95%" stopColor={COLORS[index % COLORS.length]} stopOpacity={1} />
+                </linearGradient>
+              ))}
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
             <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
@@ -149,9 +148,17 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
               hide={isSmallScreen}
               tickFormatter={(value: number) => formatNumber(value, 1, '$')}
             />
-            <Area type="monotone" dataKey="stocks" stackId="1" stroke="var(--chart-3)" fill="url(#colorStocks)" activeDot={false} />
-            <Area type="monotone" dataKey="bonds" stackId="1" stroke="var(--chart-2)" fill="url(#colorBonds)" activeDot={false} />
-            <Area type="monotone" dataKey="cash" stackId="1" stroke="var(--chart-1)" fill="url(#colorCash)" activeDot={false} />
+            {dataKeys.map((dataKey, index) => (
+              <Area
+                key={dataKey}
+                type="monotone"
+                dataKey={dataKey}
+                stackId="1"
+                stroke={COLORS[index % COLORS.length]}
+                fill={`url(#color${formatChartString(dataKey)})`}
+                activeDot={false}
+              />
+            ))}
             <Tooltip
               content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
               cursor={{ stroke: foregroundColor }}
@@ -171,24 +178,14 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
         role="group"
         aria-label="Chart legend"
       >
-        <div className="flex items-center gap-x-1 text-sm font-medium">
-          <svg viewBox="0 0 6 6" aria-hidden="true" className="size-5 fill-[var(--chart-3)]">
-            <circle r={2.5} cx={3} cy={3} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
-          </svg>
-          Stocks
-        </div>
-        <div className="flex items-center gap-x-1 text-sm font-medium">
-          <svg viewBox="0 0 6 6" aria-hidden="true" className="size-5 fill-[var(--chart-2)]">
-            <circle r={2.5} cx={3} cy={3} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
-          </svg>
-          Bonds
-        </div>
-        <div className="flex items-center gap-x-1 text-sm font-medium">
-          <svg viewBox="0 0 6 6" aria-hidden="true" className="size-5 fill-[var(--chart-1)]">
-            <circle r={2.5} cx={3} cy={3} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
-          </svg>
-          Cash
-        </div>
+        {dataKeys.map((dataKey, index) => (
+          <div key={dataKey} className="flex items-center gap-x-1 text-sm font-medium">
+            <svg viewBox="0 0 6 6" aria-hidden="true" className={`size-5 fill-[${COLORS[index % COLORS.length]}]`}>
+              <circle r={2.5} cx={3} cy={3} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
+            </svg>
+            {formatChartString(dataKey)}
+          </div>
+        ))}
       </div>
     </div>
   );

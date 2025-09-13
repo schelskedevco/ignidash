@@ -1,16 +1,14 @@
 'use client';
 
-import { useShowReferenceLinesPreference, /* useUpdatePreferences */ type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import { useShowReferenceLinesPreference, type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
-// import { Switch } from '@/components/catalyst/switch';
 import { Select } from '@/components/catalyst/select';
+import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 
-import SingleSimulationPortfolioAssetTypeAreaChart, {
-  type SingleSimulationPortfolioAssetTypeAreaChartDataPoint,
-} from '../../charts/single-simulation/single-simulation-portfolio-asset-type-area-chart';
+import SingleSimulationPortfolioAssetTypeAreaChart from '../../charts/single-simulation/single-simulation-portfolio-asset-type-area-chart';
 
 interface SingleSimulationPortfolioAssetTypeAreaChartCardProps {
-  rawChartData: SingleSimulationPortfolioAssetTypeAreaChartDataPoint[];
+  rawChartData: SingleSimulationPortfolioChartDataPoint[];
   keyMetrics: FixedReturnsKeyMetricsV2;
   setSelectedAge: (age: number) => void;
   selectedAge: number;
@@ -29,7 +27,6 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
   startAge,
 }: SingleSimulationPortfolioAssetTypeAreaChartCardProps) {
   const showReferenceLines = useShowReferenceLinesPreference();
-  // const updatePreferences = useUpdatePreferences();
 
   return (
     <Card className="my-0">
@@ -48,22 +45,13 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
           <option value="asset">Asset Class</option>
           <option value="account">Account Category</option>
         </Select>
-        {/* <Switch
-          className="focus-outline"
-          color="rose"
-          checked={showReferenceLines}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') updatePreferences('showReferenceLines', !showReferenceLines);
-          }}
-          onChange={() => updatePreferences('showReferenceLines', !showReferenceLines)}
-          aria-label="Toggle reference lines"
-        /> */}
       </div>
       <SingleSimulationPortfolioAssetTypeAreaChart
         rawChartData={rawChartData}
         startAge={startAge}
         keyMetrics={keyMetrics}
         showReferenceLines={showReferenceLines}
+        dataView={dataView}
         onAgeSelect={(age) => {
           if (age >= startAge + 1) setSelectedAge(age);
         }}
