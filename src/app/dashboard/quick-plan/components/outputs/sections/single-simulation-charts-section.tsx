@@ -15,8 +15,8 @@ import {
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
 import { SingleSimulationCategory } from '../single-simulation-category-selector';
-import SingleSimulationPortfolioAssetTypeAreaChartCard from '../cards/single-simulation/single-simulation-portfolio-asset-type-area-chart-card';
-import SingleSimulationPortfolioAssetTypePieChartCard from '../cards/single-simulation/single-simulation-portfolio-asset-type-pie-chart-card';
+import SingleSimulationPortfolioAreaChartCard from '../cards/single-simulation/single-simulation-portfolio-area-chart-card';
+import SingleSimulationPortfolioPieChartCard from '../cards/single-simulation/single-simulation-portfolio-pie-chart-card';
 import SingleSimulationCashFlowLineChartCard from '../cards/single-simulation/single-simulation-cash-flow-line-chart-card';
 import SingleSimulationCashFlowBarChartCard from '../cards/single-simulation/single-simulation-cash-flow-bar-chart-card';
 import SingleSimulationReturnsLineChartCard from '../cards/single-simulation/single-simulation-returns-line-chart-card';
@@ -44,7 +44,7 @@ function PortfolioCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }
 
   return (
     <>
-      <SingleSimulationPortfolioAssetTypeAreaChartCard
+      <SingleSimulationPortfolioAreaChartCard
         rawChartData={rawChartData}
         keyMetrics={keyMetrics}
         setSelectedAge={setSelectedAge}
@@ -53,7 +53,7 @@ function PortfolioCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }
         dataView={dataView}
         startAge={startAge}
       />
-      <SingleSimulationPortfolioAssetTypePieChartCard rawChartData={rawChartData} selectedAge={selectedAge} dataView={dataView} />
+      <SingleSimulationPortfolioPieChartCard rawChartData={rawChartData} selectedAge={selectedAge} dataView={dataView} />
     </>
   );
 }
