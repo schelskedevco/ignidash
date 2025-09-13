@@ -5,7 +5,7 @@ import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 
-import SingleSimulationPortfolioAssetTypeAreaChart from '../../charts/single-simulation/single-simulation-portfolio-asset-type-area-chart';
+import SingleSimulationPortfolioAreaChart from '../../charts/single-simulation/single-simulation-portfolio-area-chart';
 
 interface SingleSimulationPortfolioAssetTypeAreaChartCardProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
@@ -46,7 +46,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
           <option value="account">Account Category</option>
         </Select>
       </div>
-      <SingleSimulationPortfolioAssetTypeAreaChart
+      <SingleSimulationPortfolioAreaChart
         rawChartData={rawChartData}
         startAge={startAge}
         keyMetrics={keyMetrics}
