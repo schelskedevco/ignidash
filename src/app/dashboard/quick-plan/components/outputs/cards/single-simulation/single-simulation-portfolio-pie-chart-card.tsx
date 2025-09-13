@@ -4,7 +4,6 @@ import { Fragment } from 'react';
 
 import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import Card from '@/components/ui/card';
-import { Subheading } from '@/components/catalyst/heading';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { formatNumber, formatChartString } from '@/lib/utils';
 
@@ -65,14 +64,11 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
       <Card className="my-0 hidden @5xl:block">
         <div className="mb-4 flex items-center justify-between">
           <h4 className="text-foreground flex items-center text-lg font-semibold">
-            <span className="mr-2">Breakdown</span>
-            <span className="text-muted-foreground">Age {selectedAge}</span>
+            <span className="mr-2">Net Worth</span>
+            <span className="text-muted-foreground">{formatNumber(totalValue, 2, '$')}</span>
           </h4>
         </div>
         <DescriptionList>
-          <Subheading level={5} className="mb-2 whitespace-nowrap">
-            {`Net Worth | ${formatNumber(totalValue, 2, '$')}`}
-          </Subheading>
           {chartData.toReversed().map((entry) => (
             <Fragment key={entry.name}>
               <DescriptionTerm>{formatChartString(entry.name)}</DescriptionTerm>
