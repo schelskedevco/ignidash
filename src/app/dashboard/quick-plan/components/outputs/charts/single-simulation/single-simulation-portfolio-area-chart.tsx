@@ -134,7 +134,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
           >
             <defs>
               {dataKeys.map((dataKey, index) => (
-                <linearGradient key={dataKey} id={`color${formatChartString(dataKey)}`} x1="0" y1="0" x2="0" y2="1">
+                <linearGradient key={dataKey} id={`color${index}`} x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor={COLORS[index % COLORS.length]} stopOpacity={1} />
                   <stop offset="95%" stopColor={COLORS[index % COLORS.length]} stopOpacity={1} />
                 </linearGradient>
@@ -155,7 +155,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
                 dataKey={dataKey}
                 stackId="1"
                 stroke={COLORS[index % COLORS.length]}
-                fill={`url(#color${formatChartString(dataKey)})`}
+                fill={`url(#color${index})`}
                 activeDot={false}
               />
             ))}
