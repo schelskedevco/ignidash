@@ -16,7 +16,7 @@ export default function Card({ children, className, removeInternalPadding = fals
         className
       )}
     >
-      <div className={internalCardPadding}>{children}</div>
+      <div className={`h-full ${internalCardPadding}`}>{children}</div>
     </div>
   );
 }

@@ -52,8 +52,8 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
   const totalValue = chartData.reduce((acc, curr) => acc + curr.value, 0);
 
   return (
-    <>
-      <Card className="my-0">
+    <div className="grid grid-cols-1 gap-2 @5xl:grid-cols-3">
+      <Card className="my-0 @5xl:col-span-2">
         <div className="mb-4 flex items-center justify-between">
           <h4 className="text-foreground flex items-center text-lg font-semibold">
             <span className="mr-2">{title}</span>
@@ -62,7 +62,13 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
         </div>
         <SingleSimulationPortfolioPieChart chartData={chartData} selectedAge={selectedAge} dataView={dataView} />
       </Card>
-      <Card className="my-0">
+      <Card className="my-0 hidden @5xl:block">
+        <div className="mb-4 flex items-center justify-between">
+          <h4 className="text-foreground flex items-center text-lg font-semibold">
+            <span className="mr-2">Breakdown</span>
+            <span className="text-muted-foreground">Age {selectedAge}</span>
+          </h4>
+        </div>
         <DescriptionList>
           <Subheading level={5} className="mb-2 whitespace-nowrap">
             {`Net Worth | ${formatNumber(totalValue, 2, '$')}`}
@@ -75,6 +81,6 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
           ))}
         </DescriptionList>
       </Card>
-    </>
+    </div>
   );
 }
