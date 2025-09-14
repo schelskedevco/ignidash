@@ -94,7 +94,7 @@ export default function SingleSimulationCashFlowLineChart({
   let yAxisDomain: [number, number] | undefined = undefined;
   switch (dataView) {
     case 'net':
-      dataKeys.push('netCashFlow', 'grossIncome', 'expenses');
+      dataKeys.push('netCashFlow');
       break;
     case 'incomes':
       dataKeys.push('grossIncome');
