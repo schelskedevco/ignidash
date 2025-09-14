@@ -10,6 +10,7 @@ import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 import type { IncomeData } from '@/lib/calc/v2/incomes';
 import type { ExpenseData } from '@/lib/calc/v2/expenses';
+import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -58,6 +59,8 @@ const COLORS = ['var(--chart-4)', 'var(--chart-1)', 'var(--chart-2)', 'var(--cha
 interface SingleSimulationCashFlowLineChartProps {
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
   startAge: number;
+  keyMetrics: FixedReturnsKeyMetricsV2;
+  showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   dataView: 'net' | 'incomes' | 'expenses' | 'custom';
@@ -67,6 +70,8 @@ interface SingleSimulationCashFlowLineChartProps {
 export default function SingleSimulationCashFlowLineChart({
   rawChartData,
   startAge,
+  keyMetrics,
+  showReferenceLines,
   onAgeSelect,
   selectedAge,
   dataView,
@@ -89,7 +94,7 @@ export default function SingleSimulationCashFlowLineChart({
   let yAxisDomain: [number, number] | undefined = undefined;
   switch (dataView) {
     case 'net':
-      dataKeys.push('netCashFlow');
+      dataKeys.push('netCashFlow', 'grossIncome', 'expenses');
       break;
     case 'incomes':
       dataKeys.push('grossIncome');
@@ -180,6 +185,9 @@ export default function SingleSimulationCashFlowLineChart({
             content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
             cursor={{ stroke: foregroundColor }}
           />
+          {keyMetrics.retirementAge && showReferenceLines && (
+            <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+          )}
           {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
         </LineChart>
       </ResponsiveContainer>

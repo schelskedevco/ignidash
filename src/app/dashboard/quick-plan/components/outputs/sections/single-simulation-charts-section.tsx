@@ -65,7 +65,7 @@ function PortfolioCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, sta
   );
 }
 
-function CashFlowCharts({ simulation, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
+function CashFlowCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationCashFlowChartData(simulation);
 
   const [dataView, setDataView] = useState<'net' | 'incomes' | 'expenses' | 'custom'>('net');
@@ -81,6 +81,7 @@ function CashFlowCharts({ simulation, onAgeSelect, selectedAge, startAge }: Char
         setCustomDataID={setCustomDataID}
         customDataID={customDataID}
         rawChartData={rawChartData}
+        keyMetrics={keyMetrics}
         startAge={startAge}
       />
       <SingleSimulationCashFlowBarChartCard
