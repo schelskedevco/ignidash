@@ -107,12 +107,8 @@ export default function SingleSimulationCashFlowBarChart({
       break;
   }
 
-  if (transformedChartData.length === 0) {
-    return null;
-  }
-
-  const gridColor = resolvedTheme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
-  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
+  const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
+  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
 
   const shouldUseCustomTick = transformedChartData.length > 5 || isSmallScreen;
   const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
