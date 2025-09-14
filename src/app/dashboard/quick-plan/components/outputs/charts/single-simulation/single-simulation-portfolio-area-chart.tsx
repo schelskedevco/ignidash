@@ -42,7 +42,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
           <p
             key={entry.dataKey}
             style={{ backgroundColor: `hsl(from ${entry.color} h s l / 0.6)` }}
-            className={`border-foreground/50 flex justify-between rounded-lg border px-2 text-sm`}
+            className="border-foreground/50 flex justify-between rounded-lg border px-2 text-sm"
           >
             <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
             <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>

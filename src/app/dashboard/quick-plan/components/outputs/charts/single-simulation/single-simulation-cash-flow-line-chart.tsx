@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
 
 import { formatNumber, formatChartString } from '@/lib/utils';
@@ -41,7 +41,8 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
         {payload.map((entry) => (
           <p
             key={entry.dataKey}
-            className={`border-foreground/50 flex justify-between rounded-lg border bg-[${entry.color}]/60 px-2 text-sm`}
+            style={{ backgroundColor: `hsl(from ${entry.color} h s l / 0.6)` }}
+            className="border-foreground/50 flex justify-between rounded-lg border px-2 text-sm"
           >
             <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
             <span className="ml-1 font-semibold">{formatNumber(entry.value, 3, '$')}</span>
@@ -144,17 +145,20 @@ export default function SingleSimulationCashFlowLineChart({
   const foregroundColor = resolvedTheme === 'dark' ? '#f3f4f6' : '#111827'; // gray-100 : gray-900
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
 
-  const calculateInterval = (dataLength: number, desiredTicks = 8) => {
+  const calculateInterval = useCallback((dataLength: number, desiredTicks = 8) => {
     if (dataLength <= desiredTicks) return 0;
     return Math.ceil(dataLength / desiredTicks);
-  };
+  }, []);
   const interval = calculateInterval(chartData.length);
 
-  const onClick = (data: { activeLabel: string | undefined }) => {
-    if (data.activeLabel !== undefined && onAgeSelect) {
-      onAgeSelect(Number(data.activeLabel));
-    }
-  };
+  const onClick = useCallback(
+    (data: { activeLabel: string | undefined }) => {
+      if (data.activeLabel !== undefined && onAgeSelect) {
+        onAgeSelect(Number(data.activeLabel));
+      }
+    },
+    [onAgeSelect]
+  );
 
   return (
     <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
