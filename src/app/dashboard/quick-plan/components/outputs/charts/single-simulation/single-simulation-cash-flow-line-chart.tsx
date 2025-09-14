@@ -54,8 +54,6 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
   );
 };
 
-const COLORS = ['var(--chart-4)', 'var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)'];
-
 interface SingleSimulationCashFlowLineChartProps {
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
   startAge: number;
@@ -94,12 +92,21 @@ export default function SingleSimulationCashFlowLineChart({
   let yAxisDomain: [number, number] | undefined = undefined;
   switch (dataView) {
     case 'net':
+      yAxisDomain = [
+        Math.min(0, ...chartData.map((d) => d.netCashFlow * 1.25)),
+        Math.max(0, ...chartData.map((d) => d.netCashFlow * 1.25)),
+      ];
       dataKeys.push('netCashFlow');
       break;
     case 'incomes':
+      yAxisDomain = [
+        Math.min(0, ...chartData.map((d) => d.grossIncome * 1.25)),
+        Math.max(0, ...chartData.map((d) => d.grossIncome * 1.25)),
+      ];
       dataKeys.push('grossIncome');
       break;
     case 'expenses':
+      yAxisDomain = [Math.min(0, ...chartData.map((d) => d.expenses * 1.25)), Math.max(0, ...chartData.map((d) => d.expenses * 1.25))];
       dataKeys.push('expenses');
       break;
     case 'custom':
@@ -179,7 +186,7 @@ export default function SingleSimulationCashFlowLineChart({
             domain={yAxisDomain}
           />
           {dataKeys.map((dataKey, index) => (
-            <Line key={dataKey} type="monotone" dataKey={dataKey} stroke={COLORS[index % COLORS.length]} />
+            <Line key={dataKey} type="monotone" dataKey={dataKey} stroke="var(--chart-4)" />
           ))}
           <Tooltip
             content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
