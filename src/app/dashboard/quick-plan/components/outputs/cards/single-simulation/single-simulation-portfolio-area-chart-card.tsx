@@ -62,10 +62,10 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
           }}
         >
           <optgroup label="Aggregate">
-            <option value="assetClass">By Asset Class</option>
-            <option value="taxTreatment">By Tax Treatment</option>
+            <option value="assetClass">Asset Class</option>
+            <option value="taxTreatment">Tax Treatment</option>
           </optgroup>
-          <optgroup label="Custom Accounts">
+          <optgroup label="Accounts">
             {uniqueAccounts.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.name}
