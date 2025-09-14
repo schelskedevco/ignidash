@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
@@ -98,9 +98,6 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
   let chartData:
     | SingleSimulationPortfolioChartDataPoint[]
     | Array<{ age: number; stocks: number; bonds: number; cash: number } & AccountDataWithTransactions> = rawChartData;
-  if (chartData.length === 0) {
-    return null;
-  }
 
   const dataKeys: (keyof SingleSimulationPortfolioChartDataPoint | keyof AccountDataWithTransactions)[] = [];
   switch (dataView) {
@@ -149,11 +146,14 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
 
   const interval = 5;
 
-  const onClick = (data: { activeLabel: string | undefined }) => {
-    if (data.activeLabel !== undefined && onAgeSelect) {
-      onAgeSelect(Number(data.activeLabel));
-    }
-  };
+  const onClick = useCallback(
+    (data: { activeLabel: string | undefined }) => {
+      if (data.activeLabel !== undefined && onAgeSelect) {
+        onAgeSelect(Number(data.activeLabel));
+      }
+    },
+    [onAgeSelect]
+  );
 
   return (
     <div>
