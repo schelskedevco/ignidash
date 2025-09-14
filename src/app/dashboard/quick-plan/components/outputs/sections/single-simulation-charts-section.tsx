@@ -189,74 +189,27 @@ function SingleSimulationChartsSection({
   currentCategory,
 }: SingleSimulationChartsSectionProps) {
   const startAge = simulation.context.startAge;
+  const props: ChartsCategoryProps = { simulation, keyMetrics, onAgeSelect, selectedAge, startAge };
 
   let chartsComponents = null;
   switch (currentCategory) {
     case SingleSimulationCategory.Portfolio:
-      chartsComponents = (
-        <PortfolioCharts
-          simulation={simulation}
-          keyMetrics={keyMetrics}
-          onAgeSelect={onAgeSelect}
-          selectedAge={selectedAge}
-          startAge={startAge}
-        />
-      );
+      chartsComponents = <PortfolioCharts {...props} />;
       break;
     case SingleSimulationCategory.CashFlow:
-      chartsComponents = (
-        <CashFlowCharts
-          simulation={simulation}
-          keyMetrics={keyMetrics}
-          onAgeSelect={onAgeSelect}
-          selectedAge={selectedAge}
-          startAge={startAge}
-        />
-      );
+      chartsComponents = <CashFlowCharts {...props} />;
       break;
     case SingleSimulationCategory.Taxes:
-      chartsComponents = (
-        <TaxesCharts
-          simulation={simulation}
-          keyMetrics={keyMetrics}
-          onAgeSelect={onAgeSelect}
-          selectedAge={selectedAge}
-          startAge={startAge}
-        />
-      );
+      chartsComponents = <TaxesCharts {...props} />;
       break;
     case SingleSimulationCategory.Returns:
-      chartsComponents = (
-        <ReturnsCharts
-          simulation={simulation}
-          keyMetrics={keyMetrics}
-          onAgeSelect={onAgeSelect}
-          selectedAge={selectedAge}
-          startAge={startAge}
-        />
-      );
+      chartsComponents = <ReturnsCharts {...props} />;
       break;
     case SingleSimulationCategory.Contributions:
-      chartsComponents = (
-        <ContributionsCharts
-          simulation={simulation}
-          keyMetrics={keyMetrics}
-          onAgeSelect={onAgeSelect}
-          selectedAge={selectedAge}
-          startAge={startAge}
-        />
-      );
+      chartsComponents = <ContributionsCharts {...props} />;
       break;
     case SingleSimulationCategory.Withdrawals:
-      chartsComponents = (
-        <WithdrawalsCharts
-          simulation={simulation}
-          keyMetrics={keyMetrics}
-          onAgeSelect={onAgeSelect}
-          selectedAge={selectedAge}
-          startAge={startAge}
-        />
-      );
+      chartsComponents = <WithdrawalsCharts {...props} />;
       break;
     default:
       chartsComponents = (
