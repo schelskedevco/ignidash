@@ -65,16 +65,8 @@ export default function SingleSimulationCashFlowBarChart({
   switch (dataView) {
     case 'net':
       transformedChartData = chartData.flatMap(({ perIncomeData, perExpenseData }) => [
-        {
-          name: 'Gross Income',
-          amount: perIncomeData.reduce((sum, { grossIncome }) => sum + grossIncome, 0),
-          type: 'income',
-        },
-        {
-          name: 'Expenses',
-          amount: -perExpenseData.reduce((sum, { amount }) => sum + amount, 0),
-          type: 'expense',
-        },
+        { name: 'Gross Income', amount: perIncomeData.reduce((sum, { grossIncome }) => sum + grossIncome, 0), type: 'income' },
+        { name: 'Expenses', amount: -perExpenseData.reduce((sum, { amount }) => sum + amount, 0), type: 'expense' },
       ]);
       break;
     case 'incomes':
@@ -107,6 +99,10 @@ export default function SingleSimulationCashFlowBarChart({
       break;
   }
 
+  if (transformedChartData.length === 0) {
+    return <div className="flex h-64 w-full items-center justify-center sm:h-72 lg:h-80">No data available for the selected view.</div>;
+  }
+
   const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
 
@@ -115,32 +111,30 @@ export default function SingleSimulationCashFlowBarChart({
   const bottomMargin = shouldUseCustomTick ? 50 : 0;
 
   return (
-    <div>
-      <div className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={transformedChartData}
-            className="text-xs"
-            margin={{ top: 0, right: 10, left: 10, bottom: bottomMargin }}
-            tabIndex={-1}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-            <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
-            <YAxis
-              tick={{ fill: foregroundMutedColor }}
-              axisLine={false}
-              hide={isSmallScreen}
-              tickFormatter={(value: number) => formatNumber(value, 1, '$')}
-            />
-            <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
-              {transformedChartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill="var(--chart-3)" stroke="var(--chart-1)" fillOpacity={entry.type === 'income' ? 1 : 0.5} />
-              ))}
-              <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+    <div className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={transformedChartData}
+          className="text-xs"
+          margin={{ top: 0, right: 10, left: 10, bottom: bottomMargin }}
+          tabIndex={-1}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+          <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
+          <YAxis
+            tick={{ fill: foregroundMutedColor }}
+            axisLine={false}
+            hide={isSmallScreen}
+            tickFormatter={(value: number) => formatNumber(value, 1, '$')}
+          />
+          <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
+            {transformedChartData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill="var(--chart-3)" stroke="var(--chart-1)" fillOpacity={entry.type === 'income' ? 1 : 0.5} />
+            ))}
+            <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }

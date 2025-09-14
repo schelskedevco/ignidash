@@ -118,7 +118,7 @@ export default function SingleSimulationCashFlowLineChart({
       const perIncomeData = chartData.flatMap(({ age, perIncomeData }) => {
         return Object.values(perIncomeData)
           .map((income) => ({ age, ...income }))
-          .filter((income) => income.id === customDataID);
+          .filter((income) => income.id === customDataID && income.grossIncome !== 0);
       });
 
       if (perIncomeData.length > 0) {
@@ -134,7 +134,7 @@ export default function SingleSimulationCashFlowLineChart({
       const perExpenseData = chartData.flatMap(({ age, perExpenseData }) => {
         return Object.values(perExpenseData)
           .map((expense) => ({ age, ...expense }))
-          .filter((expense) => expense.id === customDataID);
+          .filter((expense) => expense.id === customDataID && expense.amount !== 0);
       });
 
       if (perExpenseData.length > 0) {
