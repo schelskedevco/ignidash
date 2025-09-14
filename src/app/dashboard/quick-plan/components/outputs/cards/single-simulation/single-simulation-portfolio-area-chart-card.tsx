@@ -61,7 +61,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
             }
           }}
         >
-          <optgroup label="Aggregate">
+          <optgroup label="View By">
             <option value="assetClass">Asset Class</option>
             <option value="taxTreatment">Tax Treatment</option>
           </optgroup>
