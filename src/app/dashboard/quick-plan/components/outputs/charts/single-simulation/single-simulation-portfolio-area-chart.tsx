@@ -201,7 +201,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
               <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
             )}
             {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
-            {keyMetrics.portfolioAtRetirement && showReferenceLines && (
+            {keyMetrics.portfolioAtRetirement && showReferenceLines && dataView !== 'custom' && (
               <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
             )}
           </AreaChart>
