@@ -32,6 +32,12 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
 }: SingleSimulationPortfolioAssetTypeAreaChartCardProps) {
   const showReferenceLines = useShowReferenceLinesPreference();
 
+  const getUniqueItems = (items: Array<{ id: string; name: string }>) => {
+    return Array.from(new Map(items.map((item) => [item.id, { id: item.id, name: item.name }])).values());
+  };
+
+  const uniqueAccounts = getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAccountData));
+
   return (
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
@@ -43,11 +49,29 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
           className="max-w-48"
           id="data-view"
           name="data-view"
-          value={dataView}
-          onChange={(e) => setDataView(e.target.value as 'assetClass' | 'taxTreatment' | 'custom')}
+          value={dataView === 'custom' ? customDataName : dataView}
+          onChange={(e) => {
+            const isCustomSelection = e.target.value !== 'assetClass' && e.target.value !== 'taxTreatment';
+            if (isCustomSelection) {
+              setDataView('custom');
+              setCustomDataName(e.target.value);
+            } else {
+              setDataView(e.target.value as 'assetClass' | 'taxTreatment' | 'custom');
+              setCustomDataName('');
+            }
+          }}
         >
-          <option value="assetClass">By Asset Class</option>
-          <option value="taxTreatment">By Tax Treatment</option>
+          <optgroup label="Aggregate">
+            <option value="assetClass">By Asset Class</option>
+            <option value="taxTreatment">By Tax Treatment</option>
+          </optgroup>
+          <optgroup label="Custom Accounts">
+            {uniqueAccounts.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+              </option>
+            ))}
+          </optgroup>
         </Select>
       </div>
       <SingleSimulationPortfolioAreaChart

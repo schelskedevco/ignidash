@@ -1002,6 +1002,7 @@ export const useSingleSimulationPortfolioChartData = (simulation: SimulationResu
         taxDeferred,
         taxFree,
         cashSavings,
+        perAccountData: Object.values(portfolio.perAccountData),
       };
     });
   }, [simulation]);

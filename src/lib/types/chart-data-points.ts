@@ -31,6 +31,7 @@ export interface SingleSimulationPortfolioChartDataPoint {
   taxDeferred: number;
   taxFree: number;
   cashSavings: number;
+  perAccountData: AccountDataWithTransactions[];
 }
 
 export interface SingleSimulationCashFlowChartDataPoint {
