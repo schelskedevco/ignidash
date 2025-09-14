@@ -31,7 +31,7 @@ export default function SingleSimulationContributionsLineChartCard({
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </h4>
         <Select
-          className="max-w-48"
+          className="max-w-64"
           id="data-view"
           name="data-view"
           value={dataView}
