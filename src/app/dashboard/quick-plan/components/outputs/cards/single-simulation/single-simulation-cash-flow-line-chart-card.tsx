@@ -11,8 +11,8 @@ interface SingleSimulationCashFlowLineChartCardProps {
   selectedAge: number;
   setDataView: (view: 'net' | 'incomes' | 'expenses' | 'custom') => void;
   dataView: 'net' | 'incomes' | 'expenses' | 'custom';
-  setCustomDataName: (name: string) => void;
-  customDataName: string;
+  setCustomDataID: (name: string) => void;
+  customDataID: string;
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
   startAge: number;
 }
@@ -22,8 +22,8 @@ export default function SingleSimulationCashFlowLineChartCard({
   selectedAge,
   setDataView,
   dataView,
-  setCustomDataName,
-  customDataName,
+  setCustomDataID,
+  customDataID,
   rawChartData,
   startAge,
 }: SingleSimulationCashFlowLineChartCardProps) {
@@ -45,15 +45,15 @@ export default function SingleSimulationCashFlowLineChartCard({
           className="max-w-48"
           id="data-view"
           name="data-view"
-          value={dataView === 'custom' ? customDataName : dataView}
+          value={dataView === 'custom' ? customDataID : dataView}
           onChange={(e) => {
             const isCustomSelection = e.target.value !== 'net' && e.target.value !== 'incomes' && e.target.value !== 'expenses';
             if (isCustomSelection) {
               setDataView('custom');
-              setCustomDataName(e.target.value);
+              setCustomDataID(e.target.value);
             } else {
               setDataView(e.target.value as 'net' | 'incomes' | 'expenses');
-              setCustomDataName('');
+              setCustomDataID('');
             }
           }}
         >
@@ -85,7 +85,7 @@ export default function SingleSimulationCashFlowLineChartCard({
         selectedAge={selectedAge}
         rawChartData={rawChartData}
         dataView={dataView}
-        customDataName={customDataName}
+        customDataID={customDataID}
       />
     </Card>
   );

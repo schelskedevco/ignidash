@@ -70,7 +70,7 @@ interface SingleSimulationPortfolioAssetTypeAreaChartProps {
   keyMetrics: FixedReturnsKeyMetricsV2;
   showReferenceLines: boolean;
   dataView: 'assetClass' | 'taxTreatment' | 'custom';
-  customDataName: string;
+  customDataID: string;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
@@ -81,7 +81,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
   keyMetrics,
   showReferenceLines,
   dataView,
-  customDataName,
+  customDataID,
   onAgeSelect,
   selectedAge,
 }: SingleSimulationPortfolioAssetTypeAreaChartProps) {
@@ -111,14 +111,14 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
       dataKeys.push('taxable', 'taxDeferred', 'taxFree', 'cashSavings');
       break;
     case 'custom':
-      if (!customDataName) {
+      if (!customDataID) {
         console.warn('Custom data name is required for custom data view');
         break;
       }
 
       const perAccountData = chartData.flatMap(({ age, perAccountData }) =>
         Object.values(perAccountData)
-          .filter((account) => account.id === customDataName)
+          .filter((account) => account.id === customDataID)
           .map((account) => {
             const totalValue = account.totalValue;
 

@@ -14,8 +14,8 @@ interface SingleSimulationPortfolioAssetTypeAreaChartCardProps {
   selectedAge: number;
   setDataView: (view: 'assetClass' | 'taxTreatment' | 'custom') => void;
   dataView: 'assetClass' | 'taxTreatment' | 'custom';
-  setCustomDataName: (name: string) => void;
-  customDataName: string;
+  setCustomDataID: (name: string) => void;
+  customDataID: string;
   startAge: number;
 }
 
@@ -26,8 +26,8 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
   selectedAge,
   setDataView,
   dataView,
-  setCustomDataName,
-  customDataName,
+  setCustomDataID,
+  customDataID,
   startAge,
 }: SingleSimulationPortfolioAssetTypeAreaChartCardProps) {
   const showReferenceLines = useShowReferenceLinesPreference();
@@ -49,15 +49,15 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
           className="max-w-48"
           id="data-view"
           name="data-view"
-          value={dataView === 'custom' ? customDataName : dataView}
+          value={dataView === 'custom' ? customDataID : dataView}
           onChange={(e) => {
             const isCustomSelection = e.target.value !== 'assetClass' && e.target.value !== 'taxTreatment';
             if (isCustomSelection) {
               setDataView('custom');
-              setCustomDataName(e.target.value);
+              setCustomDataID(e.target.value);
             } else {
               setDataView(e.target.value as 'assetClass' | 'taxTreatment' | 'custom');
-              setCustomDataName('');
+              setCustomDataID('');
             }
           }}
         >
@@ -80,7 +80,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChartCard({
         keyMetrics={keyMetrics}
         showReferenceLines={showReferenceLines}
         dataView={dataView}
-        customDataName={customDataName}
+        customDataID={customDataID}
         onAgeSelect={(age) => {
           if (age >= startAge + 1) setSelectedAge(age);
         }}

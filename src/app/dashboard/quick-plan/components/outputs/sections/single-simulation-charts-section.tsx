@@ -41,7 +41,7 @@ function PortfolioCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }
   const rawChartData = useSingleSimulationPortfolioChartData(simulation);
 
   const [dataView, setDataView] = useState<'assetClass' | 'taxTreatment' | 'custom'>('assetClass');
-  const [customDataName, setCustomDataName] = useState<string>('');
+  const [customDataID, setCustomDataID] = useState<string>('');
 
   return (
     <>
@@ -51,8 +51,8 @@ function PortfolioCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }
         keyMetrics={keyMetrics}
         setDataView={setDataView}
         dataView={dataView}
-        setCustomDataName={setCustomDataName}
-        customDataName={customDataName}
+        setCustomDataID={setCustomDataID}
+        customDataID={customDataID}
         rawChartData={rawChartData}
         startAge={startAge}
       />
@@ -60,7 +60,7 @@ function PortfolioCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }
         rawChartData={rawChartData}
         selectedAge={selectedAge}
         dataView={dataView}
-        customDataName={customDataName}
+        customDataID={customDataID}
       />
     </>
   );
@@ -72,7 +72,7 @@ function CashFlowCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }:
   const rawChartData = useSingleSimulationCashFlowChartData(simulation);
 
   const [dataView, setDataView] = useState<'net' | 'incomes' | 'expenses' | 'custom'>('net');
-  const [customDataName, setCustomDataName] = useState<string>('');
+  const [customDataID, setCustomDataID] = useState<string>('');
 
   return (
     <>
@@ -81,8 +81,8 @@ function CashFlowCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }:
         selectedAge={selectedAge}
         setDataView={setDataView}
         dataView={dataView}
-        setCustomDataName={setCustomDataName}
-        customDataName={customDataName}
+        setCustomDataID={setCustomDataID}
+        customDataID={customDataID}
         rawChartData={rawChartData}
         startAge={startAge}
       />
@@ -90,7 +90,7 @@ function CashFlowCharts({ simulation, keyMetrics, setSelectedAge, selectedAge }:
         rawChartData={rawChartData}
         selectedAge={selectedAge}
         dataView={dataView}
-        customDataName={customDataName}
+        customDataID={customDataID}
       />
     </>
   );

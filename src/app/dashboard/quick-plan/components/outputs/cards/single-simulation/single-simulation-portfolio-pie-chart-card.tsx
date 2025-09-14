@@ -16,14 +16,14 @@ interface SingleSimulationPortfolioAssetTypePieChartCardProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
   selectedAge: number;
   dataView: 'assetClass' | 'taxTreatment' | 'custom';
-  customDataName: string;
+  customDataID: string;
 }
 
 export default function SingleSimulationPortfolioAssetTypePieChartCard({
   rawChartData,
   selectedAge,
   dataView,
-  customDataName,
+  customDataID,
 }: SingleSimulationPortfolioAssetTypePieChartCardProps) {
   let title = '';
 
@@ -55,7 +55,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
         .filter((data) => data.age === selectedAge)
         .flatMap(({ age, perAccountData }) =>
           perAccountData
-            .filter((account) => account.id === customDataName)
+            .filter((account) => account.id === customDataID)
             .flatMap((account) => {
               const totalValue = account.totalValue;
 

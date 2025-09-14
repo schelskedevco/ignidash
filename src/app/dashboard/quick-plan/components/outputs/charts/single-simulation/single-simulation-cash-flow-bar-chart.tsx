@@ -47,14 +47,14 @@ interface SingleSimulationCashFlowBarChartProps {
   age: number;
   dataView: 'net' | 'incomes' | 'expenses' | 'custom';
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
-  customDataName?: string;
+  customDataID?: string;
 }
 
 export default function SingleSimulationCashFlowBarChart({
   age,
   dataView,
   rawChartData,
-  customDataName,
+  customDataID,
 }: SingleSimulationCashFlowBarChartProps) {
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
@@ -88,7 +88,7 @@ export default function SingleSimulationCashFlowBarChart({
         .filter(({ amount }) => amount !== 0);
       break;
     case 'custom':
-      if (!customDataName) {
+      if (!customDataID) {
         console.warn('Custom data name is required for custom data view');
         transformedChartData = [];
         break;
@@ -99,10 +99,10 @@ export default function SingleSimulationCashFlowBarChart({
           .flatMap(({ perIncomeData }) =>
             perIncomeData.map(({ id, name, grossIncome }) => ({ id, name, amount: grossIncome, type: 'income' }))
           )
-          .filter(({ id, amount }) => amount !== 0 && id === customDataName),
+          .filter(({ id, amount }) => amount !== 0 && id === customDataID),
         ...chartData
           .flatMap(({ perExpenseData }) => perExpenseData.map(({ id, name, amount }) => ({ id, name, amount, type: 'expense' })))
-          .filter(({ id, amount }) => amount !== 0 && id === customDataName),
+          .filter(({ id, amount }) => amount !== 0 && id === customDataID),
       ];
       break;
   }

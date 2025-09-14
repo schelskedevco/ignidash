@@ -9,14 +9,14 @@ interface SingleSimulationCashFlowBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
   dataView: 'net' | 'incomes' | 'expenses' | 'custom';
-  customDataName?: string;
+  customDataID?: string;
 }
 
 export default function SingleSimulationCashFlowBarChartCard({
   selectedAge,
   rawChartData,
   dataView,
-  customDataName,
+  customDataID,
 }: SingleSimulationCashFlowBarChartCardProps) {
   let title;
   switch (dataView) {
@@ -42,7 +42,7 @@ export default function SingleSimulationCashFlowBarChartCard({
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </h4>
       </div>
-      <SingleSimulationCashFlowBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} customDataName={customDataName} />
+      <SingleSimulationCashFlowBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} customDataID={customDataID} />
     </Card>
   );
 }

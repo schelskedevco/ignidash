@@ -60,7 +60,7 @@ interface SingleSimulationCashFlowLineChartProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   dataView: 'net' | 'incomes' | 'expenses' | 'custom';
-  customDataName?: string;
+  customDataID?: string;
 }
 
 export default function SingleSimulationCashFlowLineChart({
@@ -68,7 +68,7 @@ export default function SingleSimulationCashFlowLineChart({
   onAgeSelect,
   selectedAge,
   dataView,
-  customDataName,
+  customDataID,
 }: SingleSimulationCashFlowLineChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
@@ -101,7 +101,7 @@ export default function SingleSimulationCashFlowLineChart({
       dataKeys.push('expenses');
       break;
     case 'custom':
-      if (!customDataName) {
+      if (!customDataID) {
         console.warn('Custom data name is required for custom data view');
         break;
       }
@@ -109,7 +109,7 @@ export default function SingleSimulationCashFlowLineChart({
       const perIncomeData = chartData.flatMap(({ age, perIncomeData }) => {
         return Object.values(perIncomeData)
           .map((income) => ({ age, ...income }))
-          .filter((income) => income.id === customDataName);
+          .filter((income) => income.id === customDataID);
       });
 
       if (perIncomeData.length > 0) {
@@ -125,7 +125,7 @@ export default function SingleSimulationCashFlowLineChart({
       const perExpenseData = chartData.flatMap(({ age, perExpenseData }) => {
         return Object.values(perExpenseData)
           .map((expense) => ({ age, ...expense }))
-          .filter((expense) => expense.id === customDataName);
+          .filter((expense) => expense.id === customDataID);
       });
 
       if (perExpenseData.length > 0) {
