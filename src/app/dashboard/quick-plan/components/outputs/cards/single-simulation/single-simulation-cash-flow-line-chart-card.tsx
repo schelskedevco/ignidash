@@ -1,5 +1,7 @@
 'use client';
 
+import { useMemo, useCallback } from 'react';
+
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
@@ -25,12 +27,18 @@ export default function SingleSimulationCashFlowLineChartCard({
   customDataID,
   rawChartData,
 }: SingleSimulationCashFlowLineChartCardProps) {
-  const getUniqueItems = (items: Array<{ id: string; name: string }>) => {
+  const getUniqueItems = useCallback((items: Array<{ id: string; name: string }>) => {
     return Array.from(new Map(items.map((item) => [item.id, { id: item.id, name: item.name }])).values());
-  };
+  }, []);
 
-  const uniqueIncomes = getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perIncomeData));
-  const uniqueExpenses = getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perExpenseData));
+  const uniqueIncomes = useMemo(
+    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perIncomeData)),
+    [getUniqueItems, rawChartData]
+  );
+  const uniqueExpenses = useMemo(
+    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perExpenseData)),
+    [getUniqueItems, rawChartData]
+  );
 
   return (
     <Card className="my-0">
@@ -55,19 +63,19 @@ export default function SingleSimulationCashFlowLineChartCard({
             }
           }}
         >
-          <optgroup label="Aggregate">
+          <optgroup label="By Aggregate">
             <option value="net">Cash Flow</option>
-            <option value="incomes">Income</option>
-            <option value="expenses">Expenses</option>
+            <option value="incomes">Total Income</option>
+            <option value="expenses">Total Expenses</option>
           </optgroup>
-          <optgroup label="Custom Incomes">
+          <optgroup label="By Income">
             {uniqueIncomes.map((income) => (
               <option key={income.id} value={income.id}>
                 {income.name}
               </option>
             ))}
           </optgroup>
-          <optgroup label="Custom Expenses">
+          <optgroup label="By Expense">
             {uniqueExpenses.map((expense) => (
               <option key={expense.id} value={expense.id}>
                 {expense.name}
