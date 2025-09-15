@@ -4,13 +4,14 @@ import { useTheme } from 'next-themes';
 import { useState, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
 
-import { formatNumber, formatChartString } from '@/lib/utils';
+import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 import type { IncomeData } from '@/lib/calc/v2/incomes';
 import type { ExpenseData } from '@/lib/calc/v2/expenses';
 import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import { Divider } from '@/components/catalyst/divider';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -18,19 +19,106 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof SingleSimulationCashFlowChartDataPoint;
-    payload: SingleSimulationCashFlowChartDataPoint;
+    dataKey: keyof SingleSimulationCashFlowChartDataPoint | keyof IncomeData | keyof ExpenseData;
+    payload: SingleSimulationCashFlowChartDataPoint | ({ age: number } & IncomeData) | ({ age: number } & ExpenseData);
   }>;
   label?: number;
   startAge: number;
   disabled: boolean;
+  dataView: 'net' | 'incomes' | 'expenses' | 'custom';
 }
 
-const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomTooltipProps) => {
+const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - startAge);
+
+  if (dataView === 'custom') {
+    const payloadData = payload[0];
+    const cashFlowName = (payloadData.payload as ({ age: number } & IncomeData) | ({ age: number } & ExpenseData)).name;
+
+    return (
+      <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
+        <p className="mx-1 mb-2 flex justify-between text-sm font-semibold">
+          <span>Age {label}</span>
+          <span className="text-muted-foreground">{yearForAge}</span>
+        </p>
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="mr-2">{`${cashFlowName}:`}</span>
+          <span className="ml-1 font-semibold">{formatNumber(payloadData.value, 1, '$')}</span>
+        </p>
+      </div>
+    );
+  }
+
+  const perIncomeData = payload
+    .flatMap((entry) => (entry.payload as SingleSimulationCashFlowChartDataPoint).perIncomeData)
+    .filter((income) => income.grossIncome !== 0);
+  const totalGrossIncome = perIncomeData.reduce((sum, income) => sum + income.grossIncome, 0);
+  const incomeDataListComponent = perIncomeData.map((income) => (
+    <p
+      key={income.id}
+      style={{ backgroundColor: `hsl(from var(--chart-4) h s l / 0.75)` }}
+      className="border-foreground/50 flex justify-between rounded-lg border px-2 text-sm"
+    >
+      <span className="mr-2">{income.name}</span>
+      <span className="ml-1 font-semibold">{formatNumber(income.grossIncome, 1, '$')}</span>
+    </p>
+  ));
+
+  const perExpenseData = payload
+    .flatMap((entry) => (entry.payload as SingleSimulationCashFlowChartDataPoint).perExpenseData)
+    .filter((expense) => expense.amount !== 0);
+  const totalExpenses = perExpenseData.reduce((sum, expense) => sum + expense.amount, 0);
+  const expenseDataListComponent = perExpenseData.map((expense) => (
+    <p
+      key={expense.id}
+      style={{ backgroundColor: `hsl(from var(--chart-4) h s l / 0.25)` }}
+      className="border-foreground/50 flex justify-between rounded-lg border px-2 text-sm"
+    >
+      <span className="mr-2">{expense.name}</span>
+      <span className="ml-1 font-semibold">{formatNumber(expense.amount, 1, '$')}</span>
+    </p>
+  ));
+
+  let tooltipBodyComponent = null;
+  let tooltipFooterComponent = null;
+  switch (dataView) {
+    case 'net':
+      tooltipBodyComponent = (
+        <>
+          {incomeDataListComponent}
+          <Divider />
+          {expenseDataListComponent}
+        </>
+      );
+      tooltipFooterComponent = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="mr-2">Net Cash Flow:</span>
+          <span className="ml-1 font-semibold">{formatNumber(totalGrossIncome - totalExpenses, 1, '$')}</span>
+        </p>
+      );
+      break;
+    case 'incomes':
+      tooltipBodyComponent = incomeDataListComponent;
+      tooltipFooterComponent = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="mr-2">Total Gross Income:</span>
+          <span className="ml-1 font-semibold">{formatNumber(totalGrossIncome, 1, '$')}</span>
+        </p>
+      );
+      break;
+    case 'expenses':
+      tooltipBodyComponent = expenseDataListComponent;
+      tooltipFooterComponent = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="mr-2">Total Expenses:</span>
+          <span className="ml-1 font-semibold">{formatNumber(totalExpenses, 1, '$')}</span>
+        </p>
+      );
+      break;
+  }
 
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
@@ -38,18 +126,8 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
         <span>Age {label}</span>
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
-      <div className="flex flex-col gap-2">
-        {payload.map((entry) => (
-          <p
-            key={entry.dataKey}
-            style={{ backgroundColor: `hsl(from ${entry.color} h s l / 0.6)` }}
-            className="border-foreground/50 flex justify-between rounded-lg border px-2 text-sm"
-          >
-            <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-            <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
-          </p>
-        ))}
-      </div>
+      <div className="flex flex-col gap-2">{tooltipBodyComponent}</div>
+      {tooltipFooterComponent}
     </div>
   );
 };
@@ -192,7 +270,7 @@ export default function SingleSimulationCashFlowLineChart({
             <Line key={dataKey} type="monotone" dataKey={dataKey} stroke="var(--chart-4)" />
           ))}
           <Tooltip
-            content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
+            content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
             cursor={{ stroke: foregroundColor }}
           />
           {keyMetrics.retirementAge && showReferenceLines && (
