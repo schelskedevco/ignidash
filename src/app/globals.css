@@ -37,10 +37,10 @@
   --primary: #fb7185; /* rose-400 */
   --border: #57534e; /* stone-600 */
 
-  --chart-1: hsl(346 70% 25%);
-  --chart-2: hsl(346 75% 40%);
-  --chart-3: hsl(346 80% 60%);
-  --chart-4: hsl(346 80% 75%);
+  --chart-1: hsl(346 77% 20%);
+  --chart-2: hsl(346 77% 40%);
+  --chart-3: hsl(346 77% 60%);
+  --chart-4: hsl(346 77% 80%);
 }
 
 html {
