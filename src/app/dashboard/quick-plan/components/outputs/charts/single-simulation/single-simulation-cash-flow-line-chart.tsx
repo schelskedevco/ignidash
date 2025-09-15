@@ -59,7 +59,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   const incomeDataListComponent = perIncomeData.map((income) => (
     <p
       key={income.id}
-      style={{ backgroundColor: `hsl(from var(--chart-4) h s l / 0.75)` }}
+      style={{ backgroundColor: `hsl(from var(--chart-4) h s l / 0.25)` }}
       className="border-foreground/50 flex justify-between rounded-lg border px-2 text-sm"
     >
       <span className="mr-2">{income.name}</span>
