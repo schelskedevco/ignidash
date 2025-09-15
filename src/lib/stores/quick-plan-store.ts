@@ -1022,7 +1022,7 @@ export const useSingleSimulationCashFlowChartData = (simulation: SimulationResul
       const netIncome = taxesData.incomeTaxes.netIncome;
       const totalGrossIncome = incomesData.totalGrossIncome;
       const totalExpenses = expensesData.totalExpenses;
-      const totalTaxes = taxesData.totalTaxesDue;
+      const totalTaxes = taxesData.incomeTaxes.incomeTaxAmount + taxesData.capitalGainsTaxes.capitalGainsTaxAmount;
 
       return {
         age: currDateYear - startDateYear + startAge,
