@@ -93,31 +93,54 @@ export default function SingleSimulationTaxesLineChart({
   );
 
   const chartData: SingleSimulationTaxesChartDataPoint[] = rawChartData;
-  if (chartData.length === 0) {
-    return null;
-  }
 
   const dataKeys: (keyof SingleSimulationTaxesChartDataPoint)[] = [];
-  const yAxisDomain: [number, number] | undefined = undefined;
+  let yAxisDomain: [number, number] | undefined = undefined;
   let formatter = undefined;
   switch (dataView) {
     case 'marginalRates':
+      yAxisDomain = [
+        Math.min(0, ...chartData.flatMap((d) => [d.topMarginalIncomeTaxRate * 1.25, d.topMarginalCapitalGainsTaxRate * 1.25])),
+        Math.max(0, ...chartData.flatMap((d) => [d.topMarginalIncomeTaxRate * 1.25, d.topMarginalCapitalGainsTaxRate * 1.25])),
+      ];
       formatter = (value: number) => `${(value * 100).toFixed(2)}%`;
       dataKeys.push('topMarginalIncomeTaxRate', 'topMarginalCapitalGainsTaxRate');
       break;
     case 'effectiveRates':
+      yAxisDomain = [
+        Math.min(0, ...chartData.flatMap((d) => [d.effectiveIncomeTaxRate * 1.25, d.effectiveCapitalGainsTaxRate * 1.25])),
+        Math.max(0, ...chartData.flatMap((d) => [d.effectiveIncomeTaxRate * 1.25, d.effectiveCapitalGainsTaxRate * 1.25])),
+      ];
       formatter = (value: number) => `${(value * 100).toFixed(2)}%`;
       dataKeys.push('effectiveIncomeTaxRate', 'effectiveCapitalGainsTaxRate');
       break;
     case 'amounts':
+      yAxisDomain = [
+        Math.min(0, ...chartData.flatMap((d) => [d.incomeTaxAmount * 1.25, d.capitalGainsTaxAmount * 1.25])),
+        Math.max(0, ...chartData.flatMap((d) => [d.incomeTaxAmount * 1.25, d.capitalGainsTaxAmount * 1.25])),
+      ];
       formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys.push('incomeTaxAmount', 'capitalGainsTaxAmount');
       break;
     case 'net':
+      yAxisDomain = [
+        Math.min(0, ...chartData.flatMap((d) => [d.netIncome * 1.25, d.netCapitalGains * 1.25])),
+        Math.max(0, ...chartData.flatMap((d) => [d.netIncome * 1.25, d.netCapitalGains * 1.25])),
+      ];
       formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys.push('netIncome', 'netCapitalGains');
       break;
     case 'taxableIncome':
+      yAxisDomain = [
+        Math.min(
+          0,
+          ...chartData.flatMap((d) => [d.taxableOrdinaryIncome * 1.25, d.taxableCapitalGains * 1.25, d.totalTaxableIncome * 1.25])
+        ),
+        Math.max(
+          0,
+          ...chartData.flatMap((d) => [d.taxableOrdinaryIncome * 1.25, d.taxableCapitalGains * 1.25, d.totalTaxableIncome * 1.25])
+        ),
+      ];
       formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys.push('taxableOrdinaryIncome', 'taxableCapitalGains', 'totalTaxableIncome');
       break;
