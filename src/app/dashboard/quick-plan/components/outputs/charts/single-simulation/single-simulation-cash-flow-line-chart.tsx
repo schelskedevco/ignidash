@@ -60,7 +60,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   const incomeDataListComponent = perIncomeData.map((income) => (
     <p
       key={income.id}
-      style={{ backgroundColor: 'rgba(34, 197, 94, 0.5)' }}
+      style={{ backgroundColor: 'rgba(16, 185, 129, 0.5)' }}
       className="border-foreground/50 flex justify-between rounded-lg border px-2 text-sm"
     >
       <span className="mr-2">{income.name}</span>
@@ -75,7 +75,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   const expenseDataListComponent = perExpenseData.map((expense) => (
     <p
       key={expense.id}
-      style={{ backgroundColor: 'rgba(239, 68, 68, 0.5)' }}
+      style={{ backgroundColor: 'rgba(244, 63, 94, 0.5)' }}
       className="border-foreground/50 flex justify-between rounded-lg border px-2 text-sm"
     >
       <span className="mr-2">{expense.name}</span>
