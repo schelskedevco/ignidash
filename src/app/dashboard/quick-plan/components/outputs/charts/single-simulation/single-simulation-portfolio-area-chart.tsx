@@ -41,7 +41,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
         {payload.map((entry) => (
           <p
             key={entry.dataKey}
-            style={{ backgroundColor: `hsl(from ${entry.color} h s l / 0.6)` }}
+            style={{ backgroundColor: `hsl(from ${entry.color} h s l)` }}
             className="border-foreground/50 flex justify-between rounded-lg border px-2 text-sm"
           >
             <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
@@ -187,6 +187,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
                 stackId="1"
                 stroke={COLORS[index % COLORS.length]}
                 fill={COLORS[index % COLORS.length]}
+                fillOpacity={1}
                 activeDot={false}
               />
             ))}

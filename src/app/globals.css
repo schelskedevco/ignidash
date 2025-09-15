@@ -13,8 +13,8 @@
 
   --chart-1: hsl(346 77% 90%);
   --chart-2: hsl(346 77% 75%);
-  --chart-3: hsl(346 77% 50%);
-  --chart-4: hsl(346 77% 25%);
+  --chart-3: hsl(346 77% 60%);
+  --chart-4: hsl(346 77% 45%);
 }
 
 @theme inline {
