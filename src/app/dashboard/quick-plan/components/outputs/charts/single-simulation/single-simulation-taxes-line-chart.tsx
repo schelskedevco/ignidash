@@ -31,6 +31,8 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - startAge);
 
+  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)'];
+
   const formatValue = (value: number, mode: 'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'netIncome' | 'taxableIncome') => {
     switch (mode) {
       case 'marginalRates':
@@ -55,8 +57,8 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
         {payload.map((entry) => (
           <p
             key={entry.dataKey}
-            style={{ backgroundColor: `hsl(from ${entry.color} h s l / 0.6)` }}
-            className="border-foreground/50 flex justify-between rounded-lg border px-2 text-sm"
+            style={{ backgroundColor: entry.color }}
+            className={`border-foreground/50 flex justify-between rounded-lg border px-2 text-sm ${needsBgTextColor.includes(entry.color) ? 'text-background' : 'text-foreground'}`}
           >
             <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
             <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
@@ -67,7 +69,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   );
 };
 
-const COLORS = ['#fda4af', '#f43f5e', '#be123c'];
+const COLORS = ['var(--chart-2)', 'var(--chart-4)', 'var(--chart-3)'];
 
 interface SingleSimulationTaxesLineChartProps {
   rawChartData: SingleSimulationTaxesChartDataPoint[];
