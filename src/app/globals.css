@@ -11,10 +11,10 @@
   --primary: #e11d48; /* rose-600 */
   --border: #a8a29e; /* stone-400 */
 
-  --chart-1: hsl(346 77% 50%); /* Darker pink (top) */
-  --chart-2: hsl(346 77% 75%); /* Medium pink (middle) */
-  --chart-3: hsl(346 77% 90%); /* Light pink (bottom) */
-  --chart-4: hsl(346 77% 25%); /* Deepest pink/red (darkest) */
+  --chart-1: hsl(346 77% 90%);
+  --chart-2: hsl(346 77% 75%);
+  --chart-3: hsl(346 77% 50%);
+  --chart-4: hsl(346 77% 25%);
 }
 
 @theme inline {

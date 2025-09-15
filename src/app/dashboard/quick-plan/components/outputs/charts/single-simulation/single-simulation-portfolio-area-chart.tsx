@@ -63,7 +63,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
   );
 };
 
-const COLORS = ['var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)', 'var(--chart-4)'];
+const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
 
 interface SingleSimulationPortfolioAssetTypeAreaChartProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
@@ -171,14 +171,6 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
             tabIndex={-1}
             onClick={onClick}
           >
-            <defs>
-              {dataKeys.map((dataKey, index) => (
-                <linearGradient key={dataKey} id={`color${index}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={COLORS[index % COLORS.length]} stopOpacity={1} />
-                  <stop offset="95%" stopColor={COLORS[index % COLORS.length]} stopOpacity={1} />
-                </linearGradient>
-              ))}
-            </defs>
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
             <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
             <YAxis
@@ -194,7 +186,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
                 dataKey={dataKey}
                 stackId="1"
                 stroke={COLORS[index % COLORS.length]}
-                fill={`url(#color${index})`}
+                fill={COLORS[index % COLORS.length]}
                 activeDot={false}
               />
             ))}
