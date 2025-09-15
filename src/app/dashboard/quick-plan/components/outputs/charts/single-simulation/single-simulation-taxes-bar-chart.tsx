@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList /* Tooltip */ } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList, Cell /* Tooltip */ } from 'recharts';
 
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -57,6 +57,8 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
   );
 };
 
+const COLORS = ['var(--chart-2)', 'var(--chart-4)', 'var(--chart-3)'];
+
 interface SingleSimulationTaxesBarChartProps {
   age: number;
   dataView: 'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'netIncome' | 'taxableIncome';
@@ -111,7 +113,7 @@ export default function SingleSimulationTaxesBarChart({ age, dataView, rawChartD
   }
 
   if (transformedChartData.length === 0) {
-    return null;
+    return <div className="flex h-64 w-full items-center justify-center sm:h-72 lg:h-80">No data available for the selected view.</div>;
   }
 
   const gridColor = resolvedTheme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
@@ -134,7 +136,15 @@ export default function SingleSimulationTaxesBarChart({ age, dataView, rawChartD
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
             <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
             <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-            <Bar dataKey="amount" maxBarSize={150} minPointSize={20} fill="var(--chart-3)" stroke="var(--chart-1)">
+            <Bar dataKey="amount" maxBarSize={150} minPointSize={20}>
+              {transformedChartData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                  stroke={COLORS[index % COLORS.length]}
+                  fillOpacity={0.25}
+                />
+              ))}
               <LabelList
                 dataKey="amount"
                 position="middle"
