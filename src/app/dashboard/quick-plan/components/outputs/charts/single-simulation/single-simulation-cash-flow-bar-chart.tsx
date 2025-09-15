@@ -129,7 +129,7 @@ export default function SingleSimulationCashFlowBarChart({
             hide={isSmallScreen}
             tickFormatter={(value: number) => formatNumber(value, 1, '$')}
           />
-          <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
+          <Bar dataKey="amount" maxBarSize={150} minPointSize={20}>
             {transformedChartData.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
