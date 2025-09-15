@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { useState, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
 
-import { formatNumber } from '@/lib/utils';
+import { formatNumber, formatChartString } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
@@ -245,6 +245,7 @@ export default function SingleSimulationCashFlowLineChart({
   const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
   const foregroundColor = resolvedTheme === 'dark' ? '#f5f5f4' : '#1c1917'; // stone-100 : stone-900
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
+  const legendStrokeColor = resolvedTheme === 'dark' ? 'white' : 'black';
 
   const calculateInterval = useCallback((dataLength: number, desiredTicks = 8) => {
     if (dataLength <= desiredTicks) return 0;
@@ -262,39 +263,61 @@ export default function SingleSimulationCashFlowLineChart({
   );
 
   return (
-    <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }} tabIndex={-1} onClick={onClick}>
-          <defs>
-            <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#10b981" />
-              <stop offset="50%" stopColor="#10b981" />
-              <stop offset="50%" stopColor="#f43f5e" />
-              <stop offset="100%" stopColor="#f43f5e" />
-            </linearGradient>
-          </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
-          <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
-          <YAxis
-            tick={{ fill: foregroundMutedColor }}
-            axisLine={false}
-            hide={isSmallScreen}
-            tickFormatter={(value: number) => formatNumber(value, 1, '$')}
-            domain={yAxisDomain}
-          />
-          {dataKeys.map((dataKey, index) => (
-            <Line key={dataKey} type="monotone" dataKey={dataKey} stroke={strokeColor} dot={false} activeDot={false} strokeWidth={2} />
-          ))}
-          <Tooltip
-            content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
-            cursor={{ stroke: foregroundColor }}
-          />
-          {keyMetrics.retirementAge && showReferenceLines && (
-            <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
-          )}
-          {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
-        </LineChart>
-      </ResponsiveContainer>
+    <div>
+      <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={chartData}
+            className="text-xs"
+            margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
+            tabIndex={-1}
+            onClick={onClick}
+          >
+            <defs>
+              <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#10b981" />
+                <stop offset="50%" stopColor="#10b981" />
+                <stop offset="50%" stopColor="#f43f5e" />
+                <stop offset="100%" stopColor="#f43f5e" />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
+            <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
+            <YAxis
+              tick={{ fill: foregroundMutedColor }}
+              axisLine={false}
+              hide={isSmallScreen}
+              tickFormatter={(value: number) => formatNumber(value, 1, '$')}
+              domain={yAxisDomain}
+            />
+            {dataKeys.map((dataKey, index) => (
+              <Line key={dataKey} type="monotone" dataKey={dataKey} stroke={strokeColor} dot={false} activeDot={false} strokeWidth={2} />
+            ))}
+            <Tooltip
+              content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
+              cursor={{ stroke: foregroundColor }}
+            />
+            {keyMetrics.retirementAge && showReferenceLines && (
+              <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+            )}
+            {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+      <div
+        className={`mt-2 flex justify-center gap-x-2 sm:gap-x-4 ${!isSmallScreen ? 'ml-16' : ''}`}
+        role="group"
+        aria-label="Chart legend"
+      >
+        {dataKeys.map((dataKey, index) => (
+          <div key={dataKey} className="flex items-center gap-x-2 text-sm font-medium">
+            <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: strokeColor }} className="size-5">
+              <circle r={2.5} cx={3} cy={3} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
+            </svg>
+            {formatChartString(dataKey)}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
