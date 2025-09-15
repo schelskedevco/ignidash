@@ -11,10 +11,10 @@
   --primary: #e11d48; /* rose-600 */
   --border: #a8a29e; /* stone-400 */
 
-  --chart-1: hsl(346 77% 65%); /* Darker pink (top) */
-  --chart-2: hsl(346 77% 80%); /* Medium pink (middle) */
+  --chart-1: hsl(346 77% 50%); /* Darker pink (top) */
+  --chart-2: hsl(346 77% 75%); /* Medium pink (middle) */
   --chart-3: hsl(346 77% 90%); /* Light pink (bottom) */
-  --chart-4: hsl(346 77% 50%); /* Deepest pink/red (darkest) */
+  --chart-4: hsl(346 77% 25%); /* Deepest pink/red (darkest) */
 }
 
 @theme inline {
@@ -37,10 +37,10 @@
   --primary: #fb7185; /* rose-400 */
   --border: #57534e; /* stone-600 */
 
-  --chart-1: hsl(346 80% 50%); /* Brighter red (top) */
-  --chart-2: hsl(346 75% 35%); /* Deep burgundy (middle) */
+  --chart-1: hsl(346 80% 60%); /* Brighter red (top) */
+  --chart-2: hsl(346 75% 40%); /* Deep burgundy (middle) */
   --chart-3: hsl(346 70% 25%); /* Dark maroon (bottom) */
-  --chart-4: hsl(346 80% 65%); /* Brightest pink (lightest) */
+  --chart-4: hsl(346 80% 75%); /* Brightest pink (lightest) */
 }
 
 html {
