@@ -177,7 +177,7 @@ export default function SingleSimulationCashFlowLineChart({
         Math.max(0, ...chartData.map((d) => d.netCashFlow * 1.25)),
       ];
       dataKeys.push('netCashFlow');
-      strokeColor = 'var(--chart-4)';
+      strokeColor = 'url(#colorGradient)';
       break;
     case 'incomes':
       yAxisDomain = [
@@ -238,7 +238,7 @@ export default function SingleSimulationCashFlowLineChart({
       break;
     default:
       dataKeys.push('netCashFlow');
-      strokeColor = 'var(--chart-4)';
+      strokeColor = 'url(#colorGradient)';
       break;
   }
 
@@ -265,6 +265,14 @@ export default function SingleSimulationCashFlowLineChart({
     <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: 0 }} tabIndex={-1} onClick={onClick}>
+          <defs>
+            <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#10b981" />
+              <stop offset="50%" stopColor="#10b981" />
+              <stop offset="50%" stopColor="#f43f5e" />
+              <stop offset="100%" stopColor="#f43f5e" />
+            </linearGradient>
+          </defs>
           <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
           <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} dataKey="age" interval={interval} />
           <YAxis
