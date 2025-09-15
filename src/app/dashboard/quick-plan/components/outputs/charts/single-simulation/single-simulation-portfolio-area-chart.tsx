@@ -214,7 +214,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
       >
         {dataKeys.map((dataKey, index) => (
           <div key={dataKey} className="flex items-center gap-x-2 text-sm font-medium">
-            <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: COLORS[index % COLORS.length] }} className="size-5">
+            <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: COLORS[index % COLORS.length] }} className="size-5 shrink-0">
               <circle r={2.5} cx={3} cy={3} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
             </svg>
             {formatChartString(dataKey)}
