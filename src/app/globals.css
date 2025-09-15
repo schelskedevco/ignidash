@@ -11,10 +11,10 @@
   --primary: #e11d48; /* rose-600 */
   --border: #a8a29e; /* stone-400 */
 
-  --chart-1: hsl(346 77% 90%);
-  --chart-2: hsl(346 77% 70%);
-  --chart-3: hsl(346 77% 50%);
-  --chart-4: hsl(346 77% 30%);
+  --chart-1: hsl(346 50% 90%);
+  --chart-2: hsl(346 50% 70%);
+  --chart-3: hsl(346 50% 50%);
+  --chart-4: hsl(346 50% 30%);
 }
 
 @theme inline {
@@ -37,10 +37,10 @@
   --primary: #fb7185; /* rose-400 */
   --border: #57534e; /* stone-600 */
 
-  --chart-1: hsl(346 77% 20%);
-  --chart-2: hsl(346 77% 40%);
-  --chart-3: hsl(346 77% 60%);
-  --chart-4: hsl(346 77% 80%);
+  --chart-1: hsl(346 50% 20%);
+  --chart-2: hsl(346 50% 40%);
+  --chart-3: hsl(346 50% 60%);
+  --chart-4: hsl(346 50% 80%);
 }
 
 html {
