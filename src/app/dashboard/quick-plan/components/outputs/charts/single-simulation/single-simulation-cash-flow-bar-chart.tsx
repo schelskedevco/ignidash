@@ -105,6 +105,8 @@ export default function SingleSimulationCashFlowBarChart({
 
   const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
+  const incomeBarColor = 'rgb(16, 185, 129)'; // emerald-500
+  const expenseBarColor = 'rgb(244, 63, 94)'; // rose-500
 
   const shouldUseCustomTick = transformedChartData.length > 5 || isSmallScreen;
   const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
@@ -129,7 +131,12 @@ export default function SingleSimulationCashFlowBarChart({
           />
           <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
             {transformedChartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill="var(--chart-3)" stroke="var(--chart-1)" fillOpacity={entry.type === 'income' ? 1 : 0.25} />
+              <Cell
+                key={`cell-${index}`}
+                fill={entry.type === 'income' ? incomeBarColor : expenseBarColor}
+                stroke={entry.type === 'income' ? incomeBarColor : expenseBarColor}
+                fillOpacity={0.25}
+              />
             ))}
             <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
           </Bar>
