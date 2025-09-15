@@ -121,7 +121,7 @@ export default function SingleSimulationTaxesLineChart({
         Math.max(0, ...chartData.flatMap((d) => [d.incomeTaxAmount * 1.25, d.capitalGainsTaxAmount * 1.25])),
       ];
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('incomeTaxAmount', 'capitalGainsTaxAmount', 'totalTaxesAmount');
+      dataKeys.push('incomeTaxAmount', 'capitalGainsTaxAmount');
       break;
     case 'netIncome':
       yAxisDomain = [
@@ -129,7 +129,7 @@ export default function SingleSimulationTaxesLineChart({
         Math.max(0, ...chartData.flatMap((d) => [d.netIncome * 1.25, d.netCapitalGains * 1.25])),
       ];
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('netIncome', 'netCapitalGains', 'totalNetIncome');
+      dataKeys.push('netIncome', 'netCapitalGains');
       break;
     case 'taxableIncome':
       yAxisDomain = [
@@ -180,7 +180,15 @@ export default function SingleSimulationTaxesLineChart({
             domain={yAxisDomain}
           />
           {dataKeys.map((dataKey, index) => (
-            <Line key={dataKey} type="monotone" dataKey={dataKey} stroke={COLORS[index % COLORS.length]} />
+            <Line
+              key={dataKey}
+              type="monotone"
+              dataKey={dataKey}
+              stroke={COLORS[index % COLORS.length]}
+              dot={false}
+              activeDot={false}
+              strokeWidth={2}
+            />
           ))}
           <Tooltip
             content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
