@@ -169,6 +169,7 @@ export default function SingleSimulationCashFlowLineChart({
 
   const dataKeys: (keyof SingleSimulationCashFlowChartDataPoint | keyof IncomeData | keyof ExpenseData)[] = [];
   let yAxisDomain: [number, number] | undefined = undefined;
+  let strokeColor: string;
   switch (dataView) {
     case 'net':
       yAxisDomain = [
@@ -176,6 +177,7 @@ export default function SingleSimulationCashFlowLineChart({
         Math.max(0, ...chartData.map((d) => d.netCashFlow * 1.25)),
       ];
       dataKeys.push('netCashFlow');
+      strokeColor = 'var(--chart-4)';
       break;
     case 'incomes':
       yAxisDomain = [
@@ -183,6 +185,7 @@ export default function SingleSimulationCashFlowLineChart({
         Math.max(0, ...chartData.map((d) => d.totalGrossIncome * 1.25)),
       ];
       dataKeys.push('totalGrossIncome');
+      strokeColor = 'rgba(34, 197, 94)';
       break;
     case 'expenses':
       yAxisDomain = [
@@ -190,6 +193,7 @@ export default function SingleSimulationCashFlowLineChart({
         Math.max(0, ...chartData.map((d) => d.totalExpenses * 1.25)),
       ];
       dataKeys.push('totalExpenses');
+      strokeColor = 'rgba(239, 68, 68)';
       break;
     case 'custom':
       if (!customDataID) {
@@ -210,6 +214,7 @@ export default function SingleSimulationCashFlowLineChart({
         ];
         chartData = perIncomeData;
         dataKeys.push('grossIncome');
+        strokeColor = 'rgba(34, 197, 94)';
         break;
       }
 
@@ -226,12 +231,14 @@ export default function SingleSimulationCashFlowLineChart({
         ];
         chartData = perExpenseData;
         dataKeys.push('amount');
+        strokeColor = 'rgba(239, 68, 68)';
         break;
       }
 
       break;
     default:
       dataKeys.push('netCashFlow');
+      strokeColor = 'var(--chart-4)';
       break;
   }
 
@@ -268,7 +275,7 @@ export default function SingleSimulationCashFlowLineChart({
             domain={yAxisDomain}
           />
           {dataKeys.map((dataKey, index) => (
-            <Line key={dataKey} type="monotone" dataKey={dataKey} stroke="var(--chart-4)" dot={false} activeDot={false} strokeWidth={2} />
+            <Line key={dataKey} type="monotone" dataKey={dataKey} stroke={strokeColor} dot={false} activeDot={false} strokeWidth={2} />
           ))}
           <Tooltip
             content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
