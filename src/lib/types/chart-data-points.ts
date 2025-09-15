@@ -42,6 +42,7 @@ export interface SingleSimulationCashFlowChartDataPoint {
   totalGrossIncome: number;
   totalExpenses: number;
   netCashFlow: number;
+  totalTaxes: number;
 }
 
 export interface SingleSimulationReturnsChartDataPoint {
