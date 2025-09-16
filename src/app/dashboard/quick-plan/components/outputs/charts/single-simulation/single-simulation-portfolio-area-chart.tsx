@@ -45,7 +45,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
         {payload.map((entry) => (
           <p
             key={entry.dataKey}
-            style={{ backgroundColor: `hsl(from ${entry.color} h s l)` }}
+            style={{ backgroundColor: entry.color }}
             className={`border-foreground/50 flex justify-between rounded-lg border px-2 text-sm ${needsBgTextColor.includes(entry.color) ? 'text-background' : 'text-foreground'}`}
           >
             <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
