@@ -9,12 +9,14 @@ interface SingleSimulationContributionsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationContributionsChartDataPoint[];
   dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment' | 'custom';
+  customDataID: string;
 }
 
 export default function SingleSimulationContributionsBarChartCard({
   selectedAge,
   rawChartData,
   dataView,
+  customDataID,
 }: SingleSimulationContributionsBarChartCardProps) {
   let title;
   switch (dataView) {
@@ -40,7 +42,12 @@ export default function SingleSimulationContributionsBarChartCard({
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </h4>
       </div>
-      <SingleSimulationContributionsBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} />
+      <SingleSimulationContributionsBarChart
+        age={selectedAge}
+        rawChartData={rawChartData}
+        dataView={dataView}
+        customDataID={customDataID}
+      />
     </Card>
   );
 }

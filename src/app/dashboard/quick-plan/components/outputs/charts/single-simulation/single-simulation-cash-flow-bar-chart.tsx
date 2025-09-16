@@ -47,7 +47,7 @@ interface SingleSimulationCashFlowBarChartProps {
   age: number;
   dataView: 'net' | 'incomes' | 'expenses' | 'custom';
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
-  customDataID?: string;
+  customDataID: string;
 }
 
 export default function SingleSimulationCashFlowBarChart({

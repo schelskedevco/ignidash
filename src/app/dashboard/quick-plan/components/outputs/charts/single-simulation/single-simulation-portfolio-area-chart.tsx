@@ -67,7 +67,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
 
 const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
 
-interface SingleSimulationPortfolioAssetTypeAreaChartProps {
+interface SingleSimulationPortfolioAreaChartProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
   startAge: number;
   keyMetrics: FixedReturnsKeyMetricsV2;
@@ -78,7 +78,7 @@ interface SingleSimulationPortfolioAssetTypeAreaChartProps {
   selectedAge: number;
 }
 
-export default function SingleSimulationPortfolioAssetTypeAreaChart({
+export default function SingleSimulationPortfolioAreaChart({
   rawChartData,
   startAge,
   keyMetrics,
@@ -87,7 +87,7 @@ export default function SingleSimulationPortfolioAssetTypeAreaChart({
   customDataID,
   onAgeSelect,
   selectedAge,
-}: SingleSimulationPortfolioAssetTypeAreaChartProps) {
+}: SingleSimulationPortfolioAreaChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
   const { resolvedTheme } = useTheme();

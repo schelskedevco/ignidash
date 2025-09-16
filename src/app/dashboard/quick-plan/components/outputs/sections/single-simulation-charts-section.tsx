@@ -157,7 +157,12 @@ function ContributionsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge,
         customDataID={customDataID}
         startAge={startAge}
       />
-      <SingleSimulationContributionsBarChartCard selectedAge={selectedAge} rawChartData={rawChartData} dataView={dataView} />
+      <SingleSimulationContributionsBarChartCard
+        selectedAge={selectedAge}
+        rawChartData={rawChartData}
+        dataView={dataView}
+        customDataID={customDataID}
+      />
     </>
   );
 }

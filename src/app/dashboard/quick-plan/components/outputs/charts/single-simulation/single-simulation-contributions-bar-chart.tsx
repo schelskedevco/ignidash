@@ -49,9 +49,15 @@ interface SingleSimulationContributionsBarChartProps {
   age: number;
   dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment' | 'custom';
   rawChartData: SingleSimulationContributionsChartDataPoint[];
+  customDataID: string;
 }
 
-export default function SingleSimulationContributionsBarChart({ age, dataView, rawChartData }: SingleSimulationContributionsBarChartProps) {
+export default function SingleSimulationContributionsBarChart({
+  age,
+  dataView,
+  rawChartData,
+  customDataID,
+}: SingleSimulationContributionsBarChartProps) {
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
@@ -87,6 +93,19 @@ export default function SingleSimulationContributionsBarChart({ age, dataView, r
       ]);
       break;
     case 'custom':
+      if (!customDataID) {
+        console.warn('Custom data name is required for custom data view');
+        transformedChartData = [];
+        break;
+      }
+
+      transformedChartData = [
+        ...chartData
+          .flatMap(({ perAccountData }) =>
+            perAccountData.map(({ id, name, contributionsForPeriod }) => ({ id, name, amount: contributionsForPeriod }))
+          )
+          .filter(({ id, amount }) => amount !== 0 && id === customDataID),
+      ];
       break;
   }
 
