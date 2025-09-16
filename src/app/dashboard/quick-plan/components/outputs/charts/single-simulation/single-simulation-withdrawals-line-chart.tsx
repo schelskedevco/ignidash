@@ -8,6 +8,7 @@ import { formatNumber, formatChartString } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { AccountDataWithTransactions } from '@/lib/calc/v2/portfolio';
 import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
 
 interface CustomTooltipProps {
@@ -17,7 +18,7 @@ interface CustomTooltipProps {
     name: string;
     color: string;
     dataKey: keyof SingleSimulationWithdrawalsChartDataPoint;
-    payload: SingleSimulationWithdrawalsChartDataPoint;
+    payload: SingleSimulationWithdrawalsChartDataPoint | ({ age: number; annualWithdrawals: number } & AccountDataWithTransactions);
   }>;
   label?: number;
   startAge: number;
@@ -62,7 +63,8 @@ interface SingleSimulationWithdrawalsLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment';
+  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment' | 'custom';
+  customDataID: string;
   startAge: number;
 }
 
@@ -73,6 +75,7 @@ export default function SingleSimulationWithdrawalsLineChart({
   onAgeSelect,
   selectedAge,
   dataView,
+  customDataID,
   startAge,
 }: SingleSimulationWithdrawalsLineChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
@@ -85,7 +88,9 @@ export default function SingleSimulationWithdrawalsLineChart({
     () => setClickedOutsideChart(false)
   );
 
-  const chartData: SingleSimulationWithdrawalsChartDataPoint[] = rawChartData;
+  let chartData:
+    | SingleSimulationWithdrawalsChartDataPoint[]
+    | Array<{ age: number; annualWithdrawals: number } & AccountDataWithTransactions> = rawChartData;
 
   const dataKeys: (keyof SingleSimulationWithdrawalsChartDataPoint)[] = [];
   const yAxisDomain: [number, number] | undefined = undefined;
@@ -98,6 +103,23 @@ export default function SingleSimulationWithdrawalsLineChart({
       break;
     case 'taxTreatment':
       dataKeys.push('taxable', 'taxDeferred', 'taxFree', 'cashSavings');
+      break;
+    case 'custom':
+      if (!customDataID) {
+        console.warn('Custom data name is required for custom data view');
+        break;
+      }
+
+      const perAccountData = chartData.flatMap(({ age, perAccountData }) =>
+        Object.values(perAccountData)
+          .filter((account) => account.id === customDataID)
+          .map((account) => {
+            return { age, ...account, annualWithdrawals: account.withdrawalsForPeriod };
+          })
+      );
+
+      chartData = perAccountData;
+      dataKeys.push('annualWithdrawals', 'totalWithdrawals');
       break;
   }
 

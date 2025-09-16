@@ -47,11 +47,17 @@ const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--cha
 
 interface SingleSimulationWithdrawalsBarChartProps {
   age: number;
-  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment';
+  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment' | 'custom';
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
+  customDataID: string;
 }
 
-export default function SingleSimulationWithdrawalsBarChart({ age, dataView, rawChartData }: SingleSimulationWithdrawalsBarChartProps) {
+export default function SingleSimulationWithdrawalsBarChart({
+  age,
+  dataView,
+  rawChartData,
+  customDataID,
+}: SingleSimulationWithdrawalsBarChartProps) {
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
@@ -85,6 +91,21 @@ export default function SingleSimulationWithdrawalsBarChart({ age, dataView, raw
         { name: 'Tax Free Withdrawals', amount: item.taxFree },
         { name: 'Cash Savings Withdrawals', amount: item.cashSavings },
       ]);
+      break;
+    case 'custom':
+      if (!customDataID) {
+        console.warn('Custom data name is required for custom data view');
+        transformedChartData = [];
+        break;
+      }
+
+      transformedChartData = [
+        ...chartData
+          .flatMap(({ perAccountData }) =>
+            perAccountData.map(({ id, name, withdrawalsForPeriod }) => ({ id, name, amount: withdrawalsForPeriod }))
+          )
+          .filter(({ id, amount }) => amount !== 0 && id === customDataID),
+      ];
       break;
   }
 
@@ -127,11 +148,7 @@ export default function SingleSimulationWithdrawalsBarChart({ age, dataView, raw
                   fillOpacity={0.5}
                 />
               ))}
-              <LabelList
-                dataKey="amount"
-                position="middle"
-                content={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
-              />
+              <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
             </Bar>
           </BarChart>
         </ResponsiveContainer>

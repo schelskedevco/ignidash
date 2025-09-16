@@ -8,13 +8,15 @@ import SingleSimulationWithdrawalsBarChart from '../../charts/single-simulation/
 interface SingleSimulationWithdrawalsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
-  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment';
+  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment' | 'custom';
+  customDataID: string;
 }
 
 export default function SingleSimulationWithdrawalsBarChartCard({
   selectedAge,
   rawChartData,
   dataView,
+  customDataID,
 }: SingleSimulationWithdrawalsBarChartCardProps) {
   let title;
   switch (dataView) {
@@ -27,6 +29,9 @@ export default function SingleSimulationWithdrawalsBarChartCard({
     case 'taxTreatment':
       title = 'By Tax Treatment';
       break;
+    case 'custom':
+      title = 'Custom Account';
+      break;
   }
 
   return (
@@ -37,7 +42,7 @@ export default function SingleSimulationWithdrawalsBarChartCard({
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </h4>
       </div>
-      <SingleSimulationWithdrawalsBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} />
+      <SingleSimulationWithdrawalsBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} customDataID={customDataID} />
     </Card>
   );
 }

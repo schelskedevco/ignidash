@@ -1,5 +1,7 @@
 'use client';
 
+import { useMemo, useCallback } from 'react';
+
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
@@ -10,8 +12,10 @@ import SingleSimulationWithdrawalsLineChart from '../../charts/single-simulation
 interface SingleSimulationWithdrawalsLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'annualAmounts' | 'totalAmounts' | 'taxTreatment') => void;
-  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment';
+  setDataView: (view: 'annualAmounts' | 'totalAmounts' | 'taxTreatment' | 'custom') => void;
+  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment' | 'custom';
+  setCustomDataID: (name: string) => void;
+  customDataID: string;
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
   keyMetrics: FixedReturnsKeyMetricsV2;
   startAge: number;
@@ -22,11 +26,22 @@ export default function SingleSimulationWithdrawalsLineChartCard({
   selectedAge,
   setDataView,
   dataView,
+  setCustomDataID,
+  customDataID,
   rawChartData,
   keyMetrics,
   startAge,
 }: SingleSimulationWithdrawalsLineChartCardProps) {
   const showReferenceLines = useShowReferenceLinesPreference();
+
+  const getUniqueItems = useCallback((items: Array<{ id: string; name: string }>) => {
+    return Array.from(new Map(items.map((item) => [item.id, { id: item.id, name: item.name }])).values());
+  }, []);
+
+  const uniqueAccounts = useMemo(
+    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAccountData)),
+    [getUniqueItems, rawChartData]
+  );
 
   return (
     <Card className="my-0">
@@ -39,12 +54,33 @@ export default function SingleSimulationWithdrawalsLineChartCard({
           className="max-w-64"
           id="data-view"
           name="data-view"
-          value={dataView}
-          onChange={(e) => setDataView(e.target.value as 'annualAmounts' | 'totalAmounts' | 'taxTreatment')}
+          value={dataView === 'custom' ? customDataID : dataView}
+          onChange={(e) => {
+            const isCustomSelection =
+              e.target.value !== 'annualAmounts' && e.target.value !== 'totalAmounts' && e.target.value !== 'taxTreatment';
+            if (isCustomSelection) {
+              setDataView('custom');
+              setCustomDataID(e.target.value);
+            } else {
+              setDataView(e.target.value as 'annualAmounts' | 'totalAmounts' | 'taxTreatment');
+              setCustomDataID('');
+            }
+          }}
         >
-          <option value="taxTreatment">Tax Treatment</option>
-          <option value="annualAmounts">Annual Amounts</option>
-          <option value="totalAmounts">Total Amounts</option>
+          <optgroup label="By Category">
+            <option value="taxTreatment">Tax Treatment</option>
+          </optgroup>
+          <optgroup label="By Aggregate">
+            <option value="annualAmounts">Annual Amounts</option>
+            <option value="totalAmounts">Total Amounts</option>
+          </optgroup>
+          <optgroup label="By Account">
+            {uniqueAccounts.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.name}
+              </option>
+            ))}
+          </optgroup>
         </Select>
       </div>
       <SingleSimulationWithdrawalsLineChart
@@ -54,6 +90,7 @@ export default function SingleSimulationWithdrawalsLineChartCard({
         keyMetrics={keyMetrics}
         showReferenceLines={showReferenceLines}
         dataView={dataView}
+        customDataID={customDataID}
         startAge={startAge}
       />
     </Card>
