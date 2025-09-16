@@ -103,8 +103,8 @@ export default function SingleSimulationReturnsBarChart({ age, dataView, rawChar
     return <div className="flex h-64 w-full items-center justify-center sm:h-72 lg:h-80">No data available for the selected view.</div>;
   }
 
-  const gridColor = resolvedTheme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
-  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
+  const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
+  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
 
   const shouldUseCustomTick = transformedChartData.length > 5 || isSmallScreen;
   const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
@@ -120,7 +120,7 @@ export default function SingleSimulationReturnsBarChart({ age, dataView, rawChar
             margin={{ top: 0, right: 10, left: 10, bottom: bottomMargin }}
             tabIndex={-1}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
             <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
             <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} hide={isSmallScreen} tickFormatter={formatter} />
             <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>

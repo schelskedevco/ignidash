@@ -43,6 +43,8 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
   );
 };
 
+const COLORS = ['var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-1)'];
+
 interface SingleSimulationContributionsBarChartProps {
   age: number;
   dataView: 'annualAmounts' | 'totalAmounts' | 'account';
@@ -87,11 +89,11 @@ export default function SingleSimulationContributionsBarChart({ age, dataView, r
   }
 
   if (transformedChartData.length === 0) {
-    return null;
+    return <div className="flex h-64 w-full items-center justify-center sm:h-72 lg:h-80">No data available for the selected view.</div>;
   }
 
-  const gridColor = resolvedTheme === 'dark' ? '#374151' : '#d1d5db'; // gray-700 : gray-300
-  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d1d5db' : '#4b5563'; // gray-300 : gray-600
+  const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
+  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
 
   const shouldUseCustomTick = transformedChartData.length > 5 || isSmallScreen;
   const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
@@ -107,7 +109,7 @@ export default function SingleSimulationContributionsBarChart({ age, dataView, r
             margin={{ top: 0, right: 10, left: 10, bottom: bottomMargin }}
             tabIndex={-1}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
             <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
             <YAxis
               tick={{ fill: foregroundMutedColor }}
@@ -117,7 +119,13 @@ export default function SingleSimulationContributionsBarChart({ age, dataView, r
             />
             <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
               {transformedChartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill="var(--chart-3)" stroke="var(--chart-1)" />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                  stroke={COLORS[index % COLORS.length]}
+                  strokeWidth={3}
+                  fillOpacity={0.5}
+                />
               ))}
               <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
             </Bar>
