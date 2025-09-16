@@ -102,7 +102,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
             {chartData.map((entry, index) => (
               <Fragment key={entry.name}>
                 <DescriptionTerm className="flex items-center gap-2">
-                  <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: COLORS[index % COLORS.length] }} className="size-5">
+                  <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: COLORS[index % COLORS.length] }} className="size-5 shrink-0">
                     <circle r={2.5} cx={3} cy={3} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
                   </svg>
                   {formatChartString(entry.name)}
