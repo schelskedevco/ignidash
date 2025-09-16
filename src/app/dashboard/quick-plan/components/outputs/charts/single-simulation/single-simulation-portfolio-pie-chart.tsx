@@ -9,6 +9,13 @@ type Coordinate = {
   y: number;
 };
 
+type Payload = {
+  name: string;
+  value: number;
+  fill: string;
+  stroke: string;
+};
+
 type PieSectorData = {
   percent?: number;
   name?: string | number;
@@ -18,8 +25,7 @@ type PieSectorData = {
   value?: number;
   paddingAngle?: number;
   dataKey?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  payload?: any;
+  payload?: Payload;
 };
 
 type PieSectorDataItem = React.SVGProps<SVGPathElement> & Partial<SectorProps> & PieSectorData;
@@ -53,7 +59,7 @@ const renderActiveShape = ({
   return (
     <g>
       <text x={cx} y={cy} dy={8} textAnchor="middle" fill="currentColor" fontSize="16">
-        {formatChartString(payload.name)}
+        {formatChartString(payload?.name ?? 'N/A')}
       </text>
       <Sector cx={cx} cy={cy} innerRadius={innerRadius} outerRadius={outerRadius} startAngle={startAngle} endAngle={endAngle} fill={fill} />
       <Sector
@@ -83,11 +89,9 @@ const renderActiveShape = ({
 
 interface SingleSimulationPortfolioPieChartProps {
   chartData: { name: string; value: number }[];
-  selectedAge: number;
-  dataView: 'assetClass' | 'taxTreatment' | 'custom';
 }
 
-export default function SingleSimulationPortfolioPieChart({ chartData, selectedAge, dataView }: SingleSimulationPortfolioPieChartProps) {
+export default function SingleSimulationPortfolioPieChart({ chartData }: SingleSimulationPortfolioPieChartProps) {
   return (
     <div className="flex items-center">
       <div className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">

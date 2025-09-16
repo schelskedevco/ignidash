@@ -88,7 +88,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
             <span className="text-muted-foreground">Age {selectedAge}</span>
           </h4>
         </div>
-        <SingleSimulationPortfolioPieChart chartData={chartData} selectedAge={selectedAge} dataView={dataView} />
+        <SingleSimulationPortfolioPieChart chartData={chartData} />
       </Card>
       <Card className="my-0 hidden @5xl:block">
         <div className="mb-4 flex items-center justify-between">
