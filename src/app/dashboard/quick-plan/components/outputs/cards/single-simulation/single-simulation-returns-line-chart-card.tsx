@@ -37,9 +37,13 @@ export default function SingleSimulationReturnsLineChartCard({
           value={dataView}
           onChange={(e) => setDataView(e.target.value as 'rates' | 'annualAmounts' | 'totalAmounts')}
         >
-          <option value="rates">Rates</option>
-          <option value="annualAmounts">Annual Amounts</option>
-          <option value="totalAmounts">Total Amounts</option>
+          <optgroup label="Return Rates">
+            <option value="rates">Annual Rates</option>
+          </optgroup>
+          <optgroup label="Dollar Amounts">
+            <option value="annualAmounts">Annual Amounts</option>
+            <option value="totalAmounts">Total Amounts</option>
+          </optgroup>
         </Select>
       </div>
       <SingleSimulationReturnsLineChart
