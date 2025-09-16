@@ -90,6 +90,7 @@ export default function SingleSimulationContributionsLineChartCard({
         keyMetrics={keyMetrics}
         showReferenceLines={showReferenceLines}
         dataView={dataView}
+        customDataID={customDataID}
         startAge={startAge}
       />
     </Card>

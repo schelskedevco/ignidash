@@ -8,6 +8,7 @@ import { formatNumber, formatChartString } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationContributionsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { AccountDataWithTransactions } from '@/lib/calc/v2/portfolio';
 import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
 
 interface CustomTooltipProps {
@@ -63,6 +64,7 @@ interface SingleSimulationContributionsLineChartProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment' | 'custom';
+  customDataID: string;
   startAge: number;
 }
 
@@ -73,6 +75,7 @@ export default function SingleSimulationContributionsLineChart({
   onAgeSelect,
   selectedAge,
   dataView,
+  customDataID,
   startAge,
 }: SingleSimulationContributionsLineChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
@@ -85,7 +88,9 @@ export default function SingleSimulationContributionsLineChart({
     () => setClickedOutsideChart(false)
   );
 
-  const chartData: SingleSimulationContributionsChartDataPoint[] = rawChartData;
+  let chartData:
+    | SingleSimulationContributionsChartDataPoint[]
+    | Array<{ age: number; annualContributions: number } & AccountDataWithTransactions> = rawChartData;
 
   const dataKeys: (keyof SingleSimulationContributionsChartDataPoint)[] = [];
   const yAxisDomain: [number, number] | undefined = undefined;
@@ -100,6 +105,21 @@ export default function SingleSimulationContributionsLineChart({
       dataKeys.push('taxable', 'taxDeferred', 'taxFree', 'cashSavings');
       break;
     case 'custom':
+      if (!customDataID) {
+        console.warn('Custom data name is required for custom data view');
+        break;
+      }
+
+      const perAccountData = chartData.flatMap(({ age, perAccountData }) =>
+        Object.values(perAccountData)
+          .filter((account) => account.id === customDataID)
+          .map((account) => {
+            return { age, ...account, annualContributions: account.contributionsForPeriod };
+          })
+      );
+
+      chartData = perAccountData;
+      dataKeys.push('annualContributions', 'totalContributions');
       break;
   }
 
