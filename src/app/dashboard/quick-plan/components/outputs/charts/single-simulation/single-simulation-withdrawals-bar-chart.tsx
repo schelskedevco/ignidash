@@ -47,7 +47,7 @@ const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--cha
 
 interface SingleSimulationWithdrawalsBarChartProps {
   age: number;
-  dataView: 'annualAmounts' | 'totalAmounts' | 'account';
+  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment';
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
 }
 
@@ -75,7 +75,7 @@ export default function SingleSimulationWithdrawalsBarChart({ age, dataView, raw
         },
       ]);
       break;
-    case 'account':
+    case 'taxTreatment':
       transformedChartData = chartData.flatMap((item) => [
         {
           name: 'Taxable Withdrawals',

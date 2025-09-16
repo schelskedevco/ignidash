@@ -10,8 +10,8 @@ import SingleSimulationWithdrawalsLineChart from '../../charts/single-simulation
 interface SingleSimulationWithdrawalsLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'annualAmounts' | 'totalAmounts' | 'account') => void;
-  dataView: 'annualAmounts' | 'totalAmounts' | 'account';
+  setDataView: (view: 'annualAmounts' | 'totalAmounts' | 'taxTreatment') => void;
+  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment';
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
   keyMetrics: FixedReturnsKeyMetricsV2;
   startAge: number;
@@ -40,11 +40,11 @@ export default function SingleSimulationWithdrawalsLineChartCard({
           id="data-view"
           name="data-view"
           value={dataView}
-          onChange={(e) => setDataView(e.target.value as 'annualAmounts' | 'totalAmounts' | 'account')}
+          onChange={(e) => setDataView(e.target.value as 'annualAmounts' | 'totalAmounts' | 'taxTreatment')}
         >
+          <option value="taxTreatment">Tax Treatment</option>
           <option value="annualAmounts">Annual Amounts</option>
           <option value="totalAmounts">Total Amounts</option>
-          <option value="account">Account Category</option>
         </Select>
       </div>
       <SingleSimulationWithdrawalsLineChart

@@ -62,7 +62,7 @@ interface SingleSimulationWithdrawalsLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'annualAmounts' | 'totalAmounts' | 'account';
+  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment';
   startAge: number;
 }
 
@@ -96,7 +96,7 @@ export default function SingleSimulationWithdrawalsLineChart({
     case 'totalAmounts':
       dataKeys.push('totalWithdrawals');
       break;
-    case 'account':
+    case 'taxTreatment':
       dataKeys.push('taxable', 'taxDeferred', 'taxFree', 'cashSavings');
       break;
   }

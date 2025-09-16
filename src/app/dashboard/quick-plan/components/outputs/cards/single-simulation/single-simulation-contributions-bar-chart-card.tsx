@@ -8,7 +8,7 @@ import SingleSimulationContributionsBarChart from '../../charts/single-simulatio
 interface SingleSimulationContributionsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationContributionsChartDataPoint[];
-  dataView: 'annualAmounts' | 'totalAmounts' | 'account';
+  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment';
 }
 
 export default function SingleSimulationContributionsBarChartCard({
@@ -24,8 +24,8 @@ export default function SingleSimulationContributionsBarChartCard({
     case 'totalAmounts':
       title = 'Total Amounts';
       break;
-    case 'account':
-      title = 'By Account Category';
+    case 'taxTreatment':
+      title = 'By Tax Treatment';
       break;
   }
 

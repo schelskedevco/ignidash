@@ -8,7 +8,7 @@ import SingleSimulationWithdrawalsBarChart from '../../charts/single-simulation/
 interface SingleSimulationWithdrawalsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
-  dataView: 'annualAmounts' | 'totalAmounts' | 'account';
+  dataView: 'annualAmounts' | 'totalAmounts' | 'taxTreatment';
 }
 
 export default function SingleSimulationWithdrawalsBarChartCard({
@@ -24,8 +24,8 @@ export default function SingleSimulationWithdrawalsBarChartCard({
     case 'totalAmounts':
       title = 'Total Amounts';
       break;
-    case 'account':
-      title = 'By Account Category';
+    case 'taxTreatment':
+      title = 'By Tax Treatment';
       break;
   }
 
