@@ -72,7 +72,6 @@ export const quickPlanSchema = z.object({
   retirementFunding: retirementFundingSchema,
 
   // Needed for V2 simulation engine
-  timelines: z.record(z.string(), timelineFormSchema),
   timeline: timelineFormSchema.optional(),
   incomes: z.record(z.string(), incomeFormSchema),
   accounts: z.record(z.string(), accountFormSchema),

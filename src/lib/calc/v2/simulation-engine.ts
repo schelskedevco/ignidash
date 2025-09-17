@@ -229,7 +229,10 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
 
   runSingleSimulation(seed: number): SimulationResult {
     const returnsProvider = new StochasticReturnsProvider(this.inputs, seed);
-    const timeline = Object.values(this.inputs.timelines)[0]; // TODO: Use selected timeline. Handle nulls.
+
+    const timeline = this.inputs.timeline;
+    if (!timeline) throw new Error('Must have timeline data for simulation');
+
     return this.runSimulation(returnsProvider, timeline);
   }
 
@@ -239,7 +242,10 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
     for (let i = 0; i < numSimulations; i++) {
       const simulationSeed = this.baseSeed + i * 1009;
       const returnsProvider = new StochasticReturnsProvider(this.inputs, simulationSeed);
-      const timeline = Object.values(this.inputs.timelines)[0]; // TODO: Use selected timeline. Handle nulls.
+
+      const timeline = this.inputs.timeline;
+      if (!timeline) throw new Error('Must have timeline data for simulation');
+
       const result = this.runSimulation(returnsProvider, timeline);
 
       simulations.push([simulationSeed, result]);
@@ -261,7 +267,10 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
 
   runSingleSimulation(seed: number): SimulationResult & HistoricalRangeInfo {
     const returnsProvider = new LcgHistoricalBacktestReturnsProvider(seed);
-    const timeline = Object.values(this.inputs.timelines)[0]; // TODO: Use selected timeline. Handle nulls.
+
+    const timeline = this.inputs.timeline;
+    if (!timeline) throw new Error('Must have timeline data for simulation');
+
     const result = this.runSimulation(returnsProvider, timeline);
 
     const historicalRanges = returnsProvider.getHistoricalRanges();
@@ -275,7 +284,10 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
     for (let i = 0; i < numSimulations; i++) {
       const simulationSeed = this.baseSeed + i * 1009;
       const returnsProvider = new LcgHistoricalBacktestReturnsProvider(simulationSeed);
-      const timeline = Object.values(this.inputs.timelines)[0]; // TODO: Use selected timeline. Handle nulls.
+
+      const timeline = this.inputs.timeline;
+      if (!timeline) throw new Error('Must have timeline data for simulation');
+
       const result = this.runSimulation(returnsProvider, timeline);
 
       const historicalRanges = returnsProvider.getHistoricalRanges();

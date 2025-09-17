@@ -42,6 +42,7 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
   return (
     <>
       <DisclosureSection
+        defaultOpen
         title="Income"
         icon={BanknoteArrowUpIcon}
         centerPanelContent={!hasIncomes}

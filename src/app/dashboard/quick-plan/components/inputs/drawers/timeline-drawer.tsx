@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, type FieldErrors } from 'react-hook-form';
 
-import { useUpdateTimeline, useSingleTimelineData } from '@/lib/stores/quick-plan-store';
+import { useUpdateTimeline, useTimelineData } from '@/lib/stores/quick-plan-store';
 import { timelineFormSchema, type TimelineInputs, type RetirementStrategyInputs } from '@/lib/schemas/timeline-form-schema';
 import NumberInputV2 from '@/components/ui/number-input-v2';
 import SectionHeader from '@/components/ui/section-header';
@@ -48,7 +48,7 @@ function getRetirementStrategyError(errors: FieldErrors, retirementStrategyType:
 }
 
 export default function TimelineDrawer() {
-  const existingTimelineData = useSingleTimelineData();
+  const existingTimelineData = useTimelineData();
 
   const newTimelineDefaultValues = useMemo(
     () =>

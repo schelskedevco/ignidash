@@ -145,8 +145,6 @@ interface QuickPlanState {
     updateMarketAssumptions: (field: keyof MarketAssumptionsInputs, value: unknown) => UpdateResult;
 
     updateTimeline: (data: TimelineInputs) => UpdateResult;
-    updateTimelines: (data: TimelineInputs) => UpdateResult;
-    deleteTimeline: (id: string) => UpdateResult;
 
     updateIncomes: (data: IncomeInputs) => UpdateResult;
     deleteIncome: (id: string) => UpdateResult;
@@ -202,7 +200,6 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
       lifeExpectancy: 78,
       effectiveTaxRate: 0,
     },
-    timelines: {},
     incomes: {},
     expenses: {},
     accounts: {},
@@ -270,22 +267,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
           updateTimeline: (data: TimelineInputs) => {
             set((state) => {
               state.inputs.timeline = { ...data };
-            });
-
-            return { success: true };
-          },
-
-          updateTimelines: (data: TimelineInputs) => {
-            set((state) => {
-              state.inputs.timelines = { ...state.inputs.timelines, [data.id]: data };
-            });
-
-            return { success: true };
-          },
-
-          deleteTimeline: (id: string) => {
-            set((state) => {
-              delete state.inputs.timelines[id];
             });
 
             return { success: true };
@@ -436,9 +417,7 @@ export const useGoalsData = () => useQuickPlanStore((state) => state.inputs.goal
 export const useMarketAssumptionsData = () => useQuickPlanStore((state) => state.inputs.marketAssumptions);
 export const useRetirementFundingData = () => useQuickPlanStore((state) => state.inputs.retirementFunding);
 
-export const useTimelinesData = () => useQuickPlanStore((state) => state.inputs.timelines);
-export const useTimelineData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.timelines[id] : null));
-export const useSingleTimelineData = () => useQuickPlanStore((state) => state.inputs.timeline);
+export const useTimelineData = () => useQuickPlanStore((state) => state.inputs.timeline);
 
 export const useIncomesData = () => useQuickPlanStore((state) => state.inputs.incomes);
 export const useIncomeData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.incomes[id] : null));
@@ -485,9 +464,7 @@ export const useLifeExpectancy = () => useQuickPlanStore((state) => state.inputs
  * These hooks provide access to update functions with built-in validation
  */
 export const useUpdateMarketAssumptions = () => useQuickPlanStore((state) => state.actions.updateMarketAssumptions);
-export const useUpdateTimelines = () => useQuickPlanStore((state) => state.actions.updateTimelines);
 export const useUpdateTimeline = () => useQuickPlanStore((state) => state.actions.updateTimeline);
-export const useDeleteTimeline = () => useQuickPlanStore((state) => state.actions.deleteTimeline);
 export const useUpdateIncomes = () => useQuickPlanStore((state) => state.actions.updateIncomes);
 export const useDeleteIncome = () => useQuickPlanStore((state) => state.actions.deleteIncome);
 export const useUpdateExpenses = () => useQuickPlanStore((state) => state.actions.updateExpenses);
@@ -537,11 +514,11 @@ export const useFixedReturnsSimulationV2 = (): SimulationResultV2 | null => {
   const inputs = useQuickPlanStore((state) => state.inputs);
 
   return useMemo(() => {
-    if (!Object.values(inputs.timelines).length) return null;
+    const timeline = inputs.timeline;
+    if (!timeline) return null;
 
     const engine = new FinancialSimulationEngineV2(inputs);
     const returnsProvider = new FixedReturnsProvider(inputs);
-    const timeline = Object.values(inputs.timelines)[0];
 
     return engine.runSimulation(returnsProvider, timeline);
   }, [inputs]);
