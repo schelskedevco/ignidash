@@ -16,10 +16,10 @@ export default function SimulationSettingsDrawer() {
     case 'fixedReturns':
       simulationModeDesc = 'Uses your Expected Returns assumptions for a single deterministic projection.';
       break;
-    case 'monteCarlo':
+    case 'monteCarloStochasticReturns':
       simulationModeDesc = 'Uses your Expected Returns assumptions as averages to show success probability.';
       break;
-    case 'historicalBacktest':
+    case 'monteCarloHistoricalReturns':
       simulationModeDesc = 'Uses actual historical market data from different starting years to show success probability.';
       break;
     case 'stochasticReturns':
@@ -49,7 +49,12 @@ export default function SimulationSettingsDrawer() {
                     value={simulationMode}
                     onChange={(e) =>
                       updateSimulationMode(
-                        e.target.value as 'fixedReturns' | 'stochasticReturns' | 'historicalReturns' | 'monteCarlo' | 'historicalBacktest'
+                        e.target.value as
+                          | 'fixedReturns'
+                          | 'stochasticReturns'
+                          | 'historicalReturns'
+                          | 'monteCarloStochasticReturns'
+                          | 'monteCarloHistoricalReturns'
                       )
                     }
                   >
@@ -59,8 +64,8 @@ export default function SimulationSettingsDrawer() {
                       <option value="historicalReturns">Historical Returns</option>
                     </optgroup>
                     <optgroup label="Monte Carlo (1,000 Simulations)">
-                      <option value="monteCarlo">Stochastic Returns</option>
-                      <option value="historicalBacktest">Historical Returns</option>
+                      <option value="monteCarloStochasticReturns">Stochastic Returns</option>
+                      <option value="monteCarloHistoricalReturns">Historical Returns</option>
                     </optgroup>
                   </Select>
                   <Description>{simulationModeDesc}</Description>

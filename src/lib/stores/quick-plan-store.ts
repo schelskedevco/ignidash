@@ -116,7 +116,12 @@ interface QuickPlanState {
     showReferenceLines: boolean;
     simulationSeed: number;
     sidebarCollapsed: boolean;
-    simulationMode: 'fixedReturns' | 'stochasticReturns' | 'historicalReturns' | 'monteCarlo' | 'historicalBacktest';
+    simulationMode:
+      | 'fixedReturns'
+      | 'stochasticReturns'
+      | 'historicalReturns'
+      | 'monteCarloStochasticReturns'
+      | 'monteCarloHistoricalReturns';
   };
 
   actions: {

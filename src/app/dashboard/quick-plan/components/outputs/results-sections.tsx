@@ -25,9 +25,9 @@ export default function ResultsSections() {
     switch (simulationMode) {
       case 'fixedReturns':
         return <FixedReturnsResults />;
-      case 'monteCarlo':
+      case 'monteCarloStochasticReturns':
         return <MonteCarloResults />;
-      case 'historicalBacktest':
+      case 'monteCarloHistoricalReturns':
         return <HistoricalBacktestResults />;
     }
   }
@@ -37,8 +37,8 @@ export default function ResultsSections() {
     case 'historicalReturns':
     case 'stochasticReturns':
       return <SingleSimulationResults />;
-    case 'monteCarlo':
-    case 'historicalBacktest':
+    case 'monteCarloStochasticReturns':
+    case 'monteCarloHistoricalReturns':
       return null;
   }
 }
