@@ -64,13 +64,14 @@ export const retirementFundingSchema = z.object({
 });
 
 export const quickPlanSchema = z.object({
+  // Legacy
   basics: basicsSchema,
   growthRates: growthRatesSchema,
   allocation: allocationSchema,
   goals: goalsSchema,
   retirementFunding: retirementFundingSchema,
 
-  // Needed for V2 simulation engine
+  // New
   timeline: timelineFormSchema.optional(),
   incomes: z.record(z.string(), incomeFormSchema),
   accounts: z.record(z.string(), accountFormSchema),
