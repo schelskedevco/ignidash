@@ -15,6 +15,7 @@ import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@
 import { Select } from '@/components/catalyst/select';
 import { Divider } from '@/components/catalyst/divider';
 import { Button } from '@/components/catalyst/button';
+import { DialogActions } from '@/components/catalyst/dialog';
 
 function getRetirementStrategyDesc(retirementStrategyType: 'fixedAge' | 'swrTarget') {
   switch (retirementStrategyType) {
@@ -154,14 +155,14 @@ export default function TimelineDrawer() {
                 <Divider />
               </FieldGroup>
             </Fieldset>
-            <div className="mt-4 flex gap-x-2">
-              <Button outline onClick={() => reset()} className="w-1/2">
+            <DialogActions>
+              <Button outline onClick={() => reset()}>
                 Reset
               </Button>
-              <Button color="rose" type="submit" className="w-1/2">
+              <Button color="rose" type="submit">
                 Save
               </Button>
-            </div>
+            </DialogActions>
           </form>
         </Card>
       </SectionContainer>
