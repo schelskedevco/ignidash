@@ -13,6 +13,8 @@ import Card from '@/components/ui/card';
 import NumberInput from '@/components/ui/number-input';
 import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
 import { Divider } from '@/components/catalyst/divider';
+import { Button } from '@/components/catalyst/button';
+import { DialogActions } from '@/components/catalyst/dialog';
 
 export default function ExpectedReturnsDrawer() {
   const marketAssumptions = useMarketAssumptionsData();
@@ -93,8 +95,17 @@ export default function ExpectedReturnsDrawer() {
                   />
                   <Description>Expected annual inflation rate, used to calculate real returns.</Description>
                 </Field>
+                <Divider />
               </FieldGroup>
             </Fieldset>
+            <DialogActions>
+              <Button outline onClick={() => {}}>
+                Reset
+              </Button>
+              <Button color="rose" type="submit">
+                Save
+              </Button>
+            </DialogActions>
           </form>
         </Card>
       </SectionContainer>
