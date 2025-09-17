@@ -1,26 +1,3 @@
-/**
- * Quick Plan Store - Financial Planning State Management
- *
- * This Zustand store manages the state for a comprehensive financial planning application.
- * It handles user inputs across multiple categories (basics, growth rates, allocation, goals,
- * market assumptions, retirement funding) and provides computed selectors for FIRE calculations,
- * portfolio analysis, and validation states.
- *
- * Architecture:
- * - Uses Zustand with Immer for immutable state updates
- * - Persistent storage with selective data retention based on user preferences
- * - Comprehensive validation using schema validation functions
- * - Computed selectors for derived data and calculations
- * - Modular hook exports for optimal React component integration
- *
- * Key Features:
- * - Form validation with error reporting
- * - Selective localStorage persistence
- * - FIRE (Financial Independence, Retire Early) calculations
- * - Portfolio and asset analysis
- * - Performance-optimized selectors
- */
-
 import { useMemo } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
@@ -143,24 +120,30 @@ interface QuickPlanState {
   };
 
   actions: {
+    /* Expected Returns */
     updateMarketAssumptions: (data: MarketAssumptionsInputs) => UpdateResult;
 
+    /* Timeline */
     updateTimeline: (data: TimelineInputs) => UpdateResult;
 
+    /* Cash Flows */
     updateIncomes: (data: IncomeInputs) => UpdateResult;
     deleteIncome: (id: string) => UpdateResult;
 
     updateExpenses: (data: ExpenseInputs) => UpdateResult;
     deleteExpense: (id: string) => UpdateResult;
 
+    /* Portfolio */
     updateAccounts: (data: AccountInputs) => UpdateResult;
     deleteAccount: (id: string) => UpdateResult;
 
+    /* Contribution Order */
     updateContributionRules: (data: ContributionInputs) => UpdateResult;
     reorderContributionRules: (newOrder: string[]) => UpdateResult;
     deleteContributionRule: (id: string) => UpdateResult;
     updateBaseContributionRule: (field: keyof BaseContributionInputs, value: unknown) => UpdateResult;
 
+    /* Preferences */
     updateDataStoragePreference: (value: QuickPlanState['preferences']['dataStorage']) => void;
     updateShowReferenceLines: (value: boolean) => void;
     updateSimulationSeed: () => void;
@@ -230,7 +213,6 @@ const cleanupExistingData = () => {
   }
 };
 
-/** Run cleanup on initialization */
 cleanupExistingData();
 
 // ================================
@@ -372,9 +354,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
       {
         name: 'quick-plan-storage',
         version: 1,
-        // Simple migration: just use defaults for any version change
         migrate: () => ({ ...defaultState }),
-        // Only persist the inputs and preferences state, not the actions
         partialize: (state) => {
           const baseResult = { preferences: state.preferences };
 
@@ -391,7 +371,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
     ),
     {
       name: 'Quick Plan Store',
-      anonymousActionType: 'quickPlan/action', // Default for any unnamed actions
+      anonymousActionType: 'quickPlan/action',
     }
   )
 );
