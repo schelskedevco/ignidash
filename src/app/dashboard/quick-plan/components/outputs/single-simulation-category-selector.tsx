@@ -1,15 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-
-export enum SingleSimulationCategory {
-  Portfolio = 'Portfolio',
-  CashFlow = 'Cash Flow',
-  Taxes = 'Taxes',
-  Returns = 'Returns',
-  Contributions = 'Contributions',
-  Withdrawals = 'Withdrawals',
-}
+import { SingleSimulationCategory } from '@/lib/types/single-simulation-category';
 
 interface SingleSimulationCategorySelectorProps {
   className?: string;

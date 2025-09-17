@@ -20,10 +20,12 @@ import {
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 import { SimulationTableDataExtractor } from '@/lib/calc/simulation-table-data-extractor';
+import { TableDataExtractor } from '@/lib/calc/v2/table-data-extractor';
 import WithdrawalStrategy from '@/lib/calc/withdrawal-strategy';
 import { getSimulationWorker } from '@/lib/workers/simulation-worker-api';
 import type { MultiSimulationResultDTO } from '@/lib/schemas/simulation-dto-schema';
 import type { SimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/simulation-table-schema';
+import type { SingleSimulationTableRow } from '@/lib/schemas/single-simulation-table-schema';
 import type { IncomeInputs } from '@/lib/schemas/income-form-schema';
 import type { AccountInputs } from '@/lib/schemas/account-form-schema';
 import type { ExpenseInputs } from '@/lib/schemas/expense-form-schema';
@@ -39,6 +41,7 @@ import type {
   SingleSimulationContributionsChartDataPoint,
   SingleSimulationWithdrawalsChartDataPoint,
 } from '@/lib/types/chart-data-points';
+import { SingleSimulationCategory } from '@/lib/types/single-simulation-category';
 
 // ================================
 // TYPES & HELPERS
@@ -1202,6 +1205,16 @@ export const useFixedReturnsTableData = (simulation: SimulationResult): Simulati
     const extractor = new SimulationTableDataExtractor();
     return extractor.extractSingleSimulationTableData(simulation, currentAge);
   }, [currentAge, simulation]);
+};
+
+export const useSingleSimulationTableData = (
+  simulation: SimulationResultV2,
+  category: SingleSimulationCategory
+): SingleSimulationTableRow[] => {
+  return useMemo(() => {
+    const extractor = new TableDataExtractor();
+    return extractor.extractSingleSimulationData(simulation, category);
+  }, [simulation, category]);
 };
 
 /**

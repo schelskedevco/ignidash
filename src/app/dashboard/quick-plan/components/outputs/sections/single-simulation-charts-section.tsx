@@ -13,8 +13,8 @@ import {
   useSingleSimulationWithdrawalsChartData,
 } from '@/lib/stores/quick-plan-store';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import { SingleSimulationCategory } from '@/lib/types/single-simulation-category';
 
-import { SingleSimulationCategory } from '../single-simulation-category-selector';
 import SingleSimulationPortfolioAreaChartCard from '../cards/single-simulation/single-simulation-portfolio-area-chart-card';
 import SingleSimulationPortfolioPieChartCard from '../cards/single-simulation/single-simulation-portfolio-pie-chart-card';
 import SingleSimulationCashFlowLineChartCard from '../cards/single-simulation/single-simulation-cash-flow-line-chart-card';
