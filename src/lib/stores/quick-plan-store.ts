@@ -161,13 +161,14 @@ interface QuickPlanState {
 
 export const defaultState: Omit<QuickPlanState, 'actions'> = {
   inputs: {
+    // Legacy
     basics: { currentAge: 28, annualIncome: 85000, annualExpenses: 50000, investedAssets: 75000 },
     growthRates: { incomeGrowthRate: 3, expenseGrowthRate: 3 },
     allocation: { stockAllocation: 70, bondAllocation: 25, cashAllocation: 5 },
     goals: { retirementExpenses: 50000 },
     retirementFunding: { safeWithdrawalRate: 4, retirementIncome: 0, lifeExpectancy: 78, effectiveTaxRate: 0 },
 
-    // Needed for V2 simulation engine
+    // New
     timeline: undefined,
     incomes: {},
     expenses: {},
