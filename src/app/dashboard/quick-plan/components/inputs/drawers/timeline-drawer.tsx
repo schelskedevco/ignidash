@@ -149,9 +149,10 @@ export default function TimelineDrawer() {
                     <Description>{getRetirementStrategyDesc(retirementStrategyType)}</Description>
                   </Field>
                 )}
+                <Divider />
               </FieldGroup>
             </Fieldset>
-            <Button color="rose" type="submit" className="mt-6 w-full sm:mt-8">
+            <Button color="rose" type="submit" className="mt-4 w-full">
               Save
             </Button>
           </form>
