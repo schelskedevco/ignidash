@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from 'react';
 
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 
-import TimelineSectionV2 from './sections/timeline-section-v2';
+import TimelineSection from './sections/timeline-section';
 import IncomeSection from './sections/income-section';
 import ExpensesSection from './sections/expenses-section';
 import PortfolioSection from './sections/portfolio-section';
@@ -48,7 +48,7 @@ export default function NumbersColumnSections() {
 
   return (
     <>
-      <TimelineSectionV2 toggleDisclosure={toggleDisclosure} disclosureButtonRef={timelineButtonRef} disclosureKey="timeline" />
+      <TimelineSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={timelineButtonRef} disclosureKey="timeline" />
       <IncomeSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={incomeButtonRef} disclosureKey="income" />
       <ExpensesSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={expensesButtonRef} disclosureKey="expenses" />
       <PortfolioSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={portfolioButtonRef} disclosureKey="portfolio" />
