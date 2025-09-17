@@ -28,17 +28,7 @@ import { immer } from 'zustand/middleware/immer';
 import { useShallow } from 'zustand/react/shallow';
 import useSWR from 'swr';
 
-import {
-  type QuickPlanInputs,
-  type BasicsInputs,
-  type GrowthRatesInputs,
-  type AllocationInputs,
-  type GoalsInputs,
-  type MarketAssumptionsInputs,
-  type RetirementFundingInputs,
-  validateField,
-  validateSection,
-} from '@/lib/schemas/quick-plan-schema';
+import { type QuickPlanInputs, type MarketAssumptionsInputs, validateField } from '@/lib/schemas/quick-plan-schema';
 import {
   FinancialSimulationEngine,
   MonteCarloSimulationEngine,
@@ -77,20 +67,7 @@ import type {
 // TYPES & HELPERS
 // ================================
 
-export type UpdateResult = {
-  success: boolean;
-  error?: string;
-};
-
-type TouchedState = {
-  [K in keyof QuickPlanInputs]: boolean;
-};
-
-type ErrorState = {
-  [K in keyof QuickPlanInputs]?: {
-    [F in keyof QuickPlanInputs[K]]?: string;
-  };
-};
+export type UpdateResult = { success: boolean; error?: string };
 
 /**
  * Helper function to create update actions with validation
@@ -104,46 +81,19 @@ type ErrorState = {
 const createSimpleUpdateAction = <T extends keyof QuickPlanInputs>(
   section: T,
   set: (fn: (state: QuickPlanState) => void) => void,
-  get: () => QuickPlanState,
-  shouldUpdateTouchedState: boolean = true
+  get: () => QuickPlanState
 ) => {
   return (field: keyof QuickPlanInputs[T], value: unknown): UpdateResult => {
     const currentSection = get().inputs[section];
-    const currentValue = currentSection[field];
-
-    // Skip update if the new value is equivalent to the current value
-    if (value == currentValue) return { success: true };
 
     const result = validateField(section, field, value, currentSection);
-
     if (result.valid && result.data) {
       set((state) => {
         state.inputs[section] = result.data!;
-        if (shouldUpdateTouchedState) {
-          if (value) {
-            state.touched[section] = true;
-          } else {
-            state.touched[section] = false;
-          }
-        }
-        if (state.errors[section]) delete state.errors[section][field];
-      });
-    } else {
-      set((state) => {
-        if (shouldUpdateTouchedState) {
-          state.touched[section] = true;
-        }
-        state.errors[section] = {
-          ...state.errors[section],
-          [field]: result.error,
-        };
       });
     }
 
-    return {
-      success: result.valid,
-      error: result.error,
-    };
+    return { success: result.valid, error: result.error };
   };
 };
 
@@ -183,8 +133,6 @@ function reconstructSimulationResult(dto: MultiSimulationResultDTO): MultiSimula
 
 interface QuickPlanState {
   inputs: QuickPlanInputs;
-  touched: TouchedState;
-  errors: ErrorState;
 
   preferences: {
     dataStorage: 'localStorage' | 'none';
@@ -194,14 +142,7 @@ interface QuickPlanState {
   };
 
   actions: {
-    // Basic input actions with validation and error reporting
-    updateBasics: (field: keyof BasicsInputs, value: unknown) => UpdateResult;
-    updateGrowthRates: (field: keyof GrowthRatesInputs, value: unknown) => UpdateResult;
-    updateAllocation: (data: { [K in keyof AllocationInputs]: unknown }) => UpdateResult;
-    updateGoals: (field: keyof GoalsInputs, value: unknown) => UpdateResult;
-    updateGoalsWithoutTouched: (field: keyof GoalsInputs, value: unknown) => UpdateResult;
     updateMarketAssumptions: (field: keyof MarketAssumptionsInputs, value: unknown) => UpdateResult;
-    updateRetirementFunding: (field: keyof RetirementFundingInputs, value: unknown) => UpdateResult;
 
     updateTimelines: (data: TimelineInputs) => UpdateResult;
     deleteTimeline: (id: string) => UpdateResult;
@@ -218,16 +159,12 @@ interface QuickPlanState {
     updateContributionRules: (data: ContributionInputs) => UpdateResult;
     reorderContributionRules: (newOrder: string[]) => UpdateResult;
     deleteContributionRule: (id: string) => UpdateResult;
-
     updateBaseContributionRule: (field: keyof BaseContributionInputs, value: unknown) => UpdateResult;
 
-    // Preferences actions
     updatePreferences: (field: keyof QuickPlanState['preferences'], value: unknown) => void;
     generateNewSeed: () => void;
 
-    // Utility actions
     resetStore: () => void;
-    resetSection: (section: keyof QuickPlanInputs) => void;
   };
 }
 
@@ -273,21 +210,6 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
       type: 'save',
     },
   },
-  touched: {
-    basics: false,
-    growthRates: false,
-    allocation: false,
-    goals: false,
-    marketAssumptions: false,
-    retirementFunding: false,
-    timelines: false,
-    incomes: false,
-    expenses: false,
-    accounts: false,
-    contributionRules: false,
-    baseContributionRule: false,
-  },
-  errors: {},
   preferences: {
     dataStorage: 'localStorage',
     showReferenceLines: true,
@@ -342,42 +264,10 @@ export const useQuickPlanStore = create<QuickPlanState>()(
       immer((set, get) => ({
         ...defaultState,
         actions: {
-          // Update actions with validation - using helper to reduce duplication
-          updateBasics: createSimpleUpdateAction('basics', set, get),
-          updateGrowthRates: createSimpleUpdateAction('growthRates', set, get),
-          updateGoals: createSimpleUpdateAction('goals', set, get),
-          updateGoalsWithoutTouched: createSimpleUpdateAction('goals', set, get, false),
           updateMarketAssumptions: createSimpleUpdateAction('marketAssumptions', set, get),
-          updateRetirementFunding: createSimpleUpdateAction('retirementFunding', set, get),
-
-          // Special case for allocation - uses validateSection instead of validateField
-          updateAllocation: (data) => {
-            const result = validateSection('allocation', data);
-
-            set((state) => {
-              state.touched.allocation = true;
-
-              if (result.valid && result.data) {
-                state.inputs.allocation = result.data;
-                state.errors.allocation = {};
-              } else {
-                state.errors.allocation = {
-                  stockAllocation: result.error,
-                  bondAllocation: result.error,
-                  cashAllocation: result.error,
-                };
-              }
-            });
-
-            return {
-              success: result.valid,
-              error: result.error,
-            };
-          },
 
           updateTimelines: (data: TimelineInputs) => {
             set((state) => {
-              state.touched.timelines = true;
               state.inputs.timelines = { ...state.inputs.timelines, [data.id]: data };
             });
 
@@ -386,7 +276,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
 
           deleteTimeline: (id: string) => {
             set((state) => {
-              state.touched.timelines = true;
               delete state.inputs.timelines[id];
             });
 
@@ -395,7 +284,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
 
           updateIncomes: (data: IncomeInputs) => {
             set((state) => {
-              state.touched.incomes = true;
               state.inputs.incomes = { ...state.inputs.incomes, [data.id]: data };
             });
 
@@ -404,7 +292,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
 
           deleteIncome: (name) => {
             set((state) => {
-              state.touched.incomes = true;
               delete state.inputs.incomes[name];
             });
 
@@ -413,7 +300,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
 
           updateAccounts: (data: AccountInputs) => {
             set((state) => {
-              state.touched.accounts = true;
               state.inputs.accounts = { ...state.inputs.accounts, [data.id]: data };
             });
 
@@ -422,7 +308,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
 
           deleteAccount: (id: string) => {
             set((state) => {
-              state.touched.accounts = true;
               delete state.inputs.accounts[id];
             });
 
@@ -431,7 +316,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
 
           updateExpenses: (data: ExpenseInputs) => {
             set((state) => {
-              state.touched.expenses = true;
               state.inputs.expenses = { ...state.inputs.expenses, [data.id]: data };
             });
 
@@ -440,7 +324,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
 
           deleteExpense: (id: string) => {
             set((state) => {
-              state.touched.expenses = true;
               delete state.inputs.expenses[id];
             });
 
@@ -449,7 +332,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
 
           updateContributionRules: (data: ContributionInputs) => {
             set((state) => {
-              state.touched.contributionRules = true;
               state.inputs.contributionRules = { ...state.inputs.contributionRules, [data.id]: data };
             });
 
@@ -471,7 +353,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
 
           deleteContributionRule: (id: string) => {
             set((state) => {
-              state.touched.contributionRules = true;
               delete state.inputs.contributionRules[id];
             });
 
@@ -503,16 +384,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
           resetStore: () =>
             set((state) => {
               state.inputs = { ...defaultState.inputs };
-              state.touched = { ...defaultState.touched };
-              state.errors = {};
-            }),
-
-          resetSection: (section) =>
-            set((state) => {
-              // NOTE: Rethink Object.assign approach if using deeply nested state in the future.
-              Object.assign(state.inputs[section], defaultState.inputs[section]);
-              state.touched[section] = false;
-              if (state.errors[section]) delete state.errors[section];
             }),
         },
       })),
@@ -529,7 +400,6 @@ export const useQuickPlanStore = create<QuickPlanState>()(
             return {
               ...baseResult,
               inputs: state.inputs,
-              touched: state.touched,
             };
           }
 
@@ -606,13 +476,7 @@ export const useLifeExpectancy = () => useQuickPlanStore((state) => state.inputs
  * Action selectors
  * These hooks provide access to update functions with built-in validation
  */
-export const useUpdateBasics = () => useQuickPlanStore((state) => state.actions.updateBasics);
-export const useUpdateGrowthRates = () => useQuickPlanStore((state) => state.actions.updateGrowthRates);
-export const useUpdateAllocation = () => useQuickPlanStore((state) => state.actions.updateAllocation);
-export const useUpdateGoals = () => useQuickPlanStore((state) => state.actions.updateGoals);
-export const useUpdateGoalsWithoutTouched = () => useQuickPlanStore((state) => state.actions.updateGoalsWithoutTouched);
 export const useUpdateMarketAssumptions = () => useQuickPlanStore((state) => state.actions.updateMarketAssumptions);
-export const useUpdateRetirementFunding = () => useQuickPlanStore((state) => state.actions.updateRetirementFunding);
 export const useUpdateTimelines = () => useQuickPlanStore((state) => state.actions.updateTimelines);
 export const useDeleteTimeline = () => useQuickPlanStore((state) => state.actions.deleteTimeline);
 export const useUpdateIncomes = () => useQuickPlanStore((state) => state.actions.updateIncomes);
@@ -642,7 +506,6 @@ export const useGenerateNewSeed = () => useQuickPlanStore((state) => state.actio
  * These hooks provide access to store management functions
  */
 export const useResetStore = () => useQuickPlanStore((state) => state.actions.resetStore);
-export const useResetSection = () => useQuickPlanStore((state) => state.actions.resetSection);
 
 /**
  * Simulation & Analysis Hooks
@@ -1521,28 +1384,3 @@ export const useIsCalculationReady = () =>
       state.inputs.basics.investedAssets !== null &&
       state.inputs.goals.retirementExpenses !== null
   );
-
-/**
- * Touched State Selectors
- * These hooks provide access to form interaction state for UI feedback
- */
-export const useBasicsTouched = () => useQuickPlanStore((state) => state.touched.basics);
-export const useGrowthRatesTouched = () => useQuickPlanStore((state) => state.touched.growthRates);
-export const useAllocationTouched = () => useQuickPlanStore((state) => state.touched.allocation);
-export const useGoalsTouched = () => useQuickPlanStore((state) => state.touched.goals);
-export const useMarketAssumptionsTouched = () => useQuickPlanStore((state) => state.touched.marketAssumptions);
-export const useRetirementFundingTouched = () => useQuickPlanStore((state) => state.touched.retirementFunding);
-
-/**
- * Error State Selectors
- * These hooks provide access to validation error state for form feedback
- */
-const useSectionHasErrors = (section: keyof QuickPlanInputs) =>
-  useQuickPlanStore((state) => Object.keys(state.errors[section] || {}).length > 0);
-
-export const useBasicsHasErrors = () => useSectionHasErrors('basics');
-export const useGrowthRatesHasErrors = () => useSectionHasErrors('growthRates');
-export const useAllocationHasErrors = () => useSectionHasErrors('allocation');
-export const useGoalsHasErrors = () => useSectionHasErrors('goals');
-export const useMarketAssumptionsHasErrors = () => useSectionHasErrors('marketAssumptions');
-export const useRetirementFundingHasErrors = () => useSectionHasErrors('retirementFunding');
