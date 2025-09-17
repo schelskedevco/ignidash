@@ -2,3 +2,4 @@
 - Progress to retirement should be aged base when retirement strategy is fixed age.
 - Contributions, cost basis not being set to defaults for applicable types.
 - Trigger contribution rule updates after incomes, accounts are deleted or updated which are attached to contribution rules.
+- Auto-create contribution rules when portfolio items are added.

@@ -13,7 +13,7 @@ export default function SidebarLink({ href, current, children }: SidebarLinkProp
     <Link
       href={href}
       className={cn(
-        'group focus-outline my-1 flex items-center rounded-md text-base/6',
+        'group focus-outline my-1 flex items-center text-base/6',
         { 'bg-background ring-primary text-primary ring': current },
         { 'hover:bg-background hover:ring-border hover:ring': !current }
       )}
