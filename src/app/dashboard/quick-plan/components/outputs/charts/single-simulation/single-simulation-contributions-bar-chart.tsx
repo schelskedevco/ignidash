@@ -104,7 +104,7 @@ export default function SingleSimulationContributionsBarChart({
           .flatMap(({ perAccountData }) =>
             perAccountData.map(({ id, name, contributionsForPeriod }) => ({ id, name, amount: contributionsForPeriod }))
           )
-          .filter(({ id, amount }) => amount !== 0 && id === customDataID),
+          .filter(({ id }) => id === customDataID),
       ];
       break;
   }

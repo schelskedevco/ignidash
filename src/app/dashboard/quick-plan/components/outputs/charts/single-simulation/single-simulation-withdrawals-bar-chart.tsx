@@ -104,7 +104,7 @@ export default function SingleSimulationWithdrawalsBarChart({
           .flatMap(({ perAccountData }) =>
             perAccountData.map(({ id, name, withdrawalsForPeriod }) => ({ id, name, amount: withdrawalsForPeriod }))
           )
-          .filter(({ id, amount }) => amount !== 0 && id === customDataID),
+          .filter(({ id }) => id === customDataID),
       ];
       break;
   }
