@@ -5,7 +5,7 @@ import { HourglassIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
 import { useTimelinesData, useDeleteTimeline } from '@/lib/stores/quick-plan-store';
-import { type RetirementStrategyInputs } from '@/lib/schemas/timeline-form-schema';
+import type { RetirementStrategyInputs } from '@/lib/schemas/timeline-form-schema';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';

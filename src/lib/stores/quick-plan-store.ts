@@ -438,6 +438,7 @@ export const useRetirementFundingData = () => useQuickPlanStore((state) => state
 
 export const useTimelinesData = () => useQuickPlanStore((state) => state.inputs.timelines);
 export const useTimelineData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.timelines[id] : null));
+export const useSingleTimelineData = () => useQuickPlanStore((state) => state.inputs.timeline);
 
 export const useIncomesData = () => useQuickPlanStore((state) => state.inputs.incomes);
 export const useIncomeData = (id: string | null) => useQuickPlanStore((state) => (id !== null ? state.inputs.incomes[id] : null));
@@ -485,6 +486,7 @@ export const useLifeExpectancy = () => useQuickPlanStore((state) => state.inputs
  */
 export const useUpdateMarketAssumptions = () => useQuickPlanStore((state) => state.actions.updateMarketAssumptions);
 export const useUpdateTimelines = () => useQuickPlanStore((state) => state.actions.updateTimelines);
+export const useUpdateTimeline = () => useQuickPlanStore((state) => state.actions.updateTimeline);
 export const useDeleteTimeline = () => useQuickPlanStore((state) => state.actions.deleteTimeline);
 export const useUpdateIncomes = () => useQuickPlanStore((state) => state.actions.updateIncomes);
 export const useDeleteIncome = () => useQuickPlanStore((state) => state.actions.deleteIncome);
