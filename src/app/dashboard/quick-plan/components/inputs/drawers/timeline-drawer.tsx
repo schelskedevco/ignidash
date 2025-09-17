@@ -14,7 +14,7 @@ import Card from '@/components/ui/card';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import { Select } from '@/components/catalyst/select';
 import { Divider } from '@/components/catalyst/divider';
-// import { Button } from '@/components/catalyst/button';
+import { Button } from '@/components/catalyst/button';
 
 function getRetirementStrategyDesc(retirementStrategyType: 'fixedAge' | 'swrTarget') {
   switch (retirementStrategyType) {
@@ -151,6 +151,9 @@ export default function TimelineDrawer() {
                 )}
               </FieldGroup>
             </Fieldset>
+            <Button color="rose" type="submit" className="mt-6 w-full sm:mt-8">
+              Save
+            </Button>
           </form>
         </Card>
       </SectionContainer>
