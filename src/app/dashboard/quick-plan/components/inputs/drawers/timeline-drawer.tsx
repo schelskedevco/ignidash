@@ -22,7 +22,7 @@ function getRetirementStrategyDesc(retirementStrategyType: 'fixedAge' | 'swrTarg
     case 'swrTarget':
       return (
         <>
-          Simulations will retire when your portfolio can support your typical annual expenses at this SWR.{' '}
+          Simulations will retire when your portfolio can support your typical annual expenses at this SWR. <br />
           <a
             href="https://www.investopedia.com/terms/s/safe-withdrawal-rate-swr-method.asp"
             target="_blank"
