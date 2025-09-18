@@ -48,7 +48,7 @@ html {
 }
 
 body {
-  background: var(--background);
+  background: var(--emphasized-background);
   color: var(--foreground);
   font-family: var(--font-geist), sans-serif;
 }
