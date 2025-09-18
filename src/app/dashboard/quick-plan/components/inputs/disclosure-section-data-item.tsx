@@ -17,6 +17,8 @@ interface DisclosureSectionDataItemProps {
   showDragHandle?: boolean;
 }
 
+const COLORS = ['bg-[var(--chart-1)]', 'bg-[var(--chart-2)]', 'bg-[var(--chart-3)]', 'bg-[var(--chart-4)]'];
+
 export default function DisclosureSectionDataItem({
   id,
   index,
@@ -30,12 +32,13 @@ export default function DisclosureSectionDataItem({
   showDragHandle,
   ...otherProps
 }: DisclosureSectionDataItemProps) {
+  const color = COLORS[index % COLORS.length];
   return (
     <li key={id} className="col-span-1 flex shadow-xs dark:shadow-none" ref={ref} style={style}>
       <div
         className={cn(
           'border-foreground/50 flex w-16 shrink-0 items-center justify-center gap-1 border text-xl font-medium text-white',
-          'bg-rose-800 dark:bg-rose-400',
+          color,
           showDragHandle &&
             'cursor-grab touch-none focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset'
         )}
