@@ -8,7 +8,7 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 0,
 });
 
-export const formatValue = (value: unknown, format: ColumnFormat): string => {
+const formatValue = (value: unknown, format: ColumnFormat): string => {
   if (value == null) return '—';
   if (typeof value !== 'number' && format !== 'string' && format !== 'historicalRanges') return '—';
 
@@ -31,7 +31,7 @@ export const formatValue = (value: unknown, format: ColumnFormat): string => {
   }
 };
 
-export const formatHistoricalRanges = (ranges: Array<{ startYear: number; endYear: number }>): string => {
+const formatHistoricalRanges = (ranges: Array<{ startYear: number; endYear: number }>): string => {
   if (!ranges || ranges.length === 0) return '—';
 
   return ranges
