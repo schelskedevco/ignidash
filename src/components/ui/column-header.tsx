@@ -18,7 +18,7 @@ export default function ColumnHeader({ title, icon: Icon, iconButton, className 
       )}
     >
       <div className="mx-4 flex items-center justify-between sm:mx-6 lg:mx-8">
-        <h2 className="flex items-center gap-2 text-2xl font-semibold tracking-tight uppercase">
+        <h2 className="flex items-center gap-2 text-2xl font-semibold tracking-tight lowercase">
           <Icon className="text-primary h-8 w-8" aria-hidden="true" />
           {title}
         </h2>
