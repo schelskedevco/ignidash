@@ -4,9 +4,10 @@ interface SectionContainerProps {
   showBottomBorder: boolean;
   children: React.ReactNode;
   location?: 'default' | 'drawer';
+  className?: string;
 }
 
-export default function SectionContainer({ children, showBottomBorder, location = 'default' }: SectionContainerProps) {
+export default function SectionContainer({ children, showBottomBorder, location = 'default', className }: SectionContainerProps) {
   let outerXMarginClass = '';
   let innerXMarginClass = '';
 
@@ -23,7 +24,7 @@ export default function SectionContainer({ children, showBottomBorder, location 
 
   const borderClass = showBottomBorder ? 'border-border border-b' : '';
   return (
-    <div className={cn('my-5 pb-5', borderClass, outerXMarginClass)}>
+    <div className={cn('my-5 pb-5', borderClass, outerXMarginClass, className)}>
       <div className={innerXMarginClass}>{children}</div>
     </div>
   );
