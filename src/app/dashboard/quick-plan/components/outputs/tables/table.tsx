@@ -92,14 +92,9 @@ export default function Table<T extends Record<string, unknown>>({
     return { paginatedData: paginated, totalPages: total, emptyRows: emptyRowCount };
   }, [sortedData, currentPage, itemsPerPage, showPagination]);
 
-  const handlePageChange = withScrollPreservation((page: number) => {
-    setCurrentPage(page);
-  });
-
-  // Reset to first page when data changes
+  const handlePageChange = withScrollPreservation((page: number) => setCurrentPage(page));
   useEffect(() => setCurrentPage(1), [data]);
 
-  // Auto-focus first row when onEscPressed is provided
   useEffect(() => {
     if (onEscPressed && tableRef.current) {
       const firstRow = tableRef.current.querySelector('tbody tr');
@@ -154,7 +149,10 @@ export default function Table<T extends Record<string, unknown>>({
                             <th
                               key={String(col.key)}
                               scope="col"
-                              className={cn('group py-3.5 pr-3 pl-4 sm:pl-6 lg:pl-8', hoveredColumn === col.key && 'bg-background/50')}
+                              className={cn(
+                                'group py-3.5 pr-3 pl-4 sm:pl-6 lg:pl-8',
+                                hoveredColumn === col.key && 'bg-emphasized-background/50'
+                              )}
                               onMouseEnter={() => setHoveredColumn(col.key)}
                               onMouseLeave={() => setHoveredColumn(null)}
                               aria-sort={sortDirection}
@@ -168,7 +166,10 @@ export default function Table<T extends Record<string, unknown>>({
                           <th
                             key={String(col.key)}
                             scope="col"
-                            className={cn('group border-border/50 border-l px-3 py-3.5', hoveredColumn === col.key && 'bg-background/50')}
+                            className={cn(
+                              'group border-border/50 border-l px-3 py-3.5',
+                              hoveredColumn === col.key && 'bg-emphasized-background/50'
+                            )}
                             onMouseEnter={() => setHoveredColumn(col.key)}
                             onMouseLeave={() => setHoveredColumn(null)}
                             aria-sort={sortDirection}
@@ -179,14 +180,14 @@ export default function Table<T extends Record<string, unknown>>({
                       })}
                     </tr>
                   </thead>
-                  <tbody className="divide-border/50 bg-emphasized-background/50 border-border divide-y border-b">
+                  <tbody className="divide-border/50 border-border divide-y border-b">
                     {paginatedData.map((row) => (
                       <tr
                         key={String(row[keyField])}
                         className={cn(
-                          'hover:bg-background/50 focus-outline',
+                          'hover:bg-emphasized-background/50 focus-outline',
                           onRowClick && 'cursor-pointer',
-                          selectedRow === String(row[keyField]) && 'bg-background/50'
+                          selectedRow === String(row[keyField]) && 'bg-emphasized-background/50'
                         )}
                         onClick={() => {
                           setSelectedRow(String(row[keyField]));
@@ -214,7 +215,7 @@ export default function Table<T extends Record<string, unknown>>({
                                 key={String(col.key)}
                                 className={cn(
                                   'text-foreground py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-6 lg:pl-8',
-                                  hoveredColumn === col.key && 'bg-background/50'
+                                  hoveredColumn === col.key && 'bg-emphasized-background/50'
                                 )}
                               >
                                 {displayVal}
@@ -227,7 +228,7 @@ export default function Table<T extends Record<string, unknown>>({
                               key={String(col.key)}
                               className={cn(
                                 'text-muted-foreground border-border/50 border-l px-3 py-4 text-sm whitespace-nowrap',
-                                hoveredColumn === col.key && 'bg-background/50'
+                                hoveredColumn === col.key && 'bg-emphasized-background/50'
                               )}
                             >
                               {displayVal}
