@@ -1,12 +1,12 @@
 'use client';
 
 import { formatNumber } from '@/lib/utils';
-import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import type { SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
 
 import MetricsCard from './metrics-card';
 
 interface SingleSimulationMetricsProps {
-  keyMetrics: FixedReturnsKeyMetricsV2;
+  keyMetrics: SingleSimulationKeyMetrics;
 }
 
 export default function SingleSimulationMetrics({ keyMetrics }: SingleSimulationMetricsProps) {

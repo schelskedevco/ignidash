@@ -5,7 +5,7 @@ import { useMemo, useCallback } from 'react';
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
-import { useShowReferenceLines, type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import { useShowReferenceLines, type SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
 
 import SingleSimulationWithdrawalsLineChart from '../../charts/single-simulation/single-simulation-withdrawals-line-chart';
 
@@ -17,7 +17,7 @@ interface SingleSimulationWithdrawalsLineChartCardProps {
   setCustomDataID: (name: string) => void;
   customDataID: string;
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
-  keyMetrics: FixedReturnsKeyMetricsV2;
+  keyMetrics: SingleSimulationKeyMetrics;
   startAge: number;
 }
 

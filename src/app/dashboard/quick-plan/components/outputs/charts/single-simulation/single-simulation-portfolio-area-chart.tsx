@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { useState, useCallback } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import type { SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
 import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import type { AccountDataWithTransactions } from '@/lib/calc/v2/portfolio';
 import { formatNumber, formatChartString } from '@/lib/utils';
@@ -72,7 +72,7 @@ const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--cha
 interface SingleSimulationPortfolioAreaChartProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
   startAge: number;
-  keyMetrics: FixedReturnsKeyMetricsV2;
+  keyMetrics: SingleSimulationKeyMetrics;
   showReferenceLines: boolean;
   dataView: 'assetClass' | 'taxTreatment' | 'custom';
   customDataID: string;

@@ -2,7 +2,7 @@
 
 import { useMemo, useCallback } from 'react';
 
-import { useShowReferenceLines, type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import { useShowReferenceLines, type SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
@@ -17,7 +17,7 @@ interface SingleSimulationCashFlowLineChartCardProps {
   setCustomDataID: (name: string) => void;
   customDataID: string;
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
-  keyMetrics: FixedReturnsKeyMetricsV2;
+  keyMetrics: SingleSimulationKeyMetrics;
   startAge: number;
 }
 

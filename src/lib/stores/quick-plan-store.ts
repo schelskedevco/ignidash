@@ -498,7 +498,9 @@ export const useFixedReturnsSimulation = () => {
   }, [inputs]);
 };
 
-export const useFixedReturnsSimulationV2 = (): SimulationResultV2 | null => {
+export const useSimulationResultV2 = (
+  simulationMode: 'fixedReturns' | 'stochasticReturns' | 'historicalReturns'
+): SimulationResultV2 | null => {
   const inputs = useQuickPlanStore((state) => state.inputs);
 
   return useMemo(() => {
@@ -512,7 +514,7 @@ export const useFixedReturnsSimulationV2 = (): SimulationResultV2 | null => {
   }, [inputs]);
 };
 
-export interface FixedReturnsKeyMetricsV2 {
+export interface SingleSimulationKeyMetrics {
   success: boolean;
   startAge: number;
   retirementAge: number | null;
@@ -522,7 +524,7 @@ export interface FixedReturnsKeyMetricsV2 {
   progressToRetirement: number | null;
 }
 
-export const useFixedReturnsKeyMetricsV2 = (simulationResult: SimulationResultV2 | null): FixedReturnsKeyMetricsV2 | null => {
+export const useSingleSimulationKeyMetrics = (simulationResult: SimulationResultV2 | null): SingleSimulationKeyMetrics | null => {
   return useMemo(() => {
     if (!simulationResult) return null;
     const { data, context } = simulationResult;

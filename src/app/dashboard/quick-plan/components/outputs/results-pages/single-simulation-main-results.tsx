@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
-import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import type { SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
 import { SingleSimulationCategory } from '@/lib/types/single-simulation-category';
 
 import SingleSimulationCategorySelector from '../single-simulation-category-selector';
@@ -12,7 +12,7 @@ import SingleSimulationDataTableSection from '../sections/single-simulation-data
 
 interface SingleSimulationMainResultsProps {
   simulation: SimulationResult;
-  keyMetrics: FixedReturnsKeyMetricsV2;
+  keyMetrics: SingleSimulationKeyMetrics;
 }
 
 export default function SingleSimulationMainResults({ simulation, keyMetrics }: SingleSimulationMainResultsProps) {

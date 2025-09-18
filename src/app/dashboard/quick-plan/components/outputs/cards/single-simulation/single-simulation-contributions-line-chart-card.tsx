@@ -5,7 +5,7 @@ import { useMemo, useCallback } from 'react';
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationContributionsChartDataPoint } from '@/lib/types/chart-data-points';
-import { useShowReferenceLines, type FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import { useShowReferenceLines, type SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
 
 import SingleSimulationContributionsLineChart from '../../charts/single-simulation/single-simulation-contributions-line-chart';
 
@@ -17,7 +17,7 @@ interface SingleSimulationContributionsLineChartCardProps {
   setCustomDataID: (name: string) => void;
   customDataID: string;
   rawChartData: SingleSimulationContributionsChartDataPoint[];
-  keyMetrics: FixedReturnsKeyMetricsV2;
+  keyMetrics: SingleSimulationKeyMetrics;
   startAge: number;
 }
 

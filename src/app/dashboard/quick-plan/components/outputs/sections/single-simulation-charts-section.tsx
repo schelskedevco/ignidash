@@ -4,7 +4,7 @@ import { useState, memo } from 'react';
 
 import SectionContainer from '@/components/ui/section-container';
 import {
-  type FixedReturnsKeyMetricsV2,
+  type SingleSimulationKeyMetrics,
   useSingleSimulationPortfolioChartData,
   useSingleSimulationCashFlowChartData,
   useSingleSimulationReturnsChartData,
@@ -31,7 +31,7 @@ import SingleSimulationWithdrawalsBarChartCard from '../cards/single-simulation/
 interface ChartsCategoryProps {
   startAge: number;
   simulation: SimulationResult;
-  keyMetrics: FixedReturnsKeyMetricsV2;
+  keyMetrics: SingleSimulationKeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
@@ -198,7 +198,7 @@ function WithdrawalsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, s
 
 interface SingleSimulationChartsSectionProps {
   simulation: SimulationResult;
-  keyMetrics: FixedReturnsKeyMetricsV2;
+  keyMetrics: SingleSimulationKeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   currentCategory: SingleSimulationCategory;

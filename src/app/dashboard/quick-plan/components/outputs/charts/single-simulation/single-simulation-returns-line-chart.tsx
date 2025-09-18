@@ -8,7 +8,7 @@ import { formatNumber, formatChartString } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
-import type { FixedReturnsKeyMetricsV2 } from '@/lib/stores/quick-plan-store';
+import type { SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -93,7 +93,7 @@ const COLORS = ['var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--for
 
 interface SingleSimulationReturnsLineChartProps {
   rawChartData: SingleSimulationReturnsChartDataPoint[];
-  keyMetrics: FixedReturnsKeyMetricsV2;
+  keyMetrics: SingleSimulationKeyMetrics;
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;

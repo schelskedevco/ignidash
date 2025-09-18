@@ -36,7 +36,7 @@ export default function ResultsSections() {
     case 'fixedReturns':
     case 'historicalReturns':
     case 'stochasticReturns':
-      return <SingleSimulationResults />;
+      return <SingleSimulationResults simulationMode={simulationMode} />;
     case 'monteCarloStochasticReturns':
     case 'monteCarloHistoricalReturns':
       return null;
