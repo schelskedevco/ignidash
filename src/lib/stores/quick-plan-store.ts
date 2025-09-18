@@ -18,6 +18,8 @@ import {
   type SimulationResult as SimulationResultV2,
 } from '@/lib/calc/v2/simulation-engine';
 import { FixedReturnsProvider } from '@/lib/calc/fixed-returns-provider';
+import { StochasticReturnsProvider } from '@/lib/calc/stochastic-returns-provider';
+import { LcgHistoricalBacktestReturnsProvider } from '@/lib/calc/lcg-historical-backtest-returns-provider';
 import type { AggregateSimulationStats } from '@/lib/calc/simulation-analyzer';
 import { SimulationTableDataExtractor } from '@/lib/calc/simulation-table-data-extractor';
 import { TableDataExtractor } from '@/lib/calc/v2/table-data-extractor';
@@ -502,16 +504,28 @@ export const useSimulationResultV2 = (
   simulationMode: 'fixedReturns' | 'stochasticReturns' | 'historicalReturns'
 ): SimulationResultV2 | null => {
   const inputs = useQuickPlanStore((state) => state.inputs);
+  const seed = useSimulationSeed();
 
   return useMemo(() => {
     const timeline = inputs.timeline;
     if (!timeline) return null;
 
     const engine = new FinancialSimulationEngineV2(inputs);
-    const returnsProvider = new FixedReturnsProvider(inputs);
-
-    return engine.runSimulation(returnsProvider, timeline);
-  }, [inputs]);
+    switch (simulationMode) {
+      case 'fixedReturns': {
+        const returnsProvider = new FixedReturnsProvider(inputs);
+        return engine.runSimulation(returnsProvider, timeline);
+      }
+      case 'stochasticReturns': {
+        const returnsProvider = new StochasticReturnsProvider(inputs, seed);
+        return engine.runSimulation(returnsProvider, timeline);
+      }
+      case 'historicalReturns': {
+        const returnsProvider = new LcgHistoricalBacktestReturnsProvider(seed);
+        return engine.runSimulation(returnsProvider, timeline);
+      }
+    }
+  }, [inputs, seed, simulationMode]);
 };
 
 export interface SingleSimulationKeyMetrics {
