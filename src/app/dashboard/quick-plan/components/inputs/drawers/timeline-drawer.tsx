@@ -48,7 +48,11 @@ function getRetirementStrategyError(errors: FieldErrors, retirementStrategyType:
   }
 }
 
-export default function TimelineDrawer() {
+interface TimelineDrawerProps {
+  setOpen: (open: boolean) => void;
+}
+
+export default function TimelineDrawer({ setOpen }: TimelineDrawerProps) {
   const existingTimelineData = useTimelineData();
 
   const newTimelineDefaultValues = useMemo(
@@ -82,6 +86,7 @@ export default function TimelineDrawer() {
   const onSubmit = (data: TimelineInputs) => {
     const timelineId = data.id === '' ? uuidv4() : data.id;
     updateTimeline({ ...data, id: timelineId });
+    setOpen(false);
   };
 
   const retirementStrategyType = useWatch({ control, name: 'retirementStrategy.type' });

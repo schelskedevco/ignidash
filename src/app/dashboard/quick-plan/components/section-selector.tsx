@@ -114,13 +114,13 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
       </div>
 
       <Drawer open={expectedReturnsOpen} setOpen={setExpectedReturnsOpen} title={expectedReturnsTitleComponent}>
-        <ExpectedReturnsDrawer />
+        <ExpectedReturnsDrawer setOpen={setExpectedReturnsOpen} />
       </Drawer>
       <Drawer open={taxSettingsOpen} setOpen={setTaxSettingsOpen} title={taxSettingsTitleComponent}>
         <TaxSettingsDrawer />
       </Drawer>
       <Drawer open={timelineOpen} setOpen={setTimelineOpen} title={timelineTitleComponent}>
-        <TimelineDrawer />
+        <TimelineDrawer setOpen={setTimelineOpen} />
       </Drawer>
       <Drawer open={simulationSettingsOpen} setOpen={setSimulationSettingsOpen} title={simulationSettingsTitleComponent}>
         <SimulationSettingsDrawer />

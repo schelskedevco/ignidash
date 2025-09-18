@@ -56,13 +56,13 @@ export default function NumbersColumnHeader() {
       />
 
       <Drawer open={expectedReturnsOpen} setOpen={setExpectedReturnsOpen} title={expectedReturnsTitleComponent}>
-        <ExpectedReturnsDrawer />
+        <ExpectedReturnsDrawer setOpen={setExpectedReturnsOpen} />
       </Drawer>
       <Drawer open={taxSettingsOpen} setOpen={setTaxSettingsOpen} title={taxSettingsTitleComponent}>
         <TaxSettingsDrawer />
       </Drawer>
       <Drawer open={timelineOpen} setOpen={setTimelineOpen} title={timelineTitleComponent}>
-        <TimelineDrawer />
+        <TimelineDrawer setOpen={setTimelineOpen} />
       </Drawer>
     </>
   );

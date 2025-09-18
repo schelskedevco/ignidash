@@ -20,7 +20,11 @@ import { Divider } from '@/components/catalyst/divider';
 import { Button } from '@/components/catalyst/button';
 import { DialogActions } from '@/components/catalyst/dialog';
 
-export default function ExpectedReturnsDrawer() {
+interface ExpectedReturnsDrawerProps {
+  setOpen: (open: boolean) => void;
+}
+
+export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawerProps) {
   const marketAssumptions = useMarketAssumptionsData();
 
   const {
@@ -36,6 +40,7 @@ export default function ExpectedReturnsDrawer() {
   const updateMarketAssumptions = useUpdateMarketAssumptions();
   const onSubmit = (data: MarketAssumptionsInputs) => {
     updateMarketAssumptions({ ...data });
+    setOpen(false);
   };
 
   const stocksRealReturn = useStocksRealReturn();
