@@ -52,7 +52,7 @@ export default function DisclosureSectionDataItem({
       </div>
       <div className="bg-emphasized-background border-border flex flex-1 items-center justify-between truncate border-t border-r border-b">
         <div className="flex-1 truncate px-4 py-2 text-sm">
-          <span className="font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-gray-200">{name}</span>
+          <span className="font-medium text-stone-900 hover:text-stone-600 dark:text-white dark:hover:text-stone-200">{name}</span>
           <p className="text-muted-foreground">{desc}</p>
         </div>
         <div className="shrink-0 pr-2">
