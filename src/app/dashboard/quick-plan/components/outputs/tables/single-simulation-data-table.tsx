@@ -16,5 +16,5 @@ interface SingleSimulationDataTableProps {
 export default function SingleSimulationDataTable({ simulation, currentCategory }: SingleSimulationDataTableProps) {
   const tableData = useSingleSimulationTableData(simulation, currentCategory);
 
-  return <Table<SingleSimulationTableRow> columns={generateSimulationTableColumns()} data={tableData} keyField="year" className="my-4" />;
+  return <Table<SingleSimulationTableRow> columns={generateSimulationTableColumns()} data={tableData} keyField="year" />;
 }

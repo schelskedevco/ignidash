@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/16/solid';
 
-import { type TableColumn } from '@/lib/types/table';
+import type { TableColumn } from '@/lib/types/table';
 import Pagination from '@/components/ui/pagination';
 import Card from '@/components/ui/card';
 import { cn } from '@/lib/utils';
