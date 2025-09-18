@@ -89,6 +89,7 @@ export class Expense {
   private timeFrameStart: TimePoint;
   private timeFrameEnd: TimePoint | undefined;
   private frequency: 'yearly' | 'oneTime' | 'quarterly' | 'monthly' | 'biweekly' | 'weekly';
+  private lastYear: number = 0;
 
   constructor(data: ExpenseInputs) {
     this.hasOneTimeExpenseOccurred = false;
@@ -110,18 +111,24 @@ export class Expense {
 
     let annualAmount = rawAmount * timesToApplyPerYear;
 
-    const nominalGrowthRate = this.growthRate;
-    if (nominalGrowthRate) {
-      const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate) - 1;
+    if (this.lastYear !== Math.floor(year)) {
+      const nominalGrowthRate = this.growthRate;
+      if (nominalGrowthRate) {
+        const realGrowthRate = (1 + nominalGrowthRate / 100) / (1 + inflationRate) - 1;
 
-      annualAmount *= Math.pow(1 + realGrowthRate, Math.floor(year));
+        annualAmount *= 1 + realGrowthRate;
 
-      const growthLimit = this.growthLimit;
-      if (growthLimit !== undefined && nominalGrowthRate > 0) {
-        annualAmount = Math.min(annualAmount, growthLimit);
-      } else if (growthLimit !== undefined && nominalGrowthRate < 0) {
-        annualAmount = Math.max(annualAmount, growthLimit);
+        const growthLimit = this.growthLimit;
+        if (growthLimit !== undefined && nominalGrowthRate > 0) {
+          annualAmount = Math.min(annualAmount, growthLimit);
+        } else if (growthLimit !== undefined && nominalGrowthRate < 0) {
+          annualAmount = Math.max(annualAmount, growthLimit);
+        }
+
+        this.amount = Math.max(annualAmount / timesToApplyPerYear, 0);
       }
+
+      this.lastYear = Math.floor(year);
     }
 
     if (timesToApplyPerYear === 0) return { id: this.id, name: this.name, amount: 0 };
