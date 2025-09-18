@@ -80,7 +80,7 @@ function SingleSimulationDataTableSection({ simulation, currentCategory }: Singl
   return (
     <SectionContainer showBottomBorder>
       <SectionHeader title={headerText} desc={headerDesc} className="mb-4" />
-      <TableTypeSelector currentType={currentTableType} setCurrentType={setCurrentTableType} />
+      {!isSingleSimulation && <TableTypeSelector currentType={currentTableType} setCurrentType={setCurrentTableType} />}
       <SingleSimulationDataTable simulation={simulation} currentCategory={currentCategory} />
     </SectionContainer>
   );
