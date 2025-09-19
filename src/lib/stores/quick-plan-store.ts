@@ -389,10 +389,7 @@ export const useMultiSimulationResult = (simulationMode: 'monteCarloStochasticRe
 
   return useSWR(
     [inputs, simulationSeed, simulationMode],
-    async () => {
-      const worker = getSimulationWorker();
-      return await worker.analyzeMonteCarloSimulation(inputs, simulationSeed, 1000, simulationMode);
-    },
+    async () => await getSimulationWorker().analyzeMonteCarloSimulation(inputs, simulationSeed, 1000, simulationMode),
     { revalidateOnFocus: false }
   );
 };
