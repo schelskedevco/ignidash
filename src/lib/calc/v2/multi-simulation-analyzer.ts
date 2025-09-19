@@ -19,7 +19,7 @@ export interface Percentiles {
 export interface MultiSimulationAnalysis {
   p10Result: SimulationResult;
   p25Result: SimulationResult;
-  medianResult: SimulationResult;
+  p50Result: SimulationResult;
   p75Result: SimulationResult;
   p90Result: SimulationResult;
 }
@@ -28,7 +28,7 @@ export class MultiSimulationAnalyzer {
   analyze(multiSimulationResult: MultiSimulationResult): MultiSimulationAnalysis {
     const p10DataPoints: Array<SimulationDataPoint> = [];
     const p25DataPoints: Array<SimulationDataPoint> = [];
-    const medianDataPoints: Array<SimulationDataPoint> = [];
+    const p50DataPoints: Array<SimulationDataPoint> = [];
     const p75DataPoints: Array<SimulationDataPoint> = [];
     const p90DataPoints: Array<SimulationDataPoint> = [];
 
@@ -50,7 +50,7 @@ export class MultiSimulationAnalyzer {
 
       p10DataPoints.push(percentiles.p10.dp);
       p25DataPoints.push(percentiles.p25.dp);
-      medianDataPoints.push(percentiles.p50.dp);
+      p50DataPoints.push(percentiles.p50.dp);
       p75DataPoints.push(percentiles.p75.dp);
       p90DataPoints.push(percentiles.p90.dp);
     }
@@ -60,7 +60,7 @@ export class MultiSimulationAnalyzer {
     return {
       p10Result: { data: p10DataPoints, context },
       p25Result: { data: p25DataPoints, context },
-      medianResult: { data: medianDataPoints, context },
+      p50Result: { data: p50DataPoints, context },
       p75Result: { data: p75DataPoints, context },
       p90Result: { data: p90DataPoints, context },
     };
