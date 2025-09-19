@@ -383,29 +383,15 @@ export const useSingleSimulationKeyMetrics = (simulationResult: SimulationResult
   }, [simulationResult]);
 };
 
-export const useMonteCarloAnalysisWithWorker = () => {
+export const useMultiSimulationResult = (simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns') => {
   const inputs = useQuickPlanStore((state) => state.inputs);
   const simulationSeed = useSimulationSeed();
 
   return useSWR(
-    ['monteCarloSimAndAnalyze', inputs, simulationSeed],
+    [inputs, simulationSeed, simulationMode],
     async () => {
       const worker = getSimulationWorker();
-      return await worker.analyzeMonteCarloSimulation(inputs, simulationSeed, 1000);
-    },
-    { revalidateOnFocus: false }
-  );
-};
-
-export const useHistoricalBacktestAnalysisWithWorker = () => {
-  const inputs = useQuickPlanStore((state) => state.inputs);
-  const simulationSeed = useSimulationSeed();
-
-  return useSWR(
-    ['historicalBacktestSimAndAnalyze', inputs, simulationSeed],
-    async () => {
-      const worker = getSimulationWorker();
-      return await worker.analyzeHistoricalBacktestSimulation(inputs, simulationSeed, 1000);
+      return await worker.analyzeMonteCarloSimulation(inputs, simulationSeed, 1000, simulationMode);
     },
     { revalidateOnFocus: false }
   );

@@ -1,11 +1,10 @@
-import type { UpdateResult } from '@/lib/stores/quick-plan-store';
 import { Button } from '@/components/catalyst/button';
 import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
 
 interface DisclosureSectionDeleteDataAlertProps {
   dataToDelete: { id: string; name: string } | null;
   setDataToDelete: (data: { id: string; name: string } | null) => void;
-  deleteData: (id: string) => UpdateResult;
+  deleteData: (id: string) => void;
 }
 
 export default function DisclosureSectionDeleteDataAlert({

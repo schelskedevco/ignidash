@@ -126,7 +126,11 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
         <div className="flex h-full flex-col">
           <Field>
             <Label className="sr-only">Base Rule</Label>
-            <Select name="status" value={baseContributionRule.type} onChange={(e) => updateBaseContributionRule('type', e.target.value)}>
+            <Select
+              name="status"
+              value={baseContributionRule.type}
+              onChange={(e) => updateBaseContributionRule({ type: e.target.value as 'spend' | 'save' })}
+            >
               <option value="spend">Spend anything left</option>
               <option value="save">Save anything left</option>
             </Select>
