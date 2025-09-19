@@ -13,7 +13,10 @@ describe('LcgHistoricalBacktestReturnsProvider', () => {
 
       for (let seed = 1; seed < 1000; seed++) {
         const testProvider = new LcgHistoricalBacktestReturnsProvider(seed);
-        if (testProvider.getReturns().metadata.extras!.selectedStartYear === 1929) {
+        const historicalRanges = testProvider.getHistoricalRanges();
+        const startYear = historicalRanges[0].startYear;
+
+        if (startYear === 1929) {
           provider = testProvider;
           break;
         }
@@ -39,42 +42,10 @@ describe('LcgHistoricalBacktestReturnsProvider', () => {
       const result1 = provider1.getReturns();
       const result2 = provider2.getReturns();
 
-      expect(result1.metadata.extras!.selectedStartYear).toBe(result2.metadata.extras!.selectedStartYear);
+      const historicalRanges1 = provider1.getHistoricalRanges();
+      const historicalRanges2 = provider2.getHistoricalRanges();
+      expect(historicalRanges1[0].startYear).toBe(historicalRanges2[0].startYear);
       expect(result1.returns.stocks).toBe(result2.returns.stocks);
-    });
-
-    it('should loop to a random year when exceeding data range and continue sequentially', () => {
-      // Find a provider that starts near the end
-      let provider: LcgHistoricalBacktestReturnsProvider | null = null;
-
-      for (let seed = 1; seed < 1000; seed++) {
-        const testProvider = new LcgHistoricalBacktestReturnsProvider(seed);
-        const startYear = testProvider.getReturns().metadata.extras!.selectedStartYear as number;
-
-        if (startYear >= 2020) {
-          provider = testProvider;
-          break;
-        }
-      }
-
-      expect(provider).not.toBeNull();
-      // Get year right at the end
-      const lastYearBeforeLoop = provider!.getReturns();
-      expect(lastYearBeforeLoop.metadata.extras!.historicalYear).toBe(dataRange.endYear);
-
-      // Next year should loop to a random year
-      const firstYearAfterLoop = provider!.getReturns();
-      const loopedYear = firstYearAfterLoop.metadata.extras!.historicalYear as number;
-
-      // Should be a valid year
-      expect(loopedYear).toBeGreaterThanOrEqual(dataRange.startYear);
-      expect(loopedYear).toBeLessThanOrEqual(dataRange.endYear);
-
-      // Next year should continue sequentially from the looped year
-      const secondYearAfterLoop = provider!.getReturns();
-      expect(secondYearAfterLoop.metadata.extras!.historicalYear).toBe(
-        loopedYear < dataRange.endYear ? loopedYear + 1 : dataRange.startYear
-      );
     });
   });
 
@@ -87,13 +58,13 @@ describe('LcgHistoricalBacktestReturnsProvider', () => {
       const provider2 = new LcgHistoricalBacktestReturnsProvider(baseSeed + 2 * 1009);
       const provider3 = new LcgHistoricalBacktestReturnsProvider(baseSeed + 3 * 1009);
 
-      const result1 = provider1.getReturns();
-      const result2 = provider2.getReturns();
-      const result3 = provider3.getReturns();
+      const historicalRanges1 = provider1.getHistoricalRanges();
+      const historicalRanges2 = provider2.getHistoricalRanges();
+      const historicalRanges3 = provider3.getHistoricalRanges();
 
-      const startYear1 = result1.metadata.extras!.selectedStartYear as number;
-      const startYear2 = result2.metadata.extras!.selectedStartYear as number;
-      const startYear3 = result3.metadata.extras!.selectedStartYear as number;
+      const startYear1 = historicalRanges1[0].startYear;
+      const startYear2 = historicalRanges2[0].startYear;
+      const startYear3 = historicalRanges3[0].startYear;
 
       // Different seeds should generally produce different start years
       expect(startYear1).not.toBe(startYear2);
@@ -117,20 +88,26 @@ describe('LcgHistoricalBacktestReturnsProvider', () => {
 
       for (let seed = 1; seed < 1000; seed++) {
         const testProvider = new LcgHistoricalBacktestReturnsProvider(seed);
-        if (testProvider.getReturns().metadata.extras!.selectedStartYear === 1928) {
+        const historicalRanges = testProvider.getHistoricalRanges();
+        const startYear = historicalRanges[0].startYear;
+
+        if (startYear === 1928) {
           provider = testProvider;
           break;
         }
       }
 
       expect(provider).not.toBeNull();
-      const result = provider!.getReturns();
-      expect(result.metadata.extras!.historicalYear).toBe(1928);
-      expect(result.metadata.extras!.selectedStartYear).toBe(1928);
+      provider!.getReturns();
+      const historicalRanges1 = provider!.getHistoricalRanges();
+      expect(historicalRanges1[0].startYear).toBe(1928);
+      expect(historicalRanges1[0].endYear).toBe(1928);
 
       // Year 2 should progress to 1929
-      const year2 = provider!.getReturns();
-      expect(year2.metadata.extras!.historicalYear).toBe(1929);
+      provider!.getReturns();
+      const historicalRanges2 = provider!.getHistoricalRanges();
+      expect(historicalRanges2[0].startYear).toBe(1928);
+      expect(historicalRanges2[0].endYear).toBe(1929);
     });
 
     it('should correctly handle starting at 2024 and looping', () => {
@@ -139,23 +116,25 @@ describe('LcgHistoricalBacktestReturnsProvider', () => {
 
       for (let seed = 1; seed < 1000; seed++) {
         const testProvider = new LcgHistoricalBacktestReturnsProvider(seed);
-        if (testProvider.getReturns().metadata.extras!.selectedStartYear === 2024) {
+        const historicalRanges = testProvider.getHistoricalRanges();
+        const startYear = historicalRanges[0].startYear;
+
+        if (startYear === 2024) {
           provider = testProvider;
           break;
         }
       }
 
       expect(provider).not.toBeNull();
-      const result = provider!.getReturns();
-      expect(result.metadata.extras!.historicalYear).toBe(2024);
-      expect(result.metadata.extras!.selectedStartYear).toBe(2024);
+      provider!.getReturns();
+      const historicalRanges1 = provider!.getHistoricalRanges();
+      expect(historicalRanges1[0].startYear).toBe(2024);
+      expect(historicalRanges1[0].endYear).toBe(2024);
 
       // Year 2 should trigger a loop
-      const year2 = provider!.getReturns();
-      expect(year2.metadata.extras!.historicalYear).not.toBe(2025); // Should have looped
-      expect(year2.metadata.extras!.historicalYear).not.toBe(2024); // Should not stay at 2024
-      expect(year2.metadata.extras!.historicalYear).toBeGreaterThanOrEqual(dataRange.startYear);
-      expect(year2.metadata.extras!.historicalYear).toBeLessThanOrEqual(dataRange.endYear);
+      provider!.getReturns();
+      const historicalRanges2 = provider!.getHistoricalRanges();
+      expect(historicalRanges2[1].startYear).toBe(1928); // Should have looped
     });
   });
 });
