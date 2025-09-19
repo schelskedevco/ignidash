@@ -3,6 +3,7 @@
 import { useIsCalculationReady, useSimulationMode } from '@/lib/stores/quick-plan-store';
 
 import SingleSimulationResults from './results-pages/single-simulation-results';
+import MultiSimulationResults from './results-pages/multi-simulation-results';
 
 export default function ResultsSections() {
   const isCalculationReady = useIsCalculationReady();
@@ -23,6 +24,6 @@ export default function ResultsSections() {
       return <SingleSimulationResults simulationMode={simulationMode} />;
     case 'monteCarloStochasticReturns':
     case 'monteCarloHistoricalReturns':
-      return null;
+      return <MultiSimulationResults simulationMode={simulationMode} />;
   }
 }

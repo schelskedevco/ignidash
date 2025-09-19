@@ -6,6 +6,7 @@ import useSWR from 'swr';
 
 import type { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 import { FinancialSimulationEngine, type SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { MultiSimulationAnalysis } from '@/lib/calc/v2/multi-simulation-analyzer';
 import { FixedReturnsProvider } from '@/lib/calc/returns-providers/fixed-returns-provider';
 import { StochasticReturnsProvider } from '@/lib/calc/returns-providers/stochastic-returns-provider';
 import { LcgHistoricalBacktestReturnsProvider } from '@/lib/calc/returns-providers/lcg-historical-backtest-returns-provider';
@@ -442,6 +443,13 @@ export const useSingleSimulationKeyMetrics = (simulationResult: SimulationResult
       progressToRetirement,
     };
   }, [simulationResult]);
+};
+
+export const useMultiSimulationKeyMetrics = (multiSimulationAnalysis: MultiSimulationAnalysis | null) => {
+  return useMemo(() => {
+    if (!multiSimulationAnalysis) return null;
+    throw new Error('Not implemented yet');
+  }, [multiSimulationAnalysis]);
 };
 
 /**
