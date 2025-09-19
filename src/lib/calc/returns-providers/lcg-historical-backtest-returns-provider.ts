@@ -4,16 +4,16 @@ import { AssetReturnRates } from '../asset';
 import { SeededRandom } from './seeded-random';
 
 export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
-  private dataRange: { startYear: number; endYear: number };
-  private historicalData: NyuHistoricalYearData[];
-  private rng: SeededRandom;
-  private selectedStartYear: number;
+  private readonly historicalDataRange: { startYear: number; endYear: number };
+  private readonly historicalData: NyuHistoricalYearData[];
+  private readonly rng: SeededRandom;
+  private readonly selectedStartYear: number;
   private currentSequenceStartYear: number;
   private currentSequenceStartSimYear: number;
   private historicalRanges: Array<{ startYear: number; endYear: number }> = [];
 
   constructor(seed: number) {
-    this.dataRange = getNyuDataRange();
+    this.historicalDataRange = getNyuDataRange();
     this.historicalData = nyuHistoricalData;
     this.rng = new SeededRandom(seed);
     this.selectedStartYear = this.generateRandomStartYear();
@@ -23,9 +23,9 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   }
 
   private generateRandomStartYear(): number {
-    const yearRange = this.dataRange.endYear - this.dataRange.startYear + 1;
+    const yearRange = this.historicalDataRange.endYear - this.historicalDataRange.startYear + 1;
     const randomOffset = Math.floor(this.rng.next() * yearRange);
-    return this.dataRange.startYear + randomOffset;
+    return this.historicalDataRange.startYear + randomOffset;
   }
 
   getReturns(simulationYear: number): ReturnsWithMetadata {
@@ -33,13 +33,13 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
     const targetHistoricalYear = this.currentSequenceStartYear + yearsIntoSequence;
 
     let adjustedYear: number;
-    if (targetHistoricalYear <= this.dataRange.endYear) {
+    if (targetHistoricalYear <= this.historicalDataRange.endYear) {
       adjustedYear = targetHistoricalYear;
 
       const currentRange = this.historicalRanges[this.historicalRanges.length - 1];
       currentRange.endYear = adjustedYear;
     } else {
-      this.currentSequenceStartYear = this.dataRange.startYear;
+      this.currentSequenceStartYear = this.historicalDataRange.startYear;
       this.currentSequenceStartSimYear = simulationYear;
 
       adjustedYear = this.currentSequenceStartYear;
@@ -52,10 +52,6 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
 
     const returns: AssetReturnRates = { stocks: yearData.stockReturn, bonds: yearData.bondReturn, cash: yearData.cashReturn };
     return { returns, metadata: { inflationRate: yearData.inflationRate * 100 } };
-  }
-
-  getSelectedStartYear(): number {
-    return this.selectedStartYear;
   }
 
   getHistoricalRanges(): Array<{ startYear: number; endYear: number }> {
