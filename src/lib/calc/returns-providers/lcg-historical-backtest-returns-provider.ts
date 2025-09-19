@@ -36,6 +36,8 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
     const yearData = this.historicalData.find((data) => data.year === this.currentHistoricalYear);
     if (!yearData) throw new Error(`Historical data not found for year ${this.currentHistoricalYear}`);
 
+    this.currentHistoricalYear += 1;
+
     const returns: AssetReturnRates = { stocks: yearData.stockReturn, bonds: yearData.bondReturn, cash: yearData.cashReturn };
     return { returns, metadata: { inflationRate: yearData.inflationRate * 100 } };
   }
