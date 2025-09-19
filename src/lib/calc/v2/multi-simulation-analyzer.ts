@@ -17,6 +17,7 @@ export interface Percentiles {
 }
 
 export interface MultiSimulationAnalysis {
+  success: number;
   p10Result: SimulationResult;
   p25Result: SimulationResult;
   p50Result: SimulationResult;
@@ -57,7 +58,14 @@ export class MultiSimulationAnalyzer {
 
     const context = { ...simulations[0][1].context };
 
+    let successCount = 0;
+    for (const [, simResult] of simulations) {
+      const finalDp = simResult.data[simResult.data.length - 1];
+      if (finalDp.portfolio.totalValue > 0.1 && finalDp.phase?.name === 'retirement') successCount++;
+    }
+
     return {
+      success: successCount / simulations.length,
       p10Result: { data: p10DataPoints, context },
       p25Result: { data: p25DataPoints, context },
       p50Result: { data: p50DataPoints, context },
