@@ -1,5 +1,5 @@
 export interface SingleSimulationKeyMetrics {
-  success: boolean;
+  success: number;
   startAge: number;
   retirementAge: number | null;
   yearsToRetirement: number | null;

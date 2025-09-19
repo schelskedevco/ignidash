@@ -431,7 +431,7 @@ export const useSingleSimulationKeyMetrics = (simulationResult: SimulationResult
         break;
     }
 
-    const success = retirementAge !== null && finalPortfolio > 0.1;
+    const success = Number(retirementAge !== null && finalPortfolio > 0.1);
 
     return {
       success,
@@ -448,7 +448,10 @@ export const useSingleSimulationKeyMetrics = (simulationResult: SimulationResult
 export const useMultiSimulationKeyMetrics = (
   multiSimulationAnalysis: MultiSimulationAnalysis | null
 ): SingleSimulationKeyMetrics | null => {
-  return useSingleSimulationKeyMetrics(multiSimulationAnalysis?.p50Result ?? null);
+  const metrics = useSingleSimulationKeyMetrics(multiSimulationAnalysis?.p50Result ?? null);
+  if (!metrics) return null;
+
+  return { ...metrics, success: multiSimulationAnalysis!.success };
 };
 
 /**

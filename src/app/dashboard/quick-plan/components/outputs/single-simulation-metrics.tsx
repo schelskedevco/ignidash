@@ -12,6 +12,11 @@ interface SingleSimulationMetricsProps {
 export default function SingleSimulationMetrics({ keyMetrics }: SingleSimulationMetricsProps) {
   const { success, retirementAge, yearsToRetirement, portfolioAtRetirement, finalPortfolio, progressToRetirement } = keyMetrics;
 
+  let successForDisplay;
+  if (success >= 0.99) successForDisplay = 'Yes!';
+  else if (success <= 0.01) successForDisplay = 'No';
+  else successForDisplay = `${formatNumber(success * 100, 1)}%`;
+
   const progressToRetirementForDisplay = progressToRetirement !== null ? `${formatNumber(progressToRetirement * 100, 1)}%` : 'N/A';
   const retirementAgeForDisplay = retirementAge !== null ? `${formatNumber(retirementAge, 0)}` : '∞';
   const yearsToRetirementForDisplay = yearsToRetirement !== null ? `${formatNumber(yearsToRetirement, 0)}` : '∞';
@@ -20,7 +25,7 @@ export default function SingleSimulationMetrics({ keyMetrics }: SingleSimulation
 
   return (
     <dl className="my-4 grid grid-cols-2 gap-2 2xl:grid-cols-3">
-      <MetricsCard name="Success" stat={success ? 'Yes!' : 'No'} />
+      <MetricsCard name="Success" stat={successForDisplay} />
       <MetricsCard name="Progress to Retirement" stat={progressToRetirementForDisplay} />
       <MetricsCard
         name="Retirement Age"
