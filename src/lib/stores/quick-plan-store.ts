@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { useShallow } from 'zustand/react/shallow';
 import useSWR from 'swr';
 
 import type { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
@@ -384,24 +383,8 @@ export const useSingleSimulationKeyMetrics = (simulationResult: SimulationResult
   }, [simulationResult]);
 };
 
-export const useMonteCarloSimulationWithWorker = () => {
-  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
-  const simulationSeed = useSimulationSeed();
-
-  return useSWR(
-    ['monteCarloSim', inputs, simulationSeed],
-    async () => {
-      const worker = getSimulationWorker();
-      const _dto = await worker.runMonteCarloSimulation(inputs, simulationSeed, 1000);
-
-      throw new Error('Not implemented');
-    },
-    { revalidateOnFocus: false }
-  );
-};
-
 export const useMonteCarloAnalysisWithWorker = () => {
-  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
+  const inputs = useQuickPlanStore((state) => state.inputs);
   const simulationSeed = useSimulationSeed();
 
   return useSWR(
@@ -414,24 +397,8 @@ export const useMonteCarloAnalysisWithWorker = () => {
   );
 };
 
-export const useHistoricalBacktestSimulationWithWorker = () => {
-  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
-  const simulationSeed = useSimulationSeed();
-
-  return useSWR(
-    ['historicalBacktestSim', inputs, simulationSeed],
-    async () => {
-      const worker = getSimulationWorker();
-      const _dto = await worker.runHistoricalBacktestSimulation(inputs, simulationSeed, 1000);
-
-      throw new Error('Not implemented');
-    },
-    { revalidateOnFocus: false }
-  );
-};
-
 export const useHistoricalBacktestAnalysisWithWorker = () => {
-  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
+  const inputs = useQuickPlanStore((state) => state.inputs);
   const simulationSeed = useSimulationSeed();
 
   return useSWR(
@@ -697,38 +664,6 @@ export const useSingleSimulationTableData = (
     const extractor = new TableDataExtractor();
     return extractor.extractSingleSimulationData(simulation, category);
   }, [simulation, category]);
-};
-
-/**
- * Stochastic Table Hooks
- * These hooks provide access to stochastic simulation table data
- */
-export const useMonteCarloTableDataWithWorker = () => {
-  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
-  const simulationSeed = useSimulationSeed();
-
-  return useSWR(
-    ['monteCarloTableData', inputs, simulationSeed],
-    async () => {
-      const worker = getSimulationWorker();
-      return await worker.generateMonteCarloTableData(inputs, simulationSeed, 1000);
-    },
-    { revalidateOnFocus: false }
-  );
-};
-
-export const useHistoricalBacktestTableDataWithWorker = () => {
-  const inputs = useQuickPlanStore(useShallow((state) => state.inputs));
-  const simulationSeed = useSimulationSeed();
-
-  return useSWR(
-    ['historicalBacktestTableData', inputs, simulationSeed],
-    async () => {
-      const worker = getSimulationWorker();
-      return await worker.generateHistoricalBacktestTableData(inputs, simulationSeed, 1000);
-    },
-    { revalidateOnFocus: false }
-  );
 };
 
 /**
