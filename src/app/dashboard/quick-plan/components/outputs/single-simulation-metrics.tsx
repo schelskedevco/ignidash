@@ -9,19 +9,37 @@ interface SingleSimulationMetricsProps {
   keyMetrics: SingleSimulationKeyMetrics;
 }
 
-export default function SingleSimulationMetrics({ keyMetrics }: SingleSimulationMetricsProps) {
+const formatMetrics = (keyMetrics: SingleSimulationKeyMetrics) => {
   const { success, retirementAge, yearsToRetirement, portfolioAtRetirement, finalPortfolio, progressToRetirement } = keyMetrics;
 
-  let successForDisplay;
-  if (success >= 0.99) successForDisplay = 'Yes!';
-  else if (success <= 0.01) successForDisplay = 'No';
-  else successForDisplay = `${formatNumber(success * 100, 1)}%`;
+  const formatters = {
+    success: (v: number) => (v >= 0.99 ? 'Yes!' : v <= 0.01 ? 'No' : `${formatNumber(v * 100, 1)}%`),
+    progressToRetirement: (v: number | null) => (v !== null ? `${formatNumber(v * 100, 1)}%` : 'N/A'),
+    retirementAge: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
+    yearsToRetirement: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
+    portfolioAtRetirement: (v: number | null) => (v !== null ? `${formatNumber(v, 2, '$')}` : 'N/A'),
+    finalPortfolio: (v: number) => `${formatNumber(v, 2, '$')}`,
+  };
 
-  const progressToRetirementForDisplay = progressToRetirement !== null ? `${formatNumber(progressToRetirement * 100, 1)}%` : 'N/A';
-  const retirementAgeForDisplay = retirementAge !== null ? `${formatNumber(retirementAge, 0)}` : '∞';
-  const yearsToRetirementForDisplay = yearsToRetirement !== null ? `${formatNumber(yearsToRetirement, 0)}` : '∞';
-  const portfolioAtRetirementForDisplay = portfolioAtRetirement !== null ? `${formatNumber(portfolioAtRetirement, 2, '$')}` : 'N/A';
-  const finalPortfolioForDisplay = `${formatNumber(finalPortfolio, 2, '$')}`;
+  return {
+    successForDisplay: formatters.success(success),
+    progressToRetirementForDisplay: formatters.progressToRetirement(progressToRetirement),
+    retirementAgeForDisplay: formatters.retirementAge(retirementAge),
+    yearsToRetirementForDisplay: formatters.yearsToRetirement(yearsToRetirement),
+    portfolioAtRetirementForDisplay: formatters.portfolioAtRetirement(portfolioAtRetirement),
+    finalPortfolioForDisplay: formatters.finalPortfolio(finalPortfolio),
+  };
+};
+
+export default function SingleSimulationMetrics({ keyMetrics }: SingleSimulationMetricsProps) {
+  const {
+    successForDisplay,
+    progressToRetirementForDisplay,
+    retirementAgeForDisplay,
+    yearsToRetirementForDisplay,
+    portfolioAtRetirementForDisplay,
+    finalPortfolioForDisplay,
+  } = formatMetrics(keyMetrics);
 
   return (
     <dl className="my-4 grid grid-cols-2 gap-2 2xl:grid-cols-3">
