@@ -7,48 +7,34 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   private readonly historicalDataRange: { startYear: number; endYear: number };
   private readonly historicalData: NyuHistoricalYearData[];
   private readonly rng: SeededRandom;
-  private readonly selectedStartYear: number;
-  private currentSequenceStartYear: number;
-  private currentSequenceStartSimYear: number;
+  private currentHistoricalYear: number;
   private historicalRanges: Array<{ startYear: number; endYear: number }> = [];
 
   constructor(seed: number) {
     this.historicalDataRange = getNyuDataRange();
     this.historicalData = nyuHistoricalData;
     this.rng = new SeededRandom(seed);
-    this.selectedStartYear = this.generateRandomStartYear();
-    this.currentSequenceStartYear = this.selectedStartYear;
-    this.currentSequenceStartSimYear = 1;
-    this.historicalRanges = [{ startYear: this.selectedStartYear, endYear: this.selectedStartYear }];
+    this.currentHistoricalYear = this.generateRandomStartYear();
+    this.historicalRanges = [{ startYear: this.currentHistoricalYear, endYear: this.currentHistoricalYear }];
   }
 
   private generateRandomStartYear(): number {
-    const yearRange = this.historicalDataRange.endYear - this.historicalDataRange.startYear + 1;
-    const randomOffset = Math.floor(this.rng.next() * yearRange);
+    const numberOfHistoricalYears = this.historicalDataRange.endYear - this.historicalDataRange.startYear + 1;
+    const randomOffset = Math.floor(this.rng.next() * numberOfHistoricalYears);
+
     return this.historicalDataRange.startYear + randomOffset;
   }
 
   getReturns(simulationYear: number): ReturnsWithMetadata {
-    const yearsIntoSequence = simulationYear - this.currentSequenceStartSimYear;
-    const targetHistoricalYear = this.currentSequenceStartYear + yearsIntoSequence;
-
-    let adjustedYear: number;
-    if (targetHistoricalYear <= this.historicalDataRange.endYear) {
-      adjustedYear = targetHistoricalYear;
-
-      const currentRange = this.historicalRanges[this.historicalRanges.length - 1];
-      currentRange.endYear = adjustedYear;
+    if (this.currentHistoricalYear <= this.historicalDataRange.endYear) {
+      this.historicalRanges[this.historicalRanges.length - 1].endYear = this.currentHistoricalYear;
     } else {
-      this.currentSequenceStartYear = this.historicalDataRange.startYear;
-      this.currentSequenceStartSimYear = simulationYear;
-
-      adjustedYear = this.currentSequenceStartYear;
-
-      this.historicalRanges.push({ startYear: adjustedYear, endYear: adjustedYear });
+      this.currentHistoricalYear = this.historicalDataRange.startYear;
+      this.historicalRanges.push({ startYear: this.currentHistoricalYear, endYear: this.currentHistoricalYear });
     }
 
-    const yearData = this.historicalData.find((data) => data.year === adjustedYear);
-    if (!yearData) throw new Error(`Historical data not found for year ${adjustedYear}`);
+    const yearData = this.historicalData.find((data) => data.year === this.currentHistoricalYear);
+    if (!yearData) throw new Error(`Historical data not found for year ${this.currentHistoricalYear}`);
 
     const returns: AssetReturnRates = { stocks: yearData.stockReturn, bonds: yearData.bondReturn, cash: yearData.cashReturn };
     return { returns, metadata: { inflationRate: yearData.inflationRate * 100 } };

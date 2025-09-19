@@ -275,11 +275,16 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
 
     const simulations: Array<[number, SimulationResult & HistoricalRangeInfo]> = [];
     for (let i = 0; i < numSimulations; i++) {
+      console.log('Running LCG Historical Backtest Simulation', i + 1, 'of', numSimulations);
       const simulationSeed = this.baseSeed + i * 1009;
       const returnsProvider = new LcgHistoricalBacktestReturnsProvider(simulationSeed);
 
+      console.log('Simulation starting');
+      console.log('Historical ranges before sim:', returnsProvider.getHistoricalRanges());
       const result = this.runSimulation(returnsProvider, timeline);
+      console.log('Simulation completed');
       const historicalRanges = returnsProvider.getHistoricalRanges();
+      console.log('Historical ranges:', historicalRanges);
       simulations.push([simulationSeed, { ...result, historicalRanges }]);
     }
 
