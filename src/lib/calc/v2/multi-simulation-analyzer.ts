@@ -1,4 +1,4 @@
-import type { MultiSimulationResult, SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { SimulationDataPoint, MultiSimulationResult, SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
 export interface Stats {
   mean: number;
@@ -9,11 +9,11 @@ export interface Stats {
 }
 
 export interface Percentiles {
-  p10: number;
-  p25: number;
-  p50: number;
-  p75: number;
-  p90: number;
+  p10: { seed: number; dp: SimulationDataPoint };
+  p25: { seed: number; dp: SimulationDataPoint };
+  p50: { seed: number; dp: SimulationDataPoint };
+  p75: { seed: number; dp: SimulationDataPoint };
+  p90: { seed: number; dp: SimulationDataPoint };
 }
 
 export interface MultiSimulationAnalysis {
@@ -26,7 +26,44 @@ export interface MultiSimulationAnalysis {
 
 export class MultiSimulationAnalyzer {
   analyze(multiSimulationResult: MultiSimulationResult): MultiSimulationAnalysis {
-    throw new Error('Not implemented yet');
+    const p10DataPoints: Array<SimulationDataPoint> = [];
+    const p25DataPoints: Array<SimulationDataPoint> = [];
+    const medianDataPoints: Array<SimulationDataPoint> = [];
+    const p75DataPoints: Array<SimulationDataPoint> = [];
+    const p90DataPoints: Array<SimulationDataPoint> = [];
+
+    const simulations = multiSimulationResult.simulations;
+
+    const numDataPoints = simulations[0][1]?.data.length;
+    if (!numDataPoints) throw new Error('No data points in simulations');
+
+    for (let i = 0; i < numDataPoints; i++) {
+      const dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }> = [];
+
+      for (const [seed, simResult] of simulations) {
+        const dataPoint = simResult.data[i];
+        dataPointsForYear.push({ seed, dp: dataPoint });
+      }
+
+      const sortedDataPointsForYear = dataPointsForYear.sort((a, b) => a.dp.portfolio.totalValue - b.dp.portfolio.totalValue);
+      const percentiles = this.calculatePercentilesFromValues(sortedDataPointsForYear);
+
+      p10DataPoints.push(percentiles.p10.dp);
+      p25DataPoints.push(percentiles.p25.dp);
+      medianDataPoints.push(percentiles.p50.dp);
+      p75DataPoints.push(percentiles.p75.dp);
+      p90DataPoints.push(percentiles.p90.dp);
+    }
+
+    const context = { ...simulations[0][1].context };
+
+    return {
+      p10Result: { data: p10DataPoints, context },
+      p25Result: { data: p25DataPoints, context },
+      medianResult: { data: medianDataPoints, context },
+      p75Result: { data: p75DataPoints, context },
+      p90Result: { data: p90DataPoints, context },
+    };
   }
 
   private calculateStats(values: number[]): Stats | null {
@@ -57,12 +94,15 @@ export class MultiSimulationAnalyzer {
     return Math.sqrt(variance);
   }
 
-  private calculatePercentile(sortedValues: number[], percentile: number): number {
+  private calculatePercentile(
+    sortedValues: Array<{ seed: number; dp: SimulationDataPoint }>,
+    percentile: number
+  ): { seed: number; dp: SimulationDataPoint } {
     const index = Math.floor((percentile / 100) * sortedValues.length);
     return sortedValues[Math.min(index, sortedValues.length - 1)];
   }
 
-  private calculatePercentilesFromValues(sortedValues: number[]): Percentiles {
+  private calculatePercentilesFromValues(sortedValues: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles {
     return {
       p10: this.calculatePercentile(sortedValues, 10),
       p25: this.calculatePercentile(sortedValues, 25),
