@@ -54,28 +54,24 @@ export interface SimulationState {
 }
 
 export class FinancialSimulationEngine {
-  private readonly incomes: Incomes;
-  private readonly expenses: Expenses;
-  private readonly contributionRules: ContributionRules;
-
-  constructor(protected inputs: QuickPlanInputs) {
-    this.incomes = new Incomes(Object.values(inputs.incomes));
-    this.expenses = new Expenses(Object.values(inputs.expenses));
-    this.contributionRules = new ContributionRules(Object.values(inputs.contributionRules), inputs.baseContributionRule);
-  }
+  constructor(protected readonly inputs: QuickPlanInputs) {}
 
   runSimulation(returnsProvider: ReturnsProvider, timeline: TimelineInputs): SimulationResult {
     // Init context and state
     const simulationContext: SimulationContext = this.initSimulationContext(timeline);
     const simulationState: SimulationState = this.initSimulationState(timeline);
 
+    const incomes = new Incomes(Object.values(this.inputs.incomes));
+    const expenses = new Expenses(Object.values(this.inputs.expenses));
+    const contributionRules = new ContributionRules(Object.values(this.inputs.contributionRules), this.inputs.baseContributionRule);
+
     const resultData: Array<SimulationDataPoint> = [this.initSimulationDataPoint(simulationState)];
 
     // Init simulation processors
     const returnsProcessor = new ReturnsProcessor(simulationState, returnsProvider);
-    const incomesProcessor = new IncomesProcessor(simulationState, this.incomes);
-    const expensesProcessor = new ExpensesProcessor(simulationState, this.expenses);
-    const portfolioProcessor = new PortfolioProcessor(simulationState, this.contributionRules);
+    const incomesProcessor = new IncomesProcessor(simulationState, incomes);
+    const expensesProcessor = new ExpensesProcessor(simulationState, expenses);
+    const portfolioProcessor = new PortfolioProcessor(simulationState, contributionRules);
     const taxProcessor = new TaxProcessor(simulationState);
 
     // Init phase identifier
