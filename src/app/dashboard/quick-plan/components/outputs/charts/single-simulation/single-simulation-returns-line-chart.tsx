@@ -8,7 +8,7 @@ import { formatNumber, formatChartString } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
-import type { SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
+import type { SingleSimulationKeyMetrics } from '@/lib/types/key-metrics';
 
 interface CustomTooltipProps {
   active?: boolean;

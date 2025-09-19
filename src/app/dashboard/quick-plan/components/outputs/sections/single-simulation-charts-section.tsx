@@ -4,8 +4,8 @@ import { useState, memo } from 'react';
 
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
+import type { SingleSimulationKeyMetrics } from '@/lib/types/key-metrics';
 import {
-  type SingleSimulationKeyMetrics,
   useSingleSimulationPortfolioChartData,
   useSingleSimulationCashFlowChartData,
   useSingleSimulationReturnsChartData,

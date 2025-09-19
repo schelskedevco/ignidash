@@ -9,7 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { AccountDataWithTransactions } from '@/lib/calc/v2/portfolio';
-import type { SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
+import type { SingleSimulationKeyMetrics } from '@/lib/types/key-metrics';
 
 interface CustomTooltipProps {
   active?: boolean;

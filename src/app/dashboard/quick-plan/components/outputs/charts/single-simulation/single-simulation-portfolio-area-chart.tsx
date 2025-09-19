@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { useState, useCallback } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
-import type { SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
+import type { SingleSimulationKeyMetrics } from '@/lib/types/key-metrics';
 import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import type { AccountDataWithTransactions } from '@/lib/calc/v2/portfolio';
 import { formatNumber, formatChartString } from '@/lib/utils';

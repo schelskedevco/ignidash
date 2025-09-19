@@ -1,7 +1,7 @@
 'use client';
 
 import { formatNumber } from '@/lib/utils';
-import type { SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
+import type { SingleSimulationKeyMetrics } from '@/lib/types/key-metrics';
 
 import MetricsCard from './metrics-card';
 

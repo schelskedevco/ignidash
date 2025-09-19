@@ -3,7 +3,8 @@
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
-import { useShowReferenceLines, type SingleSimulationKeyMetrics } from '@/lib/stores/quick-plan-store';
+import { useShowReferenceLines } from '@/lib/stores/quick-plan-store';
+import type { SingleSimulationKeyMetrics } from '@/lib/types/key-metrics';
 
 import SingleSimulationReturnsLineChart from '../../charts/single-simulation/single-simulation-returns-line-chart';
 

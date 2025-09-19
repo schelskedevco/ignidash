@@ -19,6 +19,7 @@ import type { ExpenseInputs } from '@/lib/schemas/expense-form-schema';
 import type { TimelineInputs } from '@/lib/schemas/timeline-form-schema';
 import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/contribution-form-schema';
 import type { MarketAssumptionsInputs } from '../schemas/market-assumptions-schema';
+import type { SingleSimulationKeyMetrics } from '@/lib/types/key-metrics';
 import type {
   SingleSimulationPortfolioChartDataPoint,
   SingleSimulationCashFlowChartDataPoint,
@@ -445,16 +446,6 @@ export const useSimulationResult = (
     }
   }, [inputs, seed, simulationMode]);
 };
-
-export interface SingleSimulationKeyMetrics {
-  success: boolean;
-  startAge: number;
-  retirementAge: number | null;
-  yearsToRetirement: number | null;
-  portfolioAtRetirement: number | null;
-  finalPortfolio: number;
-  progressToRetirement: number | null;
-}
 
 export const useSingleSimulationKeyMetrics = (simulationResult: SimulationResult | null): SingleSimulationKeyMetrics | null => {
   return useMemo(() => {
