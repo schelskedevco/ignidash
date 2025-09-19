@@ -318,6 +318,17 @@ export const useSimulationResult = (
   }, [inputs, seed, simulationMode]);
 };
 
+export const useMultiSimulationResult = (simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns') => {
+  const inputs = useQuickPlanStore((state) => state.inputs);
+  const simulationSeed = useSimulationSeed();
+
+  return useSWR(
+    [inputs, simulationSeed, simulationMode],
+    async () => await getSimulationWorker().analyzeMonteCarloSimulation(inputs, simulationSeed, 1000, simulationMode),
+    { revalidateOnFocus: false }
+  );
+};
+
 export const useSingleSimulationKeyMetrics = (simulationResult: SimulationResult | null): SingleSimulationKeyMetrics | null => {
   return useMemo(() => {
     if (!simulationResult) return null;
@@ -381,17 +392,6 @@ export const useSingleSimulationKeyMetrics = (simulationResult: SimulationResult
       progressToRetirement,
     };
   }, [simulationResult]);
-};
-
-export const useMultiSimulationResult = (simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns') => {
-  const inputs = useQuickPlanStore((state) => state.inputs);
-  const simulationSeed = useSimulationSeed();
-
-  return useSWR(
-    [inputs, simulationSeed, simulationMode],
-    async () => await getSimulationWorker().analyzeMonteCarloSimulation(inputs, simulationSeed, 1000, simulationMode),
-    { revalidateOnFocus: false }
-  );
 };
 
 /**
