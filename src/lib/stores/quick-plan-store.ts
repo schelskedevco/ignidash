@@ -724,7 +724,7 @@ export const useSingleSimulationContributionsChartData = (simulation: Simulation
       const startDateYear = new Date().getFullYear();
       const currDateYear = new Date(data.date).getFullYear();
 
-      const portfolioData = data.portfolio!;
+      const portfolioData = data.portfolio;
 
       let cashSavings = 0;
       let taxable = 0;
@@ -772,7 +772,7 @@ export const useSingleSimulationWithdrawalsChartData = (simulation: SimulationRe
       const startDateYear = new Date().getFullYear();
       const currDateYear = new Date(data.date).getFullYear();
 
-      const portfolioData = data.portfolio!;
+      const portfolioData = data.portfolio;
 
       let cashSavings = 0;
       let taxable = 0;
