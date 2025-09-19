@@ -8,14 +8,7 @@ import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon, TrendingUpIcon } fr
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
-import {
-  useCurrentAge,
-  useLifeExpectancy,
-  useUpdateIncomes,
-  useIncomeData,
-  useIncomesData,
-  useMarketAssumptionsData,
-} from '@/lib/stores/quick-plan-store';
+import { useUpdateIncomes, useIncomeData, useIncomesData, useMarketAssumptionsData, useTimelineData } from '@/lib/stores/quick-plan-store';
 import { incomeFormSchema, type IncomeInputs, timeFrameForDisplay, growthForDisplay } from '@/lib/schemas/income-form-schema';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
@@ -148,8 +141,10 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 2100 - currentYear + 1 }, (_, i) => currentYear + i);
 
-  const currentAge = useCurrentAge()!;
-  const lifeExpectancy = useLifeExpectancy();
+  const timeline = useTimelineData();
+  const currentAge = timeline!.currentAge;
+  const lifeExpectancy = timeline!.lifeExpectancy;
+
   const ages = Array.from({ length: lifeExpectancy - currentAge + 1 }, (_, i) => currentAge + i);
 
   const timeFrameButtonRef = useRef<HTMLButtonElement>(null);
