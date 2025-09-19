@@ -1,33 +1,11 @@
-/**
- * Stochastic Returns Provider - Monte Carlo Return Generation System
- *
- * This module implements probabilistic return generation for Monte Carlo simulations.
- * It combines user-defined expected returns with historical volatility patterns to
- * create realistic market scenarios while respecting correlations between asset classes.
- *
- * Architecture:
- * - Seeded random number generation for reproducibility
- * - Correlated asset returns using Cholesky decomposition
- * - Log-normal distribution for equity returns
- * - Normal distribution for bonds, cash, and inflation
- * - Fisher equation for real return calculations
- */
-
 import { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 import { ReturnsProvider, ReturnsWithMetadata } from './returns-provider';
 import { SeededRandom } from './seeded-random';
 
-/**
- * Market parameters with historical volatility estimates
- */
 interface MarketVolatility {
-  /** Annual standard deviation for stock returns */
   stocks: number;
-  /** Annual standard deviation for bond returns */
   bonds: number;
-  /** Annual standard deviation for cash returns */
   cash: number;
-  /** Annual standard deviation for inflation rates */
   inflation: number;
 }
 
@@ -36,10 +14,10 @@ interface MarketVolatility {
  * Based on long-term historical data
  */
 const DEFAULT_VOLATILITY: MarketVolatility = {
-  stocks: 0.2, // 20% annual volatility
-  bonds: 0.06, // 6% annual volatility
-  cash: 0.01, // 1% annual volatility
-  inflation: 0.03, // 3% annual volatility
+  stocks: 0.2,
+  bonds: 0.06,
+  cash: 0.01,
+  inflation: 0.03,
 };
 
 /**
@@ -87,35 +65,18 @@ function computeCholeskyDecomposition(matrix: number[][]): number[][] {
  */
 const CHOLESKY_MATRIX = computeCholeskyDecomposition(CORRELATION_MATRIX);
 
-/**
- * Stochastic Returns Provider Implementation
- * Generates correlated, probabilistic returns based on user expectations and historical volatility
- */
 export class StochasticReturnsProvider implements ReturnsProvider {
   private rng: SeededRandom;
   private volatility: MarketVolatility;
 
-  /**
-   * Creates a stochastic returns provider with seeded random generation
-   * @param inputs - User's financial planning inputs containing market assumptions
-   * @param seed - Base seed for random number generation to ensure reproducibility
-   */
   constructor(
     private inputs: QuickPlanInputs,
     private seed: number
   ) {
-    // Initialize with required seed for this specific scenario
     this.rng = new SeededRandom(this.seed);
-
-    // Use default volatility (custom volatility not allowed)
     this.volatility = DEFAULT_VOLATILITY;
   }
 
-  /**
-   * Generate correlated returns for a specific year
-   * @param year - The simulation year (currently unused, returns are time-independent)
-   * @returns Real asset returns with inflation metadata
-   */
   getReturns(year: number): ReturnsWithMetadata {
     // Generate independent standard normal random variables
     const independentRandoms = [this.rng.nextGaussian(), this.rng.nextGaussian(), this.rng.nextGaussian(), this.rng.nextGaussian()];
@@ -141,19 +102,14 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     const realCashReturn = (1 + nominalCashReturn) / (1 + inflation) - 1;
 
     return {
-      returns: {
-        stocks: realStockReturn,
-        bonds: realBondReturn,
-        cash: realCashReturn,
-      },
-      metadata: {
-        inflationRate: inflation * 100, // Convert to percentage for metadata
-      },
+      returns: { stocks: realStockReturn, bonds: realBondReturn, cash: realCashReturn },
+      metadata: { inflationRate: inflation * 100 },
     };
   }
 
   /**
    * Apply correlation matrix using Cholesky decomposition
+   *
    * @param independentRandoms - Array of 4 independent standard normal random variables
    * @returns Array of 4 correlated random variables for [stocks, bonds, cash, inflation]
    */
@@ -172,6 +128,7 @@ export class StochasticReturnsProvider implements ReturnsProvider {
   /**
    * Generate return from log-normal distribution
    * Used for equity returns to prevent negative values and model realistic fat tails
+   *
    * @param expectedReturn - Expected return rate as a decimal (e.g., 0.1 for 10%)
    * @param volatility - Annual volatility as a decimal (e.g., 0.2 for 20%)
    * @param z - Standard normal random variable
@@ -189,6 +146,7 @@ export class StochasticReturnsProvider implements ReturnsProvider {
   /**
    * Generate return from normal distribution
    * Used for bonds, cash, and inflation
+   *
    * @param expectedReturn - Expected return rate as a decimal (e.g., 0.05 for 5%)
    * @param volatility - Annual volatility as a decimal (e.g., 0.06 for 6%)
    * @param z - Standard normal random variable
