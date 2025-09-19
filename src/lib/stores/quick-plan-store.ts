@@ -5,7 +5,7 @@ import { immer } from 'zustand/middleware/immer';
 import { useShallow } from 'zustand/react/shallow';
 import useSWR from 'swr';
 
-import { type QuickPlanInputs, validateField } from '@/lib/schemas/quick-plan-schema';
+import type { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 import { FinancialSimulationEngine, type SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { FixedReturnsProvider } from '@/lib/calc/returns-providers/fixed-returns-provider';
 import { StochasticReturnsProvider } from '@/lib/calc/returns-providers/stochastic-returns-provider';
@@ -31,40 +31,6 @@ import type {
 import { SingleSimulationCategory } from '@/lib/types/single-simulation-category';
 
 // ================================
-// TYPES & HELPERS
-// ================================
-
-export type UpdateResult = { success: boolean; error?: string };
-
-/**
- * Helper function to create update actions with validation
- * Reduces code duplication across all update methods
- *
- * @param section - The section name for validation
- * @param set - Zustand set function for state updates
- * @param get - Zustand get function for current state access
- * @returns Update function that validates and updates a single field
- */
-const createSimpleUpdateAction = <T extends keyof QuickPlanInputs>(
-  section: T,
-  set: (fn: (state: QuickPlanState) => void) => void,
-  get: () => QuickPlanState
-) => {
-  return (field: keyof QuickPlanInputs[T], value: unknown): UpdateResult => {
-    const currentSection = get().inputs[section];
-
-    const result = validateField(section, field, value, currentSection);
-    if (result.valid && result.data) {
-      set((state) => {
-        state.inputs[section] = result.data!;
-      });
-    }
-
-    return { success: result.valid, error: result.error };
-  };
-};
-
-// ================================
 // STATE INTERFACE & DEFAULT STATE
 // ================================
 
@@ -86,27 +52,27 @@ interface QuickPlanState {
 
   actions: {
     /* Expected Returns */
-    updateMarketAssumptions: (data: MarketAssumptionsInputs) => UpdateResult;
+    updateMarketAssumptions: (data: MarketAssumptionsInputs) => void;
 
     /* Timeline */
-    updateTimeline: (data: TimelineInputs) => UpdateResult;
+    updateTimeline: (data: TimelineInputs) => void;
 
     /* Cash Flows */
-    updateIncomes: (data: IncomeInputs) => UpdateResult;
-    deleteIncome: (id: string) => UpdateResult;
+    updateIncomes: (data: IncomeInputs) => void;
+    deleteIncome: (id: string) => void;
 
-    updateExpenses: (data: ExpenseInputs) => UpdateResult;
-    deleteExpense: (id: string) => UpdateResult;
+    updateExpenses: (data: ExpenseInputs) => void;
+    deleteExpense: (id: string) => void;
 
     /* Portfolio */
-    updateAccounts: (data: AccountInputs) => UpdateResult;
-    deleteAccount: (id: string) => UpdateResult;
+    updateAccounts: (data: AccountInputs) => void;
+    deleteAccount: (id: string) => void;
 
     /* Contribution Order */
-    updateContributionRules: (data: ContributionInputs) => UpdateResult;
-    reorderContributionRules: (newOrder: string[]) => UpdateResult;
-    deleteContributionRule: (id: string) => UpdateResult;
-    updateBaseContributionRule: (field: keyof BaseContributionInputs, value: unknown) => UpdateResult;
+    updateContributionRules: (data: ContributionInputs) => void;
+    reorderContributionRules: (newOrder: string[]) => void;
+    deleteContributionRule: (id: string) => void;
+    updateBaseContributionRule: (data: BaseContributionInputs) => void;
 
     /* Preferences */
     updateDataStoragePreference: (value: QuickPlanState['preferences']['dataStorage']) => void;
@@ -183,79 +149,61 @@ export const useQuickPlanStore = create<QuickPlanState>()(
       immer((set, get) => ({
         ...defaultState,
         actions: {
-          updateMarketAssumptions: (data: MarketAssumptionsInputs) => {
+          updateMarketAssumptions: (data) => {
             set((state) => {
               state.inputs.marketAssumptions = { ...data };
             });
-
-            return { success: true };
           },
 
-          updateTimeline: (data: TimelineInputs) => {
+          updateTimeline: (data) => {
             set((state) => {
               state.inputs.timeline = { ...data };
             });
-
-            return { success: true };
           },
 
-          updateIncomes: (data: IncomeInputs) => {
+          updateIncomes: (data) => {
             set((state) => {
               state.inputs.incomes = { ...state.inputs.incomes, [data.id]: data };
             });
-
-            return { success: true };
           },
 
           deleteIncome: (name) => {
             set((state) => {
               delete state.inputs.incomes[name];
             });
-
-            return { success: true };
           },
 
-          updateAccounts: (data: AccountInputs) => {
+          updateAccounts: (data) => {
             set((state) => {
               state.inputs.accounts = { ...state.inputs.accounts, [data.id]: data };
             });
-
-            return { success: true };
           },
 
-          deleteAccount: (id: string) => {
+          deleteAccount: (id) => {
             set((state) => {
               delete state.inputs.accounts[id];
             });
-
-            return { success: true };
           },
 
-          updateExpenses: (data: ExpenseInputs) => {
+          updateExpenses: (data) => {
             set((state) => {
               state.inputs.expenses = { ...state.inputs.expenses, [data.id]: data };
             });
-
-            return { success: true };
           },
 
-          deleteExpense: (id: string) => {
+          deleteExpense: (id) => {
             set((state) => {
               delete state.inputs.expenses[id];
             });
-
-            return { success: true };
           },
 
-          updateContributionRules: (data: ContributionInputs) => {
+          updateContributionRules: (data) => {
             set((state) => {
               state.inputs.contributionRules = { ...state.inputs.contributionRules, [data.id]: data };
             });
-
-            return { success: true };
           },
 
-          reorderContributionRules: (newOrder: string[]) => {
+          reorderContributionRules: (newOrder) => {
             set((state) => {
               newOrder.forEach((id, index) => {
                 const contributionRule = state.inputs.contributionRules[id];
@@ -264,19 +212,18 @@ export const useQuickPlanStore = create<QuickPlanState>()(
                 }
               });
             });
-
-            return { success: true };
           },
 
-          deleteContributionRule: (id: string) => {
+          deleteContributionRule: (id) => {
             set((state) => {
               delete state.inputs.contributionRules[id];
             });
-
-            return { success: true };
           },
 
-          updateBaseContributionRule: createSimpleUpdateAction('baseContributionRule', set, get),
+          updateBaseContributionRule: (data) =>
+            set((state) => {
+              state.inputs.baseContributionRule = { ...data };
+            }),
 
           updateDataStoragePreference: (value) =>
             set((state) => {
