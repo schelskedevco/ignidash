@@ -42,9 +42,8 @@ export interface ReturnsWithMetadata<TExtras extends Record<string, unknown> = R
  */
 export interface ReturnsProvider<TExtras extends Record<string, unknown> = Record<string, unknown>> {
   /**
-   * Get the real returns for a specific year.
-   * @param year The year for which to get the returns.
-   * @returns The real asset returns for the specified year.
+   * Get the real returns from the provider.
+   * @returns The real asset returns from the provider.
    */
-  getReturns(year: number): ReturnsWithMetadata<TExtras>;
+  getReturns(): ReturnsWithMetadata<TExtras>;
 }

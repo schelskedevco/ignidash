@@ -25,7 +25,7 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
     return this.historicalDataRange.startYear + randomOffset;
   }
 
-  getReturns(simulationYear: number): ReturnsWithMetadata {
+  getReturns(): ReturnsWithMetadata {
     if (this.currentHistoricalYear <= this.historicalDataRange.endYear) {
       this.historicalRanges[this.historicalRanges.length - 1].endYear = this.currentHistoricalYear;
     } else {

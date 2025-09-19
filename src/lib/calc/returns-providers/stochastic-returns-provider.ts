@@ -77,7 +77,7 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     this.volatility = DEFAULT_VOLATILITY;
   }
 
-  getReturns(year: number): ReturnsWithMetadata {
+  getReturns(): ReturnsWithMetadata {
     // Generate independent standard normal random variables
     const independentRandoms = [this.rng.nextGaussian(), this.rng.nextGaussian(), this.rng.nextGaussian(), this.rng.nextGaussian()];
 

@@ -77,8 +77,8 @@ describe('StochasticReturnsProvider', () => {
       const provider1 = new StochasticReturnsProvider(defaultState.inputs, 999);
       const provider2 = new StochasticReturnsProvider(defaultState.inputs, 999);
 
-      const result1 = provider1.getReturns(1); // Year 1 of simulation
-      const result2 = provider2.getReturns(1); // Year 1 of simulation
+      const result1 = provider1.getReturns(); // Year 1 of simulation
+      const result2 = provider2.getReturns(); // Year 1 of simulation
 
       expect(result1.returns.stocks).toBe(result2.returns.stocks);
       expect(result1.returns.bonds).toBe(result2.returns.bonds);
@@ -118,7 +118,7 @@ describe('StochasticReturnsProvider', () => {
 
         // Simulate multiple years within each scenario
         for (let year = 1; year <= yearsPerScenario; year++) {
-          const result = scenarioProvider.getReturns(year);
+          const result = scenarioProvider.getReturns();
 
           // Convert real returns back to nominal for statistical analysis
           const nominalStock = (1 + result.returns.stocks) * (1 + result.metadata.inflationRate / 100) - 1;

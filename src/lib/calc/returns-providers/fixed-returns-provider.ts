@@ -4,7 +4,7 @@ import { ReturnsProvider, ReturnsWithMetadata } from './returns-provider';
 export class FixedReturnsProvider implements ReturnsProvider {
   constructor(private inputs: QuickPlanInputs) {}
 
-  getReturns(year: number): ReturnsWithMetadata {
+  getReturns(): ReturnsWithMetadata {
     const { stockReturn, bondReturn, cashReturn, inflationRate } = this.inputs.marketAssumptions;
 
     const realStockReturn = (1 + stockReturn / 100) / (1 + inflationRate / 100) - 1;
