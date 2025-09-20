@@ -11,6 +11,7 @@ interface SortableContributionItemProps {
   leftAddOnCharacter: string;
   onDropdownClickEdit: () => void;
   onDropdownClickDelete: () => void;
+  colorClassName?: string;
 }
 
 export default function SortableContributionItem(props: SortableContributionItemProps) {

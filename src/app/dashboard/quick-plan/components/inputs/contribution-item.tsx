@@ -11,6 +11,7 @@ interface ContributionItemProps {
   onDropdownClickEdit: () => void;
   onDropdownClickDelete: () => void;
   style?: React.CSSProperties;
+  colorClassName?: string;
 }
 
 export const ContributionItem = forwardRef<HTMLLIElement, ContributionItemProps>(({ id, ...props }, ref) => {

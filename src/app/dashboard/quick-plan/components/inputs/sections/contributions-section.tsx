@@ -53,6 +53,8 @@ function getContributionRuleDesc(contributionInputs: ContributionInputs) {
   }
 }
 
+const COLORS = ['bg-[var(--chart-1)]', 'bg-[var(--chart-2)]', 'bg-[var(--chart-3)]', 'bg-[var(--chart-4)]'];
+
 interface ContributionsSectionProps {
   toggleDisclosure: (newDisclosure: DisclosureState) => void;
   disclosureButtonRef: RefObject<HTMLButtonElement | null>;
@@ -165,6 +167,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                         onDropdownClickDelete={() => {
                           setContributionRuleToDelete({ id, name: 'Contribution ' + (index + 1) });
                         }}
+                        colorClassName={COLORS[index % COLORS.length]}
                       />
                     ))}
                   </ul>
@@ -187,6 +190,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                       onDropdownClickDelete={() => {
                         setContributionRuleToDelete({ id: activeId, name: 'Contribution ' + (activeIndex + 1) });
                       }}
+                      colorClassName={COLORS[activeIndex % COLORS.length]}
                     />
                   ) : null}
                 </DragOverlay>

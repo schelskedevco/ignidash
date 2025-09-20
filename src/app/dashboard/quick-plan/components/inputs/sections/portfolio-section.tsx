@@ -82,6 +82,7 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
                     onDropdownClickDelete={() => {
                       setAccountToDelete({ id, name: account.name });
                     }}
+                    colorClassName="bg-[var(--chart-3)]"
                   />
                 ))}
               </ul>

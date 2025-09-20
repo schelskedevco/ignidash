@@ -15,9 +15,8 @@ interface DisclosureSectionDataItemProps {
   ref?: React.Ref<HTMLLIElement>;
   style?: React.CSSProperties;
   showDragHandle?: boolean;
+  colorClassName?: string;
 }
-
-const COLORS = ['bg-[var(--chart-1)]', 'bg-[var(--chart-2)]', 'bg-[var(--chart-3)]', 'bg-[var(--chart-4)]'];
 
 export default function DisclosureSectionDataItem({
   id,
@@ -30,9 +29,9 @@ export default function DisclosureSectionDataItem({
   ref,
   style,
   showDragHandle,
+  colorClassName,
   ...otherProps
 }: DisclosureSectionDataItemProps) {
-  const color = COLORS[index % COLORS.length];
   // const needsBgTextColor = ['bg-[var(--chart-1)]'];
 
   return (
@@ -40,7 +39,7 @@ export default function DisclosureSectionDataItem({
       <div
         className={cn(
           'border-foreground/50 flex w-16 shrink-0 items-center justify-center gap-1 border text-xl font-medium text-white',
-          color,
+          colorClassName,
           // needsBgTextColor.includes(color) && 'text-black',
           showDragHandle &&
             'cursor-grab touch-none focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none focus-visible:ring-inset'

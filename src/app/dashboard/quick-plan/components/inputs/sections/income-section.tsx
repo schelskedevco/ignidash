@@ -69,6 +69,7 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
                     onDropdownClickDelete={() => {
                       setIncomeToDelete({ id, name: income.name });
                     }}
+                    colorClassName="bg-[var(--chart-1)]"
                   />
                 ))}
               </ul>

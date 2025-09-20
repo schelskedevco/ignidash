@@ -68,6 +68,7 @@ export default function ExpensesSection({ toggleDisclosure, disclosureButtonRef,
                     onDropdownClickDelete={() => {
                       setExpenseToDelete({ id, name: expense.name });
                     }}
+                    colorClassName="bg-[var(--chart-2)]"
                   />
                 ))}
               </ul>
