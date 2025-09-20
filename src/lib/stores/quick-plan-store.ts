@@ -162,9 +162,13 @@ export const useQuickPlanStore = create<QuickPlanState>()(
             set((state) => {
               state.inputs.incomes = { ...state.inputs.incomes, [data.id]: data };
             }),
-          deleteIncome: (name) =>
+          deleteIncome: (id) =>
             set((state) => {
-              delete state.inputs.incomes[name];
+              Object.values(state.inputs.contributionRules).forEach((rule) => {
+                if (rule.incomeIds?.includes(id)) rule.incomeIds = rule.incomeIds.filter((incomeId) => incomeId !== id);
+              });
+
+              delete state.inputs.incomes[id];
             }),
           updateAccounts: (data) =>
             set((state) => {
