@@ -169,7 +169,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
           updateAccounts: (data) =>
             set((state) => {
               if (!(data.id in get().inputs.accounts)) {
-                const contributionRulesCount = Object.entries(get().inputs.contributionRules).length;
+                const contributionRulesCount = Object.keys(get().inputs.contributionRules).length;
 
                 const contributionRuleId = uuidv4();
                 const contributionRuleData: ContributionInputs = {
@@ -186,6 +186,11 @@ export const useQuickPlanStore = create<QuickPlanState>()(
             }),
           deleteAccount: (id) =>
             set((state) => {
+              const contributionRuleToDelete = Object.values(get().inputs.contributionRules).find((rule) => rule.accountId === id);
+              if (contributionRuleToDelete !== undefined) {
+                delete state.inputs.contributionRules[contributionRuleToDelete.id];
+              }
+
               delete state.inputs.accounts[id];
             }),
           updateExpenses: (data) =>

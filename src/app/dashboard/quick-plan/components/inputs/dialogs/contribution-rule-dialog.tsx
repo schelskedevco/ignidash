@@ -31,7 +31,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
   const existingContributionRuleData = useContributionRuleData(selectedContributionRuleID);
 
   const contributionRules = useContributionRulesData();
-  const contributionRulesCount = Object.entries(contributionRules).length;
+  const contributionRulesCount = Object.keys(contributionRules).length;
   const defaultRank = contributionRulesCount + 1;
   const newContributionRuleDefaultValues = useMemo(
     () =>
