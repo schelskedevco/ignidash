@@ -148,8 +148,8 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
   const years = Array.from({ length: 2100 - currentYear + 1 }, (_, i) => currentYear + i);
 
   const timeline = useTimelineData();
-  const currentAge = timeline!.currentAge;
-  const lifeExpectancy = timeline!.lifeExpectancy;
+  const currentAge = timeline?.currentAge ?? 16;
+  const lifeExpectancy = timeline?.lifeExpectancy ?? 110;
 
   const ages = Array.from({ length: lifeExpectancy - currentAge + 1 }, (_, i) => currentAge + i);
 
