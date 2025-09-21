@@ -58,9 +58,6 @@ export const yearlyAggregateTableRowSchema = z.object({
   p50Portfolio: z.number(),
   p75Portfolio: z.number(),
   p90Portfolio: z.number(),
-
-  minPortfolio: z.number().nullable(),
-  maxPortfolio: z.number().nullable(),
 });
 
 export type YearlyAggregateTableRow = z.infer<typeof yearlyAggregateTableRowSchema>;
@@ -76,8 +73,6 @@ const YEARLY_AGGREGATE_COLUMNS = {
   p50Portfolio: { title: 'P50 Portfolio', format: 'currency' },
   p75Portfolio: { title: 'P75 Portfolio', format: 'currency' },
   p90Portfolio: { title: 'P90 Portfolio', format: 'currency' },
-  minPortfolio: { title: 'Min Portfolio', format: 'currency' },
-  maxPortfolio: { title: 'Max Portfolio', format: 'currency' },
 } as const;
 
 export const YEARLY_AGGREGATE_TABLE_CONFIG: Record<keyof YearlyAggregateTableRow, { title: string; format: ColumnFormat }> =

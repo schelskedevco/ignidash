@@ -125,6 +125,32 @@ export class TableDataExtractor {
     analysis: MultiSimulationAnalysis,
     category: SimulationCategory
   ): YearlyAggregateTableRow[] {
-    return validateYearlyAggregateTableData([]);
+    return validateYearlyAggregateTableData(
+      simulations.simulations.flatMap(([, result]) => {
+        const { data, context } = result;
+
+        const startAge = context.startAge;
+        const startDateYear = new Date().getFullYear();
+
+        return data.map((dp, idx) => {
+          const currDateYear = new Date(dp.date).getFullYear();
+
+          return {
+            year: idx,
+            age: currDateYear - startDateYear + startAge,
+
+            percentAccumulation: null,
+            percentRetirement: null,
+            percentBankrupt: null,
+
+            p10Portfolio: analysis.p10Result.data[idx]?.portfolio.totalValue ?? null,
+            p25Portfolio: analysis.p25Result.data[idx]?.portfolio.totalValue ?? null,
+            p50Portfolio: analysis.p50Result.data[idx]?.portfolio.totalValue ?? null,
+            p75Portfolio: analysis.p75Result.data[idx]?.portfolio.totalValue ?? null,
+            p90Portfolio: analysis.p90Result.data[idx]?.portfolio.totalValue ?? null,
+          };
+        });
+      })
+    );
   }
 }
