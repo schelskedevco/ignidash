@@ -729,8 +729,8 @@ export const useSingleSimulationWithdrawalsChartData = (simulation: SimulationRe
 };
 
 /**
- * Fixed Returns Table Hooks
- * These hooks provide access to fixed returns simulation table data
+ * Table Hooks
+ * These hooks provide access to simulation table data
  */
 export const useSingleSimulationTableData = (simulation: SimulationResult, category: SimulationCategory): SingleSimulationTableRow[] => {
   return useMemo(() => {
