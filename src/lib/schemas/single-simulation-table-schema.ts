@@ -34,11 +34,3 @@ const SINGLE_SIMULATION_COLUMNS = {
 
 export const SIMULATION_TABLE_CONFIG: Record<keyof SingleSimulationTableRow, { title: string; format: ColumnFormat }> =
   SINGLE_SIMULATION_COLUMNS;
-
-const validateSingleSimulationTableRow = (data: unknown): SingleSimulationTableRow => {
-  return singleSimulationTableRowSchema.parse(data);
-};
-
-export const validateSingleSimulationTableData = (data: unknown[]): SingleSimulationTableRow[] => {
-  return data.map(validateSingleSimulationTableRow);
-};

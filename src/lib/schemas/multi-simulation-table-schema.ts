@@ -36,14 +36,6 @@ const MULTI_SIMULATION_COLUMNS = {
 export const MULTI_SIMULATION_TABLE_CONFIG: Record<keyof MultiSimulationTableRow, { title: string; format: ColumnFormat }> =
   MULTI_SIMULATION_COLUMNS;
 
-export const validateMultiSimulationTableRow = (data: unknown): MultiSimulationTableRow => {
-  return multiSimulationTableRowSchema.parse(data);
-};
-
-export const validateMultiSimulationTableData = (data: unknown[]): MultiSimulationTableRow[] => {
-  return data.map(validateMultiSimulationTableRow);
-};
-
 // Yearly Aggregate Table Schema
 export const yearlyAggregateTableRowSchema = z.object({
   year: z.number(),
@@ -77,11 +69,3 @@ const YEARLY_AGGREGATE_COLUMNS = {
 
 export const YEARLY_AGGREGATE_TABLE_CONFIG: Record<keyof YearlyAggregateTableRow, { title: string; format: ColumnFormat }> =
   YEARLY_AGGREGATE_COLUMNS;
-
-export const validateYearlyAggregateTableRow = (data: unknown): YearlyAggregateTableRow => {
-  return yearlyAggregateTableRowSchema.parse(data);
-};
-
-export const validateYearlyAggregateTableData = (data: unknown[]): YearlyAggregateTableRow[] => {
-  return data.map(validateYearlyAggregateTableRow);
-};
