@@ -27,7 +27,13 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
       <SectionContainer showBottomBorder className="mb-0">
         <SimulationMetrics keyMetrics={keyMetrics} />
       </SectionContainer>
-      <MultiSimulationMainResults analysis={analysis} keyMetrics={keyMetrics} tableData={tableData} yearlyTableData={yearlyTableData} />
+      <MultiSimulationMainResults
+        analysis={analysis}
+        keyMetrics={keyMetrics}
+        tableData={tableData}
+        yearlyTableData={yearlyTableData}
+        simulationMode={simulationMode}
+      />
     </>
   );
 }

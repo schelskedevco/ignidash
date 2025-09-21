@@ -15,9 +15,16 @@ interface MultiSimulationMainResultsProps {
   keyMetrics: KeyMetrics;
   tableData: MultiSimulationTableRow[];
   yearlyTableData: YearlyAggregateTableRow[];
+  simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns';
 }
 
-export default function MultiSimulationMainResults({ analysis, keyMetrics, tableData, yearlyTableData }: MultiSimulationMainResultsProps) {
+export default function MultiSimulationMainResults({
+  analysis,
+  keyMetrics,
+  tableData,
+  yearlyTableData,
+  simulationMode,
+}: MultiSimulationMainResultsProps) {
   const simulation = analysis.p50Result;
   const startAge = simulation.context.startAge;
 
@@ -40,6 +47,7 @@ export default function MultiSimulationMainResults({ analysis, keyMetrics, table
         tableData={tableData}
         yearlyTableData={yearlyTableData}
         currentCategory={currentCategory}
+        simulationMode={simulationMode}
       />
     </>
   );

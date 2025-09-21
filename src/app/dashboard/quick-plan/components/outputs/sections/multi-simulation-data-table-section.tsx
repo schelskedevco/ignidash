@@ -8,8 +8,14 @@ import SectionContainer from '@/components/ui/section-container';
 import type { MultiSimulationAnalysis } from '@/lib/calc/v2/multi-simulation-analyzer';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
+import type { SingleSimulationTableRow } from '@/lib/schemas/single-simulation-table-schema';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
-import { generateMultiSimulationTableColumns, generateYearlyAggregateTableColumns } from '@/lib/utils/table-formatters';
+import {
+  generateSimulationTableColumns,
+  generateMultiSimulationTableColumns,
+  generateYearlyAggregateTableColumns,
+} from '@/lib/utils/table-formatters';
+import { useSimulationResult, useSingleSimulationTableData } from '@/lib/stores/quick-plan-store';
 
 import TableTypeSelector, { TableType } from '../table-type-selector';
 import Table from '../tables/table';
@@ -47,16 +53,57 @@ function DrillDownBreadcrumb({ selectedSeed, setSelectedSeed }: DrillDownBreadcr
   );
 }
 
+interface TableWithSelectedSeedProps {
+  selectedSeed: number;
+  simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns';
+  currentCategory: SimulationCategory;
+  onEscPressed: () => void;
+}
+
+function TableWithSelectedSeed({ selectedSeed, simulationMode, currentCategory, onEscPressed }: TableWithSelectedSeedProps) {
+  let simulationModeForSelectedSeed: 'stochasticReturns' | 'historicalReturns';
+  switch (simulationMode) {
+    case 'monteCarloStochasticReturns':
+      simulationModeForSelectedSeed = 'stochasticReturns';
+      break;
+    case 'monteCarloHistoricalReturns':
+      simulationModeForSelectedSeed = 'historicalReturns';
+      break;
+  }
+
+  const simulationResult = useSimulationResult(simulationModeForSelectedSeed, selectedSeed);
+  const tableData = useSingleSimulationTableData(simulationResult!, currentCategory);
+
+  return (
+    <Table<SingleSimulationTableRow>
+      columns={generateSimulationTableColumns()}
+      data={tableData}
+      keyField="year"
+      onEscPressed={onEscPressed}
+    />
+  );
+}
+
 interface MultiSimulationDataTableSectionProps {
   analysis: MultiSimulationAnalysis;
   tableData: MultiSimulationTableRow[];
   yearlyTableData: YearlyAggregateTableRow[];
   currentCategory: SimulationCategory;
+  simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns';
 }
 
-function MultiSimulationDataTableSection({ analysis, tableData, yearlyTableData, currentCategory }: MultiSimulationDataTableSectionProps) {
+function MultiSimulationDataTableSection({
+  analysis,
+  tableData,
+  yearlyTableData,
+  currentCategory,
+  simulationMode,
+}: MultiSimulationDataTableSectionProps) {
   const [selectedSeed, setSelectedSeed] = useState<number | null>(null);
   const [currentTableType, setCurrentTableType] = useState<TableType>(TableType.AllSimulations);
+
+  const withScrollPreservation = useScrollPreservation();
+  const handleRowClick = withScrollPreservation((row: MultiSimulationTableRow) => setSelectedSeed(row.seed));
 
   let headerText: string | React.ReactNode;
   let headerDesc: string;
@@ -73,15 +120,33 @@ function MultiSimulationDataTableSection({ analysis, tableData, yearlyTableData,
   }
 
   let tableComponent;
-  switch (currentTableType) {
-    case TableType.AllSimulations:
-      tableComponent = <Table<MultiSimulationTableRow> columns={generateMultiSimulationTableColumns()} data={tableData} keyField="seed" />;
-      break;
-    case TableType.YearlyResults:
-      tableComponent = (
-        <Table<YearlyAggregateTableRow> columns={generateYearlyAggregateTableColumns()} data={yearlyTableData} keyField="year" />
-      );
-      break;
+  if (selectedSeed !== null) {
+    tableComponent = (
+      <TableWithSelectedSeed
+        selectedSeed={selectedSeed}
+        simulationMode={simulationMode}
+        currentCategory={currentCategory}
+        onEscPressed={withScrollPreservation(() => setSelectedSeed(null))}
+      />
+    );
+  } else {
+    switch (currentTableType) {
+      case TableType.AllSimulations:
+        tableComponent = (
+          <Table<MultiSimulationTableRow>
+            columns={generateMultiSimulationTableColumns()}
+            data={tableData}
+            keyField="seed"
+            onRowClick={handleRowClick}
+          />
+        );
+        break;
+      case TableType.YearlyResults:
+        tableComponent = (
+          <Table<YearlyAggregateTableRow> columns={generateYearlyAggregateTableColumns()} data={yearlyTableData} keyField="year" />
+        );
+        break;
+    }
   }
 
   return (
