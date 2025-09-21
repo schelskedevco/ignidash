@@ -375,10 +375,12 @@ export const useResetStore = () => useQuickPlanStore((state) => state.actions.re
  * These hooks provide access to simulation and analysis functions
  */
 export const useSimulationResult = (
-  simulationMode: 'fixedReturns' | 'stochasticReturns' | 'historicalReturns'
+  simulationMode: 'fixedReturns' | 'stochasticReturns' | 'historicalReturns',
+  seedOverride?: number
 ): SimulationResult | null => {
   const inputs = useQuickPlanStore((state) => state.inputs);
-  const seed = useSimulationSeed();
+  const preferencesSeed = useSimulationSeed();
+  const seed = seedOverride !== undefined ? seedOverride : preferencesSeed;
 
   return useMemo(() => {
     const timeline = inputs.timeline;
