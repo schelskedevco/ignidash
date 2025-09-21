@@ -7,6 +7,7 @@ import {
   validateYearlyAggregateTableData,
 } from '@/lib/schemas/multi-simulation-table-schema';
 
+import type { MultiSimulationAnalysis } from './multi-simulation-analyzer';
 import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
 
 export class TableDataExtractor {
@@ -59,15 +60,23 @@ export class TableDataExtractor {
 
         let yearsToRetirement: number | null = null;
         let retirementAge: number | null = null;
+        let yearsToBankruptcy: number | null = null;
+        let bankruptcyAge: number | null = null;
 
         for (const dp of data) {
           const phase = dp.phase;
-          if (phase?.name === 'retirement') {
+          if (phase?.name === 'retirement' && retirementAge === null) {
             const retirementDate = new Date(dp.date);
 
             yearsToRetirement = retirementDate.getFullYear() - new Date().getFullYear();
             retirementAge = startAge + yearsToRetirement;
-            break;
+          }
+
+          if (dp.portfolio.totalValue <= 0.1 && bankruptcyAge === null) {
+            const bankruptcyDate = new Date(dp.date);
+
+            yearsToBankruptcy = bankruptcyDate.getFullYear() - new Date().getFullYear();
+            bankruptcyAge = startAge + yearsToBankruptcy;
           }
         }
 
@@ -98,7 +107,7 @@ export class TableDataExtractor {
           seed,
           success,
           retirementAge,
-          bankruptcyAge: null,
+          bankruptcyAge,
           finalPhaseName: lastDp.phase!.name,
           finalPortfolioValue: lastDp.portfolio.totalValue,
           averageStockReturn,
@@ -111,7 +120,11 @@ export class TableDataExtractor {
     );
   }
 
-  extractMultiSimulationYearlyAggregateData(simulations: MultiSimulationResult, category: SimulationCategory): YearlyAggregateTableRow[] {
+  extractMultiSimulationYearlyAggregateData(
+    simulations: MultiSimulationResult,
+    analysis: MultiSimulationAnalysis,
+    category: SimulationCategory
+  ): YearlyAggregateTableRow[] {
     return validateYearlyAggregateTableData([]);
   }
 }
