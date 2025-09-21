@@ -1,6 +1,11 @@
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import { type SingleSimulationTableRow, validateSingleSimulationTableData } from '@/lib/schemas/single-simulation-table-schema';
-import { type MultiSimulationTableRow, validateMultiSimulationTableData } from '@/lib/schemas/multi-simulation-table-schema';
+import {
+  type MultiSimulationTableRow,
+  validateMultiSimulationTableData,
+  type YearlyAggregateTableRow,
+  validateYearlyAggregateTableData,
+} from '@/lib/schemas/multi-simulation-table-schema';
 
 import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
 
@@ -104,5 +109,9 @@ export class TableDataExtractor {
         };
       })
     );
+  }
+
+  extractMultiSimulationYearlyAggregateData(simulations: MultiSimulationResult, category: SimulationCategory): YearlyAggregateTableRow[] {
+    return validateYearlyAggregateTableData([]);
   }
 }
