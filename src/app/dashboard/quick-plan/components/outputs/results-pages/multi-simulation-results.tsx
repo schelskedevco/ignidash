@@ -11,10 +11,10 @@ interface MultiSimulationResultsProps {
 }
 
 export default function MultiSimulationResults({ simulationMode }: MultiSimulationResultsProps) {
-  const { data: { analysis: simulationResult, tableData, yearlyTableData } = {} } = useMultiSimulationResult(simulationMode);
-  const keyMetrics = useMultiSimulationKeyMetrics(simulationResult ?? null);
+  const { data: { analysis, tableData, yearlyTableData } = {} } = useMultiSimulationResult(simulationMode);
+  const keyMetrics = useMultiSimulationKeyMetrics(analysis ?? null);
 
-  if (!simulationResult || !keyMetrics || !tableData || !yearlyTableData) {
+  if (!analysis || !keyMetrics || !tableData || !yearlyTableData) {
     return (
       <div className="text-muted-foreground text-center">
         <p>Results content will be displayed here...</p>
@@ -27,12 +27,7 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
       <SectionContainer showBottomBorder className="mb-0">
         <SimulationMetrics keyMetrics={keyMetrics} />
       </SectionContainer>
-      <MultiSimulationMainResults
-        simulation={simulationResult.p50Result}
-        keyMetrics={keyMetrics}
-        tableData={tableData}
-        yearlyTableData={yearlyTableData}
-      />
+      <MultiSimulationMainResults analysis={analysis} keyMetrics={keyMetrics} tableData={tableData} yearlyTableData={yearlyTableData} />
     </>
   );
 }

@@ -1,6 +1,12 @@
 import type { TableColumn } from '@/lib/types/table';
 import type { ColumnFormat } from '@/lib/types/column-format';
 import { type SingleSimulationTableRow, SIMULATION_TABLE_CONFIG } from '@/lib/schemas/single-simulation-table-schema';
+import {
+  type MultiSimulationTableRow,
+  MULTI_SIMULATION_TABLE_CONFIG,
+  type YearlyAggregateTableRow,
+  YEARLY_AGGREGATE_TABLE_CONFIG,
+} from '@/lib/schemas/multi-simulation-table-schema';
 
 const currencyFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
@@ -45,5 +51,21 @@ export const generateSimulationTableColumns = (): TableColumn<SingleSimulationTa
     key: key as keyof SingleSimulationTableRow,
     title: config.title,
     format: (value: SingleSimulationTableRow[keyof SingleSimulationTableRow]) => formatValue(value, config.format),
+  }));
+};
+
+export const generateMultiSimulationTableColumns = (): TableColumn<MultiSimulationTableRow>[] => {
+  return Object.entries(MULTI_SIMULATION_TABLE_CONFIG).map(([key, config]) => ({
+    key: key as keyof MultiSimulationTableRow,
+    title: config.title,
+    format: (value: MultiSimulationTableRow[keyof MultiSimulationTableRow]) => formatValue(value, config.format),
+  }));
+};
+
+export const generateYearlyAggregateTableColumns = (): TableColumn<YearlyAggregateTableRow>[] => {
+  return Object.entries(YEARLY_AGGREGATE_TABLE_CONFIG).map(([key, config]) => ({
+    key: key as keyof YearlyAggregateTableRow,
+    title: config.title,
+    format: (value: YearlyAggregateTableRow[keyof YearlyAggregateTableRow]) => formatValue(value, config.format),
   }));
 };
