@@ -46,6 +46,63 @@ export class TableDataExtractor {
   }
 
   extractMultiSimulationData(simulations: MultiSimulationResult, category: SimulationCategory): MultiSimulationTableRow[] {
-    return validateMultiSimulationTableData([]);
+    return validateMultiSimulationTableData(
+      simulations.simulations.map(([seed, result]) => {
+        const { data, context } = result;
+
+        const startAge = context.startAge;
+
+        let yearsToRetirement: number | null = null;
+        let retirementAge: number | null = null;
+
+        for (const dp of data) {
+          const phase = dp.phase;
+          if (phase?.name === 'retirement') {
+            const retirementDate = new Date(dp.date);
+
+            yearsToRetirement = retirementDate.getFullYear() - new Date().getFullYear();
+            retirementAge = startAge + yearsToRetirement;
+            break;
+          }
+        }
+
+        const { stocks, bonds, cash, inflation, count } = data.slice(1).reduce(
+          (acc, dp) => {
+            const returnsData = dp.returns!;
+            return {
+              stocks: acc.stocks + returnsData.annualReturnRates.stocks,
+              bonds: acc.bonds + returnsData.annualReturnRates.bonds,
+              cash: acc.cash + returnsData.annualReturnRates.cash,
+              inflation: acc.inflation + returnsData.annualInflationRate,
+              count: acc.count + 1,
+            };
+          },
+          { stocks: 0, bonds: 0, cash: 0, inflation: 0, count: 0 }
+        );
+
+        const averageStockReturn = count > 0 ? stocks / count : null;
+        const averageBondReturn = count > 0 ? bonds / count : null;
+        const averageCashReturn = count > 0 ? cash / count : null;
+        const averageInflationRate = count > 0 ? inflation / count : null;
+
+        const lastDp = data[data.length - 1];
+        const success = Number(retirementAge !== null && lastDp.portfolio.totalValue > 0.1);
+        const historicalRanges = 'historicalRanges' in result && result.historicalRanges ? result.historicalRanges : null;
+
+        return {
+          seed,
+          success,
+          retirementAge,
+          bankruptcyAge: null,
+          finalPhaseName: lastDp.phase!.name,
+          finalPortfolioValue: lastDp.portfolio.totalValue,
+          averageStockReturn,
+          averageBondReturn,
+          averageCashReturn,
+          averageInflationRate,
+          historicalRanges,
+        };
+      })
+    );
   }
 }
