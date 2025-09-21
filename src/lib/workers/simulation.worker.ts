@@ -6,7 +6,11 @@ import {
   LcgHistoricalBacktestSimulationEngine,
   type MultiSimulationResult,
 } from '@/lib/calc/v2/simulation-engine';
+import { SimulationCategory } from '@/lib/types/simulation-category';
+import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
+
 import { MultiSimulationAnalyzer, type MultiSimulationAnalysis } from '../calc/v2/multi-simulation-analyzer';
+import { TableDataExtractor } from '../calc/v2/table-data-extractor';
 
 const simulationAPI = {
   async analyzeMonteCarloSimulation(
@@ -14,7 +18,7 @@ const simulationAPI = {
     baseSeed: number,
     numSimulations: number,
     simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns'
-  ): Promise<MultiSimulationAnalysis> {
+  ): Promise<{ analysis: MultiSimulationAnalysis; tableData: MultiSimulationTableRow[]; yearlyTableData: YearlyAggregateTableRow[] }> {
     let res: MultiSimulationResult;
     switch (simulationMode) {
       case 'monteCarloStochasticReturns': {
@@ -30,7 +34,13 @@ const simulationAPI = {
     }
 
     const analyzer = new MultiSimulationAnalyzer();
-    return analyzer.analyze(res);
+    const analysis = analyzer.analyze(res);
+
+    const extractor = new TableDataExtractor();
+    const tableData = extractor.extractMultiSimulationData(res, SimulationCategory.Portfolio);
+    const yearlyTableData = extractor.extractMultiSimulationYearlyAggregateData(res, analysis, SimulationCategory.Portfolio);
+
+    return { analysis, tableData, yearlyTableData };
   },
 };
 
