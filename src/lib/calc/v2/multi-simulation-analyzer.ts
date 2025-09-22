@@ -333,6 +333,7 @@ export class MultiSimulationAnalyzer {
       effectiveIncomeTaxRate: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.incomeTaxes.effectiveIncomeTaxRate ?? 0),
       topMarginalTaxRate: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.incomeTaxes.topMarginalTaxRate ?? 0),
       netIncome: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.incomeTaxes.netIncome ?? 0),
+      capitalLossDeduction: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.incomeTaxes.capitalLossDeduction ?? 0),
     };
 
     const capitalGainsTaxes = {
@@ -356,6 +357,7 @@ export class MultiSimulationAnalyzer {
         effectiveIncomeTaxRate: incomeTaxes.effectiveIncomeTaxRate[p],
         topMarginalTaxRate: incomeTaxes.topMarginalTaxRate[p],
         netIncome: incomeTaxes.netIncome[p],
+        capitalLossDeduction: incomeTaxes.capitalLossDeduction[p],
       },
       capitalGainsTaxes: {
         taxableCapitalGains: capitalGainsTaxes.taxableCapitalGains[p],
