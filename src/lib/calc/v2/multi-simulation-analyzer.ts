@@ -110,7 +110,6 @@ export class MultiSimulationAnalyzer {
 
   // export type AssetAllocation = Record<AssetClass, number>;
   // assetAllocation: AssetAllocation;
-
   private calculatePortfolioPercentiles(dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles<PortfolioData> {
     const percentiles = {
       totalValue: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.totalValue),
@@ -122,11 +121,11 @@ export class MultiSimulationAnalyzer {
       realizedGainsForPeriod: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.realizedGainsForPeriod),
     };
 
-    const accountNames: Record<string, { name: string; type: AccountInputs['type'] }> = {};
+    const accountNamesAndTypes: Record<string, { name: string; type: AccountInputs['type'] }> = {};
     dataPointsForYear.forEach(({ dp }) => {
       const perAccountData = dp.portfolio.perAccountData;
       for (const [id, acc] of Object.entries(perAccountData)) {
-        if (!accountNames[id]) accountNames[id] = { name: acc.name, type: acc.type };
+        if (!accountNamesAndTypes[id]) accountNamesAndTypes[id] = { name: acc.name, type: acc.type };
       }
     });
 
@@ -142,7 +141,7 @@ export class MultiSimulationAnalyzer {
         realizedGainsForPeriod: Percentiles<number>;
       }
     > = {};
-    for (const id of Object.keys(accountNames)) {
+    for (const id of Object.keys(accountNamesAndTypes)) {
       accountPercentiles[id] = {
         totalValue: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.perAccountData[id]?.totalValue ?? 0),
         totalWithdrawals: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.perAccountData[id]?.totalWithdrawals ?? 0),
@@ -165,7 +164,7 @@ export class MultiSimulationAnalyzer {
 
     const buildPercentileData = (p: keyof Percentiles<number>): PortfolioData => {
       const perAccountData: Record<string, AccountDataWithTransactions> = {};
-      for (const [id, { name, type }] of Object.entries(accountNames)) {
+      for (const [id, { name, type }] of Object.entries(accountNamesAndTypes)) {
         perAccountData[id] = {
           id,
           name,
