@@ -8,7 +8,7 @@ import SectionContainer from '@/components/ui/section-container';
 import { useResultsState } from '@/hooks/use-results-state';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
 
-import SimulationCategorySelector from '../single-simulation-category-selector';
+import SimulationCategorySelector from '../simulation-category-selector';
 import SingleSimulationChartsSection from '../sections/single-simulation-charts-section';
 import MultiSimulationDataTableSection from '../sections/multi-simulation-data-table-section';
 

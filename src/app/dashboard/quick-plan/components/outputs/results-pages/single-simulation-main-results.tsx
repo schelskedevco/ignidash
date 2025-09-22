@@ -5,7 +5,7 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import SectionContainer from '@/components/ui/section-container';
 import { useResultsState } from '@/hooks/use-results-state';
 
-import SimulationCategorySelector from '../single-simulation-category-selector';
+import SimulationCategorySelector from '../simulation-category-selector';
 import SingleSimulationChartsSection from '../sections/single-simulation-charts-section';
 import SingleSimulationDataTableSection from '../sections/single-simulation-data-table-section';
 
