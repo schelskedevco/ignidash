@@ -25,7 +25,7 @@ export default function MultiSimulationMainResults({
   yearlyTableData,
   simulationMode,
 }: MultiSimulationMainResultsProps) {
-  const simulation = analysis.p50Result;
+  const simulation = analysis.results.p50;
   const startAge = simulation.context.startAge;
 
   const { selectedAge, onAgeSelect, currentCategory, setCurrentCategory } = useResultsState(startAge);

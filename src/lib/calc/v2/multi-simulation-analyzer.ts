@@ -27,11 +27,7 @@ export interface Percentiles<T> {
 
 export interface MultiSimulationAnalysis {
   success: number;
-  p10Result: SimulationResult;
-  p25Result: SimulationResult;
-  p50Result: SimulationResult;
-  p75Result: SimulationResult;
-  p90Result: SimulationResult;
+  results: Percentiles<SimulationResult>;
 }
 
 export class MultiSimulationAnalyzer {
@@ -89,11 +85,13 @@ export class MultiSimulationAnalyzer {
 
     return {
       success: successCount / simulations.length,
-      p10Result: { data: p10DataPoints, context },
-      p25Result: { data: p25DataPoints, context },
-      p50Result: { data: p50DataPoints, context },
-      p75Result: { data: p75DataPoints, context },
-      p90Result: { data: p90DataPoints, context },
+      results: {
+        p10: { data: p10DataPoints, context },
+        p25: { data: p25DataPoints, context },
+        p50: { data: p50DataPoints, context },
+        p75: { data: p75DataPoints, context },
+        p90: { data: p90DataPoints, context },
+      },
     };
   }
 

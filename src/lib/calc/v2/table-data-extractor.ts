@@ -136,11 +136,11 @@ export class TableDataExtractor {
         percentAccumulation: 0,
         percentRetirement: 0,
         percentBankrupt: 0,
-        p10Portfolio: analysis.p10Result.data[i]?.portfolio.totalValue ?? null,
-        p25Portfolio: analysis.p25Result.data[i]?.portfolio.totalValue ?? null,
-        p50Portfolio: analysis.p50Result.data[i]?.portfolio.totalValue ?? null,
-        p75Portfolio: analysis.p75Result.data[i]?.portfolio.totalValue ?? null,
-        p90Portfolio: analysis.p90Result.data[i]?.portfolio.totalValue ?? null,
+        p10Portfolio: analysis.results.p10.data[i]?.portfolio.totalValue ?? null,
+        p25Portfolio: analysis.results.p25.data[i]?.portfolio.totalValue ?? null,
+        p50Portfolio: analysis.results.p50.data[i]?.portfolio.totalValue ?? null,
+        p75Portfolio: analysis.results.p75.data[i]?.portfolio.totalValue ?? null,
+        p90Portfolio: analysis.results.p90.data[i]?.portfolio.totalValue ?? null,
       });
     }
 
