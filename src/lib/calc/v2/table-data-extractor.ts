@@ -116,30 +116,34 @@ export class TableDataExtractor {
     analysis: MultiSimulationAnalysis,
     category: SimulationCategory
   ): YearlyAggregateTableRow[] {
-    return simulations.simulations.flatMap(([, result]) => {
-      const { data, context } = result;
+    const res: YearlyAggregateTableRow[] = [];
 
-      const startAge = context.startAge;
-      const startDateYear = new Date().getFullYear();
+    const simulationLength = simulations.simulations[0][1].data.length;
 
-      return data.map((dp, idx) => {
-        const currDateYear = new Date(dp.date).getFullYear();
+    const startAge = simulations.simulations[0][1].context.startAge;
+    const startDateYear = new Date().getFullYear();
 
-        return {
-          year: idx,
-          age: currDateYear - startDateYear + startAge,
+    for (let i = 0; i < simulationLength; i++) {
+      if (simulations.simulations[i][1].data.length !== simulationLength) {
+        throw new Error('All simulations must have the same length for yearly aggregate data extraction.');
+      }
 
-          percentAccumulation: 0,
-          percentRetirement: 0,
-          percentBankrupt: 0,
+      const currDateYear = new Date(simulations.simulations[i][1].data[0].date).getFullYear();
 
-          p10Portfolio: analysis.p10Result.data[idx]?.portfolio.totalValue ?? null,
-          p25Portfolio: analysis.p25Result.data[idx]?.portfolio.totalValue ?? null,
-          p50Portfolio: analysis.p50Result.data[idx]?.portfolio.totalValue ?? null,
-          p75Portfolio: analysis.p75Result.data[idx]?.portfolio.totalValue ?? null,
-          p90Portfolio: analysis.p90Result.data[idx]?.portfolio.totalValue ?? null,
-        };
+      res.push({
+        year: i,
+        age: currDateYear - startDateYear + startAge,
+        percentAccumulation: 0,
+        percentRetirement: 0,
+        percentBankrupt: 0,
+        p10Portfolio: analysis.p10Result.data[i]?.portfolio.totalValue ?? null,
+        p25Portfolio: analysis.p25Result.data[i]?.portfolio.totalValue ?? null,
+        p50Portfolio: analysis.p50Result.data[i]?.portfolio.totalValue ?? null,
+        p75Portfolio: analysis.p75Result.data[i]?.portfolio.totalValue ?? null,
+        p90Portfolio: analysis.p90Result.data[i]?.portfolio.totalValue ?? null,
       });
-    });
+    }
+
+    return res;
   }
 }
