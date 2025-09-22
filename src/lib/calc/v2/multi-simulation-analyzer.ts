@@ -1,5 +1,10 @@
 import type { SimulationDataPoint, MultiSimulationResult, SimulationResult } from './simulation-engine';
 import type { PortfolioData } from './portfolio';
+import type { IncomesData } from './incomes';
+import type { ExpensesData } from './expenses';
+import type { PhaseData } from './phase';
+import type { TaxesData } from './taxes';
+import type { ReturnsData } from './returns';
 
 export interface Stats {
   mean: number;
@@ -27,6 +32,12 @@ export interface MultiSimulationAnalysis {
 }
 
 export class MultiSimulationAnalyzer {
+  // portfolio: PortfolioData;
+  // incomes: IncomesData | null;
+  // expenses: ExpensesData | null;
+  // phase: PhaseData | null;
+  // taxes: TaxesData | null;
+  // returns: ReturnsData | null;
   analyze(multiSimulationResult: MultiSimulationResult): MultiSimulationAnalysis {
     const p10DataPoints: Array<SimulationDataPoint> = [];
     const p25DataPoints: Array<SimulationDataPoint> = [];
@@ -75,6 +86,11 @@ export class MultiSimulationAnalyzer {
     };
   }
 
+  private getFieldPercentiles<T>(data: T[], valueExtractor: (item: T) => number): Percentiles<number> {
+    const values = data.map(valueExtractor).sort((a, b) => a - b);
+    return this.calculatePercentilesFromValues(values);
+  }
+
   private calculatePercentile<T>(sortedValues: T[], percentile: number): T {
     const index = Math.floor((percentile / 100) * sortedValues.length);
     return sortedValues[Math.min(index, sortedValues.length - 1)];
@@ -90,20 +106,46 @@ export class MultiSimulationAnalyzer {
     };
   }
 
-  private calculatePortfolioPercentiles(dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles<PortfolioData> {
-    const getFieldPercentiles = (field: keyof PortfolioData) => {
-      const values = dataPointsForYear.map((d) => d.dp.portfolio[field] as number).sort((a, b) => a - b);
-      return this.calculatePercentilesFromValues(values);
-    };
+  // export interface PortfolioData {
+  //   totalValue: number;
+  //   totalWithdrawals: number;
+  //   totalContributions: number;
+  //   totalRealizedGains: number;
+  //   withdrawalsForPeriod: number;
+  //   contributionsForPeriod: number;
+  //   realizedGainsForPeriod: number;
+  //   perAccountData: Record<string, AccountDataWithTransactions>;
+  //   assetAllocation: AssetAllocation | null;
+  // }
 
+  // export type AssetAllocation = Record<AssetClass, number>;
+
+  // export interface AccountData {
+  //   totalValue: number;
+  //   totalWithdrawals: number;
+  //   totalContributions: number;
+  //   totalRealizedGains: number;
+  //   name: string;
+  //   id: string;
+  //   type: AccountInputs['type'];
+  //   assetAllocation: AssetAllocation;
+  // }
+
+  // export interface AccountDataWithTransactions extends AccountData {
+  //   contributionsForPeriod: number;
+  //   withdrawalsForPeriod: number;
+  //   realizedGainsForPeriod: number;
+  // }
+
+  private calculatePortfolioPercentiles(dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles<PortfolioData> {
     const percentiles = {
-      totalValue: getFieldPercentiles('totalValue'),
-      totalWithdrawals: getFieldPercentiles('totalWithdrawals'),
-      totalContributions: getFieldPercentiles('totalContributions'),
-      totalRealizedGains: getFieldPercentiles('totalRealizedGains'),
-      withdrawalsForPeriod: getFieldPercentiles('withdrawalsForPeriod'),
-      contributionsForPeriod: getFieldPercentiles('contributionsForPeriod'),
-      realizedGainsForPeriod: getFieldPercentiles('realizedGainsForPeriod'),
+      totalValue: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.totalValue),
+      totalWithdrawals: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.totalWithdrawals),
+      totalContributions: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.totalContributions),
+      totalRealizedGains: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.totalRealizedGains),
+      withdrawalsForPeriod: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.withdrawalsForPeriod),
+      contributionsForPeriod: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.contributionsForPeriod),
+      realizedGainsForPeriod: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.portfolio.realizedGainsForPeriod),
     };
 
     const buildPercentileData = (p: keyof Percentiles<number>): PortfolioData => ({
@@ -125,6 +167,130 @@ export class MultiSimulationAnalyzer {
       p75: buildPercentileData('p75'),
       p90: buildPercentileData('p90'),
     };
+  }
+
+  // export interface IncomesData {
+  //   totalGrossIncome: number;
+  //   totalAmountWithheld: number;
+  //   totalIncomeAfterWithholding: number;
+  //   perIncomeData: Record<string, IncomeData>;
+  // }
+
+  // export interface IncomeData {
+  //   id: string;
+  //   name: string;
+  //   grossIncome: number;
+  //   amountWithheld: number;
+  //   incomeAfterWithholding: number;
+  // }
+  private calculateIncomesPercentiles(dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles<IncomesData> {
+    const percentiles = {
+      totalGrossIncome: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.incomes?.totalGrossIncome ?? 0),
+      totalAmountWithheld: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.incomes?.totalAmountWithheld ?? 0),
+      totalIncomeAfterWithholding: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.incomes?.totalIncomeAfterWithholding ?? 0),
+    };
+
+    const buildPercentileData = (p: keyof Percentiles<number>): IncomesData => ({
+      totalGrossIncome: percentiles.totalGrossIncome[p],
+      totalAmountWithheld: percentiles.totalAmountWithheld[p],
+      totalIncomeAfterWithholding: percentiles.totalIncomeAfterWithholding[p],
+      perIncomeData: {},
+    });
+
+    return {
+      p10: buildPercentileData('p10'),
+      p25: buildPercentileData('p25'),
+      p50: buildPercentileData('p50'),
+      p75: buildPercentileData('p75'),
+      p90: buildPercentileData('p90'),
+    };
+  }
+
+  // export interface ExpensesData {
+  //   totalExpenses: number;
+  //   perExpenseData: Record<string, ExpenseData>;
+  // }
+
+  // export interface ExpenseData {
+  //   id: string;
+  //   name: string;
+  //   amount: number;
+  // }
+  private calculateExpensesPercentiles(dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles<ExpensesData> {
+    const percentiles = {
+      totalExpenses: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.expenses?.totalExpenses ?? 0),
+    };
+
+    const buildPercentileData = (p: keyof Percentiles<number>): ExpensesData => ({
+      totalExpenses: percentiles.totalExpenses[p],
+      perExpenseData: {},
+    });
+
+    return {
+      p10: buildPercentileData('p10'),
+      p25: buildPercentileData('p25'),
+      p50: buildPercentileData('p50'),
+      p75: buildPercentileData('p75'),
+      p90: buildPercentileData('p90'),
+    };
+  }
+
+  // export type PhaseName = 'accumulation' | 'retirement';
+
+  // export interface PhaseData {
+  //   name: PhaseName;
+  // }
+  private calculatePhasePercentiles(dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles<PhaseData> {
+    throw new Error('Not implemented');
+  }
+
+  // export interface CapitalGainsTaxesData {
+  //   taxableCapitalGains: number;
+  //   capitalGainsTaxAmount: number;
+  //   effectiveCapitalGainsTaxRate: number;
+  //   topMarginalCapitalGainsTaxRate: number;
+  //   netCapitalGains: number;
+  // }
+
+  // export interface IncomeTaxesData {
+  //   taxableOrdinaryIncome: number;
+  //   incomeTaxAmount: number;
+  //   effectiveIncomeTaxRate: number;
+  //   topMarginalTaxRate: number;
+  //   netIncome: number;
+  //   capitalLossDeduction?: number;
+  // }
+
+  // export interface TaxesData {
+  //   incomeTaxes: IncomeTaxesData;
+  //   capitalGainsTaxes: CapitalGainsTaxesData;
+  //   totalTaxesDue: number;
+  //   totalTaxesRefund: number;
+  //   totalTaxableIncome: number;
+  // }
+  private calculateTaxesPercentiles(dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles<TaxesData> {
+    throw new Error('Not implemented');
+  }
+
+  // export interface ReturnsData {
+  //   // Total return data
+  //   totalReturnAmounts: AssetReturnAmounts;
+
+  //   // Monthly return data
+  //   returnAmountsForPeriod: AssetReturnAmounts;
+  //   returnRatesForPeriod: AssetReturnRates;
+  //   inflationRateForPeriod: number;
+
+  //   // Annual return data
+  //   annualReturnRates: AssetReturnRates;
+  //   annualInflationRate: number;
+  // }
+
+  // export type AssetClass = 'stocks' | 'bonds' | 'cash';
+  // export type AssetReturnRates = Record<AssetClass, number>;
+  // export type AssetReturnAmounts = Record<AssetClass, number>;
+  private calculateReturnsPercentiles(dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles<ReturnsData> {
+    throw new Error('Not implemented');
   }
 
   private calculateStats(values: number[]): Stats | null {
