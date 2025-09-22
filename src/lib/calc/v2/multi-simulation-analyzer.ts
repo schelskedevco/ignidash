@@ -411,7 +411,7 @@ export class MultiSimulationAnalyzer {
     const inflationRateForPeriod = this.getNumberFieldPercentiles(dataPointsForYear, (d) => d.dp.returns!.inflationRateForPeriod);
     const annualInflationRate = this.getNumberFieldPercentiles(dataPointsForYear, (d) => d.dp.returns!.annualInflationRate);
 
-    const makeAssetPercentiles = <T extends Record<AssetClass, number>>(
+    const buildAssetPercentiles = <T extends Record<AssetClass, number>>(
       valueExtractor: (d: (typeof dataPointsForYear)[number]) => T
     ): Record<AssetClass, Percentiles<number>> => {
       return Object.fromEntries(
@@ -419,22 +419,22 @@ export class MultiSimulationAnalyzer {
       ) as Record<AssetClass, Percentiles<number>>;
     };
 
-    const totalReturnAmounts = makeAssetPercentiles((d) => d.dp.returns!.totalReturnAmounts);
-    const returnAmountsForPeriod = makeAssetPercentiles((d) => d.dp.returns!.returnAmountsForPeriod);
-    const returnRatesForPeriod = makeAssetPercentiles((d) => d.dp.returns!.returnRatesForPeriod);
-    const annualReturnRates = makeAssetPercentiles((d) => d.dp.returns!.annualReturnRates);
+    const totalReturnAmounts = buildAssetPercentiles((d) => d.dp.returns!.totalReturnAmounts);
+    const returnAmountsForPeriod = buildAssetPercentiles((d) => d.dp.returns!.returnAmountsForPeriod);
+    const returnRatesForPeriod = buildAssetPercentiles((d) => d.dp.returns!.returnRatesForPeriod);
+    const annualReturnRates = buildAssetPercentiles((d) => d.dp.returns!.annualReturnRates);
 
     const buildPercentileData = (p: keyof Percentiles<number>): ReturnsData => {
-      const pickAsset = (assetPercentiles: Record<AssetClass, Percentiles<number>>): Record<AssetClass, number> => {
+      const extractPercentile = (assetPercentiles: Record<AssetClass, Percentiles<number>>): Record<AssetClass, number> => {
         return Object.fromEntries(assetClasses.map((asset) => [asset, assetPercentiles[asset][p]])) as Record<AssetClass, number>;
       };
 
       return {
-        totalReturnAmounts: pickAsset(totalReturnAmounts),
-        returnAmountsForPeriod: pickAsset(returnAmountsForPeriod),
-        returnRatesForPeriod: pickAsset(returnRatesForPeriod),
+        totalReturnAmounts: extractPercentile(totalReturnAmounts),
+        returnAmountsForPeriod: extractPercentile(returnAmountsForPeriod),
+        returnRatesForPeriod: extractPercentile(returnRatesForPeriod),
         inflationRateForPeriod: inflationRateForPeriod[p],
-        annualReturnRates: pickAsset(annualReturnRates),
+        annualReturnRates: extractPercentile(annualReturnRates),
         annualInflationRate: annualInflationRate[p],
       };
     };
