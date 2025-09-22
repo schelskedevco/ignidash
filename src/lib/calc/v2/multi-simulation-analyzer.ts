@@ -412,10 +412,10 @@ export class MultiSimulationAnalyzer {
     const annualInflationRate = this.getNumberFieldPercentiles(dataPointsForYear, (d) => d.dp.returns!.annualInflationRate);
 
     const makeAssetPercentiles = <T extends Record<AssetClass, number>>(
-      selector: (d: (typeof dataPointsForYear)[number]) => T
+      valueExtractor: (d: (typeof dataPointsForYear)[number]) => T
     ): Record<AssetClass, Percentiles<number>> => {
       return Object.fromEntries(
-        assetClasses.map((asset) => [asset, this.getNumberFieldPercentiles(dataPointsForYear, (d) => selector(d)[asset])])
+        assetClasses.map((asset) => [asset, this.getNumberFieldPercentiles(dataPointsForYear, (d) => valueExtractor(d)[asset])])
       ) as Record<AssetClass, Percentiles<number>>;
     };
 
