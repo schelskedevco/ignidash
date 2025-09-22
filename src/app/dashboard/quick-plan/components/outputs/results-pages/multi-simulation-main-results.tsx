@@ -1,7 +1,5 @@
 'use client';
 
-import { useState } from 'react';
-
 import type { MultiSimulationAnalysis } from '@/lib/calc/v2/multi-simulation-analyzer';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import SectionContainer from '@/components/ui/section-container';
@@ -15,40 +13,25 @@ import MultiSimulationDataTableSection from '../sections/multi-simulation-data-t
 
 interface MultiSimulationMainResultsProps {
   analysis: MultiSimulationAnalysis;
+  simulation: SimulationResult;
   keyMetrics: KeyMetrics;
   tableData: MultiSimulationTableRow[];
   yearlyTableData: YearlyAggregateTableRow[];
   simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns';
+  setCurrentPercentile: (percentile: 'P10' | 'P25' | 'P50' | 'P75' | 'P90') => void;
+  currentPercentile: 'P10' | 'P25' | 'P50' | 'P75' | 'P90';
 }
 
 export default function MultiSimulationMainResults({
   analysis,
+  simulation,
   keyMetrics,
   tableData,
   yearlyTableData,
   simulationMode,
+  setCurrentPercentile,
+  currentPercentile,
 }: MultiSimulationMainResultsProps) {
-  const [currentPercentile, setCurrentPercentile] = useState<'P10' | 'P25' | 'P50' | 'P75' | 'P90'>('P50');
-
-  let simulation: SimulationResult;
-  switch (currentPercentile) {
-    case 'P10':
-      simulation = analysis.results.p10;
-      break;
-    case 'P25':
-      simulation = analysis.results.p25;
-      break;
-    case 'P50':
-      simulation = analysis.results.p50;
-      break;
-    case 'P75':
-      simulation = analysis.results.p75;
-      break;
-    case 'P90':
-      simulation = analysis.results.p90;
-      break;
-  }
-
   const startAge = simulation.context.startAge;
   const { selectedAge, onAgeSelect, currentCategory, setCurrentCategory } = useResultsState(startAge);
 

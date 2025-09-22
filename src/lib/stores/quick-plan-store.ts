@@ -482,8 +482,11 @@ export const useKeyMetrics = (simulationResult: SimulationResult | null): KeyMet
   }, [simulationResult]);
 };
 
-export const useMultiSimulationKeyMetrics = (multiSimulationAnalysis: MultiSimulationAnalysis | null): KeyMetrics | null => {
-  const metrics = useKeyMetrics(multiSimulationAnalysis?.results.p50 ?? null);
+export const useMultiSimulationKeyMetrics = (
+  multiSimulationAnalysis: MultiSimulationAnalysis | null,
+  simulation: SimulationResult | null
+): KeyMetrics | null => {
+  const metrics = useKeyMetrics(simulation);
   if (!metrics) return null;
 
   return { ...metrics, success: multiSimulationAnalysis!.success };
