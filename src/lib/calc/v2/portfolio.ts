@@ -1,5 +1,4 @@
 import type { AccountInputs, InvestmentAccountType } from '@/lib/schemas/account-form-schema';
-import { v4 as uuidv4 } from 'uuid';
 
 import type { SimulationState } from './simulation-engine';
 import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation } from '../asset';
@@ -9,6 +8,8 @@ import type { ExpensesData } from './expenses';
 import type { TaxesData } from './taxes';
 
 type TransactionsBreakdown = { totalForPeriod: number; byAccount: Record<string, number> };
+
+const EXTRA_SAVINGS_ACCOUNT_ID = '54593a0d-7b4f-489d-a5bd-42500afba532';
 
 export class PortfolioProcessor {
   private extraSavingsAccount: SavingsAccount;
@@ -20,7 +21,7 @@ export class PortfolioProcessor {
   ) {
     this.extraSavingsAccount = new SavingsAccount({
       type: 'savings' as const,
-      id: uuidv4(),
+      id: EXTRA_SAVINGS_ACCOUNT_ID,
       name: '[System] Extra Savings',
       currentValue: 0,
     });
