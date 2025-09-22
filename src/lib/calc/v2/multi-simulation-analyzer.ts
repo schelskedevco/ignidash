@@ -74,6 +74,24 @@ export class MultiSimulationAnalyzer {
     };
   }
 
+  private calculatePercentile(
+    sortedValues: Array<{ seed: number; dp: SimulationDataPoint }>,
+    percentile: number
+  ): { seed: number; dp: SimulationDataPoint } {
+    const index = Math.floor((percentile / 100) * sortedValues.length);
+    return sortedValues[Math.min(index, sortedValues.length - 1)];
+  }
+
+  private calculatePercentilesFromValues(sortedValues: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles {
+    return {
+      p10: this.calculatePercentile(sortedValues, 10),
+      p25: this.calculatePercentile(sortedValues, 25),
+      p50: this.calculatePercentile(sortedValues, 50),
+      p75: this.calculatePercentile(sortedValues, 75),
+      p90: this.calculatePercentile(sortedValues, 90),
+    };
+  }
+
   private calculateStats(values: number[]): Stats | null {
     if (values.length === 0) return null;
     if (values.length === 1) return { mean: values[0], median: values[0], min: values[0], max: values[0], stdDev: null };
@@ -100,23 +118,5 @@ export class MultiSimulationAnalyzer {
   private calculateStandardDeviation(values: number[], mean: number): number {
     const variance = values.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / (values.length - 1);
     return Math.sqrt(variance);
-  }
-
-  private calculatePercentile(
-    sortedValues: Array<{ seed: number; dp: SimulationDataPoint }>,
-    percentile: number
-  ): { seed: number; dp: SimulationDataPoint } {
-    const index = Math.floor((percentile / 100) * sortedValues.length);
-    return sortedValues[Math.min(index, sortedValues.length - 1)];
-  }
-
-  private calculatePercentilesFromValues(sortedValues: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles {
-    return {
-      p10: this.calculatePercentile(sortedValues, 10),
-      p25: this.calculatePercentile(sortedValues, 25),
-      p50: this.calculatePercentile(sortedValues, 50),
-      p75: this.calculatePercentile(sortedValues, 75),
-      p90: this.calculatePercentile(sortedValues, 90),
-    };
   }
 }
