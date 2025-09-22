@@ -35,12 +35,6 @@ export interface MultiSimulationAnalysis {
 }
 
 export class MultiSimulationAnalyzer {
-  // portfolio: PortfolioData;
-  // incomes: IncomesData | null;
-  // expenses: ExpensesData | null;
-  // phase: PhaseData | null;
-  // taxes: TaxesData | null;
-  // returns: ReturnsData | null;
   analyze(multiSimulationResult: MultiSimulationResult): MultiSimulationAnalysis {
     const p10DataPoints: Array<SimulationDataPoint> = [];
     const p25DataPoints: Array<SimulationDataPoint> = [];
@@ -61,14 +55,28 @@ export class MultiSimulationAnalyzer {
         dataPointsForYear.push({ seed, dp });
       }
 
-      const sortedDataPointsForYear = dataPointsForYear.sort((a, b) => a.dp.portfolio.totalValue - b.dp.portfolio.totalValue);
-      const percentiles = this.calculatePercentilesFromValues(sortedDataPointsForYear);
+      const portfolioPercentiles = this.calculatePortfolioPercentiles(dataPointsForYear);
+      const incomesPercentiles = this.calculateIncomesPercentiles(dataPointsForYear);
+      const expensesPercentiles = this.calculateExpensesPercentiles(dataPointsForYear);
+      const phasePercentiles = this.calculatePhasePercentiles(dataPointsForYear);
+      const taxesPercentiles = this.calculateTaxesPercentiles(dataPointsForYear);
+      const returnsPercentiles = this.calculateReturnsPercentiles(dataPointsForYear);
 
-      p10DataPoints.push(percentiles.p10.dp);
-      p25DataPoints.push(percentiles.p25.dp);
-      p50DataPoints.push(percentiles.p50.dp);
-      p75DataPoints.push(percentiles.p75.dp);
-      p90DataPoints.push(percentiles.p90.dp);
+      const buildSimulationDataPoint = (p: keyof Percentiles<number>): SimulationDataPoint => ({
+        date: dataPointsForYear[0].dp.date,
+        portfolio: portfolioPercentiles[p],
+        incomes: incomesPercentiles[p],
+        expenses: expensesPercentiles[p],
+        phase: phasePercentiles[p],
+        taxes: taxesPercentiles[p],
+        returns: returnsPercentiles[p],
+      });
+
+      p10DataPoints.push(buildSimulationDataPoint('p10'));
+      p25DataPoints.push(buildSimulationDataPoint('p25'));
+      p50DataPoints.push(buildSimulationDataPoint('p50'));
+      p75DataPoints.push(buildSimulationDataPoint('p75'));
+      p90DataPoints.push(buildSimulationDataPoint('p90'));
     }
 
     const context = { ...simulations[0][1].context };
