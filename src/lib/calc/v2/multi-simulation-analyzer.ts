@@ -320,32 +320,62 @@ export class MultiSimulationAnalyzer {
     };
   }
 
-  // export interface CapitalGainsTaxesData {
-  //   taxableCapitalGains: number;
-  //   capitalGainsTaxAmount: number;
-  //   effectiveCapitalGainsTaxRate: number;
-  //   topMarginalCapitalGainsTaxRate: number;
-  //   netCapitalGains: number;
-  // }
-
-  // export interface IncomeTaxesData {
-  //   taxableOrdinaryIncome: number;
-  //   incomeTaxAmount: number;
-  //   effectiveIncomeTaxRate: number;
-  //   topMarginalTaxRate: number;
-  //   netIncome: number;
-  //   capitalLossDeduction?: number;
-  // }
-
-  // export interface TaxesData {
-  //   incomeTaxes: IncomeTaxesData;
-  //   capitalGainsTaxes: CapitalGainsTaxesData;
-  //   totalTaxesDue: number;
-  //   totalTaxesRefund: number;
-  //   totalTaxableIncome: number;
-  // }
   private calculateTaxesPercentiles(dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles<TaxesData> {
-    throw new Error('Not implemented');
+    const percentiles = {
+      totalTaxesDue: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.totalTaxesDue ?? 0),
+      totalTaxesRefund: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.totalTaxesRefund ?? 0),
+      totalTaxableIncome: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.totalTaxableIncome ?? 0),
+    };
+
+    const incomeTaxes = {
+      taxableOrdinaryIncome: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.incomeTaxes.taxableOrdinaryIncome ?? 0),
+      incomeTaxAmount: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0),
+      effectiveIncomeTaxRate: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.incomeTaxes.effectiveIncomeTaxRate ?? 0),
+      topMarginalTaxRate: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.incomeTaxes.topMarginalTaxRate ?? 0),
+      netIncome: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.incomeTaxes.netIncome ?? 0),
+    };
+
+    const capitalGainsTaxes = {
+      taxableCapitalGains: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.capitalGainsTaxes.taxableCapitalGains ?? 0),
+      capitalGainsTaxAmount: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0),
+      effectiveCapitalGainsTaxRate: this.getFieldPercentiles(
+        dataPointsForYear,
+        (d) => d.dp.taxes?.capitalGainsTaxes.effectiveCapitalGainsTaxRate ?? 0
+      ),
+      topMarginalCapitalGainsTaxRate: this.getFieldPercentiles(
+        dataPointsForYear,
+        (d) => d.dp.taxes?.capitalGainsTaxes.topMarginalCapitalGainsTaxRate ?? 0
+      ),
+      netCapitalGains: this.getFieldPercentiles(dataPointsForYear, (d) => d.dp.taxes?.capitalGainsTaxes.netCapitalGains ?? 0),
+    };
+
+    const buildPercentileData = (p: keyof Percentiles<number>): TaxesData => ({
+      incomeTaxes: {
+        taxableOrdinaryIncome: incomeTaxes.taxableOrdinaryIncome[p],
+        incomeTaxAmount: incomeTaxes.incomeTaxAmount[p],
+        effectiveIncomeTaxRate: incomeTaxes.effectiveIncomeTaxRate[p],
+        topMarginalTaxRate: incomeTaxes.topMarginalTaxRate[p],
+        netIncome: incomeTaxes.netIncome[p],
+      },
+      capitalGainsTaxes: {
+        taxableCapitalGains: capitalGainsTaxes.taxableCapitalGains[p],
+        capitalGainsTaxAmount: capitalGainsTaxes.capitalGainsTaxAmount[p],
+        effectiveCapitalGainsTaxRate: capitalGainsTaxes.effectiveCapitalGainsTaxRate[p],
+        topMarginalCapitalGainsTaxRate: capitalGainsTaxes.topMarginalCapitalGainsTaxRate[p],
+        netCapitalGains: capitalGainsTaxes.netCapitalGains[p],
+      },
+      totalTaxesDue: percentiles.totalTaxesDue[p],
+      totalTaxesRefund: percentiles.totalTaxesRefund[p],
+      totalTaxableIncome: percentiles.totalTaxableIncome[p],
+    });
+
+    return {
+      p10: buildPercentileData('p10'),
+      p25: buildPercentileData('p25'),
+      p50: buildPercentileData('p50'),
+      p75: buildPercentileData('p75'),
+      p90: buildPercentileData('p90'),
+    };
   }
 
   private calculateReturnsPercentiles(dataPointsForYear: Array<{ seed: number; dp: SimulationDataPoint }>): Percentiles<ReturnsData> {
