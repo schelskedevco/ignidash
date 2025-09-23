@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, Fragment } from 'react';
 
 import type { SimulationDataPoint, SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
@@ -112,30 +112,41 @@ function CashFlowDataListCard({ dp }: DataListCardProps) {
   return (
     <div className="flex flex-col gap-2">
       <Card className="mb-0">
-        <Subheading level={4}>Cash Flow</Subheading>
+        <Subheading level={4}>Income</Subheading>
         <DescriptionList>
           <DescriptionTerm>Gross Income</DescriptionTerm>
           <DescriptionDetails>{`+ ${formatNumber(grossIncome, 2, '$')}`}</DescriptionDetails>
 
           <DescriptionTerm>Income Tax</DescriptionTerm>
           <DescriptionDetails>{`- ${formatNumber(incomeTax, 2, '$')}`}</DescriptionDetails>
-
-          <DescriptionTerm>Total Expenses</DescriptionTerm>
-          <DescriptionDetails>{`- ${formatNumber(totalExpenses, 2, '$')}`}</DescriptionDetails>
-
-          <DescriptionTerm className="font-semibold">Net</DescriptionTerm>
-          <DescriptionDetails className="font-semibold">{`${netCashFlow < 0 ? '-' : '+'} ${formatNumber(Math.abs(netCashFlow), 2, '$')}`}</DescriptionDetails>
-
+        </DescriptionList>
+      </Card>
+      <Card className="my-0">
+        <Subheading level={4}>Expenses</Subheading>
+        <DescriptionList>
+          {Object.values(dp.expenses?.perExpenseData ?? {}).map((expense) => (
+            <Fragment key={expense.id}>
+              <DescriptionTerm>{expense.name}</DescriptionTerm>
+              <DescriptionDetails>{formatNumber(expense.amount, 2, '$')}</DescriptionDetails>
+            </Fragment>
+          ))}
+          <DescriptionTerm className="font-semibold">Total Expenses</DescriptionTerm>
+          <DescriptionDetails className="font-semibold">{formatNumber(dp.expenses?.totalExpenses ?? 0, 2, '$')}</DescriptionDetails>
+        </DescriptionList>
+      </Card>
+      <Card className="mt-0">
+        <Subheading level={4}>Cash Flow</Subheading>
+        <DescriptionList>
           {grossIncome > 0 && (
             <>
               <DescriptionTerm>Savings Rate</DescriptionTerm>
               <DescriptionDetails>{`${formatNumber((netCashFlow / grossIncome) * 100, 1)}%`}</DescriptionDetails>
             </>
           )}
+
+          <DescriptionTerm className="font-semibold">Net</DescriptionTerm>
+          <DescriptionDetails className="font-semibold">{`${netCashFlow < 0 ? '-' : '+'} ${formatNumber(Math.abs(netCashFlow), 2, '$')}`}</DescriptionDetails>
         </DescriptionList>
-      </Card>
-      <Card className="mt-0">
-        <Subheading level={4}>Cash Flow</Subheading>
       </Card>
     </div>
   );
