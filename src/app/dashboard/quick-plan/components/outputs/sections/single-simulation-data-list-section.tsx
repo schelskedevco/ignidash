@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, Fragment } from 'react';
+import { useMemo } from 'react';
 
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
@@ -33,14 +33,16 @@ export default function SingleSimulationDataListSection({ simulation, selectedAg
       <SectionHeader title={'Data List'} desc={'Data List Desc'} className="mb-4" />
       <div className="grid grid-cols-1 gap-2 @3xl:grid-cols-2 @5xl:grid-cols-3">
         <Card>
-          <Subheading level={4}>Income</Subheading>
+          <Subheading level={4}>Cash Flow</Subheading>
           <DescriptionList>
-            {Object.values(data.incomes?.perIncomeData ?? {}).map((income) => (
-              <Fragment key={income.id}>
-                <DescriptionTerm>{income.name}</DescriptionTerm>
-                <DescriptionDetails>{`+ ${formatNumber(income.grossIncome, 2, '$')}`}</DescriptionDetails>
-              </Fragment>
-            ))}
+            <DescriptionTerm>Gross Income</DescriptionTerm>
+            <DescriptionDetails>{`+ ${formatNumber(data.incomes?.totalGrossIncome ?? 0, 2, '$')}`}</DescriptionDetails>
+
+            <DescriptionTerm>Income Tax</DescriptionTerm>
+            <DescriptionDetails>{`- ${formatNumber(data.taxes?.incomeTaxes.incomeTaxAmount ?? 0, 2, '$')}`}</DescriptionDetails>
+
+            <DescriptionTerm>Total Expenses</DescriptionTerm>
+            <DescriptionDetails>{`- ${formatNumber(data.expenses?.totalExpenses ?? 0, 2, '$')}`}</DescriptionDetails>
           </DescriptionList>
         </Card>
       </div>
