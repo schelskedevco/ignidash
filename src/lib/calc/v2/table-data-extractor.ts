@@ -153,7 +153,7 @@ export class TableDataExtractor {
   }
 
   private getHistoricalYear(historicalRanges: { startYear: number; endYear: number }[] | null, yearsSinceStart: number): number | null {
-    if (!historicalRanges || historicalRanges.length === 0) return null;
+    if (!historicalRanges?.length) return null;
 
     let historicalYear: number | null = null;
 
