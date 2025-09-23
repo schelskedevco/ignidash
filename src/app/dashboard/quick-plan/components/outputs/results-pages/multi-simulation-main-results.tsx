@@ -42,6 +42,7 @@ export default function MultiSimulationMainResults({
           setCurrentCategory={setCurrentCategory}
           currentPercentile={currentPercentile}
           setCurrentPercentile={setCurrentPercentile}
+          selectedSeed={selectedSeed}
         />
       </SectionContainer>
       <SingleSimulationChartsSection

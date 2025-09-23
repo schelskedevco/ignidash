@@ -12,6 +12,7 @@ interface SimulationCategorySelectorProps {
   currentCategory: SimulationCategory;
   setCurrentPercentile?: (percentile: 'P10' | 'P25' | 'P50' | 'P75' | 'P90') => void;
   currentPercentile?: 'P10' | 'P25' | 'P50' | 'P75' | 'P90';
+  selectedSeed: number | null;
 }
 
 export default function SimulationCategorySelector({
@@ -20,6 +21,7 @@ export default function SimulationCategorySelector({
   currentCategory,
   setCurrentPercentile,
   currentPercentile,
+  selectedSeed,
 }: SimulationCategorySelectorProps) {
   const percentiles = ['P10', 'P25', 'P50', 'P75', 'P90'] as const;
 
@@ -43,7 +45,7 @@ export default function SimulationCategorySelector({
       {setCurrentPercentile && currentPercentile && (
         <div className="border-border/50 shrink-0 border-l sm:px-2">
           <Dropdown>
-            <DropdownButton plain aria-label="Open options">
+            <DropdownButton plain aria-label="Open options" disabled={!!selectedSeed}>
               <ListFilterIcon />
             </DropdownButton>
             <DropdownMenu>
