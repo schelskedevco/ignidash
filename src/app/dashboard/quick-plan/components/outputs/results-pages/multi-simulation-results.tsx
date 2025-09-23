@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-import { useMultiSimulationResult, useKeyMetrics, useSimulationResult } from '@/lib/stores/quick-plan-store';
+import { useMultiSimulationResult, useKeyMetrics, useSimulationResult, useSimulationSeed } from '@/lib/stores/quick-plan-store';
 import SectionContainer from '@/components/ui/section-container';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
@@ -49,6 +49,9 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
         break;
     }
   }
+
+  const seed = useSimulationSeed();
+  useEffect(() => setSelectedSeed(null), [seed, simulationMode]);
 
   const baseMetrics = useKeyMetrics(simulation);
   const keyMetrics = baseMetrics && {
