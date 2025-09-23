@@ -1,3 +1,7 @@
+'use client';
+
+import { useMemo } from 'react';
+
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { Subheading } from '@/components/catalyst/heading';
@@ -8,9 +12,22 @@ import Card from '@/components/ui/card';
 
 interface SingleSimulationDataListSectionProps {
   simulation: SimulationResult;
+  selectedAge: number;
 }
 
-export default function SingleSimulationDataListSection({ simulation }: SingleSimulationDataListSectionProps) {
+export default function SingleSimulationDataListSection({ simulation, selectedAge }: SingleSimulationDataListSectionProps) {
+  const data = useMemo(() => {
+    return simulation.data.find((dp) => {
+      const startAge = simulation.context.startAge;
+      const startDateYear = new Date().getFullYear();
+      const currDateYear = new Date(dp.date).getFullYear();
+
+      return currDateYear - startDateYear + startAge === selectedAge;
+    });
+  }, [simulation, selectedAge]);
+
+  if (!data) return null;
+
   return (
     <SectionContainer showBottomBorder>
       <SectionHeader title={'Data List'} desc={'Data List Desc'} className="mb-4" />

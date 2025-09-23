@@ -56,7 +56,7 @@ export default function MultiSimulationMainResults({
         setSelectedSeed={setSelectedSeed}
         selectedSeed={selectedSeed}
       />
-      <SingleSimulationDataListSection simulation={simulation} />
+      <SingleSimulationDataListSection simulation={simulation} selectedAge={selectedAge} />
       <MultiSimulationDataTableSection
         simulation={simulation}
         tableData={tableData}
