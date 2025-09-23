@@ -6,7 +6,6 @@ import type { SimulationDataPoint, SimulationResult } from '@/lib/calc/v2/simula
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { Subheading } from '@/components/catalyst/heading';
 import { formatNumber } from '@/lib/utils';
-import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import Card from '@/components/ui/card';
 
@@ -15,7 +14,57 @@ interface DataListCardProps {
 }
 
 function PortfolioDataListCard({ dp }: DataListCardProps) {
-  return null;
+  const portfolioData = dp.portfolio;
+  const totalValue = portfolioData.totalValue;
+
+  const assetAllocation = portfolioData.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
+  const stocksAllocation = assetAllocation.stocks;
+  const bondsAllocation = assetAllocation.bonds;
+  const cashAllocation = assetAllocation.cash;
+
+  //   let cashSavings = 0;
+  //   let taxable = 0;
+  //   let taxDeferred = 0;
+  //   let taxFree = 0;
+
+  //   for (const account of Object.values(portfolioData.perAccountData)) {
+  //     switch (account.type) {
+  //       case 'savings':
+  //         cashSavings += account.totalValue;
+  //         break;
+  //       case 'taxableBrokerage':
+  //         taxable += account.totalValue;
+  //         break;
+  //       case '401k':
+  //       case 'ira':
+  //       case 'hsa':
+  //         taxDeferred += account.totalValue;
+  //         break;
+  //       case 'roth401k':
+  //       case 'rothIra':
+  //         taxFree += account.totalValue;
+  //         break;
+  //     }
+  //   }
+
+  return (
+    <Card>
+      <Subheading level={4}>Portfolio</Subheading>
+      <DescriptionList>
+        <DescriptionTerm>Stocks</DescriptionTerm>
+        <DescriptionDetails>{`${formatNumber(totalValue * stocksAllocation, 2, '$')} (${formatNumber(stocksAllocation * 100, 1)}%)`}</DescriptionDetails>
+
+        <DescriptionTerm>Bonds</DescriptionTerm>
+        <DescriptionDetails>{`${formatNumber(totalValue * bondsAllocation, 2, '$')} (${formatNumber(bondsAllocation * 100, 1)}%)`}</DescriptionDetails>
+
+        <DescriptionTerm>Cash</DescriptionTerm>
+        <DescriptionDetails>{`${formatNumber(totalValue * cashAllocation, 2, '$')} (${formatNumber(cashAllocation * 100, 1)}%)`}</DescriptionDetails>
+
+        <DescriptionTerm className="font-semibold">Total Value</DescriptionTerm>
+        <DescriptionDetails className="font-semibold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
+      </DescriptionList>
+    </Card>
+  );
 }
 
 function CashFlowDataListCard({ dp }: DataListCardProps) {
@@ -64,7 +113,6 @@ export default function SingleSimulationDataListSection({ simulation, selectedAg
 
   return (
     <SectionContainer showBottomBorder>
-      <SectionHeader title={'Data List'} desc={'Data List Desc'} className="mb-4" />
       <div className="grid grid-cols-1 gap-2 @3xl:grid-cols-2 @5xl:grid-cols-3">
         <PortfolioDataListCard dp={dp} />
         <CashFlowDataListCard dp={dp} />
