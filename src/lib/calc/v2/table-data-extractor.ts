@@ -15,7 +15,6 @@ export class TableDataExtractor {
       const currDateYear = new Date(data.date).getFullYear();
 
       const historicalYear: number | null = this.getHistoricalYear(historicalRanges, idx);
-
       const phaseName = data.phase?.name ?? null;
 
       const portfolioData = data.portfolio;
