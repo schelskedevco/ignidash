@@ -45,7 +45,7 @@ function DrillDownBreadcrumb({ selectedSeed, setSelectedSeed }: DrillDownBreadcr
         <li>
           <div className="flex items-center">
             <ChevronRightIcon aria-hidden="true" className="size-5 shrink-0" />
-            <span className="ml-2">{`Simulation #${selectedSeed}`}</span>
+            <span className="ml-2">{`Seed #${selectedSeed}`}</span>
           </div>
         </li>
       </ol>

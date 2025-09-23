@@ -203,6 +203,8 @@ interface SingleSimulationChartsSectionProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   currentCategory: SimulationCategory;
+  currentPercentile: 'P10' | 'P25' | 'P50' | 'P75' | 'P90';
+  selectedSeed: number | null;
 }
 
 function SingleSimulationChartsSection({
@@ -211,6 +213,8 @@ function SingleSimulationChartsSection({
   onAgeSelect,
   selectedAge,
   currentCategory,
+  currentPercentile,
+  selectedSeed,
 }: SingleSimulationChartsSectionProps) {
   const startAge = simulation.context.startAge;
   const props: ChartsCategoryProps = { simulation, keyMetrics, onAgeSelect, selectedAge, startAge };
@@ -244,9 +248,11 @@ function SingleSimulationChartsSection({
       break;
   }
 
+  const title = selectedSeed !== null ? `Data Visualization (Seed #${selectedSeed})` : `Data Visualization (${currentPercentile})`;
+
   return (
     <SectionContainer showBottomBorder>
-      <SectionHeader title="Data Visualization" desc="Interactive charts to explore your projection." className="mb-4" />
+      <SectionHeader title={title} desc="Interactive charts to explore your projection." className="mb-4" />
       <div className="mb-4 grid grid-cols-1 gap-2">{chartsComponents}</div>
     </SectionContainer>
   );

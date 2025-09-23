@@ -51,6 +51,8 @@ export default function MultiSimulationMainResults({
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
         currentCategory={currentCategory}
+        currentPercentile={currentPercentile}
+        selectedSeed={selectedSeed}
       />
       <MultiSimulationDataTableSection
         simulation={simulation}
