@@ -131,7 +131,7 @@ function CashFlowDataListCard({ dp }: DataListCardProps) {
             </Fragment>
           ))}
           <DescriptionTerm className="font-semibold">Total Expenses</DescriptionTerm>
-          <DescriptionDetails className="font-semibold">{formatNumber(dp.expenses?.totalExpenses ?? 0, 2, '$')}</DescriptionDetails>
+          <DescriptionDetails className="font-semibold">{formatNumber(totalExpenses, 2, '$')}</DescriptionDetails>
         </DescriptionList>
       </Card>
       <Card className="mt-0">
