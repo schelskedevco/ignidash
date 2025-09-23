@@ -7,6 +7,7 @@ import { useResultsState } from '@/hooks/use-results-state';
 
 import SimulationCategorySelector from '../simulation-category-selector';
 import SingleSimulationChartsSection from '../sections/single-simulation-charts-section';
+import SingleSimulationDataListSection from '../sections/single-simulation-data-list-section';
 import SingleSimulationDataTableSection from '../sections/single-simulation-data-table-section';
 
 interface SingleSimulationMainResultsProps {
@@ -31,6 +32,7 @@ export default function SingleSimulationMainResults({ simulation, keyMetrics }: 
         selectedAge={selectedAge}
         currentCategory={currentCategory}
       />
+      <SingleSimulationDataListSection simulation={simulation} />
       <SingleSimulationDataTableSection simulation={simulation} currentCategory={currentCategory} />
     </>
   );
