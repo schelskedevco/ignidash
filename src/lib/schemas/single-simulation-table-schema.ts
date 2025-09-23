@@ -14,6 +14,7 @@ export const singleSimulationTableRowSchema = z.object({
   cashValue: z.number(),
   cashReturn: z.number().nullable(),
   inflationRate: z.number().nullable(),
+  historicalYear: z.number().nullable(),
 });
 
 export type SingleSimulationTableRow = z.infer<typeof singleSimulationTableRowSchema>;
@@ -30,6 +31,7 @@ const SINGLE_SIMULATION_COLUMNS = {
   cashValue: { title: 'Cash Value', format: 'currency' },
   cashReturn: { title: 'Cash Return', format: 'percentage' },
   inflationRate: { title: 'Inflation Rate', format: 'percentage' },
+  historicalYear: { title: 'Historical Year', format: 'number' },
 } as const;
 
 export const SIMULATION_TABLE_CONFIG: Record<keyof SingleSimulationTableRow, { title: string; format: ColumnFormat }> =

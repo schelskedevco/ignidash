@@ -398,8 +398,14 @@ export const useSimulationResult = (
       case 'historicalReturns': {
         const returnsProvider = new LcgHistoricalBacktestReturnsProvider(seed);
         const res = engine.runSimulation(returnsProvider, timeline);
-        const _historicalRanges = returnsProvider.getHistoricalRanges();
-        return res;
+        const historicalRanges = returnsProvider.getHistoricalRanges();
+        return {
+          ...res,
+          context: {
+            ...res.context,
+            historicalRanges,
+          },
+        };
       }
     }
   }, [inputs, seed, simulationMode]);

@@ -9,8 +9,32 @@ export class TableDataExtractor {
   extractSingleSimulationData(simulation: SimulationResult, category: SimulationCategory): SingleSimulationTableRow[] {
     return simulation.data.map((data, idx) => {
       const startAge = simulation.context.startAge;
+      const historicalRanges = simulation.context.historicalRanges ?? null;
+
       const startDateYear = new Date().getFullYear();
       const currDateYear = new Date(data.date).getFullYear();
+
+      let historicalYear: number | null = null;
+      if (historicalRanges && historicalRanges.length > 0) {
+        const yearsSinceStart = currDateYear - startDateYear;
+
+        let cumulativeYears = 0;
+        for (const range of historicalRanges) {
+          const rangeLength = range.endYear - range.startYear + 1;
+
+          if (yearsSinceStart < cumulativeYears + rangeLength) {
+            const yearsIntoRange = yearsSinceStart - cumulativeYears;
+            historicalYear = range.startYear + yearsIntoRange;
+            break;
+          }
+
+          cumulativeYears += rangeLength;
+        }
+
+        if (historicalYear === null && historicalRanges.length > 0) {
+          historicalYear = historicalRanges[historicalRanges.length - 1].endYear;
+        }
+      }
 
       const phaseName = data.phase?.name ?? null;
 
@@ -40,6 +64,7 @@ export class TableDataExtractor {
         cashValue: portfolioValue * cashAllocation,
         cashReturn,
         inflationRate,
+        historicalYear,
       };
     });
   }
