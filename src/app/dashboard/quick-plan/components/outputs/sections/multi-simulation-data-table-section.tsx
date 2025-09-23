@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, memo } from 'react';
-import { ChevronRightIcon } from '@heroicons/react/20/solid';
 
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
@@ -19,39 +18,7 @@ import { useSingleSimulationTableData } from '@/lib/stores/quick-plan-store';
 
 import TableTypeSelector, { TableType } from '../table-type-selector';
 import Table from '../tables/table';
-
-interface DrillDownBreadcrumbProps {
-  selectedSeed: number | null;
-  setSelectedSeed: (seed: number | null) => void;
-}
-
-function DrillDownBreadcrumb({ selectedSeed, setSelectedSeed }: DrillDownBreadcrumbProps) {
-  const withScrollPreservation = useScrollPreservation();
-
-  return (
-    <nav aria-label="Breadcrumb" className="flex">
-      <ol role="list" className="flex items-center space-x-2">
-        <li>
-          <div>
-            <button
-              type="button"
-              className="text-muted-foreground hover:text-foreground focus-outline"
-              onClick={withScrollPreservation(() => setSelectedSeed(null))}
-            >
-              <span>All Simulations</span>
-            </button>
-          </div>
-        </li>
-        <li>
-          <div className="flex items-center">
-            <ChevronRightIcon aria-hidden="true" className="size-5 shrink-0" />
-            <span className="ml-2">{`Seed #${selectedSeed}`}</span>
-          </div>
-        </li>
-      </ol>
-    </nav>
-  );
-}
+import DrillDownBreadcrumb from '../drill-down-breadcrumb';
 
 interface TableWithSelectedSeedProps {
   currentCategory: SimulationCategory;
