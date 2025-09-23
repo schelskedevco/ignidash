@@ -91,7 +91,20 @@ function PortfolioDataListCard({ dp }: DataListCardProps) {
 }
 
 function CashFlowDataListCard({ dp }: DataListCardProps) {
-  const grossIncome = dp.incomes?.totalGrossIncome ?? 0;
+  let taxDeferredWithdrawals = 0;
+  for (const account of Object.values(dp.portfolio.perAccountData)) {
+    switch (account.type) {
+      case '401k':
+      case 'ira':
+      case 'hsa':
+        taxDeferredWithdrawals += account.withdrawalsForPeriod;
+        break;
+      default:
+        break;
+    }
+  }
+
+  const grossIncome = (dp.incomes?.totalGrossIncome ?? 0) + taxDeferredWithdrawals;
   const incomeTax = dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0;
   const totalExpenses = dp.expenses?.totalExpenses ?? 0;
   const netCashFlow = grossIncome - incomeTax - totalExpenses;
@@ -114,6 +127,10 @@ function CashFlowDataListCard({ dp }: DataListCardProps) {
       </DescriptionList>
     </Card>
   );
+}
+
+function TaxesDataListCard({ dp }: DataListCardProps) {
+  return null;
 }
 
 interface SingleSimulationDataListSectionProps {
@@ -139,6 +156,7 @@ export default function SingleSimulationDataListSection({ simulation, selectedAg
       <div className="grid grid-cols-1 gap-2 @3xl:grid-cols-2 @5xl:grid-cols-3">
         <PortfolioDataListCard dp={dp} />
         <CashFlowDataListCard dp={dp} />
+        <TaxesDataListCard dp={dp} />
       </div>
     </SectionContainer>
   );
