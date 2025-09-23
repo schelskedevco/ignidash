@@ -114,11 +114,11 @@ function CashFlowDataListCard({ dp }: DataListCardProps) {
       <Card className="mb-0">
         <Subheading level={4}>Income</Subheading>
         <DescriptionList>
-          <DescriptionTerm>Gross Income</DescriptionTerm>
-          <DescriptionDetails>{`+ ${formatNumber(grossIncome, 2, '$')}`}</DescriptionDetails>
-
           <DescriptionTerm>Income Tax</DescriptionTerm>
-          <DescriptionDetails>{`- ${formatNumber(incomeTax, 2, '$')}`}</DescriptionDetails>
+          <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
+
+          <DescriptionTerm className="font-semibold">Net Income</DescriptionTerm>
+          <DescriptionDetails className="font-semibold">{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
         </DescriptionList>
       </Card>
       <Card className="my-0">
