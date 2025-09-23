@@ -124,6 +124,13 @@ function CashFlowDataListCard({ dp }: DataListCardProps) {
 
         <DescriptionTerm className="font-semibold">Net</DescriptionTerm>
         <DescriptionDetails className="font-semibold">{`${netCashFlow < 0 ? '-' : '+'} ${formatNumber(Math.abs(netCashFlow), 2, '$')}`}</DescriptionDetails>
+
+        {grossIncome > 0 && (
+          <>
+            <DescriptionTerm>Savings Rate</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber((netCashFlow / grossIncome) * 100, 1)}%`}</DescriptionDetails>
+          </>
+        )}
       </DescriptionList>
     </Card>
   );
