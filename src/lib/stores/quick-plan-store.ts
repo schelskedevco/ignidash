@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 import type { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 import { FinancialSimulationEngine, type SimulationResult } from '@/lib/calc/v2/simulation-engine';
-import type { MultiSimulationAnalysis } from '@/lib/calc/v2/multi-simulation-analyzer';
 import { FixedReturnsProvider } from '@/lib/calc/returns-providers/fixed-returns-provider';
 import { StochasticReturnsProvider } from '@/lib/calc/returns-providers/stochastic-returns-provider';
 import { LcgHistoricalBacktestReturnsProvider } from '@/lib/calc/returns-providers/lcg-historical-backtest-returns-provider';
@@ -417,7 +416,7 @@ export const useMultiSimulationResult = (simulationMode: 'monteCarloStochasticRe
   );
 };
 
-export const useKeyMetrics = (simulationResult: SimulationResult | null): KeyMetrics | null => {
+export const useKeyMetrics = (simulationResult: SimulationResult | null | undefined): KeyMetrics | null => {
   return useMemo(() => {
     if (!simulationResult) return null;
     const { data, context } = simulationResult;
@@ -480,16 +479,6 @@ export const useKeyMetrics = (simulationResult: SimulationResult | null): KeyMet
       progressToRetirement,
     };
   }, [simulationResult]);
-};
-
-export const useMultiSimulationKeyMetrics = (
-  multiSimulationAnalysis: MultiSimulationAnalysis | null,
-  simulation: SimulationResult | null
-): KeyMetrics | null => {
-  const metrics = useKeyMetrics(simulation);
-  if (!metrics) return null;
-
-  return { ...metrics, success: multiSimulationAnalysis!.success };
 };
 
 /**

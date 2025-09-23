@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { useMultiSimulationResult, useMultiSimulationKeyMetrics, useSimulationResult } from '@/lib/stores/quick-plan-store';
+import { useMultiSimulationResult, useKeyMetrics, useSimulationResult } from '@/lib/stores/quick-plan-store';
 import SectionContainer from '@/components/ui/section-container';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
@@ -50,7 +50,8 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
     }
   }
 
-  const keyMetrics = useMultiSimulationKeyMetrics(analysis ?? null, simulation ?? null);
+  const baseMetrics = useKeyMetrics(simulation);
+  const keyMetrics = baseMetrics && selectedSeed === null ? { ...baseMetrics, success: analysis?.success ?? 0 } : null;
 
   if (!analysis || !keyMetrics || !tableData || !yearlyTableData || !simulation) {
     return (
