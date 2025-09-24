@@ -87,12 +87,6 @@ function CashFlowDataListCardV2({ dp }: DataListCardProps) {
         <DescriptionTerm>Total Gross Income</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm>Ordinary Income</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(ordinaryIncome, 2, '$')}</DescriptionDetails>
-
-        <DescriptionTerm>Tax Deferred Withdrawals</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(taxDeferredWithdrawals, 2, '$')}</DescriptionDetails>
-
         <DescriptionTerm>Income Tax</DescriptionTerm>
         <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
 
