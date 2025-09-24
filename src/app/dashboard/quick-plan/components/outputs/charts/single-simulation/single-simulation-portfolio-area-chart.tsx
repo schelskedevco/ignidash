@@ -210,7 +210,7 @@ export default function SingleSimulationPortfolioAreaChart({
         </ResponsiveContainer>
       </div>
       <div
-        className={`mt-2 flex justify-center gap-x-2 sm:gap-x-4 ${!isSmallScreen ? 'ml-16' : ''}`}
+        className={`mt-2 grid grid-cols-2 gap-2 sm:flex sm:justify-center sm:gap-x-4 ${!isSmallScreen ? 'ml-16' : ''}`}
         role="group"
         aria-label="Chart legend"
       >
@@ -219,7 +219,7 @@ export default function SingleSimulationPortfolioAreaChart({
             <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: COLORS[index % COLORS.length] }} className="size-5 shrink-0">
               <rect x={0.5} y={0.5} width={5} height={5} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
             </svg>
-            {formatChartString(dataKey)}
+            <span className="truncate">{formatChartString(dataKey)}</span>
           </div>
         ))}
       </div>
