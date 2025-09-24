@@ -164,6 +164,35 @@ function TaxesDataListCardV2({ dp }: DataListCardProps) {
   );
 }
 
+function ReturnsDataListCardV2({ dp }: DataListCardProps) {
+  const portfolioData = dp.portfolio;
+  const totalValue = portfolioData.totalValue;
+
+  const assetAllocation = portfolioData.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
+  const stocksAllocation = assetAllocation.stocks;
+  const bondsAllocation = assetAllocation.bonds;
+  const cashAllocation = assetAllocation.cash;
+
+  return (
+    <Card className="my-0">
+      <Subheading level={4}>Portfolio by Asset Class</Subheading>
+      <DescriptionList>
+        <DescriptionTerm>Stocks</DescriptionTerm>
+        <DescriptionDetails>{`${formatNumber(totalValue * stocksAllocation, 2, '$')} (${formatNumber(stocksAllocation * 100, 1)}%)`}</DescriptionDetails>
+
+        <DescriptionTerm>Bonds</DescriptionTerm>
+        <DescriptionDetails>{`${formatNumber(totalValue * bondsAllocation, 2, '$')} (${formatNumber(bondsAllocation * 100, 1)}%)`}</DescriptionDetails>
+
+        <DescriptionTerm>Cash</DescriptionTerm>
+        <DescriptionDetails>{`${formatNumber(totalValue * cashAllocation, 2, '$')} (${formatNumber(cashAllocation * 100, 1)}%)`}</DescriptionDetails>
+
+        <DescriptionTerm className="font-bold">Total Value</DescriptionTerm>
+        <DescriptionDetails className="font-bold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
+      </DescriptionList>
+    </Card>
+  );
+}
+
 function PortfolioDataListCard({ dp }: DataListCardProps) {
   const [portfolioChecked, setPortfolioChecked] = useState(false);
 
@@ -547,7 +576,7 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
     case SimulationCategory.Returns:
       dataListComponents = (
         <div className="grid grid-cols-1 gap-2">
-          <PortfolioDataListCardV2 dp={dp} />
+          <ReturnsDataListCardV2 dp={dp} />
         </div>
       );
       break;
