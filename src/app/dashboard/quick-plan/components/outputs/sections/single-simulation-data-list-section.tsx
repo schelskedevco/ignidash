@@ -45,7 +45,7 @@ function PortfolioDataListCardV2({ dp }: DataListCardProps) {
 
         <DescriptionTerm className="font-bold">Net Change</DescriptionTerm>
         <DescriptionDetails className="font-bold">
-          {formatNumber(stockAmount + bondAmount + cashAmount + totalContributions - totalWithdrawals, 2, '$')}
+          {formatNumber(stockAmount + bondAmount + cashAmount + totalContributions + totalWithdrawals, 2, '$')}
         </DescriptionDetails>
       </DescriptionList>
     </Card>
@@ -468,60 +468,6 @@ function TaxesDataListCard({ dp }: DataListCardProps) {
   );
 }
 
-function ReturnsDataListCard({ dp }: DataListCardProps) {
-  const [returnsChecked, setReturnsChecked] = useState(false);
-
-  const returnsData = dp.returns;
-
-  const { stocks: stockReturn, bonds: bondReturn, cash: cashReturn } = returnsData?.annualReturnRates ?? { stocks: 0, bonds: 0, cash: 0 };
-  const inflationRate = returnsData?.annualInflationRate ?? 0;
-  const {
-    stocks: stockAmount,
-    bonds: bondAmount,
-    cash: cashAmount,
-  } = returnsData?.returnAmountsForPeriod ?? { stocks: 0, bonds: 0, cash: 0 };
-
-  return (
-    <Card className="my-0">
-      <div className="flex w-full items-center justify-between">
-        <Subheading level={4}>{returnsChecked ? 'Return Rates' : 'Return Amounts'}</Subheading>
-        <Switch aria-label="Toggle returns data view mode" checked={returnsChecked} onChange={setReturnsChecked} />
-      </div>
-      <DescriptionList>
-        {returnsChecked ? (
-          <>
-            <DescriptionTerm>Stocks Rate</DescriptionTerm>
-            <DescriptionDetails>{`${formatNumber(stockReturn * 100, 2)}%`}</DescriptionDetails>
-
-            <DescriptionTerm>Bonds Rate</DescriptionTerm>
-            <DescriptionDetails>{`${formatNumber(bondReturn * 100, 2)}%`}</DescriptionDetails>
-
-            <DescriptionTerm>Cash Rate</DescriptionTerm>
-            <DescriptionDetails>{`${formatNumber(cashReturn * 100, 2)}%`}</DescriptionDetails>
-
-            <DescriptionTerm>Inflation Rate</DescriptionTerm>
-            <DescriptionDetails>{`${formatNumber(inflationRate * 100, 2)}%`}</DescriptionDetails>
-          </>
-        ) : (
-          <>
-            <DescriptionTerm>Stocks Amount</DescriptionTerm>
-            <DescriptionDetails>{formatNumber(stockAmount, 2, '$')}</DescriptionDetails>
-
-            <DescriptionTerm>Bonds Amount</DescriptionTerm>
-            <DescriptionDetails>{formatNumber(bondAmount, 2, '$')}</DescriptionDetails>
-
-            <DescriptionTerm>Cash Amount</DescriptionTerm>
-            <DescriptionDetails>{formatNumber(cashAmount, 2, '$')}</DescriptionDetails>
-
-            <DescriptionTerm className="font-bold">Total Amount</DescriptionTerm>
-            <DescriptionDetails className="font-bold">{formatNumber(stockAmount + bondAmount + cashAmount, 2, '$')}</DescriptionDetails>
-          </>
-        )}
-      </DescriptionList>
-    </Card>
-  );
-}
-
 function IncomeDataListCard({ dp }: DataListCardProps) {
   let taxDeferredWithdrawals = 0;
   for (const account of Object.values(dp.portfolio.perAccountData)) {
@@ -612,9 +558,8 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
       break;
     case SimulationCategory.Returns:
       dataListComponents = (
-        <div className="grid grid-cols-1 gap-2 @3xl:grid-cols-2">
-          <PortfolioDataListCard dp={dp} />
-          <ReturnsDataListCard dp={dp} />
+        <div className="grid grid-cols-1 gap-2">
+          <PortfolioDataListCardV2 dp={dp} />
         </div>
       );
       break;
