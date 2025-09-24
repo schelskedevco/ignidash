@@ -373,6 +373,12 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
       );
       break;
     case SimulationCategory.CashFlow:
+      dataListComponents = (
+        <div className="grid grid-cols-1 gap-2">
+          <CashFlowDataListCard dp={dp} />
+        </div>
+      );
+      break;
     case SimulationCategory.Taxes:
       dataListComponents = (
         <div className="grid grid-cols-1 gap-2">
@@ -404,14 +410,7 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
       break;
   }
 
-  return (
-    <SectionContainer showBottomBorder>
-      <div className="grid grid-cols-1 gap-2">
-        {dataListComponents}
-        <CashFlowDataListCard dp={dp} />
-      </div>
-    </SectionContainer>
-  );
+  return <SectionContainer showBottomBorder>{dataListComponents}</SectionContainer>;
 }
 
 // Memoize the entire section to prevent re-renders when props haven't changed
