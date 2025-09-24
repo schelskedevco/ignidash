@@ -146,7 +146,56 @@ function WithdrawalsDataListCard({ dp }: DataListCardProps) {
 }
 
 function ContributionsDataListCard({ dp }: DataListCardProps) {
-  return null;
+  const portfolioData = dp.portfolio;
+
+  let cashSavings = 0;
+  let taxable = 0;
+  let taxDeferred = 0;
+  let taxFree = 0;
+
+  for (const account of Object.values(portfolioData.perAccountData)) {
+    switch (account.type) {
+      case 'savings':
+        cashSavings += account.contributionsForPeriod;
+        break;
+      case 'taxableBrokerage':
+        taxable += account.contributionsForPeriod;
+        break;
+      case '401k':
+      case 'ira':
+      case 'hsa':
+        taxDeferred += account.contributionsForPeriod;
+        break;
+      case 'roth401k':
+      case 'rothIra':
+        taxFree += account.contributionsForPeriod;
+        break;
+    }
+  }
+
+  return (
+    <Card className="my-0">
+      <Subheading level={4}>Contributions</Subheading>
+      <DescriptionList>
+        <DescriptionTerm>Taxable</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(taxable, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Tax Deferred</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(taxDeferred, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Tax Free</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(taxFree, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Cash Savings</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(cashSavings, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm className="font-semibold">Total Contributions</DescriptionTerm>
+        <DescriptionDetails className="font-semibold">
+          {formatNumber(taxable + taxDeferred + taxFree + cashSavings, 2, '$')}
+        </DescriptionDetails>
+      </DescriptionList>
+    </Card>
+  );
 }
 
 function TaxesDataListCard({ dp }: DataListCardProps) {
