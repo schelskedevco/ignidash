@@ -211,7 +211,7 @@ function TaxesDataListCard({ dp }: DataListCardProps) {
       <div className="flex w-full items-center justify-between">
         <Subheading level={4}>Taxes</Subheading>
         <Select
-          className="max-w-48 sm:max-w-64"
+          className="max-w-64"
           id="taxes-data-view"
           name="taxes-data-view"
           value={taxesDataView}
