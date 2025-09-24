@@ -164,6 +164,12 @@ export default function SingleSimulationPortfolioAreaChart({
     [onAgeSelect]
   );
 
+  const getLegendGridCols = useCallback((length: number) => {
+    if (length % 3 === 0) return 'grid-cols-3';
+    if (length % 2 === 0) return 'grid-cols-2';
+    return 'grid-cols-4';
+  }, []);
+
   return (
     <div>
       <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
@@ -210,7 +216,7 @@ export default function SingleSimulationPortfolioAreaChart({
         </ResponsiveContainer>
       </div>
       <div className={`mt-2 flex justify-center ${!isSmallScreen ? 'ml-16' : ''}`} role="group" aria-label="Chart legend">
-        <div className="grid grid-cols-2 gap-2 sm:gap-4">
+        <div className={`grid ${getLegendGridCols(dataKeys.length)} gap-x-2 gap-y-2 sm:gap-x-4`}>
           {dataKeys.map((dataKey, index) => (
             <div key={dataKey} className="flex items-center gap-x-2 text-sm font-medium">
               <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: COLORS[index % COLORS.length] }} className="size-5 shrink-0">
