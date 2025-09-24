@@ -316,13 +316,13 @@ export default function SingleSimulationCashFlowLineChart({
       >
         <div className="flex items-center gap-x-2 text-sm font-medium">
           <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: 'var(--chart-2)' }} className="size-5 shrink-0">
-            <circle r={2.5} cx={3} cy={3} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
+            <rect x={0.5} y={0.5} width={5} height={5} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
           </svg>
           Income
         </div>
         <div className="flex items-center gap-x-2 text-sm font-medium">
           <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: 'var(--chart-4)' }} className="size-5 shrink-0">
-            <circle r={2.5} cx={3} cy={3} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
+            <rect x={0.5} y={0.5} width={5} height={5} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
           </svg>
           Expense
         </div>
