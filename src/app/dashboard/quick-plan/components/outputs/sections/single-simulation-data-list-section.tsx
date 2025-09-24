@@ -76,7 +76,7 @@ function CashFlowDataListCardV2({ dp }: DataListCardProps) {
     <Card className="my-0">
       <Subheading level={4}>Cash Flow</Subheading>
       <DescriptionList>
-        <DescriptionTerm>Gross Ordinary Income</DescriptionTerm>
+        <DescriptionTerm>Gross Income</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Tax Deferred Withdrawals</DescriptionTerm>
