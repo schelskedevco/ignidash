@@ -55,7 +55,7 @@ function PortfolioDataListCard({ dp }: DataListCardProps) {
   return (
     <Card className="my-0">
       <div className="flex w-full items-center justify-between">
-        <Subheading level={4}>{portfolioChecked ? 'Portfolio by Asset Class' : 'Portfolio by Tax Treatment'}</Subheading>
+        <Subheading level={4}>Portfolio</Subheading>
         <Switch aria-label="Toggle portfolio data view mode" checked={portfolioChecked} onChange={setPortfolioChecked} />
       </div>
       <DescriptionList>
@@ -85,7 +85,7 @@ function PortfolioDataListCard({ dp }: DataListCardProps) {
             <DescriptionDetails>{`${formatNumber(cashSavings, 2, '$')} (${formatNumber((cashSavings / totalValue) * 100, 1)}%)`}</DescriptionDetails>
           </>
         )}
-        <DescriptionTerm className="font-semibold">Total Value</DescriptionTerm>
+        <DescriptionTerm className="font-semibold">Total</DescriptionTerm>
         <DescriptionDetails className="font-semibold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
@@ -122,7 +122,7 @@ function WithdrawalsDataListCard({ dp }: DataListCardProps) {
 
   return (
     <Card className="my-0">
-      <Subheading level={4}>Annual Withdrawals</Subheading>
+      <Subheading level={4}>Withdrawals</Subheading>
       <DescriptionList>
         <DescriptionTerm>Taxable</DescriptionTerm>
         <DescriptionDetails>{formatNumber(taxable, 2, '$')}</DescriptionDetails>
@@ -175,7 +175,7 @@ function ContributionsDataListCard({ dp }: DataListCardProps) {
 
   return (
     <Card className="my-0">
-      <Subheading level={4}>Annual Contributions</Subheading>
+      <Subheading level={4}>Contributions</Subheading>
       <DescriptionList>
         <DescriptionTerm>Taxable</DescriptionTerm>
         <DescriptionDetails>{formatNumber(taxable, 2, '$')}</DescriptionDetails>
