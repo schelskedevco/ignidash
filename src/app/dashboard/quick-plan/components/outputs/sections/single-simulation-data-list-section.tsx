@@ -65,7 +65,7 @@ function PortfolioAndReturnsDataListCard({ dp }: DataListCardProps) {
     <div className="grid h-full grid-rows-2 gap-2">
       <Card className="mb-0">
         <div className="flex w-full items-center justify-between">
-          <Subheading level={4}>Portfolio</Subheading>
+          <Subheading level={4}>{portfolioChecked ? 'Portfolio by Asset Class' : 'Portfolio by Tax Treatment'}</Subheading>
           <Switch aria-label="Toggle portfolio data view mode" checked={portfolioChecked} onChange={setPortfolioChecked} />
         </div>
         <DescriptionList>
@@ -101,7 +101,7 @@ function PortfolioAndReturnsDataListCard({ dp }: DataListCardProps) {
       </Card>
       <Card className="mt-0">
         <div className="flex w-full items-center justify-between">
-          <Subheading level={4}>Returns</Subheading>
+          <Subheading level={4}>{returnsChecked ? 'Return Rates' : 'Return Amounts'}</Subheading>
           <Switch aria-label="Toggle returns data view mode" checked={returnsChecked} onChange={setReturnsChecked} />
         </div>
         <DescriptionList>
