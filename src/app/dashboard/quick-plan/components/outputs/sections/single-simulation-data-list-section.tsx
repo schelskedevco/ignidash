@@ -53,8 +53,10 @@ function PortfolioDataListCardV2({ dp }: DataListCardProps) {
 }
 
 function CashFlowDataListCardV2({ dp }: DataListCardProps) {
+  const portfolioData = dp.portfolio;
+
   let taxDeferredWithdrawals = 0;
-  for (const account of Object.values(dp.portfolio.perAccountData)) {
+  for (const account of Object.values(portfolioData.perAccountData)) {
     switch (account.type) {
       case '401k':
       case 'ira':
@@ -66,10 +68,14 @@ function CashFlowDataListCardV2({ dp }: DataListCardProps) {
     }
   }
 
-  const ordinaryIncome = dp.incomes?.totalGrossIncome ?? 0;
+  const incomesData = dp.incomes;
+  const expensesData = dp.expenses;
+  const taxesData = dp.taxes;
+
+  const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
   const grossIncome = ordinaryIncome + taxDeferredWithdrawals;
-  const incomeTax = dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0;
-  const totalExpenses = dp.expenses?.totalExpenses ?? 0;
+  const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+  const totalExpenses = expensesData?.totalExpenses ?? 0;
   const netIncome = grossIncome - incomeTax;
   const netCashFlow = netIncome - totalExpenses;
   const savingsRate = netIncome > 0 ? (netCashFlow / netIncome) * 100 : null;
