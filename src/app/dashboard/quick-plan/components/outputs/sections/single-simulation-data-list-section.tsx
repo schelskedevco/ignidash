@@ -71,7 +71,7 @@ function CashFlowDataListCardV2({ dp }: DataListCardProps) {
   const totalExpenses = dp.expenses?.totalExpenses ?? 0;
   const netIncome = grossIncome - incomeTax;
   const netCashFlow = netIncome - totalExpenses;
-  const savingsRate = grossIncome > 0 ? (netCashFlow / grossIncome) * 100 : null;
+  const savingsRate = netIncome > 0 ? (netCashFlow / netIncome) * 100 : null;
 
   return (
     <Card className="my-0">
