@@ -198,13 +198,85 @@ function ContributionsDataListCard({ dp }: DataListCardProps) {
   );
 }
 
+// export interface CapitalGainsTaxesData {
+//   taxableCapitalGains: number;
+//   capitalGainsTaxAmount: number;
+//   effectiveCapitalGainsTaxRate: number;
+//   topMarginalCapitalGainsTaxRate: number;
+//   netCapitalGains: number;
+// }
+
+// export interface IncomeTaxesData {
+//   taxableOrdinaryIncome: number;
+//   incomeTaxAmount: number;
+//   effectiveIncomeTaxRate: number;
+//   topMarginalTaxRate: number;
+//   netIncome: number;
+//   capitalLossDeduction?: number;
+// }
+
+// export interface TaxesData {
+//   incomeTaxes: IncomeTaxesData;
+//   capitalGainsTaxes: CapitalGainsTaxesData;
+//   totalTaxableIncome: number;
+// }
+
 function TaxesDataListCard({ dp }: DataListCardProps) {
   const [taxesDataView, setTaxesDataView] = useState<'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'taxableIncome'>('marginalRates');
 
   const taxesData = dp.taxes;
 
+  const topMarginalIncomeTaxRate = taxesData?.incomeTaxes.topMarginalTaxRate ?? 0;
+  const topMarginalCapitalGainsTaxRate = taxesData?.capitalGainsTaxes.topMarginalCapitalGainsTaxRate ?? 0;
+
+  const effectiveIncomeTaxRate = taxesData?.incomeTaxes.effectiveIncomeTaxRate ?? 0;
+  const effectiveCapitalGainsTaxRate = taxesData?.capitalGainsTaxes.effectiveCapitalGainsTaxRate ?? 0;
+
   const incomeTaxAmount = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
   const capitalGainsTaxAmount = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+
+  let taxesDescListComponents = null;
+  switch (taxesDataView) {
+    case 'marginalRates':
+      taxesDescListComponents = (
+        <>
+          <DescriptionTerm>Top Marginal Income Tax Rate</DescriptionTerm>
+          <DescriptionDetails>{`${formatNumber(topMarginalIncomeTaxRate * 100, 2)}%`}</DescriptionDetails>
+
+          <DescriptionTerm>Top Marginal CG Tax Rate</DescriptionTerm>
+          <DescriptionDetails>{`${formatNumber(topMarginalCapitalGainsTaxRate * 100, 2)}%`}</DescriptionDetails>
+        </>
+      );
+      break;
+    case 'effectiveRates':
+      taxesDescListComponents = (
+        <>
+          <DescriptionTerm>Effective Income Tax Rate</DescriptionTerm>
+          <DescriptionDetails>{`${formatNumber(effectiveIncomeTaxRate * 100, 2)}%`}</DescriptionDetails>
+
+          <DescriptionTerm>Effective CG Tax Rate</DescriptionTerm>
+          <DescriptionDetails>{`${formatNumber(effectiveCapitalGainsTaxRate * 100, 2)}%`}</DescriptionDetails>
+        </>
+      );
+      break;
+    case 'taxAmounts':
+      taxesDescListComponents = (
+        <>
+          <DescriptionTerm>Income Tax</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(incomeTaxAmount, 2, '$')}</DescriptionDetails>
+
+          <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
+
+          <DescriptionTerm className="font-semibold">Total Tax Liability</DescriptionTerm>
+          <DescriptionDetails className="font-semibold">{formatNumber(incomeTaxAmount + capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
+        </>
+      );
+      break;
+    case 'taxableIncome':
+      taxesDescListComponents = null;
+      break;
+  }
 
   return (
     <Card className="my-0">
@@ -227,16 +299,7 @@ function TaxesDataListCard({ dp }: DataListCardProps) {
           </optgroup>
         </Select>
       </div>
-      <DescriptionList>
-        <DescriptionTerm>Income Tax</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(incomeTaxAmount, 2, '$')}</DescriptionDetails>
-
-        <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
-
-        <DescriptionTerm className="font-semibold">Total Tax Liability</DescriptionTerm>
-        <DescriptionDetails className="font-semibold">{formatNumber(incomeTaxAmount + capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
-      </DescriptionList>
+      <DescriptionList>{taxesDescListComponents}</DescriptionList>
     </Card>
   );
 }
@@ -394,29 +457,6 @@ function NetCashFlowDataListCard({ dp }: DataListCardProps) {
     </Card>
   );
 }
-
-// export interface CapitalGainsTaxesData {
-//   taxableCapitalGains: number;
-//   capitalGainsTaxAmount: number;
-//   effectiveCapitalGainsTaxRate: number;
-//   topMarginalCapitalGainsTaxRate: number;
-//   netCapitalGains: number;
-// }
-
-// export interface IncomeTaxesData {
-//   taxableOrdinaryIncome: number;
-//   incomeTaxAmount: number;
-//   effectiveIncomeTaxRate: number;
-//   topMarginalTaxRate: number;
-//   netIncome: number;
-//   capitalLossDeduction?: number;
-// }
-
-// export interface TaxesData {
-//   incomeTaxes: IncomeTaxesData;
-//   capitalGainsTaxes: CapitalGainsTaxesData;
-//   totalTaxableIncome: number;
-// }
 
 interface SingleSimulationDataListSectionProps {
   simulation: SimulationResult;
