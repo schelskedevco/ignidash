@@ -295,7 +295,73 @@ function ReturnsDataListCard({ dp }: DataListCardProps) {
   );
 }
 
-function CashFlowDataListCard({ dp }: DataListCardProps) {
+function IncomeDataListCard({ dp }: DataListCardProps) {
+  let taxDeferredWithdrawals = 0;
+  for (const account of Object.values(dp.portfolio.perAccountData)) {
+    switch (account.type) {
+      case '401k':
+      case 'ira':
+      case 'hsa':
+        taxDeferredWithdrawals += account.withdrawalsForPeriod;
+        break;
+      default:
+        break;
+    }
+  }
+
+  const grossIncome = (dp.incomes?.totalGrossIncome ?? 0) + taxDeferredWithdrawals;
+  const incomeTax = dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0;
+  const netIncome = grossIncome - incomeTax;
+
+  return (
+    <Card className="my-0">
+      <Subheading level={4}>Income</Subheading>
+      <DescriptionList>
+        {Object.values(dp.incomes?.perIncomeData ?? {}).map((income) => (
+          <Fragment key={income.id}>
+            <DescriptionTerm>{income.name}</DescriptionTerm>
+            <DescriptionDetails>{formatNumber(income.grossIncome, 2, '$')}</DescriptionDetails>
+          </Fragment>
+        ))}
+
+        {taxDeferredWithdrawals > 0 && (
+          <>
+            <DescriptionTerm>Tax Deferred Withdrawals</DescriptionTerm>
+            <DescriptionDetails>{formatNumber(taxDeferredWithdrawals, 2, '$')}</DescriptionDetails>
+          </>
+        )}
+
+        <DescriptionTerm>Income Tax</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm className="font-semibold">Net Income</DescriptionTerm>
+        <DescriptionDetails className="font-semibold">{formatNumber(netIncome, 2, '$')}</DescriptionDetails>
+      </DescriptionList>
+    </Card>
+  );
+}
+
+function ExpensesDataListCard({ dp }: DataListCardProps) {
+  const totalExpenses = dp.expenses?.totalExpenses ?? 0;
+
+  return (
+    <Card className="my-0">
+      <Subheading level={4}>Expenses</Subheading>
+      <DescriptionList>
+        {Object.values(dp.expenses?.perExpenseData ?? {}).map((expense) => (
+          <Fragment key={expense.id}>
+            <DescriptionTerm>{expense.name}</DescriptionTerm>
+            <DescriptionDetails>{formatNumber(expense.amount, 2, '$')}</DescriptionDetails>
+          </Fragment>
+        ))}
+        <DescriptionTerm className="font-semibold">Total Expenses</DescriptionTerm>
+        <DescriptionDetails className="font-semibold">{formatNumber(totalExpenses, 2, '$')}</DescriptionDetails>
+      </DescriptionList>
+    </Card>
+  );
+}
+
+function NetCashFlowDataListCard({ dp }: DataListCardProps) {
   let taxDeferredWithdrawals = 0;
   for (const account of Object.values(dp.portfolio.perAccountData)) {
     switch (account.type) {
@@ -316,55 +382,16 @@ function CashFlowDataListCard({ dp }: DataListCardProps) {
   const netCashFlow = netIncome - totalExpenses;
 
   return (
-    <div className="grid h-full grid-rows-2 gap-2">
-      <Card className="mb-0">
-        <Subheading level={4}>Income</Subheading>
-        <DescriptionList>
-          {Object.values(dp.incomes?.perIncomeData ?? {}).map((income) => (
-            <Fragment key={income.id}>
-              <DescriptionTerm>{income.name}</DescriptionTerm>
-              <DescriptionDetails>{formatNumber(income.grossIncome, 2, '$')}</DescriptionDetails>
-            </Fragment>
-          ))}
+    <Card className="my-0">
+      <Subheading level={4}>Net Cash Flow</Subheading>
+      <DescriptionList>
+        <DescriptionTerm>Savings Rate</DescriptionTerm>
+        <DescriptionDetails>{grossIncome > 0 ? `${formatNumber((netCashFlow / grossIncome) * 100, 1)}%` : 'N/A'}</DescriptionDetails>
 
-          {taxDeferredWithdrawals > 0 && (
-            <>
-              <DescriptionTerm>Tax Deferred Withdrawals</DescriptionTerm>
-              <DescriptionDetails>{formatNumber(taxDeferredWithdrawals, 2, '$')}</DescriptionDetails>
-            </>
-          )}
-
-          <DescriptionTerm>Income Tax</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
-
-          <DescriptionTerm className="font-semibold">Net Income</DescriptionTerm>
-          <DescriptionDetails className="font-semibold">{formatNumber(netIncome, 2, '$')}</DescriptionDetails>
-        </DescriptionList>
-      </Card>
-      <Card className="my-0">
-        <Subheading level={4}>Expenses</Subheading>
-        <DescriptionList>
-          {Object.values(dp.expenses?.perExpenseData ?? {}).map((expense) => (
-            <Fragment key={expense.id}>
-              <DescriptionTerm>{expense.name}</DescriptionTerm>
-              <DescriptionDetails>{formatNumber(expense.amount, 2, '$')}</DescriptionDetails>
-            </Fragment>
-          ))}
-          <DescriptionTerm className="font-semibold">Total Expenses</DescriptionTerm>
-          <DescriptionDetails className="font-semibold">{formatNumber(totalExpenses, 2, '$')}</DescriptionDetails>
-        </DescriptionList>
-      </Card>
-      <Card className="mt-0">
-        <Subheading level={4}>Cash Flow</Subheading>
-        <DescriptionList>
-          <DescriptionTerm>Savings Rate</DescriptionTerm>
-          <DescriptionDetails>{grossIncome > 0 ? `${formatNumber((netCashFlow / grossIncome) * 100, 1)}%` : 'N/A'}</DescriptionDetails>
-
-          <DescriptionTerm className="font-semibold">Net</DescriptionTerm>
-          <DescriptionDetails className="font-semibold">{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
-        </DescriptionList>
-      </Card>
-    </div>
+        <DescriptionTerm className="font-semibold">Net</DescriptionTerm>
+        <DescriptionDetails className="font-semibold">{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
+      </DescriptionList>
+    </Card>
   );
 }
 
@@ -423,8 +450,10 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
       break;
     case SimulationCategory.CashFlow:
       dataListComponents = (
-        <div className="grid grid-cols-1 gap-2">
-          <CashFlowDataListCard dp={dp} />
+        <div className="grid grid-cols-1 gap-2 @6xl:grid-cols-3">
+          <IncomeDataListCard dp={dp} />
+          <ExpensesDataListCard dp={dp} />
+          <NetCashFlowDataListCard dp={dp} />
         </div>
       );
       break;
