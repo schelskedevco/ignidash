@@ -16,9 +16,8 @@ interface DataListCardProps {
   dp: SimulationDataPoint;
 }
 
-function PortfolioAndReturnsDataListCard({ dp }: DataListCardProps) {
+function PortfolioDataListCard({ dp }: DataListCardProps) {
   const [portfolioChecked, setPortfolioChecked] = useState(true);
-  const [returnsChecked, setReturnsChecked] = useState(true);
 
   const portfolioData = dp.portfolio;
   const totalValue = portfolioData.totalValue;
@@ -53,6 +52,49 @@ function PortfolioAndReturnsDataListCard({ dp }: DataListCardProps) {
     }
   }
 
+  return (
+    <Card className="my-0">
+      <div className="flex w-full items-center justify-between">
+        <Subheading level={4}>{portfolioChecked ? 'Portfolio by Asset Class' : 'Portfolio by Tax Treatment'}</Subheading>
+        <Switch aria-label="Toggle portfolio data view mode" checked={portfolioChecked} onChange={setPortfolioChecked} />
+      </div>
+      <DescriptionList>
+        {portfolioChecked ? (
+          <>
+            <DescriptionTerm>Stocks</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(totalValue * stocksAllocation, 2, '$')} (${formatNumber(stocksAllocation * 100, 1)}%)`}</DescriptionDetails>
+
+            <DescriptionTerm>Bonds</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(totalValue * bondsAllocation, 2, '$')} (${formatNumber(bondsAllocation * 100, 1)}%)`}</DescriptionDetails>
+
+            <DescriptionTerm>Cash</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(totalValue * cashAllocation, 2, '$')} (${formatNumber(cashAllocation * 100, 1)}%)`}</DescriptionDetails>
+          </>
+        ) : (
+          <>
+            <DescriptionTerm>Taxable</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(taxable, 2, '$')} (${formatNumber((taxable / totalValue) * 100, 1)}%)`}</DescriptionDetails>
+
+            <DescriptionTerm>Tax Deferred</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(taxDeferred, 2, '$')} (${formatNumber((taxDeferred / totalValue) * 100, 1)}%)`}</DescriptionDetails>
+
+            <DescriptionTerm>Tax Free</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(taxFree, 2, '$')} (${formatNumber((taxFree / totalValue) * 100, 1)}%)`}</DescriptionDetails>
+
+            <DescriptionTerm>Cash Savings</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(cashSavings, 2, '$')} (${formatNumber((cashSavings / totalValue) * 100, 1)}%)`}</DescriptionDetails>
+          </>
+        )}
+        <DescriptionTerm className="font-semibold">Total Value</DescriptionTerm>
+        <DescriptionDetails className="font-semibold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
+      </DescriptionList>
+    </Card>
+  );
+}
+
+function ReturnsDataListCard({ dp }: DataListCardProps) {
+  const [returnsChecked, setReturnsChecked] = useState(true);
+
   const returnsData = dp.returns;
 
   const { stocks: stockReturn, bonds: bondReturn, cash: cashReturn } = returnsData?.annualReturnRates ?? { stocks: 0, bonds: 0, cash: 0 };
@@ -64,83 +106,43 @@ function PortfolioAndReturnsDataListCard({ dp }: DataListCardProps) {
   } = returnsData?.returnAmountsForPeriod ?? { stocks: 0, bonds: 0, cash: 0 };
 
   return (
-    <div className="grid h-full grid-rows-2 gap-2">
-      <Card className="mb-0">
-        <div className="flex w-full items-center justify-between">
-          <Subheading level={4}>{portfolioChecked ? 'Portfolio by Asset Class' : 'Portfolio by Tax Treatment'}</Subheading>
-          <Switch aria-label="Toggle portfolio data view mode" checked={portfolioChecked} onChange={setPortfolioChecked} />
-        </div>
-        <DescriptionList>
-          {portfolioChecked ? (
-            <>
-              <DescriptionTerm>Stocks</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(totalValue * stocksAllocation, 2, '$')} (${formatNumber(stocksAllocation * 100, 1)}%)`}</DescriptionDetails>
+    <Card className="my-0">
+      <div className="flex w-full items-center justify-between">
+        <Subheading level={4}>{returnsChecked ? 'Return Rates' : 'Return Amounts'}</Subheading>
+        <Switch aria-label="Toggle returns data view mode" checked={returnsChecked} onChange={setReturnsChecked} />
+      </div>
+      <DescriptionList>
+        {returnsChecked ? (
+          <>
+            <DescriptionTerm>Stocks</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(stockReturn * 100, 2)}%`}</DescriptionDetails>
 
-              <DescriptionTerm>Bonds</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(totalValue * bondsAllocation, 2, '$')} (${formatNumber(bondsAllocation * 100, 1)}%)`}</DescriptionDetails>
+            <DescriptionTerm>Bonds</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(bondReturn * 100, 2)}%`}</DescriptionDetails>
 
-              <DescriptionTerm>Cash</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(totalValue * cashAllocation, 2, '$')} (${formatNumber(cashAllocation * 100, 1)}%)`}</DescriptionDetails>
-            </>
-          ) : (
-            <>
-              <DescriptionTerm>Taxable</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(taxable, 2, '$')} (${formatNumber((taxable / totalValue) * 100, 1)}%)`}</DescriptionDetails>
+            <DescriptionTerm>Cash</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(cashReturn * 100, 2)}%`}</DescriptionDetails>
 
-              <DescriptionTerm>Tax Deferred</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(taxDeferred, 2, '$')} (${formatNumber((taxDeferred / totalValue) * 100, 1)}%)`}</DescriptionDetails>
+            <DescriptionTerm>Inflation</DescriptionTerm>
+            <DescriptionDetails>{`${formatNumber(inflationRate * 100, 2)}%`}</DescriptionDetails>
+          </>
+        ) : (
+          <>
+            <DescriptionTerm>Stocks</DescriptionTerm>
+            <DescriptionDetails>{formatNumber(stockAmount, 2, '$')}</DescriptionDetails>
 
-              <DescriptionTerm>Tax Free</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(taxFree, 2, '$')} (${formatNumber((taxFree / totalValue) * 100, 1)}%)`}</DescriptionDetails>
+            <DescriptionTerm>Bonds</DescriptionTerm>
+            <DescriptionDetails>{formatNumber(bondAmount, 2, '$')}</DescriptionDetails>
 
-              <DescriptionTerm>Cash Savings</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(cashSavings, 2, '$')} (${formatNumber((cashSavings / totalValue) * 100, 1)}%)`}</DescriptionDetails>
-            </>
-          )}
-          <DescriptionTerm className="font-semibold">Total Value</DescriptionTerm>
-          <DescriptionDetails className="font-semibold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
-        </DescriptionList>
-      </Card>
-      <Card className="mt-0">
-        <div className="flex w-full items-center justify-between">
-          <Subheading level={4}>{returnsChecked ? 'Return Rates' : 'Return Amounts'}</Subheading>
-          <Switch aria-label="Toggle returns data view mode" checked={returnsChecked} onChange={setReturnsChecked} />
-        </div>
-        <DescriptionList>
-          {returnsChecked ? (
-            <>
-              <DescriptionTerm>Stocks</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(stockReturn * 100, 2)}%`}</DescriptionDetails>
+            <DescriptionTerm>Cash</DescriptionTerm>
+            <DescriptionDetails>{formatNumber(cashAmount, 2, '$')}</DescriptionDetails>
 
-              <DescriptionTerm>Bonds</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(bondReturn * 100, 2)}%`}</DescriptionDetails>
-
-              <DescriptionTerm>Cash</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(cashReturn * 100, 2)}%`}</DescriptionDetails>
-
-              <DescriptionTerm>Inflation</DescriptionTerm>
-              <DescriptionDetails>{`${formatNumber(inflationRate * 100, 2)}%`}</DescriptionDetails>
-            </>
-          ) : (
-            <>
-              <DescriptionTerm>Stocks</DescriptionTerm>
-              <DescriptionDetails>{formatNumber(stockAmount, 2, '$')}</DescriptionDetails>
-
-              <DescriptionTerm>Bonds</DescriptionTerm>
-              <DescriptionDetails>{formatNumber(bondAmount, 2, '$')}</DescriptionDetails>
-
-              <DescriptionTerm>Cash</DescriptionTerm>
-              <DescriptionDetails>{formatNumber(cashAmount, 2, '$')}</DescriptionDetails>
-
-              <DescriptionTerm className="font-semibold">Total</DescriptionTerm>
-              <DescriptionDetails className="font-semibold">
-                {formatNumber(stockAmount + bondAmount + cashAmount, 2, '$')}
-              </DescriptionDetails>
-            </>
-          )}
-        </DescriptionList>
-      </Card>
-    </div>
+            <DescriptionTerm className="font-semibold">Total</DescriptionTerm>
+            <DescriptionDetails className="font-semibold">{formatNumber(stockAmount + bondAmount + cashAmount, 2, '$')}</DescriptionDetails>
+          </>
+        )}
+      </DescriptionList>
+    </Card>
   );
 }
 
@@ -352,11 +354,24 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
 
   if (!dp) return null;
 
+  let dataListComponents = null;
   switch (currentCategory) {
     case SimulationCategory.Portfolio:
+      dataListComponents = (
+        <div className="grid grid-cols-1 gap-2">
+          <PortfolioDataListCard dp={dp} />
+        </div>
+      );
+      break;
     case SimulationCategory.CashFlow:
     case SimulationCategory.Taxes:
     case SimulationCategory.Returns:
+      dataListComponents = (
+        <div className="grid grid-cols-1 gap-2">
+          <ReturnsDataListCard dp={dp} />
+        </div>
+      );
+      break;
     case SimulationCategory.Contributions:
     case SimulationCategory.Withdrawals:
       break;
@@ -365,7 +380,7 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
   return (
     <SectionContainer showBottomBorder>
       <div className="grid grid-cols-1 gap-2">
-        <PortfolioAndReturnsDataListCard dp={dp} />
+        {dataListComponents}
         <CashFlowDataListCard dp={dp} />
         <WithdrawalsAndTaxesDataListCard dp={dp} />
       </div>
