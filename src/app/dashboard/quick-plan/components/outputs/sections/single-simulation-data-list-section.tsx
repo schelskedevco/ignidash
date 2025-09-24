@@ -215,7 +215,7 @@ function CashFlowDataListCard({ dp }: DataListCardProps) {
   );
 }
 
-function TaxesDataListCard({ dp }: DataListCardProps) {
+function WithdrawalsAndTaxesDataListCard({ dp }: DataListCardProps) {
   return null;
 }
 
@@ -242,7 +242,7 @@ export default function SingleSimulationDataListSection({ simulation, selectedAg
       <div className="grid grid-cols-1 gap-2 @3xl:grid-cols-2 @5xl:grid-cols-3">
         <PortfolioAndReturnsDataListCard dp={dp} />
         <CashFlowDataListCard dp={dp} />
-        <TaxesDataListCard dp={dp} />
+        <WithdrawalsAndTaxesDataListCard dp={dp} />
       </div>
     </SectionContainer>
   );
