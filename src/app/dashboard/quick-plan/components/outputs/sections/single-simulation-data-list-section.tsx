@@ -199,7 +199,7 @@ function ContributionsDataListCard({ dp }: DataListCardProps) {
 }
 
 function TaxesDataListCard({ dp }: DataListCardProps) {
-  const [taxesDataView, setTaxesDataView] = useState<'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'taxableIncome'>('marginalRates');
+  const [taxesDataView, setTaxesDataView] = useState<'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'taxableIncome'>('taxAmounts');
 
   const taxesData = dp.taxes;
 
