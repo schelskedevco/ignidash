@@ -27,7 +27,7 @@ export default function SimulationCategorySelector({
 
   return (
     <div className="flex items-center justify-between">
-      <div className={cn('isolate -ml-1 flex gap-x-2 overflow-x-auto px-1', className)}>
+      <div className={cn('isolate -ml-1 flex gap-x-2 overflow-x-auto px-1 py-2', className)}>
         {Object.values(SimulationCategory).map((category) => (
           <button
             key={category}
