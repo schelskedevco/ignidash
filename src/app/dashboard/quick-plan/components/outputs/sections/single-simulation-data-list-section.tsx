@@ -275,7 +275,7 @@ function TaxesDataListCard({ dp }: DataListCardProps) {
           <DescriptionTerm>Taxable Capital Gains</DescriptionTerm>
           <DescriptionDetails>{formatNumber(taxableCapitalGains, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm className="font-bold">Total</DescriptionTerm>
+          <DescriptionTerm className="font-bold">Total Taxable Income</DescriptionTerm>
           <DescriptionDetails className="font-bold">{formatNumber(totalTaxableIncome, 2, '$')}</DescriptionDetails>
         </>
       );
@@ -330,30 +330,30 @@ function ReturnsDataListCard({ dp }: DataListCardProps) {
       <DescriptionList>
         {returnsChecked ? (
           <>
-            <DescriptionTerm>Stocks</DescriptionTerm>
+            <DescriptionTerm>Stocks Rate</DescriptionTerm>
             <DescriptionDetails>{`${formatNumber(stockReturn * 100, 2)}%`}</DescriptionDetails>
 
-            <DescriptionTerm>Bonds</DescriptionTerm>
+            <DescriptionTerm>Bonds Rate</DescriptionTerm>
             <DescriptionDetails>{`${formatNumber(bondReturn * 100, 2)}%`}</DescriptionDetails>
 
-            <DescriptionTerm>Cash</DescriptionTerm>
+            <DescriptionTerm>Cash Rate</DescriptionTerm>
             <DescriptionDetails>{`${formatNumber(cashReturn * 100, 2)}%`}</DescriptionDetails>
 
-            <DescriptionTerm>Inflation</DescriptionTerm>
+            <DescriptionTerm>Inflation Rate</DescriptionTerm>
             <DescriptionDetails>{`${formatNumber(inflationRate * 100, 2)}%`}</DescriptionDetails>
           </>
         ) : (
           <>
-            <DescriptionTerm>Stocks</DescriptionTerm>
+            <DescriptionTerm>Stocks Amount</DescriptionTerm>
             <DescriptionDetails>{formatNumber(stockAmount, 2, '$')}</DescriptionDetails>
 
-            <DescriptionTerm>Bonds</DescriptionTerm>
+            <DescriptionTerm>Bonds Amount</DescriptionTerm>
             <DescriptionDetails>{formatNumber(bondAmount, 2, '$')}</DescriptionDetails>
 
-            <DescriptionTerm>Cash</DescriptionTerm>
+            <DescriptionTerm>Cash Amount</DescriptionTerm>
             <DescriptionDetails>{formatNumber(cashAmount, 2, '$')}</DescriptionDetails>
 
-            <DescriptionTerm className="font-bold">Total</DescriptionTerm>
+            <DescriptionTerm className="font-bold">Total Amount</DescriptionTerm>
             <DescriptionDetails className="font-bold">{formatNumber(stockAmount + bondAmount + cashAmount, 2, '$')}</DescriptionDetails>
           </>
         )}
