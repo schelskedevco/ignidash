@@ -55,7 +55,7 @@ function PortfolioDataListCard({ dp }: DataListCardProps) {
   return (
     <Card className="my-0">
       <div className="flex w-full items-center justify-between">
-        <Subheading level={4}>Portfolio</Subheading>
+        <Subheading level={4}>{portfolioChecked ? 'Portfolio by Asset Class' : 'Portfolio by Tax Treatment'}</Subheading>
         <Switch aria-label="Toggle portfolio data view mode" checked={portfolioChecked} onChange={setPortfolioChecked} />
       </div>
       <DescriptionList>
