@@ -68,7 +68,7 @@ const createRenderActiveShape = (isSmallScreen: boolean) => {
           fill="currentColor"
           fontSize="14"
         >{`${value !== undefined ? formatNumber(value, 2, '$') : 'N/A'}`}</text>
-        <text x={cx} y={cy} dy={0} textAnchor="middle" fill="currentColor" fontSize="14" fontWeight="bold">
+        <text x={cx} y={cy} dy={0} textAnchor="middle" fill="currentColor" fontSize="14" fontWeight="600">
           {formatChartString(payload?.name ?? 'N/A')}
         </text>
         <text x={cx} y={cy} dy={20} textAnchor="middle" fill="var(--muted-foreground)" fontSize="14">
