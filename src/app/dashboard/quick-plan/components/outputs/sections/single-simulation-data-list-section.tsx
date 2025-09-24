@@ -85,8 +85,8 @@ function PortfolioDataListCard({ dp }: DataListCardProps) {
             <DescriptionDetails>{`${formatNumber(cashSavings, 2, '$')} (${formatNumber((cashSavings / totalValue) * 100, 1)}%)`}</DescriptionDetails>
           </>
         )}
-        <DescriptionTerm className="font-semibold">Total</DescriptionTerm>
-        <DescriptionDetails className="font-semibold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
+        <DescriptionTerm className="font-bold">Total</DescriptionTerm>
+        <DescriptionDetails className="font-bold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );
@@ -136,10 +136,8 @@ function WithdrawalsDataListCard({ dp }: DataListCardProps) {
         <DescriptionTerm>Cash Savings</DescriptionTerm>
         <DescriptionDetails>{formatNumber(cashSavings, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm className="font-semibold">Total</DescriptionTerm>
-        <DescriptionDetails className="font-semibold">
-          {formatNumber(taxable + taxDeferred + taxFree + cashSavings, 2, '$')}
-        </DescriptionDetails>
+        <DescriptionTerm className="font-bold">Total</DescriptionTerm>
+        <DescriptionDetails className="font-bold">{formatNumber(taxable + taxDeferred + taxFree + cashSavings, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );
@@ -189,10 +187,8 @@ function ContributionsDataListCard({ dp }: DataListCardProps) {
         <DescriptionTerm>Cash Savings</DescriptionTerm>
         <DescriptionDetails>{formatNumber(cashSavings, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm className="font-semibold">Total</DescriptionTerm>
-        <DescriptionDetails className="font-semibold">
-          {formatNumber(taxable + taxDeferred + taxFree + cashSavings, 2, '$')}
-        </DescriptionDetails>
+        <DescriptionTerm className="font-bold">Total</DescriptionTerm>
+        <DescriptionDetails className="font-bold">{formatNumber(taxable + taxDeferred + taxFree + cashSavings, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );
@@ -249,8 +245,8 @@ function TaxesDataListCard({ dp }: DataListCardProps) {
           <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
           <DescriptionDetails>{formatNumber(capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm className="font-semibold">Total Tax Liability</DescriptionTerm>
-          <DescriptionDetails className="font-semibold">{formatNumber(incomeTaxAmount + capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm className="font-bold">Total Tax Liability</DescriptionTerm>
+          <DescriptionDetails className="font-bold">{formatNumber(incomeTaxAmount + capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
         </>
       );
       break;
@@ -263,8 +259,8 @@ function TaxesDataListCard({ dp }: DataListCardProps) {
           <DescriptionTerm>Taxable Capital Gains</DescriptionTerm>
           <DescriptionDetails>{formatNumber(taxableCapitalGains, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm className="font-semibold">Total</DescriptionTerm>
-          <DescriptionDetails className="font-semibold">{formatNumber(totalTaxableIncome, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm className="font-bold">Total</DescriptionTerm>
+          <DescriptionDetails className="font-bold">{formatNumber(totalTaxableIncome, 2, '$')}</DescriptionDetails>
         </>
       );
       break;
@@ -341,8 +337,8 @@ function ReturnsDataListCard({ dp }: DataListCardProps) {
             <DescriptionTerm>Cash</DescriptionTerm>
             <DescriptionDetails>{formatNumber(cashAmount, 2, '$')}</DescriptionDetails>
 
-            <DescriptionTerm className="font-semibold">Total</DescriptionTerm>
-            <DescriptionDetails className="font-semibold">{formatNumber(stockAmount + bondAmount + cashAmount, 2, '$')}</DescriptionDetails>
+            <DescriptionTerm className="font-bold">Total</DescriptionTerm>
+            <DescriptionDetails className="font-bold">{formatNumber(stockAmount + bondAmount + cashAmount, 2, '$')}</DescriptionDetails>
           </>
         )}
       </DescriptionList>
@@ -389,8 +385,8 @@ function IncomeDataListCard({ dp }: DataListCardProps) {
         <DescriptionTerm>Income Tax</DescriptionTerm>
         <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm className="font-semibold">Net Income</DescriptionTerm>
-        <DescriptionDetails className="font-semibold">{formatNumber(netIncome, 2, '$')}</DescriptionDetails>
+        <DescriptionTerm className="font-bold">Net Income</DescriptionTerm>
+        <DescriptionDetails className="font-bold">{formatNumber(netIncome, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );
@@ -409,8 +405,8 @@ function ExpensesDataListCard({ dp }: DataListCardProps) {
             <DescriptionDetails>{formatNumber(expense.amount, 2, '$')}</DescriptionDetails>
           </Fragment>
         ))}
-        <DescriptionTerm className="font-semibold">Total Expenses</DescriptionTerm>
-        <DescriptionDetails className="font-semibold">{formatNumber(totalExpenses, 2, '$')}</DescriptionDetails>
+        <DescriptionTerm className="font-bold">Total Expenses</DescriptionTerm>
+        <DescriptionDetails className="font-bold">{formatNumber(totalExpenses, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );
@@ -443,8 +439,8 @@ function NetCashFlowDataListCard({ dp }: DataListCardProps) {
         <DescriptionTerm>Savings Rate</DescriptionTerm>
         <DescriptionDetails>{grossIncome > 0 ? `${formatNumber((netCashFlow / grossIncome) * 100, 1)}%` : 'N/A'}</DescriptionDetails>
 
-        <DescriptionTerm className="font-semibold">Net</DescriptionTerm>
-        <DescriptionDetails className="font-semibold">{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
+        <DescriptionTerm className="font-bold">Net</DescriptionTerm>
+        <DescriptionDetails className="font-bold">{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );
