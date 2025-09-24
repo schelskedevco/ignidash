@@ -32,7 +32,7 @@ export default function SingleSimulationMainResults({ simulation, keyMetrics }: 
         selectedAge={selectedAge}
         currentCategory={currentCategory}
       />
-      <SingleSimulationDataListSection simulation={simulation} selectedAge={selectedAge} />
+      <SingleSimulationDataListSection simulation={simulation} selectedAge={selectedAge} currentCategory={currentCategory} />
       <SingleSimulationDataTableSection simulation={simulation} currentCategory={currentCategory} />
     </>
   );

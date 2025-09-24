@@ -10,6 +10,7 @@ import SectionContainer from '@/components/ui/section-container';
 import Card from '@/components/ui/card';
 import { Switch } from '@/components/catalyst/switch';
 import { Select } from '@/components/catalyst/select';
+import { SimulationCategory } from '@/lib/types/simulation-category';
 
 interface DataListCardProps {
   dp: SimulationDataPoint;
@@ -335,9 +336,14 @@ function WithdrawalsAndTaxesDataListCard({ dp }: DataListCardProps) {
 interface SingleSimulationDataListSectionProps {
   simulation: SimulationResult;
   selectedAge: number;
+  currentCategory: SimulationCategory;
 }
 
-export default function SingleSimulationDataListSection({ simulation, selectedAge }: SingleSimulationDataListSectionProps) {
+export default function SingleSimulationDataListSection({
+  simulation,
+  selectedAge,
+  currentCategory,
+}: SingleSimulationDataListSectionProps) {
   const dp = useMemo(() => {
     return simulation.data.find((dp) => {
       const startAge = simulation.context.startAge;
