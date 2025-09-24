@@ -92,6 +92,106 @@ function PortfolioDataListCard({ dp }: DataListCardProps) {
   );
 }
 
+function WithdrawalsDataListCard({ dp }: DataListCardProps) {
+  const portfolioData = dp.portfolio;
+
+  let cashSavings = 0;
+  let taxable = 0;
+  let taxDeferred = 0;
+  let taxFree = 0;
+
+  for (const account of Object.values(portfolioData.perAccountData)) {
+    switch (account.type) {
+      case 'savings':
+        cashSavings += account.withdrawalsForPeriod;
+        break;
+      case 'taxableBrokerage':
+        taxable += account.withdrawalsForPeriod;
+        break;
+      case '401k':
+      case 'ira':
+      case 'hsa':
+        taxDeferred += account.withdrawalsForPeriod;
+        break;
+      case 'roth401k':
+      case 'rothIra':
+        taxFree += account.withdrawalsForPeriod;
+        break;
+    }
+  }
+
+  return (
+    <Card className="my-0">
+      <Subheading level={4}>Withdrawals</Subheading>
+      <DescriptionList>
+        <DescriptionTerm>Taxable</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(taxable, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Tax Deferred</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(taxDeferred, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Tax Free</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(taxFree, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Cash Savings</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(cashSavings, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm className="font-semibold">Total Withdrawals</DescriptionTerm>
+        <DescriptionDetails className="font-semibold">
+          {formatNumber(taxable + taxDeferred + taxFree + cashSavings, 2, '$')}
+        </DescriptionDetails>
+      </DescriptionList>
+    </Card>
+  );
+}
+
+function ContributionsDataListCard({ dp }: DataListCardProps) {
+  return null;
+}
+
+function TaxesDataListCard({ dp }: DataListCardProps) {
+  const [taxesDataView, setTaxesDataView] = useState<'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'taxableIncome'>('marginalRates');
+
+  const taxesData = dp.taxes;
+
+  const incomeTaxAmount = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+  const capitalGainsTaxAmount = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+
+  return (
+    <Card className="my-0">
+      <div className="flex w-full items-center justify-between">
+        <Subheading level={4}>Taxes</Subheading>
+        <Select
+          className="max-w-48 sm:max-w-64"
+          id="taxes-data-view"
+          name="taxes-data-view"
+          value={taxesDataView}
+          onChange={(e) => setTaxesDataView(e.target.value as 'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'taxableIncome')}
+        >
+          <optgroup label="Tax Rates">
+            <option value="marginalRates">Top Marginal Rates</option>
+            <option value="effectiveRates">Effective Rates</option>
+          </optgroup>
+          <optgroup label="Dollar Amounts">
+            <option value="taxAmounts">Tax Amounts</option>
+            <option value="taxableIncome">Taxable Income</option>
+          </optgroup>
+        </Select>
+      </div>
+      <DescriptionList>
+        <DescriptionTerm>Income Tax</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(incomeTaxAmount, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm className="font-semibold">Total Tax Liability</DescriptionTerm>
+        <DescriptionDetails className="font-semibold">{formatNumber(incomeTaxAmount + capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
+      </DescriptionList>
+    </Card>
+  );
+}
+
 function ReturnsDataListCard({ dp }: DataListCardProps) {
   const [returnsChecked, setReturnsChecked] = useState(true);
 
@@ -242,99 +342,6 @@ function CashFlowDataListCard({ dp }: DataListCardProps) {
 //   totalTaxableIncome: number;
 // }
 
-function WithdrawalsAndTaxesDataListCard({ dp }: DataListCardProps) {
-  const [taxesDataView, setTaxesDataView] = useState<'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'taxableIncome'>('marginalRates');
-
-  const portfolioData = dp.portfolio;
-
-  let cashSavings = 0;
-  let taxable = 0;
-  let taxDeferred = 0;
-  let taxFree = 0;
-
-  for (const account of Object.values(portfolioData.perAccountData)) {
-    switch (account.type) {
-      case 'savings':
-        cashSavings += account.withdrawalsForPeriod;
-        break;
-      case 'taxableBrokerage':
-        taxable += account.withdrawalsForPeriod;
-        break;
-      case '401k':
-      case 'ira':
-      case 'hsa':
-        taxDeferred += account.withdrawalsForPeriod;
-        break;
-      case 'roth401k':
-      case 'rothIra':
-        taxFree += account.withdrawalsForPeriod;
-        break;
-    }
-  }
-
-  const taxesData = dp.taxes;
-
-  const incomeTaxAmount = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
-  const capitalGainsTaxAmount = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
-
-  return (
-    <div className="grid h-full grid-rows-2 gap-2">
-      <Card className="mb-0">
-        <Subheading level={4}>Withdrawals</Subheading>
-        <DescriptionList>
-          <DescriptionTerm>Taxable</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(taxable, 2, '$')}</DescriptionDetails>
-
-          <DescriptionTerm>Tax Deferred</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(taxDeferred, 2, '$')}</DescriptionDetails>
-
-          <DescriptionTerm>Tax Free</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(taxFree, 2, '$')}</DescriptionDetails>
-
-          <DescriptionTerm>Cash Savings</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(cashSavings, 2, '$')}</DescriptionDetails>
-
-          <DescriptionTerm className="font-semibold">Total Withdrawals</DescriptionTerm>
-          <DescriptionDetails className="font-semibold">
-            {formatNumber(taxable + taxDeferred + taxFree + cashSavings, 2, '$')}
-          </DescriptionDetails>
-        </DescriptionList>
-      </Card>
-      <Card className="mt-0">
-        <div className="flex w-full items-center justify-between">
-          <Subheading level={4}>Taxes</Subheading>
-          <Select
-            className="max-w-48 sm:max-w-64"
-            id="taxes-data-view"
-            name="taxes-data-view"
-            value={taxesDataView}
-            onChange={(e) => setTaxesDataView(e.target.value as 'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'taxableIncome')}
-          >
-            <optgroup label="Tax Rates">
-              <option value="marginalRates">Top Marginal Rates</option>
-              <option value="effectiveRates">Effective Rates</option>
-            </optgroup>
-            <optgroup label="Dollar Amounts">
-              <option value="taxAmounts">Tax Amounts</option>
-              <option value="taxableIncome">Taxable Income</option>
-            </optgroup>
-          </Select>
-        </div>
-        <DescriptionList>
-          <DescriptionTerm>Income Tax</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(incomeTaxAmount, 2, '$')}</DescriptionDetails>
-
-          <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
-
-          <DescriptionTerm className="font-semibold">Total Tax Liability</DescriptionTerm>
-          <DescriptionDetails className="font-semibold">{formatNumber(incomeTaxAmount + capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
-        </DescriptionList>
-      </Card>
-    </div>
-  );
-}
-
 interface SingleSimulationDataListSectionProps {
   simulation: SimulationResult;
   selectedAge: number;
@@ -360,11 +367,19 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
       dataListComponents = (
         <div className="grid grid-cols-1 gap-2">
           <PortfolioDataListCard dp={dp} />
+          <WithdrawalsDataListCard dp={dp} />
+          <ContributionsDataListCard dp={dp} />
         </div>
       );
       break;
     case SimulationCategory.CashFlow:
     case SimulationCategory.Taxes:
+      dataListComponents = (
+        <div className="grid grid-cols-1 gap-2">
+          <TaxesDataListCard dp={dp} />
+        </div>
+      );
+      break;
     case SimulationCategory.Returns:
       dataListComponents = (
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -374,7 +389,18 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
       );
       break;
     case SimulationCategory.Contributions:
+      dataListComponents = (
+        <div className="grid grid-cols-1 gap-2">
+          <ContributionsDataListCard dp={dp} />
+        </div>
+      );
+      break;
     case SimulationCategory.Withdrawals:
+      dataListComponents = (
+        <div className="grid grid-cols-1 gap-2">
+          <WithdrawalsDataListCard dp={dp} />
+        </div>
+      );
       break;
   }
 
@@ -383,7 +409,6 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
       <div className="grid grid-cols-1 gap-2">
         {dataListComponents}
         <CashFlowDataListCard dp={dp} />
-        <WithdrawalsAndTaxesDataListCard dp={dp} />
       </div>
     </SectionContainer>
   );
