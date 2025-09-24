@@ -42,7 +42,7 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
   } = formatMetrics(keyMetrics);
 
   return (
-    <dl className="my-4 grid grid-cols-2 gap-2 2xl:grid-cols-3">
+    <dl className="grid grid-cols-2 gap-2 2xl:grid-cols-3">
       <MetricsCard name="Success" stat={successForDisplay} />
       <MetricsCard name="Progress to Retirement" stat={progressToRetirementForDisplay} />
       <MetricsCard
