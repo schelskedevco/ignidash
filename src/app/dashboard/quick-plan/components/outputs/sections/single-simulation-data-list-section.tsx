@@ -62,7 +62,7 @@ function PortfolioAndReturnsDataListCard({ dp }: DataListCardProps) {
   } = returnsData?.returnAmountsForPeriod ?? { stocks: 0, bonds: 0, cash: 0 };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="grid h-full grid-rows-2 gap-2">
       <Card className="mb-0">
         <div className="flex w-full items-center justify-between">
           <Subheading level={4}>Portfolio</Subheading>
@@ -163,7 +163,7 @@ function CashFlowDataListCard({ dp }: DataListCardProps) {
   const netCashFlow = netIncome - totalExpenses;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="grid h-full grid-rows-2 gap-2">
       <Card className="mb-0">
         <Subheading level={4}>Income</Subheading>
         <DescriptionList>
