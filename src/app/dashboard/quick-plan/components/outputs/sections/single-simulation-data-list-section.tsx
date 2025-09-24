@@ -198,29 +198,6 @@ function ContributionsDataListCard({ dp }: DataListCardProps) {
   );
 }
 
-// export interface CapitalGainsTaxesData {
-//   taxableCapitalGains: number;
-//   capitalGainsTaxAmount: number;
-//   effectiveCapitalGainsTaxRate: number;
-//   topMarginalCapitalGainsTaxRate: number;
-//   netCapitalGains: number;
-// }
-
-// export interface IncomeTaxesData {
-//   taxableOrdinaryIncome: number;
-//   incomeTaxAmount: number;
-//   effectiveIncomeTaxRate: number;
-//   topMarginalTaxRate: number;
-//   netIncome: number;
-//   capitalLossDeduction?: number;
-// }
-
-// export interface TaxesData {
-//   incomeTaxes: IncomeTaxesData;
-//   capitalGainsTaxes: CapitalGainsTaxesData;
-//   totalTaxableIncome: number;
-// }
-
 function TaxesDataListCard({ dp }: DataListCardProps) {
   const [taxesDataView, setTaxesDataView] = useState<'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'taxableIncome'>('marginalRates');
 
