@@ -209,19 +209,17 @@ export default function SingleSimulationPortfolioAreaChart({
           </AreaChart>
         </ResponsiveContainer>
       </div>
-      <div
-        className={`mt-2 flex justify-center gap-x-2 sm:gap-x-4 ${!isSmallScreen ? 'ml-16' : ''}`}
-        role="group"
-        aria-label="Chart legend"
-      >
-        {dataKeys.map((dataKey, index) => (
-          <div key={dataKey} className="flex items-center gap-x-2 text-sm font-medium">
-            <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: COLORS[index % COLORS.length] }} className="size-5 shrink-0">
-              <rect x={0.5} y={0.5} width={5} height={5} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
-            </svg>
-            {formatChartString(dataKey)}
-          </div>
-        ))}
+      <div className={`mt-2 flex justify-center ${!isSmallScreen ? 'ml-16' : ''}`} role="group" aria-label="Chart legend">
+        <div className="grid grid-cols-2 gap-2 sm:gap-4">
+          {dataKeys.map((dataKey, index) => (
+            <div key={dataKey} className="flex items-center gap-x-2 text-sm font-medium">
+              <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: COLORS[index % COLORS.length] }} className="size-5 shrink-0">
+                <rect x={0.5} y={0.5} width={5} height={5} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
+              </svg>
+              {formatChartString(dataKey)}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
