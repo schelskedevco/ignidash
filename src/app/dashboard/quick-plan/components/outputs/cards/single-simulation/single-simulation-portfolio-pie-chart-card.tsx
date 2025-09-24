@@ -88,7 +88,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
         <div className="mb-4 flex items-center justify-between">
           <h4 className="text-foreground flex items-center text-lg font-semibold">
             <span className="mr-2">Net Worth</span>
-            <span className="text-muted-foreground">{formatNumber(totalValue, 2, '$')}</span>
+            <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
           </h4>
         </div>
         <div className="flex h-64 w-full flex-col sm:h-72 lg:h-80">
