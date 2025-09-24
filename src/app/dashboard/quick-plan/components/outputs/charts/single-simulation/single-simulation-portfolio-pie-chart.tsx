@@ -97,16 +97,7 @@ export default function SingleSimulationPortfolioPieChart({ chartData }: SingleS
       <div className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart className="text-xs">
-            <Pie
-              activeShape={renderActiveShape}
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={80}
-              paddingAngle={10}
-              dataKey="value"
-            >
+            <Pie activeShape={renderActiveShape} data={chartData} cx="50%" cy="50%" innerRadius={80} outerRadius={100} dataKey="value">
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${entry.name}`} fill={COLORS[index % COLORS.length]} stroke="currentColor" />
               ))}
