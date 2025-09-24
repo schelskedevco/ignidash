@@ -66,7 +66,8 @@ function CashFlowDataListCardV2({ dp }: DataListCardProps) {
     }
   }
 
-  const grossIncome = (dp.incomes?.totalGrossIncome ?? 0) + taxDeferredWithdrawals;
+  const ordinaryIncome = dp.incomes?.totalGrossIncome ?? 0;
+  const grossIncome = ordinaryIncome + taxDeferredWithdrawals;
   const incomeTax = dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0;
   const totalExpenses = dp.expenses?.totalExpenses ?? 0;
   const netIncome = grossIncome - incomeTax;
@@ -77,8 +78,11 @@ function CashFlowDataListCardV2({ dp }: DataListCardProps) {
     <Card className="my-0">
       <Subheading level={4}>Cash Flow</Subheading>
       <DescriptionList>
-        <DescriptionTerm>Gross Income</DescriptionTerm>
+        <DescriptionTerm>Total Gross Income</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Ordinary Income</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(ordinaryIncome, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Tax Deferred Withdrawals</DescriptionTerm>
         <DescriptionDetails>{formatNumber(taxDeferredWithdrawals, 2, '$')}</DescriptionDetails>
