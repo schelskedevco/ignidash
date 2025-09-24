@@ -106,6 +106,48 @@ function CashFlowDataListCardV2({ dp }: DataListCardProps) {
   );
 }
 
+function _TaxesDataListCardV2({ dp }: DataListCardProps) {
+  let taxDeferredWithdrawals = 0;
+  for (const account of Object.values(dp.portfolio.perAccountData)) {
+    switch (account.type) {
+      case '401k':
+      case 'ira':
+      case 'hsa':
+        taxDeferredWithdrawals += account.withdrawalsForPeriod;
+        break;
+      default:
+        break;
+    }
+  }
+
+  const ordinaryIncome = dp.incomes?.totalGrossIncome ?? 0;
+  const grossIncome = ordinaryIncome + taxDeferredWithdrawals;
+  const incomeTax = dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0;
+  const netIncome = grossIncome - incomeTax;
+
+  return (
+    <Card className="my-0">
+      <Subheading level={4}>Taxes</Subheading>
+      <DescriptionList>
+        <DescriptionTerm>Total Gross Income</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Ordinary Income</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(ordinaryIncome, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Tax Deferred Withdrawals</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(taxDeferredWithdrawals, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Income Tax</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Net Income</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(netIncome, 2, '$')}</DescriptionDetails>
+      </DescriptionList>
+    </Card>
+  );
+}
+
 function PortfolioDataListCard({ dp }: DataListCardProps) {
   const [portfolioChecked, setPortfolioChecked] = useState(false);
 
