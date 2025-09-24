@@ -261,7 +261,7 @@ function SingleSimulationChartsSection({
   return (
     <SectionContainer showBottomBorder>
       <SectionHeader title={headerText} desc="Interactive charts to explore your projection." className="mb-4" />
-      <div className="mb-4 grid grid-cols-1 gap-2">{chartsComponents}</div>
+      <div className="grid grid-cols-1 gap-2">{chartsComponents}</div>
     </SectionContainer>
   );
 }
