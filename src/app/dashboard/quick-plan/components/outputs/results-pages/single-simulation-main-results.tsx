@@ -22,7 +22,7 @@ export default function SingleSimulationMainResults({ simulation, keyMetrics }: 
 
   return (
     <>
-      <SectionContainer showBottomBorder className="py-0">
+      <SectionContainer showBottomBorder className="from-emphasized-background bg-gradient-to-l py-0">
         <SimulationCategorySelector currentCategory={currentCategory} setCurrentCategory={setCurrentCategory} />
       </SectionContainer>
       <SingleSimulationChartsSection
