@@ -84,7 +84,7 @@ export default function SingleSimulationContributionsBarChart({
     case 'taxTreatment':
       transformedChartData = chartData.flatMap((item) => [
         {
-          name: 'Taxable Brokerage Contributions',
+          name: 'Taxable Contributions',
           amount: item.taxableBrokerage,
         },
         { name: 'Tax Deferred Contributions', amount: item.taxDeferred },
