@@ -215,9 +215,31 @@ function CashFlowDataListCard({ dp }: DataListCardProps) {
   );
 }
 
+// export interface CapitalGainsTaxesData {
+//   taxableCapitalGains: number;
+//   capitalGainsTaxAmount: number;
+//   effectiveCapitalGainsTaxRate: number;
+//   topMarginalCapitalGainsTaxRate: number;
+//   netCapitalGains: number;
+// }
+
+// export interface IncomeTaxesData {
+//   taxableOrdinaryIncome: number;
+//   incomeTaxAmount: number;
+//   effectiveIncomeTaxRate: number;
+//   topMarginalTaxRate: number;
+//   netIncome: number;
+//   capitalLossDeduction?: number;
+// }
+
+// export interface TaxesData {
+//   incomeTaxes: IncomeTaxesData;
+//   capitalGainsTaxes: CapitalGainsTaxesData;
+//   totalTaxableIncome: number;
+// }
+
 function WithdrawalsAndTaxesDataListCard({ dp }: DataListCardProps) {
   const portfolioData = dp.portfolio;
-  const taxesData = dp.taxes;
 
   let cashSavings = 0;
   let taxable = 0;
@@ -243,6 +265,11 @@ function WithdrawalsAndTaxesDataListCard({ dp }: DataListCardProps) {
         break;
     }
   }
+
+  const taxesData = dp.taxes;
+
+  const incomeTaxAmount = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+  const capitalGainsTaxAmount = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
 
   return (
     <div className="grid h-full grid-rows-2 gap-2">
@@ -271,10 +298,13 @@ function WithdrawalsAndTaxesDataListCard({ dp }: DataListCardProps) {
         <Subheading level={4}>Taxes</Subheading>
         <DescriptionList>
           <DescriptionTerm>Income Tax</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(taxesData?.incomeTaxes.incomeTaxAmount ?? 0, 2, '$')}</DescriptionDetails>
+          <DescriptionDetails>{formatNumber(incomeTaxAmount, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0, 2, '$')}</DescriptionDetails>
+          <DescriptionDetails>{formatNumber(capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
+
+          <DescriptionTerm className="font-semibold">Total Tax Liability</DescriptionTerm>
+          <DescriptionDetails className="font-semibold">{formatNumber(incomeTaxAmount + capitalGainsTaxAmount, 2, '$')}</DescriptionDetails>
         </DescriptionList>
       </Card>
     </div>
