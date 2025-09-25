@@ -182,13 +182,13 @@ function ReturnsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
         <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
       </Subheading>
       <DescriptionList>
-        <DescriptionTerm>Stocks</DescriptionTerm>
+        <DescriptionTerm>Stock Holdings</DescriptionTerm>
         <DescriptionDetails>{`${formatNumber(totalValue * stocksAllocation, 2, '$')} (${formatNumber(stocksAllocation * 100, 1)}%)`}</DescriptionDetails>
 
-        <DescriptionTerm>Bonds</DescriptionTerm>
+        <DescriptionTerm>Bond Holdings</DescriptionTerm>
         <DescriptionDetails>{`${formatNumber(totalValue * bondsAllocation, 2, '$')} (${formatNumber(bondsAllocation * 100, 1)}%)`}</DescriptionDetails>
 
-        <DescriptionTerm>Cash</DescriptionTerm>
+        <DescriptionTerm>Cash Holdings</DescriptionTerm>
         <DescriptionDetails>{`${formatNumber(totalValue * cashAllocation, 2, '$')} (${formatNumber(cashAllocation * 100, 1)}%)`}</DescriptionDetails>
 
         <DescriptionTerm className="font-bold">Total Portfolio Value</DescriptionTerm>
