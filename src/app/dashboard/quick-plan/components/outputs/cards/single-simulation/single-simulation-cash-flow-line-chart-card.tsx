@@ -72,11 +72,9 @@ export default function SingleSimulationCashFlowLineChartCard({
             }
           }}
         >
-          <optgroup label="By Aggregate">
-            <option value="net">Net Cash Flow</option>
-            <option value="incomes">Total Gross Income</option>
-            <option value="expenses">Total Expenses</option>
-          </optgroup>
+          <option value="net">Net Cash Flow</option>
+          <option value="incomes">Income</option>
+          <option value="expenses">Expenses</option>
           <optgroup label="By Income">
             {uniqueIncomes.map((income) => (
               <option key={income.id} value={income.id}>
