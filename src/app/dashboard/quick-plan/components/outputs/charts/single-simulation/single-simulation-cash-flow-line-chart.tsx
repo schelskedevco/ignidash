@@ -35,6 +35,15 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)'];
 
+  const formatValue = (value: number, mode: 'net' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => {
+    switch (mode) {
+      case 'savingsRate':
+        return `${value.toFixed(2)}%`;
+      default:
+        return formatNumber(value, 1, '$');
+    }
+  };
+
   let tooltipBodyComponent = null;
   let tooltipFooterComponent = null;
   switch (dataView) {
@@ -83,9 +92,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
               className={`border-foreground/50 flex justify-between rounded-lg border px-2 text-sm ${needsBgTextColor.includes(entry.color) ? 'text-background' : 'text-foreground'}`}
             >
               <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-              <span className="ml-1 font-semibold">
-                {dataView === 'savingsRate' ? `${entry.value.toFixed(2)}%` : formatNumber(entry.value, 1, '$')}
-              </span>
+              <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
             </p>
           ))}
         </div>
