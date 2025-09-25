@@ -70,13 +70,17 @@ export default function SingleSimulationCashFlowBarChart({
       ]);
       break;
     case 'incomes':
-      transformedChartData = chartData.flatMap(({ perIncomeData }) =>
-        perIncomeData.map(({ name, grossIncome }) => ({ name, amount: grossIncome, type: 'income' }))
+      transformedChartData = chartData.flatMap(({ perIncomeData, taxDeferredWithdrawals }) =>
+        perIncomeData
+          .map(({ name, grossIncome }) => ({ name, amount: grossIncome, type: 'income' }))
+          .concat({ name: 'Tax Deferred Withdrawals', amount: taxDeferredWithdrawals, type: 'income' })
       );
       break;
     case 'expenses':
-      transformedChartData = chartData.flatMap(({ perExpenseData }) =>
-        perExpenseData.map(({ name, amount }) => ({ name, amount, type: 'expense' }))
+      transformedChartData = chartData.flatMap(({ perExpenseData, incomeTax }) =>
+        perExpenseData
+          .map(({ name, amount }) => ({ name, amount, type: 'expense' }))
+          .concat({ name: 'Income Tax', amount: incomeTax, type: 'expense' })
       );
       break;
     case 'custom':
