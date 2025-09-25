@@ -98,7 +98,7 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionTerm>Net Income</DescriptionTerm>
           <DescriptionDetails>{formatNumber(netIncome, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm>Total Expenses</DescriptionTerm>
+          <DescriptionTerm>Expenses</DescriptionTerm>
           <DescriptionDetails>{formatNumber(totalExpenses, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="font-bold">Savings Rate</DescriptionTerm>

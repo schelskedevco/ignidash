@@ -575,9 +575,9 @@ export const useSingleSimulationCashFlowChartData = (simulation: SimulationResul
       const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
       const grossIncome = ordinaryIncome + taxDeferredWithdrawals;
       const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
-      const totalExpenses = expensesData?.totalExpenses ?? 0;
+      const expenses = expensesData?.totalExpenses ?? 0;
       const netIncome = grossIncome - incomeTax;
-      const netCashFlow = netIncome - totalExpenses;
+      const netCashFlow = netIncome - expenses;
       const savingsRate = netIncome > 0 ? (netCashFlow / netIncome) * 100 : null;
 
       return {
@@ -588,7 +588,7 @@ export const useSingleSimulationCashFlowChartData = (simulation: SimulationResul
         taxDeferredWithdrawals,
         grossIncome,
         incomeTax,
-        totalExpenses,
+        expenses,
         netIncome,
         netCashFlow,
         savingsRate,

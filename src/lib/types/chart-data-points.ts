@@ -42,7 +42,7 @@ export interface SingleSimulationCashFlowChartDataPoint {
   taxDeferredWithdrawals: number;
   grossIncome: number;
   incomeTax: number;
-  totalExpenses: number;
+  expenses: number;
   netIncome: number;
   netCashFlow: number;
   savingsRate: number | null;

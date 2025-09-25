@@ -52,7 +52,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
 
       const grossIncome = entry.grossIncome;
       const incomeTax = entry.incomeTax;
-      const totalExpenses = entry.totalExpenses;
+      const expenses = entry.expenses;
       const netCashFlow = entry.netCashFlow;
 
       tooltipBodyComponent = (
@@ -75,8 +75,8 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
             style={{ backgroundColor: 'var(--chart-4)' }}
             className="border-foreground/50 text-background flex justify-between rounded-lg border px-2 text-sm"
           >
-            <span className="mr-2">{`${formatChartString('totalExpenses')}:`}</span>
-            <span className="ml-1 font-semibold">{formatNumber(totalExpenses, 1, '$')}</span>
+            <span className="mr-2">{`${formatChartString('expenses')}:`}</span>
+            <span className="ml-1 font-semibold">{formatNumber(expenses, 1, '$')}</span>
           </p>
         </div>
       );
@@ -169,7 +169,7 @@ export default function SingleSimulationCashFlowLineChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'expenses':
-      dataKeys.push('totalExpenses', 'incomeTax');
+      dataKeys.push('expenses', 'incomeTax');
       strokeColors.push('var(--chart-4)', 'var(--chart-1)');
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
