@@ -7,12 +7,14 @@ import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/componen
 import { formatNumber } from '@/lib/utils';
 import Card from '@/components/ui/card';
 import { SimulationCategory } from '@/lib/types/simulation-category';
+import { Subheading } from '@/components/catalyst/heading';
 
 interface DataListCardProps {
   dp: SimulationDataPoint;
+  selectedAge: number;
 }
 
-function PortfolioDataListCardV2({ dp }: DataListCardProps) {
+function PortfolioDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const returnsData = dp.returns;
 
   const {
@@ -28,6 +30,10 @@ function PortfolioDataListCardV2({ dp }: DataListCardProps) {
 
   return (
     <Card className="my-0">
+      <Subheading level={4}>
+        <span className="mr-2">Details</span>
+        <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
+      </Subheading>
       <DescriptionList>
         <DescriptionTerm>Total Returns</DescriptionTerm>
         <DescriptionDetails>{formatNumber(stockAmount + bondAmount + cashAmount, 2, '$')}</DescriptionDetails>
@@ -47,7 +53,7 @@ function PortfolioDataListCardV2({ dp }: DataListCardProps) {
   );
 }
 
-function CashFlowDataListCardV2({ dp }: DataListCardProps) {
+function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const portfolioData = dp.portfolio;
 
   let taxDeferredWithdrawals = 0;
@@ -77,6 +83,10 @@ function CashFlowDataListCardV2({ dp }: DataListCardProps) {
 
   return (
     <Card className="my-0">
+      <Subheading level={4}>
+        <span className="mr-2">Details</span>
+        <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
+      </Subheading>
       <DescriptionList>
         <DescriptionTerm>Total Gross Income</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
@@ -100,7 +110,7 @@ function CashFlowDataListCardV2({ dp }: DataListCardProps) {
   );
 }
 
-function TaxesDataListCardV2({ dp }: DataListCardProps) {
+function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const portfolioData = dp.portfolio;
 
   const realizedGains = portfolioData.realizedGainsForPeriod;
@@ -129,6 +139,10 @@ function TaxesDataListCardV2({ dp }: DataListCardProps) {
 
   return (
     <Card className="my-0">
+      <Subheading level={4}>
+        <span className="mr-2">Details</span>
+        <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
+      </Subheading>
       <DescriptionList>
         <DescriptionTerm>Total Gross Income</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
@@ -149,7 +163,7 @@ function TaxesDataListCardV2({ dp }: DataListCardProps) {
   );
 }
 
-function ReturnsDataListCardV2({ dp }: DataListCardProps) {
+function ReturnsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const portfolioData = dp.portfolio;
   const totalValue = portfolioData.totalValue;
 
@@ -160,6 +174,10 @@ function ReturnsDataListCardV2({ dp }: DataListCardProps) {
 
   return (
     <Card className="my-0">
+      <Subheading level={4}>
+        <span className="mr-2">Details</span>
+        <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
+      </Subheading>
       <DescriptionList>
         <DescriptionTerm>Stocks</DescriptionTerm>
         <DescriptionDetails>{`${formatNumber(totalValue * stocksAllocation, 2, '$')} (${formatNumber(stocksAllocation * 100, 1)}%)`}</DescriptionDetails>
@@ -177,7 +195,7 @@ function ReturnsDataListCardV2({ dp }: DataListCardProps) {
   );
 }
 
-function ContributionsDataListCardV2({ dp }: DataListCardProps) {
+function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const portfolioData = dp.portfolio;
   const totalValue = portfolioData.totalValue;
   const totalContributions = portfolioData.contributionsForPeriod;
@@ -208,6 +226,10 @@ function ContributionsDataListCardV2({ dp }: DataListCardProps) {
 
   return (
     <Card className="my-0">
+      <Subheading level={4}>
+        <span className="mr-2">Details</span>
+        <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
+      </Subheading>
       <DescriptionList>
         <DescriptionTerm>Total Portfolio Value</DescriptionTerm>
         <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
@@ -222,7 +244,7 @@ function ContributionsDataListCardV2({ dp }: DataListCardProps) {
   );
 }
 
-function WithdrawalsDataListCardV2({ dp }: DataListCardProps) {
+function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const portfolioData = dp.portfolio;
   const totalValue = portfolioData.totalValue;
   const totalWithdrawals = portfolioData.withdrawalsForPeriod;
@@ -253,6 +275,10 @@ function WithdrawalsDataListCardV2({ dp }: DataListCardProps) {
 
   return (
     <Card className="my-0">
+      <Subheading level={4}>
+        <span className="mr-2">Details</span>
+        <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
+      </Subheading>
       <DescriptionList>
         <DescriptionTerm>Total Portfolio Value</DescriptionTerm>
         <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
@@ -289,41 +315,42 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
 
   if (!dp) return null;
 
+  const props: DataListCardProps = { dp, selectedAge };
   switch (currentCategory) {
     case SimulationCategory.Portfolio:
       return (
         <div className="grid grid-cols-1 gap-2">
-          <PortfolioDataListCardV2 dp={dp} />
+          <PortfolioDataListCardV2 {...props} />
         </div>
       );
     case SimulationCategory.CashFlow:
       return (
         <div className="grid grid-cols-1 gap-2">
-          <CashFlowDataListCardV2 dp={dp} />
+          <CashFlowDataListCardV2 {...props} />
         </div>
       );
     case SimulationCategory.Taxes:
       return (
         <div className="grid grid-cols-1 gap-2">
-          <TaxesDataListCardV2 dp={dp} />
+          <TaxesDataListCardV2 {...props} />
         </div>
       );
     case SimulationCategory.Returns:
       return (
         <div className="grid grid-cols-1 gap-2">
-          <ReturnsDataListCardV2 dp={dp} />
+          <ReturnsDataListCardV2 {...props} />
         </div>
       );
     case SimulationCategory.Contributions:
       return (
         <div className="grid grid-cols-1 gap-2">
-          <ContributionsDataListCardV2 dp={dp} />
+          <ContributionsDataListCardV2 {...props} />
         </div>
       );
     case SimulationCategory.Withdrawals:
       return (
         <div className="grid grid-cols-1 gap-2">
-          <WithdrawalsDataListCardV2 dp={dp} />
+          <WithdrawalsDataListCardV2 {...props} />
         </div>
       );
   }
