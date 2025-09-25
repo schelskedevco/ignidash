@@ -8,7 +8,6 @@ import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 
 import SimulationCategorySelector from '../simulation-category-selector';
 import SingleSimulationChartsSection from '../sections/single-simulation-charts-section';
-import SingleSimulationDataListSection from '../sections/single-simulation-data-list-section';
 import MultiSimulationDataTableSection from '../sections/multi-simulation-data-table-section';
 
 interface MultiSimulationMainResultsProps {
@@ -56,7 +55,6 @@ export default function MultiSimulationMainResults({
         setSelectedSeed={setSelectedSeed}
         selectedSeed={selectedSeed}
       />
-      <SingleSimulationDataListSection simulation={simulation} selectedAge={selectedAge} currentCategory={currentCategory} />
       <MultiSimulationDataTableSection
         simulation={simulation}
         tableData={tableData}

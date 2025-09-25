@@ -29,6 +29,7 @@ import SingleSimulationContributionsBarChartCard from '../cards/single-simulatio
 import SingleSimulationWithdrawalsLineChartCard from '../cards/single-simulation/single-simulation-withdrawals-line-chart-card';
 import SingleSimulationWithdrawalsBarChartCard from '../cards/single-simulation/single-simulation-withdrawals-bar-chart-card';
 import DrillDownBreadcrumb from '../drill-down-breadcrumb';
+import SingleSimulationDataListSection from './single-simulation-data-list-section';
 
 interface ChartsCategoryProps {
   startAge: number;
@@ -261,7 +262,12 @@ function SingleSimulationChartsSection({
   return (
     <SectionContainer showBottomBorder>
       <SectionHeader title={headerText} desc="Interactive charts to explore your projection." className="mb-4" />
-      <div className="grid grid-cols-1 gap-2 @[92rem]:grid-cols-2">{chartsComponents}</div>
+      <div className="grid grid-cols-1 gap-2 @[92rem]:grid-cols-2">
+        {chartsComponents}
+        <div className="@[92rem]:col-span-2">
+          <SingleSimulationDataListSection simulation={simulation} selectedAge={selectedAge} currentCategory={currentCategory} />
+        </div>
+      </div>
     </SectionContainer>
   );
 }

@@ -5,7 +5,6 @@ import { useMemo, memo } from 'react';
 import type { SimulationDataPoint, SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { formatNumber } from '@/lib/utils';
-import SectionContainer from '@/components/ui/section-container';
 import Card from '@/components/ui/card';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 
@@ -290,53 +289,44 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
 
   if (!dp) return null;
 
-  let dataListComponents = null;
   switch (currentCategory) {
     case SimulationCategory.Portfolio:
-      dataListComponents = (
+      return (
         <div className="grid grid-cols-1 gap-2">
           <PortfolioDataListCardV2 dp={dp} />
         </div>
       );
-      break;
     case SimulationCategory.CashFlow:
-      dataListComponents = (
+      return (
         <div className="grid grid-cols-1 gap-2">
           <CashFlowDataListCardV2 dp={dp} />
         </div>
       );
-      break;
     case SimulationCategory.Taxes:
-      dataListComponents = (
+      return (
         <div className="grid grid-cols-1 gap-2">
           <TaxesDataListCardV2 dp={dp} />
         </div>
       );
-      break;
     case SimulationCategory.Returns:
-      dataListComponents = (
+      return (
         <div className="grid grid-cols-1 gap-2">
           <ReturnsDataListCardV2 dp={dp} />
         </div>
       );
-      break;
     case SimulationCategory.Contributions:
-      dataListComponents = (
+      return (
         <div className="grid grid-cols-1 gap-2">
           <ContributionsDataListCardV2 dp={dp} />
         </div>
       );
-      break;
     case SimulationCategory.Withdrawals:
-      dataListComponents = (
+      return (
         <div className="grid grid-cols-1 gap-2">
           <WithdrawalsDataListCardV2 dp={dp} />
         </div>
       );
-      break;
   }
-
-  return <SectionContainer showBottomBorder>{dataListComponents}</SectionContainer>;
 }
 
 // Memoize the entire section to prevent re-renders when props haven't changed
