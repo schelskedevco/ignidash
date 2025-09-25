@@ -264,7 +264,7 @@ function WithdrawalsDataListCardV2({ dp }: DataListCardProps) {
         <DescriptionDetails className="font-bold">{formatNumber(totalWithdrawals, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm className="font-bold">Withdrawal Rate</DescriptionTerm>
-        <DescriptionDetails className="font-bold">{`${formatNumber((totalWithdrawals / (totalValue + totalWithdrawals)) * 100, 1)}%`}</DescriptionDetails>
+        <DescriptionDetails className="font-bold">{`${formatNumber((Math.abs(totalWithdrawals) / (totalValue + totalWithdrawals)) * 100, 1)}%`}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );
