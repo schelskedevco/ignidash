@@ -37,34 +37,51 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)'];
 
+  let tooltipBodyComponent = null;
+  let tooltipFooterComponent = null;
+  switch (dataView) {
+    case 'net':
+      tooltipFooterComponent = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="mr-2">Total:</span>
+          <span className="ml-1 font-semibold">
+            {formatNumber(
+              payload.reduce((sum, item) => sum + item.value, 0),
+              3,
+              '$'
+            )}
+          </span>
+        </p>
+      );
+      break;
+    case 'incomes':
+    case 'expenses':
+    case 'custom':
+      tooltipBodyComponent = (
+        <div className="flex flex-col gap-2">
+          {payload.map((entry) => (
+            <p
+              key={entry.dataKey}
+              style={{ backgroundColor: entry.color }}
+              className={`border-foreground/50 flex justify-between rounded-lg border px-2 text-sm ${needsBgTextColor.includes(entry.color) ? 'text-background' : 'text-foreground'}`}
+            >
+              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
+              <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
+            </p>
+          ))}
+        </div>
+      );
+      break;
+  }
+
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
       <p className="mx-1 mb-2 flex justify-between text-sm font-semibold">
         <span>Age {label}</span>
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
-      <div className="flex flex-col gap-2">
-        {payload.map((entry) => (
-          <p
-            key={entry.dataKey}
-            style={{ backgroundColor: entry.color }}
-            className={`border-foreground/50 flex justify-between rounded-lg border px-2 text-sm ${needsBgTextColor.includes(entry.color) ? 'text-background' : 'text-foreground'}`}
-          >
-            <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-            <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
-          </p>
-        ))}
-      </div>
-      <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
-        <span className="mr-2">Total:</span>
-        <span className="ml-1 font-semibold">
-          {formatNumber(
-            payload.reduce((sum, item) => sum + item.value, 0),
-            3,
-            '$'
-          )}
-        </span>
-      </p>
+      {tooltipBodyComponent}
+      {tooltipFooterComponent}
     </div>
   );
 };
