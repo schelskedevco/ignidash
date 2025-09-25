@@ -147,7 +147,7 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
         <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
       </Subheading>
       <DescriptionList>
-        <DescriptionTerm>Total Gross Income</DescriptionTerm>
+        <DescriptionTerm>Gross Income</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Income Tax</DescriptionTerm>
