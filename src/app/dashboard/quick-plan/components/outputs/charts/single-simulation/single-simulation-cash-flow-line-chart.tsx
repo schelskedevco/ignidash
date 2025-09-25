@@ -27,8 +27,6 @@ interface CustomTooltipProps {
   dataView: 'net' | 'incomes' | 'expenses' | 'custom';
 }
 
-// (entry.payload as SingleSimulationCashFlowChartDataPoint)
-
 const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
@@ -103,8 +101,6 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
     </div>
   );
 };
-
-// const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
 
 interface SingleSimulationCashFlowLineChartProps {
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
