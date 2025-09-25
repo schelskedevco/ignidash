@@ -50,7 +50,8 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
     case 'net':
       const entry: SingleSimulationCashFlowChartDataPoint = payload[0].payload as SingleSimulationCashFlowChartDataPoint;
 
-      const netIncome = entry.netIncome;
+      const grossIncome = entry.grossIncome;
+      const incomeTax = entry.incomeTax;
       const totalExpenses = entry.totalExpenses;
       const netCashFlow = entry.netCashFlow;
 
@@ -60,8 +61,15 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
             style={{ backgroundColor: 'var(--chart-2)' }}
             className="border-foreground/50 text-foreground flex justify-between rounded-lg border px-2 text-sm"
           >
-            <span className="mr-2">{`${formatChartString('netIncome')}:`}</span>
-            <span className="ml-1 font-semibold">{formatNumber(netIncome, 1, '$')}</span>
+            <span className="mr-2">{`${formatChartString('grossIncome')}:`}</span>
+            <span className="ml-1 font-semibold">{formatNumber(grossIncome, 1, '$')}</span>
+          </p>
+          <p
+            style={{ backgroundColor: 'var(--chart-4)' }}
+            className="border-foreground/50 text-background flex justify-between rounded-lg border px-2 text-sm"
+          >
+            <span className="mr-2">{`${formatChartString('incomeTax')}:`}</span>
+            <span className="ml-1 font-semibold">{formatNumber(incomeTax, 1, '$')}</span>
           </p>
           <p
             style={{ backgroundColor: 'var(--chart-4)' }}
