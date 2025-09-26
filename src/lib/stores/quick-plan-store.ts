@@ -435,18 +435,17 @@ export const useMultiSimulationResult = (
 
   const worker = getSimulationWorker();
 
-  const { data: handle } = useSWR(
+  const { data: handleData } = useSWR(
     ['simulationHandle', inputs, simulationSeed, simulationMode],
-    async () => {
-      const { handle } = await worker.runSimulation(inputs, simulationSeed, 1000, simulationMode);
-      return handle;
-    },
+    async () => worker.runSimulation(inputs, simulationSeed, 1000, simulationMode),
     { revalidateOnFocus: false }
   );
 
+  const handle = handleData?.handle;
+
   const { data: { analysis, tableData, yearlyTableData } = {} } = useSWR(
     handle ? ['derived', handle, sortMode] : null,
-    async () => await worker.getDerivedMultiSimulationData(handle!, sortMode),
+    async () => worker.getDerivedMultiSimulationData(handle!, sortMode),
     { revalidateOnFocus: false }
   );
 
