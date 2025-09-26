@@ -183,6 +183,16 @@ export class MultiSimulationAnalyzer {
     return { min, max, range: max - min };
   }
 
+  private normalize(value: number | null, min: number, range: number, fallback: number = 0, invert: boolean = false): number {
+    if (value === null) return fallback;
+    if (range === 0) return 0.5;
+
+    let norm = (value - min) / range;
+    if (invert) norm = 1 - norm;
+
+    return Math.max(0, Math.min(1, norm));
+  }
+
   analyze(multiSimulationResult: MultiSimulationResult): MultiSimulationAnalysis {
     const p10DataPoints: Array<SimulationDataPoint> = [];
     const p25DataPoints: Array<SimulationDataPoint> = [];
