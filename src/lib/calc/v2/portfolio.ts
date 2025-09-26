@@ -236,7 +236,9 @@ export class PortfolioProcessor {
     // TODO: Handle going into debt (remainingToWithdraw > 0 after drawdown loop)
     // TODO: Handle Required Minimum Distributions starting age 73
 
-    return { totalForPeriod: grossCashFlow, byAccount, realizedGainsForPeriod, realizedGainsByAccount };
+    const totalForPeriod = Math.abs(grossCashFlow) - remainingToWithdraw;
+
+    return { totalForPeriod, byAccount, realizedGainsForPeriod, realizedGainsByAccount };
   }
 
   private getWithdrawalOrder(): AccountInputs['type'][] {
