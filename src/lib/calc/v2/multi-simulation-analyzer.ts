@@ -1,4 +1,5 @@
 import type { AccountInputs } from '@/lib/schemas/account-form-schema';
+import { SimulationCategory } from '@/lib/types/simulation-category';
 
 import type { SimulationDataPoint, MultiSimulationResult, SimulationResult } from './simulation-engine';
 import type { PortfolioData, AccountDataWithTransactions } from './portfolio';
@@ -8,6 +9,7 @@ import type { PhaseData, PhaseName } from './phase';
 import type { TaxesData, IncomeTaxesData, CapitalGainsTaxesData } from './taxes';
 import type { ReturnsData } from './returns';
 import type { AssetClass, AssetAllocation } from '../asset';
+import { TableDataExtractor } from './table-data-extractor';
 
 export interface Stats {
   mean: number;
@@ -37,16 +39,27 @@ export class MultiSimulationAnalyzer {
   // Compare time to bankruptcy
   // Compare average returns
 
+  // seed,
+  // success,
+  // retirementAge,
+  // bankruptcyAge,
+  // finalPhaseName: lastDp.phase!.name,
+  // finalPortfolioValue: lastDp.portfolio.totalValue,
+  // averageStockReturn,
+  // averageBondReturn,
+  // averageCashReturn,
+  // averageInflationRate,
+
   analyzeV2(multiSimulationResult: MultiSimulationResult): MultiSimulationAnalysis {
     const simulations = multiSimulationResult.simulations;
 
     const numDataPoints = simulations[0][1]?.data.length;
     if (!numDataPoints) throw new Error('No data points in simulations');
 
-    const finalPortfolioValues = simulations.map(([, res]) => {
-      const data = res.data;
-      return data[data.length - 1].portfolio.totalValue;
-    });
+    const extractor = new TableDataExtractor();
+    const tableData = extractor.extractMultiSimulationData(multiSimulationResult, SimulationCategory.Portfolio);
+
+    const finalPortfolioValues = tableData.map((row) => row.finalPortfolioValue);
 
     const minFinalPortfolioValue = Math.min(...finalPortfolioValues);
     const maxFinalPortfolioValue = Math.max(...finalPortfolioValues);
