@@ -33,6 +33,9 @@ export interface MultiSimulationAnalysis {
   results: Percentiles<SimulationResult>;
 }
 
+type WeightKey = keyof typeof MultiSimulationAnalyzer.WEIGHTS;
+type NormalizedValues = Record<WeightKey, number>;
+
 export class MultiSimulationAnalyzer {
   static readonly WEIGHTS = {
     success: 0.2,
@@ -120,25 +123,30 @@ export class MultiSimulationAnalyzer {
       const successA = Number(retirementAgeA !== null && lastDpA.portfolio.totalValue > 0.1);
       const successB = Number(retirementAgeB !== null && lastDpB.portfolio.totalValue > 0.1);
 
-      const scoreA =
-        MultiSimulationAnalyzer.WEIGHTS.success * successA +
-        MultiSimulationAnalyzer.WEIGHTS.finalPortfolioValue * normalizedFinalPortfolioValueA +
-        MultiSimulationAnalyzer.WEIGHTS.retirementAge * normalizedRetirementAgeA +
-        MultiSimulationAnalyzer.WEIGHTS.bankruptcyAge * normalizedBankruptcyAgeA +
-        MultiSimulationAnalyzer.WEIGHTS.averageStockReturn * normalizedAverageStockReturnA +
-        MultiSimulationAnalyzer.WEIGHTS.averageBondReturn * normalizedAverageBondReturnA +
-        MultiSimulationAnalyzer.WEIGHTS.averageCashReturn * normalizedAverageCashReturnA +
-        MultiSimulationAnalyzer.WEIGHTS.averageInflationRate * normalizedAverageInflationRateA;
+      const valuesA: NormalizedValues = {
+        success: successA,
+        finalPortfolioValue: normalizedFinalPortfolioValueA,
+        retirementAge: normalizedRetirementAgeA,
+        bankruptcyAge: normalizedBankruptcyAgeA,
+        averageStockReturn: normalizedAverageStockReturnA,
+        averageBondReturn: normalizedAverageBondReturnA,
+        averageCashReturn: normalizedAverageCashReturnA,
+        averageInflationRate: normalizedAverageInflationRateA,
+      };
 
-      const scoreB =
-        MultiSimulationAnalyzer.WEIGHTS.success * successB +
-        MultiSimulationAnalyzer.WEIGHTS.finalPortfolioValue * normalizedFinalPortfolioValueB +
-        MultiSimulationAnalyzer.WEIGHTS.retirementAge * normalizedRetirementAgeB +
-        MultiSimulationAnalyzer.WEIGHTS.bankruptcyAge * normalizedBankruptcyAgeB +
-        MultiSimulationAnalyzer.WEIGHTS.averageStockReturn * normalizedAverageStockReturnB +
-        MultiSimulationAnalyzer.WEIGHTS.averageBondReturn * normalizedAverageBondReturnB +
-        MultiSimulationAnalyzer.WEIGHTS.averageCashReturn * normalizedAverageCashReturnB +
-        MultiSimulationAnalyzer.WEIGHTS.averageInflationRate * normalizedAverageInflationRateB;
+      const valuesB: NormalizedValues = {
+        success: successB,
+        finalPortfolioValue: normalizedFinalPortfolioValueB,
+        retirementAge: normalizedRetirementAgeB,
+        bankruptcyAge: normalizedBankruptcyAgeB,
+        averageStockReturn: normalizedAverageStockReturnB,
+        averageBondReturn: normalizedAverageBondReturnB,
+        averageCashReturn: normalizedAverageCashReturnB,
+        averageInflationRate: normalizedAverageInflationRateB,
+      };
+
+      const scoreA = this.calculateScore(valuesA);
+      const scoreB = this.calculateScore(valuesB);
 
       return scoreA - scoreB;
     });
@@ -162,6 +170,13 @@ export class MultiSimulationAnalyzer {
     if (invert) norm = 1 - norm;
 
     return Math.max(0, Math.min(1, norm));
+  }
+
+  private calculateScore(values: NormalizedValues): number {
+    return (Object.keys(MultiSimulationAnalyzer.WEIGHTS) as WeightKey[]).reduce(
+      (sum, key) => sum + MultiSimulationAnalyzer.WEIGHTS[key] * values[key],
+      0
+    );
   }
 
   analyze(multiSimulationResult: MultiSimulationResult): MultiSimulationAnalysis {
