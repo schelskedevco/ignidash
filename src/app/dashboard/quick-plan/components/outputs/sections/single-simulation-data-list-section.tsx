@@ -275,7 +275,7 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const totalExpenses = expensesData?.totalExpenses ?? 0;
   const netIncome = grossIncome - incomeTax;
   const netCashFlow = netIncome - totalExpenses;
-  const withdrawalRate = totalValue + annualWithdrawals > 0 ? (Math.abs(annualWithdrawals) / (totalValue + annualWithdrawals)) * 100 : null;
+  const withdrawalRate = totalValue + annualWithdrawals > 0 ? (annualWithdrawals / (totalValue + annualWithdrawals)) * 100 : null;
 
   return (
     <Card className="my-0">
