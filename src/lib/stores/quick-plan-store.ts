@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import useSWR, { mutate } from 'swr';
+import useSWR from 'swr';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 import { FinancialSimulationEngine, type SimulationResult } from '@/lib/calc/v2/simulation-engine';
-import { MultiSimulationAnalyzer, type MultiSimulationAnalysis } from '@/lib/calc/v2/multi-simulation-analyzer';
+import type { MultiSimulationAnalysis } from '@/lib/calc/v2/multi-simulation-analyzer';
 import { FixedReturnsProvider } from '@/lib/calc/returns-providers/fixed-returns-provider';
 import { StochasticReturnsProvider } from '@/lib/calc/returns-providers/stochastic-returns-provider';
 import { LcgHistoricalBacktestReturnsProvider } from '@/lib/calc/returns-providers/lcg-historical-backtest-returns-provider';
@@ -424,29 +424,31 @@ export const useSimulationResult = (
 
 export const useMultiSimulationResult = (
   simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns'
-): { analysis: MultiSimulationAnalysis | null; tableData: MultiSimulationTableRow[]; yearlyTableData: YearlyAggregateTableRow[] } => {
+): {
+  analysis: MultiSimulationAnalysis | undefined;
+  tableData: MultiSimulationTableRow[] | undefined;
+  yearlyTableData: YearlyAggregateTableRow[] | undefined;
+} => {
   const inputs = useQuickPlanStore((state) => state.inputs);
   const simulationSeed = useSimulationSeed();
   const sortMode = useMonteCarloSortMode();
 
-  const { data: res } = useSWR(
-    [inputs, simulationSeed, simulationMode],
+  const worker = getSimulationWorker();
+
+  const { data: handle } = useSWR(
+    ['simulationHandle', inputs, simulationSeed, simulationMode],
     async () => {
-      const res = await getSimulationWorker().analyzeMonteCarloSimulation(inputs, simulationSeed, 1000, simulationMode);
-      mutate(() => true, undefined, { revalidate: false });
-      return res;
+      const { handle } = await worker.runSimulation(inputs, simulationSeed, 1000, simulationMode);
+      return handle;
     },
     { revalidateOnFocus: false }
   );
 
-  if (!res) return { analysis: null, tableData: [], yearlyTableData: [] };
-
-  const analyzer = new MultiSimulationAnalyzer();
-  const analysis = analyzer.analyzeV2(res, sortMode);
-
-  const extractor = new TableDataExtractor();
-  const tableData = extractor.extractMultiSimulationData(res, SimulationCategory.Portfolio);
-  const yearlyTableData = extractor.extractMultiSimulationYearlyAggregateData(res, analysis, SimulationCategory.Portfolio);
+  const { data: { analysis, tableData, yearlyTableData } = {} } = useSWR(
+    handle ? ['derived', handle, sortMode] : null,
+    async () => await worker.getDerivedMultiSimulationData(handle!, sortMode),
+    { revalidateOnFocus: false }
+  );
 
   return { analysis, tableData, yearlyTableData };
 };
