@@ -69,13 +69,9 @@ export default function SingleSimulationContributionsLineChartCard({
             }
           }}
         >
-          <optgroup label="By Category">
-            <option value="taxCategory">Tax Category</option>
-          </optgroup>
-          <optgroup label="By Aggregate">
-            <option value="annualAmounts">Annual Amounts</option>
-            <option value="totalAmounts">Total Amounts</option>
-          </optgroup>
+          <option value="taxCategory">Tax Category</option>
+          <option value="annualAmounts">Annual Amounts</option>
+          <option value="totalAmounts">Total Amounts</option>
           <optgroup label="By Account">
             {uniqueAccounts.map((account) => (
               <option key={account.id} value={account.id}>
