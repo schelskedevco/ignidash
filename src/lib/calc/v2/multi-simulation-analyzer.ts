@@ -38,14 +38,10 @@ type NormalizedValues = Record<WeightKey, number>;
 
 export class MultiSimulationAnalyzer {
   static readonly WEIGHTS = {
-    success: 0.2,
-    finalPortfolioValue: 0.2,
-    retirementAge: 0.2,
-    bankruptcyAge: 0.2,
-    averageStockReturn: 0.1,
-    averageBondReturn: 0.05,
-    averageCashReturn: 0.025,
-    averageInflationRate: 0.025,
+    success: 0.25,
+    finalPortfolioValue: 0.25,
+    retirementAge: 0.25,
+    bankruptcyAge: 0.25,
   } as const;
 
   analyzeV2(multiSimulationResult: MultiSimulationResult): MultiSimulationAnalysis {
@@ -60,10 +56,6 @@ export class MultiSimulationAnalyzer {
     const { min: minFinalPortfolioValue, range: finalPortfolioValueRange } = this.getRange(tableData, (row) => row.finalPortfolioValue);
     const { min: minRetirementAge, range: retirementAgeRange } = this.getRange(tableData, (row) => row.retirementAge);
     const { min: minBankruptcyAge, range: bankruptcyAgeRange } = this.getRange(tableData, (row) => row.bankruptcyAge);
-    const { min: minAverageStockReturn, range: averageStockReturnRange } = this.getRange(tableData, (row) => row.averageStockReturn);
-    const { min: minAverageBondReturn, range: averageBondReturnRange } = this.getRange(tableData, (row) => row.averageBondReturn);
-    const { min: minAverageCashReturn, range: averageCashReturnRange } = this.getRange(tableData, (row) => row.averageCashReturn);
-    const { min: minAverageInflationRate, range: averageInflationRateRange } = this.getRange(tableData, (row) => row.averageInflationRate);
 
     const sortedSimulations = [...simulations].sort((a, b) => {
       const {
@@ -80,36 +72,11 @@ export class MultiSimulationAnalyzer {
       const { retirementAge: retirementAgeA, bankruptcyAge: bankruptcyAgeA } = SimulationDataExtractor.getMilestonesData(dataA, startAge);
       const { retirementAge: retirementAgeB, bankruptcyAge: bankruptcyAgeB } = SimulationDataExtractor.getMilestonesData(dataB, startAge);
 
-      const normalizedRetirementAgeA = this.normalize(retirementAgeA, minRetirementAge, retirementAgeRange, 0);
-      const normalizedRetirementAgeB = this.normalize(retirementAgeB, minRetirementAge, retirementAgeRange, 0);
+      const normalizedRetirementAgeA = this.normalize(retirementAgeA, minRetirementAge, retirementAgeRange, 0, true);
+      const normalizedRetirementAgeB = this.normalize(retirementAgeB, minRetirementAge, retirementAgeRange, 0, true);
 
       const normalizedBankruptcyAgeA = this.normalize(bankruptcyAgeA, minBankruptcyAge, bankruptcyAgeRange, 1);
       const normalizedBankruptcyAgeB = this.normalize(bankruptcyAgeB, minBankruptcyAge, bankruptcyAgeRange, 1);
-
-      const returnsA = SimulationDataExtractor.getAverageReturns(dataA);
-      const returnsB = SimulationDataExtractor.getAverageReturns(dataB);
-
-      const normalizedAverageStockReturnA = this.normalize(returnsA.averageStockReturn, minAverageStockReturn, averageStockReturnRange, 0);
-      const normalizedAverageBondReturnA = this.normalize(returnsA.averageBondReturn, minAverageBondReturn, averageBondReturnRange, 0);
-      const normalizedAverageCashReturnA = this.normalize(returnsA.averageCashReturn, minAverageCashReturn, averageCashReturnRange, 0);
-      const normalizedAverageInflationRateA = this.normalize(
-        returnsA.averageInflationRate,
-        minAverageInflationRate,
-        averageInflationRateRange,
-        1,
-        true
-      );
-
-      const normalizedAverageStockReturnB = this.normalize(returnsB.averageStockReturn, minAverageStockReturn, averageStockReturnRange, 0);
-      const normalizedAverageBondReturnB = this.normalize(returnsB.averageBondReturn, minAverageBondReturn, averageBondReturnRange, 0);
-      const normalizedAverageCashReturnB = this.normalize(returnsB.averageCashReturn, minAverageCashReturn, averageCashReturnRange, 0);
-      const normalizedAverageInflationRateB = this.normalize(
-        returnsB.averageInflationRate,
-        minAverageInflationRate,
-        averageInflationRateRange,
-        1,
-        true
-      );
 
       const lastDpA = dataA[dataALength - 1];
       const lastDpB = dataB[dataBLength - 1];
@@ -125,10 +92,6 @@ export class MultiSimulationAnalyzer {
         finalPortfolioValue: normalizedFinalPortfolioValueA,
         retirementAge: normalizedRetirementAgeA,
         bankruptcyAge: normalizedBankruptcyAgeA,
-        averageStockReturn: normalizedAverageStockReturnA,
-        averageBondReturn: normalizedAverageBondReturnA,
-        averageCashReturn: normalizedAverageCashReturnA,
-        averageInflationRate: normalizedAverageInflationRateA,
       };
 
       const valuesB: NormalizedValues = {
@@ -136,10 +99,6 @@ export class MultiSimulationAnalyzer {
         finalPortfolioValue: normalizedFinalPortfolioValueB,
         retirementAge: normalizedRetirementAgeB,
         bankruptcyAge: normalizedBankruptcyAgeB,
-        averageStockReturn: normalizedAverageStockReturnB,
-        averageBondReturn: normalizedAverageBondReturnB,
-        averageCashReturn: normalizedAverageCashReturnB,
-        averageInflationRate: normalizedAverageInflationRateB,
       };
 
       const scoreA = this.calculateScore(valuesA);

@@ -34,7 +34,7 @@ const simulationAPI = {
     }
 
     const analyzer = new MultiSimulationAnalyzer();
-    const analysis = analyzer.analyze(res);
+    const analysis = analyzer.analyzeV2(res);
 
     const extractor = new TableDataExtractor();
     const tableData = extractor.extractMultiSimulationData(res, SimulationCategory.Portfolio);
