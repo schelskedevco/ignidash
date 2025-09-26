@@ -92,7 +92,7 @@ export class PortfolioProcessor {
     }
 
     if (taxesData.totalTaxesDue > 0) {
-      const res = this.processWithdrawals(taxesData.totalTaxesDue);
+      const res = this.processWithdrawals(-taxesData.totalTaxesDue);
       withdrawalsForPeriod += res.totalForPeriod;
       withdrawalsByAccount = res.byAccount;
       realizedGainsForPeriod += res.realizedGainsForPeriod;
