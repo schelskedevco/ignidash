@@ -89,51 +89,42 @@ export class MultiSimulationAnalyzer {
       const { retirementAge: retirementAgeA, bankruptcyAge: bankruptcyAgeA } = SimulationDataExtractor.getMilestonesData(dataA, startAge);
       const { retirementAge: retirementAgeB, bankruptcyAge: bankruptcyAgeB } = SimulationDataExtractor.getMilestonesData(dataB, startAge);
 
-      const normalizedRetirementAgeA = retirementAgeA !== null ? (retirementAgeA - minRetirementAge) / retirementAgeRange : 0;
-      const normalizedRetirementAgeB = retirementAgeB !== null ? (retirementAgeB - minRetirementAge) / retirementAgeRange : 0;
+      const normalizedRetirementAgeA = this.normalize(retirementAgeA, minRetirementAge, retirementAgeRange, 0);
+      const normalizedRetirementAgeB = this.normalize(retirementAgeB, minRetirementAge, retirementAgeRange, 0);
 
-      const normalizedBankruptcyAgeA = bankruptcyAgeA !== null ? (bankruptcyAgeA - minBankruptcyAge) / bankruptcyAgeRange : 1;
-      const normalizedBankruptcyAgeB = bankruptcyAgeB !== null ? (bankruptcyAgeB - minBankruptcyAge) / bankruptcyAgeRange : 1;
+      const normalizedBankruptcyAgeA = this.normalize(bankruptcyAgeA, minBankruptcyAge, bankruptcyAgeRange, 1);
+      const normalizedBankruptcyAgeB = this.normalize(bankruptcyAgeB, minBankruptcyAge, bankruptcyAgeRange, 1);
 
-      const {
-        averageStockReturn: averageStockReturnA,
-        averageBondReturn: averageBondReturnA,
-        averageCashReturn: averageCashReturnA,
-        averageInflationRate: averageInflationRateA,
-      } = SimulationDataExtractor.getAverageReturns(dataA);
+      const returnsA = SimulationDataExtractor.getAverageReturns(dataA);
+      const returnsB = SimulationDataExtractor.getAverageReturns(dataB);
 
-      const normalizedAverageStockReturnA =
-        averageStockReturnA !== null ? (averageStockReturnA - minAverageStockReturn) / averageStockReturnRange : 0;
-      const normalizedAverageBondReturnA =
-        averageBondReturnA !== null ? (averageBondReturnA - minAverageBondReturn) / averageBondReturnRange : 0;
-      const normalizedAverageCashReturnA =
-        averageCashReturnA !== null ? (averageCashReturnA - minAverageCashReturn) / averageCashReturnRange : 0;
-      const normalizedAverageInflationRateA =
-        averageInflationRateA !== null ? 1 - (averageInflationRateA - minAverageInflationRate) / averageInflationRateRange : 1;
+      const normalizedAverageStockReturnA = this.normalize(returnsA.averageStockReturn, minAverageStockReturn, averageStockReturnRange, 0);
+      const normalizedAverageBondReturnA = this.normalize(returnsA.averageBondReturn, minAverageBondReturn, averageBondReturnRange, 0);
+      const normalizedAverageCashReturnA = this.normalize(returnsA.averageCashReturn, minAverageCashReturn, averageCashReturnRange, 0);
+      const normalizedAverageInflationRateA = this.normalize(
+        returnsA.averageInflationRate,
+        minAverageInflationRate,
+        averageInflationRateRange,
+        1,
+        true
+      );
 
-      const {
-        averageStockReturn: averageStockReturnB,
-        averageBondReturn: averageBondReturnB,
-        averageCashReturn: averageCashReturnB,
-        averageInflationRate: averageInflationRateB,
-      } = SimulationDataExtractor.getAverageReturns(dataB);
-
-      const normalizedAverageStockReturnB =
-        averageStockReturnB !== null ? (averageStockReturnB - minAverageStockReturn) / averageStockReturnRange : 0;
-      const normalizedAverageBondReturnB =
-        averageBondReturnB !== null ? (averageBondReturnB - minAverageBondReturn) / averageBondReturnRange : 0;
-      const normalizedAverageCashReturnB =
-        averageCashReturnB !== null ? (averageCashReturnB - minAverageCashReturn) / averageCashReturnRange : 0;
-      const normalizedAverageInflationRateB =
-        averageInflationRateB !== null ? 1 - (averageInflationRateB - minAverageInflationRate) / averageInflationRateRange : 1;
+      const normalizedAverageStockReturnB = this.normalize(returnsB.averageStockReturn, minAverageStockReturn, averageStockReturnRange, 0);
+      const normalizedAverageBondReturnB = this.normalize(returnsB.averageBondReturn, minAverageBondReturn, averageBondReturnRange, 0);
+      const normalizedAverageCashReturnB = this.normalize(returnsB.averageCashReturn, minAverageCashReturn, averageCashReturnRange, 0);
+      const normalizedAverageInflationRateB = this.normalize(
+        returnsB.averageInflationRate,
+        minAverageInflationRate,
+        averageInflationRateRange,
+        1,
+        true
+      );
 
       const lastDpA = dataA[dataALength - 1];
       const lastDpB = dataB[dataBLength - 1];
 
-      const normalizedFinalPortfolioValueA =
-        finalPortfolioValueRange !== 0 ? (lastDpA.portfolio.totalValue - minFinalPortfolioValue) / finalPortfolioValueRange : 0.5;
-      const normalizedFinalPortfolioValueB =
-        finalPortfolioValueRange !== 0 ? (lastDpB.portfolio.totalValue - minFinalPortfolioValue) / finalPortfolioValueRange : 0.5;
+      const normalizedFinalPortfolioValueA = this.normalize(lastDpA.portfolio.totalValue, minFinalPortfolioValue, finalPortfolioValueRange);
+      const normalizedFinalPortfolioValueB = this.normalize(lastDpB.portfolio.totalValue, minFinalPortfolioValue, finalPortfolioValueRange);
 
       const successA = Number(retirementAgeA !== null && lastDpA.portfolio.totalValue > 0.1);
       const successB = Number(retirementAgeB !== null && lastDpB.portfolio.totalValue > 0.1);
