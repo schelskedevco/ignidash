@@ -47,9 +47,9 @@ export default function SingleSimulationReturnsLineChartCard({
           <optgroup label="Return Rates">
             <option value="rates">Annual Rates</option>
           </optgroup>
-          <optgroup label="Dollar Amounts">
-            <option value="annualAmounts">Annual Amounts</option>
-            <option value="totalAmounts">Total Amounts</option>
+          <optgroup label="Return Amounts">
+            <option value="annualAmounts">Annual Returns</option>
+            <option value="totalAmounts">Total Returns</option>
           </optgroup>
         </Select>
       </div>
