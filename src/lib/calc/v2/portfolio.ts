@@ -578,6 +578,9 @@ export class InvestmentAccount extends Account {
   }
 
   applyContribution(amount: number): void {
+    if (amount < 0) throw new Error('Contribution amount must be non-negative');
+    if (amount === 0) return;
+
     const currentBondValue = this.totalValue * this.currPercentBonds;
 
     const newTotalValue = this.totalValue + amount;
@@ -595,6 +598,8 @@ export class InvestmentAccount extends Account {
   }
 
   applyWithdrawal(amount: number): { realizedGains: number } {
+    if (amount < 0) throw new Error('Withdrawal amount must be non-negative');
+    if (amount === 0) return { realizedGains: 0 };
     if (amount > this.totalValue) throw new Error('Insufficient funds for withdrawal');
 
     const currentBondValue = this.totalValue * this.currPercentBonds;
