@@ -28,7 +28,7 @@ export class PortfolioProcessor {
   }
 
   processCashFlows(incomesData: IncomesData, expensesData: ExpensesData): PortfolioData {
-    const grossCashFlow = incomesData.totalGrossIncome - expensesData.totalExpenses;
+    const grossCashFlow = incomesData.totalIncomeAfterWithholding - expensesData.totalExpenses;
 
     const { totalForPeriod: contributionsForPeriod, byAccount: contributionsByAccount } = this.processContributions(
       grossCashFlow,
