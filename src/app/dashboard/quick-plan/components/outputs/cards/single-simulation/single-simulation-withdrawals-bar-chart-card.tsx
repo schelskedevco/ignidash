@@ -22,10 +22,10 @@ export default function SingleSimulationWithdrawalsBarChartCard({
   let title;
   switch (dataView) {
     case 'annualAmounts':
-      title = 'Annual Amounts';
+      title = 'Annual Withdrawals';
       break;
     case 'totalAmounts':
-      title = 'Total Amounts';
+      title = 'Total Withdrawals';
       break;
     case 'taxCategory':
       title = 'By Tax Category';
