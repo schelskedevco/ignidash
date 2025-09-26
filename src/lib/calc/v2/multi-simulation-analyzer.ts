@@ -44,7 +44,7 @@ export class MultiSimulationAnalyzer {
     const tableData = extractor.extractMultiSimulationData(multiSimulationResult, SimulationCategory.Portfolio);
 
     const finalPortfolioValues = tableData.map((row) => row.finalPortfolioValue);
-    const retirementAges = tableData.map((row) => row.retirementAge ?? Infinity);
+    const retirementAges = tableData.map((row) => row.retirementAge ?? -Infinity);
     const bankruptcyAges = tableData.map((row) => row.bankruptcyAge ?? Infinity);
     const averageStockReturns = tableData.map((row) => row.averageStockReturn ?? 0);
     const averageBondReturns = tableData.map((row) => row.averageBondReturn ?? 0);
@@ -94,8 +94,8 @@ export class MultiSimulationAnalyzer {
       const { retirementAge: retirementAgeA, bankruptcyAge: bankruptcyAgeA } = SimulationDataExtractor.getMilestonesData(dataA, startAge);
       const { retirementAge: retirementAgeB, bankruptcyAge: bankruptcyAgeB } = SimulationDataExtractor.getMilestonesData(dataB, startAge);
 
-      const normalizedRetirementAgeA = retirementAgeA !== null ? (retirementAgeA - minRetirementAge) / retirementAgeRange : 1;
-      const normalizedRetirementAgeB = retirementAgeB !== null ? (retirementAgeB - minRetirementAge) / retirementAgeRange : 1;
+      const normalizedRetirementAgeA = retirementAgeA !== null ? (retirementAgeA - minRetirementAge) / retirementAgeRange : 0;
+      const normalizedRetirementAgeB = retirementAgeB !== null ? (retirementAgeB - minRetirementAge) / retirementAgeRange : 0;
 
       const normalizedBankruptcyAgeA = bankruptcyAgeA !== null ? (bankruptcyAgeA - minBankruptcyAge) / bankruptcyAgeRange : 1;
       const normalizedBankruptcyAgeB = bankruptcyAgeB !== null ? (bankruptcyAgeB - minBankruptcyAge) / bankruptcyAgeRange : 1;
@@ -108,13 +108,13 @@ export class MultiSimulationAnalyzer {
       } = SimulationDataExtractor.getAverageReturns(dataA);
 
       const normalizedAverageStockReturnA =
-        averageStockReturnA !== null ? (averageStockReturnA - minAverageStockReturn) / averageStockReturnRange : 1;
+        averageStockReturnA !== null ? (averageStockReturnA - minAverageStockReturn) / averageStockReturnRange : 0;
       const normalizedAverageBondReturnA =
-        averageBondReturnA !== null ? (averageBondReturnA - minAverageBondReturn) / averageBondReturnRange : 1;
+        averageBondReturnA !== null ? (averageBondReturnA - minAverageBondReturn) / averageBondReturnRange : 0;
       const normalizedAverageCashReturnA =
-        averageCashReturnA !== null ? (averageCashReturnA - minAverageCashReturn) / averageCashReturnRange : 1;
+        averageCashReturnA !== null ? (averageCashReturnA - minAverageCashReturn) / averageCashReturnRange : 0;
       const normalizedAverageInflationRateA =
-        averageInflationRateA !== null ? (averageInflationRateA - minAverageInflationRate) / averageInflationRateRange : 1;
+        averageInflationRateA !== null ? 1 - (averageInflationRateA - minAverageInflationRate) / averageInflationRateRange : 1;
 
       const {
         averageStockReturn: averageStockReturnB,
@@ -124,13 +124,13 @@ export class MultiSimulationAnalyzer {
       } = SimulationDataExtractor.getAverageReturns(dataB);
 
       const normalizedAverageStockReturnB =
-        averageStockReturnB !== null ? (averageStockReturnB - minAverageStockReturn) / averageStockReturnRange : 1;
+        averageStockReturnB !== null ? (averageStockReturnB - minAverageStockReturn) / averageStockReturnRange : 0;
       const normalizedAverageBondReturnB =
-        averageBondReturnB !== null ? (averageBondReturnB - minAverageBondReturn) / averageBondReturnRange : 1;
+        averageBondReturnB !== null ? (averageBondReturnB - minAverageBondReturn) / averageBondReturnRange : 0;
       const normalizedAverageCashReturnB =
-        averageCashReturnB !== null ? (averageCashReturnB - minAverageCashReturn) / averageCashReturnRange : 1;
+        averageCashReturnB !== null ? (averageCashReturnB - minAverageCashReturn) / averageCashReturnRange : 0;
       const normalizedAverageInflationRateB =
-        averageInflationRateB !== null ? (averageInflationRateB - minAverageInflationRate) / averageInflationRateRange : 1;
+        averageInflationRateB !== null ? 1 - (averageInflationRateB - minAverageInflationRate) / averageInflationRateRange : 1;
 
       const lastDpA = dataA[dataALength - 1];
       const lastDpB = dataB[dataBLength - 1];
