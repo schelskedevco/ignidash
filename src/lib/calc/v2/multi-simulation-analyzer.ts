@@ -31,6 +31,48 @@ export interface MultiSimulationAnalysis {
 }
 
 export class MultiSimulationAnalyzer {
+  // Compare success
+  // Compare final total value
+  // Compare time to retirement
+  // Compare time to bankruptcy
+  // Compare average returns
+
+  analyzeV2(multiSimulationResult: MultiSimulationResult): MultiSimulationAnalysis {
+    const simulations = multiSimulationResult.simulations;
+
+    const numDataPoints = simulations[0][1]?.data.length;
+    if (!numDataPoints) throw new Error('No data points in simulations');
+
+    const finalPortfolioValues = simulations.map(([, res]) => {
+      const data = res.data;
+      return data[data.length - 1].portfolio.totalValue;
+    });
+
+    const minFinalPortfolioValue = Math.min(...finalPortfolioValues);
+    const maxFinalPortfolioValue = Math.max(...finalPortfolioValues);
+    const finalPortfolioValueRange = maxFinalPortfolioValue - minFinalPortfolioValue;
+
+    const _sortedSimulations = [...simulations].sort((a, b) => {
+      const dataA = a[1].data;
+      const dataALength = dataA.length;
+
+      const dataB = b[1].data;
+      const dataBLength = dataB.length;
+
+      if (dataALength !== dataBLength) console.warn('Simulations have different lengths');
+
+      const lastDpA = dataA[dataALength - 1];
+      const lastDpB = dataB[dataBLength - 1];
+
+      const normalizedFinalPortfolioValueA = (lastDpA.portfolio.totalValue - minFinalPortfolioValue) / finalPortfolioValueRange;
+      const normalizedFinalPortfolioValueB = (lastDpB.portfolio.totalValue - minFinalPortfolioValue) / finalPortfolioValueRange;
+
+      return normalizedFinalPortfolioValueA - normalizedFinalPortfolioValueB;
+    });
+
+    throw new Error('analyzeV2 is not implemented. Use analyze instead.');
+  }
+
   analyze(multiSimulationResult: MultiSimulationResult): MultiSimulationAnalysis {
     const p10DataPoints: Array<SimulationDataPoint> = [];
     const p25DataPoints: Array<SimulationDataPoint> = [];
