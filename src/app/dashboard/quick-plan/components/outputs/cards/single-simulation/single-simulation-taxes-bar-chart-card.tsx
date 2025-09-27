@@ -16,7 +16,7 @@ export default function SingleSimulationTaxesBarChartCard({ selectedAge, rawChar
   let title;
   switch (dataView) {
     case 'marginalRates':
-      title = 'Marginal Rates';
+      title = 'Top Marginal Rates';
       break;
     case 'effectiveRates':
       title = 'Effective Rates';

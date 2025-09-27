@@ -48,7 +48,7 @@ export default function SingleSimulationTaxesLineChartCard({
             <option value="marginalRates">Top Marginal Rates</option>
             <option value="effectiveRates">Effective Rates</option>
           </optgroup>
-          <optgroup label="Dollar Amounts">
+          <optgroup label="Tax Amounts">
             <option value="taxAmounts">Tax Amounts</option>
             <option value="netIncome">Net Income After Tax</option>
             <option value="taxableIncome">Taxable Income</option>
