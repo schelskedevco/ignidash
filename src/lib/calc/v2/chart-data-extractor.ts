@@ -118,26 +118,41 @@ export class ChartDataExtractor {
     const startAge = simulation.context.startAge;
     const startDateYear = new Date().getFullYear();
 
+    let totalIncomeTaxAmount = 0;
+    let totalCapGainsTaxAmount = 0;
+    let totalTaxAmount = 0;
+
     return simulation.data.slice(1).map((data) => {
       const currDateYear = new Date(data.date).getFullYear();
 
       const taxesData = data.taxes!;
 
+      const annualIncomeTaxAmount = taxesData.incomeTaxes.incomeTaxAmount;
+      const annualCapGainsTaxAmount = taxesData.capitalGainsTaxes.capitalGainsTaxAmount;
+      const totalAnnualTaxAmount = annualIncomeTaxAmount + annualCapGainsTaxAmount;
+
+      totalIncomeTaxAmount += annualIncomeTaxAmount;
+      totalCapGainsTaxAmount += annualCapGainsTaxAmount;
+      totalTaxAmount += totalAnnualTaxAmount;
+
       return {
         age: currDateYear - startDateYear + startAge,
         taxableOrdinaryIncome: taxesData.incomeTaxes.taxableOrdinaryIncome,
-        incomeTaxAmount: taxesData.incomeTaxes.incomeTaxAmount,
+        annualIncomeTaxAmount,
+        totalIncomeTaxAmount,
         effectiveIncomeTaxRate: taxesData.incomeTaxes.effectiveIncomeTaxRate,
         topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalTaxRate,
         netIncome: taxesData.incomeTaxes.netIncome,
         capitalLossDeduction: taxesData.incomeTaxes.capitalLossDeduction,
         taxableCapGains: taxesData.capitalGainsTaxes.taxableCapitalGains,
-        capGainsTaxAmount: taxesData.capitalGainsTaxes.capitalGainsTaxAmount,
+        annualCapGainsTaxAmount,
+        totalCapGainsTaxAmount,
         effectiveCapGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
         topMarginalCapGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
         netCapGains: taxesData.capitalGainsTaxes.netCapitalGains,
         totalTaxableIncome: taxesData.totalTaxableIncome,
-        totalTaxesAmount: taxesData.incomeTaxes.incomeTaxAmount + taxesData.capitalGainsTaxes.capitalGainsTaxAmount,
+        totalAnnualTaxAmount,
+        totalTaxAmount,
         totalNetIncome: taxesData.incomeTaxes.netIncome + taxesData.capitalGainsTaxes.netCapitalGains,
       };
     });

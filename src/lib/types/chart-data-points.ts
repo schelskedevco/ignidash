@@ -65,18 +65,21 @@ export interface SingleSimulationReturnsChartDataPoint {
 export interface SingleSimulationTaxesChartDataPoint {
   age: number;
   taxableOrdinaryIncome: number;
-  incomeTaxAmount: number;
+  annualIncomeTaxAmount: number;
+  totalIncomeTaxAmount: number;
   effectiveIncomeTaxRate: number;
   topMarginalIncomeTaxRate: number;
   netIncome: number;
   capitalLossDeduction: number | undefined;
   taxableCapGains: number;
-  capGainsTaxAmount: number;
+  annualCapGainsTaxAmount: number;
+  totalCapGainsTaxAmount: number;
   effectiveCapGainsTaxRate: number;
   topMarginalCapGainsTaxRate: number;
   netCapGains: number;
   totalTaxableIncome: number;
-  totalTaxesAmount: number;
+  totalAnnualTaxAmount: number;
+  totalTaxAmount: number;
   totalNetIncome: number;
 }
 
