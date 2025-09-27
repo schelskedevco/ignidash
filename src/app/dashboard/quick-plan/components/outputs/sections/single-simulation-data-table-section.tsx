@@ -15,7 +15,7 @@ interface SingleSimulationDataTableSectionProps {
 }
 
 function SingleSimulationDataTableSection({ simulation, currentCategory }: SingleSimulationDataTableSectionProps) {
-  const headerText = 'Yearly Results';
+  const headerText = 'Data Table';
   const headerDesc = 'Year-by-year progression and outcome for this simulation.';
 
   return (

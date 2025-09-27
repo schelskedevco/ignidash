@@ -65,13 +65,13 @@ function MultiSimulationDataTableSection({
   let headerDesc: string;
 
   if (selectedSeed !== null) {
-    headerText = <DrillDownBreadcrumb selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} rootLabel="All Simulations" />;
+    headerText = <DrillDownBreadcrumb selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} rootLabel="Data Table" />;
     headerDesc = 'Year-by-year progression and outcome for this simulation.';
   } else if (currentTableType === TableType.YearlyResults) {
-    headerText = 'Yearly Results';
+    headerText = 'Data Table';
     headerDesc = 'View aggregated statistics across all simulations by year.';
   } else {
-    headerText = 'All Simulations';
+    headerText = 'Data Table';
     headerDesc = 'Browse all simulation runs. Select one to explore further.';
   }
 
