@@ -14,10 +14,10 @@ interface MarketVolatility {
  * Based on long-term historical data
  */
 const DEFAULT_VOLATILITY: MarketVolatility = {
-  stocks: 0.2,
+  stocks: 0.18,
   bonds: 0.06,
   cash: 0.01,
-  inflation: 0.03,
+  inflation: 0.02,
 };
 
 /**
