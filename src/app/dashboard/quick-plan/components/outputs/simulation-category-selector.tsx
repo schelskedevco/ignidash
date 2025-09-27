@@ -64,7 +64,7 @@ export default function SimulationCategorySelector({
             </DropdownButton>
             <DropdownMenu>
               <DropdownHeader>
-                <div className="pr-6 text-sm/7 font-semibold">Sort Results By</div>
+                <div className="pr-6 text-sm/7 font-semibold">Sort Simulations By</div>
               </DropdownHeader>
               <DropdownDivider />
               {sortModeOptions.map((sortMode) => (
