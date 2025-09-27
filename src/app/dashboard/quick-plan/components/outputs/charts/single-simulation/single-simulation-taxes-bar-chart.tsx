@@ -14,12 +14,16 @@ const CustomLabelListContent = (props: any) => {
     return null;
   }
 
-  const formatValue = (value: number, mode: 'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'netIncome' | 'taxableIncome') => {
+  const formatValue = (
+    value: number,
+    mode: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome'
+  ) => {
     switch (mode) {
       case 'marginalRates':
       case 'effectiveRates':
         return `${(value * 100).toFixed(2)}%`;
-      case 'taxAmounts':
+      case 'annualAmounts':
+      case 'totalAmounts':
       case 'netIncome':
       case 'taxableIncome':
         return formatNumber(value, 1, '$');
@@ -61,7 +65,7 @@ const COLORS = ['var(--chart-2)', 'var(--chart-4)', 'var(--chart-3)', 'var(--cha
 
 interface SingleSimulationTaxesBarChartProps {
   age: number;
-  dataView: 'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'netIncome' | 'taxableIncome';
+  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
   rawChartData: SingleSimulationTaxesChartDataPoint[];
 }
 
@@ -88,7 +92,7 @@ export default function SingleSimulationTaxesBarChart({ age, dataView, rawChartD
       ]);
       formatter = (value: number) => `${(value * 100).toFixed(2)}%`;
       break;
-    case 'taxAmounts':
+    case 'annualAmounts':
       transformedChartData = chartData.flatMap((item) => [
         { name: 'Income Tax Amount', amount: item.incomeTaxAmount },
         { name: 'Cap Gains Tax Amount', amount: item.capGainsTaxAmount },

@@ -22,7 +22,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'netIncome' | 'taxableIncome';
+  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
 }
 
 const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -33,12 +33,16 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)'];
 
-  const formatValue = (value: number, mode: 'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'netIncome' | 'taxableIncome') => {
+  const formatValue = (
+    value: number,
+    mode: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome'
+  ) => {
     switch (mode) {
       case 'marginalRates':
       case 'effectiveRates':
         return `${(value * 100).toFixed(2)}%`;
-      case 'taxAmounts':
+      case 'annualAmounts':
+      case 'totalAmounts':
       case 'netIncome':
       case 'taxableIncome':
         return formatNumber(value, 1, '$');
@@ -52,7 +56,8 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
     case 'marginalRates':
     case 'effectiveRates':
       break;
-    case 'taxAmounts':
+    case 'annualAmounts':
+    case 'totalAmounts':
     case 'netIncome':
     case 'taxableIncome':
       totalFooter = (
@@ -101,7 +106,7 @@ interface SingleSimulationTaxesLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'marginalRates' | 'effectiveRates' | 'taxAmounts' | 'netIncome' | 'taxableIncome';
+  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
   startAge: number;
 }
 
@@ -142,7 +147,7 @@ export default function SingleSimulationTaxesLineChart({
       formatter = (value: number) => `${(value * 100).toFixed(2)}%`;
       dataKeys.push('effectiveIncomeTaxRate', 'effectiveCapGainsTaxRate');
       break;
-    case 'taxAmounts':
+    case 'annualAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys.push('incomeTaxAmount', 'capGainsTaxAmount');
       break;
