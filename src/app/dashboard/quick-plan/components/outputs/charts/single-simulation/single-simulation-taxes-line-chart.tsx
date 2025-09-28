@@ -52,6 +52,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
     }
   };
 
+  let header = null;
   let totalFooter = null;
   switch (dataView) {
     case 'marginalRates':
@@ -90,14 +91,19 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
         </p>
       ));
 
-      totalFooter = (
-        <div className="mx-1 mt-2 flex flex-col gap-2">
-          <Divider />
+      header = (
+        <div className="mx-1 mb-2 flex flex-col gap-2">
           <p className="text-muted-foreground -mb-2 text-xs/6">Adjustments</p>
           {adjustments}
           <Divider />
           <p className="text-muted-foreground -mb-2 text-xs/6">Deductions</p>
           {deductions}
+          <Divider />
+        </div>
+      );
+
+      totalFooter = (
+        <div className="mx-1 mt-2 flex flex-col gap-2">
           <Divider />
           <p className="flex justify-between text-sm font-semibold">
             <span className="mr-2">Total:</span>
@@ -120,6 +126,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
         <span>Age {label}</span>
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
+      {header}
       <div className="flex flex-col gap-2">
         {payload.map((entry) => (
           <p
