@@ -83,10 +83,21 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
         </p>
       ));
 
+      const deductions = Object.entries(entry.deductions).map(([name, value]) => (
+        <p key={name} className="flex justify-between text-sm font-semibold">
+          <span className="mr-2">{`${formatChartString(name)}:`}</span>
+          <span className="ml-1 font-semibold">{formatNumber(value, 1, '$')}</span>
+        </p>
+      ));
+
       totalFooter = (
         <div className="mx-1 mt-2 flex flex-col gap-2">
           <Divider />
+          <p className="text-muted-foreground -mb-2 text-xs/6">Adjustments</p>
           {adjustments}
+          <Divider />
+          <p className="text-muted-foreground -mb-2 text-xs/6">Deductions</p>
+          {deductions}
           <Divider />
           <p className="flex justify-between text-sm font-semibold">
             <span className="mr-2">Total:</span>
