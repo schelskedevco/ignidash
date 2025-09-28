@@ -51,7 +51,7 @@ export class TaxProcessor {
   constructor(private simulationState: SimulationState) {}
 
   process(annualPortfolioDataBeforeTaxes: PortfolioData, annualIncomesData: IncomesData): TaxesData {
-    const grossOrdinaryIncome = this.getGrossOrdinaryIncome(annualPortfolioDataBeforeTaxes, annualIncomesData);
+    const { grossOrdinaryIncome } = this.getGrossOrdinaryIncome(annualPortfolioDataBeforeTaxes, annualIncomesData);
     const grossRealizedGains = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod;
 
     const capitalLossDeduction = Math.min(0, Math.max(-3000, grossRealizedGains));
@@ -133,13 +133,16 @@ export class TaxProcessor {
     return { incomeTaxAmount, topMarginalTaxRate };
   }
 
-  private getGrossOrdinaryIncome(annualPortfolioDataBeforeTaxes: PortfolioData, annualIncomesData: IncomesData): number {
+  private getGrossOrdinaryIncome(
+    annualPortfolioDataBeforeTaxes: PortfolioData,
+    annualIncomesData: IncomesData
+  ): { grossOrdinaryIncome: number } {
     const grossIncomeFromIncomes = annualIncomesData.totalGrossIncome;
     const grossIncomeFromTaxDeferredWithdrawals = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira']);
 
     const taxDeferredContributions = this.getContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira', 'hsa']);
 
-    return grossIncomeFromIncomes + grossIncomeFromTaxDeferredWithdrawals - taxDeferredContributions;
+    return { grossOrdinaryIncome: grossIncomeFromIncomes + grossIncomeFromTaxDeferredWithdrawals - taxDeferredContributions };
   }
 
   private getContributionsForAccountTypes(annualPortfolioDataBeforeTaxes: PortfolioData, accountTypes: AccountInputs['type'][]): number {
