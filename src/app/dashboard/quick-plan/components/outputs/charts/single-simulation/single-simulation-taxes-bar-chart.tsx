@@ -85,7 +85,10 @@ export default function SingleSimulationTaxesBarChart({
   let formatter = undefined;
   let transformedChartData: { name: string; [key: string]: number | string }[] = [];
   let dataKeys: string[] = ['amount'];
+
   let isStacked = false;
+  const stackedColors: string[] = [];
+
   switch (dataView) {
     case 'marginalRates':
       transformedChartData = chartData.flatMap((item) => [
@@ -139,8 +142,14 @@ export default function SingleSimulationTaxesBarChart({
       });
       formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys = [];
-      if (hasOrdinaryIncome) dataKeys.push('taxableOrdinaryIncome');
-      if (hasCapGains) dataKeys.push('taxableCapGains');
+      if (hasOrdinaryIncome) {
+        dataKeys.push('taxableOrdinaryIncome');
+        stackedColors.push(COLORS[0]);
+      }
+      if (hasCapGains) {
+        dataKeys.push('taxableCapGains');
+        stackedColors.push(COLORS[1]);
+      }
       isStacked = true;
       break;
   }
@@ -196,8 +205,8 @@ export default function SingleSimulationTaxesBarChart({
                   stackId="stack"
                   maxBarSize={250}
                   minPointSize={20}
-                  fill={COLORS[idx % COLORS.length]}
-                  stroke={COLORS[idx % COLORS.length]}
+                  fill={stackedColors[idx]}
+                  stroke={stackedColors[idx]}
                   strokeWidth={3}
                   fillOpacity={0.5}
                 >
