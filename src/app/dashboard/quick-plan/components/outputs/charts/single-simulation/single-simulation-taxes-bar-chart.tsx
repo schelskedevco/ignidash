@@ -84,6 +84,7 @@ export default function SingleSimulationTaxesBarChart({
 
   let formatter = undefined;
   let transformedChartData: { name: string; amount: number }[] = [];
+  let dataKeys: string[] = ['amount'];
   switch (dataView) {
     case 'marginalRates':
       transformedChartData = chartData.flatMap((item) => [
@@ -130,6 +131,7 @@ export default function SingleSimulationTaxesBarChart({
         { name: 'Total Taxable Income', amount: item.totalTaxableIncome },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
+      dataKeys = ['amount'];
       break;
   }
 
@@ -158,22 +160,24 @@ export default function SingleSimulationTaxesBarChart({
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
             <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
             <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-            <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
-              {transformedChartData.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                  stroke={COLORS[index % COLORS.length]}
-                  strokeWidth={3}
-                  fillOpacity={0.5}
+            {dataKeys.map((dataKey) => (
+              <Bar key={dataKey} dataKey={dataKey} stackId="a" maxBarSize={250} minPointSize={20}>
+                {transformedChartData.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                    stroke={COLORS[index % COLORS.length]}
+                    strokeWidth={3}
+                    fillOpacity={0.5}
+                  />
+                ))}
+                <LabelList
+                  dataKey="amount"
+                  position="middle"
+                  content={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
                 />
-              ))}
-              <LabelList
-                dataKey="amount"
-                position="middle"
-                content={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
-              />
-            </Bar>
+              </Bar>
+            ))}
             {referenceLineMode === 'marginalIncomeTaxRates' &&
               INCOME_TAX_BRACKETS_SINGLE.map((bracket, index) => (
                 <ReferenceLine
