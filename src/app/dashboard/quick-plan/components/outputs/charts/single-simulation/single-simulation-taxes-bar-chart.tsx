@@ -160,13 +160,13 @@ export default function SingleSimulationTaxesBarChart({
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
             <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
             <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-            {dataKeys.map((dataKey) => (
-              <Bar key={dataKey} dataKey={dataKey} stackId="a" maxBarSize={250} minPointSize={20}>
-                {transformedChartData.map((entry, index) => (
+            {dataKeys.map((dataKey, idx1) => (
+              <Bar key={dataKey} dataKey={dataKey} stackId="stack" maxBarSize={250} minPointSize={20}>
+                {transformedChartData.map((entry, idx2) => (
                   <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                    stroke={COLORS[index % COLORS.length]}
+                    key={`cell-${idx1}-${idx2}`}
+                    fill={COLORS[idx1 % COLORS.length]}
+                    stroke={COLORS[idx1 % COLORS.length]}
                     strokeWidth={3}
                     fillOpacity={0.5}
                   />
