@@ -11,14 +11,24 @@ import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data
 import { INCOME_TAX_BRACKETS_SINGLE, CAPITAL_GAINS_TAX_BRACKETS_SINGLE } from '@/lib/calc/v2/taxes';
 import { Divider } from '@/components/catalyst/divider';
 
+type CustomTooltipPayload = {
+  name: string;
+  taxableOrdinaryIncome: number;
+  taxableCapGains: number;
+  grossIncome: number;
+  totalTaxableIncome: number;
+  adjustments: Record<string, number>;
+  deductions: Record<string, number>;
+};
+
 interface CustomTooltipProps {
   active?: boolean;
   payload?: Array<{
     value: number;
     name: string;
     color: string;
-    dataKey: keyof SingleSimulationTaxesChartDataPoint;
-    payload: SingleSimulationTaxesChartDataPoint;
+    dataKey: keyof CustomTooltipPayload;
+    payload: CustomTooltipPayload;
   }>;
   label?: number;
   startAge: number;
