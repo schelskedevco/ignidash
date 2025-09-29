@@ -37,12 +37,32 @@ const CustomTooltip = ({ active, payload, startAge, age, disabled, dataView }: C
 
   const entry = payload[0].payload;
 
+  const adjustments = Object.entries(entry.adjustments).map(([name, value]) => (
+    <p key={name} className="flex justify-between text-sm font-semibold">
+      <span className="mr-2">{`${formatChartString(name)}:`}</span>
+      <span className="ml-1 font-semibold">{formatNumber(value, 1, '$')}</span>
+    </p>
+  ));
+
+  const deductions = Object.entries(entry.deductions).map(([name, value]) => (
+    <p key={name} className="flex justify-between text-sm font-semibold">
+      <span className="mr-2">{`${formatChartString(name)}:`}</span>
+      <span className="ml-1 font-semibold">{formatNumber(value, 1, '$')}</span>
+    </p>
+  ));
+
   const header = (
     <div className="mx-1 mb-2 flex flex-col gap-2">
       <p className="flex justify-between text-sm font-semibold">
         <span className="mr-2">Gross Income:</span>
         <span className="ml-1 font-semibold">{formatNumber(entry.grossIncome, 1, '$')}</span>
       </p>
+      <Divider />
+      <p className="text-muted-foreground -mb-2 text-xs/6">Adjustments</p>
+      {adjustments}
+      <Divider />
+      <p className="text-muted-foreground -mb-2 text-xs/6">Deductions</p>
+      {deductions}
       <Divider />
     </div>
   );
@@ -65,6 +85,13 @@ const CustomTooltip = ({ active, payload, startAge, age, disabled, dataView }: C
             <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
           </p>
         ))}
+        <p
+          style={{ backgroundColor: 'var(--chart-3)' }}
+          className={`border-foreground/50 text-background flex justify-between rounded-lg border px-2 text-sm`}
+        >
+          <span className="mr-2">{`${formatChartString('totalTaxableIncome')}:`}</span>
+          <span className="ml-1 font-semibold">{formatNumber(entry.totalTaxableIncome, 1, '$')}</span>
+        </p>
       </div>
     </div>
   );
@@ -154,7 +181,7 @@ export default function SingleSimulationTaxesBarChart({
   const chartData = rawChartData.filter((item) => item.age === age);
 
   let formatter = undefined;
-  let transformedChartData: { name: string; [key: string]: number | string }[] = [];
+  let transformedChartData: { name: string; [key: string]: number | string | Record<string, number> }[] = [];
   let dataKeys: string[] = ['amount'];
 
   let isStacked = false;
@@ -210,6 +237,9 @@ export default function SingleSimulationTaxesBarChart({
           taxableOrdinaryIncome: item.taxableOrdinaryIncome,
           taxableCapGains: item.taxableCapGains,
           grossIncome: item.grossIncome,
+          totalTaxableIncome: item.totalTaxableIncome,
+          adjustments: item.adjustments,
+          deductions: item.deductions,
         };
       });
       formatter = (value: number) => formatNumber(value, 1, '$');
