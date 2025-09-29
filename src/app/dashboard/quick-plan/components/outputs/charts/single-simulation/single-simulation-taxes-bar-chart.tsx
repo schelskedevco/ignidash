@@ -67,9 +67,15 @@ interface SingleSimulationTaxesBarChartProps {
   age: number;
   dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
   rawChartData: SingleSimulationTaxesChartDataPoint[];
+  referenceLineMode: 'hideReferenceLines' | 'showMarginalCapGainsRates' | 'showMarginalIncomeRates';
 }
 
-export default function SingleSimulationTaxesBarChart({ age, dataView, rawChartData }: SingleSimulationTaxesBarChartProps) {
+export default function SingleSimulationTaxesBarChart({
+  age,
+  dataView,
+  rawChartData,
+  referenceLineMode,
+}: SingleSimulationTaxesBarChartProps) {
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 

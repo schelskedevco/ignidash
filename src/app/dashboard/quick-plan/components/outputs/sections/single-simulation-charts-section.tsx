@@ -121,7 +121,12 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
         referenceLineMode={referenceLineMode}
         referenceLineModes={referenceLineModes}
       />
-      <SingleSimulationTaxesBarChartCard selectedAge={selectedAge} rawChartData={rawChartData} dataView={dataView} />
+      <SingleSimulationTaxesBarChartCard
+        selectedAge={selectedAge}
+        rawChartData={rawChartData}
+        dataView={dataView}
+        referenceLineMode={referenceLineMode}
+      />
     </>
   );
 }

@@ -10,9 +10,15 @@ interface SingleSimulationTaxesBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationTaxesChartDataPoint[];
   dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
+  referenceLineMode: 'hideReferenceLines' | 'showMarginalCapGainsRates' | 'showMarginalIncomeRates';
 }
 
-export default function SingleSimulationTaxesBarChartCard({ selectedAge, rawChartData, dataView }: SingleSimulationTaxesBarChartCardProps) {
+export default function SingleSimulationTaxesBarChartCard({
+  selectedAge,
+  rawChartData,
+  dataView,
+  referenceLineMode,
+}: SingleSimulationTaxesBarChartCardProps) {
   let title;
   switch (dataView) {
     case 'marginalRates':
@@ -43,7 +49,12 @@ export default function SingleSimulationTaxesBarChartCard({ selectedAge, rawChar
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>
       </div>
-      <SingleSimulationTaxesBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} />
+      <SingleSimulationTaxesBarChart
+        age={selectedAge}
+        rawChartData={rawChartData}
+        dataView={dataView}
+        referenceLineMode={referenceLineMode}
+      />
     </Card>
   );
 }
