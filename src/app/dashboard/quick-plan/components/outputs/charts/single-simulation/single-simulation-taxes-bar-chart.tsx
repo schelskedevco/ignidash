@@ -22,33 +22,20 @@ interface CustomTooltipProps {
   }>;
   label?: number;
   startAge: number;
+  age: number;
   disabled: boolean;
   dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
 }
 
-const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
+const CustomTooltip = ({ active, payload, startAge, age, disabled, dataView }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled || dataView !== 'taxableIncome') return null;
 
   const currentYear = new Date().getFullYear();
-  const yearForAge = currentYear + (label! - startAge);
+  const yearForAge = currentYear + (age - startAge);
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)'];
 
   const entry = payload[0].payload;
-
-  const adjustments = Object.entries(entry.adjustments).map(([name, value]) => (
-    <p key={name} className="flex justify-between text-sm font-semibold">
-      <span className="mr-2">{`${formatChartString(name)}:`}</span>
-      <span className="ml-1 font-semibold">{formatNumber(value, 1, '$')}</span>
-    </p>
-  ));
-
-  const deductions = Object.entries(entry.deductions).map(([name, value]) => (
-    <p key={name} className="flex justify-between text-sm font-semibold">
-      <span className="mr-2">{`${formatChartString(name)}:`}</span>
-      <span className="ml-1 font-semibold">{formatNumber(value, 1, '$')}</span>
-    </p>
-  ));
 
   const header = (
     <div className="mx-1 mb-2 flex flex-col gap-2">
@@ -57,19 +44,13 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
         <span className="ml-1 font-semibold">{formatNumber(entry.grossIncome, 1, '$')}</span>
       </p>
       <Divider />
-      <p className="text-muted-foreground -mb-2 text-xs/6">Adjustments</p>
-      {adjustments}
-      <Divider />
-      <p className="text-muted-foreground -mb-2 text-xs/6">Deductions</p>
-      {deductions}
-      <Divider />
     </div>
   );
 
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
       <p className="mx-1 mb-2 flex justify-between text-sm font-semibold">
-        <span>Age {label}</span>
+        <span>Age {age}</span>
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
       {header}
@@ -228,6 +209,7 @@ export default function SingleSimulationTaxesBarChart({
           name: 'Taxable Income',
           taxableOrdinaryIncome: item.taxableOrdinaryIncome,
           taxableCapGains: item.taxableCapGains,
+          grossIncome: item.grossIncome,
         };
       });
       formatter = (value: number) => formatNumber(value, 1, '$');
@@ -307,10 +289,14 @@ export default function SingleSimulationTaxesBarChart({
                   />
                 </Bar>
               ))}
-            <Tooltip
-              content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
-              cursor={{ stroke: foregroundColor }}
-            />
+            {dataView === 'taxableIncome' && (
+              <Tooltip
+                content={
+                  <CustomTooltip startAge={startAge} age={age} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />
+                }
+                cursor={false}
+              />
+            )}
             {referenceLineMode === 'marginalIncomeTaxRates' &&
               INCOME_TAX_BRACKETS_SINGLE.map((bracket, index) => (
                 <ReferenceLine
