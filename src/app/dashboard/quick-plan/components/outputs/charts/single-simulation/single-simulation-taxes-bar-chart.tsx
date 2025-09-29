@@ -85,6 +85,7 @@ export default function SingleSimulationTaxesBarChart({
   let formatter = undefined;
   let transformedChartData: { name: string; [key: string]: number | string }[] = [];
   let dataKeys: string[] = ['amount'];
+  let isStacked = false;
   switch (dataView) {
     case 'marginalRates':
       transformedChartData = chartData.flatMap((item) => [
@@ -125,7 +126,11 @@ export default function SingleSimulationTaxesBarChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'taxableIncome':
+      let hasOrdinaryIncome = false;
+      let hasCapGains = false;
       transformedChartData = chartData.map((item) => {
+        hasOrdinaryIncome = item.taxableOrdinaryIncome > 0 || hasOrdinaryIncome;
+        hasCapGains = item.taxableCapGains > 0 || hasCapGains;
         return {
           name: 'Taxable Income',
           taxableOrdinaryIncome: item.taxableOrdinaryIncome,
@@ -133,7 +138,10 @@ export default function SingleSimulationTaxesBarChart({
         };
       });
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys = ['taxableOrdinaryIncome', 'taxableCapGains'];
+      dataKeys = [];
+      if (hasOrdinaryIncome) dataKeys.push('taxableOrdinaryIncome');
+      if (hasCapGains) dataKeys.push('taxableCapGains');
+      isStacked = true;
       break;
   }
 
@@ -162,13 +170,13 @@ export default function SingleSimulationTaxesBarChart({
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
             <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
             <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-            {dataKeys.map((dataKey, idx1) => (
-              <Bar key={dataKey} dataKey={dataKey} stackId="stack" maxBarSize={250} minPointSize={20}>
-                {transformedChartData.map((entry, idx2) => (
+            {!isStacked && (
+              <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
+                {transformedChartData.map((entry, idx) => (
                   <Cell
-                    key={`cell-${idx1}-${idx2}`}
-                    fill={COLORS[(idx1 + idx2) % COLORS.length]}
-                    stroke={COLORS[(idx1 + idx2) % COLORS.length]}
+                    key={`cell-${idx}`}
+                    fill={COLORS[idx % COLORS.length]}
+                    stroke={COLORS[idx % COLORS.length]}
                     strokeWidth={3}
                     fillOpacity={0.5}
                   />
@@ -179,8 +187,8 @@ export default function SingleSimulationTaxesBarChart({
                   content={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
                 />
               </Bar>
-            ))}
-            {dataKeys.length > 1 &&
+            )}
+            {isStacked &&
               dataKeys.map((dataKey, idx) => (
                 <Bar
                   key={`${dataKey}-${idx}`}
