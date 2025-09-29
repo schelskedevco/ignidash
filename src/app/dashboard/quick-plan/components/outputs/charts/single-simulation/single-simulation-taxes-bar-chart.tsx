@@ -239,6 +239,7 @@ export default function SingleSimulationTaxesBarChart({
     case 'taxableIncome':
       let hasOrdinaryIncome = false;
       let hasCapGains = false;
+
       transformedChartData = chartData.map((item) => {
         hasOrdinaryIncome = item.taxableOrdinaryIncome > 0 || hasOrdinaryIncome;
         hasCapGains = item.taxableCapGains > 0 || hasCapGains;
@@ -252,7 +253,7 @@ export default function SingleSimulationTaxesBarChart({
           deductions: item.deductions,
         };
       });
-      formatter = (value: number) => formatNumber(value, 1, '$');
+
       dataKeys = [];
       if (hasOrdinaryIncome) {
         dataKeys.push('taxableOrdinaryIncome');
@@ -262,6 +263,8 @@ export default function SingleSimulationTaxesBarChart({
         dataKeys.push('taxableCapGains');
         stackedColors.push(COLORS[1]);
       }
+
+      formatter = (value: number) => formatNumber(value, 1, '$');
       isStacked = true;
       break;
   }
