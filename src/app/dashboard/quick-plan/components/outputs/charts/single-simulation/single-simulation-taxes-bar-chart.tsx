@@ -178,6 +178,26 @@ export default function SingleSimulationTaxesBarChart({
                 />
               </Bar>
             ))}
+            {dataKeys.length > 1 &&
+              dataKeys.map((dataKey, idx) => (
+                <Bar
+                  key={dataKey}
+                  dataKey={dataKey}
+                  stackId="stack"
+                  maxBarSize={250}
+                  minPointSize={20}
+                  fill={COLORS[idx % COLORS.length]}
+                  stroke={COLORS[idx % COLORS.length]}
+                  strokeWidth={3}
+                  fillOpacity={0.5}
+                >
+                  <LabelList
+                    dataKey={dataKey}
+                    position="middle"
+                    content={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
+                  />
+                </Bar>
+              ))}
             {referenceLineMode === 'marginalIncomeTaxRates' &&
               INCOME_TAX_BRACKETS_SINGLE.map((bracket, index) => (
                 <ReferenceLine
