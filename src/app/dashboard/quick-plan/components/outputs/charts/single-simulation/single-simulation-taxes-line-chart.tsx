@@ -271,6 +271,8 @@ export default function SingleSimulationTaxesLineChart({
                   label={{
                     value: `${(bracket.rate * 100).toFixed(0)}% (${formatNumber(bracket.min, 1, '$')})`,
                     position: 'insideBottomRight',
+                    fill: foregroundColor,
+                    fontWeight: '600',
                   }}
                 />
               ))}
@@ -283,6 +285,8 @@ export default function SingleSimulationTaxesLineChart({
                   label={{
                     value: `${(bracket.rate * 100).toFixed(0)}% (${formatNumber(bracket.min, 1, '$')})`,
                     position: 'insideBottomRight',
+                    fill: foregroundColor,
+                    fontWeight: '600',
                   }}
                 />
               ))}
