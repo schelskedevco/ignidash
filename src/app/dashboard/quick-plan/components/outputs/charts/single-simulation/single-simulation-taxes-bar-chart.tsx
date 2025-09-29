@@ -125,11 +125,13 @@ export default function SingleSimulationTaxesBarChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'taxableIncome':
-      transformedChartData = chartData.map((item) => ({
-        name: 'Taxable Income',
-        taxableOrdinaryIncome: item.taxableOrdinaryIncome,
-        taxableCapGains: item.taxableCapGains,
-      }));
+      transformedChartData = chartData.map((item) => {
+        return {
+          name: 'Taxable Income',
+          taxableOrdinaryIncome: item.taxableOrdinaryIncome,
+          taxableCapGains: item.taxableCapGains,
+        };
+      });
       formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys = ['taxableOrdinaryIncome', 'taxableCapGains'];
       break;
@@ -181,7 +183,7 @@ export default function SingleSimulationTaxesBarChart({
             {dataKeys.length > 1 &&
               dataKeys.map((dataKey, idx) => (
                 <Bar
-                  key={dataKey}
+                  key={`${dataKey}-${idx}`}
                   dataKey={dataKey}
                   stackId="stack"
                   maxBarSize={250}
