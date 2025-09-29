@@ -18,6 +18,7 @@ export class TableDataExtractor {
       const currDateYear = new Date(data.date).getFullYear();
 
       const phaseName = data.phase?.name ?? null;
+      const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
 
       const portfolioData = data.portfolio;
       const portfolioValue = portfolioData.totalValue;
@@ -36,7 +37,7 @@ export class TableDataExtractor {
       return {
         year: idx,
         age: currDateYear - startDateYear + startAge,
-        phaseName: phaseName,
+        phaseName: formattedPhaseName,
         portfolioValue,
         stockValue: portfolioValue * stocksAllocation,
         stockReturn,
@@ -64,12 +65,15 @@ export class TableDataExtractor {
       const success = retirementAge !== null && lastDp.portfolio.totalValue > 0.1;
       const historicalRanges = context.historicalRanges ?? null;
 
+      const finalPhaseName = lastDp.phase?.name ?? null;
+      const formattedFinalPhaseName = finalPhaseName !== null ? finalPhaseName.charAt(0).toUpperCase() + finalPhaseName.slice(1) : null;
+
       return {
         seed,
         success,
         retirementAge,
         bankruptcyAge,
-        finalPhaseName: lastDp.phase!.name,
+        finalPhaseName: formattedFinalPhaseName,
         finalPortfolioValue: lastDp.portfolio.totalValue,
         averageStockReturn,
         averageBondReturn,

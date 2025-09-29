@@ -8,7 +8,7 @@ export const multiSimulationTableRowSchema = z.object({
   success: z.boolean(),
   retirementAge: z.number().nullable(),
   bankruptcyAge: z.number().nullable(),
-  finalPhaseName: z.string(),
+  finalPhaseName: z.string().nullable(),
   finalPortfolioValue: z.number(),
   averageStockReturn: z.number().nullable(),
   averageBondReturn: z.number().nullable(),
