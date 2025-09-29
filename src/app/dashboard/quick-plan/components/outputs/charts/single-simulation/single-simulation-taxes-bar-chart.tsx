@@ -266,7 +266,7 @@ export default function SingleSimulationTaxesBarChart({
       break;
   }
 
-  if (transformedChartData.length === 0) {
+  if (transformedChartData.length === 0 || dataKeys.length === 0) {
     return <div className="flex h-64 w-full items-center justify-center sm:h-72 lg:h-80">No data available for the selected view.</div>;
   }
 
