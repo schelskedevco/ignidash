@@ -1,6 +1,6 @@
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import type {
-  SingleSimulationTableRow,
+  SingleSimulationPortfolioTableRow,
   SingleSimulationCashFlowTableRow,
   SingleSimulationTaxesTableRow,
   SingleSimulationReturnsTableRow,
@@ -14,7 +14,7 @@ import type { MultiSimulationAnalysis } from './multi-simulation-analyzer';
 import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
 
 export class TableDataExtractor {
-  extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationTableRow[] {
+  extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationPortfolioTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();

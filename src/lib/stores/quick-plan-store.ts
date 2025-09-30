@@ -15,7 +15,7 @@ import { ChartDataExtractor } from '@/lib/calc/v2/chart-data-extractor';
 import { TableDataExtractor } from '@/lib/calc/v2/table-data-extractor';
 import { getSimulationWorker } from '@/lib/workers/simulation-worker-api';
 import type {
-  SingleSimulationTableRow,
+  SingleSimulationPortfolioTableRow,
   SingleSimulationCashFlowTableRow,
   SingleSimulationReturnsTableRow,
   SingleSimulationTaxesTableRow,
@@ -578,7 +578,7 @@ export const useSingleSimulationWithdrawalsChartData = (simulation: SimulationRe
  * Table Hooks
  * These hooks provide access to simulation table data
  */
-export const useSingleSimulationPortfolioTableData = (simulation: SimulationResult): SingleSimulationTableRow[] => {
+export const useSingleSimulationPortfolioTableData = (simulation: SimulationResult): SingleSimulationPortfolioTableRow[] => {
   return useMemo(() => {
     const extractor = new TableDataExtractor();
     return extractor.extractSingleSimulationPortfolioData(simulation);

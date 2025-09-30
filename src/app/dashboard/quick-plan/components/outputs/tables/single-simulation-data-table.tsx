@@ -2,7 +2,7 @@
 
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import type {
-  SingleSimulationTableRow,
+  SingleSimulationPortfolioTableRow,
   SingleSimulationCashFlowTableRow,
   SingleSimulationReturnsTableRow,
   SingleSimulationTaxesTableRow,
@@ -38,7 +38,7 @@ function PortfolioTable({ simulation, onEscPressed }: TableCategoryProps) {
   const tableData = useSingleSimulationPortfolioTableData(simulation);
 
   return (
-    <Table<SingleSimulationTableRow>
+    <Table<SingleSimulationPortfolioTableRow>
       columns={generatePortfolioTableColumns()}
       data={tableData}
       keyField="year"

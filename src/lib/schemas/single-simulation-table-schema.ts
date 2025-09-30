@@ -6,7 +6,7 @@ import type { ColumnFormat } from '@/lib/types/column-format';
 // PORTFOLIO TABLE SCHEMA
 // ================================
 
-export const singleSimulationTableRowSchema = z.object({
+export const singleSimulationPortfolioTableRowSchema = z.object({
   year: z.number(),
   age: z.number(),
   phaseName: z.string().nullable(),
@@ -25,7 +25,7 @@ export const singleSimulationTableRowSchema = z.object({
   historicalYear: z.number().nullable(),
 });
 
-export type SingleSimulationTableRow = z.infer<typeof singleSimulationTableRowSchema>;
+export type SingleSimulationPortfolioTableRow = z.infer<typeof singleSimulationPortfolioTableRowSchema>;
 
 const SINGLE_SIMULATION_COLUMNS = {
   year: { title: 'Year', format: 'number' },
@@ -46,7 +46,7 @@ const SINGLE_SIMULATION_COLUMNS = {
   historicalYear: { title: 'Historical Year', format: 'number' },
 } as const;
 
-export const SIMULATION_TABLE_CONFIG: Record<keyof SingleSimulationTableRow, { title: string; format: ColumnFormat }> =
+export const SIMULATION_PORTFOLIO_TABLE_CONFIG: Record<keyof SingleSimulationPortfolioTableRow, { title: string; format: ColumnFormat }> =
   SINGLE_SIMULATION_COLUMNS;
 
 // ================================
