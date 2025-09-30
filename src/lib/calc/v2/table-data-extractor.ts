@@ -14,36 +14,7 @@ import type { MultiSimulationAnalysis } from './multi-simulation-analyzer';
 import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
 
 export class TableDataExtractor {
-  extractSingleSimulationData(
-    simulation: SimulationResult,
-    category: SimulationCategory
-  ): (
-    | SingleSimulationTableRow
-    | SingleSimulationCashFlowTableRow
-    | SingleSimulationTaxesTableRow
-    | SingleSimulationReturnsTableRow
-    | SingleSimulationContributionsTableRow
-    | SingleSimulationWithdrawalsTableRow
-  )[] {
-    switch (category) {
-      case SimulationCategory.Portfolio:
-        return this.extractSingleSimulationPortfolioData(simulation);
-      case SimulationCategory.CashFlow:
-        return this.extractSingleSimulationCashFlowData(simulation);
-      case SimulationCategory.Taxes:
-        return this.extractSingleSimulationTaxesData(simulation);
-      case SimulationCategory.Returns:
-        return this.extractSingleSimulationReturnsData(simulation);
-      case SimulationCategory.Contributions:
-        return this.extractSingleSimulationContributionsData(simulation);
-      case SimulationCategory.Withdrawals:
-        return this.extractSingleSimulationWithdrawalsData(simulation);
-      default:
-        throw new Error(`Unsupported simulation category: ${category}`);
-    }
-  }
-
-  private extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationTableRow[] {
+  extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -118,7 +89,7 @@ export class TableDataExtractor {
     });
   }
 
-  private extractSingleSimulationCashFlowData(simulation: SimulationResult): SingleSimulationCashFlowTableRow[] {
+  extractSingleSimulationCashFlowData(simulation: SimulationResult): SingleSimulationCashFlowTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -174,7 +145,7 @@ export class TableDataExtractor {
     });
   }
 
-  private extractSingleSimulationTaxesData(simulation: SimulationResult): SingleSimulationTaxesTableRow[] {
+  extractSingleSimulationTaxesData(simulation: SimulationResult): SingleSimulationTaxesTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -248,7 +219,7 @@ export class TableDataExtractor {
     });
   }
 
-  private extractSingleSimulationReturnsData(simulation: SimulationResult): SingleSimulationReturnsTableRow[] {
+  extractSingleSimulationReturnsData(simulation: SimulationResult): SingleSimulationReturnsTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -293,7 +264,7 @@ export class TableDataExtractor {
     });
   }
 
-  private extractSingleSimulationContributionsData(simulation: SimulationResult): SingleSimulationContributionsTableRow[] {
+  extractSingleSimulationContributionsData(simulation: SimulationResult): SingleSimulationContributionsTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -364,7 +335,7 @@ export class TableDataExtractor {
     });
   }
 
-  private extractSingleSimulationWithdrawalsData(simulation: SimulationResult): SingleSimulationWithdrawalsTableRow[] {
+  extractSingleSimulationWithdrawalsData(simulation: SimulationResult): SingleSimulationWithdrawalsTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
