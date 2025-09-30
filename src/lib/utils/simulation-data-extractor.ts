@@ -50,60 +50,53 @@ export class SimulationDataExtractor {
     const startAge = context.startAge;
     const startDateYear = new Date().getFullYear();
 
-    const {
-      stocks,
-      bonds,
-      cash,
-      inflation,
-      count,
-      minStockReturn,
-      maxStockReturn,
-      earlyRetirementStockReturn,
-      yearsOfEarlyRetirement: _yearsOfEarlyRetirement,
-    } = data.slice(1).reduce(
-      (acc, dp) => {
-        const currDateYear = new Date(dp.date).getFullYear();
-        const currAge = currDateYear - startDateYear + startAge;
+    const { stocks, bonds, cash, inflation, count, minStockReturn, maxStockReturn, earlyRetirementStocks, yearsOfEarlyRetirement } = data
+      .slice(1)
+      .reduce(
+        (acc, dp) => {
+          const currDateYear = new Date(dp.date).getFullYear();
+          const currAge = currDateYear - startDateYear + startAge;
 
-        const returnsData = dp.returns!;
-        const stockReturn = returnsData.annualReturnRates.stocks;
+          const returnsData = dp.returns!;
+          const stockReturn = returnsData.annualReturnRates.stocks;
 
-        let earlyRetirementStockReturn = acc.earlyRetirementStockReturn;
-        let yearsOfEarlyRetirement = acc.yearsOfEarlyRetirement;
-        if (retirementAge !== null && currAge >= retirementAge && currAge <= retirementAge + 5) {
-          earlyRetirementStockReturn += stockReturn;
-          yearsOfEarlyRetirement += 1;
+          let earlyRetirementStocks = acc.earlyRetirementStocks;
+          let yearsOfEarlyRetirement = acc.yearsOfEarlyRetirement;
+          if (retirementAge !== null && currAge >= retirementAge && currAge <= retirementAge + 5) {
+            earlyRetirementStocks += stockReturn;
+            yearsOfEarlyRetirement += 1;
+          }
+
+          return {
+            stocks: acc.stocks + stockReturn,
+            bonds: acc.bonds + returnsData.annualReturnRates.bonds,
+            cash: acc.cash + returnsData.annualReturnRates.cash,
+            inflation: acc.inflation + returnsData.annualInflationRate,
+            count: acc.count + 1,
+            minStockReturn: Math.min(acc.minStockReturn, stockReturn),
+            maxStockReturn: Math.max(acc.maxStockReturn, stockReturn),
+            earlyRetirementStocks,
+            yearsOfEarlyRetirement,
+          };
+        },
+        {
+          stocks: 0,
+          bonds: 0,
+          cash: 0,
+          inflation: 0,
+          count: 0,
+          minStockReturn: Infinity,
+          maxStockReturn: -Infinity,
+          earlyRetirementStocks: 0,
+          yearsOfEarlyRetirement: 0,
         }
-
-        return {
-          stocks: acc.stocks + stockReturn,
-          bonds: acc.bonds + returnsData.annualReturnRates.bonds,
-          cash: acc.cash + returnsData.annualReturnRates.cash,
-          inflation: acc.inflation + returnsData.annualInflationRate,
-          count: acc.count + 1,
-          minStockReturn: Math.min(acc.minStockReturn, stockReturn),
-          maxStockReturn: Math.max(acc.maxStockReturn, stockReturn),
-          earlyRetirementStockReturn,
-          yearsOfEarlyRetirement,
-        };
-      },
-      {
-        stocks: 0,
-        bonds: 0,
-        cash: 0,
-        inflation: 0,
-        count: 0,
-        minStockReturn: Infinity,
-        maxStockReturn: -Infinity,
-        earlyRetirementStockReturn: 0,
-        yearsOfEarlyRetirement: 0,
-      }
-    );
+      );
 
     const averageStockReturn = count > 0 ? stocks / count : null;
     const averageBondReturn = count > 0 ? bonds / count : null;
     const averageCashReturn = count > 0 ? cash / count : null;
     const averageInflationRate = count > 0 ? inflation / count : null;
+    const earlyRetirementStockReturn = yearsOfEarlyRetirement > 0 ? earlyRetirementStocks / yearsOfEarlyRetirement : null;
 
     return {
       averageStockReturn,
