@@ -14,6 +14,10 @@ import type { MultiSimulationAnalysis } from './multi-simulation-analyzer';
 import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
 
 export class TableDataExtractor {
+  // ================================
+  // SINGLE SIMULATION DATA EXTRACTION
+  // ================================
+
   extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationPortfolioTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
@@ -409,6 +413,10 @@ export class TableDataExtractor {
     });
   }
 
+  // ================================
+  // MULTI SIMULATION DATA EXTRACTION
+  // ================================
+
   extractMultiSimulationData(simulations: MultiSimulationResult, category: SimulationCategory): MultiSimulationTableRow[] {
     return simulations.simulations.map(([seed, result]) => {
       const { data, context } = result;
@@ -426,6 +434,21 @@ export class TableDataExtractor {
       const finalPhaseName = lastDp.phase?.name ?? null;
       const formattedFinalPhaseName = finalPhaseName !== null ? finalPhaseName.charAt(0).toUpperCase() + finalPhaseName.slice(1) : null;
 
+      const { cumulativeIncomeTaxAmount, cumulativeCapGainsTaxAmount } = data.reduce(
+        (acc, dp) => {
+          const incomeTax = dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0;
+          const capGainsTax = dp.taxes?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+
+          return {
+            cumulativeIncomeTaxAmount: acc.cumulativeIncomeTaxAmount + incomeTax,
+            cumulativeCapGainsTaxAmount: acc.cumulativeCapGainsTaxAmount + capGainsTax,
+          };
+        },
+        { cumulativeIncomeTaxAmount: 0, cumulativeCapGainsTaxAmount: 0 }
+      );
+
+      const cumulativeTaxAmount = cumulativeIncomeTaxAmount + cumulativeCapGainsTaxAmount;
+
       return {
         seed,
         success,
@@ -437,6 +460,12 @@ export class TableDataExtractor {
         averageBondReturn,
         averageCashReturn,
         averageInflationRate,
+        cumulativeIncomeTaxAmount,
+        cumulativeCapGainsTaxAmount,
+        cumulativeTaxAmount,
+        cumulativeContributions: lastDp.portfolio.totalContributions,
+        cumulativeWithdrawals: lastDp.portfolio.totalWithdrawals,
+        cumulativeRealizedGains: lastDp.portfolio.totalRealizedGains,
         historicalRanges,
       };
     });

@@ -14,6 +14,12 @@ export const multiSimulationTableRowSchema = z.object({
   averageBondReturn: z.number().nullable(),
   averageCashReturn: z.number().nullable(),
   averageInflationRate: z.number().nullable(),
+  cumulativeIncomeTaxAmount: z.number().nullable(),
+  cumulativeCapGainsTaxAmount: z.number().nullable(),
+  cumulativeTaxAmount: z.number().nullable(),
+  cumulativeContributions: z.number().nullable(),
+  cumulativeWithdrawals: z.number().nullable(),
+  cumulativeRealizedGains: z.number().nullable(),
   historicalRanges: z.array(z.object({ startYear: z.number(), endYear: z.number() })).nullable(),
 });
 
@@ -30,6 +36,12 @@ const MULTI_SIMULATION_COLUMNS = {
   averageBondReturn: { title: 'Mean Bond Return', format: 'percentage' },
   averageCashReturn: { title: 'Mean Cash Return', format: 'percentage' },
   averageInflationRate: { title: 'Mean Inflation Rate', format: 'percentage' },
+  cumulativeIncomeTaxAmount: { title: 'Cumulative Income Taxes', format: 'currency' },
+  cumulativeCapGainsTaxAmount: { title: 'Cumulative Cap Gains Taxes', format: 'currency' },
+  cumulativeTaxAmount: { title: 'Cumulative Taxes', format: 'currency' },
+  cumulativeContributions: { title: 'Cumulative Contributions', format: 'currency' },
+  cumulativeWithdrawals: { title: 'Cumulative Withdrawals', format: 'currency' },
+  cumulativeRealizedGains: { title: 'Cumulative Realized Gains', format: 'currency' },
   historicalRanges: { title: 'Historical Ranges', format: 'historicalRanges' },
 } as const;
 
