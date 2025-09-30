@@ -3,6 +3,7 @@ import type {
   SingleSimulationTableRow,
   SingleSimulationCashFlowTableRow,
   SingleSimulationTaxesTableRow,
+  SingleSimulationReturnsTableRow,
 } from '@/lib/schemas/single-simulation-table-schema';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
 import { SimulationDataExtractor } from '@/lib/utils/simulation-data-extractor';
@@ -238,6 +239,51 @@ export class TableDataExtractor {
         effectiveCapGainsTaxRate: taxesData?.capitalGainsTaxes.effectiveCapitalGainsTaxRate ?? null,
         topMarginalCapGainsTaxRate: taxesData?.capitalGainsTaxes.topMarginalCapitalGainsTaxRate ?? null,
         capitalLossDeduction: taxesData?.incomeTaxes.capitalLossDeduction ?? null,
+        historicalYear,
+      };
+    });
+  }
+
+  private extractSingleSimulationReturnsData(simulation: SimulationResult): SingleSimulationReturnsTableRow[] {
+    const startAge = simulation.context.startAge;
+    const historicalRanges = simulation.context.historicalRanges ?? null;
+    const startDateYear = new Date().getFullYear();
+
+    return simulation.data.map((data, idx) => {
+      const historicalYear: number | null = this.getHistoricalYear(historicalRanges, idx);
+      const currDateYear = new Date(data.date).getFullYear();
+
+      const phaseName = data.phase?.name ?? null;
+      const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
+
+      const portfolioData = data.portfolio;
+      const totalPortfolioValue = portfolioData.totalValue;
+
+      const assetAllocation = portfolioData.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
+      const stocksAllocation = assetAllocation.stocks;
+      const bondsAllocation = assetAllocation.bonds;
+      const cashAllocation = assetAllocation.cash;
+
+      const returnsData = data.returns;
+
+      return {
+        year: idx,
+        age: currDateYear - startDateYear + startAge,
+        phaseName: formattedPhaseName,
+        totalPortfolioValue,
+        stockRate: returnsData?.annualReturnRates.stocks ?? null,
+        cumulativeStockAmount: returnsData?.totalReturnAmounts.stocks ?? null,
+        stockAmount: returnsData?.returnAmountsForPeriod.stocks ?? null,
+        stockHoldings: totalPortfolioValue * stocksAllocation,
+        bondRate: returnsData?.annualReturnRates.bonds ?? null,
+        cumulativeBondAmount: returnsData?.totalReturnAmounts.bonds ?? null,
+        bondAmount: returnsData?.returnAmountsForPeriod.bonds ?? null,
+        bondHoldings: totalPortfolioValue * bondsAllocation,
+        cashRate: returnsData?.annualReturnRates.cash ?? null,
+        cumulativeCashAmount: returnsData?.totalReturnAmounts.cash ?? null,
+        cashAmount: returnsData?.returnAmountsForPeriod.cash ?? null,
+        cashHoldings: totalPortfolioValue * cashAllocation,
+        inflationRate: returnsData?.annualInflationRate ?? null,
         historicalYear,
       };
     });
