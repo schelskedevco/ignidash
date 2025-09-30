@@ -145,9 +145,9 @@ export class TableDataExtractor {
         }
       }
 
-      const incomesData = data.incomes!;
-      const expensesData = data.expenses!;
-      const taxesData = data.taxes!;
+      const incomesData = data.incomes;
+      const expensesData = data.expenses;
+      const taxesData = data.taxes;
 
       const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
       const grossIncome = ordinaryIncome + taxDeferredWithdrawals;
@@ -202,13 +202,13 @@ export class TableDataExtractor {
 
       const portfolioData = data.portfolio;
 
-      let annualTaxDeferredWithdrawals = 0;
+      let taxDeferredWithdrawals = 0;
       for (const account of Object.values(portfolioData.perAccountData)) {
         switch (account.type) {
           case '401k':
           case 'ira':
           case 'hsa':
-            annualTaxDeferredWithdrawals += account.withdrawalsForPeriod;
+            taxDeferredWithdrawals += account.withdrawalsForPeriod;
             break;
           default:
             break;
@@ -218,8 +218,8 @@ export class TableDataExtractor {
       const incomesData = data.incomes;
 
       const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
-      const annualRealizedCapGains = portfolioData.realizedGainsForPeriod;
-      const grossIncome = ordinaryIncome + annualTaxDeferredWithdrawals + annualRealizedCapGains;
+      const realizedCapGains = portfolioData.realizedGainsForPeriod;
+      const grossIncome = ordinaryIncome + taxDeferredWithdrawals + realizedCapGains;
 
       return {
         year: idx,
@@ -227,7 +227,7 @@ export class TableDataExtractor {
         phaseName: formattedPhaseName,
         grossIncome,
         netIncome: taxesData?.incomeTaxes.netIncome ?? null,
-        realizedCapGains: annualRealizedCapGains,
+        realizedCapGains,
         netCapGains: taxesData?.capitalGainsTaxes.netCapitalGains ?? null,
         taxableOrdinaryIncome: taxesData?.incomeTaxes.taxableOrdinaryIncome ?? null,
         taxableCapGains: taxesData?.capitalGainsTaxes.taxableCapitalGains ?? null,
