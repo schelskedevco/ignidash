@@ -434,20 +434,20 @@ export class TableDataExtractor {
       const finalPhaseName = lastDp.phase?.name ?? null;
       const formattedFinalPhaseName = finalPhaseName !== null ? finalPhaseName.charAt(0).toUpperCase() + finalPhaseName.slice(1) : null;
 
-      const { cumulativeIncomeTaxAmount, cumulativeCapGainsTaxAmount } = data.reduce(
+      const { lifetimeIncomeTaxes, lifetimeCapGainsTaxes } = data.reduce(
         (acc, dp) => {
           const incomeTax = dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0;
           const capGainsTax = dp.taxes?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
 
           return {
-            cumulativeIncomeTaxAmount: acc.cumulativeIncomeTaxAmount + incomeTax,
-            cumulativeCapGainsTaxAmount: acc.cumulativeCapGainsTaxAmount + capGainsTax,
+            lifetimeIncomeTaxes: acc.lifetimeIncomeTaxes + incomeTax,
+            lifetimeCapGainsTaxes: acc.lifetimeCapGainsTaxes + capGainsTax,
           };
         },
-        { cumulativeIncomeTaxAmount: 0, cumulativeCapGainsTaxAmount: 0 }
+        { lifetimeIncomeTaxes: 0, lifetimeCapGainsTaxes: 0 }
       );
 
-      const cumulativeTaxAmount = cumulativeIncomeTaxAmount + cumulativeCapGainsTaxAmount;
+      const lifetimeTaxes = lifetimeIncomeTaxes + lifetimeCapGainsTaxes;
 
       return {
         seed,
@@ -460,12 +460,12 @@ export class TableDataExtractor {
         averageBondReturn,
         averageCashReturn,
         averageInflationRate,
-        cumulativeIncomeTaxAmount,
-        cumulativeCapGainsTaxAmount,
-        cumulativeTaxAmount,
-        cumulativeContributions: lastDp.portfolio.totalContributions,
-        cumulativeWithdrawals: lastDp.portfolio.totalWithdrawals,
-        cumulativeRealizedGains: lastDp.portfolio.totalRealizedGains,
+        lifetimeIncomeTaxes,
+        lifetimeCapGainsTaxes,
+        lifetimeTaxes,
+        lifetimeContributions: lastDp.portfolio.totalContributions,
+        lifetimeWithdrawals: lastDp.portfolio.totalWithdrawals,
+        lifetimeRealizedGains: lastDp.portfolio.totalRealizedGains,
         historicalRanges,
       };
     });
