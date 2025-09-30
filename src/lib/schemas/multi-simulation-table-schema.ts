@@ -31,7 +31,7 @@ const MULTI_SIMULATION_COLUMNS = {
   retirementAge: { title: 'Retirement Age', format: 'number' },
   bankruptcyAge: { title: 'Bankruptcy Age', format: 'number' },
   finalPhaseName: { title: 'Final Phase', format: 'string' },
-  finalPortfolioValue: { title: 'Final Portfolio', format: 'currency' },
+  finalPortfolioValue: { title: 'Final Portfolio Value', format: 'currency' },
   averageStockReturn: { title: 'Mean Stock Return', format: 'percentage' },
   averageBondReturn: { title: 'Mean Bond Return', format: 'percentage' },
   averageCashReturn: { title: 'Mean Cash Return', format: 'percentage' },
