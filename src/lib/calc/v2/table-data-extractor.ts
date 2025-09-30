@@ -4,6 +4,8 @@ import type {
   SingleSimulationCashFlowTableRow,
   SingleSimulationTaxesTableRow,
   SingleSimulationReturnsTableRow,
+  SingleSimulationContributionsTableRow,
+  SingleSimulationWithdrawalsTableRow,
 } from '@/lib/schemas/single-simulation-table-schema';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
 import { SimulationDataExtractor } from '@/lib/utils/simulation-data-extractor';
@@ -12,19 +14,17 @@ import type { MultiSimulationAnalysis } from './multi-simulation-analyzer';
 import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
 
 export class TableDataExtractor {
-  // export enum SimulationCategory {
-  //   Portfolio = 'Portfolio',
-  //   CashFlow = 'Cash Flow',
-  //   Taxes = 'Taxes',
-  //   Returns = 'Returns',
-  //   Contributions = 'Contributions',
-  //   Withdrawals = 'Withdrawals',
-  // }
-
   extractSingleSimulationData(
     simulation: SimulationResult,
     category: SimulationCategory
-  ): (SingleSimulationTableRow | SingleSimulationCashFlowTableRow | SingleSimulationTaxesTableRow | SingleSimulationReturnsTableRow)[] {
+  ): (
+    | SingleSimulationTableRow
+    | SingleSimulationCashFlowTableRow
+    | SingleSimulationTaxesTableRow
+    | SingleSimulationReturnsTableRow
+    | SingleSimulationContributionsTableRow
+    | SingleSimulationWithdrawalsTableRow
+  )[] {
     switch (category) {
       case SimulationCategory.Portfolio:
         return this.extractSingleSimulationPortfolioData(simulation);
@@ -35,7 +35,9 @@ export class TableDataExtractor {
       case SimulationCategory.Returns:
         return this.extractSingleSimulationReturnsData(simulation);
       case SimulationCategory.Contributions:
+        return this.extractSingleSimulationContributionsData(simulation);
       case SimulationCategory.Withdrawals:
+        return this.extractSingleSimulationWithdrawalsData(simulation);
       default:
         throw new Error(`Unsupported simulation category: ${category}`);
     }
@@ -289,6 +291,14 @@ export class TableDataExtractor {
         historicalYear,
       };
     });
+  }
+
+  private extractSingleSimulationContributionsData(simulation: SimulationResult): SingleSimulationContributionsTableRow[] {
+    throw new Error('Method not implemented.');
+  }
+
+  private extractSingleSimulationWithdrawalsData(simulation: SimulationResult): SingleSimulationWithdrawalsTableRow[] {
+    throw new Error('Method not implemented.');
   }
 
   extractMultiSimulationData(simulations: MultiSimulationResult, category: SimulationCategory): MultiSimulationTableRow[] {
