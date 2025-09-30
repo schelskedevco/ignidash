@@ -1,5 +1,5 @@
 import { SimulationCategory } from '@/lib/types/simulation-category';
-import type { SingleSimulationTableRow } from '@/lib/schemas/single-simulation-table-schema';
+import type { SingleSimulationTableRow, SingleSimulationCashFlowTableRow } from '@/lib/schemas/single-simulation-table-schema';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
 import { SimulationDataExtractor } from '@/lib/utils/simulation-data-extractor';
 
@@ -16,11 +16,15 @@ export class TableDataExtractor {
   //   Withdrawals = 'Withdrawals',
   // }
 
-  extractSingleSimulationData(simulation: SimulationResult, category: SimulationCategory): SingleSimulationTableRow[] {
+  extractSingleSimulationData(
+    simulation: SimulationResult,
+    category: SimulationCategory
+  ): (SingleSimulationTableRow | SingleSimulationCashFlowTableRow)[] {
     switch (category) {
       case SimulationCategory.Portfolio:
         return this.extractSingleSimulationPortfolioData(simulation);
       case SimulationCategory.CashFlow:
+        return this.extractSingleSimulationCashFlowData(simulation);
       case SimulationCategory.Taxes:
       case SimulationCategory.Returns:
       case SimulationCategory.Contributions:
@@ -31,13 +35,12 @@ export class TableDataExtractor {
   }
 
   private extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationTableRow[] {
+    const startAge = simulation.context.startAge;
+    const historicalRanges = simulation.context.historicalRanges ?? null;
+    const startDateYear = new Date().getFullYear();
+
     return simulation.data.map((data, idx) => {
-      const startAge = simulation.context.startAge;
-
-      const historicalRanges = simulation.context.historicalRanges ?? null;
       const historicalYear: number | null = this.getHistoricalYear(historicalRanges, idx);
-
-      const startDateYear = new Date().getFullYear();
       const currDateYear = new Date(data.date).getFullYear();
 
       const phaseName = data.phase?.name ?? null;
@@ -101,6 +104,62 @@ export class TableDataExtractor {
         taxDeferredHoldings,
         taxFreeHoldings,
         cashSavings,
+        historicalYear,
+      };
+    });
+  }
+
+  private extractSingleSimulationCashFlowData(simulation: SimulationResult): SingleSimulationCashFlowTableRow[] {
+    const startAge = simulation.context.startAge;
+    const historicalRanges = simulation.context.historicalRanges ?? null;
+    const startDateYear = new Date().getFullYear();
+
+    return simulation.data.map((data, idx) => {
+      const historicalYear: number | null = this.getHistoricalYear(historicalRanges, idx);
+      const currDateYear = new Date(data.date).getFullYear();
+
+      const phaseName = data.phase?.name ?? null;
+      const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
+
+      const portfolioData = data.portfolio;
+
+      let taxDeferredWithdrawals = 0;
+      for (const account of Object.values(portfolioData.perAccountData)) {
+        switch (account.type) {
+          case '401k':
+          case 'ira':
+          case 'hsa':
+            taxDeferredWithdrawals += account.withdrawalsForPeriod;
+            break;
+          default:
+            break;
+        }
+      }
+
+      const incomesData = data.incomes!;
+      const expensesData = data.expenses!;
+      const taxesData = data.taxes!;
+
+      const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
+      const grossIncome = ordinaryIncome + taxDeferredWithdrawals;
+      const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+      const expenses = expensesData?.totalExpenses ?? 0;
+      const netIncome = grossIncome - incomeTax;
+      const netCashFlow = netIncome - expenses;
+      const savingsRate = netIncome > 0 ? (netCashFlow / netIncome) * 100 : null;
+
+      return {
+        year: idx,
+        age: currDateYear - startDateYear + startAge,
+        phaseName: formattedPhaseName,
+        ordinaryIncome,
+        taxDeferredWithdrawals,
+        grossIncome,
+        incomeTax,
+        netIncome,
+        expenses,
+        netCashFlow,
+        savingsRate,
         historicalYear,
       };
     });
