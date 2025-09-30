@@ -41,7 +41,7 @@ describe('StochasticReturnsProvider', () => {
       const generateLogNormalReturn = StochasticReturnsProvider.prototype['generateLogNormalReturn'];
 
       const expectedReturn = 0.1; // 10%
-      const volatility = 0.2; // 20%
+      const volatility = 0.18; // 18%
       const zScore = -3; // Extreme negative event
 
       const result = generateLogNormalReturn.call(provider, expectedReturn, volatility, zScore);
@@ -183,10 +183,10 @@ describe('StochasticReturnsProvider', () => {
       expect(meanInflation).toBeCloseTo(0.025, 2);
 
       // Verify standard deviations match expected volatilities
-      expect(stockStdDev).toBeCloseTo(0.2, 1);
+      expect(stockStdDev).toBeCloseTo(0.18, 1);
       expect(bondStdDev).toBeCloseTo(0.06, 2);
       expect(cashStdDev).toBeCloseTo(0.01, 2);
-      expect(inflationStdDev).toBeCloseTo(0.03, 2);
+      expect(inflationStdDev).toBeCloseTo(0.02, 2);
 
       // Verify correlation structure (from CORRELATION_MATRIX)
       // [1.0, -0.1, 0.05, -0.15], // Stocks
