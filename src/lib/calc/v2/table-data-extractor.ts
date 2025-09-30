@@ -24,14 +24,16 @@ export class TableDataExtractor {
   extractSingleSimulationData(
     simulation: SimulationResult,
     category: SimulationCategory
-  ): (SingleSimulationTableRow | SingleSimulationCashFlowTableRow)[] {
+  ): (SingleSimulationTableRow | SingleSimulationCashFlowTableRow | SingleSimulationTaxesTableRow | SingleSimulationReturnsTableRow)[] {
     switch (category) {
       case SimulationCategory.Portfolio:
         return this.extractSingleSimulationPortfolioData(simulation);
       case SimulationCategory.CashFlow:
         return this.extractSingleSimulationCashFlowData(simulation);
       case SimulationCategory.Taxes:
+        return this.extractSingleSimulationTaxesData(simulation);
       case SimulationCategory.Returns:
+        return this.extractSingleSimulationReturnsData(simulation);
       case SimulationCategory.Contributions:
       case SimulationCategory.Withdrawals:
       default:
