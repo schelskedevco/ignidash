@@ -17,6 +17,20 @@ export class TableDataExtractor {
   // }
 
   extractSingleSimulationData(simulation: SimulationResult, category: SimulationCategory): SingleSimulationTableRow[] {
+    switch (category) {
+      case SimulationCategory.Portfolio:
+        return this.extractSingleSimulationPortfolioData(simulation);
+      case SimulationCategory.CashFlow:
+      case SimulationCategory.Taxes:
+      case SimulationCategory.Returns:
+      case SimulationCategory.Contributions:
+      case SimulationCategory.Withdrawals:
+      default:
+        throw new Error(`Unsupported simulation category: ${category}`);
+    }
+  }
+
+  private extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationTableRow[] {
     return simulation.data.map((data, idx) => {
       const startAge = simulation.context.startAge;
 
