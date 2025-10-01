@@ -41,9 +41,9 @@ export class MultiSimulationAnalyzer {
     sortMode: 'finalPortfolioValue' | 'retirementAge' | 'bankruptcyAge' | 'averageStockReturn' | 'earlyRetirementStockReturn'
   ) {
     const base: Record<MetricKey, number> = {
-      finalPortfolioValue: 0.25,
-      retirementAge: 0.25,
-      bankruptcyAge: 0.25,
+      finalPortfolioValue: 0,
+      retirementAge: 0,
+      bankruptcyAge: 0,
       averageStockReturn: 0,
       earlyRetirementStockReturn: 0,
     };
@@ -53,44 +53,27 @@ export class MultiSimulationAnalyzer {
         return {
           ...base,
           finalPortfolioValue: 1,
-          success: 0,
-          retirementAge: 0,
-          bankruptcyAge: 0,
-          averageStockReturn: 0,
-          earlyRetirementStockReturn: 0,
         };
       case 'retirementAge':
         return {
           ...base,
           retirementAge: 1,
-          success: 0,
-          finalPortfolioValue: 0,
-          bankruptcyAge: 0,
-          averageStockReturn: 0,
-          earlyRetirementStockReturn: 0,
         };
       case 'bankruptcyAge':
         return {
           ...base,
           bankruptcyAge: 1,
-          success: 0,
-          finalPortfolioValue: 0,
-          retirementAge: 0,
-          averageStockReturn: 0,
-          earlyRetirementStockReturn: 0,
         };
       case 'averageStockReturn':
         return {
           ...base,
           averageStockReturn: 1,
-          success: 0,
-          finalPortfolioValue: 0,
-          retirementAge: 0,
-          bankruptcyAge: 0,
-          earlyRetirementStockReturn: 0,
         };
       case 'earlyRetirementStockReturn':
-        throw new Error('Not implemented yet');
+        return {
+          ...base,
+          earlyRetirementStockReturn: 1,
+        };
     }
   }
 
@@ -110,6 +93,10 @@ export class MultiSimulationAnalyzer {
     const { min: minRetirementAge, range: retirementAgeRange } = this.getRange(tableData, (row) => row.retirementAge);
     const { min: minBankruptcyAge, range: bankruptcyAgeRange } = this.getRange(tableData, (row) => row.bankruptcyAge);
     const { min: minAverageStockReturn, range: averageStockReturnRange } = this.getRange(tableData, (row) => row.averageStockReturn);
+    const { min: minEarlyRetirementStockReturn, range: earlyRetirementStockReturnRange } = this.getRange(
+      tableData,
+      (row) => row.earlyRetirementStockReturn
+    );
 
     const weights = MultiSimulationAnalyzer.buildWeights(sortMode);
 
@@ -140,6 +127,19 @@ export class MultiSimulationAnalyzer {
       const normalizedAverageStockReturnA = this.normalize(returnsA.averageStockReturn, minAverageStockReturn, averageStockReturnRange, 0);
       const normalizedAverageStockReturnB = this.normalize(returnsB.averageStockReturn, minAverageStockReturn, averageStockReturnRange, 0);
 
+      const normalizedEarlyRetirementStockReturnA = this.normalize(
+        returnsA.earlyRetirementStockReturn,
+        minEarlyRetirementStockReturn,
+        earlyRetirementStockReturnRange,
+        0
+      );
+      const normalizedEarlyRetirementStockReturnB = this.normalize(
+        returnsB.earlyRetirementStockReturn,
+        minEarlyRetirementStockReturn,
+        earlyRetirementStockReturnRange,
+        0
+      );
+
       const lastDpA = dataA[dataALength - 1];
       const lastDpB = dataB[dataBLength - 1];
 
@@ -154,7 +154,7 @@ export class MultiSimulationAnalyzer {
         retirementAge: normalizedRetirementAgeA,
         bankruptcyAge: normalizedBankruptcyAgeA,
         averageStockReturn: normalizedAverageStockReturnA,
-        earlyRetirementStockReturn: 0,
+        earlyRetirementStockReturn: normalizedEarlyRetirementStockReturnA,
       };
 
       const valuesB: NormalizedValues = {
@@ -162,7 +162,7 @@ export class MultiSimulationAnalyzer {
         retirementAge: normalizedRetirementAgeB,
         bankruptcyAge: normalizedBankruptcyAgeB,
         averageStockReturn: normalizedAverageStockReturnB,
-        earlyRetirementStockReturn: 0,
+        earlyRetirementStockReturn: normalizedEarlyRetirementStockReturnB,
       };
 
       const scoreA = this.calculateScore(valuesA, weights);
