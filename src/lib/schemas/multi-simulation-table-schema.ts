@@ -38,7 +38,7 @@ const MULTI_SIMULATION_COLUMNS = {
   minStockReturn: { title: 'Min Stock Return', format: 'percentage' },
   maxStockReturn: { title: 'Max Stock Return', format: 'percentage' },
   averageStockReturn: { title: 'Mean Stock Return', format: 'percentage' },
-  earlyRetirementStockReturn: { title: 'Early Retirement Stock Return (SORR)', format: 'percentage' },
+  earlyRetirementStockReturn: { title: 'Mean Early Retirement Stock Return (SORR)', format: 'percentage' },
   averageBondReturn: { title: 'Mean Bond Return', format: 'percentage' },
   averageCashReturn: { title: 'Mean Cash Return', format: 'percentage' },
   averageInflationRate: { title: 'Mean Inflation Rate', format: 'percentage' },
