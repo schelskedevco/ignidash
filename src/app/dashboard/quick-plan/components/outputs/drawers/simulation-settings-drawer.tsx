@@ -109,6 +109,7 @@ export default function SimulationSettingsDrawer({ setOpen }: SimulationSettings
                         inputMode="numeric"
                         placeholder="1929"
                         decimalScale={0}
+                        disableThousandsSeparator
                       />
                       {errors.historicalStartYearOverride && <ErrorMessage>{errors.historicalStartYearOverride?.message}</ErrorMessage>}
                       <Description>Start your simulation from a specific historical year or leave blank to use a random year.</Description>

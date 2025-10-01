@@ -13,6 +13,7 @@ interface NumberInputProps {
   min?: number;
   max?: number;
   autoFocus?: boolean;
+  disableThousandsSeparator?: boolean;
 }
 
 export default function NumberInput<
@@ -29,6 +30,7 @@ export default function NumberInput<
   min,
   max,
   autoFocus,
+  disableThousandsSeparator,
   name,
   rules,
   shouldUnregister,
@@ -81,7 +83,7 @@ export default function NumberInput<
       placeholder={placeholder}
       inputMode={inputMode}
       autoComplete="off"
-      thousandSeparator=","
+      thousandSeparator={disableThousandsSeparator ? undefined : ','}
       decimalSeparator="."
       prefix={prefix}
       suffix={suffix}

@@ -15,6 +15,7 @@ export const simulationSettingsSchema = z
     },
     {
       message: 'Historical start year is only valid for historical simulation mode',
+      path: ['historicalStartYearOverride'],
     }
   )
   .refine(
@@ -27,6 +28,7 @@ export const simulationSettingsSchema = z
     },
     {
       message: 'Historical start year must be between 1928 and 2024',
+      path: ['historicalStartYearOverride'],
     }
   );
 
