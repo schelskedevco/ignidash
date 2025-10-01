@@ -420,7 +420,7 @@ export const useSimulationResult = (
   const seed = hasSeedOverride ? seedOverride : preferencesSeed;
 
   let startYearOverride = useQuickPlanStore((state) => state.preferences.simulationSettings.historicalStartYearOverride);
-  startYearOverride = hasSeedOverride ? startYearOverride : undefined;
+  startYearOverride = !hasSeedOverride ? startYearOverride : undefined;
 
   return useMemo(() => {
     const timeline = inputs.timeline;

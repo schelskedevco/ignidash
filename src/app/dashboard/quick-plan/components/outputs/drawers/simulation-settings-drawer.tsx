@@ -38,6 +38,7 @@ export default function SimulationSettingsDrawer({ setOpen }: SimulationSettings
   const updateSimulationSettings = useUpdateSimulationSettings();
   const onSubmit = (data: SimulationSettingsInputs) => {
     updateSimulationSettings({ ...data });
+    console.log('Updated simulation settings:', data);
     setOpen(false);
   };
 
