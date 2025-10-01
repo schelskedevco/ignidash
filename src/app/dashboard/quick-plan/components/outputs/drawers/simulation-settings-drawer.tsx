@@ -15,6 +15,8 @@ import { type SimulationSettingsInputs, simulationSettingsSchema } from '@/lib/s
 import { Divider } from '@/components/catalyst/divider';
 import { Button } from '@/components/catalyst/button';
 import { DialogActions } from '@/components/catalyst/dialog';
+import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
+import { Subheading } from '@/components/catalyst/heading';
 
 interface SimulationSettingsDrawerProps {
   setOpen: (open: boolean) => void;
@@ -157,6 +159,25 @@ export default function SimulationSettingsDrawer({ setOpen }: SimulationSettings
               </Button>
             </DialogActions>
           </form>
+        </Card>
+        <Card className="mt-4">
+          <Subheading level={4}>Notable Historical Years</Subheading>
+          <DescriptionList>
+            <DescriptionTerm>1929—1932</DescriptionTerm>
+            <DescriptionDetails>Great Depression</DescriptionDetails>
+
+            <DescriptionTerm>1966—1982</DescriptionTerm>
+            <DescriptionDetails>Stagflation era</DescriptionDetails>
+
+            <DescriptionTerm>1973—1974</DescriptionTerm>
+            <DescriptionDetails>Oil crisis and recession</DescriptionDetails>
+
+            <DescriptionTerm>2000—2002</DescriptionTerm>
+            <DescriptionDetails>Dot-com bubble burst</DescriptionDetails>
+
+            <DescriptionTerm>2008—2009</DescriptionTerm>
+            <DescriptionDetails>Financial Crisis</DescriptionDetails>
+          </DescriptionList>
         </Card>
       </SectionContainer>
     </>
