@@ -65,6 +65,13 @@ export default function Table<T extends Record<string, unknown>>({
       const aVal = a[sortState.column!];
       const bVal = b[sortState.column!];
 
+      const aIsNull = aVal == null;
+      const bIsNull = bVal == null;
+
+      if (aIsNull && bIsNull) return 0;
+      if (aIsNull) return 1;
+      if (bIsNull) return -1;
+
       if (aVal === bVal) return 0;
 
       let comparison = 0;
