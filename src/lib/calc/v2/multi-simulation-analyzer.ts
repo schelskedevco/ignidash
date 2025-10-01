@@ -1,6 +1,7 @@
 import type { AccountInputs } from '@/lib/schemas/account-form-schema';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import { SimulationDataExtractor } from '@/lib/utils/simulation-data-extractor';
+import { type Percentiles, StatsUtils } from '@/lib/utils/stats-utils';
 
 import type { SimulationDataPoint, MultiSimulationResult, SimulationResult } from './simulation-engine';
 import type { PortfolioData, AccountDataWithTransactions } from './portfolio';
@@ -11,22 +12,6 @@ import type { TaxesData, IncomeTaxesData, CapitalGainsTaxesData } from './taxes'
 import type { ReturnsData } from './returns';
 import type { AssetClass, AssetAllocation } from '../asset';
 import { TableDataExtractor } from './table-data-extractor';
-
-export interface Stats {
-  mean: number;
-  median: number;
-  min: number;
-  max: number;
-  stdDev: number | null;
-}
-
-export interface Percentiles<T> {
-  p10: T;
-  p25: T;
-  p50: T;
-  p75: T;
-  p90: T;
-}
 
 export interface MultiSimulationAnalysis {
   success: number;
@@ -74,11 +59,14 @@ export class MultiSimulationAnalyzer {
     const extractor = new TableDataExtractor();
     const tableData = extractor.extractMultiSimulationData(multiSimulationResult, SimulationCategory.Portfolio);
 
-    const { min: minFinalPortfolioValue, range: finalPortfolioValueRange } = this.getRange(tableData, (row) => row.finalPortfolioValue);
-    const { min: minRetirementAge, range: retirementAgeRange } = this.getRange(tableData, (row) => row.retirementAge);
-    const { min: minBankruptcyAge, range: bankruptcyAgeRange } = this.getRange(tableData, (row) => row.bankruptcyAge);
-    const { min: minAverageStockReturn, range: averageStockReturnRange } = this.getRange(tableData, (row) => row.averageStockReturn);
-    const { min: minEarlyRetirementStockReturn, range: earlyRetirementStockReturnRange } = this.getRange(
+    const { min: minFinalPortfolioValue, range: finalPortfolioValueRange } = StatsUtils.getRange(
+      tableData,
+      (row) => row.finalPortfolioValue
+    );
+    const { min: minRetirementAge, range: retirementAgeRange } = StatsUtils.getRange(tableData, (row) => row.retirementAge);
+    const { min: minBankruptcyAge, range: bankruptcyAgeRange } = StatsUtils.getRange(tableData, (row) => row.bankruptcyAge);
+    const { min: minAverageStockReturn, range: averageStockReturnRange } = StatsUtils.getRange(tableData, (row) => row.averageStockReturn);
+    const { min: minEarlyRetirementStockReturn, range: earlyRetirementStockReturnRange } = StatsUtils.getRange(
       tableData,
       (row) => row.earlyRetirementStockReturn
     );
@@ -100,25 +88,35 @@ export class MultiSimulationAnalyzer {
       const { retirementAge: retirementAgeA, bankruptcyAge: bankruptcyAgeA } = SimulationDataExtractor.getMilestonesData(dataA, startAge);
       const { retirementAge: retirementAgeB, bankruptcyAge: bankruptcyAgeB } = SimulationDataExtractor.getMilestonesData(dataB, startAge);
 
-      const normalizedRetirementAgeA = this.normalize(retirementAgeA, minRetirementAge, retirementAgeRange, 0, true);
-      const normalizedRetirementAgeB = this.normalize(retirementAgeB, minRetirementAge, retirementAgeRange, 0, true);
+      const normalizedRetirementAgeA = StatsUtils.normalize(retirementAgeA, minRetirementAge, retirementAgeRange, 0, true);
+      const normalizedRetirementAgeB = StatsUtils.normalize(retirementAgeB, minRetirementAge, retirementAgeRange, 0, true);
 
-      const normalizedBankruptcyAgeA = this.normalize(bankruptcyAgeA, minBankruptcyAge, bankruptcyAgeRange, 1);
-      const normalizedBankruptcyAgeB = this.normalize(bankruptcyAgeB, minBankruptcyAge, bankruptcyAgeRange, 1);
+      const normalizedBankruptcyAgeA = StatsUtils.normalize(bankruptcyAgeA, minBankruptcyAge, bankruptcyAgeRange, 1);
+      const normalizedBankruptcyAgeB = StatsUtils.normalize(bankruptcyAgeB, minBankruptcyAge, bankruptcyAgeRange, 1);
 
       const returnsA = SimulationDataExtractor.getAverageReturns(a[1], retirementAgeA);
       const returnsB = SimulationDataExtractor.getAverageReturns(b[1], retirementAgeB);
 
-      const normalizedAverageStockReturnA = this.normalize(returnsA.averageStockReturn, minAverageStockReturn, averageStockReturnRange, 0);
-      const normalizedAverageStockReturnB = this.normalize(returnsB.averageStockReturn, minAverageStockReturn, averageStockReturnRange, 0);
+      const normalizedAverageStockReturnA = StatsUtils.normalize(
+        returnsA.averageStockReturn,
+        minAverageStockReturn,
+        averageStockReturnRange,
+        0
+      );
+      const normalizedAverageStockReturnB = StatsUtils.normalize(
+        returnsB.averageStockReturn,
+        minAverageStockReturn,
+        averageStockReturnRange,
+        0
+      );
 
-      const normalizedEarlyRetirementStockReturnA = this.normalize(
+      const normalizedEarlyRetirementStockReturnA = StatsUtils.normalize(
         returnsA.earlyRetirementStockReturn,
         minEarlyRetirementStockReturn,
         earlyRetirementStockReturnRange,
         0
       );
-      const normalizedEarlyRetirementStockReturnB = this.normalize(
+      const normalizedEarlyRetirementStockReturnB = StatsUtils.normalize(
         returnsB.earlyRetirementStockReturn,
         minEarlyRetirementStockReturn,
         earlyRetirementStockReturnRange,
@@ -128,8 +126,16 @@ export class MultiSimulationAnalyzer {
       const lastDpA = dataA[dataALength - 1];
       const lastDpB = dataB[dataBLength - 1];
 
-      const normalizedFinalPortfolioValueA = this.normalize(lastDpA.portfolio.totalValue, minFinalPortfolioValue, finalPortfolioValueRange);
-      const normalizedFinalPortfolioValueB = this.normalize(lastDpB.portfolio.totalValue, minFinalPortfolioValue, finalPortfolioValueRange);
+      const normalizedFinalPortfolioValueA = StatsUtils.normalize(
+        lastDpA.portfolio.totalValue,
+        minFinalPortfolioValue,
+        finalPortfolioValueRange
+      );
+      const normalizedFinalPortfolioValueB = StatsUtils.normalize(
+        lastDpB.portfolio.totalValue,
+        minFinalPortfolioValue,
+        finalPortfolioValueRange
+      );
 
       const _successA = Number(retirementAgeA !== null && lastDpA.portfolio.totalValue > 0.1);
       const _successB = Number(retirementAgeB !== null && lastDpB.portfolio.totalValue > 0.1);
@@ -162,27 +168,9 @@ export class MultiSimulationAnalyzer {
       if (finalDp.portfolio.totalValue > 0.1 && finalDp.phase?.name === 'retirement') successCount++;
     }
 
-    const results = this.calculatePercentilesFromValues(sortedSimulations.map((s) => s[1]));
+    const results = StatsUtils.calculatePercentilesFromValues(sortedSimulations.map((s) => s[1]));
 
     return { success: successCount / simulations.length, results };
-  }
-
-  private getRange<T>(data: T[], extractor: (row: T) => number | null): { min: number; max: number; range: number } {
-    const values = data.map(extractor).filter((v): v is number => v !== null);
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-
-    return { min, max, range: max - min };
-  }
-
-  private normalize(value: number | null, min: number, range: number, fallback: number = 0, invert: boolean = false): number {
-    if (value === null) return fallback;
-    if (range === 0) return 0.5;
-
-    let norm = (value - min) / range;
-    if (invert) norm = 1 - norm;
-
-    return Math.max(0, Math.min(1, norm));
   }
 
   private calculateScore(values: NormalizedValues, weights: Record<MetricKey, number>): number {
@@ -477,7 +465,7 @@ export class MultiSimulationAnalyzer {
 
     const values: PhaseName[] = dataPointsForYear.map((d) => d.dp.phase!.name).sort();
 
-    const percentiles = this.calculatePercentilesFromValues(values);
+    const percentiles = StatsUtils.calculatePercentilesFromValues(values);
     const wrapPhaseName = (name: PhaseName): PhaseData => ({ name });
 
     return {
@@ -606,26 +594,11 @@ export class MultiSimulationAnalyzer {
 
   private getNumberFieldPercentiles<T>(data: T[], valueExtractor: (item: T) => number): Percentiles<number> {
     const values = data.map(valueExtractor).sort((a, b) => a - b);
-    return this.calculatePercentilesFromValues(values);
+    return StatsUtils.calculatePercentilesFromValues(values);
   }
 
   private getAssetAllocationPercentiles(data: Array<AssetAllocation | null>): Percentiles<AssetAllocation> {
     const values = data.map((item) => item ?? { stocks: 0, bonds: 0, cash: 0 }).sort((a, b) => a.stocks - b.stocks);
-    return this.calculatePercentilesFromValues(values);
-  }
-
-  private calculatePercentile<T>(sortedValues: T[], percentile: number): T {
-    const index = Math.floor((percentile / 100) * sortedValues.length);
-    return sortedValues[Math.min(index, sortedValues.length - 1)];
-  }
-
-  private calculatePercentilesFromValues<T>(sortedValues: T[]): Percentiles<T> {
-    return {
-      p10: this.calculatePercentile(sortedValues, 10),
-      p25: this.calculatePercentile(sortedValues, 25),
-      p50: this.calculatePercentile(sortedValues, 50),
-      p75: this.calculatePercentile(sortedValues, 75),
-      p90: this.calculatePercentile(sortedValues, 90),
-    };
+    return StatsUtils.calculatePercentilesFromValues(values);
   }
 }
