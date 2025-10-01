@@ -127,7 +127,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
     showReferenceLines: true,
     simulationSeed: Math.floor(Math.random() * 1000),
     sidebarCollapsed: false,
-    simulationSettings: { simulationMode: 'fixedReturns' },
+    simulationSettings: { simulationMode: 'historicalReturns' },
     monteCarloSortMode: 'finalPortfolioValue',
   },
 };
