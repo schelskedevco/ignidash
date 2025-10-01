@@ -3,6 +3,7 @@ import { nyuHistoricalData, NyuHistoricalYearData, getNyuDataRange } from '../da
 import { AssetReturnRates } from '../asset';
 import { PhaseData } from '../v2/phase';
 import { SeededRandom } from './seeded-random';
+import { PhaseName } from '../v2/phase';
 
 export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   private readonly historicalDataRange: { startYear: number; endYear: number };
@@ -10,6 +11,7 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   private readonly rng: SeededRandom;
   private currentHistoricalYear: number;
   private historicalRanges: Array<{ startYear: number; endYear: number }> = [];
+  private phaseName: PhaseName | null = null;
 
   constructor(
     seed: number,
@@ -31,7 +33,15 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   }
 
   getReturns(phaseData: PhaseData | null): ReturnsWithMetadata {
-    if (this.currentHistoricalYear <= this.historicalDataRange.endYear) {
+    const prevPhaseName = this.phaseName;
+    const currPhaseName = phaseData?.name ?? null;
+
+    if (this.retirementStartYearOverride !== undefined && prevPhaseName !== 'retirement' && currPhaseName === 'retirement') {
+      this.phaseName = currPhaseName;
+
+      this.currentHistoricalYear = this.retirementStartYearOverride;
+      this.historicalRanges.push({ startYear: this.currentHistoricalYear, endYear: this.currentHistoricalYear });
+    } else if (this.currentHistoricalYear <= this.historicalDataRange.endYear) {
       this.historicalRanges[this.historicalRanges.length - 1].endYear = this.currentHistoricalYear;
     } else {
       this.currentHistoricalYear = this.historicalDataRange.startYear;
