@@ -47,6 +47,7 @@ export default function SimulationSettingsDrawer({ setOpen }: SimulationSettings
   useEffect(() => {
     if (simulationMode !== 'historicalReturns') {
       unregister('historicalStartYearOverride');
+      unregister('historicalRetirementStartYearOverride');
     }
   }, [simulationMode, unregister]);
 
@@ -114,6 +115,33 @@ export default function SimulationSettingsDrawer({ setOpen }: SimulationSettings
                       />
                       {errors.historicalStartYearOverride && <ErrorMessage>{errors.historicalStartYearOverride?.message}</ErrorMessage>}
                       <Description>Start your simulation from a specific historical year or leave blank to use a random year.</Description>
+                    </Field>
+                    <Divider />
+                  </>
+                )}
+                {simulationMode === 'historicalReturns' && (
+                  <>
+                    <Field>
+                      <Label htmlFor="historicalRetirementStartYearOverride" className="flex w-full items-center justify-between">
+                        <span className="whitespace-nowrap">Historical Retirement Start Year</span>
+                        <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                      </Label>
+                      <NumberInput
+                        name="historicalRetirementStartYearOverride"
+                        control={control}
+                        id="historicalRetirementStartYearOverride"
+                        inputMode="numeric"
+                        placeholder="2008"
+                        decimalScale={0}
+                        disableThousandsSeparator
+                      />
+                      {errors.historicalRetirementStartYearOverride && (
+                        <ErrorMessage>{errors.historicalRetirementStartYearOverride?.message}</ErrorMessage>
+                      )}
+                      <Description>
+                        Start your simulation&apos;s retirement from a specific historical year or leave blank to continue chronologically.
+                        This is helpful for evaluating sequence of returns risk.
+                      </Description>
                     </Field>
                     <Divider />
                   </>
