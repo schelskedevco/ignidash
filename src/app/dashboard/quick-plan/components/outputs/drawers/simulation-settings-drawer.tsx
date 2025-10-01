@@ -1,6 +1,6 @@
 'use client';
 
-import { useSimulationMode, useUpdateSimulationMode } from '@/lib/stores/quick-plan-store';
+import { useSimulationMode, useUpdateSimulationMode, type SimulationMode } from '@/lib/stores/quick-plan-store';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import Card from '@/components/ui/card';
@@ -47,16 +47,7 @@ export default function SimulationSettingsDrawer() {
                     id="simulation-mode"
                     name="simulation-mode"
                     value={simulationMode}
-                    onChange={(e) =>
-                      updateSimulationMode(
-                        e.target.value as
-                          | 'fixedReturns'
-                          | 'stochasticReturns'
-                          | 'historicalReturns'
-                          | 'monteCarloStochasticReturns'
-                          | 'monteCarloHistoricalReturns'
-                      )
-                    }
+                    onChange={(e) => updateSimulationMode(e.target.value as SimulationMode)}
                   >
                     <optgroup label="Single Simulation">
                       <option value="fixedReturns">Fixed Returns</option>
