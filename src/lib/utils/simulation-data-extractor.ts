@@ -50,7 +50,7 @@ export class SimulationDataExtractor {
     const startAge = context.startAge;
     const startDateYear = new Date().getFullYear();
 
-    const { stocks, bonds, cash, inflation, count, minStockReturn, maxStockReturn, earlyRetirementStocks, yearsOfEarlyRetirement } = data
+    const { stocks, bonds, cash, inflation, count, minStockReturn, maxStockReturn, earlyRetirementStocks, totalWeight } = data
       .slice(1)
       .reduce(
         (acc, dp) => {
@@ -61,10 +61,12 @@ export class SimulationDataExtractor {
           const stockReturn = returnsData.annualReturnRates.stocks;
 
           let earlyRetirementStocks = acc.earlyRetirementStocks;
-          let yearsOfEarlyRetirement = acc.yearsOfEarlyRetirement;
-          if (retirementAge !== null && currAge >= retirementAge && currAge <= retirementAge + 5) {
-            earlyRetirementStocks += stockReturn;
-            yearsOfEarlyRetirement += 1;
+          let totalWeight = acc.totalWeight;
+          if (retirementAge !== null && currAge >= retirementAge && currAge < retirementAge + 5) {
+            const yearIntoRetirement = currAge - retirementAge + 1;
+            const weight = 6 - yearIntoRetirement;
+            earlyRetirementStocks += stockReturn * weight;
+            totalWeight += weight;
           }
 
           return {
@@ -76,7 +78,7 @@ export class SimulationDataExtractor {
             minStockReturn: Math.min(acc.minStockReturn, stockReturn),
             maxStockReturn: Math.max(acc.maxStockReturn, stockReturn),
             earlyRetirementStocks,
-            yearsOfEarlyRetirement,
+            totalWeight,
           };
         },
         {
@@ -88,7 +90,7 @@ export class SimulationDataExtractor {
           minStockReturn: Infinity,
           maxStockReturn: -Infinity,
           earlyRetirementStocks: 0,
-          yearsOfEarlyRetirement: 0,
+          totalWeight: 0,
         }
       );
 
@@ -96,7 +98,7 @@ export class SimulationDataExtractor {
     const averageBondReturn = count > 0 ? bonds / count : null;
     const averageCashReturn = count > 0 ? cash / count : null;
     const averageInflationRate = count > 0 ? inflation / count : null;
-    const earlyRetirementStockReturn = yearsOfEarlyRetirement > 0 ? earlyRetirementStocks / yearsOfEarlyRetirement : null;
+    const earlyRetirementStockReturn = totalWeight > 0 ? earlyRetirementStocks / totalWeight : null;
 
     return {
       averageStockReturn,
