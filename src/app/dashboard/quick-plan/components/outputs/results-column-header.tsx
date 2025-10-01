@@ -7,6 +7,7 @@ import IconButton from '@/components/ui/icon-button';
 import Drawer from '@/components/ui/drawer';
 import ColumnHeader from '@/components/ui/column-header';
 import { useRegenSimulation } from '@/hooks/use-regen-simulation';
+import { useSimulationSeed, useSimulationMode } from '@/lib/stores/quick-plan-store';
 
 import SimulationSettingsDrawer from './drawers/simulation-settings-drawer';
 
@@ -21,10 +22,30 @@ export default function ResultsColumnHeader() {
     </div>
   );
 
+  const seed = useSimulationSeed();
+  const simulationMode = useSimulationMode();
+
+  let title;
+  switch (simulationMode) {
+    case 'fixedReturns':
+      title = 'Fixed Results';
+      break;
+    case 'stochasticReturns':
+      title = `Stochastic Results | Seed #${seed}`;
+      break;
+    case 'historicalReturns':
+      title = `Historical Results | Seed #${seed}`;
+      break;
+    case 'monteCarloStochasticReturns':
+    case 'monteCarloHistoricalReturns':
+      title = `Monte Carlo Results | Seed #${seed}`;
+      break;
+  }
+
   return (
     <>
       <ColumnHeader
-        title="Results"
+        title={title}
         icon={PresentationIcon}
         iconButton={
           <div className="flex items-center gap-x-1">
