@@ -133,39 +133,6 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
 };
 
 // ================================
-// PERSISTENCE UTILITIES
-// ================================
-
-/**
- * Clean up existing data if dataStorage preference is "none"
- * Removes sensitive user data from localStorage while preserving preferences
- */
-const cleanupExistingData = () => {
-  if (typeof window === 'undefined') return;
-
-  const stored = localStorage.getItem('quick-plan-storage');
-  if (!stored) return;
-
-  try {
-    const parsed = JSON.parse(stored);
-    if (parsed.state?.preferences?.dataStorage === 'none') {
-      const cleanedData = {
-        state: {
-          preferences: parsed.state.preferences,
-        },
-        version: parsed.version,
-      };
-      localStorage.setItem('quick-plan-storage', JSON.stringify(cleanedData));
-    }
-  } catch (error) {
-    console.warn('Failed to parse quick-plan storage:', error);
-    localStorage.removeItem('quick-plan-storage');
-  }
-};
-
-cleanupExistingData();
-
-// ================================
 // STORE CREATION
 // ================================
 
