@@ -123,7 +123,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
         <TimelineDrawer setOpen={setTimelineOpen} />
       </Drawer>
       <Drawer open={simulationSettingsOpen} setOpen={setSimulationSettingsOpen} title={simulationSettingsTitleComponent}>
-        <SimulationSettingsDrawer />
+        <SimulationSettingsDrawer setOpen={setSimulationSettingsOpen} />
       </Drawer>
     </>
   );

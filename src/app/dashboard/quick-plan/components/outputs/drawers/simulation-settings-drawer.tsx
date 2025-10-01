@@ -1,15 +1,38 @@
 'use client';
 
-import { useSimulationMode, useUpdateSimulationMode, type SimulationMode } from '@/lib/stores/quick-plan-store';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useWatch } from 'react-hook-form';
+
+import { useSimulationSettings, useUpdateSimulationSettings } from '@/lib/stores/quick-plan-store';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import { Field, FieldGroup, Fieldset, Label, Description } from '@/components/catalyst/fieldset';
+import { type SimulationSettingsInputs, simulationSettingsSchema } from '@/lib/schemas/simulation-settings-schema';
+import { Divider } from '@/components/catalyst/divider';
+import { Button } from '@/components/catalyst/button';
+import { DialogActions } from '@/components/catalyst/dialog';
 
-export default function SimulationSettingsDrawer() {
-  const simulationMode = useSimulationMode();
-  const updateSimulationMode = useUpdateSimulationMode();
+interface SimulationSettingsDrawerProps {
+  setOpen: (open: boolean) => void;
+}
+
+export default function SimulationSettingsDrawer({ setOpen }: SimulationSettingsDrawerProps) {
+  const simulationSettings = useSimulationSettings();
+
+  const { control, register, handleSubmit, reset } = useForm({
+    resolver: zodResolver(simulationSettingsSchema),
+    defaultValues: simulationSettings,
+  });
+
+  const updateSimulationSettings = useUpdateSimulationSettings();
+  const onSubmit = (data: SimulationSettingsInputs) => {
+    updateSimulationSettings({ ...data });
+    setOpen(false);
+  };
+
+  const simulationMode = useWatch({ control, name: 'simulationMode' });
 
   let simulationModeDesc;
   switch (simulationMode) {
@@ -38,17 +61,12 @@ export default function SimulationSettingsDrawer() {
       <SectionContainer showBottomBorder={false} location="drawer">
         <SectionHeader title="Simulation Settings" desc="Select your preferred simulation methodology for projections." />
         <Card>
-          <form onSubmit={(e) => e.preventDefault()}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Fieldset aria-label="Simulation methodology">
               <FieldGroup>
                 <Field>
-                  <Label htmlFor="simulation-mode">Simulation Mode</Label>
-                  <Select
-                    id="simulation-mode"
-                    name="simulation-mode"
-                    value={simulationMode}
-                    onChange={(e) => updateSimulationMode(e.target.value as SimulationMode)}
-                  >
+                  <Label htmlFor="simulationMode">Simulation Mode</Label>
+                  <Select {...register('simulationMode')} id="simulationMode" name="simulationMode">
                     <optgroup label="Single Simulation">
                       <option value="fixedReturns">Fixed Returns</option>
                       <option value="stochasticReturns">Stochastic Returns</option>
@@ -61,8 +79,17 @@ export default function SimulationSettingsDrawer() {
                   </Select>
                   <Description>{simulationModeDesc}</Description>
                 </Field>
+                <Divider />
               </FieldGroup>
             </Fieldset>
+            <DialogActions>
+              <Button outline onClick={() => reset()}>
+                Reset
+              </Button>
+              <Button color="rose" type="submit">
+                Save
+              </Button>
+            </DialogActions>
           </form>
         </Card>
       </SectionContainer>

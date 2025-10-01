@@ -30,7 +30,8 @@ import type { AccountInputs } from '@/lib/schemas/account-form-schema';
 import type { ExpenseInputs } from '@/lib/schemas/expense-form-schema';
 import type { TimelineInputs } from '@/lib/schemas/timeline-form-schema';
 import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/contribution-form-schema';
-import type { MarketAssumptionsInputs } from '../schemas/market-assumptions-schema';
+import type { MarketAssumptionsInputs } from '@/lib/schemas/market-assumptions-schema';
+import type { SimulationSettingsInputs } from '@/lib/schemas/simulation-settings-schema';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type {
   SingleSimulationPortfolioChartDataPoint,
@@ -71,7 +72,7 @@ interface QuickPlanState {
     showReferenceLines: boolean;
     simulationSeed: number;
     sidebarCollapsed: boolean;
-    simulationMode: SimulationMode;
+    simulationSettings: SimulationSettingsInputs;
     monteCarloSortMode: MonteCarloSortMode;
   };
 
@@ -104,7 +105,7 @@ interface QuickPlanState {
     updateShowReferenceLines: (value: boolean) => void;
     updateSimulationSeed: () => void;
     updateSidebarCollapsed: (value: boolean) => void;
-    updateSimulationMode: (value: QuickPlanState['preferences']['simulationMode']) => void;
+    updateSimulationSettings: (data: SimulationSettingsInputs) => void;
     updateMonteCarloSortMode: (value: QuickPlanState['preferences']['monteCarloSortMode']) => void;
 
     resetStore: () => void;
@@ -126,7 +127,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
     showReferenceLines: true,
     simulationSeed: Math.floor(Math.random() * 1000),
     sidebarCollapsed: false,
-    simulationMode: 'fixedReturns',
+    simulationSettings: { simulationMode: 'fixedReturns' },
     monteCarloSortMode: 'finalPortfolioValue',
   },
 };
@@ -280,9 +281,9 @@ export const useQuickPlanStore = create<QuickPlanState>()(
             set((state) => {
               state.preferences.sidebarCollapsed = value;
             }),
-          updateSimulationMode: (value) =>
+          updateSimulationSettings: (data) =>
             set((state) => {
-              state.preferences.simulationMode = value;
+              state.preferences.simulationSettings = { ...data };
             }),
           updateMonteCarloSortMode: (value) =>
             set((state) => {
@@ -296,7 +297,7 @@ export const useQuickPlanStore = create<QuickPlanState>()(
       })),
       {
         name: 'quick-plan-storage',
-        version: 2,
+        version: 1,
         migrate: () => ({ ...defaultState }),
         partialize: (state) => {
           const baseResult = { preferences: state.preferences };
@@ -383,7 +384,7 @@ export const useUpdateDataStoragePreference = () => useQuickPlanStore((state) =>
 export const useUpdateShowReferenceLines = () => useQuickPlanStore((state) => state.actions.updateShowReferenceLines);
 export const useUpdateSimulationSeed = () => useQuickPlanStore((state) => state.actions.updateSimulationSeed);
 export const useUpdateSidebarCollapsed = () => useQuickPlanStore((state) => state.actions.updateSidebarCollapsed);
-export const useUpdateSimulationMode = () => useQuickPlanStore((state) => state.actions.updateSimulationMode);
+export const useUpdateSimulationSettings = () => useQuickPlanStore((state) => state.actions.updateSimulationSettings);
 export const useUpdateMonteCarloSortMode = () => useQuickPlanStore((state) => state.actions.updateMonteCarloSortMode);
 
 /**
@@ -394,7 +395,8 @@ export const useDataStoragePreference = () => useQuickPlanStore((state) => state
 export const useShowReferenceLines = () => useQuickPlanStore((state) => state.preferences.showReferenceLines);
 export const useSimulationSeed = () => useQuickPlanStore((state) => state.preferences.simulationSeed);
 export const useSidebarCollapsed = () => useQuickPlanStore((state) => state.preferences.sidebarCollapsed);
-export const useSimulationMode = () => useQuickPlanStore((state) => state.preferences.simulationMode);
+export const useSimulationSettings = () => useQuickPlanStore((state) => state.preferences.simulationSettings);
+export const useSimulationMode = () => useQuickPlanStore((state) => state.preferences.simulationSettings.simulationMode);
 export const useMonteCarloSortMode = () => useQuickPlanStore((state) => state.preferences.monteCarloSortMode);
 
 /**

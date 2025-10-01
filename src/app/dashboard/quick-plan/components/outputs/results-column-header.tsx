@@ -62,7 +62,7 @@ export default function ResultsColumnHeader() {
       />
 
       <Drawer open={simulationSettingsOpen} setOpen={setSimulationSettingsOpen} title={simulationSettingsTitleComponent}>
-        <SimulationSettingsDrawer />
+        <SimulationSettingsDrawer setOpen={setSimulationSettingsOpen} />
       </Drawer>
     </>
   );
