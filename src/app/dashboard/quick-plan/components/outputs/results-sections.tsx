@@ -47,7 +47,7 @@ export default function ResultsSections() {
                     <a className="group">
                       <div className="flex items-start">
                         <div aria-hidden="true" className="relative flex size-5 shrink-0 items-center justify-center">
-                          <div className="size-2 rounded-full bg-gray-300 group-hover:bg-gray-400 dark:bg-white/15 dark:group-hover:bg-white/25" />
+                          <div className="size-2 rounded-full bg-stone-300 group-hover:bg-stone-400 dark:bg-white/25 dark:group-hover:bg-white/50" />
                         </div>
                         <p className="text-muted-foreground group-hover:text-foreground ml-3 text-sm font-medium">{step.name}</p>
                         <step.icon className="ml-3 size-5 shrink-0 text-rose-600 group-hover:text-rose-800 dark:text-rose-400 dark:group-hover:text-rose-300" />
