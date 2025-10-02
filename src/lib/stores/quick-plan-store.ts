@@ -126,7 +126,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
   preferences: {
     dataStorage: 'localStorage',
     showReferenceLines: true,
-    simulationSeed: Math.floor(Math.random() * 1000),
+    simulationSeed: 9521,
     sidebarCollapsed: false,
     simulationSettings: { simulationMode: 'historicalReturns' },
     monteCarloSortMode: 'finalPortfolioValue',
