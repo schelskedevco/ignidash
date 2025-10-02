@@ -8,7 +8,7 @@ import MultiSimulationResults from './results-pages/multi-simulation-results';
 
 interface Step {
   name: string;
-  status: 'complete' | 'current' | 'upcoming';
+  status: 'complete' | 'upcoming';
 }
 
 export default function ResultsSections() {
@@ -43,14 +43,6 @@ export default function ResultsSections() {
                           {step.name}
                         </span>
                       </span>
-                    </a>
-                  ) : step.status === 'current' ? (
-                    <a aria-current="step" className="flex items-start">
-                      <span aria-hidden="true" className="relative flex size-5 shrink-0 items-center justify-center">
-                        <span className="absolute size-4 rounded-full bg-rose-200 dark:bg-rose-900" />
-                        <span className="relative block size-2 rounded-full bg-rose-600 dark:bg-rose-400" />
-                      </span>
-                      <span className="ml-3 text-sm font-medium text-rose-600 dark:text-rose-400">{step.name}</span>
                     </a>
                   ) : (
                     <a className="group">
