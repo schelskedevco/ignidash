@@ -431,7 +431,7 @@ export const useMultiSimulationResult = (
   tableData: MultiSimulationTableRow[] | undefined;
   yearlyTableData: YearlyAggregateTableRow[] | undefined;
   isLoading: boolean;
-  progressPercent: number;
+  completedSimulations: number;
 } => {
   const inputs = useQuickPlanStore((state) => state.inputs);
   const simulationSeed = useSimulationSeed();
@@ -468,7 +468,7 @@ export const useMultiSimulationResult = (
     prevHandleRef.current = handle;
   }, [handle]);
 
-  return { analysis, tableData, yearlyTableData, isLoading, progressPercent: Math.round((completedSimulations / numSimulations) * 100) };
+  return { analysis, tableData, yearlyTableData, isLoading, completedSimulations };
 };
 
 export const useKeyMetrics = (simulationResult: SimulationResult | null | undefined): KeyMetrics | null => {
