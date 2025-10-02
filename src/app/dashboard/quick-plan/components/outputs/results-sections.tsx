@@ -14,9 +14,9 @@ export default function ResultsSections() {
 
   const steps = [
     { name: 'Set up your timeline', icon: HourglassIcon, status: timelineIsReady ? 'complete' : 'upcoming' },
-    { name: 'Add at least one account', icon: LandmarkIcon, status: accountsAreReady ? 'complete' : 'upcoming' },
     { name: 'Add at least one income', icon: BanknoteArrowUpIcon, status: incomesAreReady ? 'complete' : 'upcoming' },
     { name: 'Add at least one expense', icon: BanknoteArrowDownIcon, status: expensesAreReady ? 'complete' : 'upcoming' },
+    { name: 'Add at least one account', icon: LandmarkIcon, status: accountsAreReady ? 'complete' : 'upcoming' },
   ];
 
   if (!(timelineIsReady && accountsAreReady && incomesAreReady && expensesAreReady)) {
