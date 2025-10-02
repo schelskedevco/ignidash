@@ -39,9 +39,7 @@ export default function ResultsSections() {
                             className="size-full text-rose-600 group-hover:text-rose-800 dark:text-rose-400 dark:group-hover:text-rose-300"
                           />
                         </span>
-                        <span className="ml-3 text-sm font-medium text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white">
-                          {step.name}
-                        </span>
+                        <span className="text-muted-foreground group-hover:text-foreground ml-3 text-sm font-medium">{step.name}</span>
                         <step.icon className="ml-3 size-5 shrink-0 text-rose-600 group-hover:text-rose-800 dark:text-rose-400 dark:group-hover:text-rose-300" />
                       </span>
                     </a>
@@ -51,9 +49,7 @@ export default function ResultsSections() {
                         <div aria-hidden="true" className="relative flex size-5 shrink-0 items-center justify-center">
                           <div className="size-2 rounded-full bg-gray-300 group-hover:bg-gray-400 dark:bg-white/15 dark:group-hover:bg-white/25" />
                         </div>
-                        <p className="ml-3 text-sm font-medium text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white">
-                          {step.name}
-                        </p>
+                        <p className="text-muted-foreground group-hover:text-foreground ml-3 text-sm font-medium">{step.name}</p>
                         <step.icon className="ml-3 size-5 shrink-0 text-rose-600 group-hover:text-rose-800 dark:text-rose-400 dark:group-hover:text-rose-300" />
                       </div>
                     </a>
