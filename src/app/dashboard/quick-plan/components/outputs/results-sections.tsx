@@ -42,7 +42,7 @@ export default function ResultsSections() {
                         <span className="ml-3 text-sm font-medium text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white">
                           {step.name}
                         </span>
-                        <step.icon className="text-primary ml-3 size-5 shrink-0" />
+                        <step.icon className="ml-3 size-5 shrink-0 text-rose-600 group-hover:text-rose-800 dark:text-rose-400 dark:group-hover:text-rose-300" />
                       </span>
                     </a>
                   ) : (
@@ -54,7 +54,7 @@ export default function ResultsSections() {
                         <p className="ml-3 text-sm font-medium text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white">
                           {step.name}
                         </p>
-                        <step.icon className="text-primary ml-3 size-5 shrink-0" />
+                        <step.icon className="ml-3 size-5 shrink-0 text-rose-600 group-hover:text-rose-800 dark:text-rose-400 dark:group-hover:text-rose-300" />
                       </div>
                     </a>
                   )}
