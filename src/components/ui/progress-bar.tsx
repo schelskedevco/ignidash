@@ -15,7 +15,6 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ progressPercent }: ProgressBarProps) {
-  console.log('ProgressBar render with progressPercent:', progressPercent);
   const getStepStatus = (stepPercent: number) => {
     if (progressPercent >= stepPercent) {
       return 'complete';
