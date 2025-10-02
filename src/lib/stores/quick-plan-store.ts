@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useRef, useEffect } from 'react';
+import * as Comlink from 'comlink';
+import { useMemo, useRef, useEffect, useState } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -430,6 +431,7 @@ export const useMultiSimulationResult = (
   tableData: MultiSimulationTableRow[] | undefined;
   yearlyTableData: YearlyAggregateTableRow[] | undefined;
   isLoading: boolean;
+  progressPercent: number;
 } => {
   const inputs = useQuickPlanStore((state) => state.inputs);
   const simulationSeed = useSimulationSeed();
@@ -437,9 +439,19 @@ export const useMultiSimulationResult = (
 
   const worker = getSimulationWorker();
 
+  const numSimulations = 1000;
+  const [completedSimulations, setCompletedSimulations] = useState(0);
+
   const { data: handleData, isLoading } = useSWR(
     ['simulationHandle', inputs, simulationSeed, simulationMode],
-    async () => worker.runSimulation(inputs, simulationSeed, 1000, simulationMode),
+    async () =>
+      worker.runSimulation(
+        inputs,
+        simulationSeed,
+        numSimulations,
+        simulationMode,
+        Comlink.proxy((completed: number) => setCompletedSimulations(completed))
+      ),
     { revalidateOnFocus: false }
   );
 
@@ -456,7 +468,7 @@ export const useMultiSimulationResult = (
     prevHandleRef.current = handle;
   }, [handle]);
 
-  return { analysis, tableData, yearlyTableData, isLoading };
+  return { analysis, tableData, yearlyTableData, isLoading, progressPercent: Math.round((completedSimulations / numSimulations) * 100) };
 };
 
 export const useKeyMetrics = (simulationResult: SimulationResult | null | undefined): KeyMetrics | null => {

@@ -27,7 +27,8 @@ const simulationAPI = {
     inputs: QuickPlanInputs,
     baseSeed: number,
     numSimulations: number,
-    simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns'
+    simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns',
+    onProgress?: (completed: number) => void
   ): Promise<{ handle: string }> {
     const handle = uuidv4();
 
@@ -35,12 +36,12 @@ const simulationAPI = {
     switch (simulationMode) {
       case 'monteCarloStochasticReturns': {
         const engine = new MonteCarloSimulationEngine(inputs, baseSeed);
-        res = engine.runMonteCarloSimulation(numSimulations);
+        res = engine.runMonteCarloSimulation(numSimulations, onProgress);
         break;
       }
       case 'monteCarloHistoricalReturns': {
         const engine = new LcgHistoricalBacktestSimulationEngine(inputs, baseSeed);
-        res = engine.runLcgHistoricalBacktest(numSimulations);
+        res = engine.runLcgHistoricalBacktest(numSimulations, onProgress);
         break;
       }
     }
