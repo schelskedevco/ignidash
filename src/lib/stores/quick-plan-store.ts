@@ -65,8 +65,12 @@ export type MonteCarloSortMode =
   | 'averageStockReturn'
   | 'earlyRetirementStockReturn';
 
+export type SimulationStatus = 'none' | 'loading' | 'loaded';
+
 interface QuickPlanState {
   inputs: QuickPlanInputs;
+
+  simulationStatus: SimulationStatus;
 
   preferences: {
     dataStorage: 'localStorage' | 'none';
@@ -101,6 +105,9 @@ interface QuickPlanState {
     deleteContributionRule: (id: string) => void;
     updateBaseContributionRule: (data: BaseContributionInputs) => void;
 
+    /* Simulation Status */
+    updateSimulationStatus: (status: SimulationStatus) => void;
+
     /* Preferences */
     updateDataStoragePreference: (value: QuickPlanState['preferences']['dataStorage']) => void;
     updateShowReferenceLines: (value: boolean) => void;
@@ -123,6 +130,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
     baseContributionRule: { type: 'save' },
     marketAssumptions: { stockReturn: 10, bondReturn: 5, cashReturn: 3, inflationRate: 3 },
   },
+  simulationStatus: 'none',
   preferences: {
     dataStorage: 'localStorage',
     showReferenceLines: true,
@@ -231,6 +239,10 @@ export const useQuickPlanStore = create<QuickPlanState>()(
             set((state) => {
               state.inputs.baseContributionRule = { ...data };
             }),
+          updateSimulationStatus: (status) =>
+            set((state) => {
+              state.simulationStatus = status;
+            }),
           updateDataStoragePreference: (value) =>
             set((state) => {
               state.preferences.dataStorage = value as 'localStorage' | 'none';
@@ -326,8 +338,9 @@ export const useInvestmentData = (id: string | null) =>
 export const useContributionRulesData = () => useQuickPlanStore((state) => state.inputs.contributionRules);
 export const useContributionRuleData = (id: string | null) =>
   useQuickPlanStore((state) => (id !== null ? state.inputs.contributionRules[id] : null));
-
 export const useBaseContributionRuleData = () => useQuickPlanStore((state) => state.inputs.baseContributionRule);
+
+export const useSimulationStatus = () => useQuickPlanStore((state) => state.simulationStatus);
 
 /**
  * Action selectors
@@ -346,6 +359,7 @@ export const useReorderContributionRules = () => useQuickPlanStore((state) => st
 export const useDeleteContributionRule = () => useQuickPlanStore((state) => state.actions.deleteContributionRule);
 export const useUpdateBaseContributionRule = () => useQuickPlanStore((state) => state.actions.updateBaseContributionRule);
 
+export const useUpdateSimulationStatus = () => useQuickPlanStore((state) => state.actions.updateSimulationStatus);
 export const useUpdateDataStoragePreference = () => useQuickPlanStore((state) => state.actions.updateDataStoragePreference);
 export const useUpdateShowReferenceLines = () => useQuickPlanStore((state) => state.actions.updateShowReferenceLines);
 export const useUpdateSimulationSeed = () => useQuickPlanStore((state) => state.actions.updateSimulationSeed);
@@ -463,6 +477,17 @@ export const useMultiSimulationResult = (
     async () => worker.getDerivedMultiSimulationData(handle!, sortMode, category),
     { revalidateOnFocus: false, keepPreviousData: prevHandleRef.current === handle }
   );
+
+  const updateSimulationStatus = useUpdateSimulationStatus();
+  useEffect(() => {
+    if (isLoading) {
+      updateSimulationStatus('loading');
+    } else if (!isLoading && handle) {
+      updateSimulationStatus('loaded');
+    } else if (!isLoading && !handle) {
+      updateSimulationStatus('none');
+    }
+  }, [isLoading, handle, updateSimulationStatus]);
 
   useEffect(() => {
     prevHandleRef.current = handle;
