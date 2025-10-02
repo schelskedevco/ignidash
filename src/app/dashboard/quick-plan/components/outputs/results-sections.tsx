@@ -28,7 +28,7 @@ export default function ResultsSections() {
       <div className="flex h-[calc(100vh-7.375rem)] flex-col items-center justify-center gap-8 lg:h-[calc(100vh-4.3125rem)]">
         <div className="px-4 py-12 sm:px-6 lg:px-8">
           <Subheading className="mb-4" level={3}>
-            Prepare Your Simulation
+            Prepare Your Simulation:
           </Subheading>
           <nav aria-label="Progress" className="flex justify-center">
             <ol role="list" className="space-y-6">
