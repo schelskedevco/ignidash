@@ -8,9 +8,7 @@ export function useRegenSimulation() {
   const isDisabled = simulationStatus === 'loading';
 
   const handleClick = () => {
-    if (isDisabled) return;
-
-    updateSimulationSeed();
+    if (!isDisabled) updateSimulationSeed();
   };
 
   return {
