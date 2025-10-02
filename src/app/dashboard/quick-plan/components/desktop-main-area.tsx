@@ -3,7 +3,7 @@ import ResultsColumnHeader from './outputs/results-column-header';
 
 export default function DesktopMainArea() {
   return (
-    <div className="hidden h-full xl:block">
+    <div className="hidden xl:block">
       <ResultsColumnHeader />
       <div className="flex h-full flex-col pt-[4.3125rem]">
         <ResultsSections />

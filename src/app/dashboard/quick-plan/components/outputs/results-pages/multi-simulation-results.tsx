@@ -77,7 +77,7 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
     const progressPercent = (roundedSimulations / 1000) * 100;
 
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-8">
+      <div className="flex h-[calc(100vh-7.375rem)] flex-col items-center justify-center gap-8 lg:h-[calc(100vh-4.3125rem)]">
         <p className="text-muted-foreground">
           Completed <strong>{roundedSimulations}</strong> / <strong>1000</strong> simulations...
         </p>
