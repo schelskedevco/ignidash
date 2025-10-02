@@ -10,7 +10,7 @@ const steps = [
   { name: 'Step 5', href: '#', status: 'upcoming' },
 ];
 
-export default function Example() {
+export default function ProgressBar() {
   return (
     <nav aria-label="Progress">
       <ol role="list" className="flex items-center">

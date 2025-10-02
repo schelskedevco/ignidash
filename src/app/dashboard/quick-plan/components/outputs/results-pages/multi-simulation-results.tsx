@@ -12,6 +12,7 @@ import {
 import SectionContainer from '@/components/ui/section-container';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { useResultsState } from '@/hooks/use-results-state';
+import ProgressBar from '@/components/ui/progress-bar';
 
 import SimulationMetrics from '../simulation-metrics';
 import MultiSimulationMainResults from './multi-simulation-main-results';
@@ -73,8 +74,9 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
 
   if (!analysis || !keyMetrics || !tableData || !yearlyTableData || !simulation || isLoading) {
     return (
-      <div className="text-muted-foreground flex h-full items-center justify-center">
-        <p>Completed {Math.floor(completedSimulations / 10) * 10} / 1000 simulations...</p>
+      <div className="flex h-full flex-col items-center justify-center gap-4">
+        <ProgressBar />
+        <p className="text-muted-foreground">Completed {Math.floor(completedSimulations / 10) * 10} / 1000 simulations...</p>
       </div>
     );
   }
