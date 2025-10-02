@@ -689,5 +689,10 @@ export const useIsCalculationReady = () => {
   const incomes = useIncomesData();
   const expenses = useExpensesData();
 
-  return timeline !== undefined && Object.keys(accounts).length > 0 && Object.keys(incomes).length > 0 && Object.keys(expenses).length > 0;
+  return {
+    timelineIsReady: timeline !== undefined,
+    accountsAreReady: Object.keys(accounts).length > 0,
+    incomesAreReady: Object.keys(incomes).length > 0,
+    expensesAreReady: Object.keys(expenses).length > 0,
+  };
 };
