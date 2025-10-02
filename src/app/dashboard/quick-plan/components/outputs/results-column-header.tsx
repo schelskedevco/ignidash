@@ -12,7 +12,7 @@ import { useSimulationSeed, useSimulationMode } from '@/lib/stores/quick-plan-st
 import SimulationSettingsDrawer from './drawers/simulation-settings-drawer';
 
 export default function ResultsColumnHeader() {
-  const { icon, label, handleClick, className } = useRegenSimulation();
+  const { icon, label, handleClick, isDisabled, className } = useRegenSimulation();
   const [simulationSettingsOpen, setSimulationSettingsOpen] = useState(false);
 
   const simulationSettingsTitleComponent = (
@@ -55,7 +55,14 @@ export default function ResultsColumnHeader() {
               onClick={() => setSimulationSettingsOpen(true)}
               surfaceColor="emphasized"
             />
-            <IconButton icon={icon} label={label} onClick={handleClick} className={className} surfaceColor="emphasized" />
+            <IconButton
+              icon={icon}
+              label={label}
+              onClick={handleClick}
+              className={className}
+              surfaceColor="emphasized"
+              isDisabled={isDisabled}
+            />
           </div>
         }
         className="w-[calc(100%-42rem)] group-data-[state=collapsed]/sidebar:w-[calc(100%-28rem)]"

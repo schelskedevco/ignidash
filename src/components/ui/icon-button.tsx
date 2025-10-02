@@ -13,9 +13,18 @@ interface IconButtonProps {
   label: string;
   onClick?: () => void;
   surfaceColor?: SurfaceColor;
+  isDisabled?: boolean;
 }
 
-export default function IconButton({ className, icon: Icon, iconClassName, label, onClick, surfaceColor = 'default' }: IconButtonProps) {
+export default function IconButton({
+  className,
+  icon: Icon,
+  iconClassName,
+  label,
+  onClick,
+  surfaceColor = 'default',
+  isDisabled = false,
+}: IconButtonProps) {
   let hoverClass;
   switch (surfaceColor) {
     case 'default':
@@ -31,7 +40,10 @@ export default function IconButton({ className, icon: Icon, iconClassName, label
       type="button"
       aria-label={label}
       onClick={onClick}
-      className={cn(`ring-border focus-outline rounded-full p-2 transition-transform hover:ring ${hoverClass}`, className)}
+      disabled={isDisabled}
+      className={cn('ring-border focus-outline rounded-full p-2 transition-transform hover:ring', className, hoverClass, {
+        'cursor-not-allowed opacity-50': isDisabled,
+      })}
     >
       <Icon aria-hidden="true" className={cn('size-5', iconClassName)} />
     </button>
