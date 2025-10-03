@@ -28,13 +28,11 @@ export default function ResultsColumnHeader() {
   let title;
   switch (simulationMode) {
     case 'fixedReturns':
-      title = 'Fixed Results';
+      title = 'Results';
       break;
     case 'stochasticReturns':
-      title = `Stochastic Results | Seed #${seed}`;
-      break;
     case 'historicalReturns':
-      title = `Historical Results | Seed #${seed}`;
+      title = `Results | Seed #${seed}`;
       break;
     case 'monteCarloStochasticReturns':
     case 'monteCarloHistoricalReturns':
