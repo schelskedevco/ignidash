@@ -44,7 +44,7 @@ function DisclosureSectionContent({
 
   return (
     <div className="contents">
-      <div className="border-border -mx-2 border-b sm:-mx-3 lg:-mx-4">
+      <div className="border-border/50 -mx-2 border-b sm:-mx-3 lg:-mx-4">
         <DisclosureButton
           ref={disclosureButtonRef}
           onClick={() => {
@@ -71,7 +71,7 @@ function DisclosureSectionContent({
           </div>
         </DisclosureButton>
       </div>
-      <DisclosurePanel className="border-border -mx-2 flex flex-1 flex-col justify-center border-b sm:-mx-3 lg:-mx-4">
+      <DisclosurePanel className="border-border/50 -mx-2 flex flex-1 flex-col justify-center border-b sm:-mx-3 lg:-mx-4">
         <div className={cn('flex h-full flex-col px-4 py-5 sm:py-6', { 'justify-center': centerPanelContent })}>{children}</div>
       </DisclosurePanel>
     </div>

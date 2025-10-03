@@ -10,7 +10,7 @@ export function DescriptionTerm({ className, ...props }: React.ComponentPropsWit
   return (
     <dt
       {...props}
-      className={clsx(className, 'border-border col-start-1 border-t pt-3 text-stone-500 first:border-none sm:py-3 dark:text-stone-400')}
+      className={clsx(className, 'border-border/50 col-start-1 border-t pt-3 text-stone-500 first:border-none sm:py-3 dark:text-stone-400')}
     />
   );
 }
@@ -19,7 +19,7 @@ export function DescriptionDetails({ className, ...props }: React.ComponentProps
   return (
     <dd
       {...props}
-      className={clsx(className, 'sm:border-border pt-1 pb-3 text-stone-950 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-white')}
+      className={clsx(className, 'sm:border-border/50 pt-1 pb-3 text-stone-950 sm:border-t sm:py-3 sm:nth-2:border-none dark:text-white')}
     />
   );
 }
