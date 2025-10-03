@@ -38,8 +38,8 @@ export default function Drawer({ open, setOpen, title, children }: DrawerProps) 
                   </button>
                 </div>
               </TransitionChild>
-              <div className="border-border/50 flex h-full flex-col sm:border-l">
-                <div className="bg-emphasized-background border-border/50 flex items-center justify-between border-b px-4 py-6 sm:px-5">
+              <div className="border-border/50 flex h-full flex-col border-dashed sm:border-l">
+                <div className="bg-emphasized-background border-border/50 flex items-center justify-between border-b border-dashed px-4 py-6 sm:px-5">
                   <DialogTitle className="text-xl font-semibold tracking-tight">{title}</DialogTitle>
                   <button
                     type="button"
