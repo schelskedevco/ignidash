@@ -2,7 +2,6 @@ import Image from 'next/image';
 
 import type { NavigationItem } from '@/lib/navigation';
 import { SidebarModeToggle } from '@/components/mode-toggle';
-import { Divider } from '@/components/catalyst/divider';
 
 import SidebarLink from './sidebar-link';
 import SidebarBrand from './sidebar-brand';
@@ -33,12 +32,24 @@ export function DesktopSidebar({ navigation, secondaryNavigation }: DesktopSideb
                     </SidebarLink>
                   </li>
                 ))}
-                <Divider />
               </ul>
             </li>
-            <li className="mt-auto mb-1">
+            <li className="my-3 flex-1">
+              <div
+                className="bg-background border-border h-full border"
+                style={{
+                  backgroundImage: `repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 10px,
+                    var(--color-emphasized-background) 10px,
+                    var(--color-emphasized-background) 11px
+                  )`,
+                }}
+              ></div>
+            </li>
+            <li className="mb-1">
               <ul role="list" className="space-y-1.5">
-                <Divider />
                 <li key="dark-mode">
                   <SidebarModeToggle />
                 </li>
