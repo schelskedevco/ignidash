@@ -54,7 +54,7 @@ export default function SimulationCategorySelector({
             onClick={() => setCurrentCategory(category)}
             type="button"
             className={cn(
-              'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border relative inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold focus:z-10',
+              'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border/50 relative inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold focus:z-10',
               { 'text-foreground bg-emphasized-background': currentCategory === category }
             )}
           >
@@ -63,7 +63,7 @@ export default function SimulationCategorySelector({
         ))}
       </div>
       {setCurrentPercentile && currentPercentile && (
-        <div className="border-border flex shrink-0 border-l sm:gap-1.5 sm:px-2">
+        <div className="border-border/50 flex shrink-0 border-l sm:gap-1.5 sm:px-2">
           <Dropdown>
             <DropdownButton plain aria-label="Open sort mode options" disabled={!!selectedSeed}>
               <ArrowUpDownIcon data-slot="icon" />

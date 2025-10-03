@@ -12,7 +12,7 @@ interface MobileSidebarContentProps {
 
 export default function MobileSidebarContent({ navigation, secondaryNavigation, onClose }: MobileSidebarContentProps) {
   return (
-    <div className="bg-emphasized-background border-border flex grow flex-col border-r">
+    <div className="bg-emphasized-background border-border/50 flex grow flex-col border-r">
       <div className="px-3">
         <SidebarBrand onClose={onClose} />
       </div>
@@ -34,7 +34,7 @@ export default function MobileSidebarContent({ navigation, secondaryNavigation, 
           </li>
           <li className="my-3 flex-1">
             <div
-              className="bg-background border-border h-full border"
+              className="bg-background border-border/50 h-full border"
               style={{
                 backgroundImage: `repeating-linear-gradient(
                   45deg,

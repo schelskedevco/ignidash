@@ -9,7 +9,7 @@ interface SidebarBrandProps {
 
 export default function SidebarBrand({ onClose }: SidebarBrandProps) {
   return (
-    <div className="border-border from-emphasized-background -mx-3 flex items-center justify-between gap-2 border-b bg-gradient-to-r to-rose-500/25 py-4 shadow-lg group-data-[state=collapsed]/sidebar:py-[0.875rem] dark:shadow-black/30">
+    <div className="border-border/50 from-emphasized-background -mx-3 flex items-center justify-between gap-2 border-b bg-gradient-to-r to-rose-500/25 py-4 shadow-lg group-data-[state=collapsed]/sidebar:py-[0.875rem] dark:shadow-black/30">
       <div className="hidden w-full items-center justify-center group-data-[state=collapsed]/sidebar:flex">
         <SidebarToggle />
       </div>

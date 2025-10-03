@@ -118,7 +118,7 @@ export default function Table<T extends Record<string, unknown>>({
               <div className="inline-block min-w-full py-2 align-middle">
                 <table
                   ref={tableRef}
-                  className="divide-border bg-background relative min-w-full divide-y"
+                  className="divide-border/50 bg-background relative min-w-full divide-y"
                   onKeyDown={(e: React.KeyboardEvent) => {
                     if (e.key === 'Escape' && onEscPressed) {
                       e.preventDefault();
@@ -174,7 +174,7 @@ export default function Table<T extends Record<string, unknown>>({
                             key={String(col.key)}
                             scope="col"
                             className={cn(
-                              'group border-border border-l px-3 py-3.5',
+                              'group border-border/50 border-l px-3 py-3.5',
                               hoveredColumn === col.key && 'bg-emphasized-background/50'
                             )}
                             onMouseEnter={() => setHoveredColumn(col.key)}
@@ -187,7 +187,7 @@ export default function Table<T extends Record<string, unknown>>({
                       })}
                     </tr>
                   </thead>
-                  <tbody className="divide-border/50 border-border divide-y border-b">
+                  <tbody className="divide-border/50 border-border/50 divide-y border-b">
                     {paginatedData.map((row) => (
                       <tr
                         key={String(row[keyField])}
@@ -234,7 +234,7 @@ export default function Table<T extends Record<string, unknown>>({
                             <td
                               key={String(col.key)}
                               className={cn(
-                                'text-muted-foreground border-border border-l px-3 py-4 text-sm whitespace-nowrap',
+                                'text-muted-foreground border-border/50 border-l px-3 py-4 text-sm whitespace-nowrap',
                                 hoveredColumn === col.key && 'bg-emphasized-background/50'
                               )}
                             >

@@ -14,7 +14,7 @@ interface DesktopSidebarProps {
 export function DesktopSidebar({ navigation, secondaryNavigation }: DesktopSidebarProps) {
   return (
     <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col group-data-[state=collapsed]/sidebar:lg:w-16">
-      <div className="bg-emphasized-background border-border flex grow flex-col border-r">
+      <div className="bg-emphasized-background border-border/50 flex grow flex-col border-r">
         <div className="px-3">
           <SidebarBrand />
         </div>
@@ -36,7 +36,7 @@ export function DesktopSidebar({ navigation, secondaryNavigation }: DesktopSideb
             </li>
             <li className="my-3 flex-1">
               <div
-                className="bg-background border-border h-full border"
+                className="bg-background border-border/50 h-full border"
                 style={{
                   backgroundImage: `repeating-linear-gradient(
                     45deg,
@@ -68,7 +68,7 @@ export function DesktopSidebar({ navigation, secondaryNavigation }: DesktopSideb
             <li className="-mx-3">
               <a
                 href="#"
-                className="hover:bg-background border-border focus-visible:ring-primary flex items-center border-t py-3 pl-4 text-base/6 font-semibold focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
+                className="hover:bg-background border-border/50 focus-visible:ring-primary flex items-center border-t py-3 pl-4 text-base/6 font-semibold focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
               >
                 <Image
                   alt=""

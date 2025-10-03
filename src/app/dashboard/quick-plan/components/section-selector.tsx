@@ -68,9 +68,9 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
 
   return (
     <>
-      <div className="border-border bg-emphasized-background fixed top-[4.0625rem] z-30 -mx-2 w-full border-b py-2 shadow-lg sm:-mx-3 lg:top-0 lg:-mx-4 lg:w-[calc(100%-18rem)] lg:py-4 lg:group-data-[state=collapsed]/sidebar:w-[calc(100%-4rem)] dark:shadow-black/30">
+      <div className="border-border/50 bg-emphasized-background fixed top-[4.0625rem] z-30 -mx-2 w-full border-b py-2 shadow-lg sm:-mx-3 lg:top-0 lg:-mx-4 lg:w-[calc(100%-18rem)] lg:py-4 lg:group-data-[state=collapsed]/sidebar:w-[calc(100%-4rem)] dark:shadow-black/30">
         <div className="mr-4 flex items-stretch justify-between sm:mr-6 lg:mr-8">
-          <nav aria-label="Tabs" className="divide-border border-border -my-2 flex divide-x border-r lg:-my-4">
+          <nav aria-label="Tabs" className="divide-border/50 border-border/50 -my-2 flex divide-x border-r lg:-my-4">
             {tabs.map((tab) => (
               <button
                 key={tab.name}

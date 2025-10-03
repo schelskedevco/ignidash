@@ -233,7 +233,7 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
                   </Select>
                 </Field>
               </div>
-              <Disclosure as="div" className="border-border border-t pt-4">
+              <Disclosure as="div" className="border-border/50 border-t pt-4">
                 {({ open, close }) => (
                   <>
                     <DisclosureButton
@@ -248,7 +248,7 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
                           toggleDisclosure({ open, close, key: 'timeframe' });
                         }
                       }}
-                      className="group data-open:border-border focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
+                      className="group data-open:border-border/50 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
                     >
                       <div className="flex items-center gap-2">
                         <CalendarIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
@@ -447,7 +447,7 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
                 )}
               </Disclosure>
               {frequency !== 'oneTime' && (
-                <Disclosure as="div" className="border-border border-t pt-4">
+                <Disclosure as="div" className="border-border/50 border-t pt-4">
                   {({ open, close }) => (
                     <>
                       <DisclosureButton
@@ -462,7 +462,7 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
                             toggleDisclosure({ open, close, key: 'rateOfChange' });
                           }
                         }}
-                        className="group data-open:border-border focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
+                        className="group data-open:border-border/50 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
                       >
                         <div className="flex items-center gap-2">
                           <TrendingUpIcon className="text-primary size-5 shrink-0" aria-hidden="true" />

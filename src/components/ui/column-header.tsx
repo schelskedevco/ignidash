@@ -13,7 +13,7 @@ export default function ColumnHeader({ title, icon: Icon, iconButton, className 
   return (
     <div
       className={cn(
-        'border-border bg-emphasized-background fixed top-0 z-10 -mx-2 border-b py-4 shadow-lg sm:-mx-3 lg:-mx-4 dark:shadow-black/30',
+        'border-border/50 bg-emphasized-background fixed top-0 z-10 -mx-2 border-b py-4 shadow-lg sm:-mx-3 lg:-mx-4 dark:shadow-black/30',
         className
       )}
     >

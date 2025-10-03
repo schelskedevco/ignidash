@@ -49,7 +49,7 @@ export default function DisclosureSectionDataItem({
         {showDragHandle && <GripVerticalIcon className="size-5 shrink-0" />}
         {leftAddOnCharacter}
       </div>
-      <div className="bg-emphasized-background border-border flex flex-1 items-center justify-between truncate border-t border-r border-b">
+      <div className="bg-emphasized-background border-border/50 flex flex-1 items-center justify-between truncate border-t border-r border-b">
         <div className="flex-1 truncate px-4 py-2 text-sm">
           <span className="font-medium text-stone-900 hover:text-stone-600 dark:text-white dark:hover:text-stone-200">{name}</span>
           <p className="text-muted-foreground">{desc}</p>
