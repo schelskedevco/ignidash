@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 
 import SidebarToggle from './sidebar-toggle';
@@ -16,7 +16,7 @@ export default function SidebarBrand({ onClose }: SidebarBrandProps) {
       <div className="mx-3 flex w-full items-center justify-between group-data-[state=collapsed]/sidebar:hidden">
         <Link href="/dashboard" className="focus-outline flex items-center" onClick={onClose}>
           <div className="px-1">
-            <Image src="/icons8-investment-portfolio-80.png" alt="Ignidash logo" width={32} height={32} className="shrink-0" />
+            <FireIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
           </div>
           <span className="relative ml-1 text-2xl font-bold tracking-tight">
             Ignidash
