@@ -72,4 +72,12 @@ with open(OUTPUT_TS, "w") as f:
         )
     f.write("];\n")
 
+# Compute summary stats
+stock_mean = annual["DividendYield"].mean()
+stock_std = annual["DividendYield"].std(ddof=1)
+bond_mean = annual["BondYield"].mean()
+bond_std = annual["BondYield"].std(ddof=1)
+
 print(f"✅ Wrote {len(annual)} years of data to {OUTPUT_TS}")
+print(f"📊 Stock Yield: mean={stock_mean:.4f}, std={stock_std:.4f}")
+print(f"📊 Bond Yield: mean={bond_mean:.4f}, std={bond_std:.4f}")
