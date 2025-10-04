@@ -42,8 +42,9 @@ annual = annual[["Year", "DividendYield", "BondYield"]]
 with open(OUTPUT_TS, "w") as f:
     f.write("export const shillerHistoricalData: ShillerHistoricalYearData[] = [\n")
     for _, row in annual.iterrows():
+        year = int(row["Year"])  # ensure integer, no .0
         f.write(
-            f"  {{ year: {row['Year']}, stockYield: {row['DividendYield']:.4f}, bondYield: {row['BondYield']:.4f} }},\n"
+            f"  {{ year: {year}, stockYield: {row['DividendYield']:.4f}, bondYield: {row['BondYield']:.4f} }},\n"
         )
     f.write("];\n")
 
