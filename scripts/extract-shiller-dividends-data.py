@@ -23,8 +23,8 @@ df["Month"] = df["Date"].str.split(".").str[1].fillna("0").astype(int)
 for col in ["S&P Comp. P", "Dividend D", "Long Interest Rate GS10"]:
     df[col] = pd.to_numeric(df[col], errors="coerce")
 
-# Compute dividend yield = (12 * monthly dividend) / price
-df["DividendYield"] = (df["Dividend D"] * 12) / df["S&P Comp. P"]
+# Compute dividend yield = dividend / price
+df["DividendYield"] = df["Dividend D"] / df["S&P Comp. P"]
 
 # Bond yield = GS10 / 100 (convert % to fraction)
 df["BondYield"] = df["Long Interest Rate GS10"] / 100.0
