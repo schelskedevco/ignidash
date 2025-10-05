@@ -156,7 +156,6 @@ export class StochasticReturnsProvider implements ReturnsProvider {
 
   /**
    * Generate return from log-normal distribution
-   * Used for equity returns to prevent negative values and model realistic fat tails
    *
    * @param expectedReturn - Expected return rate as a decimal (e.g., 0.1 for 10%)
    * @param volatility - Annual volatility as a decimal (e.g., 0.2 for 20%)
@@ -186,9 +185,6 @@ export class StochasticReturnsProvider implements ReturnsProvider {
    * @returns Log-normal distributed yield as a decimal (always >= 0)
    */
   private generateLogNormalYield(expectedYield: number, volatility: number, z: number): number {
-    // For yields, we model the level itself as log-normal, not the change
-    // The yield Y is always positive (unlike returns which can be negative)
-
     const mean = expectedYield;
     const variance = volatility * volatility;
 
