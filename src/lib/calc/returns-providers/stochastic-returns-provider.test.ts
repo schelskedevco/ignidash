@@ -80,6 +80,79 @@ describe('StochasticReturnsProvider', () => {
     });
   });
 
+  it('should produce log-normal distribution with correct statistical properties', () => {
+    const provider = new StochasticReturnsProvider(defaultState.inputs, 54321);
+    const generateLogNormalReturn = StochasticReturnsProvider.prototype['generateLogNormalReturn'];
+
+    const expectedReturn = 0.1; // 10%
+    const volatility = 0.18; // 18%
+    const numSamples = 10000;
+
+    const returns: number[] = [];
+    const logReturns: number[] = [];
+
+    // Generate samples using Box-Muller for z-scores
+    for (let i = 0; i < numSamples; i++) {
+      const u1 = Math.random();
+      const u2 = Math.random();
+      const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+
+      const r = generateLogNormalReturn.call(provider, expectedReturn, volatility, z);
+      returns.push(r);
+      logReturns.push(Math.log(1 + r));
+    }
+
+    // Verify mean and std dev match inputs
+    const meanReturn = returns.reduce((sum, r) => sum + r, 0) / numSamples;
+    const variance = returns.reduce((sum, r) => sum + Math.pow(r - meanReturn, 2), 0) / numSamples;
+    const stdDev = Math.sqrt(variance);
+
+    expect(meanReturn).toBeCloseTo(expectedReturn, 2);
+    expect(stdDev).toBeCloseTo(volatility, 2);
+
+    // Verify all returns > -100%
+    expect(Math.min(...returns)).toBeGreaterThan(-1);
+
+    // Verify log-returns follow normal distribution
+    const meanLog = logReturns.reduce((sum, lr) => sum + lr, 0) / numSamples;
+    const logStdDev = Math.sqrt(logReturns.reduce((sum, lr) => sum + Math.pow(lr - meanLog, 2), 0) / numSamples);
+
+    const within1Sigma = logReturns.filter((lr) => Math.abs(lr - meanLog) <= logStdDev).length / numSamples;
+    expect(within1Sigma).toBeCloseTo(0.68, 1);
+
+    // Verify positive skewness (characteristic of log-normal)
+    const skewness = returns.reduce((sum, r) => sum + Math.pow((r - meanReturn) / stdDev, 3), 0) / numSamples;
+    expect(skewness).toBeGreaterThan(0);
+  });
+
+  it('should handle extreme parameter combinations correctly', () => {
+    const provider = new StochasticReturnsProvider(defaultState.inputs, 12345);
+    const generateLogNormalReturn = StochasticReturnsProvider.prototype['generateLogNormalReturn'];
+
+    // High volatility, low expected return (stress scenario)
+    const result1 = generateLogNormalReturn.call(provider, 0.02, 0.5, -2);
+    expect(result1).toBeGreaterThan(-1);
+    expect(isFinite(result1)).toBe(true);
+
+    // Negative expected return with volatility (bear market)
+    const result2 = generateLogNormalReturn.call(provider, -0.05, 0.3, 1);
+    expect(result2).toBeGreaterThan(-1);
+    expect(isFinite(result2)).toBe(true);
+
+    // Very high expected return (unlikely but possible input)
+    const result3 = generateLogNormalReturn.call(provider, 0.5, 0.4, 0);
+    expect(result3).toBeGreaterThan(-1);
+    expect(isFinite(result3)).toBe(true);
+
+    // Verify formula still works correctly with extreme inputs
+    const mean = 1 + 0.5;
+    const variance = 0.4 * 0.4;
+    const sigma = Math.sqrt(Math.log(1 + variance / (mean * mean)));
+    const mu = Math.log(mean) - 0.5 * sigma * sigma;
+    const expected = Math.exp(mu + sigma * 0) - 1;
+    expect(result3).toBeCloseTo(expected, 10);
+  });
+
   describe('getReturns integration', () => {
     it('should produce deterministic results with seeded random generation', () => {
       const provider1 = new StochasticReturnsProvider(defaultState.inputs, 999);
