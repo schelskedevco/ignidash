@@ -37,7 +37,7 @@ const _CORRELATION_MATRIX = [
   [0.01, -0.11, 0.38, 1.0, 0.39, -0.02], // Inflation
   [0.02, 0.2, 0.93, 0.39, 1.0, 0.01], // BondYield
   [-0.29, -0.06, -0.01, -0.02, 0.01, 1.0], // StockYield
-];
+]; // Since 1928
 
 const MODERN_CORRELATION_MATRIX = [
   // StockReturn, BondReturn, CashReturn, Inflation, BondYield, StockYield
@@ -47,7 +47,7 @@ const MODERN_CORRELATION_MATRIX = [
   [-0.02, -0.33, 0.31, 1.0, 0.26, 0.01], // Inflation
   [0.02, 0.04, 0.81, 0.26, 1.0, 0.36], // BondYield
   [-0.27, 0.23, 0.14, 0.01, 0.36, 1.0], // StockYield
-];
+]; // Since 1990
 
 /**
  * Cholesky decomposition of correlation matrix
