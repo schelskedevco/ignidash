@@ -18,5 +18,11 @@
   "tailwindCSS.experimental.classRegex": [
     ["clsx\\(([^)]*)\\)", "(?:'|\")([^']*)(?:'|\")"],
     ["cn\\(([^)]*)\\)", "(?:'|\")([^']*)(?:'|\")"]
-  ]
+  ],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.defaultInterpreterPath": "/usr/bin/python3",
+  "python-envs.defaultEnvManager": "ms-python.python:system",
+  "python-envs.pythonProjects": []
 }

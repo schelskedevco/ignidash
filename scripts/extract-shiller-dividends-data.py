@@ -16,8 +16,10 @@ import os
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(script_dir)
 
-INPUT_CSV = os.path.join(project_root, 'src/lib/calc/data/ie-dividends-data.csv')
-OUTPUT_TS = os.path.join(project_root, 'src/lib/calc/data/shiller-historical-yield-data.ts')
+INPUT_CSV = os.path.join(project_root, "src/lib/calc/data/ie-dividends-data.csv")
+OUTPUT_TS = os.path.join(
+    project_root, "src/lib/calc/data/shiller-historical-yield-data.ts"
+)
 
 # Load CSV
 df = pd.read_csv(INPUT_CSV)
@@ -46,7 +48,8 @@ df = df[["year", "stockYield", "bondYield"]]
 
 # Write TypeScript
 with open(OUTPUT_TS, "w") as f:
-    f.write("""/**
+    f.write(
+        """/**
  * Historical stock dividend yield and bond yield data (1928-present)
  *
  * Source: Robert Shiller's publicly available dataset
@@ -70,12 +73,15 @@ export interface ShillerHistoricalYearData {
 }
 
 export const shillerHistoricalData: ShillerHistoricalYearData[] = [
-""")
-    
+"""
+    )
+
     for _, row in df.iterrows():
-        f.write(f'  {{ year: {int(row["year"])}, stockYield: {row["stockYield"]:.4f}, '
-                f'bondYield: {row["bondYield"]:.4f} }},\n')
-    
+        f.write(
+            f'  {{ year: {int(row["year"])}, stockYield: {row["stockYield"]:.4f}, '
+            f'bondYield: {row["bondYield"]:.4f} }},\n'
+        )
+
     f.write("];\n")
 
 # Compute and display summary stats
@@ -87,7 +93,11 @@ print(f"Data range: {int(df['year'].min())} - {int(df['year'].max())}")
 print(f"Generated {OUTPUT_TS}")
 
 print(f"\nSample Statistics:")
-print(f"Stock Yield - Mean: {stock_yields.mean():.4f}, Std: {stock_yields.std(ddof=1):.4f}, "
-      f"Min: {stock_yields.min():.4f}, Max: {stock_yields.max():.4f}")
-print(f"Bond Yield  - Mean: {bond_yields.mean():.4f}, Std: {bond_yields.std(ddof=1):.4f}, "
-      f"Min: {bond_yields.min():.4f}, Max: {bond_yields.max():.4f}")
+print(
+    f"Stock Yield - Mean: {stock_yields.mean():.4f}, Std: {stock_yields.std(ddof=1):.4f}, "
+    f"Min: {stock_yields.min():.4f}, Max: {stock_yields.max():.4f}"
+)
+print(
+    f"Bond Yield  - Mean: {bond_yields.mean():.4f}, Std: {bond_yields.std(ddof=1):.4f}, "
+    f"Min: {bond_yields.min():.4f}, Max: {bond_yields.max():.4f}"
+)

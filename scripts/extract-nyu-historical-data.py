@@ -18,8 +18,8 @@ import os
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(script_dir)
 
-INPUT_CSV = os.path.join(project_root, 'src/lib/calc/data/nyu-historical-data.csv')
-OUTPUT_TS = os.path.join(project_root, 'src/lib/calc/data/nyu-historical-data.ts')
+INPUT_CSV = os.path.join(project_root, "src/lib/calc/data/nyu-historical-data.csv")
+OUTPUT_TS = os.path.join(project_root, "src/lib/calc/data/nyu-historical-data.ts")
 
 # Load CSV
 df = pd.read_csv(INPUT_CSV)
@@ -29,18 +29,24 @@ df = df.dropna(subset=[df.columns[0]])
 
 # Parse columns (assuming: Year, Inflation, Stock, ?, Cash, Bond)
 df.columns = df.columns.str.strip()
-df['year'] = df.iloc[:, 0].astype(int)
+df["year"] = df.iloc[:, 0].astype(int)
 
 # Convert percentage strings to decimals
-for i, col_name in [(1, 'inflationRate'), (2, 'stockReturn'), (4, 'cashReturn'), (5, 'bondReturn')]:
-    df[col_name] = df.iloc[:, i].str.rstrip('%').astype(float) / 100.0
+for i, col_name in [
+    (1, "inflationRate"),
+    (2, "stockReturn"),
+    (4, "cashReturn"),
+    (5, "bondReturn"),
+]:
+    df[col_name] = df.iloc[:, i].str.rstrip("%").astype(float) / 100.0
 
 # Select needed columns
-df = df[['year', 'stockReturn', 'bondReturn', 'cashReturn', 'inflationRate']]
+df = df[["year", "stockReturn", "bondReturn", "cashReturn", "inflationRate"]]
 
 # Write TypeScript
-with open(OUTPUT_TS, 'w') as f:
-    f.write('''/**
+with open(OUTPUT_TS, "w") as f:
+    f.write(
+        """/**
  * NYU Stern historical financial market data (1928-present)
  * 
  * Real annual returns for stocks, bonds, cash, plus inflation rates.
@@ -58,14 +64,18 @@ export interface NyuHistoricalYearData {
 }
 
 export const nyuHistoricalData: NyuHistoricalYearData[] = [
-''')
-    
+"""
+    )
+
     for _, row in df.iterrows():
-        f.write(f'  {{ year: {int(row["year"])}, stockReturn: {row["stockReturn"]:.6f}, '
-                f'bondReturn: {row["bondReturn"]:.6f}, cashReturn: {row["cashReturn"]:.6f}, '
-                f'inflationRate: {row["inflationRate"]:.6f} }},\n')
-    
-    f.write('''];
+        f.write(
+            f'  {{ year: {int(row["year"])}, stockReturn: {row["stockReturn"]:.6f}, '
+            f'bondReturn: {row["bondReturn"]:.6f}, cashReturn: {row["cashReturn"]:.6f}, '
+            f'inflationRate: {row["inflationRate"]:.6f} }},\n'
+        )
+
+    f.write(
+        """];
 
 /**
  * Get NYU historical data for a specific year range
@@ -129,13 +139,14 @@ export function calculateNyuHistoricalStats(data: NyuHistoricalYearData[]) {
     }
   };
 }
-''')
+"""
+    )
 
 # Compute and display summary stats
-stock_returns = df['stockReturn'].values
-bond_returns = df['bondReturn'].values
-cash_returns = df['cashReturn'].values
-inflation_rates = df['inflationRate'].values
+stock_returns = df["stockReturn"].values
+bond_returns = df["bondReturn"].values
+cash_returns = df["cashReturn"].values
+inflation_rates = df["inflationRate"].values
 
 # Nominal returns
 stock_nominal = (1 + stock_returns) * (1 + inflation_rates) - 1
@@ -147,12 +158,26 @@ print(f"Data range: {int(df['year'].min())} - {int(df['year'].max())}")
 print(f"Generated {OUTPUT_TS}")
 
 print(f"\nSample Statistics (Real):")
-print(f"Stocks - Mean: {stock_returns.mean():6.2%}, Std: {stock_returns.std(ddof=1):6.2%}")
-print(f"Bonds  - Mean: {bond_returns.mean():6.2%}, Std: {bond_returns.std(ddof=1):6.2%}")
-print(f"Cash   - Mean: {cash_returns.mean():6.2%}, Std: {cash_returns.std(ddof=1):6.2%}")
-print(f"Infl   - Mean: {inflation_rates.mean():6.2%}, Std: {inflation_rates.std(ddof=1):6.2%}")
+print(
+    f"Stocks - Mean: {stock_returns.mean():6.2%}, Std: {stock_returns.std(ddof=1):6.2%}"
+)
+print(
+    f"Bonds  - Mean: {bond_returns.mean():6.2%}, Std: {bond_returns.std(ddof=1):6.2%}"
+)
+print(
+    f"Cash   - Mean: {cash_returns.mean():6.2%}, Std: {cash_returns.std(ddof=1):6.2%}"
+)
+print(
+    f"Infl   - Mean: {inflation_rates.mean():6.2%}, Std: {inflation_rates.std(ddof=1):6.2%}"
+)
 
 print(f"\nSample Statistics (Nominal):")
-print(f"Stocks - Mean: {stock_nominal.mean():6.2%}, Std: {stock_nominal.std(ddof=1):6.2%}")
-print(f"Bonds  - Mean: {bond_nominal.mean():6.2%}, Std: {bond_nominal.std(ddof=1):6.2%}")
-print(f"Cash   - Mean: {cash_nominal.mean():6.2%}, Std: {cash_nominal.std(ddof=1):6.2%}")
+print(
+    f"Stocks - Mean: {stock_nominal.mean():6.2%}, Std: {stock_nominal.std(ddof=1):6.2%}"
+)
+print(
+    f"Bonds  - Mean: {bond_nominal.mean():6.2%}, Std: {bond_nominal.std(ddof=1):6.2%}"
+)
+print(
+    f"Cash   - Mean: {cash_nominal.mean():6.2%}, Std: {cash_nominal.std(ddof=1):6.2%}"
+)
