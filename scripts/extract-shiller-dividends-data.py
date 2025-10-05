@@ -75,9 +75,13 @@ with open(OUTPUT_TS, "w") as f:
 # Compute summary stats
 stock_mean = annual["DividendYield"].mean()
 stock_std = annual["DividendYield"].std(ddof=1)
+stock_max = annual["DividendYield"].max()
+stock_min = annual["DividendYield"].min()
 bond_mean = annual["BondYield"].mean()
 bond_std = annual["BondYield"].std(ddof=1)
+bond_max = annual["BondYield"].max()
+bond_min = annual["BondYield"].min()
 
 print(f"✅ Wrote {len(annual)} years of data to {OUTPUT_TS}")
-print(f"📊 Stock Yield: mean={stock_mean:.4f}, std={stock_std:.4f}")
-print(f"📊 Bond Yield: mean={bond_mean:.4f}, std={bond_std:.4f}")
+print(f"📊 Stock Yield: mean={stock_mean:.4f}, std={stock_std:.4f}, min={stock_min:.4f}, max={stock_max:.4f}")
+print(f"📊 Bond Yield: mean={bond_mean:.4f}, std={bond_std:.4f}, min={bond_min:.4f}, max={bond_max:.4f}")
