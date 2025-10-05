@@ -391,8 +391,8 @@ describe('StochasticReturnsProvider', () => {
       expect(meanStockYield).toBeCloseTo(0.035); // 3.5%
 
       // Verify standard deviations match expected volatilities (from DEFAULT_VOLATILITY)
-      expect(bondYieldStdDev).toBeCloseTo(0.03); // 3% volatility
-      expect(stockYieldStdDev).toBeCloseTo(0.02); // 2% volatility
+      expect(bondYieldStdDev).toBeCloseTo(0.015); // 1.5% volatility
+      expect(stockYieldStdDev).toBeCloseTo(0.01); // 1% volatility
 
       // Test lognormal constraints - yields should always be >= 0
       const minBondYield = Math.min(...yields.bondYield);
