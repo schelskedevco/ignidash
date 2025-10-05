@@ -29,7 +29,7 @@ const DEFAULT_VOLATILITY: MarketVolatility = {
  * Correlation matrix for asset classes and inflation
  * Based on historical correlations
  */
-const CORRELATION_MATRIX = [
+const _CORRELATION_MATRIX = [
   // StockReturn, BondReturn, CashReturn, Inflation, BondYield, StockYield
   [1.0, 0.02, -0.03, 0.01, 0.02, -0.29], // StockReturn
   [0.02, 1.0, 0.27, -0.11, 0.2, -0.06], // BondReturn
@@ -39,7 +39,7 @@ const CORRELATION_MATRIX = [
   [-0.29, -0.06, -0.01, -0.02, 0.01, 1.0], // StockYield
 ];
 
-const _MODERN_CORRELATION_MATRIX = [
+const MODERN_CORRELATION_MATRIX = [
   // StockReturn, BondReturn, CashReturn, Inflation, BondYield, StockYield
   [1.0, -0.1, 0.07, -0.02, 0.02, -0.27], // StockReturn
   [-0.1, 1.0, 0.21, -0.33, 0.04, 0.23], // BondReturn
@@ -80,7 +80,7 @@ function computeCholeskyDecomposition(matrix: number[][]): number[][] {
 /**
  * Pre-computed Cholesky decomposition of the correlation matrix
  */
-const CHOLESKY_MATRIX = computeCholeskyDecomposition(CORRELATION_MATRIX);
+const CHOLESKY_MATRIX = computeCholeskyDecomposition(MODERN_CORRELATION_MATRIX);
 
 export class StochasticReturnsProvider implements ReturnsProvider {
   private rng: SeededRandom;
