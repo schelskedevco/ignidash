@@ -184,16 +184,16 @@ describe('StochasticReturnsProvider', () => {
       const cashInflationCorr = calcCorrelation(returns.cash, returns.inflation);
 
       // Verify means converge to expected values
-      expect(meanStock).toBeCloseTo(0.1, 2);
-      expect(meanBond).toBeCloseTo(0.05, 2);
-      expect(meanCash).toBeCloseTo(0.03, 2);
-      expect(meanInflation).toBeCloseTo(0.025, 2);
+      expect(meanStock).toBeCloseTo(0.1);
+      expect(meanBond).toBeCloseTo(0.05);
+      expect(meanCash).toBeCloseTo(0.03);
+      expect(meanInflation).toBeCloseTo(0.025);
 
       // Verify standard deviations match expected volatilities
-      expect(stockStdDev).toBeCloseTo(0.18, 1);
-      expect(bondStdDev).toBeCloseTo(0.06, 2);
-      expect(cashStdDev).toBeCloseTo(0.03, 2);
-      expect(inflationStdDev).toBeCloseTo(0.04, 2);
+      expect(stockStdDev).toBeCloseTo(0.18);
+      expect(bondStdDev).toBeCloseTo(0.06);
+      expect(cashStdDev).toBeCloseTo(0.03);
+      expect(inflationStdDev).toBeCloseTo(0.04);
 
       // Verify correlation structure (from MODERN_CORRELATION_MATRIX)
       //   [1.0, -0.1, 0.07, -0.02, 0.02, -0.27], // StockReturn
