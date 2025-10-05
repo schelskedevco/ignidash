@@ -31,12 +31,22 @@ const DEFAULT_VOLATILITY: MarketVolatility = {
  */
 const CORRELATION_MATRIX = [
   // StockReturn, BondReturn, CashReturn, Inflation, BondYield, StockYield
-  [1.0, -0.1, 0.05, 0.05, -0.05, 0.15], // StockReturn
-  [-0.1, 1.0, 0.2, -0.45, 0.55, -0.1], // BondReturn
-  [0.05, 0.2, 1.0, 0.6, 0.3, 0.05], // CashReturn
-  [0.05, -0.45, 0.6, 1.0, 0.4, -0.1], // Inflation
-  [-0.05, 0.55, 0.3, 0.4, 1.0, -0.05], // BondYield
-  [0.15, -0.1, 0.05, -0.1, -0.05, 1.0], // StockYield
+  [1.0, 0.02, -0.03, 0.01, 0.02, -0.29], // StockReturn
+  [0.02, 1.0, 0.27, -0.11, 0.2, -0.06], // BondReturn
+  [-0.03, 0.27, 1.0, 0.38, 0.93, -0.01], // CashReturn
+  [0.01, -0.11, 0.38, 1.0, 0.39, -0.02], // Inflation
+  [0.02, 0.2, 0.93, 0.39, 1.0, 0.01], // BondYield
+  [-0.29, -0.06, -0.01, -0.02, 0.01, 1.0], // StockYield
+];
+
+const _MODERN_CORRELATION_MATRIX = [
+  // StockReturn, BondReturn, CashReturn, Inflation, BondYield, StockYield
+  [1.0, -0.1, 0.07, -0.02, 0.02, -0.27], // StockReturn
+  [-0.1, 1.0, 0.21, -0.33, 0.04, 0.23], // BondReturn
+  [0.07, 0.21, 1.0, 0.31, 0.81, 0.14], // CashReturn
+  [-0.02, -0.33, 0.31, 1.0, 0.26, 0.01], // Inflation
+  [0.02, 0.04, 0.81, 0.26, 1.0, 0.36], // BondYield
+  [-0.27, 0.23, 0.14, 0.01, 0.36, 1.0], // StockYield
 ];
 
 /**
