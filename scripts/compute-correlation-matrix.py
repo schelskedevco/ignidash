@@ -56,15 +56,25 @@ print('\n...')
 print(merged_df.tail())
 print('\n')
 
-# --- Compute correlation matrix ---
-corr_matrix = merged_df[[
+# --- Define the relevant columns ---
+cols = [
     "stockReturn_nominal",
     "bondReturn_nominal",
     "cashReturn_nominal",
     "inflationRate",
     "bondYield",
     "stockYield"
-]].corr()
+]
 
+# --- Correlation Matrix: Full Dataset ---
+corr_matrix1 = merged_df[cols].corr()
 print("Correlation Matrix (1928-2024):")
-print(corr_matrix.round(2))
+print(corr_matrix1.round(2))
+print("\n")
+
+# --- Correlation Matrix: Last 35 Years ---
+max_year = merged_df["year"].max()
+last35_df = merged_df[merged_df["year"] >= max_year - 34]  # includes last 35 years
+corr_matrix2 = last35_df[cols].corr()
+print(f"Correlation Matrix (Last 35 Years, {max_year-34}-{max_year}):")
+print(corr_matrix2.round(2))
