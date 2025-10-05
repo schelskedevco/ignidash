@@ -118,17 +118,21 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     const inflation = this.generateNormalReturn(expectedInflation, this.volatility.inflation, correlatedRandoms[3]);
 
     // Generate yields - use normal distribution with bounds
-    const bondYield = Math.max(0, this.generateNormalReturn(expectedBondYield, this.volatility.bondYield, correlatedRandoms[4]));
-    const stockYield = Math.max(0, this.generateNormalReturn(expectedStockYield, this.volatility.stockYield, correlatedRandoms[5]));
+    const nominalBondYield = Math.max(0, this.generateNormalReturn(expectedBondYield, this.volatility.bondYield, correlatedRandoms[4]));
+    const nominalStockYield = Math.max(0, this.generateNormalReturn(expectedStockYield, this.volatility.stockYield, correlatedRandoms[5]));
 
     // Calculate real returns using Fisher equation
     const realStockReturn = (1 + nominalStockReturn) / (1 + inflation) - 1;
     const realBondReturn = (1 + nominalBondReturn) / (1 + inflation) - 1;
     const realCashReturn = (1 + nominalCashReturn) / (1 + inflation) - 1;
 
+    // Calculate real yields using Fisher equation
+    const realBondYield = (1 + nominalBondYield) / (1 + inflation) - 1;
+    const realStockYield = (1 + nominalStockYield) / (1 + inflation) - 1;
+
     return {
       returns: { stocks: realStockReturn, bonds: realBondReturn, cash: realCashReturn },
-      metadata: { inflationRate: inflation * 100, bondYield: bondYield * 100, stockYield: stockYield * 100 },
+      metadata: { inflationRate: inflation * 100, bondYield: realBondYield * 100, stockYield: realStockYield * 100 },
     };
   }
 
