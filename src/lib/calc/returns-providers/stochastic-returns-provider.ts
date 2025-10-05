@@ -111,15 +111,13 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     const expectedBondYield = this.inputs.marketAssumptions.bondYield / 100;
     const expectedStockYield = this.inputs.marketAssumptions.stockYield / 100;
 
-    // Generate nominal returns using appropriate distributions
+    // Generate nominal returns and yields using appropriate distributions
     const nominalStockReturn = this.generateLogNormalReturn(expectedStockReturn, this.volatility.stockReturn, correlatedRandoms[0]);
     const nominalBondReturn = this.generateNormalReturn(expectedBondReturn, this.volatility.bondReturn, correlatedRandoms[1]);
     const nominalCashReturn = this.generateNormalReturn(expectedCashReturn, this.volatility.cashReturn, correlatedRandoms[2]);
     const inflation = this.generateNormalReturn(expectedInflation, this.volatility.inflation, correlatedRandoms[3]);
-
-    // Generate yields - use normal distribution with bounds
-    const nominalBondYield = Math.max(0, this.generateNormalReturn(expectedBondYield, this.volatility.bondYield, correlatedRandoms[4]));
-    const nominalStockYield = Math.max(0, this.generateNormalReturn(expectedStockYield, this.volatility.stockYield, correlatedRandoms[5]));
+    const nominalBondYield = this.generateLogNormalYield(expectedBondYield, this.volatility.bondYield, correlatedRandoms[4]);
+    const nominalStockYield = this.generateLogNormalYield(expectedStockYield, this.volatility.stockYield, correlatedRandoms[5]);
 
     // Calculate real returns using Fisher equation
     const realStockReturn = (1 + nominalStockReturn) / (1 + inflation) - 1;
