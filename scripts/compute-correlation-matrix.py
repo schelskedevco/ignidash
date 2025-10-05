@@ -74,7 +74,7 @@ print("\n")
 
 # --- Correlation Matrix: Last 35 Years ---
 max_year = merged_df["year"].max()
-last35_df = merged_df[merged_df["year"] >= max_year - 34]  # includes last 35 years
+last35_df = merged_df[merged_df["year"] >= max_year - 34]
 corr_matrix2 = last35_df[cols].corr()
 print(f"Correlation Matrix (Last 35 Years, {max_year-34}-{max_year}):")
 print(corr_matrix2.round(2))
