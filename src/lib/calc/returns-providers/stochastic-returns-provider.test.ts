@@ -96,7 +96,9 @@ describe('StochasticReturnsProvider', () => {
         ...defaultState.inputs,
         marketAssumptions: {
           stockReturn: 10,
+          stockYield: 3,
           bondReturn: 5,
+          bondYield: 3,
           cashReturn: 3,
           inflationRate: 2.5,
           simulationMode: 'monteCarlo' as const,
