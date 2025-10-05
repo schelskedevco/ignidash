@@ -163,15 +163,18 @@ export class StochasticReturnsProvider implements ReturnsProvider {
    * @returns Log-normal distributed return rate as a decimal
    */
   private generateLogNormalReturn(expectedReturn: number, volatility: number, z: number): number {
+    // Reference: https://en.wikipedia.org/wiki/Log-normal_distribution#Generation_and_parameters
+    // Reference: https://www.statlect.com/probability-distributions/log-normal-distribution
     const mean = 1 + expectedReturn;
     const variance = volatility * volatility;
 
-    // Convert expected return to log-normal parameters
-    // E[R] = exp(μ + σ²/2) - 1, so μ = ln(1 + E[R]) - σ²/2 (Reference: https://www.statlect.com/probability-distributions/log-normal-distribution)
+    // Convert arithmetic moments to log-space parameters
+    // Given E[Y] and Var[Y], the log-space parameters are:
+    // σ² = ln(1 + Var/Mean²) and μ = ln(Mean) - σ²/2
     const sigmaLog = Math.sqrt(Math.log(1 + variance / (mean * mean)));
     const mu = Math.log(mean) - 0.5 * sigmaLog * sigmaLog;
 
-    // Generate log-normal return (Reference: https://en.wikipedia.org/wiki/Log-normal_distribution#Generation_and_parameters)
+    // Generate log-normal return
     return Math.exp(mu + sigmaLog * z) - 1;
   }
 
@@ -188,8 +191,9 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     const mean = expectedYield;
     const variance = volatility * volatility;
 
-    // Convert arithmetic volatility to log-space parameters
-    // E[Y] = exp(μ + σ²/2), so:
+    // Convert arithmetic moments to log-space parameters
+    // Given E[Y] and Var[Y], the log-space parameters are:
+    // σ² = ln(1 + Var/Mean²) and μ = ln(Mean) - σ²/2
     const sigmaLog = Math.sqrt(Math.log(1 + variance / (mean * mean)));
     const mu = Math.log(mean) - 0.5 * sigmaLog * sigmaLog;
 
