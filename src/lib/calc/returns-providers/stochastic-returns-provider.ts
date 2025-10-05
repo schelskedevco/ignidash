@@ -4,12 +4,12 @@ import { SeededRandom } from './seeded-random';
 import type { PhaseData } from '../v2/phase';
 
 interface MarketVolatility {
-  stocks: number;
-  bonds: number;
+  stock: number;
+  bond: number;
   cash: number;
   inflation: number;
-  bondsYield: number;
-  stocksYield: number;
+  bondYield: number;
+  stockYield: number;
 }
 
 /**
@@ -17,12 +17,12 @@ interface MarketVolatility {
  * Based on long-term historical data
  */
 const DEFAULT_VOLATILITY: MarketVolatility = {
-  stocks: 0.18,
-  bonds: 0.06,
+  stock: 0.18,
+  bond: 0.06,
   cash: 0.01,
   inflation: 0.02,
-  bondsYield: 0.02,
-  stocksYield: 0.03,
+  bondYield: 0.02,
+  stockYield: 0.03,
 };
 
 /**
@@ -102,14 +102,14 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     const expectedStockYield = this.inputs.marketAssumptions.stockYield / 100;
 
     // Generate nominal returns using appropriate distributions
-    const nominalStockReturn = this.generateLogNormalReturn(expectedStockReturn, this.volatility.stocks, correlatedRandoms[0]);
-    const nominalBondReturn = this.generateNormalReturn(expectedBondReturn, this.volatility.bonds, correlatedRandoms[1]);
+    const nominalStockReturn = this.generateLogNormalReturn(expectedStockReturn, this.volatility.stock, correlatedRandoms[0]);
+    const nominalBondReturn = this.generateNormalReturn(expectedBondReturn, this.volatility.bond, correlatedRandoms[1]);
     const nominalCashReturn = this.generateNormalReturn(expectedCashReturn, this.volatility.cash, correlatedRandoms[2]);
     const inflation = this.generateNormalReturn(expectedInflation, this.volatility.inflation, correlatedRandoms[3]);
 
     // Generate yields - use normal distribution with bounds
-    const bondYield = Math.max(0, this.generateNormalReturn(expectedBondYield, this.volatility.bondsYield, correlatedRandoms[4]));
-    const stockYield = Math.max(0, this.generateNormalReturn(expectedStockYield, this.volatility.stocksYield, correlatedRandoms[5]));
+    const bondYield = Math.max(0, this.generateNormalReturn(expectedBondYield, this.volatility.bondYield, correlatedRandoms[4]));
+    const stockYield = Math.max(0, this.generateNormalReturn(expectedStockYield, this.volatility.stockYield, correlatedRandoms[5]));
 
     // Calculate real returns using Fisher equation
     const realStockReturn = (1 + nominalStockReturn) / (1 + inflation) - 1;
