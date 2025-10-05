@@ -21,8 +21,8 @@ const DEFAULT_VOLATILITY: MarketVolatility = {
   bondReturn: 0.06,
   cashReturn: 0.01,
   inflation: 0.02,
-  bondYield: 0.02,
-  stockYield: 0.03,
+  bondYield: 0.03,
+  stockYield: 0.02,
 };
 
 /**
