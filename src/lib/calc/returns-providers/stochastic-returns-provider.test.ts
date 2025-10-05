@@ -192,18 +192,20 @@ describe('StochasticReturnsProvider', () => {
       // Verify standard deviations match expected volatilities
       expect(stockStdDev).toBeCloseTo(0.18, 1);
       expect(bondStdDev).toBeCloseTo(0.06, 2);
-      expect(cashStdDev).toBeCloseTo(0.01, 2);
-      expect(inflationStdDev).toBeCloseTo(0.02, 2);
+      expect(cashStdDev).toBeCloseTo(0.03, 2);
+      expect(inflationStdDev).toBeCloseTo(0.04, 2);
 
-      // Verify correlation structure (from CORRELATION_MATRIX)
-      // [1.0, -0.1, 0.05, -0.15], // Stocks
-      // [-0.1, 1.0, 0.2, -0.3],   // Bonds
-      // [0.05, 0.2, 1.0, 0.6],    // Cash
-      // [-0.15, -0.3, 0.6, 1.0],  // Inflation
+      // Verify correlation structure (from MODERN_CORRELATION_MATRIX)
+      //   [1.0, -0.1, 0.07, -0.02, 0.02, -0.27], // StockReturn
+      //   [-0.1, 1.0, 0.21, -0.33, 0.04, 0.23],  // BondReturn
+      //   [0.07, 0.21, 1.0, 0.31, 0.81, 0.14],   // CashReturn
+      //   [-0.02, -0.33, 0.31, 1.0, 0.26, 0.01], // Inflation
+      //   [0.02, 0.04, 0.81, 0.26, 1.0, 0.36],   // BondYield
+      //   [-0.27, 0.23, 0.14, 0.01, 0.36, 1.0],  // StockYield
       expect(stockBondCorr).toBeCloseTo(-0.1, 1);
-      expect(stockInflationCorr).toBeCloseTo(-0.15, 1);
-      expect(bondInflationCorr).toBeCloseTo(-0.3, 1); // Strongest negative correlation
-      expect(cashInflationCorr).toBeCloseTo(0.6, 1); // Strongest positive correlation
+      expect(stockInflationCorr).toBeCloseTo(-0.02, 1);
+      expect(bondInflationCorr).toBeCloseTo(-0.33, 1);
+      expect(cashInflationCorr).toBeCloseTo(0.31, 1);
 
       // Verify return constraints
       const minStockReturn = Math.min(...returns.stocks);
@@ -216,8 +218,8 @@ describe('StochasticReturnsProvider', () => {
 
       // Normal distributions should statistically never hit -100% with our volatility parameters
       expect(minBondReturn).toBeGreaterThan(-1); // Bonds: 5% mean, 6% vol
-      expect(minCashReturn).toBeGreaterThan(-1); // Cash: 3% mean, 1% vol
-      expect(minInflationRate).toBeGreaterThan(-1); // Inflation: 2.5% mean, 3% vol
+      expect(minCashReturn).toBeGreaterThan(-1); // Cash: 3% mean, 3% vol
+      expect(minInflationRate).toBeGreaterThan(-1); // Inflation: 2.5% mean, 4% vol
 
       // Test distribution properties for normal distributions (bonds, cash, inflation)
       const testDistributionProperties = (values: number[], mean: number, stdDev: number, name: string) => {

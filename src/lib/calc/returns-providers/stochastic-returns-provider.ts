@@ -173,6 +173,25 @@ export class StochasticReturnsProvider implements ReturnsProvider {
   }
 
   /**
+   * Generate a non-negative yield from log-normal distribution
+   * Used for bond and stock yields which cannot be negative
+   *
+   * @param expectedYield - Expected yield as a decimal (e.g., 0.03 for 3%)
+   * @param volatility - Annual volatility as a decimal (e.g., 0.03 for 3%)
+   * @param z - Standard normal random variable
+   * @returns Log-normal distributed yield as a decimal (always >= 0)
+   */
+  private generateLogNormalYield(expectedYield: number, volatility: number, z: number): number {
+    // Similar to generateLogNormalReturn, but without the "-1"
+    // For yields, we model the level itself as log-normal, not the change
+    // E[Y] = exp(μ + σ²/2), so μ = ln(E[Y]) - σ²/2
+    const mu = Math.log(expectedYield) - 0.5 * volatility * volatility;
+
+    // Generate log-normal yield (always positive)
+    return Math.exp(mu + volatility * z);
+  }
+
+  /**
    * Generate return from normal distribution
    * Used for bonds, cash, and inflation
    *
