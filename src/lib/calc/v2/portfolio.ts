@@ -4,7 +4,7 @@ import type { SimulationState } from './simulation-engine';
 import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation } from '../asset';
 import { ContributionRules } from './contribution-rules';
 import type { IncomesData } from './incomes';
-import { type ExpensesData, ExpensesProcessor } from './expenses';
+import type { ExpensesData } from './expenses';
 import type { TaxesData } from './taxes';
 
 type TransactionsBreakdown = { totalForPeriod: number; byAccount: Record<string, number> };
@@ -27,14 +27,13 @@ export class PortfolioProcessor {
     });
   }
 
-  processCashFlows(incomesData: IncomesData, expensesData: ExpensesData, expensesProcessor: ExpensesProcessor): PortfolioData {
+  processCashFlows(incomesData: IncomesData, expensesData: ExpensesData): { portfolioData: PortfolioData; discretionaryExpense: number } {
     const grossCashFlow = incomesData.totalIncomeAfterWithholding - expensesData.totalExpenses;
 
-    const { totalForPeriod: contributionsForPeriod, byAccount: contributionsByAccount } = this.processContributions(
-      grossCashFlow,
-      expensesProcessor,
-      incomesData
-    );
+    const {
+      transactionsBreakdown: { totalForPeriod: contributionsForPeriod, byAccount: contributionsByAccount },
+      discretionaryExpense,
+    } = this.processContributions(grossCashFlow, incomesData);
     const {
       totalForPeriod: withdrawalsForPeriod,
       byAccount: withdrawalsByAccount,
@@ -72,10 +71,13 @@ export class PortfolioProcessor {
     };
 
     this.monthlyData.push(result);
-    return result;
+    return { portfolioData: result, discretionaryExpense };
   }
 
-  processTaxes(annualPortfolioDataBeforeTaxes: PortfolioData, taxesData: TaxesData, expensesProcessor: ExpensesProcessor): PortfolioData {
+  processTaxes(
+    annualPortfolioDataBeforeTaxes: PortfolioData,
+    taxesData: TaxesData
+  ): { portfolioData: PortfolioData; discretionaryExpense: number } {
     const perAccountDataBeforeTaxes = annualPortfolioDataBeforeTaxes.perAccountData;
 
     let withdrawalsForPeriod = annualPortfolioDataBeforeTaxes.withdrawalsForPeriod;
@@ -86,10 +88,12 @@ export class PortfolioProcessor {
     let withdrawalsByAccount: Record<string, number> = {};
     let realizedGainsByAccount: Record<string, number> = {};
 
+    let discretionaryExpense = 0;
     if (taxesData.totalTaxesRefund > 0) {
-      const res = this.processContributions(taxesData.totalTaxesRefund, expensesProcessor);
+      const { transactionsBreakdown: res, discretionaryExpense: expense } = this.processContributions(taxesData.totalTaxesRefund);
       contributionsForPeriod += res.totalForPeriod;
       contributionsByAccount = res.byAccount;
+      discretionaryExpense += expense;
     }
 
     if (taxesData.totalTaxesDue > 0) {
@@ -124,26 +128,28 @@ export class PortfolioProcessor {
     const assetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
 
     return {
-      totalValue,
-      totalWithdrawals,
-      totalContributions,
-      totalRealizedGains,
-      withdrawalsForPeriod,
-      contributionsForPeriod,
-      realizedGainsForPeriod,
-      perAccountData,
-      assetAllocation,
+      portfolioData: {
+        totalValue,
+        totalWithdrawals,
+        totalContributions,
+        totalRealizedGains,
+        withdrawalsForPeriod,
+        contributionsForPeriod,
+        realizedGainsForPeriod,
+        perAccountData,
+        assetAllocation,
+      },
+      discretionaryExpense,
     };
   }
 
   private processContributions(
     grossCashFlow: number,
-    expensesProcessor: ExpensesProcessor,
     incomesData?: IncomesData
-  ): TransactionsBreakdown {
+  ): { transactionsBreakdown: TransactionsBreakdown; discretionaryExpense: number } {
     const byAccount: Record<string, number> = {};
     if (!(grossCashFlow > 0)) {
-      return { totalForPeriod: 0, byAccount };
+      return { transactionsBreakdown: { totalForPeriod: 0, byAccount }, discretionaryExpense: 0 };
     }
 
     const age = this.simulationState.time.age;
@@ -176,11 +182,12 @@ export class PortfolioProcessor {
       currentRuleIndex++;
     }
 
+    let discretionaryExpense = 0;
     if (remainingToContribute > 0) {
       const baseRule = this.contributionRules.getBaseRuleType();
       switch (baseRule) {
         case 'spend':
-          expensesProcessor.processDiscretionaryExpense(remainingToContribute);
+          discretionaryExpense = remainingToContribute;
           break;
         case 'save':
           const portfolioHasExtraSavingsAccount = this.simulationState.portfolio
@@ -201,7 +208,7 @@ export class PortfolioProcessor {
 
     const totalForPeriod = grossCashFlow - remainingToContribute;
 
-    return { totalForPeriod, byAccount };
+    return { transactionsBreakdown: { totalForPeriod, byAccount }, discretionaryExpense };
   }
 
   private processWithdrawals(
