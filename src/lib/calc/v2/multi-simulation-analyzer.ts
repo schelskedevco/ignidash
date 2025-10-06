@@ -563,6 +563,8 @@ export class MultiSimulationAnalyzer {
     const returnRatesForPeriod = buildAssetPercentiles((d) => d.dp.returns!.returnRatesForPeriod);
     const annualReturnRates = buildAssetPercentiles((d) => d.dp.returns!.annualReturnRates);
 
+    console.warn('Yield amounts and rates are not yet implemented in multi-simulation analysis');
+
     const buildPercentileData = (p: keyof Percentiles<number>): ReturnsData => {
       const extractPercentile = (assetPercentiles: Record<AssetClass, Percentiles<number>>): Record<AssetClass, number> => {
         return Object.fromEntries(assetClasses.map((asset) => [asset, assetPercentiles[asset][p]])) as Record<AssetClass, number>;
@@ -570,11 +572,23 @@ export class MultiSimulationAnalyzer {
 
       return {
         totalReturnAmounts: extractPercentile(totalReturnAmounts),
+        totalYieldAmounts: {
+          taxable: { dividendYield: 0, bondYield: 0 },
+          taxDeferred: { dividendYield: 0, bondYield: 0 },
+          taxFree: { dividendYield: 0, bondYield: 0 },
+        },
         returnAmountsForPeriod: extractPercentile(returnAmountsForPeriod),
         returnRatesForPeriod: extractPercentile(returnRatesForPeriod),
         inflationRateForPeriod: inflationRateForPeriod[p],
+        yieldAmountsForPeriod: {
+          taxable: { dividendYield: 0, bondYield: 0 },
+          taxDeferred: { dividendYield: 0, bondYield: 0 },
+          taxFree: { dividendYield: 0, bondYield: 0 },
+        },
+        yieldRatesForPeriod: { dividendYield: 0, bondYield: 0 },
         annualReturnRates: extractPercentile(annualReturnRates),
         annualInflationRate: annualInflationRate[p],
+        annualYieldRates: { dividendYield: 0, bondYield: 0 },
       };
     };
 

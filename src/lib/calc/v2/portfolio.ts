@@ -1,7 +1,7 @@
 import type { AccountInputs, InvestmentAccountType } from '@/lib/schemas/account-form-schema';
 
 import type { SimulationState } from './simulation-engine';
-import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation } from '../asset';
+import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation, AssetYieldRates, AssetYieldAmounts, TaxCategory } from '../asset';
 import { ContributionRules } from './contribution-rules';
 import type { IncomesData } from './incomes';
 import type { ExpensesData } from './expenses';
@@ -423,6 +423,33 @@ export class Portfolio {
 
     return { returnsForPeriod, totalReturns };
   }
+
+  applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts } {
+    const yieldsForPeriod: AssetYieldAmounts = {
+      taxable: { dividendYield: 0, bondYield: 0 },
+      taxDeferred: { dividendYield: 0, bondYield: 0 },
+      taxFree: { dividendYield: 0, bondYield: 0 },
+    };
+    const totalYields: AssetYieldAmounts = {
+      taxable: { dividendYield: 0, bondYield: 0 },
+      taxDeferred: { dividendYield: 0, bondYield: 0 },
+      taxFree: { dividendYield: 0, bondYield: 0 },
+    };
+
+    this.accounts.forEach((account) => {
+      const { yieldsForPeriod: accountYieldsForPeriod, totalYields: accountTotalYields } = account.applyYields(yields);
+
+      (['taxable', 'taxDeferred', 'taxFree'] as TaxCategory[]).forEach((category) => {
+        yieldsForPeriod[category].dividendYield += accountYieldsForPeriod[category].dividendYield;
+        yieldsForPeriod[category].bondYield += accountYieldsForPeriod[category].bondYield;
+
+        totalYields[category].dividendYield += accountTotalYields[category].dividendYield;
+        totalYields[category].bondYield += accountTotalYields[category].bondYield;
+      });
+    });
+
+    return { yieldsForPeriod, totalYields };
+  }
 }
 
 export interface AccountData {
@@ -451,7 +478,8 @@ export abstract class Account {
     protected totalReturns: AssetReturnAmounts,
     protected totalContributions: number,
     protected totalWithdrawals: number,
-    protected totalRealizedGains: number
+    protected totalRealizedGains: number,
+    protected totalYields: AssetYieldAmounts
   ) {}
 
   getAccountID(): string {
@@ -485,13 +513,18 @@ export abstract class Account {
   abstract getAccountData(): AccountData;
 
   abstract applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts };
+  abstract applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts };
   abstract applyContribution(amount: number): void;
   abstract applyWithdrawal(amount: number): { realizedGains: number };
 }
 
 export class SavingsAccount extends Account {
   constructor(data: AccountInputs) {
-    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0);
+    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, {
+      taxable: { dividendYield: 0, bondYield: 0 },
+      taxDeferred: { dividendYield: 0, bondYield: 0 },
+      taxFree: { dividendYield: 0, bondYield: 0 },
+    });
   }
 
   getAccountData(): AccountData {
@@ -522,6 +555,17 @@ export class SavingsAccount extends Account {
     return { returnsForPeriod: { cash: cashReturnsAmount, bonds: 0, stocks: 0 }, totalReturns: { ...this.totalReturns } };
   }
 
+  applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts } {
+    return {
+      yieldsForPeriod: {
+        taxable: { dividendYield: 0, bondYield: 0 },
+        taxDeferred: { dividendYield: 0, bondYield: 0 },
+        taxFree: { dividendYield: 0, bondYield: 0 },
+      },
+      totalYields: this.totalYields,
+    };
+  }
+
   applyContribution(amount: number): void {
     this.totalValue += amount;
     this.totalContributions += amount;
@@ -544,7 +588,11 @@ export class InvestmentAccount extends Account {
   private contributionBasis: number | undefined;
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
-    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0);
+    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, {
+      taxable: { dividendYield: 0, bondYield: 0 },
+      taxDeferred: { dividendYield: 0, bondYield: 0 },
+      taxFree: { dividendYield: 0, bondYield: 0 },
+    });
     this.initialPercentBonds = (data.percentBonds ?? 0) / 100;
     this.currPercentBonds = (data.percentBonds ?? 0) / 100;
 
@@ -590,6 +638,17 @@ export class InvestmentAccount extends Account {
     this.currPercentBonds = this.totalValue ? newBondsValue / this.totalValue : this.initialPercentBonds;
 
     return { returnsForPeriod: { cash: 0, bonds: bondReturnsAmount, stocks: stockReturnsAmount }, totalReturns: { ...this.totalReturns } };
+  }
+
+  applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts } {
+    return {
+      yieldsForPeriod: {
+        taxable: { dividendYield: 0, bondYield: 0 },
+        taxDeferred: { dividendYield: 0, bondYield: 0 },
+        taxFree: { dividendYield: 0, bondYield: 0 },
+      },
+      totalYields: this.totalYields,
+    };
   }
 
   applyContribution(amount: number): void {

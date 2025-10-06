@@ -1,24 +1,29 @@
 import type { SimulationState } from './simulation-engine';
 import { ReturnsProvider } from '../returns-providers/returns-provider';
-import type { AssetReturnRates, AssetReturnAmounts } from '../asset';
+import type { AssetReturnRates, AssetReturnAmounts, AssetYieldAmounts, AssetYieldRates, TaxCategory } from '../asset';
 
 export interface ReturnsData {
   // Total return data
   totalReturnAmounts: AssetReturnAmounts;
+  totalYieldAmounts: AssetYieldAmounts;
 
   // Monthly return data
   returnAmountsForPeriod: AssetReturnAmounts;
   returnRatesForPeriod: AssetReturnRates;
   inflationRateForPeriod: number;
+  yieldAmountsForPeriod: AssetYieldAmounts;
+  yieldRatesForPeriod: AssetYieldRates;
 
   // Annual return data
   annualReturnRates: AssetReturnRates;
   annualInflationRate: number;
+  annualYieldRates: AssetYieldRates;
 }
 
 export class ReturnsProcessor {
   private cachedAnnualReturnRates: AssetReturnRates;
   private cachedAnnualInflationRate: number;
+  private cachedAnnualYieldRates: AssetYieldRates;
   private lastYear: number;
   private monthlyData: ReturnsData[] = [];
 
@@ -31,6 +36,7 @@ export class ReturnsProcessor {
 
     this.cachedAnnualReturnRates = returns.returns;
     this.cachedAnnualInflationRate = returns.metadata.inflationRate / 100;
+    this.cachedAnnualYieldRates = { dividendYield: returns.metadata.stockYield, bondYield: returns.metadata.bondYield };
     this.lastYear = this.simulationState.time.year;
   }
 
@@ -42,6 +48,7 @@ export class ReturnsProcessor {
 
       this.cachedAnnualReturnRates = returns.returns;
       this.cachedAnnualInflationRate = returns.metadata.inflationRate / 100;
+      this.cachedAnnualYieldRates = { dividendYield: returns.metadata.stockYield, bondYield: returns.metadata.bondYield };
       this.lastYear = currentYear;
     }
 
@@ -51,17 +58,28 @@ export class ReturnsProcessor {
       cash: Math.pow(1 + this.cachedAnnualReturnRates.cash, 1 / 12) - 1,
     };
     const inflationRateForPeriod = Math.pow(1 + this.cachedAnnualInflationRate, 1 / 12) - 1;
+    const yieldRatesForPeriod: AssetYieldRates = {
+      dividendYield: this.cachedAnnualYieldRates.dividendYield / 12,
+      bondYield: this.cachedAnnualYieldRates.bondYield / 12,
+    };
 
     const { returnsForPeriod: returnAmountsForPeriod, totalReturns: totalReturnAmounts } =
       this.simulationState.portfolio.applyReturns(returnRatesForPeriod);
 
+    const { yieldsForPeriod: yieldAmountsForPeriod, totalYields: totalYieldAmounts } =
+      this.simulationState.portfolio.applyYields(yieldRatesForPeriod);
+
     const result = {
       totalReturnAmounts,
+      totalYieldAmounts,
       returnAmountsForPeriod,
       returnRatesForPeriod,
       inflationRateForPeriod,
+      yieldAmountsForPeriod,
+      yieldRatesForPeriod,
       annualReturnRates: this.cachedAnnualReturnRates,
       annualInflationRate: this.cachedAnnualInflationRate,
+      annualYieldRates: this.cachedAnnualYieldRates,
     };
 
     this.monthlyData.push(result);
@@ -78,7 +96,7 @@ export class ReturnsProcessor {
 
   getAnnualData(): ReturnsData {
     return {
-      ...this.monthlyData[0] /* Only need to accumulate returnAmounts */,
+      ...this.monthlyData[0],
       returnAmountsForPeriod: this.monthlyData.reduce(
         (acc, curr) => ({
           stocks: acc.stocks + curr.returnAmountsForPeriod.stocks,
@@ -86,6 +104,20 @@ export class ReturnsProcessor {
           cash: acc.cash + curr.returnAmountsForPeriod.cash,
         }),
         { stocks: 0, bonds: 0, cash: 0 }
+      ),
+      yieldAmountsForPeriod: this.monthlyData.reduce(
+        (acc, curr) => {
+          (['taxable', 'taxDeferred', 'taxFree'] as TaxCategory[]).forEach((category) => {
+            acc[category].dividendYield += curr.yieldAmountsForPeriod[category].dividendYield;
+            acc[category].bondYield += curr.yieldAmountsForPeriod[category].bondYield;
+          });
+          return acc;
+        },
+        {
+          taxable: { dividendYield: 0, bondYield: 0 },
+          taxDeferred: { dividendYield: 0, bondYield: 0 },
+          taxFree: { dividendYield: 0, bondYield: 0 },
+        }
       ),
     };
   }
