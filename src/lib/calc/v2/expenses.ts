@@ -48,10 +48,10 @@ export class ExpensesProcessor {
 
     currentMonthlyData.totalExpenses += amount;
 
-    const currentDiscretionaryExpense = currentMonthlyData.perExpenseData[discretionaryExpense.id];
+    const currentDiscretionaryExpenses = currentMonthlyData.perExpenseData[discretionaryExpense.id];
     currentMonthlyData.perExpenseData[discretionaryExpense.id] = {
       ...discretionaryExpense,
-      amount: (currentDiscretionaryExpense?.amount ?? 0) + amount,
+      amount: (currentDiscretionaryExpenses?.amount ?? 0) + amount,
     };
 
     return currentMonthlyData;
