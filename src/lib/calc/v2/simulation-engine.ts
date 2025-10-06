@@ -45,11 +45,6 @@ export interface SimulationContext {
   readonly startDate: Date;
   readonly endDate: Date;
   readonly retirementStrategy: RetirementStrategyInputs;
-  readonly returnsProcessor: ReturnsProcessor;
-  readonly incomesProcessor: IncomesProcessor;
-  readonly expensesProcessor: ExpensesProcessor;
-  readonly portfolioProcessor: PortfolioProcessor;
-  readonly taxProcessor: TaxProcessor;
 }
 
 export interface SimulationState {
@@ -63,11 +58,15 @@ export class FinancialSimulationEngine {
   constructor(protected readonly inputs: QuickPlanInputs) {}
 
   runSimulation(returnsProvider: ReturnsProvider, timeline: TimelineInputs): SimulationResult {
+    // Init context and state
+    const simulationContext: SimulationContext = this.initSimulationContext(timeline);
     const simulationState: SimulationState = this.initSimulationState(timeline);
 
     const incomes = new Incomes(Object.values(this.inputs.incomes));
     const expenses = new Expenses(Object.values(this.inputs.expenses));
     const contributionRules = new ContributionRules(Object.values(this.inputs.contributionRules), this.inputs.baseContributionRule);
+
+    const resultData: Array<SimulationDataPoint> = [this.initSimulationDataPoint(simulationState)];
 
     // Init simulation processors
     const returnsProcessor = new ReturnsProcessor(simulationState, returnsProvider);
@@ -75,16 +74,6 @@ export class FinancialSimulationEngine {
     const expensesProcessor = new ExpensesProcessor(simulationState, expenses);
     const portfolioProcessor = new PortfolioProcessor(simulationState, contributionRules);
     const taxProcessor = new TaxProcessor(simulationState);
-
-    const simulationContext: SimulationContext = this.initSimulationContext(timeline, {
-      returnsProcessor,
-      incomesProcessor,
-      expensesProcessor,
-      portfolioProcessor,
-      taxProcessor,
-    });
-
-    const resultData: Array<SimulationDataPoint> = [this.initSimulationDataPoint(simulationState)];
 
     // Init phase identifier
     const phaseIdentifier = new PhaseIdentifier(simulationState, timeline);
@@ -158,16 +147,7 @@ export class FinancialSimulationEngine {
     simulationState.time.month += 1;
   }
 
-  private initSimulationContext(
-    timeline: TimelineInputs,
-    processors: {
-      returnsProcessor: ReturnsProcessor;
-      incomesProcessor: IncomesProcessor;
-      expensesProcessor: ExpensesProcessor;
-      portfolioProcessor: PortfolioProcessor;
-      taxProcessor: TaxProcessor;
-    }
-  ): SimulationContext {
+  private initSimulationContext(timeline: TimelineInputs): SimulationContext {
     const startAge = timeline.currentAge;
     const endAge = timeline.lifeExpectancy;
 
@@ -178,15 +158,7 @@ export class FinancialSimulationEngine {
 
     const retirementStrategy = timeline.retirementStrategy;
 
-    return {
-      startAge,
-      endAge,
-      yearsToSimulate,
-      startDate,
-      endDate,
-      retirementStrategy,
-      ...processors,
-    };
+    return { startAge, endAge, yearsToSimulate, startDate, endDate, retirementStrategy };
   }
 
   private initSimulationState(timeline: TimelineInputs): SimulationState {
