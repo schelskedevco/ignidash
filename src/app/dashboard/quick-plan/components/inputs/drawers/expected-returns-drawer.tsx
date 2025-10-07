@@ -71,7 +71,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                   </Label>
                   <NumberInput name="stockYield" control={control} id="stockYield" inputMode="decimal" placeholder="3.5%" suffix="%" />
                   {errors.stockYield && <ErrorMessage>{errors.stockYield?.message}</ErrorMessage>}
-                  <Description>Percentage of stock value paid out as taxable dividends annually.</Description>
+                  <Description>Percentage of stock value paid out as dividends annually.</Description>
                 </Field>
                 <Divider />
                 <Field>
@@ -90,7 +90,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                   </Label>
                   <NumberInput id="bondYield" control={control} name="bondYield" inputMode="decimal" placeholder="4.5%" suffix="%" />
                   {errors.bondYield && <ErrorMessage>{errors.bondYield?.message}</ErrorMessage>}
-                  <Description>Percentage of bond value paid out as taxable interest annually.</Description>
+                  <Description>Percentage of bond value paid out as interest annually.</Description>
                 </Field>
                 <Divider />
                 <Field>
