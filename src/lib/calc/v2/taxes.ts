@@ -180,7 +180,11 @@ export class TaxProcessor {
     annualReturnsData: ReturnsData
   ): { grossOrdinaryIncome: number; taxDeferredContributions: number } {
     const grossIncomeFromIncomes = annualIncomesData.totalGrossIncome;
-    const grossIncomeFromTaxDeferredWithdrawals = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira']);
+    const grossIncomeFromTaxDeferredWithdrawals = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, [
+      '401k',
+      'ira',
+      'hsa',
+    ]);
     const grossIncomeFromInterest = annualReturnsData.yieldAmountsForPeriod.taxable.bondYield;
 
     const taxDeferredContributions = this.getContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira', 'hsa']);
