@@ -5,7 +5,7 @@ import { useMemo, useRef, useEffect, useState, useCallback } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
@@ -459,7 +459,10 @@ export const useMultiSimulationResult = (
   const swrKey = ['simulationHandle', inputs, simulationSeed, simulationMode];
   const { data: handleData, isLoading } = useSWR(
     swrKey,
-    async () => worker.runSimulation(inputs, simulationSeed, 1000, simulationMode, Comlink.proxy(onProgress)),
+    () => {
+      mutate(() => true, undefined, { revalidate: false });
+      return worker.runSimulation(inputs, simulationSeed, 1000, simulationMode, Comlink.proxy(onProgress));
+    },
     { revalidateOnFocus: false }
   );
 
@@ -468,7 +471,7 @@ export const useMultiSimulationResult = (
 
   const { data: { analysis, tableData, yearlyTableData } = {} } = useSWR(
     handle ? ['derived', handle, sortMode, category] : null,
-    async () => worker.getDerivedMultiSimulationData(handle!, sortMode, category),
+    () => worker.getDerivedMultiSimulationData(handle!, sortMode, category),
     { revalidateOnFocus: false, keepPreviousData: prevHandleRef.current === handle }
   );
 
