@@ -32,6 +32,11 @@ export interface TaxesData {
   deductions: Record<string, number>;
 }
 
+export interface EarlyWithdrawalPenaltyData {
+  taxDeferredPenaltyAmount: number;
+  taxFreePenaltyAmount: number;
+}
+
 const STANDARD_DEDUCTION_SINGLE = 15000;
 
 export const INCOME_TAX_BRACKETS_SINGLE = [
@@ -109,6 +114,20 @@ export class TaxProcessor {
     };
   }
 
+  private processIncomeTaxes(taxableOrdinaryIncome: number): { incomeTaxAmount: number; topMarginalTaxRate: number } {
+    let incomeTaxAmount = 0;
+    let topMarginalTaxRate = 0;
+    for (const bracket of INCOME_TAX_BRACKETS_SINGLE) {
+      if (taxableOrdinaryIncome <= bracket.min) break;
+
+      const taxableInBracket = Math.min(taxableOrdinaryIncome, bracket.max) - bracket.min;
+      incomeTaxAmount += taxableInBracket * bracket.rate;
+      topMarginalTaxRate = bracket.rate;
+    }
+
+    return { incomeTaxAmount, topMarginalTaxRate };
+  }
+
   private processCapitalGainsTaxes(
     taxableCapitalGains: number,
     taxableOrdinaryIncome: number
@@ -129,20 +148,6 @@ export class TaxProcessor {
     }
 
     return { capitalGainsTaxAmount, topMarginalCapitalGainsTaxRate };
-  }
-
-  private processIncomeTaxes(taxableOrdinaryIncome: number): { incomeTaxAmount: number; topMarginalTaxRate: number } {
-    let incomeTaxAmount = 0;
-    let topMarginalTaxRate = 0;
-    for (const bracket of INCOME_TAX_BRACKETS_SINGLE) {
-      if (taxableOrdinaryIncome <= bracket.min) break;
-
-      const taxableInBracket = Math.min(taxableOrdinaryIncome, bracket.max) - bracket.min;
-      incomeTaxAmount += taxableInBracket * bracket.rate;
-      topMarginalTaxRate = bracket.rate;
-    }
-
-    return { incomeTaxAmount, topMarginalTaxRate };
   }
 
   private getGrossOrdinaryIncome(
