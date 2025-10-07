@@ -308,8 +308,8 @@ export class PortfolioProcessor {
     };
   }
 
-  private processRequiredMinimumDistributions(): void {
-    throw new Error('Method not implemented.');
+  processRequiredMinimumDistributions(): void {
+    return;
   }
 
   private getWithdrawalOrder(): Array<WithdrawalOrderItem> {

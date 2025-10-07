@@ -82,6 +82,9 @@ export class FinancialSimulationEngine {
     while (simulationState.time.date < simulationContext.endDate) {
       this.incrementSimulationTime(simulationState);
 
+      // Handle RMDs at start of year, before any other processing
+      if (simulationState.time.age >= 73 && simulationState.time.month % 12 === 1) portfolioProcessor.processRequiredMinimumDistributions();
+
       // Process one month of simulation
       const returnsData = returnsProcessor.process();
       const incomesData = incomesProcessor.process(returnsData);
