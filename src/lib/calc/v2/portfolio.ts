@@ -40,6 +40,8 @@ export class PortfolioProcessor {
       byAccount: withdrawalsByAccount,
       realizedGainsForPeriod,
       realizedGainsByAccount,
+      earningsWithdrawnForPeriod,
+      earningsWithdrawnByAccount,
     } = this.processWithdrawals(grossCashFlow);
 
     const perAccountData: Record<string, AccountDataWithTransactions> = Object.fromEntries(
@@ -48,8 +50,12 @@ export class PortfolioProcessor {
         const contributionsForPeriod = contributionsByAccount[account.getAccountID()] || 0;
         const withdrawalsForPeriod = withdrawalsByAccount[account.getAccountID()] || 0;
         const realizedGainsForPeriod = realizedGainsByAccount[account.getAccountID()] || 0;
+        const earningsWithdrawnForPeriod = earningsWithdrawnByAccount[account.getAccountID()] || 0;
 
-        return [account.getAccountID(), { ...accountData, contributionsForPeriod, withdrawalsForPeriod, realizedGainsForPeriod }];
+        return [
+          account.getAccountID(),
+          { ...accountData, contributionsForPeriod, withdrawalsForPeriod, realizedGainsForPeriod, earningsWithdrawnForPeriod },
+        ];
       })
     );
 
@@ -57,6 +63,7 @@ export class PortfolioProcessor {
     const totalWithdrawals = this.simulationState.portfolio.getTotalWithdrawals();
     const totalContributions = this.simulationState.portfolio.getTotalContributions();
     const totalRealizedGains = this.simulationState.portfolio.getTotalRealizedGains();
+    const totalEarningsWithdrawn = this.simulationState.portfolio.getTotalEarningsWithdrawn();
     const assetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
 
     const result = {
@@ -64,9 +71,11 @@ export class PortfolioProcessor {
       totalWithdrawals,
       totalContributions,
       totalRealizedGains,
+      totalEarningsWithdrawn,
       withdrawalsForPeriod,
       contributionsForPeriod,
       realizedGainsForPeriod,
+      earningsWithdrawnForPeriod,
       perAccountData,
       assetAllocation,
     };
@@ -84,10 +93,12 @@ export class PortfolioProcessor {
     let withdrawalsForPeriod = annualPortfolioDataBeforeTaxes.withdrawalsForPeriod;
     let contributionsForPeriod = annualPortfolioDataBeforeTaxes.contributionsForPeriod;
     let realizedGainsForPeriod = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod;
+    let earningsWithdrawnForPeriod = annualPortfolioDataBeforeTaxes.earningsWithdrawnForPeriod;
 
     let contributionsByAccount: Record<string, number> = {};
     let withdrawalsByAccount: Record<string, number> = {};
     let realizedGainsByAccount: Record<string, number> = {};
+    let earningsWithdrawnByAccount: Record<string, number> = {};
 
     let discretionaryExpense = 0;
     if (taxesData.totalTaxesRefund > 0) {
@@ -103,6 +114,8 @@ export class PortfolioProcessor {
       withdrawalsByAccount = res.byAccount;
       realizedGainsForPeriod += res.realizedGainsForPeriod;
       realizedGainsByAccount = res.realizedGainsByAccount;
+      earningsWithdrawnForPeriod += res.earningsWithdrawnForPeriod;
+      earningsWithdrawnByAccount = res.earningsWithdrawnByAccount;
     }
 
     const perAccountData: Record<string, AccountDataWithTransactions> = Object.fromEntries(
@@ -118,7 +131,14 @@ export class PortfolioProcessor {
         const realizedGainsForPeriodBeforeTaxes = perAccountDataBeforeTaxes[account.getAccountID()]?.realizedGainsForPeriod || 0;
         const realizedGainsForPeriod = (realizedGainsByAccount[account.getAccountID()] || 0) + realizedGainsForPeriodBeforeTaxes;
 
-        return [account.getAccountID(), { ...accountData, contributionsForPeriod, withdrawalsForPeriod, realizedGainsForPeriod }];
+        const earningsWithdrawnForPeriodBeforeTaxes = perAccountDataBeforeTaxes[account.getAccountID()]?.earningsWithdrawnForPeriod || 0;
+        const earningsWithdrawnForPeriod =
+          (earningsWithdrawnByAccount[account.getAccountID()] || 0) + earningsWithdrawnForPeriodBeforeTaxes;
+
+        return [
+          account.getAccountID(),
+          { ...accountData, contributionsForPeriod, withdrawalsForPeriod, realizedGainsForPeriod, earningsWithdrawnForPeriod },
+        ];
       })
     );
 
@@ -126,6 +146,7 @@ export class PortfolioProcessor {
     const totalWithdrawals = this.simulationState.portfolio.getTotalWithdrawals();
     const totalContributions = this.simulationState.portfolio.getTotalContributions();
     const totalRealizedGains = this.simulationState.portfolio.getTotalRealizedGains();
+    const totalEarningsWithdrawn = this.simulationState.portfolio.getTotalEarningsWithdrawn();
     const assetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
 
     return {
@@ -134,9 +155,11 @@ export class PortfolioProcessor {
         totalWithdrawals,
         totalContributions,
         totalRealizedGains,
+        totalEarningsWithdrawn,
         withdrawalsForPeriod,
         contributionsForPeriod,
         realizedGainsForPeriod,
+        earningsWithdrawnForPeriod,
         perAccountData,
         assetAllocation,
       },
@@ -212,16 +235,28 @@ export class PortfolioProcessor {
     return { transactionsBreakdown: { totalForPeriod, byAccount }, discretionaryExpense };
   }
 
-  private processWithdrawals(
-    grossCashFlow: number
-  ): TransactionsBreakdown & { realizedGainsForPeriod: number; realizedGainsByAccount: Record<string, number> } {
+  private processWithdrawals(grossCashFlow: number): TransactionsBreakdown & {
+    realizedGainsForPeriod: number;
+    realizedGainsByAccount: Record<string, number>;
+    earningsWithdrawnForPeriod: number;
+    earningsWithdrawnByAccount: Record<string, number>;
+  } {
     const byAccount: Record<string, number> = {};
     const realizedGainsByAccount: Record<string, number> = {};
+    const earningsWithdrawnByAccount: Record<string, number> = {};
     if (!(grossCashFlow < 0)) {
-      return { totalForPeriod: 0, byAccount, realizedGainsForPeriod: 0, realizedGainsByAccount };
+      return {
+        totalForPeriod: 0,
+        byAccount,
+        realizedGainsForPeriod: 0,
+        realizedGainsByAccount,
+        earningsWithdrawnForPeriod: 0,
+        earningsWithdrawnByAccount,
+      };
     }
 
     let realizedGainsForPeriod = 0;
+    let earningsWithdrawnForPeriod = 0;
 
     const withdrawalOrder = this.getWithdrawalOrder();
     let remainingToWithdraw = Math.abs(grossCashFlow);
@@ -238,9 +273,11 @@ export class PortfolioProcessor {
 
         const withdrawFromThisAccount = Math.min(remainingToWithdraw, account.getTotalValue());
 
-        const { realizedGains } = account.applyWithdrawal(withdrawFromThisAccount);
+        const { realizedGains, earningsWithdrawn } = account.applyWithdrawal(withdrawFromThisAccount);
         realizedGainsByAccount[account.getAccountID()] = realizedGains;
         realizedGainsForPeriod += realizedGains;
+        earningsWithdrawnByAccount[account.getAccountID()] = earningsWithdrawn;
+        earningsWithdrawnForPeriod += earningsWithdrawn;
 
         byAccount[account.getAccountID()] = withdrawFromThisAccount;
         remainingToWithdraw -= withdrawFromThisAccount;
@@ -252,7 +289,14 @@ export class PortfolioProcessor {
 
     const totalForPeriod = Math.abs(grossCashFlow) - remainingToWithdraw;
 
-    return { totalForPeriod, byAccount, realizedGainsForPeriod, realizedGainsByAccount };
+    return {
+      totalForPeriod,
+      byAccount,
+      realizedGainsForPeriod,
+      realizedGainsByAccount,
+      earningsWithdrawnForPeriod,
+      earningsWithdrawnByAccount,
+    };
   }
 
   private getWithdrawalOrder(): AccountInputs['type'][] {
@@ -314,9 +358,11 @@ export interface PortfolioData {
   totalWithdrawals: number;
   totalContributions: number;
   totalRealizedGains: number;
+  totalEarningsWithdrawn: number;
   withdrawalsForPeriod: number;
   contributionsForPeriod: number;
   realizedGainsForPeriod: number;
+  earningsWithdrawnForPeriod: number;
   perAccountData: Record<string, AccountDataWithTransactions>;
   assetAllocation: AssetAllocation | null;
 }
@@ -376,6 +422,10 @@ export class Portfolio {
 
   getTotalRealizedGains(): number {
     return this.accounts.reduce((acc, account) => acc + account.getTotalRealizedGains(), 0);
+  }
+
+  getTotalEarningsWithdrawn(): number {
+    return this.accounts.reduce((acc, account) => acc + account.getTotalEarningsWithdrawn(), 0);
   }
 
   getTotalReturns(): AssetReturnAmounts {
@@ -468,6 +518,7 @@ export interface AccountDataWithTransactions extends AccountData {
   contributionsForPeriod: number;
   withdrawalsForPeriod: number;
   realizedGainsForPeriod: number;
+  earningsWithdrawnForPeriod: number;
 }
 
 export abstract class Account {
@@ -480,6 +531,7 @@ export abstract class Account {
     protected totalContributions: number,
     protected totalWithdrawals: number,
     protected totalRealizedGains: number,
+    protected totalEarningsWithdrawn: number,
     protected totalYields: AssetYieldAmounts
   ) {}
 
@@ -511,17 +563,21 @@ export abstract class Account {
     return this.totalRealizedGains;
   }
 
+  getTotalEarningsWithdrawn(): number {
+    return this.totalEarningsWithdrawn;
+  }
+
   abstract getAccountData(): AccountData;
 
   abstract applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts };
   abstract applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts };
   abstract applyContribution(amount: number): void;
-  abstract applyWithdrawal(amount: number): { realizedGains: number };
+  abstract applyWithdrawal(amount: number): { realizedGains: number; earningsWithdrawn: number };
 }
 
 export class SavingsAccount extends Account {
   constructor(data: AccountInputs) {
-    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, {
+    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, {
       taxable: { dividendYield: 0, bondYield: 0 },
       taxDeferred: { dividendYield: 0, bondYield: 0 },
       taxFree: { dividendYield: 0, bondYield: 0 },
@@ -565,12 +621,12 @@ export class SavingsAccount extends Account {
     this.totalContributions += amount;
   }
 
-  applyWithdrawal(amount: number): { realizedGains: number } {
+  applyWithdrawal(amount: number): { realizedGains: number; earningsWithdrawn: number } {
     if (amount > this.totalValue) throw new Error('Insufficient funds for withdrawal');
     this.totalValue -= amount;
     this.totalWithdrawals += amount;
 
-    return { realizedGains: 0 };
+    return { realizedGains: 0, earningsWithdrawn: 0 };
   }
 }
 
@@ -582,7 +638,7 @@ export class InvestmentAccount extends Account {
   private contributionBasis: number | undefined;
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
-    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, {
+    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, {
       taxable: { dividendYield: 0, bondYield: 0 },
       taxDeferred: { dividendYield: 0, bondYield: 0 },
       taxFree: { dividendYield: 0, bondYield: 0 },
@@ -711,9 +767,9 @@ export class InvestmentAccount extends Account {
     if (this.contributionBasis !== undefined) this.contributionBasis += amount;
   }
 
-  applyWithdrawal(amount: number): { realizedGains: number } {
+  applyWithdrawal(amount: number): { realizedGains: number; earningsWithdrawn: number } {
     if (amount < 0) throw new Error('Withdrawal amount must be non-negative');
-    if (amount === 0) return { realizedGains: 0 };
+    if (amount === 0) return { realizedGains: 0, earningsWithdrawn: 0 };
     if (amount > this.totalValue) throw new Error('Insufficient funds for withdrawal');
 
     const currentBondValue = this.totalValue * this.currPercentBonds;
@@ -734,9 +790,13 @@ export class InvestmentAccount extends Account {
       this.totalRealizedGains += realizedGains;
     }
 
+    let earningsWithdrawn = 0;
     if (this.contributionBasis !== undefined) {
       const contributionWithdrawn = Math.min(amount, this.contributionBasis);
       this.contributionBasis -= contributionWithdrawn;
+
+      earningsWithdrawn = amount - contributionWithdrawn;
+      this.totalEarningsWithdrawn += earningsWithdrawn;
     }
 
     this.totalValue = newTotalValue;
@@ -744,6 +804,6 @@ export class InvestmentAccount extends Account {
 
     this.totalWithdrawals += amount;
 
-    return { realizedGains };
+    return { realizedGains, earningsWithdrawn };
   }
 }
