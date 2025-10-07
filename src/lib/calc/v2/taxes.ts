@@ -3,6 +3,7 @@ import type { AccountInputs } from '@/lib/schemas/account-form-schema';
 import type { SimulationState } from './simulation-engine';
 import type { IncomesData } from './incomes';
 import type { PortfolioData } from './portfolio';
+import type { ReturnsData } from './returns';
 
 export interface CapitalGainsTaxesData {
   taxableCapitalGains: number;
@@ -52,10 +53,11 @@ export const CAPITAL_GAINS_TAX_BRACKETS_SINGLE = [
 export class TaxProcessor {
   constructor(private simulationState: SimulationState) {}
 
-  process(annualPortfolioDataBeforeTaxes: PortfolioData, annualIncomesData: IncomesData): TaxesData {
+  process(annualPortfolioDataBeforeTaxes: PortfolioData, annualIncomesData: IncomesData, annualReturnsData: ReturnsData): TaxesData {
     const { grossOrdinaryIncome, taxDeferredContributions } = this.getGrossOrdinaryIncome(
       annualPortfolioDataBeforeTaxes,
-      annualIncomesData
+      annualIncomesData,
+      annualReturnsData
     );
     const grossRealizedGains = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod;
 
@@ -142,15 +144,19 @@ export class TaxProcessor {
 
   private getGrossOrdinaryIncome(
     annualPortfolioDataBeforeTaxes: PortfolioData,
-    annualIncomesData: IncomesData
+    annualIncomesData: IncomesData,
+    annualReturnsData: ReturnsData
   ): { grossOrdinaryIncome: number; taxDeferredContributions: number } {
     const grossIncomeFromIncomes = annualIncomesData.totalGrossIncome;
     const grossIncomeFromTaxDeferredWithdrawals = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira']);
+    const grossIncomeFromInterest =
+      annualReturnsData.returnAmountsForPeriod.cash + annualReturnsData.yieldAmountsForPeriod.taxable.bondYield;
 
     const taxDeferredContributions = this.getContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira', 'hsa']);
 
     return {
-      grossOrdinaryIncome: grossIncomeFromIncomes + grossIncomeFromTaxDeferredWithdrawals - taxDeferredContributions,
+      grossOrdinaryIncome:
+        grossIncomeFromIncomes + grossIncomeFromTaxDeferredWithdrawals + grossIncomeFromInterest - taxDeferredContributions,
       taxDeferredContributions,
     };
   }

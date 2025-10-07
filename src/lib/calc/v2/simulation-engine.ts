@@ -97,7 +97,7 @@ export class FinancialSimulationEngine {
         const annualReturnsData = returnsProcessor.getAnnualData();
 
         // Process taxes
-        const annualTaxesData = taxProcessor.process(annualPortfolioDataBeforeTaxes, annualIncomesData);
+        const annualTaxesData = taxProcessor.process(annualPortfolioDataBeforeTaxes, annualIncomesData, annualReturnsData);
         const { portfolioData: annualPortfolioDataAfterTaxes, discretionaryExpense: annualDiscretionaryExpense } =
           portfolioProcessor.processTaxes(annualPortfolioDataBeforeTaxes, annualTaxesData);
 
