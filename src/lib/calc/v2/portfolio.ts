@@ -312,17 +312,19 @@ export class PortfolioProcessor {
     // TODO: Create more sophisticated drawdown strategy based on tax, penalty efficiency
 
     const age = this.simulationState.time.age;
-    const retirementAge = 59.5;
+    const regularQualifiedWithdrawalAge = 59.5;
 
-    if (age < retirementAge) {
+    if (age < regularQualifiedWithdrawalAge) {
       return [
         { type: 'savings' },
         { type: 'taxableBrokerage' },
-        { type: 'roth401k' },
-        { type: 'rothIra' },
+        { type: 'roth401k', modifier: 'contributionsOnly' },
+        { type: 'rothIra', modifier: 'contributionsOnly' },
         { type: '401k' },
         { type: 'ira' },
         { type: 'hsa' },
+        { type: 'roth401k' },
+        { type: 'rothIra' },
       ];
     } else {
       return [
