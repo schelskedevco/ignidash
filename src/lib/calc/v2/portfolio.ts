@@ -9,6 +9,13 @@ import type { TaxesData } from './taxes';
 
 type TransactionsBreakdown = { totalForPeriod: number; byAccount: Record<string, number> };
 
+type WithdrawalModifier = 'contributionsOnly';
+
+interface WithdrawalOrderItem {
+  type: AccountInputs['type'];
+  modifier?: WithdrawalModifier;
+}
+
 const EXTRA_SAVINGS_ACCOUNT_ID = '54593a0d-7b4f-489d-a5bd-42500afba532';
 
 export class PortfolioProcessor {
@@ -264,7 +271,9 @@ export class PortfolioProcessor {
     for (const accountType of withdrawalOrder) {
       if (remainingToWithdraw <= 0) break;
 
-      const accountsOfType = this.simulationState.portfolio.getAccounts().filter((account) => account.getAccountType() === accountType);
+      const accountsOfType = this.simulationState.portfolio
+        .getAccounts()
+        .filter((account) => account.getAccountType() === accountType.type);
       if (accountsOfType.length === 0) continue;
 
       for (const account of accountsOfType) {
@@ -299,16 +308,32 @@ export class PortfolioProcessor {
     };
   }
 
-  private getWithdrawalOrder(): AccountInputs['type'][] {
+  private getWithdrawalOrder(): Array<WithdrawalOrderItem> {
     // TODO: Create more sophisticated drawdown strategy based on tax, penalty efficiency
 
     const age = this.simulationState.time.age;
     const retirementAge = 59.5;
 
     if (age < retirementAge) {
-      return ['savings', 'taxableBrokerage', 'roth401k', 'rothIra', '401k', 'ira', 'hsa'];
+      return [
+        { type: 'savings' },
+        { type: 'taxableBrokerage' },
+        { type: 'roth401k' },
+        { type: 'rothIra' },
+        { type: '401k' },
+        { type: 'ira' },
+        { type: 'hsa' },
+      ];
     } else {
-      return ['savings', 'taxableBrokerage', '401k', 'ira', 'hsa', 'roth401k', 'rothIra'];
+      return [
+        { type: 'savings' },
+        { type: 'taxableBrokerage' },
+        { type: '401k' },
+        { type: 'ira' },
+        { type: 'hsa' },
+        { type: 'roth401k' },
+        { type: 'rothIra' },
+      ];
     }
   }
 
@@ -671,6 +696,10 @@ export class InvestmentAccount extends Account {
       type: this.type,
       assetAllocation,
     };
+  }
+
+  getContributionBasis(): number | undefined {
+    return this.contributionBasis;
   }
 
   applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts } {
