@@ -150,6 +150,30 @@ export class TaxProcessor {
     return { capitalGainsTaxAmount, topMarginalCapitalGainsTaxRate };
   }
 
+  private processEarlyWithdrawalPenalties(annualPortfolioDataBeforeTaxes: PortfolioData): EarlyWithdrawalPenaltyData {
+    let taxDeferredPenaltyAmount = 0;
+    let taxFreePenaltyAmount = 0;
+
+    const age = this.simulationState.time.age;
+    const regularQualifiedWithdrawalAge = 59.5;
+
+    if (age < regularQualifiedWithdrawalAge) {
+      const taxDeferredWithdrawalsFrom401kAndIra = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira']);
+      taxDeferredPenaltyAmount += taxDeferredWithdrawalsFrom401kAndIra * 0.1;
+
+      const earningsWithdrawnFromRoth = this.getEarningsWithdrawnFromRothAccountTypes(annualPortfolioDataBeforeTaxes);
+      taxFreePenaltyAmount += earningsWithdrawnFromRoth * 0.1;
+    }
+
+    const hsaQualifiedWithdrawalAge = 65;
+    if (age < hsaQualifiedWithdrawalAge) {
+      const taxDeferredWithdrawalsFromHsa = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, ['hsa']);
+      taxDeferredPenaltyAmount += taxDeferredWithdrawalsFromHsa * 0.2;
+    }
+
+    return { taxDeferredPenaltyAmount, taxFreePenaltyAmount };
+  }
+
   private getGrossOrdinaryIncome(
     annualPortfolioDataBeforeTaxes: PortfolioData,
     annualIncomesData: IncomesData,
@@ -178,5 +202,13 @@ export class TaxProcessor {
     return Object.values(annualPortfolioDataBeforeTaxes.perAccountData)
       .filter((account) => accountTypes.includes(account.type))
       .reduce((sum, account) => sum + account.withdrawalsForPeriod, 0);
+  }
+
+  private getEarningsWithdrawnFromRothAccountTypes(annualPortfolioDataBeforeTaxes: PortfolioData): number {
+    const rothAccountTypes = ['roth401k', 'rothIra'] as AccountInputs['type'][];
+
+    return Object.values(annualPortfolioDataBeforeTaxes.perAccountData)
+      .filter((account) => rothAccountTypes.includes(account.type))
+      .reduce((sum, account) => sum + account.earningsWithdrawnForPeriod, 0);
   }
 }
