@@ -450,7 +450,6 @@ export const useMultiSimulationResult = (
   const inputs = useQuickPlanStore((state) => state.inputs);
   const simulationSeed = useSimulationSeed();
   const sortMode = useMonteCarloSortMode();
-
   const worker = getSimulationWorker();
 
   const [completedSimulations, setCompletedSimulations] = useState(0);
