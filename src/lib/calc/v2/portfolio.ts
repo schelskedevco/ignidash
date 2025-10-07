@@ -330,6 +330,7 @@ export class PortfolioProcessor {
           acc.contributionsForPeriod += curr.contributionsForPeriod;
           acc.withdrawalsForPeriod += curr.withdrawalsForPeriod;
           acc.realizedGainsForPeriod += curr.realizedGainsForPeriod;
+          acc.earningsWithdrawnForPeriod += curr.earningsWithdrawnForPeriod;
 
           Object.entries(curr.perAccountData).forEach(([accountID, accountData]) => {
             acc.perAccountData[accountID] = {
@@ -337,6 +338,8 @@ export class PortfolioProcessor {
               contributionsForPeriod: (acc.perAccountData[accountID]?.contributionsForPeriod ?? 0) + accountData.contributionsForPeriod,
               withdrawalsForPeriod: (acc.perAccountData[accountID]?.withdrawalsForPeriod ?? 0) + accountData.withdrawalsForPeriod,
               realizedGainsForPeriod: (acc.perAccountData[accountID]?.realizedGainsForPeriod ?? 0) + accountData.realizedGainsForPeriod,
+              earningsWithdrawnForPeriod:
+                (acc.perAccountData[accountID]?.earningsWithdrawnForPeriod ?? 0) + accountData.earningsWithdrawnForPeriod,
             };
           });
 
@@ -346,6 +349,7 @@ export class PortfolioProcessor {
           contributionsForPeriod: 0,
           withdrawalsForPeriod: 0,
           realizedGainsForPeriod: 0,
+          earningsWithdrawnForPeriod: 0,
           perAccountData: {} as Record<string, AccountDataWithTransactions>,
         }
       ),
