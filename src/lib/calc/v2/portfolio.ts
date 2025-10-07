@@ -237,12 +237,10 @@ export class PortfolioProcessor {
         if (!(account.getTotalValue() > 0)) continue;
 
         const withdrawFromThisAccount = Math.min(remainingToWithdraw, account.getTotalValue());
-        const { realizedGains } = account.applyWithdrawal(withdrawFromThisAccount);
 
-        if (realizedGains > 0) {
-          realizedGainsByAccount[account.getAccountID()] = realizedGains;
-          realizedGainsForPeriod += realizedGains;
-        }
+        const { realizedGains } = account.applyWithdrawal(withdrawFromThisAccount);
+        realizedGainsByAccount[account.getAccountID()] = realizedGains;
+        realizedGainsForPeriod += realizedGains;
 
         byAccount[account.getAccountID()] = withdrawFromThisAccount;
         remainingToWithdraw -= withdrawFromThisAccount;
