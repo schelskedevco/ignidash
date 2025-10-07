@@ -456,8 +456,9 @@ export const useMultiSimulationResult = (
   const [completedSimulations, setCompletedSimulations] = useState(0);
   const onProgress = useCallback((completed: number) => setCompletedSimulations(completed), []);
 
+  const swrKey = ['simulationHandle', inputs, simulationSeed, simulationMode];
   const { data: handleData, isLoading } = useSWR(
-    ['simulationHandle', inputs, simulationSeed, simulationMode],
+    swrKey,
     async () => worker.runSimulation(inputs, simulationSeed, 1000, simulationMode, Comlink.proxy(onProgress)),
     { revalidateOnFocus: false }
   );
