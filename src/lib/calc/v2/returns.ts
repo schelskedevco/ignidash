@@ -63,11 +63,11 @@ export class ReturnsProcessor {
       bondYield: this.cachedAnnualYieldRates.bondYield / 12,
     };
 
-    const { returnsForPeriod: returnAmountsForPeriod, totalReturns: totalReturnAmounts } =
-      this.simulationState.portfolio.applyReturns(returnRatesForPeriod);
-
     const { yieldsForPeriod: yieldAmountsForPeriod, totalYields: totalYieldAmounts } =
       this.simulationState.portfolio.applyYields(yieldRatesForPeriod);
+
+    const { returnsForPeriod: returnAmountsForPeriod, totalReturns: totalReturnAmounts } =
+      this.simulationState.portfolio.applyReturns(returnRatesForPeriod);
 
     const result = {
       totalReturnAmounts,
