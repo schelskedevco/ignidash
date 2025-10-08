@@ -71,13 +71,13 @@ export class PortfolioProcessor {
       {} // rmdsByAccount
     );
 
-    const result = this.buildPortfolioData(
+    const portfolioData = this.buildPortfolioData(
       { withdrawalsForPeriod, contributionsForPeriod, realizedGainsForPeriod, earningsWithdrawnForPeriod, rmdsForPeriod: 0 },
       perAccountData
     );
 
-    this.monthlyData.push(result);
-    return { portfolioData: result, discretionaryExpense };
+    this.monthlyData.push(portfolioData);
+    return { portfolioData, discretionaryExpense };
   }
 
   processTaxes(
@@ -128,10 +128,7 @@ export class PortfolioProcessor {
       perAccountData
     );
 
-    return {
-      portfolioData,
-      discretionaryExpense,
-    };
+    return { portfolioData, discretionaryExpense };
   }
 
   private processContributions(
@@ -321,7 +318,7 @@ export class PortfolioProcessor {
       rmdsByAccount
     );
 
-    const result = this.buildPortfolioData(
+    const portfolioData = this.buildPortfolioData(
       {
         withdrawalsForPeriod: totalForPeriod,
         contributionsForPeriod: totalForPeriod,
@@ -332,8 +329,8 @@ export class PortfolioProcessor {
       perAccountData
     );
 
-    this.monthlyData.push(result);
-    return result;
+    this.monthlyData.push(portfolioData);
+    return portfolioData;
   }
 
   private buildPerAccountData(
