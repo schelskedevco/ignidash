@@ -1,6 +1,16 @@
+import type { AccountInputs } from '@/lib/schemas/account-form-schema';
+
 import type { SimulationState } from './simulation-engine';
 import { ReturnsProvider } from '../returns-providers/returns-provider';
 import type { AssetReturnRates, AssetReturnAmounts, AssetYieldAmounts, AssetYieldRates, TaxCategory } from '../asset';
+
+export interface AccountDataWithReturns {
+  name: string;
+  id: string;
+  type: AccountInputs['type'];
+  returnsForPeriod: AssetReturnAmounts;
+  totalReturns: AssetReturnAmounts;
+}
 
 export interface ReturnsData {
   // Total return data
@@ -18,6 +28,8 @@ export interface ReturnsData {
   annualReturnRates: AssetReturnRates;
   annualInflationRate: number;
   annualYieldRates: AssetYieldRates;
+
+  perAccountData: Record<string, AccountDataWithReturns>;
 }
 
 export class ReturnsProcessor {
@@ -66,8 +78,11 @@ export class ReturnsProcessor {
     const { yieldsForPeriod: yieldAmountsForPeriod, totalYields: totalYieldAmounts } =
       this.simulationState.portfolio.applyYields(yieldRatesForPeriod);
 
-    const { returnsForPeriod: returnAmountsForPeriod, totalReturns: totalReturnAmounts } =
-      this.simulationState.portfolio.applyReturns(returnRatesForPeriod);
+    const {
+      returnsForPeriod: returnAmountsForPeriod,
+      totalReturns: totalReturnAmounts,
+      byAccount: perAccountData,
+    } = this.simulationState.portfolio.applyReturns(returnRatesForPeriod);
 
     const result = {
       totalReturnAmounts,
@@ -80,6 +95,7 @@ export class ReturnsProcessor {
       annualReturnRates: this.cachedAnnualReturnRates,
       annualInflationRate: this.cachedAnnualInflationRate,
       annualYieldRates: this.cachedAnnualYieldRates,
+      perAccountData,
     };
 
     this.monthlyData.push(result);
@@ -95,28 +111,43 @@ export class ReturnsProcessor {
   }
 
   getAnnualData(): ReturnsData {
+    const addAssetReturns = (a: AssetReturnAmounts | undefined, b: AssetReturnAmounts): AssetReturnAmounts => ({
+      stocks: (a?.stocks ?? 0) + b.stocks,
+      bonds: (a?.bonds ?? 0) + b.bonds,
+      cash: (a?.cash ?? 0) + b.cash,
+    });
+
     return {
       ...this.monthlyData[0],
-      returnAmountsForPeriod: this.monthlyData.reduce(
-        (acc, curr) => ({
-          stocks: acc.stocks + curr.returnAmountsForPeriod.stocks,
-          bonds: acc.bonds + curr.returnAmountsForPeriod.bonds,
-          cash: acc.cash + curr.returnAmountsForPeriod.cash,
-        }),
-        { stocks: 0, bonds: 0, cash: 0 }
-      ),
-      yieldAmountsForPeriod: this.monthlyData.reduce(
+      ...this.monthlyData.reduce(
         (acc, curr) => {
+          acc.returnAmountsForPeriod.stocks += curr.returnAmountsForPeriod.stocks;
+          acc.returnAmountsForPeriod.bonds += curr.returnAmountsForPeriod.bonds;
+          acc.returnAmountsForPeriod.cash += curr.returnAmountsForPeriod.cash;
+
           (['taxable', 'taxDeferred', 'taxFree'] as TaxCategory[]).forEach((category) => {
-            acc[category].dividendYield += curr.yieldAmountsForPeriod[category].dividendYield;
-            acc[category].bondYield += curr.yieldAmountsForPeriod[category].bondYield;
+            acc.yieldAmountsForPeriod[category].dividendYield += curr.yieldAmountsForPeriod[category].dividendYield;
+            acc.yieldAmountsForPeriod[category].bondYield += curr.yieldAmountsForPeriod[category].bondYield;
           });
+
+          Object.entries(curr.perAccountData).forEach(([accountID, accountData]) => {
+            acc.perAccountData[accountID] = {
+              ...accountData,
+              returnsForPeriod: addAssetReturns(acc.perAccountData[accountID]?.returnsForPeriod, accountData.returnsForPeriod),
+              totalReturns: addAssetReturns(acc.perAccountData[accountID]?.totalReturns, accountData.totalReturns),
+            };
+          });
+
           return acc;
         },
         {
-          taxable: { dividendYield: 0, bondYield: 0 },
-          taxDeferred: { dividendYield: 0, bondYield: 0 },
-          taxFree: { dividendYield: 0, bondYield: 0 },
+          returnAmountsForPeriod: { stocks: 0, bonds: 0, cash: 0 },
+          yieldAmountsForPeriod: {
+            taxable: { dividendYield: 0, bondYield: 0 },
+            taxDeferred: { dividendYield: 0, bondYield: 0 },
+            taxFree: { dividendYield: 0, bondYield: 0 },
+          },
+          perAccountData: {} as Record<string, AccountDataWithReturns>,
         }
       ),
     };

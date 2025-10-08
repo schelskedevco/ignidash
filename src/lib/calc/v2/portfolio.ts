@@ -6,6 +6,7 @@ import { ContributionRules } from './contribution-rules';
 import type { IncomesData } from './incomes';
 import type { ExpensesData } from './expenses';
 import type { TaxesData } from './taxes';
+import type { AccountDataWithReturns } from './returns';
 import { uniformLifetimeMap } from '../data/rmds-table';
 
 type TransactionsBreakdown = { totalForPeriod: number; byAccount: Record<string, number> };
@@ -611,7 +612,11 @@ export class Portfolio {
     return this.accounts.find((account) => account.getAccountID() === accountID);
   }
 
-  applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts } {
+  applyReturns(returns: AssetReturnRates): {
+    returnsForPeriod: AssetReturnAmounts;
+    totalReturns: AssetReturnAmounts;
+    byAccount: Record<string, AccountDataWithReturns>;
+  } {
     const returnsForPeriod: AssetReturnAmounts = {
       cash: 0,
       bonds: 0,
@@ -622,6 +627,7 @@ export class Portfolio {
       bonds: 0,
       stocks: 0,
     };
+    const byAccount: Record<string, AccountDataWithReturns> = {};
 
     this.accounts.forEach((account) => {
       const { returnsForPeriod: accountReturnsForPeriod, totalReturns: accountTotalReturns } = account.applyReturns(returns);
@@ -633,9 +639,17 @@ export class Portfolio {
       totalReturns.cash += accountTotalReturns.cash;
       totalReturns.bonds += accountTotalReturns.bonds;
       totalReturns.stocks += accountTotalReturns.stocks;
+
+      byAccount[account.getAccountID()] = {
+        name: account.getAccountName(),
+        id: account.getAccountID(),
+        type: account.getAccountType(),
+        returnsForPeriod: accountReturnsForPeriod,
+        totalReturns: accountTotalReturns,
+      };
     });
 
-    return { returnsForPeriod, totalReturns };
+    return { returnsForPeriod, totalReturns, byAccount };
   }
 
   applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts } {
@@ -710,6 +724,10 @@ export abstract class Account {
 
   getAccountType(): AccountInputs['type'] {
     return this.type;
+  }
+
+  getAccountName(): string {
+    return this.name;
   }
 
   getTotalValue(): number {
