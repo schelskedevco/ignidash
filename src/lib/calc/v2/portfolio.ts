@@ -644,8 +644,8 @@ export class Portfolio {
         name: account.getAccountName(),
         id: account.getAccountID(),
         type: account.getAccountType(),
-        returnsForPeriod: accountReturnsForPeriod,
-        totalReturns: accountTotalReturns,
+        returnAmountsForPeriod: accountReturnsForPeriod,
+        totalReturnAmounts: accountTotalReturns,
       };
     });
 

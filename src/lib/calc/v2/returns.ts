@@ -8,8 +8,8 @@ export interface AccountDataWithReturns {
   name: string;
   id: string;
   type: AccountInputs['type'];
-  returnsForPeriod: AssetReturnAmounts;
-  totalReturns: AssetReturnAmounts;
+  returnAmountsForPeriod: AssetReturnAmounts;
+  totalReturnAmounts: AssetReturnAmounts;
 }
 
 export interface ReturnsData {
@@ -133,8 +133,11 @@ export class ReturnsProcessor {
           Object.entries(curr.perAccountData).forEach(([accountID, accountData]) => {
             acc.perAccountData[accountID] = {
               ...accountData,
-              returnsForPeriod: addAssetReturns(acc.perAccountData[accountID]?.returnsForPeriod, accountData.returnsForPeriod),
-              totalReturns: addAssetReturns(acc.perAccountData[accountID]?.totalReturns, accountData.totalReturns),
+              returnAmountsForPeriod: addAssetReturns(
+                acc.perAccountData[accountID]?.returnAmountsForPeriod,
+                accountData.returnAmountsForPeriod
+              ),
+              totalReturnAmounts: addAssetReturns(acc.perAccountData[accountID]?.totalReturnAmounts, accountData.totalReturnAmounts),
             };
           });
 
