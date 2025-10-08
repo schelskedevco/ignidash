@@ -62,26 +62,13 @@ export class PortfolioProcessor {
       earningsWithdrawnByAccount,
     } = this.processWithdrawals(grossCashFlow);
 
-    const perAccountData: Record<string, AccountDataWithTransactions> = Object.fromEntries(
-      this.simulationState.portfolio.getAccounts().map((account) => {
-        const accountData = account.getAccountData();
-        const contributionsForPeriod = contributionsByAccount[account.getAccountID()] || 0;
-        const withdrawalsForPeriod = withdrawalsByAccount[account.getAccountID()] || 0;
-        const realizedGainsForPeriod = realizedGainsByAccount[account.getAccountID()] || 0;
-        const earningsWithdrawnForPeriod = earningsWithdrawnByAccount[account.getAccountID()] || 0;
-
-        return [
-          account.getAccountID(),
-          {
-            ...accountData,
-            contributionsForPeriod,
-            withdrawalsForPeriod,
-            realizedGainsForPeriod,
-            earningsWithdrawnForPeriod,
-            rmdsForPeriod: 0,
-          },
-        ];
-      })
+    const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
+      {}, // baseAccountData
+      contributionsByAccount,
+      withdrawalsByAccount,
+      realizedGainsByAccount,
+      earningsWithdrawnByAccount,
+      {} // rmdsByAccount
     );
 
     const result = this.buildPortfolioData(
@@ -127,35 +114,13 @@ export class PortfolioProcessor {
       earningsWithdrawnByAccount = res.earningsWithdrawnByAccount;
     }
 
-    const perAccountData: Record<string, AccountDataWithTransactions> = Object.fromEntries(
-      this.simulationState.portfolio.getAccounts().map((account) => {
-        const accountData = account.getAccountData();
-
-        const contributionsForPeriodBeforeTaxes = perAccountDataBeforeTaxes[account.getAccountID()]?.contributionsForPeriod || 0;
-        const contributionsForPeriod = (contributionsByAccount[account.getAccountID()] || 0) + contributionsForPeriodBeforeTaxes;
-
-        const withdrawalsForPeriodBeforeTaxes = perAccountDataBeforeTaxes[account.getAccountID()]?.withdrawalsForPeriod || 0;
-        const withdrawalsForPeriod = (withdrawalsByAccount[account.getAccountID()] || 0) + withdrawalsForPeriodBeforeTaxes;
-
-        const realizedGainsForPeriodBeforeTaxes = perAccountDataBeforeTaxes[account.getAccountID()]?.realizedGainsForPeriod || 0;
-        const realizedGainsForPeriod = (realizedGainsByAccount[account.getAccountID()] || 0) + realizedGainsForPeriodBeforeTaxes;
-
-        const earningsWithdrawnForPeriodBeforeTaxes = perAccountDataBeforeTaxes[account.getAccountID()]?.earningsWithdrawnForPeriod || 0;
-        const earningsWithdrawnForPeriod =
-          (earningsWithdrawnByAccount[account.getAccountID()] || 0) + earningsWithdrawnForPeriodBeforeTaxes;
-
-        return [
-          account.getAccountID(),
-          {
-            ...accountData,
-            contributionsForPeriod,
-            withdrawalsForPeriod,
-            realizedGainsForPeriod,
-            earningsWithdrawnForPeriod,
-            rmdsForPeriod: 0,
-          },
-        ];
-      })
+    const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
+      perAccountDataBeforeTaxes,
+      contributionsByAccount,
+      withdrawalsByAccount,
+      realizedGainsByAccount,
+      earningsWithdrawnByAccount,
+      {} // rmdsByAccount
     );
 
     const portfolioData = this.buildPortfolioData(
@@ -347,27 +312,13 @@ export class PortfolioProcessor {
     contributionsByAccount[this.rmdSavingsAccount.getAccountID()] =
       (contributionsByAccount[this.rmdSavingsAccount.getAccountID()] || 0) + totalForPeriod;
 
-    const perAccountData: Record<string, AccountDataWithTransactions> = Object.fromEntries(
-      this.simulationState.portfolio.getAccounts().map((account) => {
-        const accountData = account.getAccountData();
-        const contributionsForPeriod = contributionsByAccount[account.getAccountID()] || 0;
-        const withdrawalsForPeriod = withdrawalsByAccount[account.getAccountID()] || 0;
-        const realizedGainsForPeriod = realizedGainsByAccount[account.getAccountID()] || 0;
-        const earningsWithdrawnForPeriod = earningsWithdrawnByAccount[account.getAccountID()] || 0;
-        const rmdsForPeriod = rmdsByAccount[account.getAccountID()] || 0;
-
-        return [
-          account.getAccountID(),
-          {
-            ...accountData,
-            contributionsForPeriod,
-            withdrawalsForPeriod,
-            realizedGainsForPeriod,
-            earningsWithdrawnForPeriod,
-            rmdsForPeriod,
-          },
-        ];
-      })
+    const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
+      {}, // baseAccountData
+      contributionsByAccount,
+      withdrawalsByAccount,
+      realizedGainsByAccount,
+      earningsWithdrawnByAccount,
+      rmdsByAccount
     );
 
     const result = this.buildPortfolioData(
@@ -383,6 +334,49 @@ export class PortfolioProcessor {
 
     this.monthlyData.push(result);
     return result;
+  }
+
+  private buildPerAccountData(
+    baseAccountData: Record<string, AccountDataWithTransactions>,
+    contributionsByAccount: Record<string, number>,
+    withdrawalsByAccount: Record<string, number>,
+    realizedGainsByAccount: Record<string, number>,
+    earningsWithdrawnByAccount: Record<string, number>,
+    rmdsByAccount: Record<string, number>
+  ): Record<string, AccountDataWithTransactions> {
+    return Object.fromEntries(
+      this.simulationState.portfolio.getAccounts().map((account) => {
+        const accountID = account.getAccountID();
+        const accountData = account.getAccountData();
+
+        const baseContributionsForPeriod = baseAccountData[accountID]?.contributionsForPeriod || 0;
+        const contributionsForPeriod = (contributionsByAccount[accountID] || 0) + baseContributionsForPeriod;
+
+        const baseWithdrawalsForPeriod = baseAccountData[accountID]?.withdrawalsForPeriod || 0;
+        const withdrawalsForPeriod = (withdrawalsByAccount[accountID] || 0) + baseWithdrawalsForPeriod;
+
+        const baseRealizedGainsForPeriod = baseAccountData[accountID]?.realizedGainsForPeriod || 0;
+        const realizedGainsForPeriod = (realizedGainsByAccount[accountID] || 0) + baseRealizedGainsForPeriod;
+
+        const baseEarningsWithdrawnForPeriod = baseAccountData[accountID]?.earningsWithdrawnForPeriod || 0;
+        const earningsWithdrawnForPeriod = (earningsWithdrawnByAccount[accountID] || 0) + baseEarningsWithdrawnForPeriod;
+
+        const baseRmdsForPeriod = baseAccountData[accountID]?.rmdsForPeriod || 0;
+        const rmdsForPeriod = (rmdsByAccount[accountID] || 0) + baseRmdsForPeriod;
+
+        return [
+          accountID,
+          {
+            ...accountData,
+            contributionsForPeriod,
+            withdrawalsForPeriod,
+            realizedGainsForPeriod,
+            earningsWithdrawnForPeriod,
+            rmdsForPeriod,
+          },
+        ];
+      })
+    );
   }
 
   private buildPortfolioData(
