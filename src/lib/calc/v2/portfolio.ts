@@ -17,6 +17,8 @@ interface WithdrawalOrderItem {
   modifier?: WithdrawalModifier;
 }
 
+type WithdrawalType = 'rmd' | 'regular';
+
 const EXTRA_SAVINGS_ACCOUNT_ID = '54593a0d-7b4f-489d-a5bd-42500afba532';
 const RMD_SAVINGS_ACCOUNT_ID = 'd7288042-1f83-4e50-9a6a-b1ef7a6191cc';
 
@@ -70,7 +72,14 @@ export class PortfolioProcessor {
 
         return [
           account.getAccountID(),
-          { ...accountData, contributionsForPeriod, withdrawalsForPeriod, realizedGainsForPeriod, earningsWithdrawnForPeriod },
+          {
+            ...accountData,
+            contributionsForPeriod,
+            withdrawalsForPeriod,
+            realizedGainsForPeriod,
+            earningsWithdrawnForPeriod,
+            rmdsForPeriod: 0,
+          },
         ];
       })
     );
@@ -80,6 +89,7 @@ export class PortfolioProcessor {
     const totalContributions = this.simulationState.portfolio.getTotalContributions();
     const totalRealizedGains = this.simulationState.portfolio.getTotalRealizedGains();
     const totalEarningsWithdrawn = this.simulationState.portfolio.getTotalEarningsWithdrawn();
+    const totalRmds = this.simulationState.portfolio.getTotalRmds();
     const assetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
 
     const result = {
@@ -88,10 +98,12 @@ export class PortfolioProcessor {
       totalContributions,
       totalRealizedGains,
       totalEarningsWithdrawn,
+      totalRmds,
       withdrawalsForPeriod,
       contributionsForPeriod,
       realizedGainsForPeriod,
       earningsWithdrawnForPeriod,
+      rmdsForPeriod: 0,
       perAccountData,
       assetAllocation,
     };
@@ -153,7 +165,14 @@ export class PortfolioProcessor {
 
         return [
           account.getAccountID(),
-          { ...accountData, contributionsForPeriod, withdrawalsForPeriod, realizedGainsForPeriod, earningsWithdrawnForPeriod },
+          {
+            ...accountData,
+            contributionsForPeriod,
+            withdrawalsForPeriod,
+            realizedGainsForPeriod,
+            earningsWithdrawnForPeriod,
+            rmdsForPeriod: 0,
+          },
         ];
       })
     );
@@ -163,6 +182,7 @@ export class PortfolioProcessor {
     const totalContributions = this.simulationState.portfolio.getTotalContributions();
     const totalRealizedGains = this.simulationState.portfolio.getTotalRealizedGains();
     const totalEarningsWithdrawn = this.simulationState.portfolio.getTotalEarningsWithdrawn();
+    const totalRmds = this.simulationState.portfolio.getTotalRmds();
     const assetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
 
     return {
@@ -172,10 +192,12 @@ export class PortfolioProcessor {
         totalContributions,
         totalRealizedGains,
         totalEarningsWithdrawn,
+        totalRmds,
         withdrawalsForPeriod,
         contributionsForPeriod,
         realizedGainsForPeriod,
         earningsWithdrawnForPeriod,
+        rmdsForPeriod: 0,
         perAccountData,
         assetAllocation,
       },
@@ -294,7 +316,7 @@ export class PortfolioProcessor {
 
         const withdrawFromThisAccount = Math.min(remainingToWithdraw, maxWithdrawable);
 
-        const { realizedGains, earningsWithdrawn } = account.applyWithdrawal(withdrawFromThisAccount);
+        const { realizedGains, earningsWithdrawn } = account.applyWithdrawal(withdrawFromThisAccount, 'regular');
         realizedGainsByAccount[account.getAccountID()] = realizedGains;
         realizedGainsForPeriod += realizedGains;
         earningsWithdrawnByAccount[account.getAccountID()] = earningsWithdrawn;
@@ -324,6 +346,7 @@ export class PortfolioProcessor {
     const withdrawalsByAccount: Record<string, number> = {};
     const realizedGainsByAccount: Record<string, number> = {};
     const earningsWithdrawnByAccount: Record<string, number> = {};
+    const rmdsByAccount: Record<string, number> = {};
 
     let totalForPeriod = 0;
     let realizedGainsForPeriod = 0;
@@ -336,13 +359,14 @@ export class PortfolioProcessor {
       const lookupAge = Math.min(age, 120);
       const rmdAmount = account.getTotalValue() / uniformLifetimeMap[lookupAge];
 
-      const { realizedGains, earningsWithdrawn } = account.applyWithdrawal(rmdAmount);
+      const { realizedGains, earningsWithdrawn } = account.applyWithdrawal(rmdAmount, 'rmd');
       realizedGainsByAccount[account.getAccountID()] = realizedGains;
       realizedGainsForPeriod += realizedGains;
       earningsWithdrawnByAccount[account.getAccountID()] = earningsWithdrawn;
       earningsWithdrawnForPeriod += earningsWithdrawn;
 
       withdrawalsByAccount[account.getAccountID()] = rmdAmount;
+      rmdsByAccount[account.getAccountID()] = rmdAmount;
       totalForPeriod += rmdAmount;
     }
 
@@ -366,10 +390,18 @@ export class PortfolioProcessor {
         const withdrawalsForPeriod = withdrawalsByAccount[account.getAccountID()] || 0;
         const realizedGainsForPeriod = realizedGainsByAccount[account.getAccountID()] || 0;
         const earningsWithdrawnForPeriod = earningsWithdrawnByAccount[account.getAccountID()] || 0;
+        const rmdsForPeriod = rmdsByAccount[account.getAccountID()] || 0;
 
         return [
           account.getAccountID(),
-          { ...accountData, contributionsForPeriod, withdrawalsForPeriod, realizedGainsForPeriod, earningsWithdrawnForPeriod },
+          {
+            ...accountData,
+            contributionsForPeriod,
+            withdrawalsForPeriod,
+            realizedGainsForPeriod,
+            earningsWithdrawnForPeriod,
+            rmdsForPeriod,
+          },
         ];
       })
     );
@@ -379,6 +411,7 @@ export class PortfolioProcessor {
     const totalContributions = this.simulationState.portfolio.getTotalContributions();
     const totalRealizedGains = this.simulationState.portfolio.getTotalRealizedGains();
     const totalEarningsWithdrawn = this.simulationState.portfolio.getTotalEarningsWithdrawn();
+    const totalRmds = this.simulationState.portfolio.getTotalRmds();
     const assetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
 
     const result = {
@@ -387,10 +420,12 @@ export class PortfolioProcessor {
       totalContributions,
       totalRealizedGains,
       totalEarningsWithdrawn,
+      totalRmds,
       withdrawalsForPeriod: totalForPeriod,
       contributionsForPeriod: totalForPeriod,
       realizedGainsForPeriod,
       earningsWithdrawnForPeriod,
+      rmdsForPeriod: totalForPeriod,
       perAccountData,
       assetAllocation,
     };
@@ -479,10 +514,12 @@ export interface PortfolioData {
   totalContributions: number;
   totalRealizedGains: number;
   totalEarningsWithdrawn: number;
+  totalRmds: number;
   withdrawalsForPeriod: number;
   contributionsForPeriod: number;
   realizedGainsForPeriod: number;
   earningsWithdrawnForPeriod: number;
+  rmdsForPeriod: number;
   perAccountData: Record<string, AccountDataWithTransactions>;
   assetAllocation: AssetAllocation | null;
 }
@@ -550,6 +587,10 @@ export class Portfolio {
 
   getTotalEarningsWithdrawn(): number {
     return this.accounts.reduce((acc, account) => acc + account.getTotalEarningsWithdrawn(), 0);
+  }
+
+  getTotalRmds(): number {
+    return this.accounts.reduce((acc, account) => acc + account.getTotalRmds(), 0);
   }
 
   getTotalReturns(): AssetReturnAmounts {
@@ -629,9 +670,11 @@ export class Portfolio {
 
 export interface AccountData {
   totalValue: number;
-  totalWithdrawals: number;
   totalContributions: number;
+  totalWithdrawals: number;
   totalRealizedGains: number;
+  totalEarningsWithdrawn: number;
+  totalRmds: number;
   name: string;
   id: string;
   type: AccountInputs['type'];
@@ -643,6 +686,7 @@ export interface AccountDataWithTransactions extends AccountData {
   withdrawalsForPeriod: number;
   realizedGainsForPeriod: number;
   earningsWithdrawnForPeriod: number;
+  rmdsForPeriod: number;
 }
 
 export abstract class Account {
@@ -656,6 +700,7 @@ export abstract class Account {
     protected totalWithdrawals: number,
     protected totalRealizedGains: number,
     protected totalEarningsWithdrawn: number,
+    protected totalRmds: number,
     protected totalYields: AssetYieldAmounts
   ) {}
 
@@ -691,6 +736,10 @@ export abstract class Account {
     return this.totalEarningsWithdrawn;
   }
 
+  getTotalRmds(): number {
+    return this.totalRmds;
+  }
+
   getHasRMDs(): boolean {
     return this.type === 'ira' || this.type === '401k';
   }
@@ -700,12 +749,12 @@ export abstract class Account {
   abstract applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts };
   abstract applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts };
   abstract applyContribution(amount: number): void;
-  abstract applyWithdrawal(amount: number): { realizedGains: number; earningsWithdrawn: number };
+  abstract applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number };
 }
 
 export class SavingsAccount extends Account {
   constructor(data: AccountInputs) {
-    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, {
+    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, 0, {
       taxable: { dividendYield: 0, bondYield: 0 },
       taxDeferred: { dividendYield: 0, bondYield: 0 },
       taxFree: { dividendYield: 0, bondYield: 0 },
@@ -724,6 +773,8 @@ export class SavingsAccount extends Account {
       totalWithdrawals: this.totalWithdrawals,
       totalContributions: this.totalContributions,
       totalRealizedGains: this.totalRealizedGains,
+      totalEarningsWithdrawn: this.totalEarningsWithdrawn,
+      totalRmds: this.totalRmds,
       name: this.name,
       id: this.id,
       type: this.type,
@@ -749,8 +800,10 @@ export class SavingsAccount extends Account {
     this.totalContributions += amount;
   }
 
-  applyWithdrawal(amount: number): { realizedGains: number; earningsWithdrawn: number } {
+  applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number } {
     if (amount > this.totalValue) throw new Error('Insufficient funds for withdrawal');
+    if (type === 'rmd') throw new Error('Savings account should not have RMDs');
+
     this.totalValue -= amount;
     this.totalWithdrawals += amount;
 
@@ -766,7 +819,7 @@ export class InvestmentAccount extends Account {
   private contributionBasis: number | undefined;
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
-    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, {
+    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, 0, {
       taxable: { dividendYield: 0, bondYield: 0 },
       taxDeferred: { dividendYield: 0, bondYield: 0 },
       taxFree: { dividendYield: 0, bondYield: 0 },
@@ -790,6 +843,8 @@ export class InvestmentAccount extends Account {
       totalWithdrawals: this.totalWithdrawals,
       totalContributions: this.totalContributions,
       totalRealizedGains: this.totalRealizedGains,
+      totalEarningsWithdrawn: this.totalEarningsWithdrawn,
+      totalRmds: this.totalRmds,
       name: this.name,
       id: this.id,
       type: this.type,
@@ -899,7 +954,7 @@ export class InvestmentAccount extends Account {
     if (this.contributionBasis !== undefined) this.contributionBasis += amount;
   }
 
-  applyWithdrawal(amount: number): { realizedGains: number; earningsWithdrawn: number } {
+  applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number } {
     if (amount < 0) throw new Error('Withdrawal amount must be non-negative');
     if (amount === 0) return { realizedGains: 0, earningsWithdrawn: 0 };
     if (amount > this.totalValue) throw new Error('Insufficient funds for withdrawal');
@@ -935,6 +990,7 @@ export class InvestmentAccount extends Account {
     this.currPercentBonds = newTotalValue ? (currentBondValue - bondWithdrawal) / newTotalValue : this.initialPercentBonds;
 
     this.totalWithdrawals += amount;
+    if (type === 'rmd') this.totalRmds += amount;
 
     return { realizedGains, earningsWithdrawn };
   }

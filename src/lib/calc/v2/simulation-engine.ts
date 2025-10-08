@@ -188,6 +188,7 @@ export class FinancialSimulationEngine {
       withdrawalsForPeriod: 0,
       realizedGainsForPeriod: 0,
       earningsWithdrawnForPeriod: 0,
+      rmdsForPeriod: 0,
     };
 
     const perAccountData: Record<string, AccountDataWithTransactions> = Object.fromEntries(
@@ -204,10 +205,12 @@ export class FinancialSimulationEngine {
         totalWithdrawals: 0,
         totalRealizedGains: 0,
         totalEarningsWithdrawn: 0,
+        totalRmds: 0,
         contributionsForPeriod: 0,
         withdrawalsForPeriod: 0,
         realizedGainsForPeriod: 0,
         earningsWithdrawnForPeriod: 0,
+        rmdsForPeriod: 0,
         perAccountData,
         assetAllocation,
       },
