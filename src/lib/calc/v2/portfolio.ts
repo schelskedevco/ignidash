@@ -344,35 +344,24 @@ export class PortfolioProcessor {
     earningsWithdrawnByAccount: Record<string, number>,
     rmdsByAccount: Record<string, number>
   ): Record<string, AccountDataWithTransactions> {
+    const addToBase = (accountID: string, field: keyof AccountDataWithTransactions, value: number) => {
+      return ((baseAccountData[accountID]?.[field] as number) || 0) + value;
+    };
+
     return Object.fromEntries(
       this.simulationState.portfolio.getAccounts().map((account) => {
         const accountID = account.getAccountID();
         const accountData = account.getAccountData();
 
-        const baseContributionsForPeriod = baseAccountData[accountID]?.contributionsForPeriod || 0;
-        const contributionsForPeriod = (contributionsByAccount[accountID] || 0) + baseContributionsForPeriod;
-
-        const baseWithdrawalsForPeriod = baseAccountData[accountID]?.withdrawalsForPeriod || 0;
-        const withdrawalsForPeriod = (withdrawalsByAccount[accountID] || 0) + baseWithdrawalsForPeriod;
-
-        const baseRealizedGainsForPeriod = baseAccountData[accountID]?.realizedGainsForPeriod || 0;
-        const realizedGainsForPeriod = (realizedGainsByAccount[accountID] || 0) + baseRealizedGainsForPeriod;
-
-        const baseEarningsWithdrawnForPeriod = baseAccountData[accountID]?.earningsWithdrawnForPeriod || 0;
-        const earningsWithdrawnForPeriod = (earningsWithdrawnByAccount[accountID] || 0) + baseEarningsWithdrawnForPeriod;
-
-        const baseRmdsForPeriod = baseAccountData[accountID]?.rmdsForPeriod || 0;
-        const rmdsForPeriod = (rmdsByAccount[accountID] || 0) + baseRmdsForPeriod;
-
         return [
           accountID,
           {
             ...accountData,
-            contributionsForPeriod,
-            withdrawalsForPeriod,
-            realizedGainsForPeriod,
-            earningsWithdrawnForPeriod,
-            rmdsForPeriod,
+            contributionsForPeriod: addToBase(accountID, 'contributionsForPeriod', contributionsByAccount[accountID] || 0),
+            withdrawalsForPeriod: addToBase(accountID, 'withdrawalsForPeriod', withdrawalsByAccount[accountID] || 0),
+            realizedGainsForPeriod: addToBase(accountID, 'realizedGainsForPeriod', realizedGainsByAccount[accountID] || 0),
+            earningsWithdrawnForPeriod: addToBase(accountID, 'earningsWithdrawnForPeriod', earningsWithdrawnByAccount[accountID] || 0),
+            rmdsForPeriod: addToBase(accountID, 'rmdsForPeriod', rmdsByAccount[accountID] || 0),
           },
         ];
       })
