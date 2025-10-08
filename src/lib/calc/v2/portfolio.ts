@@ -317,14 +317,11 @@ export class PortfolioProcessor {
     };
   }
 
-  processRequiredMinimumDistributions(): void {
+  processRequiredMinimumDistributions(): PortfolioData {
     const age = this.simulationState.time.age;
-    if (age < 73) {
-      console.warn('RMDs should not be processed for ages under 73');
-      return;
-    }
+    if (age < 73) throw new Error('RMDs should not be processed for ages under 73');
 
-    const byAccountWithdrawals: Record<string, number> = {};
+    const withdrawalsByAccount: Record<string, number> = {};
     const realizedGainsByAccount: Record<string, number> = {};
     const earningsWithdrawnByAccount: Record<string, number> = {};
 
@@ -345,25 +342,11 @@ export class PortfolioProcessor {
       earningsWithdrawnByAccount[account.getAccountID()] = earningsWithdrawn;
       earningsWithdrawnForPeriod += earningsWithdrawn;
 
-      byAccountWithdrawals[account.getAccountID()] = rmdAmount;
+      withdrawalsByAccount[account.getAccountID()] = rmdAmount;
       totalForPeriod += rmdAmount;
     }
 
-    const _rmdWithdrawalsData: TransactionsBreakdown & {
-      realizedGainsForPeriod: number;
-      realizedGainsByAccount: Record<string, number>;
-      earningsWithdrawnForPeriod: number;
-      earningsWithdrawnByAccount: Record<string, number>;
-    } = {
-      totalForPeriod,
-      byAccount: byAccountWithdrawals,
-      realizedGainsForPeriod,
-      realizedGainsByAccount,
-      earningsWithdrawnForPeriod,
-      earningsWithdrawnByAccount,
-    };
-
-    const byAccountContributions: Record<string, number> = {};
+    const contributionsByAccount: Record<string, number> = {};
 
     const portfolioHasRmdSavingsAccount = this.simulationState.portfolio
       .getAccounts()
@@ -373,10 +356,47 @@ export class PortfolioProcessor {
     }
 
     this.rmdSavingsAccount.applyContribution(totalForPeriod);
-    byAccountContributions[this.rmdSavingsAccount.getAccountID()] =
-      (byAccountContributions[this.rmdSavingsAccount.getAccountID()] || 0) + totalForPeriod;
+    contributionsByAccount[this.rmdSavingsAccount.getAccountID()] =
+      (contributionsByAccount[this.rmdSavingsAccount.getAccountID()] || 0) + totalForPeriod;
 
-    return;
+    const perAccountData: Record<string, AccountDataWithTransactions> = Object.fromEntries(
+      this.simulationState.portfolio.getAccounts().map((account) => {
+        const accountData = account.getAccountData();
+        const contributionsForPeriod = contributionsByAccount[account.getAccountID()] || 0;
+        const withdrawalsForPeriod = withdrawalsByAccount[account.getAccountID()] || 0;
+        const realizedGainsForPeriod = realizedGainsByAccount[account.getAccountID()] || 0;
+        const earningsWithdrawnForPeriod = earningsWithdrawnByAccount[account.getAccountID()] || 0;
+
+        return [
+          account.getAccountID(),
+          { ...accountData, contributionsForPeriod, withdrawalsForPeriod, realizedGainsForPeriod, earningsWithdrawnForPeriod },
+        ];
+      })
+    );
+
+    const totalValue = this.simulationState.portfolio.getTotalValue();
+    const totalWithdrawals = this.simulationState.portfolio.getTotalWithdrawals();
+    const totalContributions = this.simulationState.portfolio.getTotalContributions();
+    const totalRealizedGains = this.simulationState.portfolio.getTotalRealizedGains();
+    const totalEarningsWithdrawn = this.simulationState.portfolio.getTotalEarningsWithdrawn();
+    const assetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
+
+    const result = {
+      totalValue,
+      totalWithdrawals,
+      totalContributions,
+      totalRealizedGains,
+      totalEarningsWithdrawn,
+      withdrawalsForPeriod: totalForPeriod,
+      contributionsForPeriod: totalForPeriod,
+      realizedGainsForPeriod,
+      earningsWithdrawnForPeriod,
+      perAccountData,
+      assetAllocation,
+    };
+
+    this.monthlyData.push(result);
+    return result;
   }
 
   private getWithdrawalOrder(): Array<WithdrawalOrderItem> {
