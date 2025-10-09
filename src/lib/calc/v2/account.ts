@@ -86,10 +86,7 @@ export abstract class Account {
     return this.totalYields;
   }
 
-  getHasRMDs(): boolean {
-    return this.type === 'ira' || this.type === '401k';
-  }
-
+  abstract getHasRMDs(): boolean;
   abstract getAccountData(): AccountData;
   abstract applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts };
   abstract applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts };
@@ -106,6 +103,10 @@ export class SavingsAccount extends Account {
       bonds: 0,
       cash: 0,
     });
+  }
+
+  getHasRMDs(): boolean {
+    return false;
   }
 
   getAccountData(): AccountData {
@@ -178,6 +179,10 @@ export abstract class InvestmentAccount extends Account {
     });
     this.initialPercentBonds = (data.percentBonds ?? 0) / 100;
     this.currPercentBonds = (data.percentBonds ?? 0) / 100;
+  }
+
+  getHasRMDs(): boolean {
+    return this.type === 'ira' || this.type === '401k';
   }
 
   getAccountData(): AccountData {
