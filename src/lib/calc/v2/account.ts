@@ -302,14 +302,14 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
   }
 
   applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number } {
-    super.applyWithdrawalShared(amount, type);
-
     const basisProportion = this.costBasis / this.totalValue;
     const basisWithdrawn = Math.min(amount * basisProportion, this.costBasis);
     this.costBasis -= basisWithdrawn;
 
     const realizedGains = amount - basisWithdrawn;
     this.totalRealizedGains += realizedGains;
+
+    super.applyWithdrawalShared(amount, type);
 
     return { realizedGains, earningsWithdrawn: 0 };
   }
@@ -352,13 +352,13 @@ export class TaxFreeAccount extends InvestmentAccount {
   }
 
   applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number } {
-    super.applyWithdrawalShared(amount, type);
-
     const contributionWithdrawn = Math.min(amount, this.contributionBasis);
     this.contributionBasis -= contributionWithdrawn;
 
     const earningsWithdrawn = amount - contributionWithdrawn;
     this.totalEarningsWithdrawn += earningsWithdrawn;
+
+    super.applyWithdrawalShared(amount, type);
 
     return { earningsWithdrawn, realizedGains: 0 };
   }
