@@ -96,6 +96,10 @@ interface SingleSimulationPortfolioPieChartProps {
 export default function SingleSimulationPortfolioPieChart({ chartData }: SingleSimulationPortfolioPieChartProps) {
   const isSmallScreen = useIsMobile();
 
+  if (chartData.reduce((sum, item) => sum + item.value, 0) === 0) {
+    return <div className="flex h-64 w-full items-center justify-center sm:h-72 lg:h-80">No data available for the selected view.</div>;
+  }
+
   return (
     <div className="flex items-center">
       <div className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
