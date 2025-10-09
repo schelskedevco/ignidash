@@ -330,15 +330,12 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
   applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number } {
     super.applyWithdrawalShared(amount, type);
 
-    let realizedGains = 0;
-    if (this.costBasis !== undefined) {
-      const basisProportion = this.costBasis / this.totalValue;
-      const basisWithdrawn = Math.min(amount * basisProportion, this.costBasis);
-      this.costBasis -= basisWithdrawn;
+    const basisProportion = this.costBasis / this.totalValue;
+    const basisWithdrawn = Math.min(amount * basisProportion, this.costBasis);
+    this.costBasis -= basisWithdrawn;
 
-      realizedGains = amount - basisWithdrawn;
-      this.totalRealizedGains += realizedGains;
-    }
+    const realizedGains = amount - basisWithdrawn;
+    this.totalRealizedGains += realizedGains;
 
     return { realizedGains, earningsWithdrawn: 0 };
   }
@@ -379,14 +376,11 @@ export class TaxFreeAccount extends InvestmentAccount {
   applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number } {
     super.applyWithdrawalShared(amount, type);
 
-    let earningsWithdrawn = 0;
-    if (this.contributionBasis !== undefined) {
-      const contributionWithdrawn = Math.min(amount, this.contributionBasis);
-      this.contributionBasis -= contributionWithdrawn;
+    const contributionWithdrawn = Math.min(amount, this.contributionBasis);
+    this.contributionBasis -= contributionWithdrawn;
 
-      earningsWithdrawn = amount - contributionWithdrawn;
-      this.totalEarningsWithdrawn += earningsWithdrawn;
-    }
+    const earningsWithdrawn = amount - contributionWithdrawn;
+    this.totalEarningsWithdrawn += earningsWithdrawn;
 
     return { earningsWithdrawn, realizedGains: 0 };
   }
