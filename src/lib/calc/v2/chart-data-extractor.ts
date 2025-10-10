@@ -348,13 +348,12 @@ export class ChartDataExtractor {
         }
       }
 
-      totalEarlyWithdrawals += annualEarlyWithdrawals;
-
-      const withdrawalRate = totalValue + annualWithdrawals > 0 ? (annualWithdrawals / (totalValue + annualWithdrawals)) * 100 : null;
-
       const taxesData = data.taxes!;
       const annualEarlyWithdrawalPenalties = taxesData.earlyWithdrawalPenalties.totalPenaltyAmount;
       totalEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
+      totalEarlyWithdrawals += annualEarlyWithdrawals;
+
+      const withdrawalRate = totalValue + annualWithdrawals > 0 ? (annualWithdrawals / (totalValue + annualWithdrawals)) * 100 : null;
 
       return {
         age,
