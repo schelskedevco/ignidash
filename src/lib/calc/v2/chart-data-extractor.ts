@@ -90,10 +90,10 @@ export class ChartDataExtractor {
       const expensesData = data.expenses!;
       const taxesData = data.taxes!;
 
-      const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
+      const ordinaryIncome = incomesData.totalGrossIncome;
       const grossIncome = ordinaryIncome + taxDeferredWithdrawals;
-      const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
-      const expenses = expensesData?.totalExpenses ?? 0;
+      const incomeTax = taxesData.incomeTaxes.incomeTaxAmount;
+      const expenses = expensesData.totalExpenses;
       const netIncome = grossIncome - incomeTax;
       const netCashFlow = netIncome - expenses;
       const savingsRate = netIncome > 0 ? (netCashFlow / netIncome) * 100 : null;
