@@ -192,7 +192,18 @@ function ContributionsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge,
 function WithdrawalsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationWithdrawalsChartData(simulation);
 
-  const [dataView, setDataView] = useState<'annualAmounts' | 'totalAmounts' | 'taxCategory' | 'withdrawalRate' | 'custom'>('taxCategory');
+  const [dataView, setDataView] = useState<
+    | 'annualAmounts'
+    | 'totalAmounts'
+    | 'taxCategory'
+    | 'realizedGains'
+    | 'rmds'
+    | 'rothEarnings'
+    | 'ewPenalties'
+    | 'nonQualified'
+    | 'withdrawalRate'
+    | 'custom'
+  >('taxCategory');
   const [customDataID, setCustomDataID] = useState<string>('');
 
   return (

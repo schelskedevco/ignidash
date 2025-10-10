@@ -23,7 +23,17 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'annualAmounts' | 'totalAmounts' | 'taxCategory' | 'withdrawalRate' | 'custom';
+  dataView:
+    | 'annualAmounts'
+    | 'totalAmounts'
+    | 'taxCategory'
+    | 'realizedGains'
+    | 'rmds'
+    | 'rothEarnings'
+    | 'ewPenalties'
+    | 'nonQualified'
+    | 'withdrawalRate'
+    | 'custom';
 }
 
 const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -34,7 +44,20 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)'];
 
-  const formatValue = (value: number, mode: 'annualAmounts' | 'totalAmounts' | 'taxCategory' | 'withdrawalRate' | 'custom') => {
+  const formatValue = (
+    value: number,
+    mode:
+      | 'annualAmounts'
+      | 'totalAmounts'
+      | 'taxCategory'
+      | 'realizedGains'
+      | 'rmds'
+      | 'rothEarnings'
+      | 'ewPenalties'
+      | 'nonQualified'
+      | 'withdrawalRate'
+      | 'custom'
+  ) => {
     switch (mode) {
       case 'withdrawalRate':
         return `${value.toFixed(2)}%`;
@@ -90,7 +113,17 @@ interface SingleSimulationWithdrawalsLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'annualAmounts' | 'totalAmounts' | 'taxCategory' | 'withdrawalRate' | 'custom';
+  dataView:
+    | 'annualAmounts'
+    | 'totalAmounts'
+    | 'taxCategory'
+    | 'realizedGains'
+    | 'rmds'
+    | 'rothEarnings'
+    | 'ewPenalties'
+    | 'nonQualified'
+    | 'withdrawalRate'
+    | 'custom';
   customDataID: string;
   startAge: number;
 }
@@ -133,6 +166,26 @@ export default function SingleSimulationWithdrawalsLineChart({
       break;
     case 'taxCategory':
       dataKeys.push('taxableBrokerage', 'taxDeferred', 'taxFree', 'cashSavings');
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      break;
+    case 'realizedGains':
+      dataKeys.push('annualRealizedGains', 'totalRealizedGains');
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      break;
+    case 'rmds':
+      dataKeys.push('annualRmds', 'totalRmds');
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      break;
+    case 'rothEarnings':
+      dataKeys.push('annualRothEarningsWithdrawn', 'totalRothEarningsWithdrawn');
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      break;
+    case 'ewPenalties':
+      dataKeys.push('annualEarlyWithdrawalPenalties', 'totalEarlyWithdrawalPenalties');
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      break;
+    case 'nonQualified':
+      dataKeys.push('annualNonQualified', 'totalNonQualified');
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'withdrawalRate':

@@ -9,7 +9,17 @@ import SingleSimulationWithdrawalsBarChart from '../../charts/single-simulation/
 interface SingleSimulationWithdrawalsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
-  dataView: 'annualAmounts' | 'totalAmounts' | 'taxCategory' | 'withdrawalRate' | 'custom';
+  dataView:
+    | 'annualAmounts'
+    | 'totalAmounts'
+    | 'taxCategory'
+    | 'realizedGains'
+    | 'rmds'
+    | 'rothEarnings'
+    | 'ewPenalties'
+    | 'nonQualified'
+    | 'withdrawalRate'
+    | 'custom';
   customDataID: string;
 }
 
@@ -29,6 +39,21 @@ export default function SingleSimulationWithdrawalsBarChartCard({
       break;
     case 'taxCategory':
       title = 'By Tax Category';
+      break;
+    case 'realizedGains':
+      title = 'Realized Gains';
+      break;
+    case 'rmds':
+      title = 'Required Minimum Distributions';
+      break;
+    case 'rothEarnings':
+      title = 'Roth Earnings Withdrawals';
+      break;
+    case 'ewPenalties':
+      title = 'Early Withdrawal Penalties';
+      break;
+    case 'nonQualified':
+      title = 'Non-Qualified Withdrawals';
       break;
     case 'withdrawalRate':
       title = 'Withdrawal Rate';

@@ -47,7 +47,17 @@ const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--cha
 
 interface SingleSimulationWithdrawalsBarChartProps {
   age: number;
-  dataView: 'annualAmounts' | 'totalAmounts' | 'taxCategory' | 'withdrawalRate' | 'custom';
+  dataView:
+    | 'annualAmounts'
+    | 'totalAmounts'
+    | 'taxCategory'
+    | 'realizedGains'
+    | 'rmds'
+    | 'rothEarnings'
+    | 'ewPenalties'
+    | 'nonQualified'
+    | 'withdrawalRate'
+    | 'custom';
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
   customDataID: string;
 }
@@ -90,6 +100,36 @@ export default function SingleSimulationWithdrawalsBarChart({
         { name: 'Tax Deferred Withdrawals', amount: item.taxDeferred },
         { name: 'Tax Free Withdrawals', amount: item.taxFree },
         { name: 'Cash Savings Withdrawals', amount: item.cashSavings },
+      ]);
+      break;
+    case 'realizedGains':
+      transformedChartData = chartData.flatMap((item) => [
+        { name: 'Annual Realized Gains', amount: item.annualRealizedGains },
+        { name: 'Total Realized Gains', amount: item.totalRealizedGains },
+      ]);
+      break;
+    case 'rmds':
+      transformedChartData = chartData.flatMap((item) => [
+        { name: 'Annual RMDs', amount: item.annualRmds },
+        { name: 'Total RMDs', amount: item.totalRmds },
+      ]);
+      break;
+    case 'rothEarnings':
+      transformedChartData = chartData.flatMap((item) => [
+        { name: 'Annual Roth Earnings', amount: item.annualRothEarningsWithdrawn },
+        { name: 'Total Roth Earnings', amount: item.totalRothEarningsWithdrawn },
+      ]);
+      break;
+    case 'ewPenalties':
+      transformedChartData = chartData.flatMap((item) => [
+        { name: 'Annual EW Penalties', amount: item.annualEarlyWithdrawalPenalties },
+        { name: 'Total EW Penalties', amount: item.totalEarlyWithdrawalPenalties },
+      ]);
+      break;
+    case 'nonQualified':
+      transformedChartData = chartData.flatMap((item) => [
+        { name: 'Annual Non-Qualified', amount: item.annualNonQualified },
+        { name: 'Total Non-Qualified', amount: item.totalNonQualified },
       ]);
       break;
     case 'withdrawalRate':
