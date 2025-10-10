@@ -302,6 +302,7 @@ export class ChartDataExtractor {
       }
 
       totalNonQualified += annualNonQualified;
+
       const withdrawalRate = totalValue + annualWithdrawals > 0 ? (annualWithdrawals / (totalValue + annualWithdrawals)) * 100 : null;
 
       const taxesData = data.taxes!;
