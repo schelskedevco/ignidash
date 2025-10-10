@@ -116,8 +116,8 @@ export default function SingleSimulationWithdrawalsBarChart({
       break;
     case 'rothEarnings':
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Annual Roth Earnings', amount: item.annualRothEarningsWithdrawn },
-        { name: 'Total Roth Earnings', amount: item.totalRothEarningsWithdrawn },
+        { name: 'Annual Roth Earnings', amount: item.annualRothEarningsWithdrawals },
+        { name: 'Total Roth Earnings', amount: item.totalRothEarningsWithdrawals },
       ]);
       break;
     case 'ewPenalties':

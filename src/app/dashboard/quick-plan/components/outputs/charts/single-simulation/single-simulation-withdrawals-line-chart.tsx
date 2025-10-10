@@ -177,7 +177,7 @@ export default function SingleSimulationWithdrawalsLineChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'rothEarnings':
-      dataKeys.push('annualRothEarningsWithdrawn', 'totalRothEarningsWithdrawn');
+      dataKeys.push('annualRothEarningsWithdrawals', 'totalRothEarningsWithdrawals');
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'ewPenalties':

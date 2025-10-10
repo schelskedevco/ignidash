@@ -105,13 +105,13 @@ export interface SingleSimulationWithdrawalsChartDataPoint {
   totalRealizedGains: number;
   totalRmds: number;
   totalNonQualified: number;
-  totalRothEarningsWithdrawn: number;
+  totalRothEarningsWithdrawals: number;
   totalEarlyWithdrawalPenalties: number;
   annualWithdrawals: number;
   annualRealizedGains: number;
   annualRmds: number;
   annualNonQualified: number;
-  annualRothEarningsWithdrawn: number;
+  annualRothEarningsWithdrawals: number;
   annualEarlyWithdrawalPenalties: number;
   perAccountData: AccountDataWithTransactions[];
   taxableBrokerage: number;
