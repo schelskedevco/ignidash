@@ -1,8 +1,12 @@
 'use client';
 
+import { Fragment } from 'react';
+
 import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import Card from '@/components/ui/card';
 import { Subheading } from '@/components/catalyst/heading';
+import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
+import { formatChartString, formatNumber } from '@/lib/utils';
 
 import SingleSimulationPortfolioPieChart from '../../charts/single-simulation/single-simulation-portfolio-pie-chart';
 
@@ -68,6 +72,8 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
       break;
   }
 
+  const totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+
   return (
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
@@ -76,7 +82,23 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>
       </div>
-      <SingleSimulationPortfolioPieChart chartData={chartData} />
+      <div className="flex h-full items-center">
+        <div className="flex-1">
+          <SingleSimulationPortfolioPieChart chartData={chartData} />
+        </div>
+        <div className="hidden flex-1 sm:block">
+          <DescriptionList>
+            {chartData.map(({ name, value }) => (
+              <Fragment key={name}>
+                <DescriptionTerm>{formatChartString(name)}</DescriptionTerm>
+                <DescriptionDetails>{`${formatNumber(value, 2, '$')} (${formatNumber((value / totalValue) * 100, 1)}%)`}</DescriptionDetails>
+              </Fragment>
+            ))}
+            <DescriptionTerm className="font-bold">Total Portfolio Value</DescriptionTerm>
+            <DescriptionDetails className="font-bold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
+          </DescriptionList>
+        </div>
+      </div>
     </Card>
   );
 }
