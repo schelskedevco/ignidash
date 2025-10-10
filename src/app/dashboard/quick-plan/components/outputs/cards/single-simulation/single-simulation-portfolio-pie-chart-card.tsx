@@ -86,18 +86,20 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
         <div className="flex-1">
           <SingleSimulationPortfolioPieChart chartData={chartData} />
         </div>
-        <div className="hidden flex-1 sm:block">
-          <DescriptionList>
-            {chartData.map(({ name, value }) => (
-              <Fragment key={name}>
-                <DescriptionTerm>{formatChartString(name)}</DescriptionTerm>
-                <DescriptionDetails>{`${formatNumber(value, 2, '$')} (${formatNumber((value / totalValue) * 100, 1)}%)`}</DescriptionDetails>
-              </Fragment>
-            ))}
-            <DescriptionTerm className="font-bold">Total Portfolio Value</DescriptionTerm>
-            <DescriptionDetails className="font-bold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
-          </DescriptionList>
-        </div>
+        {totalValue > 0 && (
+          <div className="hidden flex-1 sm:block">
+            <DescriptionList>
+              {chartData.map(({ name, value }) => (
+                <Fragment key={name}>
+                  <DescriptionTerm>{formatChartString(name)}</DescriptionTerm>
+                  <DescriptionDetails>{`${formatNumber(value, 2, '$')} (${formatNumber((value / totalValue) * 100, 1)}%)`}</DescriptionDetails>
+                </Fragment>
+              ))}
+              <DescriptionTerm className="font-bold">Total Portfolio Value</DescriptionTerm>
+              <DescriptionDetails className="font-bold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
+            </DescriptionList>
+          </div>
+        )}
       </div>
     </Card>
   );
