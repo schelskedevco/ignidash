@@ -119,7 +119,7 @@ export default function SingleSimulationPortfolioAreaChart({
       }
 
       const perAccountData = chartData.flatMap(({ age, perAccountData }) =>
-        Object.values(perAccountData)
+        perAccountData
           .filter((account) => account.id === customDataID)
           .map((account) => {
             const totalValue = account.totalValue;

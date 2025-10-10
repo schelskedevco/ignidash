@@ -129,7 +129,7 @@ export default function SingleSimulationContributionsLineChart({
       }
 
       const perAccountData = chartData.flatMap(({ age, perAccountData }) =>
-        Object.values(perAccountData)
+        perAccountData
           .filter((account) => account.id === customDataID)
           .map((account) => {
             return { age, ...account, annualContributions: account.contributionsForPeriod };
