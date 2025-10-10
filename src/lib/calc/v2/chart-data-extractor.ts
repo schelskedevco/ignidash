@@ -150,9 +150,9 @@ export class ChartDataExtractor {
         }
       }
 
-      const incomesData = data.incomes;
+      const incomesData = data.incomes!;
 
-      const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
+      const ordinaryIncome = incomesData.totalGrossIncome;
       const annualRealizedGains = portfolioData.realizedGainsForPeriod;
       const grossIncome = ordinaryIncome + annualTaxDeferredWithdrawals + annualRealizedGains;
 
