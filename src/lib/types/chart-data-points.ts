@@ -86,6 +86,8 @@ export interface SingleSimulationTaxesChartDataPoint {
   effectiveCapGainsTaxRate: number;
   topMarginalCapGainsTaxRate: number;
   netCapGains: number;
+  annualEarlyWithdrawalPenalties: number;
+  totalEarlyWithdrawalPenalties: number;
   totalTaxableIncome: number;
   totalAnnualTaxAmount: number;
   totalTaxAmount: number;

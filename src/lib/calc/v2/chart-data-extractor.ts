@@ -140,6 +140,7 @@ export class ChartDataExtractor {
 
     let totalIncomeTaxAmount = 0;
     let totalCapGainsTaxAmount = 0;
+    let totalEarlyWithdrawalPenalties = 0;
     let totalTaxAmount = 0;
 
     return simulation.data.slice(1).map((data) => {
@@ -149,10 +150,12 @@ export class ChartDataExtractor {
 
       const annualIncomeTaxAmount = taxesData.incomeTaxes.incomeTaxAmount;
       const annualCapGainsTaxAmount = taxesData.capitalGainsTaxes.capitalGainsTaxAmount;
-      const totalAnnualTaxAmount = annualIncomeTaxAmount + annualCapGainsTaxAmount;
+      const annualEarlyWithdrawalPenalties = taxesData.earlyWithdrawalPenalties.totalPenaltyAmount;
+      const totalAnnualTaxAmount = annualIncomeTaxAmount + annualCapGainsTaxAmount + annualEarlyWithdrawalPenalties;
 
       totalIncomeTaxAmount += annualIncomeTaxAmount;
       totalCapGainsTaxAmount += annualCapGainsTaxAmount;
+      totalEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       totalTaxAmount += totalAnnualTaxAmount;
 
       const portfolioData = data.portfolio;
@@ -192,6 +195,8 @@ export class ChartDataExtractor {
         effectiveCapGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
         topMarginalCapGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
         netCapGains: taxesData.capitalGainsTaxes.netCapitalGains,
+        annualEarlyWithdrawalPenalties,
+        totalEarlyWithdrawalPenalties,
         totalTaxableIncome: taxesData.totalTaxableIncome,
         totalAnnualTaxAmount,
         totalTaxAmount,
