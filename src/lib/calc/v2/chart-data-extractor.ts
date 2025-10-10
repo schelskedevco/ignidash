@@ -259,8 +259,12 @@ export class ChartDataExtractor {
     const startAge = simulation.context.startAge;
     const startDateYear = new Date().getFullYear();
 
+    let totalEarlyWithdrawalPenalties = 0;
+    let totalNonQualified = 0;
+
     return simulation.data.slice(1).map((data) => {
       const currDateYear = new Date(data.date).getFullYear();
+      const age = currDateYear - startDateYear + startAge;
 
       const portfolioData = data.portfolio;
       const totalValue = portfolioData.totalValue;
@@ -270,6 +274,7 @@ export class ChartDataExtractor {
       let taxableBrokerage = 0;
       let taxDeferred = 0;
       let taxFree = 0;
+      let annualNonQualified = 0;
 
       for (const account of Object.values(portfolioData.perAccountData)) {
         switch (account.type) {
@@ -283,22 +288,37 @@ export class ChartDataExtractor {
           case 'ira':
           case 'hsa':
             taxDeferred += account.withdrawalsForPeriod;
+            if (age < 59.5) annualNonQualified += account.withdrawalsForPeriod;
             break;
           case 'roth401k':
           case 'rothIra':
             taxFree += account.withdrawalsForPeriod;
+            if (age < 59.5) annualNonQualified += account.withdrawalsForPeriod;
             break;
         }
       }
 
+      totalNonQualified += annualNonQualified;
       const withdrawalRate = totalValue + annualWithdrawals > 0 ? (annualWithdrawals / (totalValue + annualWithdrawals)) * 100 : null;
 
+      const taxesData = data.taxes!;
+      const annualEarlyWithdrawalPenalties = taxesData.earlyWithdrawalPenalties.totalPenaltyAmount;
+      totalEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
+
       return {
-        age: currDateYear - startDateYear + startAge,
+        age,
         totalWithdrawals: portfolioData.totalWithdrawals,
         annualWithdrawals: portfolioData.withdrawalsForPeriod,
         totalRealizedGains: portfolioData.totalRealizedGains,
         annualRealizedGains: portfolioData.realizedGainsForPeriod,
+        totalRmds: portfolioData.totalRmds,
+        annualRmds: portfolioData.rmdsForPeriod,
+        totalRothEarningsWithdrawn: portfolioData.totalEarningsWithdrawn,
+        annualRothEarningsWithdrawn: portfolioData.earningsWithdrawnForPeriod,
+        totalEarlyWithdrawalPenalties,
+        annualEarlyWithdrawalPenalties,
+        totalNonQualified,
+        annualNonQualified,
         perAccountData: Object.values(portfolioData.perAccountData),
         taxableBrokerage,
         taxDeferred,
