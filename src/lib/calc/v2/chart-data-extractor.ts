@@ -160,6 +160,7 @@ export class ChartDataExtractor {
       totalTaxAmount += totalAnnualTaxAmount;
 
       const portfolioData = data.portfolio;
+      const annualRealizedGains = portfolioData.realizedGainsForPeriod;
 
       let annualTaxDeferredWithdrawals = 0;
       let annualTaxFreeEarningsWithdrawals = 0;
@@ -179,11 +180,20 @@ export class ChartDataExtractor {
         }
       }
 
+      const returnsData = data.returns!;
+      const taxableDividendIncome = returnsData.yieldAmountsForPeriod.taxable.stocks;
+      const taxableInterestIncome = returnsData.yieldAmountsForPeriod.taxable.bonds + returnsData.yieldAmountsForPeriod.taxable.cash;
+
       const incomesData = data.incomes!;
 
       const ordinaryIncome = incomesData.totalGrossIncome;
-      const annualRealizedGains = portfolioData.realizedGainsForPeriod;
-      const grossIncome = ordinaryIncome + annualTaxDeferredWithdrawals + annualTaxFreeEarningsWithdrawals + annualRealizedGains;
+      const grossIncome =
+        ordinaryIncome +
+        annualTaxDeferredWithdrawals +
+        annualTaxFreeEarningsWithdrawals +
+        annualRealizedGains +
+        taxableDividendIncome +
+        taxableInterestIncome;
 
       return {
         age: currDateYear - startDateYear + startAge,
