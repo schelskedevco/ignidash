@@ -113,12 +113,18 @@ export default function SingleSimulationWithdrawalsLineChartCard({
           <option value="taxCategory">Tax Category</option>
           <option value="annualAmounts">Annual Withdrawals</option>
           <option value="totalAmounts">Total Withdrawals</option>
-          <option value="realizedGains">Realized Gains</option>
           <option value="rmds">Required Minimum Distributions</option>
-          <option value="rothEarnings">Roth Earnings Withdrawals</option>
-          <option value="ewPenalties">Early Withdrawal Penalties</option>
-          <option value="nonQualified">Non-Qualified Withdrawals</option>
           <option value="withdrawalRate">Withdrawal Rate</option>
+          <optgroup label="Taxable Brokerage">
+            <option value="realizedGains">Realized Gains</option>
+          </optgroup>
+          <optgroup label="Tax Free">
+            <option value="rothEarnings">Roth Earnings Withdrawals</option>
+          </optgroup>
+          <optgroup label="Issues & Penalties">
+            <option value="nonQualified">Non-Qualified Withdrawals</option>
+            <option value="ewPenalties">Early Withdrawal Penalties</option>
+          </optgroup>
           <optgroup label="By Account">
             {uniqueAccounts.map((account) => (
               <option key={account.id} value={account.id}>
