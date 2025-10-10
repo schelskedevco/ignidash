@@ -286,9 +286,12 @@ export class ChartDataExtractor {
             break;
           case '401k':
           case 'ira':
-          case 'hsa':
             taxDeferred += account.withdrawalsForPeriod;
             if (age < 59.5) annualNonQualified += account.withdrawalsForPeriod;
+            break;
+          case 'hsa':
+            taxDeferred += account.withdrawalsForPeriod;
+            if (age < 65) annualNonQualified += account.withdrawalsForPeriod;
             break;
           case 'roth401k':
           case 'rothIra':
