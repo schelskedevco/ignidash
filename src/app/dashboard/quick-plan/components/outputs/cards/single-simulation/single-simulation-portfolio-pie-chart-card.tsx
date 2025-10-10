@@ -82,12 +82,12 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>
       </div>
-      <div className="flex h-full items-center">
-        <div className="flex-1">
+      <div className="divide-border/25 flex h-full items-center divide-x py-4">
+        <div className="flex-1 pr-4">
           <SingleSimulationPortfolioPieChart chartData={chartData} />
         </div>
         {totalValue > 0 && (
-          <div className="hidden flex-1 sm:block">
+          <div className="hidden flex-1 pl-4 sm:block">
             <DescriptionList>
               {chartData.map(({ name, value }) => (
                 <Fragment key={name}>
@@ -95,7 +95,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
                   <DescriptionDetails>{`${formatNumber(value, 2, '$')} (${formatNumber((value / totalValue) * 100, 1)}%)`}</DescriptionDetails>
                 </Fragment>
               ))}
-              <DescriptionTerm className="font-bold">Total Portfolio Value</DescriptionTerm>
+              <DescriptionTerm className="font-bold">Total</DescriptionTerm>
               <DescriptionDetails className="font-bold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
             </DescriptionList>
           </div>
