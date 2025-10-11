@@ -54,32 +54,21 @@ function PortfolioDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 }
 
 function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
-  const portfolioData = dp.portfolio;
+  const taxesData = dp.taxes;
 
-  let annualTaxDeferredWithdrawals = 0;
-  for (const account of Object.values(portfolioData.perAccountData)) {
-    switch (account.type) {
-      case '401k':
-      case 'ira':
-      case 'hsa':
-        annualTaxDeferredWithdrawals += account.withdrawalsForPeriod;
-        break;
-      default:
-        break;
-    }
-  }
+  const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+  const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+  const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
+  const totalTaxesAndPenalties = incomeTax + capGainsTax + earlyWithdrawalPenalties;
 
   const incomesData = dp.incomes;
   const expensesData = dp.expenses;
-  const taxesData = dp.taxes;
 
-  const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
-  const grossIncome = ordinaryIncome + annualTaxDeferredWithdrawals;
-  const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+  const earnedIncome = incomesData?.totalGrossIncome ?? 0;
+  const earnedIncomeAfterTax = earnedIncome - totalTaxesAndPenalties;
   const totalExpenses = expensesData?.totalExpenses ?? 0;
-  const netIncome = grossIncome - incomeTax;
-  const netCashFlow = netIncome - totalExpenses;
-  const savingsRate = netIncome > 0 ? (netCashFlow / netIncome) * 100 : null;
+  const operatingCashFlow = earnedIncomeAfterTax - totalExpenses;
+  const savingsRate = earnedIncomeAfterTax > 0 ? (operatingCashFlow / earnedIncomeAfterTax) * 100 : null;
 
   return (
     <div>
@@ -89,14 +78,11 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>
         <DescriptionList>
-          <DescriptionTerm>Gross Income*</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm>Gross Earned Income</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(earnedIncome, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm>Income Tax</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
-
-          <DescriptionTerm>Net Income</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(netIncome, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm>Taxes & Penalties</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(totalTaxesAndPenalties, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm>Expenses</DescriptionTerm>
           <DescriptionDetails>{formatNumber(totalExpenses, 2, '$')}</DescriptionDetails>
@@ -104,15 +90,15 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionTerm className="font-bold">Savings Rate</DescriptionTerm>
           <DescriptionDetails className="font-bold">{savingsRate !== null ? `${formatNumber(savingsRate, 1)}%` : 'N/A'}</DescriptionDetails>
 
-          <DescriptionTerm className="font-bold">Net Cash Flow</DescriptionTerm>
-          <DescriptionDetails className="font-bold">{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm className="font-bold">Operating Cash Flow</DescriptionTerm>
+          <DescriptionDetails className="font-bold">{formatNumber(operatingCashFlow, 2, '$')}</DescriptionDetails>
         </DescriptionList>
       </Card>
-      <p className="text-muted-foreground mt-2 ml-2 text-sm/6">*Includes tax-deferred withdrawals from 401(k), HSA, and IRA.</p>
     </div>
   );
 }
 
+/* FIX TAXES */
 function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const portfolioData = dp.portfolio;
 
@@ -201,6 +187,7 @@ function ReturnsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   );
 }
 
+/* FIX CONTRIB AND WITHDRAW */
 function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const portfolioData = dp.portfolio;
   const totalValue = portfolioData.totalValue;
