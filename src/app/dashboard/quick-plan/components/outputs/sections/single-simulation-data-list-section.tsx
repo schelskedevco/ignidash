@@ -125,14 +125,20 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
   const taxableRetirementDistributions = annualTaxDeferredWithdrawals + annualEarlyTaxFreeEarningsWithdrawals;
 
-  const incomesData = dp.incomes;
-  const taxesData = dp.taxes;
+  const returnsData = dp.returns;
+  const taxableDividendIncome = returnsData?.yieldAmountsForPeriod.taxable.stocks ?? 0;
+  const taxableInterestIncome =
+    (returnsData?.yieldAmountsForPeriod.taxable.bonds ?? 0) + (returnsData?.yieldAmountsForPeriod.taxable.cash ?? 0);
 
-  const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
-  const grossIncome = ordinaryIncome + annualTaxDeferredWithdrawals;
+  const incomesData = dp.incomes;
+  const earnedIncome = incomesData?.totalGrossIncome ?? 0;
+  const grossIncome = earnedIncome + taxableRetirementDistributions + annualRealizedGains + taxableDividendIncome + taxableInterestIncome;
+
+  const taxesData = dp.taxes;
   const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
   const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
-  const totalTaxLiability = incomeTax + capGainsTax;
+  const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
+  const totalTaxesAndPenalties = incomeTax + capGainsTax + earlyWithdrawalPenalties;
 
   return (
     <Card className="my-0">
@@ -156,8 +162,8 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
         <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
         <DescriptionDetails>{formatNumber(capGainsTax, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm className="font-bold">Total Tax Liability</DescriptionTerm>
-        <DescriptionDetails className="font-bold">{formatNumber(totalTaxLiability, 2, '$')}</DescriptionDetails>
+        <DescriptionTerm className="font-bold">Total Taxes & Penalties</DescriptionTerm>
+        <DescriptionDetails className="font-bold">{formatNumber(totalTaxesAndPenalties, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );
