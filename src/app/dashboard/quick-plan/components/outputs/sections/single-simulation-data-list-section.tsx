@@ -153,6 +153,9 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
         <DescriptionTerm>Taxable Retirement Distributions</DescriptionTerm>
         <DescriptionDetails>{formatNumber(taxableRetirementDistributions, 2, '$')}</DescriptionDetails>
 
+        <DescriptionTerm>Taxable Interest Income</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(taxableInterestIncome, 2, '$')}</DescriptionDetails>
+
         <DescriptionTerm>Gross Income</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
 
