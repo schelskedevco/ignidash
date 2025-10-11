@@ -240,53 +240,49 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const totalValue = portfolioData.totalValue;
   const annualWithdrawals = portfolioData.withdrawalsForPeriod;
 
-  let annualTaxDeferredWithdrawals = 0;
-  for (const account of Object.values(portfolioData.perAccountData)) {
-    switch (account.type) {
-      case '401k':
-      case 'ira':
-      case 'hsa':
-        annualTaxDeferredWithdrawals += account.withdrawalsForPeriod;
-        break;
-      default:
-        break;
-    }
-  }
+  const taxesData = dp.taxes;
+
+  const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+  const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+  const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
+  const totalTaxesAndPenalties = incomeTax + capGainsTax + earlyWithdrawalPenalties;
 
   const incomesData = dp.incomes;
   const expensesData = dp.expenses;
-  const taxesData = dp.taxes;
 
-  const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
-  const grossIncome = ordinaryIncome + annualTaxDeferredWithdrawals;
-  const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+  const earnedIncome = incomesData?.totalGrossIncome ?? 0;
+  const earnedIncomeAfterTax = earnedIncome - totalTaxesAndPenalties;
   const totalExpenses = expensesData?.totalExpenses ?? 0;
-  const netIncome = grossIncome - incomeTax;
-  const netCashFlow = netIncome - totalExpenses;
+  const operatingCashFlow = earnedIncomeAfterTax - totalExpenses;
   const withdrawalRate = totalValue + annualWithdrawals > 0 ? (annualWithdrawals / (totalValue + annualWithdrawals)) * 100 : null;
 
   return (
-    <Card className="my-0">
-      <Subheading level={4}>
-        <span className="mr-2">Details</span>
-        <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
-      </Subheading>
-      <DescriptionList>
-        <DescriptionTerm>Total Portfolio Value</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
+    <div>
+      <Card className="my-0">
+        <Subheading level={4}>
+          <span className="mr-2">Details</span>
+          <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
+        </Subheading>
+        <DescriptionList>
+          <DescriptionTerm>Total Portfolio Value</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm>Net Cash Flow</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm>Operating Cash Flow*</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(operatingCashFlow, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm className="font-bold">Annual Withdrawals</DescriptionTerm>
-        <DescriptionDetails className="font-bold">{formatNumber(annualWithdrawals, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm className="font-bold">Annual Withdrawals</DescriptionTerm>
+          <DescriptionDetails className="font-bold">{formatNumber(annualWithdrawals, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm className="font-bold">Withdrawal Rate</DescriptionTerm>
-        <DescriptionDetails className="font-bold">
-          {withdrawalRate !== null ? `${formatNumber(withdrawalRate, 1)}%` : 'N/A'}
-        </DescriptionDetails>
-      </DescriptionList>
-    </Card>
+          <DescriptionTerm className="font-bold">Withdrawal Rate</DescriptionTerm>
+          <DescriptionDetails className="font-bold">
+            {withdrawalRate !== null ? `${formatNumber(withdrawalRate, 1)}%` : 'N/A'}
+          </DescriptionDetails>
+        </DescriptionList>
+      </Card>
+      <p className="text-muted-foreground mt-2 ml-2 text-sm/6">
+        *Earned income minus all taxes and expenses. Investment income and portfolio withdrawals are excluded.
+      </p>
+    </div>
   );
 }
 
