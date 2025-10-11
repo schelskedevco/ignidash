@@ -156,9 +156,6 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
         <DescriptionTerm>Taxable Interest Income</DescriptionTerm>
         <DescriptionDetails>{formatNumber(taxableInterestIncome, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm>Gross Income</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
-
         <DescriptionTerm>Income Tax</DescriptionTerm>
         <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
 
@@ -167,6 +164,9 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
         <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
         <DescriptionDetails>{formatNumber(capGainsTax, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm className="font-bold">Total Gross Income</DescriptionTerm>
+        <DescriptionDetails className="font-bold">{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm className="font-bold">Total Taxes & Penalties</DescriptionTerm>
         <DescriptionDetails className="font-bold">{formatNumber(totalTaxesAndPenalties, 2, '$')}</DescriptionDetails>
