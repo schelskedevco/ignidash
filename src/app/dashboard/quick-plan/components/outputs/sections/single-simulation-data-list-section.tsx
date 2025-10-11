@@ -159,8 +159,8 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
         <DescriptionTerm>Income Tax</DescriptionTerm>
         <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm>Realized Capital Gains</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(annualRealizedGains, 2, '$')}</DescriptionDetails>
+        <DescriptionTerm>Realized Capital Gains & Dividends</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(annualRealizedGains + taxableDividendIncome, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
         <DescriptionDetails>{formatNumber(capGainsTax, 2, '$')}</DescriptionDetails>
