@@ -164,7 +164,7 @@ export default function SingleSimulationCashFlowLineChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'incomes':
-      dataKeys.push('ordinaryIncome', 'taxDeferredWithdrawals', 'incomeTax', 'netIncome');
+      dataKeys.push('earnedIncome', 'taxDeferredWithdrawals', 'incomeTax', 'netIncome');
       strokeColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;

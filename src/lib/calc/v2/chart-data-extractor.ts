@@ -105,9 +105,9 @@ export class ChartDataExtractor {
       const incomesData = data.incomes!;
       const expensesData = data.expenses!;
 
-      const ordinaryIncome = incomesData.totalGrossIncome;
+      const earnedIncome = incomesData.totalGrossIncome;
       const grossIncome =
-        ordinaryIncome +
+        earnedIncome +
         taxDeferredWithdrawals +
         earlyTaxFreeEarningsWithdrawals +
         realizedGains +
@@ -122,7 +122,7 @@ export class ChartDataExtractor {
         age: currDateYear - startDateYear + startAge,
         perIncomeData: Object.values(incomesData.perIncomeData),
         perExpenseData: Object.values(expensesData.perExpenseData),
-        ordinaryIncome,
+        earnedIncome,
         taxDeferredWithdrawals,
         earlyTaxFreeEarningsWithdrawals,
         taxableDividendIncome,
