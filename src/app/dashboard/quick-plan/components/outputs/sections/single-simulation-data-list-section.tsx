@@ -78,7 +78,7 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>
         <DescriptionList>
-          <DescriptionTerm>Gross Earned Income</DescriptionTerm>
+          <DescriptionTerm>Earned Income</DescriptionTerm>
           <DescriptionDetails>{formatNumber(earnedIncome, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm>Taxes & Penalties</DescriptionTerm>
