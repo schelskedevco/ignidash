@@ -302,6 +302,51 @@ export class SimulationDataExtractor {
     };
   }
 
+  static getTaxableIncomeSources(dp: SimulationDataPoint, age: number): TaxableIncomeSources {
+    const portfolioData = dp.portfolio;
+    const realizedGains = portfolioData.realizedGainsForPeriod;
+
+    let taxDeferredWithdrawals = 0;
+    let earlyTaxFreeEarningsWithdrawals = 0;
+    for (const account of Object.values(portfolioData.perAccountData)) {
+      switch (account.type) {
+        case 'roth401k':
+        case 'rothIra':
+          if (age < 59.5) earlyTaxFreeEarningsWithdrawals += account.earningsWithdrawnForPeriod;
+          break;
+        case '401k':
+        case 'ira':
+        case 'hsa':
+          taxDeferredWithdrawals += account.withdrawalsForPeriod;
+          break;
+        default:
+          break;
+      }
+    }
+
+    const taxableRetirementDistributions = taxDeferredWithdrawals + earlyTaxFreeEarningsWithdrawals;
+
+    const returnsData = dp.returns;
+    const taxableDividendIncome = returnsData?.yieldAmountsForPeriod.taxable.stocks ?? 0;
+    const taxableInterestIncome =
+      (returnsData?.yieldAmountsForPeriod.taxable.bonds ?? 0) + (returnsData?.yieldAmountsForPeriod.taxable.cash ?? 0);
+
+    const incomesData = dp.incomes;
+    const earnedIncome = incomesData?.totalGrossIncome ?? 0;
+    const totalGrossIncome = earnedIncome + taxableRetirementDistributions + realizedGains + taxableDividendIncome + taxableInterestIncome;
+
+    return {
+      realizedGains,
+      taxDeferredWithdrawals,
+      earlyTaxFreeEarningsWithdrawals,
+      totalEarlyWithdrawals: taxDeferredWithdrawals + earlyTaxFreeEarningsWithdrawals,
+      taxableDividendIncome,
+      taxableInterestIncome,
+      earnedIncome,
+      totalGrossIncome,
+    };
+  }
+
   static getSavingsRate(dp: SimulationDataPoint): number | null {
     const { earnedIncomeAfterTax, operatingCashFlow } = this.getOperatingCashFlowData(dp);
     return earnedIncomeAfterTax > 0 ? (operatingCashFlow / earnedIncomeAfterTax) * 100 : null;
