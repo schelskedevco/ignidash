@@ -81,8 +81,8 @@ export class MultiSimulationAnalyzer {
       const normalizedBankruptcyAgeA = StatsUtils.normalize(bankruptcyAgeA, minBankruptcyAge, bankruptcyAgeRange, 1);
       const normalizedBankruptcyAgeB = StatsUtils.normalize(bankruptcyAgeB, minBankruptcyAge, bankruptcyAgeRange, 1);
 
-      const returnsA = SimulationDataExtractor.getAverageReturns(a[1], retirementAgeA);
-      const returnsB = SimulationDataExtractor.getAverageReturns(b[1], retirementAgeB);
+      const returnsA = SimulationDataExtractor.getAverageReturnsData(a[1], retirementAgeA);
+      const returnsB = SimulationDataExtractor.getAverageReturnsData(b[1], retirementAgeB);
 
       const normalizedAverageStockReturnA = StatsUtils.normalize(
         returnsA.averageStockReturn,

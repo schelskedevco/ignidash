@@ -17,6 +17,20 @@ export interface ReturnsStatsData {
   earlyRetirementStockReturn: number | null;
 }
 
+export interface OperatingCashFlowData {
+  earnedIncome: number;
+  earnedIncomeAfterTax: number;
+  totalExpenses: number;
+  operatingCashFlow: number;
+}
+
+export interface AnnualTaxesData {
+  incomeTax: number;
+  capGainsTax: number;
+  earlyWithdrawalPenalties: number;
+  totalTaxesAndPenalties: number;
+}
+
 export class SimulationDataExtractor {
   static getMilestonesData(data: SimulationDataPoint[], startAge: number): MilestonesData {
     let yearsToRetirement: number | null = null;
@@ -44,7 +58,7 @@ export class SimulationDataExtractor {
     return { yearsToRetirement, retirementAge, yearsToBankruptcy, bankruptcyAge };
   }
 
-  static getAverageReturns(result: SimulationResult, retirementAge: number | null): ReturnsStatsData {
+  static getAverageReturnsData(result: SimulationResult, retirementAge: number | null): ReturnsStatsData {
     const { data, context } = result;
 
     const startAge = context.startAge;
@@ -107,5 +121,30 @@ export class SimulationDataExtractor {
       maxStockReturn,
       earlyRetirementStockReturn,
     };
+  }
+
+  static getAnnualTaxesData(dp: SimulationDataPoint): AnnualTaxesData {
+    const taxesData = dp.taxes;
+
+    const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+    const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+    const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
+    const totalTaxesAndPenalties = incomeTax + capGainsTax + earlyWithdrawalPenalties;
+
+    return { incomeTax, capGainsTax, earlyWithdrawalPenalties, totalTaxesAndPenalties };
+  }
+
+  static getOperatingCashFlowData(dp: SimulationDataPoint): OperatingCashFlowData {
+    const incomesData = dp.incomes;
+    const expensesData = dp.expenses;
+
+    const { totalTaxesAndPenalties } = this.getAnnualTaxesData(dp);
+
+    const earnedIncome = incomesData?.totalGrossIncome ?? 0;
+    const earnedIncomeAfterTax = earnedIncome - totalTaxesAndPenalties;
+    const totalExpenses = expensesData?.totalExpenses ?? 0;
+    const operatingCashFlow = earnedIncomeAfterTax - totalExpenses;
+
+    return { earnedIncome, earnedIncomeAfterTax, totalExpenses, operatingCashFlow };
   }
 }
