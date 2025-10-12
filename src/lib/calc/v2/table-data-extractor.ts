@@ -345,9 +345,13 @@ export class TableDataExtractor {
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
 
+    let cumulativeEarlyWithdrawals = 0;
+    let cumulativeEarlyWithdrawalPenalties = 0;
+
     return simulation.data.map((data, idx) => {
       const historicalYear: number | null = this.getHistoricalYear(historicalRanges, idx);
       const currDateYear = new Date(data.date).getFullYear();
+      const age = currDateYear - startDateYear + startAge;
 
       const phaseName = data.phase?.name ?? null;
       const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
@@ -360,6 +364,7 @@ export class TableDataExtractor {
       let taxableBrokerageWithdrawals = 0;
       let taxDeferredWithdrawals = 0;
       let taxFreeWithdrawals = 0;
+      let earlyWithdrawals = 0;
 
       for (const account of Object.values(portfolioData.perAccountData)) {
         switch (account.type) {
@@ -371,43 +376,63 @@ export class TableDataExtractor {
             break;
           case '401k':
           case 'ira':
+            taxDeferredWithdrawals += account.withdrawalsForPeriod;
+            if (age < 59.5) earlyWithdrawals += account.withdrawalsForPeriod;
+            break;
           case 'hsa':
             taxDeferredWithdrawals += account.withdrawalsForPeriod;
+            if (age < 65) earlyWithdrawals += account.withdrawalsForPeriod;
             break;
           case 'roth401k':
           case 'rothIra':
             taxFreeWithdrawals += account.withdrawalsForPeriod;
+            if (age < 59.5) earlyWithdrawals += account.withdrawalsForPeriod;
             break;
         }
       }
 
-      const incomesData = data.incomes;
-      const expensesData = data.expenses;
       const taxesData = data.taxes;
 
-      const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
-      const grossIncome = ordinaryIncome + taxDeferredWithdrawals;
       const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+      const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+      const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
+      const totalTaxesAndPenalties = incomeTax + capGainsTax + earlyWithdrawalPenalties;
+
+      cumulativeEarlyWithdrawalPenalties += earlyWithdrawalPenalties;
+      cumulativeEarlyWithdrawals += earlyWithdrawals;
+
+      const incomesData = data.incomes;
+      const expensesData = data.expenses;
+
+      const earnedIncome = incomesData?.totalGrossIncome ?? 0;
+      const earnedIncomeAfterTax = earnedIncome - totalTaxesAndPenalties;
       const totalExpenses = expensesData?.totalExpenses ?? 0;
-      const netIncome = grossIncome - incomeTax;
-      const netCashFlow = netIncome - totalExpenses;
+      const operatingCashFlow = earnedIncomeAfterTax - totalExpenses;
       const withdrawalRate =
         totalPortfolioValue + annualWithdrawals > 0 ? (annualWithdrawals / (totalPortfolioValue + annualWithdrawals)) * 100 : null;
 
       return {
         year: idx,
-        age: currDateYear - startDateYear + startAge,
+        age,
         phaseName: formattedPhaseName,
         cumulativeWithdrawals: portfolioData.totalWithdrawals,
         annualWithdrawals: portfolioData.withdrawalsForPeriod,
         cumulativeRealizedGains: portfolioData.totalRealizedGains,
         annualRealizedGains: portfolioData.realizedGainsForPeriod,
+        cumulativeRequiredMinimumDistributions: portfolioData.totalRmds,
+        annualRequiredMinimumDistributions: portfolioData.rmdsForPeriod,
+        cumulativeEarlyWithdrawals,
+        annualEarlyWithdrawals: earlyWithdrawals,
+        cumulativeRothEarningsWithdrawals: portfolioData.totalEarningsWithdrawn,
+        annualRothEarningsWithdrawals: portfolioData.earningsWithdrawnForPeriod,
+        cumulativeEarlyWithdrawalPenalties,
+        annualEarlyWithdrawalPenalties: earlyWithdrawalPenalties,
         taxableBrokerage: taxableBrokerageWithdrawals,
         taxDeferred: taxDeferredWithdrawals,
         taxFree: taxFreeWithdrawals,
         cashSavings: cashSavingsWithdrawals,
         totalPortfolioValue,
-        netCashFlow,
+        operatingCashFlow,
         withdrawalRate,
         historicalYear,
       };
