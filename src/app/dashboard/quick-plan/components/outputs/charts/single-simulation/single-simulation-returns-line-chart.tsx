@@ -25,7 +25,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'rates' | 'annualAmounts' | 'totalAmounts' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
 }
 
 const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -36,12 +36,12 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--foreground)'];
 
-  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'totalAmounts' | 'custom') => {
+  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom') => {
     switch (mode) {
       case 'rates':
         return `${(value * 100).toFixed(2)}%`;
       case 'annualAmounts':
-      case 'totalAmounts':
+      case 'cumulativeAmounts':
       case 'custom':
         return formatNumber(value, 1, '$');
       default:
@@ -54,7 +54,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
     case 'rates':
       break;
     case 'annualAmounts':
-    case 'totalAmounts':
+    case 'cumulativeAmounts':
     case 'custom':
       totalFooter = (
         <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
@@ -102,7 +102,7 @@ interface SingleSimulationReturnsLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'rates' | 'annualAmounts' | 'totalAmounts' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
   customDataID: string;
   startAge: number;
 }
@@ -141,11 +141,11 @@ export default function SingleSimulationReturnsLineChart({
       break;
     case 'annualAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('stocksAmount', 'bondsAmount', 'cashAmount');
+      dataKeys.push('annualStocksAmount', 'annualBondsAmount', 'annualCashAmount');
       break;
-    case 'totalAmounts':
+    case 'cumulativeAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('totalStocksAmount', 'totalBondsAmount', 'totalCashAmount');
+      dataKeys.push('cumulativeStocksAmount', 'cumulativeBondsAmount', 'cumulativeCashAmount');
       break;
     case 'custom':
       if (!customDataID) {
@@ -169,7 +169,7 @@ export default function SingleSimulationReturnsLineChart({
 
       chartData = perAccountData;
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('stocksAmount', 'bondsAmount', 'cashAmount');
+      dataKeys.push('annualStocksAmount', 'annualBondsAmount', 'annualCashAmount');
       break;
   }
 

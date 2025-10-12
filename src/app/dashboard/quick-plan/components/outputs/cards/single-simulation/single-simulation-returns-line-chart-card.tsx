@@ -14,8 +14,8 @@ import SingleSimulationReturnsLineChart from '../../charts/single-simulation/sin
 interface SingleSimulationReturnsLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'rates' | 'annualAmounts' | 'totalAmounts' | 'custom') => void;
-  dataView: 'rates' | 'annualAmounts' | 'totalAmounts' | 'custom';
+  setDataView: (view: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom') => void;
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
   rawChartData: SingleSimulationReturnsChartDataPoint[];
   keyMetrics: KeyMetrics;
   startAge: number;
@@ -58,12 +58,13 @@ export default function SingleSimulationReturnsLineChartCard({
           name="returns-data-view"
           value={dataView === 'custom' ? customDataID : dataView}
           onChange={(e) => {
-            const isCustomSelection = e.target.value !== 'rates' && e.target.value !== 'annualAmounts' && e.target.value !== 'totalAmounts';
+            const isCustomSelection =
+              e.target.value !== 'rates' && e.target.value !== 'annualAmounts' && e.target.value !== 'cumulativeAmounts';
             if (isCustomSelection) {
               setDataView('custom');
               setCustomDataID(e.target.value);
             } else {
-              setDataView(e.target.value as 'rates' | 'annualAmounts' | 'totalAmounts');
+              setDataView(e.target.value as 'rates' | 'annualAmounts' | 'cumulativeAmounts');
               setCustomDataID('');
             }
           }}
@@ -73,7 +74,7 @@ export default function SingleSimulationReturnsLineChartCard({
           </optgroup>
           <optgroup label="Return Amounts">
             <option value="annualAmounts">Annual Returns</option>
-            <option value="totalAmounts">Total Returns</option>
+            <option value="cumulativeAmounts">Cumulative Returns</option>
           </optgroup>
           <optgroup label="By Account">
             {uniqueAccounts.map((account) => (

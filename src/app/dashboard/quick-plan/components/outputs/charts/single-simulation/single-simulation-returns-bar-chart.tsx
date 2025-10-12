@@ -14,12 +14,12 @@ const CustomLabelListContent = (props: any) => {
     return null;
   }
 
-  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'totalAmounts' | 'custom') => {
+  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom') => {
     switch (mode) {
       case 'rates':
         return `${(value * 100).toFixed(2)}%`;
       case 'annualAmounts':
-      case 'totalAmounts':
+      case 'cumulativeAmounts':
       case 'custom':
         return formatNumber(value, 1, '$');
       default:
@@ -60,7 +60,7 @@ const COLORS = ['var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--for
 
 interface SingleSimulationReturnsBarChartProps {
   age: number;
-  dataView: 'rates' | 'annualAmounts' | 'totalAmounts' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
   rawChartData: SingleSimulationReturnsChartDataPoint[];
   customDataID: string;
 }
@@ -90,17 +90,17 @@ export default function SingleSimulationReturnsBarChart({
       break;
     case 'annualAmounts':
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Stocks Amount', amount: item.stocksAmount },
-        { name: 'Bonds Amount', amount: item.bondsAmount },
-        { name: 'Cash Amount', amount: item.cashAmount },
+        { name: 'Stocks Amount', amount: item.annualStocksAmount },
+        { name: 'Bonds Amount', amount: item.annualBondsAmount },
+        { name: 'Cash Amount', amount: item.annualCashAmount },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
-    case 'totalAmounts':
+    case 'cumulativeAmounts':
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Total Stocks', amount: item.totalStocksAmount },
-        { name: 'Total Bonds', amount: item.totalBondsAmount },
-        { name: 'Total Cash', amount: item.totalCashAmount },
+        { name: 'Cumulative Stocks', amount: item.cumulativeStocksAmount },
+        { name: 'Cumulative Bonds', amount: item.cumulativeBondsAmount },
+        { name: 'Cumulative Cash', amount: item.cumulativeCashAmount },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;

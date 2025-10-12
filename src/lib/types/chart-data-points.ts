@@ -3,26 +3,6 @@ import type { IncomeData } from '@/lib/calc/v2/incomes';
 import type { AccountDataWithTransactions } from '@/lib/calc/v2/account';
 import type { AccountDataWithReturns } from '@/lib/calc/v2/returns';
 
-export interface StochasticCashFlowChartDataPoint {
-  age: number;
-  name: string;
-  amount: number;
-}
-
-export interface StochasticReturnsChartDataPoint {
-  age: number;
-  name: string;
-  rate: number | null;
-  amount: number | null;
-}
-
-export interface StochasticWithdrawalsChartDataPoint {
-  age: number;
-  name: string;
-  rate: number | null;
-  amount: number | null;
-}
-
 export interface SingleSimulationPortfolioChartDataPoint {
   age: number;
   stockHoldings: number;
@@ -54,12 +34,12 @@ export interface SingleSimulationReturnsChartDataPoint {
   bondsRate: number;
   cashRate: number;
   inflationRate: number;
-  totalStocksAmount: number;
-  totalBondsAmount: number;
-  totalCashAmount: number;
-  stocksAmount: number;
-  bondsAmount: number;
-  cashAmount: number;
+  cumulativeStocksAmount: number;
+  cumulativeBondsAmount: number;
+  cumulativeCashAmount: number;
+  annualStocksAmount: number;
+  annualBondsAmount: number;
+  annualCashAmount: number;
   perAccountData: AccountDataWithReturns[];
 }
 

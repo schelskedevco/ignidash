@@ -9,7 +9,7 @@ import SingleSimulationReturnsBarChart from '../../charts/single-simulation/sing
 interface SingleSimulationReturnsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationReturnsChartDataPoint[];
-  dataView: 'rates' | 'annualAmounts' | 'totalAmounts' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
   customDataID: string;
 }
 
@@ -27,8 +27,8 @@ export default function SingleSimulationReturnsBarChartCard({
     case 'annualAmounts':
       title = 'Annual Returns';
       break;
-    case 'totalAmounts':
-      title = 'Total Returns';
+    case 'cumulativeAmounts':
+      title = 'Cumulative Returns';
       break;
     case 'custom':
       title = 'Custom Account';

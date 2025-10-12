@@ -212,12 +212,12 @@ export class ChartDataExtractor {
         bondsRate: returnsData.annualReturnRates.bonds,
         cashRate: returnsData.annualReturnRates.cash,
         inflationRate: returnsData.annualInflationRate,
-        totalStocksAmount: returnsData.totalReturnAmounts.stocks,
-        totalBondsAmount: returnsData.totalReturnAmounts.bonds,
-        totalCashAmount: returnsData.totalReturnAmounts.cash,
-        stocksAmount: returnsData.returnAmountsForPeriod.stocks,
-        bondsAmount: returnsData.returnAmountsForPeriod.bonds,
-        cashAmount: returnsData.returnAmountsForPeriod.cash,
+        cumulativeStocksAmount: returnsData.totalReturnAmounts.stocks,
+        cumulativeBondsAmount: returnsData.totalReturnAmounts.bonds,
+        cumulativeCashAmount: returnsData.totalReturnAmounts.cash,
+        annualStocksAmount: returnsData.returnAmountsForPeriod.stocks,
+        annualBondsAmount: returnsData.returnAmountsForPeriod.bonds,
+        annualCashAmount: returnsData.returnAmountsForPeriod.cash,
         perAccountData: Object.values(returnsData.perAccountData),
       };
     });
