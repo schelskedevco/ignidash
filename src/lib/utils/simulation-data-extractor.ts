@@ -31,6 +31,14 @@ export interface AnnualTaxesData {
   totalTaxesAndPenalties: number;
 }
 
+export interface AnnualWithdrawalsData {
+  cashSavingsWithdrawals: number;
+  taxableBrokerageWithdrawals: number;
+  taxDeferredWithdrawals: number;
+  taxFreeWithdrawals: number;
+  earlyWithdrawals: number;
+}
+
 export class SimulationDataExtractor {
   static getMilestonesData(data: SimulationDataPoint[], startAge: number): MilestonesData {
     let yearsToRetirement: number | null = null;
@@ -146,5 +154,42 @@ export class SimulationDataExtractor {
     const operatingCashFlow = earnedIncomeAfterTax - totalExpenses;
 
     return { earnedIncome, earnedIncomeAfterTax, totalExpenses, operatingCashFlow };
+  }
+
+  static getAnnualWithdrawalsData(dp: SimulationDataPoint, age: number): AnnualWithdrawalsData {
+    const portfolioData = dp.portfolio;
+
+    let cashSavingsWithdrawals = 0;
+    let taxableBrokerageWithdrawals = 0;
+    let taxDeferredWithdrawals = 0;
+    let taxFreeWithdrawals = 0;
+    let earlyWithdrawals = 0;
+
+    for (const account of Object.values(portfolioData.perAccountData)) {
+      switch (account.type) {
+        case 'savings':
+          cashSavingsWithdrawals += account.withdrawalsForPeriod;
+          break;
+        case 'taxableBrokerage':
+          taxableBrokerageWithdrawals += account.withdrawalsForPeriod;
+          break;
+        case '401k':
+        case 'ira':
+          taxDeferredWithdrawals += account.withdrawalsForPeriod;
+          if (age < 59.5) earlyWithdrawals += account.withdrawalsForPeriod;
+          break;
+        case 'hsa':
+          taxDeferredWithdrawals += account.withdrawalsForPeriod;
+          if (age < 65) earlyWithdrawals += account.withdrawalsForPeriod;
+          break;
+        case 'roth401k':
+        case 'rothIra':
+          taxFreeWithdrawals += account.withdrawalsForPeriod;
+          if (age < 59.5) earlyWithdrawals += account.earningsWithdrawnForPeriod;
+          break;
+      }
+    }
+
+    return { cashSavingsWithdrawals, taxableBrokerageWithdrawals, taxDeferredWithdrawals, taxFreeWithdrawals, earlyWithdrawals };
   }
 }
