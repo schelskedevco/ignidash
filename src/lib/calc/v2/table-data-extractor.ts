@@ -235,6 +235,7 @@ export class TableDataExtractor {
     return simulation.data.map((data, idx) => {
       const historicalYear: number | null = this.getHistoricalYear(historicalRanges, idx);
       const currDateYear = new Date(data.date).getFullYear();
+      const age = currDateYear - startDateYear + startAge;
 
       const phaseName = data.phase?.name ?? null;
       const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
@@ -249,12 +250,11 @@ export class TableDataExtractor {
         taxFreeContributions: taxFree,
         cashSavingsContributions: cashSavings,
       } = SimulationDataExtractor.getContributionsByTaxCategory(data);
-
       const { operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(data);
 
       return {
         year: idx,
-        age: currDateYear - startDateYear + startAge,
+        age,
         phaseName: formattedPhaseName,
         cumulativeContributions: portfolioData.totalContributions,
         annualContributions,
@@ -296,14 +296,12 @@ export class TableDataExtractor {
         cashSavingsWithdrawals: cashSavings,
         earlyWithdrawals: annualEarlyWithdrawals,
       } = SimulationDataExtractor.getWithdrawalsByTaxCategory(data, age);
-
       const { earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties } = SimulationDataExtractor.getTaxAmountsByType(data);
 
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeEarlyWithdrawals += annualEarlyWithdrawals;
 
       const { operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(data);
-
       const withdrawalRate = SimulationDataExtractor.getWithdrawalRate(data);
 
       return {
