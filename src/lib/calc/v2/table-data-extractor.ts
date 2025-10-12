@@ -360,33 +360,33 @@ export class TableDataExtractor {
       const totalPortfolioValue = portfolioData.totalValue;
       const annualWithdrawals = portfolioData.withdrawalsForPeriod;
 
-      let cashSavingsWithdrawals = 0;
-      let taxableBrokerageWithdrawals = 0;
-      let taxDeferredWithdrawals = 0;
-      let taxFreeWithdrawals = 0;
-      let earlyWithdrawals = 0;
+      let cashSavings = 0;
+      let taxableBrokerage = 0;
+      let taxDeferred = 0;
+      let taxFree = 0;
+      let annualEarlyWithdrawals = 0;
 
       for (const account of Object.values(portfolioData.perAccountData)) {
         switch (account.type) {
           case 'savings':
-            cashSavingsWithdrawals += account.withdrawalsForPeriod;
+            cashSavings += account.withdrawalsForPeriod;
             break;
           case 'taxableBrokerage':
-            taxableBrokerageWithdrawals += account.withdrawalsForPeriod;
+            taxableBrokerage += account.withdrawalsForPeriod;
             break;
           case '401k':
           case 'ira':
-            taxDeferredWithdrawals += account.withdrawalsForPeriod;
-            if (age < 59.5) earlyWithdrawals += account.withdrawalsForPeriod;
+            taxDeferred += account.withdrawalsForPeriod;
+            if (age < 59.5) annualEarlyWithdrawals += account.withdrawalsForPeriod;
             break;
           case 'hsa':
-            taxDeferredWithdrawals += account.withdrawalsForPeriod;
-            if (age < 65) earlyWithdrawals += account.withdrawalsForPeriod;
+            taxDeferred += account.withdrawalsForPeriod;
+            if (age < 65) annualEarlyWithdrawals += account.withdrawalsForPeriod;
             break;
           case 'roth401k':
           case 'rothIra':
-            taxFreeWithdrawals += account.withdrawalsForPeriod;
-            if (age < 59.5) earlyWithdrawals += account.withdrawalsForPeriod;
+            taxFree += account.withdrawalsForPeriod;
+            if (age < 59.5) annualEarlyWithdrawals += account.earningsWithdrawnForPeriod;
             break;
         }
       }
@@ -399,7 +399,7 @@ export class TableDataExtractor {
       const totalTaxesAndPenalties = incomeTax + capGainsTax + earlyWithdrawalPenalties;
 
       cumulativeEarlyWithdrawalPenalties += earlyWithdrawalPenalties;
-      cumulativeEarlyWithdrawals += earlyWithdrawals;
+      cumulativeEarlyWithdrawals += annualEarlyWithdrawals;
 
       const incomesData = data.incomes;
       const expensesData = data.expenses;
@@ -422,15 +422,15 @@ export class TableDataExtractor {
         cumulativeRequiredMinimumDistributions: portfolioData.totalRmds,
         annualRequiredMinimumDistributions: portfolioData.rmdsForPeriod,
         cumulativeEarlyWithdrawals,
-        annualEarlyWithdrawals: earlyWithdrawals,
+        annualEarlyWithdrawals,
         cumulativeRothEarningsWithdrawals: portfolioData.totalEarningsWithdrawn,
         annualRothEarningsWithdrawals: portfolioData.earningsWithdrawnForPeriod,
         cumulativeEarlyWithdrawalPenalties,
         annualEarlyWithdrawalPenalties: earlyWithdrawalPenalties,
-        taxableBrokerage: taxableBrokerageWithdrawals,
-        taxDeferred: taxDeferredWithdrawals,
-        taxFree: taxFreeWithdrawals,
-        cashSavings: cashSavingsWithdrawals,
+        taxableBrokerage,
+        taxDeferred,
+        taxFree,
+        cashSavings,
         totalPortfolioValue,
         operatingCashFlow,
         withdrawalRate,
