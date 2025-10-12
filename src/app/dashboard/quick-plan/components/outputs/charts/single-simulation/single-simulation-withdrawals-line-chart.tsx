@@ -18,7 +18,9 @@ interface CustomTooltipProps {
     name: string;
     color: string;
     dataKey: keyof SingleSimulationWithdrawalsChartDataPoint;
-    payload: SingleSimulationWithdrawalsChartDataPoint | ({ age: number; annualWithdrawals: number } & AccountDataWithTransactions);
+    payload:
+      | SingleSimulationWithdrawalsChartDataPoint
+      | ({ age: number; annualWithdrawals: number; cumulativeWithdrawals: number } & AccountDataWithTransactions);
   }>;
   label?: number;
   startAge: number;
@@ -147,7 +149,7 @@ export default function SingleSimulationWithdrawalsLineChart({
 
   let chartData:
     | SingleSimulationWithdrawalsChartDataPoint[]
-    | Array<{ age: number; annualWithdrawals: number } & AccountDataWithTransactions> = rawChartData;
+    | Array<{ age: number; annualWithdrawals: number; cumulativeWithdrawals: number } & AccountDataWithTransactions> = rawChartData;
 
   const dataKeys: (keyof SingleSimulationWithdrawalsChartDataPoint)[] = [];
   const yAxisDomain: [number, number] | undefined = undefined;
@@ -195,7 +197,7 @@ export default function SingleSimulationWithdrawalsLineChart({
         perAccountData
           .filter((account) => account.id === customDataID)
           .map((account) => {
-            return { age, ...account, annualWithdrawals: account.withdrawalsForPeriod };
+            return { age, ...account, annualWithdrawals: account.withdrawalsForPeriod, cumulativeWithdrawals: account.totalWithdrawals };
           })
       );
 

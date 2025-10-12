@@ -18,7 +18,9 @@ interface CustomTooltipProps {
     name: string;
     color: string;
     dataKey: keyof SingleSimulationContributionsChartDataPoint;
-    payload: SingleSimulationContributionsChartDataPoint | ({ age: number; annualContributions: number } & AccountDataWithTransactions);
+    payload:
+      | SingleSimulationContributionsChartDataPoint
+      | ({ age: number; annualContributions: number; cumulativeContributions: number } & AccountDataWithTransactions);
   }>;
   label?: number;
   startAge: number;
@@ -108,7 +110,7 @@ export default function SingleSimulationContributionsLineChart({
 
   let chartData:
     | SingleSimulationContributionsChartDataPoint[]
-    | Array<{ age: number; annualContributions: number } & AccountDataWithTransactions> = rawChartData;
+    | Array<{ age: number; annualContributions: number; cumulativeContributions: number } & AccountDataWithTransactions> = rawChartData;
 
   const dataKeys: (keyof SingleSimulationContributionsChartDataPoint)[] = [];
   const yAxisDomain: [number, number] | undefined = undefined;
@@ -132,7 +134,12 @@ export default function SingleSimulationContributionsLineChart({
         perAccountData
           .filter((account) => account.id === customDataID)
           .map((account) => {
-            return { age, ...account, annualContributions: account.contributionsForPeriod };
+            return {
+              age,
+              ...account,
+              annualContributions: account.contributionsForPeriod,
+              cumulativeContributions: account.totalContributions,
+            };
           })
       );
 
