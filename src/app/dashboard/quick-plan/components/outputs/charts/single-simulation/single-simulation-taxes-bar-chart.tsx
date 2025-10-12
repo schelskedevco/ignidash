@@ -214,17 +214,17 @@ export default function SingleSimulationTaxesBarChart({
       break;
     case 'annualAmounts':
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Income Tax Amount', amount: item.annualIncomeTaxAmount },
-        { name: 'Cap Gains Tax Amount', amount: item.annualCapGainsTaxAmount },
-        { name: 'Total Tax Amount', amount: item.totalAnnualTaxAmount },
+        { name: 'Income Tax', amount: item.annualIncomeTax },
+        { name: 'Cap Gains Tax', amount: item.annualCapGainsTax },
+        { name: 'Total Taxes & Penalties', amount: item.annualTotalTaxesAndPenalties },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'cumulativeAmounts':
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Cumulative Income Tax Amount', amount: item.cumulativeIncomeTaxAmount },
-        { name: 'Cumulative Cap Gains Tax Amount', amount: item.cumulativeCapGainsTaxAmount },
-        { name: 'Cumulative Tax Amount', amount: item.cumulativeTotalTaxAmount },
+        { name: 'Cumulative Income Tax', amount: item.cumulativeIncomeTax },
+        { name: 'Cumulative Cap Gains Tax', amount: item.cumulativeCapGainsTax },
+        { name: 'Cumulative Taxes & Penalties', amount: item.cumulativeTotalTaxesAndPenalties },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;

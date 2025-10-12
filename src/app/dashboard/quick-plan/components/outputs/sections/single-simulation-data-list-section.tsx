@@ -57,7 +57,6 @@ function PortfolioDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const { totalTaxesAndPenalties } = SimulationDataExtractor.getTaxAmountsByType(dp);
   const { earnedIncome, totalExpenses, operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(dp);
-
   const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
 
   return (
@@ -101,12 +100,7 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
     earnedIncome,
     grossIncome,
   } = SimulationDataExtractor.getTaxableIncomeSources(dp, selectedAge);
-
-  const {
-    incomeTaxAmount: incomeTax,
-    capGainsTaxAmount: capGainsTax,
-    totalTaxesAndPenalties,
-  } = SimulationDataExtractor.getTaxAmountsByType(dp);
+  const { incomeTax, capGainsTax, totalTaxesAndPenalties } = SimulationDataExtractor.getTaxAmountsByType(dp);
 
   const taxableRetirementDistributions = taxDeferredWithdrawals + earlyTaxFreeEarningsWithdrawals;
 

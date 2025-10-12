@@ -25,9 +25,9 @@ export interface OperatingCashFlowData {
 }
 
 export interface TaxAmountsByType {
-  incomeTaxAmount: number;
-  capGainsTaxAmount: number;
-  earlyWithdrawalPenaltiesAmount: number;
+  incomeTax: number;
+  capGainsTax: number;
+  earlyWithdrawalPenalties: number;
   totalTaxesAndPenalties: number;
 }
 
@@ -165,12 +165,12 @@ export class SimulationDataExtractor {
   static getTaxAmountsByType(dp: SimulationDataPoint): TaxAmountsByType {
     const taxesData = dp.taxes;
 
-    const incomeTaxAmount = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
-    const capGainsTaxAmount = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
-    const earlyWithdrawalPenaltiesAmount = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
-    const totalTaxesAndPenalties = incomeTaxAmount + capGainsTaxAmount + earlyWithdrawalPenaltiesAmount;
+    const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+    const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+    const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
+    const totalTaxesAndPenalties = incomeTax + capGainsTax + earlyWithdrawalPenalties;
 
-    return { incomeTaxAmount, capGainsTaxAmount, earlyWithdrawalPenaltiesAmount, totalTaxesAndPenalties };
+    return { incomeTax, capGainsTax, earlyWithdrawalPenalties, totalTaxesAndPenalties };
   }
 
   static getOperatingCashFlowData(dp: SimulationDataPoint): OperatingCashFlowData {

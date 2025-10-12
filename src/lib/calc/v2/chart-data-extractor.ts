@@ -51,11 +51,7 @@ export class ChartDataExtractor {
       const currDateYear = new Date(data.date).getFullYear();
       const age = currDateYear - startDateYear + startAge;
 
-      const {
-        incomeTaxAmount: incomeTax,
-        capGainsTaxAmount: capGainsTax,
-        earlyWithdrawalPenaltiesAmount: earlyWithdrawalPenalties,
-      } = SimulationDataExtractor.getTaxAmountsByType(data);
+      const { incomeTax, capGainsTax, earlyWithdrawalPenalties } = SimulationDataExtractor.getTaxAmountsByType(data);
       const { earnedIncome, totalExpenses: expenses, operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
 
@@ -78,26 +74,26 @@ export class ChartDataExtractor {
     const startAge = simulation.context.startAge;
     const startDateYear = new Date().getFullYear();
 
-    let cumulativeIncomeTaxAmount = 0;
-    let cumulativeCapGainsTaxAmount = 0;
+    let cumulativeIncomeTax = 0;
+    let cumulativeCapGainsTax = 0;
     let cumulativeEarlyWithdrawalPenalties = 0;
-    let cumulativeTotalTaxAmount = 0;
+    let cumulativeTotalTaxesAndPenalties = 0;
 
     return simulation.data.slice(1).map((data) => {
       const currDateYear = new Date(data.date).getFullYear();
       const age = currDateYear - startDateYear + startAge;
 
       const {
-        incomeTaxAmount: annualIncomeTaxAmount,
-        capGainsTaxAmount: annualCapGainsTaxAmount,
-        earlyWithdrawalPenaltiesAmount: annualEarlyWithdrawalPenalties,
-        totalTaxesAndPenalties: totalAnnualTaxAmount,
+        incomeTax: annualIncomeTax,
+        capGainsTax: annualCapGainsTax,
+        earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties,
+        totalTaxesAndPenalties: annualTotalTaxesAndPenalties,
       } = SimulationDataExtractor.getTaxAmountsByType(data);
 
-      cumulativeIncomeTaxAmount += annualIncomeTaxAmount;
-      cumulativeCapGainsTaxAmount += annualCapGainsTaxAmount;
+      cumulativeIncomeTax += annualIncomeTax;
+      cumulativeCapGainsTax += annualCapGainsTax;
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
-      cumulativeTotalTaxAmount += totalAnnualTaxAmount;
+      cumulativeTotalTaxesAndPenalties += annualTotalTaxesAndPenalties;
 
       const {
         realizedGains,
@@ -119,24 +115,24 @@ export class ChartDataExtractor {
         earlyTaxFreeEarningsWithdrawals,
         taxableInterestIncome,
         taxableOrdinaryIncome: taxesData.incomeTaxes.taxableOrdinaryIncome,
-        annualIncomeTaxAmount,
-        cumulativeIncomeTaxAmount,
+        annualIncomeTax,
+        cumulativeIncomeTax,
         effectiveIncomeTaxRate: taxesData.incomeTaxes.effectiveIncomeTaxRate,
         topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalTaxRate,
         netIncome: taxesData.incomeTaxes.netIncome,
         realizedGains,
         taxableDividendIncome,
         taxableCapGains: taxesData.capitalGainsTaxes.taxableCapitalGains,
-        annualCapGainsTaxAmount,
-        cumulativeCapGainsTaxAmount,
+        annualCapGainsTax,
+        cumulativeCapGainsTax,
         effectiveCapGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
         topMarginalCapGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
         netCapGains: taxesData.capitalGainsTaxes.netCapitalGains,
         annualEarlyWithdrawalPenalties,
         cumulativeEarlyWithdrawalPenalties,
         totalTaxableIncome: taxesData.totalTaxableIncome,
-        totalAnnualTaxAmount,
-        cumulativeTotalTaxAmount,
+        annualTotalTaxesAndPenalties,
+        cumulativeTotalTaxesAndPenalties,
         totalNetIncome: taxesData.incomeTaxes.netIncome + taxesData.capitalGainsTaxes.netCapitalGains,
         adjustments: taxesData.adjustments,
         deductions: taxesData.deductions,

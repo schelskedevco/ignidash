@@ -184,11 +184,11 @@ export default function SingleSimulationTaxesLineChart({
       break;
     case 'annualAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('annualIncomeTaxAmount', 'annualCapGainsTaxAmount');
+      dataKeys.push('annualIncomeTax', 'annualCapGainsTax');
       break;
     case 'cumulativeAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('cumulativeIncomeTaxAmount', 'cumulativeCapGainsTaxAmount');
+      dataKeys.push('cumulativeIncomeTax', 'cumulativeCapGainsTax');
       break;
     case 'netIncome':
       formatter = (value: number) => formatNumber(value, 1, '$');
