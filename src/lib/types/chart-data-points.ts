@@ -74,7 +74,7 @@ export interface SingleSimulationTaxesChartDataPoint {
   taxableInterestIncome: number;
   taxableOrdinaryIncome: number;
   annualIncomeTaxAmount: number;
-  totalIncomeTaxAmount: number;
+  cumulativeIncomeTaxAmount: number;
   effectiveIncomeTaxRate: number;
   topMarginalIncomeTaxRate: number;
   netIncome: number;
@@ -84,19 +84,19 @@ export interface SingleSimulationTaxesChartDataPoint {
   taxableDividendIncome: number;
   taxableCapGains: number;
   annualCapGainsTaxAmount: number;
-  totalCapGainsTaxAmount: number;
+  cumulativeCapGainsTaxAmount: number;
   effectiveCapGainsTaxRate: number;
   topMarginalCapGainsTaxRate: number;
   netCapGains: number;
 
   /* Early Withdrawal Penalties */
   annualEarlyWithdrawalPenalties: number;
-  totalEarlyWithdrawalPenalties: number;
+  cumulativeEarlyWithdrawalPenalties: number;
 
   /* Totals */
   totalTaxableIncome: number;
   totalAnnualTaxAmount: number;
-  totalTaxAmount: number;
+  cumulativeTotalTaxAmount: number;
   totalNetIncome: number;
 
   /* Adjustments & Deductions */

@@ -13,7 +13,7 @@ import SingleSimulationTaxesBarChart from '../../charts/single-simulation/single
 interface SingleSimulationTaxesBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationTaxesChartDataPoint[];
-  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
+  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome';
   setReferenceLineMode: (mode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates') => void;
   referenceLineMode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates';
   referenceLineModes: readonly ('hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates')[];
@@ -40,8 +40,8 @@ export default function SingleSimulationTaxesBarChartCard({
     case 'annualAmounts':
       title = 'Annual Taxes';
       break;
-    case 'totalAmounts':
-      title = 'Total Taxes';
+    case 'cumulativeAmounts':
+      title = 'Cumulative Taxes';
       break;
     case 'netIncome':
       title = 'Net After Tax';

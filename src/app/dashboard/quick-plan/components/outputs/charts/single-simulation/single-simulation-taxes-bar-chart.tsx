@@ -34,7 +34,7 @@ interface TaxableIncomeTooltipProps {
   startAge: number;
   age: number;
   disabled: boolean;
-  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
+  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome';
 }
 
 const TaxableIncomeTooltip = ({ active, payload, startAge, age, disabled, dataView }: TaxableIncomeTooltipProps) => {
@@ -116,14 +116,14 @@ const CustomLabelListContent = (props: any) => {
 
   const formatValue = (
     value: number,
-    mode: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome'
+    mode: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome'
   ) => {
     switch (mode) {
       case 'marginalRates':
       case 'effectiveRates':
         return `${(value * 100).toFixed(2)}%`;
       case 'annualAmounts':
-      case 'totalAmounts':
+      case 'cumulativeAmounts':
       case 'netIncome':
       case 'taxableIncome':
         return formatNumber(value, 1, '$');
@@ -165,7 +165,7 @@ const COLORS = ['var(--chart-2)', 'var(--chart-4)', 'var(--chart-3)', 'var(--cha
 
 interface SingleSimulationTaxesBarChartProps {
   age: number;
-  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
+  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome';
   rawChartData: SingleSimulationTaxesChartDataPoint[];
   referenceLineMode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates' | null;
   startAge: number;
@@ -220,11 +220,11 @@ export default function SingleSimulationTaxesBarChart({
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
-    case 'totalAmounts':
+    case 'cumulativeAmounts':
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Total Income Tax Amount', amount: item.totalIncomeTaxAmount },
-        { name: 'Total Cap Gains Tax Amount', amount: item.totalCapGainsTaxAmount },
-        { name: 'Total Tax Amount', amount: item.totalTaxAmount },
+        { name: 'Cumulative Income Tax Amount', amount: item.cumulativeIncomeTaxAmount },
+        { name: 'Cumulative Cap Gains Tax Amount', amount: item.cumulativeCapGainsTaxAmount },
+        { name: 'Cumulative Tax Amount', amount: item.cumulativeTotalTaxAmount },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;

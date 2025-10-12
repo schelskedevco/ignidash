@@ -23,7 +23,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
+  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome';
 }
 
 const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -36,14 +36,14 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
 
   const formatValue = (
     value: number,
-    mode: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome'
+    mode: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome'
   ) => {
     switch (mode) {
       case 'marginalRates':
       case 'effectiveRates':
         return `${(value * 100).toFixed(2)}%`;
       case 'annualAmounts':
-      case 'totalAmounts':
+      case 'cumulativeAmounts':
       case 'netIncome':
       case 'taxableIncome':
         return formatNumber(value, 1, '$');
@@ -59,7 +59,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
     case 'effectiveRates':
       break;
     case 'annualAmounts':
-    case 'totalAmounts':
+    case 'cumulativeAmounts':
     case 'netIncome':
       totalFooter = (
         <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
@@ -141,7 +141,7 @@ interface SingleSimulationTaxesLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
+  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome';
   startAge: number;
 }
 
@@ -186,9 +186,9 @@ export default function SingleSimulationTaxesLineChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys.push('annualIncomeTaxAmount', 'annualCapGainsTaxAmount');
       break;
-    case 'totalAmounts':
+    case 'cumulativeAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('totalIncomeTaxAmount', 'totalCapGainsTaxAmount');
+      dataKeys.push('cumulativeIncomeTaxAmount', 'cumulativeCapGainsTaxAmount');
       break;
     case 'netIncome':
       formatter = (value: number) => formatNumber(value, 1, '$');

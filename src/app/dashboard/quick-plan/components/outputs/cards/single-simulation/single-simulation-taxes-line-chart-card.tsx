@@ -12,8 +12,8 @@ import SingleSimulationTaxesLineChart from '../../charts/single-simulation/singl
 interface SingleSimulationTaxesLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome') => void;
-  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome';
+  setDataView: (view: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome') => void;
+  dataView: 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome';
   rawChartData: SingleSimulationTaxesChartDataPoint[];
   keyMetrics: KeyMetrics;
   startAge: number;
@@ -44,7 +44,7 @@ export default function SingleSimulationTaxesLineChartCard({
           value={dataView}
           onChange={(e) =>
             setDataView(
-              e.target.value as 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome'
+              e.target.value as 'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome'
             )
           }
         >
@@ -56,7 +56,7 @@ export default function SingleSimulationTaxesLineChartCard({
             <option value="taxableIncome">Taxable Income</option>
             <option value="netIncome">Net Income After Tax</option>
             <option value="annualAmounts">Annual Taxes</option>
-            <option value="totalAmounts">Total Taxes</option>
+            <option value="cumulativeAmounts">Cumulative Taxes</option>
           </optgroup>
         </Select>
       </div>

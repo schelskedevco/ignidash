@@ -106,10 +106,10 @@ export class ChartDataExtractor {
     const startAge = simulation.context.startAge;
     const startDateYear = new Date().getFullYear();
 
-    let totalIncomeTaxAmount = 0;
-    let totalCapGainsTaxAmount = 0;
-    let totalEarlyWithdrawalPenalties = 0;
-    let totalTaxAmount = 0;
+    let cumulativeIncomeTaxAmount = 0;
+    let cumulativeCapGainsTaxAmount = 0;
+    let cumulativeEarlyWithdrawalPenalties = 0;
+    let cumulativeTotalTaxAmount = 0;
 
     return simulation.data.slice(1).map((data) => {
       const currDateYear = new Date(data.date).getFullYear();
@@ -122,10 +122,10 @@ export class ChartDataExtractor {
       const annualEarlyWithdrawalPenalties = taxesData.earlyWithdrawalPenalties.totalPenaltyAmount;
       const totalAnnualTaxAmount = annualIncomeTaxAmount + annualCapGainsTaxAmount + annualEarlyWithdrawalPenalties;
 
-      totalIncomeTaxAmount += annualIncomeTaxAmount;
-      totalCapGainsTaxAmount += annualCapGainsTaxAmount;
-      totalEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
-      totalTaxAmount += totalAnnualTaxAmount;
+      cumulativeIncomeTaxAmount += annualIncomeTaxAmount;
+      cumulativeCapGainsTaxAmount += annualCapGainsTaxAmount;
+      cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
+      cumulativeTotalTaxAmount += totalAnnualTaxAmount;
 
       const portfolioData = data.portfolio;
       const annualRealizedGains = portfolioData.realizedGainsForPeriod;
@@ -172,7 +172,7 @@ export class ChartDataExtractor {
         taxableInterestIncome,
         taxableOrdinaryIncome: taxesData.incomeTaxes.taxableOrdinaryIncome,
         annualIncomeTaxAmount,
-        totalIncomeTaxAmount,
+        cumulativeIncomeTaxAmount,
         effectiveIncomeTaxRate: taxesData.incomeTaxes.effectiveIncomeTaxRate,
         topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalTaxRate,
         netIncome: taxesData.incomeTaxes.netIncome,
@@ -180,15 +180,15 @@ export class ChartDataExtractor {
         taxableDividendIncome,
         taxableCapGains: taxesData.capitalGainsTaxes.taxableCapitalGains,
         annualCapGainsTaxAmount,
-        totalCapGainsTaxAmount,
+        cumulativeCapGainsTaxAmount,
         effectiveCapGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
         topMarginalCapGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
         netCapGains: taxesData.capitalGainsTaxes.netCapitalGains,
         annualEarlyWithdrawalPenalties,
-        totalEarlyWithdrawalPenalties,
+        cumulativeEarlyWithdrawalPenalties,
         totalTaxableIncome: taxesData.totalTaxableIncome,
         totalAnnualTaxAmount,
-        totalTaxAmount,
+        cumulativeTotalTaxAmount,
         totalNetIncome: taxesData.incomeTaxes.netIncome + taxesData.capitalGainsTaxes.netCapitalGains,
         adjustments: taxesData.adjustments,
         deductions: taxesData.deductions,

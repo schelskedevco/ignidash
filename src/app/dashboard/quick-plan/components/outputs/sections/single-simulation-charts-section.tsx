@@ -101,7 +101,7 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
   const rawChartData = useSingleSimulationTaxesChartData(simulation);
 
   const [dataView, setDataView] = useState<
-    'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'totalAmounts' | 'netIncome' | 'taxableIncome'
+    'marginalRates' | 'effectiveRates' | 'annualAmounts' | 'cumulativeAmounts' | 'netIncome' | 'taxableIncome'
   >('marginalRates');
 
   const referenceLineModes = ['marginalIncomeTaxRates', 'marginalCapGainsTaxRates', 'hideReferenceLines'] as const;
