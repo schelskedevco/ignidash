@@ -192,4 +192,18 @@ export class SimulationDataExtractor {
 
     return { cashSavingsWithdrawals, taxableBrokerageWithdrawals, taxDeferredWithdrawals, taxFreeWithdrawals, earlyWithdrawals };
   }
+
+  static getSavingsRate(dp: SimulationDataPoint): number | null {
+    const { earnedIncomeAfterTax, operatingCashFlow } = this.getOperatingCashFlowData(dp);
+    return earnedIncomeAfterTax > 0 ? (operatingCashFlow / earnedIncomeAfterTax) * 100 : null;
+  }
+
+  static getWithdrawalRate(dp: SimulationDataPoint): number | null {
+    const portfolioData = dp.portfolio;
+
+    const totalValue = portfolioData.totalValue;
+    const annualWithdrawals = portfolioData.withdrawalsForPeriod;
+
+    return totalValue + annualWithdrawals > 0 ? (annualWithdrawals / (totalValue + annualWithdrawals)) * 100 : null;
+  }
 }
