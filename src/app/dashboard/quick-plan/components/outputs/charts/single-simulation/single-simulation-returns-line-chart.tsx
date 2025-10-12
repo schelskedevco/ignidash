@@ -20,7 +20,7 @@ interface CustomTooltipProps {
     dataKey: keyof SingleSimulationReturnsChartDataPoint;
     payload:
       | SingleSimulationReturnsChartDataPoint
-      | ({ age: number; stocksAmount: number; bondsAmount: number; cashAmount: number } & AccountDataWithReturns);
+      | ({ age: number; annualStocksAmount: number; annualBondsAmount: number; annualCashAmount: number } & AccountDataWithReturns);
   }>;
   label?: number;
   startAge: number;
@@ -129,7 +129,8 @@ export default function SingleSimulationReturnsLineChart({
 
   let chartData:
     | SingleSimulationReturnsChartDataPoint[]
-    | Array<{ age: number; stocksAmount: number; bondsAmount: number; cashAmount: number } & AccountDataWithReturns> = rawChartData;
+    | Array<{ age: number; annualStocksAmount: number; annualBondsAmount: number; annualCashAmount: number } & AccountDataWithReturns> =
+    rawChartData;
 
   const dataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
   const yAxisDomain: [number, number] | undefined = undefined;
@@ -160,9 +161,9 @@ export default function SingleSimulationReturnsLineChart({
             return {
               age,
               ...account,
-              stocksAmount: account.returnAmountsForPeriod.stocks,
-              bondsAmount: account.returnAmountsForPeriod.bonds,
-              cashAmount: account.returnAmountsForPeriod.cash,
+              annualStocksAmount: account.returnAmountsForPeriod.stocks,
+              annualBondsAmount: account.returnAmountsForPeriod.bonds,
+              annualCashAmount: account.returnAmountsForPeriod.cash,
             };
           })
       );
