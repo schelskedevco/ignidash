@@ -96,6 +96,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
     case 'ordinaryIncome':
     case 'capGainsAndDividends':
     case 'earlyWithdrawalPenalties':
+    case 'adjustmentsAndDeductions':
       totalFooter = (
         <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
           <span className="mr-2">Total:</span>
