@@ -308,16 +308,24 @@ export class SimulationDataExtractor {
 
     let taxDeferredWithdrawals = 0;
     let earlyTaxFreeEarningsWithdrawals = 0;
+    let totalEarlyWithdrawals = 0;
     for (const account of Object.values(portfolioData.perAccountData)) {
       switch (account.type) {
         case 'roth401k':
         case 'rothIra':
-          if (age < 59.5) earlyTaxFreeEarningsWithdrawals += account.earningsWithdrawnForPeriod;
+          if (age < 59.5) {
+            earlyTaxFreeEarningsWithdrawals += account.earningsWithdrawnForPeriod;
+            totalEarlyWithdrawals += account.earningsWithdrawnForPeriod;
+          }
           break;
         case '401k':
         case 'ira':
+          taxDeferredWithdrawals += account.withdrawalsForPeriod;
+          if (age < 59.5) totalEarlyWithdrawals += account.withdrawalsForPeriod;
+          break;
         case 'hsa':
           taxDeferredWithdrawals += account.withdrawalsForPeriod;
+          if (age < 65) totalEarlyWithdrawals += account.withdrawalsForPeriod;
           break;
         default:
           break;
@@ -339,7 +347,7 @@ export class SimulationDataExtractor {
       realizedGains,
       taxDeferredWithdrawals,
       earlyTaxFreeEarningsWithdrawals,
-      totalEarlyWithdrawals: taxDeferredWithdrawals + earlyTaxFreeEarningsWithdrawals,
+      totalEarlyWithdrawals,
       taxableDividendIncome,
       taxableInterestIncome,
       earnedIncome,
