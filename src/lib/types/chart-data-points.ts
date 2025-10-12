@@ -47,7 +47,7 @@ export interface SingleSimulationTaxesChartDataPoint {
   age: number;
 
   /* Ordinary Income */
-  ordinaryIncome: number;
+  earnedIncome: number;
   grossIncome: number;
   taxDeferredWithdrawals: number;
   earlyTaxFreeEarningsWithdrawals: number;

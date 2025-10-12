@@ -6,6 +6,7 @@ import type {
   SingleSimulationContributionsChartDataPoint,
   SingleSimulationWithdrawalsChartDataPoint,
 } from '@/lib/types/chart-data-points';
+import { SimulationDataExtractor } from '@/lib/utils/simulation-data-extractor';
 
 import type { SimulationResult } from './simulation-engine';
 
@@ -18,43 +19,20 @@ export class ChartDataExtractor {
       const currDateYear = new Date(data.date).getFullYear();
 
       const portfolioData = data.portfolio;
-      const totalValue = portfolioData.totalValue;
 
-      const assetAllocation = portfolioData.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
-      const stocksAllocation = assetAllocation.stocks;
-      const bondsAllocation = assetAllocation.bonds;
-      const cashAllocation = assetAllocation.cash;
-
-      let cashSavings = 0;
-      let taxableBrokerage = 0;
-      let taxDeferred = 0;
-      let taxFree = 0;
-
-      for (const account of Object.values(portfolioData.perAccountData)) {
-        switch (account.type) {
-          case 'savings':
-            cashSavings += account.totalValue;
-            break;
-          case 'taxableBrokerage':
-            taxableBrokerage += account.totalValue;
-            break;
-          case '401k':
-          case 'ira':
-          case 'hsa':
-            taxDeferred += account.totalValue;
-            break;
-          case 'roth401k':
-          case 'rothIra':
-            taxFree += account.totalValue;
-            break;
-        }
-      }
+      const { stockHoldings, bondHoldings, cashHoldings } = SimulationDataExtractor.getHoldingsByAssetClass(data);
+      const {
+        taxableBrokerageHoldings: taxableBrokerage,
+        taxDeferredHoldings: taxDeferred,
+        taxFreeHoldings: taxFree,
+        cashSavings,
+      } = SimulationDataExtractor.getHoldingsByTaxCategory(data);
 
       return {
         age: currDateYear - startDateYear + startAge,
-        stockHoldings: totalValue * stocksAllocation,
-        bondHoldings: totalValue * bondsAllocation,
-        cashHoldings: totalValue * cashAllocation,
+        stockHoldings,
+        bondHoldings,
+        cashHoldings,
         taxableBrokerage,
         taxDeferred,
         taxFree,
@@ -71,26 +49,18 @@ export class ChartDataExtractor {
     return simulation.data.slice(1).map((data) => {
       const currDateYear = new Date(data.date).getFullYear();
 
-      const taxesData = data.taxes!;
-
-      const incomeTax = taxesData.incomeTaxes.incomeTaxAmount;
-      const capGainsTax = taxesData.capitalGainsTaxes.capitalGainsTaxAmount;
-      const earlyWithdrawalPenalties = taxesData.earlyWithdrawalPenalties.totalPenaltyAmount;
-      const totalTaxesAndPenalties = incomeTax + capGainsTax + earlyWithdrawalPenalties;
-
-      const incomesData = data.incomes!;
-      const expensesData = data.expenses!;
-
-      const earnedIncome = incomesData.totalGrossIncome;
-      const earnedIncomeAfterTax = earnedIncome - totalTaxesAndPenalties;
-      const expenses = expensesData.totalExpenses;
-      const operatingCashFlow = earnedIncomeAfterTax - expenses;
-      const savingsRate = earnedIncomeAfterTax > 0 ? (operatingCashFlow / earnedIncomeAfterTax) * 100 : null;
+      const {
+        incomeTaxAmount: incomeTax,
+        capGainsTaxAmount: capGainsTax,
+        earlyWithdrawalPenaltiesAmount: earlyWithdrawalPenalties,
+      } = SimulationDataExtractor.getTaxAmountsByType(data);
+      const { earnedIncome, totalExpenses: expenses, operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(data);
+      const savingsRate = SimulationDataExtractor.getSavingsRate(data);
 
       return {
         age: currDateYear - startDateYear + startAge,
-        perIncomeData: Object.values(incomesData.perIncomeData),
-        perExpenseData: Object.values(expensesData.perExpenseData),
+        perIncomeData: Object.values(data.incomes!.perIncomeData),
+        perExpenseData: Object.values(data.expenses!.perExpenseData),
         earnedIncome,
         incomeTax,
         capGainsTax,
@@ -115,60 +85,36 @@ export class ChartDataExtractor {
       const currDateYear = new Date(data.date).getFullYear();
       const age = currDateYear - startDateYear + startAge;
 
-      const taxesData = data.taxes!;
-
-      const annualIncomeTaxAmount = taxesData.incomeTaxes.incomeTaxAmount;
-      const annualCapGainsTaxAmount = taxesData.capitalGainsTaxes.capitalGainsTaxAmount;
-      const annualEarlyWithdrawalPenalties = taxesData.earlyWithdrawalPenalties.totalPenaltyAmount;
-      const totalAnnualTaxAmount = annualIncomeTaxAmount + annualCapGainsTaxAmount + annualEarlyWithdrawalPenalties;
+      const {
+        incomeTaxAmount: annualIncomeTaxAmount,
+        capGainsTaxAmount: annualCapGainsTaxAmount,
+        earlyWithdrawalPenaltiesAmount: annualEarlyWithdrawalPenalties,
+        totalTaxesAndPenalties: totalAnnualTaxAmount,
+      } = SimulationDataExtractor.getTaxAmountsByType(data);
 
       cumulativeIncomeTaxAmount += annualIncomeTaxAmount;
       cumulativeCapGainsTaxAmount += annualCapGainsTaxAmount;
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeTotalTaxAmount += totalAnnualTaxAmount;
 
-      const portfolioData = data.portfolio;
-      const annualRealizedGains = portfolioData.realizedGainsForPeriod;
+      const {
+        realizedGains,
+        taxDeferredWithdrawals,
+        earlyTaxFreeEarningsWithdrawals,
+        taxableDividendIncome,
+        taxableInterestIncome,
+        earnedIncome,
+        grossIncome,
+      } = SimulationDataExtractor.getTaxableIncomeSources(data, age);
 
-      let annualTaxDeferredWithdrawals = 0;
-      let annualEarlyTaxFreeEarningsWithdrawals = 0;
-      for (const account of Object.values(portfolioData.perAccountData)) {
-        switch (account.type) {
-          case 'roth401k':
-          case 'rothIra':
-            if (age < 59.5) annualEarlyTaxFreeEarningsWithdrawals += account.earningsWithdrawnForPeriod;
-            break;
-          case '401k':
-          case 'ira':
-          case 'hsa':
-            annualTaxDeferredWithdrawals += account.withdrawalsForPeriod;
-            break;
-          default:
-            break;
-        }
-      }
-
-      const returnsData = data.returns!;
-      const taxableDividendIncome = returnsData.yieldAmountsForPeriod.taxable.stocks;
-      const taxableInterestIncome = returnsData.yieldAmountsForPeriod.taxable.bonds + returnsData.yieldAmountsForPeriod.taxable.cash;
-
-      const incomesData = data.incomes!;
-
-      const ordinaryIncome = incomesData.totalGrossIncome;
-      const grossIncome =
-        ordinaryIncome +
-        annualTaxDeferredWithdrawals +
-        annualEarlyTaxFreeEarningsWithdrawals +
-        annualRealizedGains +
-        taxableDividendIncome +
-        taxableInterestIncome;
+      const taxesData = data.taxes!;
 
       return {
         age,
-        ordinaryIncome,
+        earnedIncome,
         grossIncome,
-        taxDeferredWithdrawals: annualTaxDeferredWithdrawals,
-        earlyTaxFreeEarningsWithdrawals: annualEarlyTaxFreeEarningsWithdrawals,
+        taxDeferredWithdrawals,
+        earlyTaxFreeEarningsWithdrawals,
         taxableInterestIncome,
         taxableOrdinaryIncome: taxesData.incomeTaxes.taxableOrdinaryIncome,
         annualIncomeTaxAmount,
@@ -176,7 +122,7 @@ export class ChartDataExtractor {
         effectiveIncomeTaxRate: taxesData.incomeTaxes.effectiveIncomeTaxRate,
         topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalTaxRate,
         netIncome: taxesData.incomeTaxes.netIncome,
-        realizedGains: annualRealizedGains,
+        realizedGains,
         taxableDividendIncome,
         taxableCapGains: taxesData.capitalGainsTaxes.taxableCapitalGains,
         annualCapGainsTaxAmount,
@@ -231,36 +177,19 @@ export class ChartDataExtractor {
       const currDateYear = new Date(data.date).getFullYear();
 
       const portfolioData = data.portfolio;
+      const annualContributions = portfolioData.contributionsForPeriod;
 
-      let cashSavings = 0;
-      let taxableBrokerage = 0;
-      let taxDeferred = 0;
-      let taxFree = 0;
-
-      for (const account of Object.values(portfolioData.perAccountData)) {
-        switch (account.type) {
-          case 'savings':
-            cashSavings += account.contributionsForPeriod;
-            break;
-          case 'taxableBrokerage':
-            taxableBrokerage += account.contributionsForPeriod;
-            break;
-          case '401k':
-          case 'ira':
-          case 'hsa':
-            taxDeferred += account.contributionsForPeriod;
-            break;
-          case 'roth401k':
-          case 'rothIra':
-            taxFree += account.contributionsForPeriod;
-            break;
-        }
-      }
+      const {
+        taxableBrokerageContributions: taxableBrokerage,
+        taxDeferredContributions: taxDeferred,
+        taxFreeContributions: taxFree,
+        cashSavingsContributions: cashSavings,
+      } = SimulationDataExtractor.getContributionsByTaxCategory(data);
 
       return {
         age: currDateYear - startDateYear + startAge,
         cumulativeContributions: portfolioData.totalContributions,
-        annualContributions: portfolioData.contributionsForPeriod,
+        annualContributions,
         perAccountData: Object.values(portfolioData.perAccountData),
         taxableBrokerage,
         taxDeferred,
@@ -282,46 +211,21 @@ export class ChartDataExtractor {
       const age = currDateYear - startDateYear + startAge;
 
       const portfolioData = data.portfolio;
-      const totalValue = portfolioData.totalValue;
-      const annualWithdrawals = portfolioData.withdrawalsForPeriod;
 
-      let cashSavings = 0;
-      let taxableBrokerage = 0;
-      let taxDeferred = 0;
-      let taxFree = 0;
-      let annualEarlyWithdrawals = 0;
-
-      for (const account of Object.values(portfolioData.perAccountData)) {
-        switch (account.type) {
-          case 'savings':
-            cashSavings += account.withdrawalsForPeriod;
-            break;
-          case 'taxableBrokerage':
-            taxableBrokerage += account.withdrawalsForPeriod;
-            break;
-          case '401k':
-          case 'ira':
-            taxDeferred += account.withdrawalsForPeriod;
-            if (age < 59.5) annualEarlyWithdrawals += account.withdrawalsForPeriod;
-            break;
-          case 'hsa':
-            taxDeferred += account.withdrawalsForPeriod;
-            if (age < 65) annualEarlyWithdrawals += account.withdrawalsForPeriod;
-            break;
-          case 'roth401k':
-          case 'rothIra':
-            taxFree += account.withdrawalsForPeriod;
-            if (age < 59.5) annualEarlyWithdrawals += account.earningsWithdrawnForPeriod;
-            break;
-        }
-      }
+      const {
+        taxableBrokerageWithdrawals: taxableBrokerage,
+        taxDeferredWithdrawals: taxDeferred,
+        taxFreeWithdrawals: taxFree,
+        cashSavingsWithdrawals: cashSavings,
+        earlyWithdrawals: annualEarlyWithdrawals,
+      } = SimulationDataExtractor.getWithdrawalsByTaxCategory(data, age);
+      cumulativeEarlyWithdrawals += annualEarlyWithdrawals;
 
       const taxesData = data.taxes!;
       const annualEarlyWithdrawalPenalties = taxesData.earlyWithdrawalPenalties.totalPenaltyAmount;
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
-      cumulativeEarlyWithdrawals += annualEarlyWithdrawals;
 
-      const withdrawalRate = totalValue + annualWithdrawals > 0 ? (annualWithdrawals / (totalValue + annualWithdrawals)) * 100 : null;
+      const withdrawalRate = SimulationDataExtractor.getWithdrawalRate(data);
 
       return {
         age,
