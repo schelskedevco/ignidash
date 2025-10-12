@@ -296,10 +296,10 @@ export class TableDataExtractor {
         cashSavingsWithdrawals: cashSavings,
         earlyWithdrawals: annualEarlyWithdrawals,
       } = SimulationDataExtractor.getWithdrawalsByTaxCategory(data, age);
-      const { earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties } = SimulationDataExtractor.getTaxAmountsByType(data);
-
-      cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeEarlyWithdrawals += annualEarlyWithdrawals;
+
+      const { earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties } = SimulationDataExtractor.getTaxAmountsByType(data);
+      cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
 
       const { operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(data);
       const withdrawalRate = SimulationDataExtractor.getWithdrawalRate(data);
