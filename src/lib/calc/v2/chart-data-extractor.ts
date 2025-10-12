@@ -113,6 +113,7 @@ export class ChartDataExtractor {
         grossIncome,
         taxDeferredWithdrawals,
         earlyRothEarningsWithdrawals,
+        taxableRetirementDistributions: taxDeferredWithdrawals + earlyRothEarningsWithdrawals,
         taxableInterestIncome,
         taxableOrdinaryIncome: taxesData.incomeTaxes.taxableOrdinaryIncome,
         annualIncomeTax,

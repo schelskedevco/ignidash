@@ -327,7 +327,7 @@ export default function SingleSimulationTaxesBarChart({
       transformedChartData = chartData.flatMap((item) => [
         { name: 'Earned Income', amount: item.earnedIncome },
         { name: 'Taxable Interest Income', amount: item.taxableInterestIncome },
-        { name: 'Taxable Retirement Distributions', amount: item.taxDeferredWithdrawals + item.earlyRothEarningsWithdrawals },
+        { name: 'Taxable Retirement Distributions', amount: item.taxableRetirementDistributions },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
