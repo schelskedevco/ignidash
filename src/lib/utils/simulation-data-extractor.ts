@@ -31,6 +31,13 @@ export interface AnnualTaxesData {
   totalTaxesAndPenalties: number;
 }
 
+export interface AnnualContributionsData {
+  cashSavingsContributions: number;
+  taxableBrokerageContributions: number;
+  taxDeferredContributions: number;
+  taxFreeContributions: number;
+}
+
 export interface AnnualWithdrawalsData {
   cashSavingsWithdrawals: number;
   taxableBrokerageWithdrawals: number;
@@ -154,6 +161,37 @@ export class SimulationDataExtractor {
     const operatingCashFlow = earnedIncomeAfterTax - totalExpenses;
 
     return { earnedIncome, earnedIncomeAfterTax, totalExpenses, operatingCashFlow };
+  }
+
+  static getAnnualContributionsData(dp: SimulationDataPoint): AnnualContributionsData {
+    const portfolioData = dp.portfolio;
+
+    let cashSavingsContributions = 0;
+    let taxableBrokerageContributions = 0;
+    let taxDeferredContributions = 0;
+    let taxFreeContributions = 0;
+
+    for (const account of Object.values(portfolioData.perAccountData)) {
+      switch (account.type) {
+        case 'savings':
+          cashSavingsContributions += account.contributionsForPeriod;
+          break;
+        case 'taxableBrokerage':
+          taxableBrokerageContributions += account.contributionsForPeriod;
+          break;
+        case '401k':
+        case 'ira':
+        case 'hsa':
+          taxDeferredContributions += account.contributionsForPeriod;
+          break;
+        case 'roth401k':
+        case 'rothIra':
+          taxFreeContributions += account.contributionsForPeriod;
+          break;
+      }
+    }
+
+    return { cashSavingsContributions, taxableBrokerageContributions, taxDeferredContributions, taxFreeContributions };
   }
 
   static getAnnualWithdrawalsData(dp: SimulationDataPoint, age: number): AnnualWithdrawalsData {
