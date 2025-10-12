@@ -285,43 +285,45 @@ export class TableDataExtractor {
       const totalPortfolioValue = portfolioData.totalValue;
       const annualContributions = portfolioData.contributionsForPeriod;
 
-      let cashSavingsContributions = 0;
-      let taxableBrokerageContributions = 0;
-      let taxDeferredContributions = 0;
-      let taxFreeContributions = 0;
-      let taxDeferredWithdrawals = 0;
+      let cashSavings = 0;
+      let taxableBrokerage = 0;
+      let taxDeferred = 0;
+      let taxFree = 0;
 
       for (const account of Object.values(portfolioData.perAccountData)) {
         switch (account.type) {
           case 'savings':
-            cashSavingsContributions += account.contributionsForPeriod;
+            cashSavings += account.contributionsForPeriod;
             break;
           case 'taxableBrokerage':
-            taxableBrokerageContributions += account.contributionsForPeriod;
+            taxableBrokerage += account.contributionsForPeriod;
             break;
           case '401k':
           case 'ira':
           case 'hsa':
-            taxDeferredContributions += account.contributionsForPeriod;
-            taxDeferredWithdrawals += account.withdrawalsForPeriod;
+            taxDeferred += account.contributionsForPeriod;
             break;
           case 'roth401k':
           case 'rothIra':
-            taxFreeContributions += account.contributionsForPeriod;
+            taxFree += account.contributionsForPeriod;
             break;
         }
       }
 
-      const incomesData = data.incomes;
-      const expensesData = data.expenses;
       const taxesData = data.taxes;
 
-      const ordinaryIncome = incomesData?.totalGrossIncome ?? 0;
-      const grossIncome = ordinaryIncome + taxDeferredWithdrawals;
       const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+      const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+      const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
+      const totalTaxesAndPenalties = incomeTax + capGainsTax + earlyWithdrawalPenalties;
+
+      const incomesData = data.incomes;
+      const expensesData = data.expenses;
+
+      const earnedIncome = incomesData?.totalGrossIncome ?? 0;
+      const earnedIncomeAfterTax = earnedIncome - totalTaxesAndPenalties;
       const totalExpenses = expensesData?.totalExpenses ?? 0;
-      const netIncome = grossIncome - incomeTax;
-      const netCashFlow = netIncome - totalExpenses;
+      const operatingCashFlow = earnedIncomeAfterTax - totalExpenses;
 
       return {
         year: idx,
@@ -329,12 +331,12 @@ export class TableDataExtractor {
         phaseName: formattedPhaseName,
         cumulativeContributions: portfolioData.totalContributions,
         annualContributions,
-        taxableBrokerage: taxableBrokerageContributions,
-        taxDeferred: taxDeferredContributions,
-        taxFree: taxFreeContributions,
-        cashSavings: cashSavingsContributions,
+        taxableBrokerage,
+        taxDeferred,
+        taxFree,
+        cashSavings,
         totalPortfolioValue,
-        netCashFlow,
+        operatingCashFlow,
         historicalYear,
       };
     });

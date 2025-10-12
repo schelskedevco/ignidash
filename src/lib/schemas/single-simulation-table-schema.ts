@@ -213,7 +213,7 @@ export const singleSimulationContributionsTableRowSchema = z.object({
   taxFree: z.number().nullable(),
   cashSavings: z.number().nullable(),
   totalPortfolioValue: z.number().nullable(),
-  netCashFlow: z.number().nullable(),
+  operatingCashFlow: z.number().nullable(),
   historicalYear: z.number().nullable(),
 });
 
@@ -230,7 +230,7 @@ const SINGLE_SIMULATION_CONTRIBUTIONS_COLUMNS = {
   taxFree: { title: 'Tax-Free Contributions', format: 'currency' },
   cashSavings: { title: 'Cash Savings Contributions', format: 'currency' },
   totalPortfolioValue: { title: 'Total Portfolio Value', format: 'currency' },
-  netCashFlow: { title: 'Net Cash Flow', format: 'currency' },
+  operatingCashFlow: { title: 'Operating Cash Flow', format: 'currency' },
   historicalYear: { title: 'Historical Year', format: 'number' },
 } as const;
 
