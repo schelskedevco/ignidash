@@ -109,24 +109,21 @@ export class FinancialSimulationEngine {
         let { portfolioData: annualPortfolioDataAfterTaxes } = processTaxesResult;
         const { discretionaryExpense: annualDiscretionaryExpense } = processTaxesResult;
 
-        if (totalTaxesDue > 0) {
-          let totalTaxesPaid = totalTaxesDue;
+        // Iteratively reconcile taxes until convergence
+        let totalTaxesPaid = totalTaxesDue;
+        for (let i = 0; i < 10 && totalTaxesDue > 0; i++) {
+          annualTaxesData = taxProcessor.process(annualPortfolioDataAfterTaxes, annualIncomesData, annualReturnsData);
+          const totalTaxesDue = annualTaxesData.totalTaxesDue;
 
-          for (let i = 0; i < 10; i++) {
-            annualTaxesData = taxProcessor.process(annualPortfolioDataAfterTaxes, annualIncomesData, annualReturnsData);
-            const totalTaxesDue = annualTaxesData.totalTaxesDue;
+          const remainingTaxesDue = totalTaxesDue - totalTaxesPaid;
+          if (Math.abs(remainingTaxesDue) < 1) break;
 
-            const remainingTaxesDue = totalTaxesDue - totalTaxesPaid;
-            if (Math.abs(remainingTaxesDue) < 1) break;
+          ({ portfolioData: annualPortfolioDataAfterTaxes } = portfolioProcessor.processTaxes(annualPortfolioDataAfterTaxes, {
+            totalTaxesDue: remainingTaxesDue,
+            totalTaxesRefund: 0,
+          }));
 
-            const processTaxesResult = portfolioProcessor.processTaxes(annualPortfolioDataAfterTaxes, {
-              totalTaxesDue: remainingTaxesDue,
-              totalTaxesRefund: 0,
-            });
-
-            annualPortfolioDataAfterTaxes = processTaxesResult.portfolioData;
-            totalTaxesPaid = totalTaxesDue;
-          }
+          totalTaxesPaid = totalTaxesDue;
         }
 
         // Process expenses last to account for discretionary expenses from tax refunds
