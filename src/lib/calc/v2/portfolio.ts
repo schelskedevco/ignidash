@@ -13,7 +13,6 @@ import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation, AssetYieldR
 import { ContributionRules } from './contribution-rules';
 import type { IncomesData } from './incomes';
 import type { ExpensesData } from './expenses';
-import type { TaxesData } from './taxes';
 import type { AccountDataWithReturns } from './returns';
 import { uniformLifetimeMap } from '../data/rmds-table';
 
@@ -89,7 +88,7 @@ export class PortfolioProcessor {
 
   processTaxes(
     annualPortfolioDataBeforeTaxes: PortfolioData,
-    taxesData: TaxesData
+    taxesData: { totalTaxesDue: number; totalTaxesRefund: number }
   ): { portfolioData: PortfolioData; discretionaryExpense: number } {
     const perAccountDataBeforeTaxes = annualPortfolioDataBeforeTaxes.perAccountData;
 

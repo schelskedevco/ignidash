@@ -101,9 +101,34 @@ export class FinancialSimulationEngine {
         const annualReturnsData = returnsProcessor.getAnnualData();
 
         // Process taxes
-        const annualTaxesData = taxProcessor.process(annualPortfolioDataBeforeTaxes, annualIncomesData, annualReturnsData);
-        const { portfolioData: annualPortfolioDataAfterTaxes, discretionaryExpense: annualDiscretionaryExpense } =
-          portfolioProcessor.processTaxes(annualPortfolioDataBeforeTaxes, annualTaxesData);
+        let annualTaxesData = taxProcessor.process(annualPortfolioDataBeforeTaxes, annualIncomesData, annualReturnsData);
+        let { totalTaxesDue } = annualTaxesData;
+        const { totalTaxesRefund } = annualTaxesData;
+
+        // Process portfolio updates after calculating taxes
+        let processTaxesResult = portfolioProcessor.processTaxes(annualPortfolioDataBeforeTaxes, { totalTaxesDue, totalTaxesRefund });
+        let { portfolioData: annualPortfolioDataAfterTaxes } = processTaxesResult;
+        const { discretionaryExpense: annualDiscretionaryExpense } = processTaxesResult;
+
+        if (totalTaxesDue > 0) {
+          let totalTaxesPaid = totalTaxesDue;
+
+          for (let i = 0; i < 50; i++) {
+            annualTaxesData = taxProcessor.process(annualPortfolioDataAfterTaxes, annualIncomesData, annualReturnsData);
+            totalTaxesDue = annualTaxesData.totalTaxesDue;
+
+            const remainingTaxesDue = totalTaxesDue - totalTaxesPaid;
+            if (Math.abs(remainingTaxesDue) < 1) break;
+
+            processTaxesResult = portfolioProcessor.processTaxes(annualPortfolioDataAfterTaxes, {
+              totalTaxesDue: remainingTaxesDue,
+              totalTaxesRefund: 0,
+            });
+
+            annualPortfolioDataAfterTaxes = processTaxesResult.portfolioData;
+            totalTaxesPaid = totalTaxesDue;
+          }
+        }
 
         // Process expenses last to account for discretionary expenses from tax refunds
         if (annualDiscretionaryExpense) expensesProcessor.processDiscretionaryExpense(annualDiscretionaryExpense);
