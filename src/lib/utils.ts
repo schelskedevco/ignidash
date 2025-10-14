@@ -21,5 +21,10 @@ export function formatNumberAsNumber(num: number): number {
 
 export function formatChartString(input: string): string {
   const withSpaces = input.replace(/(?<!^)([A-Z])/g, ' $1');
-  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
+  const withCapitalized = withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
+
+  if (withCapitalized.startsWith('Tax Free')) return 'Tax-Free' + withCapitalized.slice(8);
+  if (withCapitalized.startsWith('Tax Deferred')) return 'Tax-Deferred' + withCapitalized.slice(12);
+
+  return withCapitalized;
 }
