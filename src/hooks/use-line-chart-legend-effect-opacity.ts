@@ -10,14 +10,14 @@ export function useLineChartLegendEffectOpacity() {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       setHoveringDataKey(dataKey);
-    }, 100);
+    }, 50);
   };
 
   const handleMouseLeave = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       setHoveringDataKey(null);
-    }, 100);
+    }, 50);
   };
 
   useEffect(() => {
