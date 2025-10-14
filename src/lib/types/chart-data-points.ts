@@ -114,9 +114,9 @@ export interface SingleSimulationWithdrawalsChartDataPoint {
   annualRothEarningsWithdrawals: number;
   annualEarlyWithdrawalPenalties: number;
   perAccountData: AccountDataWithTransactions[];
-  taxableBrokerage: number;
-  taxDeferred: number;
-  taxFree: number;
-  cashSavings: number;
+  taxableWithdrawals: number;
+  taxDeferredWithdrawals: number;
+  taxFreeWithdrawals: number;
+  cashWithdrawals: number;
   withdrawalRate: number | null;
 }

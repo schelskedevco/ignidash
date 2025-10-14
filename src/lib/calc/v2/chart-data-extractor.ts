@@ -217,10 +217,10 @@ export class ChartDataExtractor {
       const annualWithdrawals = portfolioData.withdrawalsForPeriod;
 
       const {
-        taxableBrokerageWithdrawals: taxableBrokerage,
-        taxDeferredWithdrawals: taxDeferred,
-        taxFreeWithdrawals: taxFree,
-        cashSavingsWithdrawals: cashSavings,
+        taxableBrokerageWithdrawals: taxableWithdrawals,
+        taxDeferredWithdrawals,
+        taxFreeWithdrawals,
+        cashSavingsWithdrawals: cashWithdrawals,
         earlyWithdrawals: annualEarlyWithdrawals,
       } = SimulationDataExtractor.getWithdrawalsByTaxCategory(data, age);
       cumulativeEarlyWithdrawals += annualEarlyWithdrawals;
@@ -246,10 +246,10 @@ export class ChartDataExtractor {
         cumulativeEarlyWithdrawals,
         annualEarlyWithdrawals,
         perAccountData: Object.values(portfolioData.perAccountData),
-        taxableBrokerage,
-        taxDeferred,
-        taxFree,
-        cashSavings,
+        taxableWithdrawals,
+        taxDeferredWithdrawals,
+        taxFreeWithdrawals,
+        cashWithdrawals,
         withdrawalRate,
       };
     });

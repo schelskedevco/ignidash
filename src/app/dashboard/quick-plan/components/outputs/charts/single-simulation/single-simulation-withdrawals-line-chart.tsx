@@ -175,7 +175,7 @@ export default function SingleSimulationWithdrawalsLineChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'taxCategory':
-      dataKeys.push('taxableBrokerage', 'taxDeferred', 'taxFree', 'cashSavings');
+      dataKeys.push('taxableWithdrawals', 'taxDeferredWithdrawals', 'taxFreeWithdrawals', 'cashWithdrawals');
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'realizedGains':
