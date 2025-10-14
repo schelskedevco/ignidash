@@ -79,6 +79,10 @@ export default function SingleSimulationWithdrawalsBarChart({
       mobile: ['Annual Gains', 'Cumulative Gains'],
       desktop: ['Annual Realized Gains', 'Cumulative Realized Gains'],
     },
+    earlyWithdrawalPenalties: {
+      mobile: ['Annual EW Penalty', 'Cumul. EW Penalty'],
+      desktop: ['Annual EW Penalties', 'Cumulative EW Penalties'],
+    },
     earlyWithdrawals: {
       mobile: ['Annual EWs', 'Cumulative EWs'],
       desktop: ['Annual Early Withdrawals', 'Cumulative Early Withdrawals'],
@@ -123,12 +127,14 @@ export default function SingleSimulationWithdrawalsBarChart({
         { name: 'Cumulative RMDs', amount: item.cumulativeRequiredMinimumDistributions },
       ]);
       break;
-    case 'earlyWithdrawalPenalties':
+    case 'earlyWithdrawalPenalties': {
+      const [annualLabel, cumulativeLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Annual EW Penalties', amount: item.annualEarlyWithdrawalPenalties },
-        { name: 'Cumulative EW Penalties', amount: item.cumulativeEarlyWithdrawalPenalties },
+        { name: annualLabel, amount: item.annualEarlyWithdrawalPenalties },
+        { name: cumulativeLabel, amount: item.cumulativeEarlyWithdrawalPenalties },
       ]);
       break;
+    }
     case 'earlyWithdrawals': {
       const [annualLabel, cumulativeLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
