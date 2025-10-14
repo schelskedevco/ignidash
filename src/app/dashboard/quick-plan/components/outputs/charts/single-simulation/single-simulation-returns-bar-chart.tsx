@@ -17,7 +17,7 @@ const CustomLabelListContent = (props: any) => {
   const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom') => {
     switch (mode) {
       case 'rates':
-        return `${(value * 100).toFixed(2)}%`;
+        return `${(value * 100).toFixed(1)}%`;
       case 'annualAmounts':
       case 'cumulativeAmounts':
       case 'custom':
@@ -86,7 +86,7 @@ export default function SingleSimulationReturnsBarChart({
         { name: 'Cash Rate', amount: item.cashRate },
         { name: 'Inflation Rate', amount: item.inflationRate },
       ]);
-      formatter = (value: number) => `${(value * 100).toFixed(2)}%`;
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       break;
     case 'annualAmounts':
       transformedChartData = chartData.flatMap((item) => [

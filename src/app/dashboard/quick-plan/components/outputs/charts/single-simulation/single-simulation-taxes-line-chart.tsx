@@ -65,7 +65,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
     switch (mode) {
       case 'marginalRates':
       case 'effectiveRates':
-        return `${(value * 100).toFixed(2)}%`;
+        return `${(value * 100).toFixed(1)}%`;
       case 'annualAmounts':
       case 'cumulativeAmounts':
       case 'netIncome':
@@ -223,11 +223,11 @@ export default function SingleSimulationTaxesLineChart({
         Math.min(0, ...chartData.flatMap((d) => [d.topMarginalIncomeTaxRate * 1.25, d.topMarginalCapGainsTaxRate * 1.25])),
         Math.max(0, ...chartData.flatMap((d) => [d.topMarginalIncomeTaxRate * 1.25, d.topMarginalCapGainsTaxRate * 1.25])),
       ];
-      formatter = (value: number) => `${(value * 100).toFixed(2)}%`;
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       dataKeys.push('topMarginalIncomeTaxRate', 'topMarginalCapGainsTaxRate');
       break;
     case 'effectiveRates':
-      formatter = (value: number) => `${(value * 100).toFixed(2)}%`;
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       dataKeys.push('effectiveIncomeTaxRate', 'effectiveCapGainsTaxRate');
       break;
     case 'annualAmounts':

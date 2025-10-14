@@ -61,7 +61,7 @@ const createRenderActiveShape = (isSmallScreen: boolean) => {
           {formatChartString(payload?.name ?? 'N/A')}
         </text>
         <text x={cx} y={cy} dy={20} textAnchor="middle" fill="var(--muted-foreground)" fontSize="14">
-          {`${((percent ?? 1) * 100).toFixed(2)}%`}
+          {`${((percent ?? 1) * 100).toFixed(1)}%`}
         </text>
         <Sector
           cx={cx}

@@ -39,7 +39,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom') => {
     switch (mode) {
       case 'rates':
-        return `${(value * 100).toFixed(2)}%`;
+        return `${(value * 100).toFixed(1)}%`;
       case 'annualAmounts':
       case 'cumulativeAmounts':
       case 'custom':
@@ -137,7 +137,7 @@ export default function SingleSimulationReturnsLineChart({
   let formatter = undefined;
   switch (dataView) {
     case 'rates':
-      formatter = (value: number) => `${(value * 100).toFixed(2)}%`;
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       dataKeys.push('stocksRate', 'bondsRate', 'cashRate', 'inflationRate');
       break;
     case 'annualAmounts':

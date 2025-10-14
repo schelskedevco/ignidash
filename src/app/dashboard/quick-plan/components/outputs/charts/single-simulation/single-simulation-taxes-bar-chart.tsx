@@ -145,7 +145,7 @@ const CustomLabelListContent = (props: any) => {
     switch (mode) {
       case 'marginalRates':
       case 'effectiveRates':
-        return `${(value * 100).toFixed(2)}%`;
+        return `${(value * 100).toFixed(1)}%`;
       case 'annualAmounts':
       case 'cumulativeAmounts':
       case 'netIncome':
@@ -245,14 +245,14 @@ export default function SingleSimulationTaxesBarChart({
         { name: 'Top Marginal Income Tax Rate', amount: item.topMarginalIncomeTaxRate },
         { name: 'Top Marginal Cap Gains Tax Rate', amount: item.topMarginalCapGainsTaxRate },
       ]);
-      formatter = (value: number) => `${(value * 100).toFixed(2)}%`;
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       break;
     case 'effectiveRates':
       transformedChartData = chartData.flatMap((item) => [
         { name: 'Effective Income Tax Rate', amount: item.effectiveIncomeTaxRate },
         { name: 'Effective Cap Gains Tax Rate', amount: item.effectiveCapGainsTaxRate },
       ]);
-      formatter = (value: number) => `${(value * 100).toFixed(2)}%`;
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       break;
     case 'annualAmounts':
       transformedChartData = chartData.flatMap((item) => [

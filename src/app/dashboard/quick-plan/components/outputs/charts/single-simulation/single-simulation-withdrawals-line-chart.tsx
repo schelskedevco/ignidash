@@ -60,7 +60,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   ) => {
     switch (mode) {
       case 'withdrawalRate':
-        return `${value.toFixed(2)}%`;
+        return `${value.toFixed(1)}%`;
       default:
         return formatNumber(value, 1, '$');
     }
@@ -185,7 +185,7 @@ export default function SingleSimulationWithdrawalsLineChart({
       break;
     case 'withdrawalRate':
       dataKeys.push('withdrawalRate');
-      formatter = (value: number) => `${value.toFixed(2)}%`;
+      formatter = (value: number) => `${value.toFixed(1)}%`;
       break;
     case 'custom':
       if (!customDataID) {
