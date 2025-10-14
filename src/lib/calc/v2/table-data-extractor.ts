@@ -37,8 +37,8 @@ export class TableDataExtractor {
       const annualWithdrawals = portfolioData.withdrawalsForPeriod;
       const annualContributions = portfolioData.contributionsForPeriod;
 
-      const { taxableBrokerageHoldings, taxDeferredHoldings, taxFreeHoldings, cashSavings } =
-        SimulationDataExtractor.getHoldingsByTaxCategory(data);
+      const { taxableBrokerageBalance, taxDeferredBalance, taxFreeBalance, cashSavings } =
+        SimulationDataExtractor.getBalanceByTaxCategory(data);
       const { stockHoldings, bondHoldings, cashHoldings } = SimulationDataExtractor.getHoldingsByAssetClass(data);
 
       const returnsData = data.returns;
@@ -60,9 +60,9 @@ export class TableDataExtractor {
         stockHoldings,
         bondHoldings,
         cashHoldings,
-        taxableBrokerageHoldings,
-        taxDeferredHoldings,
-        taxFreeHoldings,
+        taxableBrokerageBalance,
+        taxDeferredBalance,
+        taxFreeBalance,
         cashSavings,
         historicalYear,
       };

@@ -46,11 +46,11 @@ export interface WithdrawalsByTaxCategory {
   earlyWithdrawals: number;
 }
 
-export interface HoldingsByTaxCategory {
+export interface BalanceByTaxCategory {
   cashSavings: number;
-  taxableBrokerageHoldings: number;
-  taxDeferredHoldings: number;
-  taxFreeHoldings: number;
+  taxableBrokerageBalance: number;
+  taxDeferredBalance: number;
+  taxFreeBalance: number;
 }
 
 export interface HoldingsByAssetClass {
@@ -255,13 +255,13 @@ export class SimulationDataExtractor {
     return { cashSavingsWithdrawals, taxableBrokerageWithdrawals, taxDeferredWithdrawals, taxFreeWithdrawals, earlyWithdrawals };
   }
 
-  static getHoldingsByTaxCategory(dp: SimulationDataPoint): HoldingsByTaxCategory {
+  static getBalanceByTaxCategory(dp: SimulationDataPoint): BalanceByTaxCategory {
     const portfolioData = dp.portfolio;
 
     let cashSavings = 0;
-    let taxableBrokerageHoldings = 0;
-    let taxDeferredHoldings = 0;
-    let taxFreeHoldings = 0;
+    let taxableBrokerageBalance = 0;
+    let taxDeferredBalance = 0;
+    let taxFreeBalance = 0;
 
     for (const account of Object.values(portfolioData.perAccountData)) {
       switch (account.type) {
@@ -269,21 +269,21 @@ export class SimulationDataExtractor {
           cashSavings += account.totalValue;
           break;
         case 'taxableBrokerage':
-          taxableBrokerageHoldings += account.totalValue;
+          taxableBrokerageBalance += account.totalValue;
           break;
         case '401k':
         case 'ira':
         case 'hsa':
-          taxDeferredHoldings += account.totalValue;
+          taxDeferredBalance += account.totalValue;
           break;
         case 'roth401k':
         case 'rothIra':
-          taxFreeHoldings += account.totalValue;
+          taxFreeBalance += account.totalValue;
           break;
       }
     }
 
-    return { cashSavings, taxableBrokerageHoldings, taxDeferredHoldings, taxFreeHoldings };
+    return { cashSavings, taxableBrokerageBalance, taxDeferredBalance, taxFreeBalance };
   }
 
   static getHoldingsByAssetClass(dp: SimulationDataPoint): HoldingsByAssetClass {
