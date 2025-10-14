@@ -4,7 +4,7 @@ import { useTheme } from 'next-themes';
 import { useState, useCallback } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
 
-import { formatNumber, formatChartString } from '@/lib/utils';
+import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
@@ -104,7 +104,9 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
           <p
             key={entry.dataKey}
             style={{ backgroundColor: entry.color }}
-            className={`border-foreground/50 flex justify-between rounded-lg border px-2 text-sm ${needsBgTextColor.includes(entry.color) ? 'text-background' : 'text-foreground'}`}
+            className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
+              'text-background': needsBgTextColor.includes(entry.color),
+            })}
           >
             <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
             <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
@@ -282,7 +284,7 @@ export default function SingleSimulationWithdrawalsLineChart({
         </ResponsiveContainer>
       </div>
       <div
-        className={`mt-2 grid grid-cols-2 gap-2 sm:flex sm:justify-center sm:gap-x-4 ${!isSmallScreen ? 'ml-16' : ''}`}
+        className={cn('mt-2 grid grid-cols-2 gap-2 sm:flex sm:justify-center sm:gap-x-4', { 'ml-16': !isSmallScreen })}
         role="group"
         aria-label="Chart legend"
       >

@@ -7,7 +7,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import type { AccountDataWithTransactions } from '@/lib/calc/v2/account';
-import { formatNumber, formatChartString } from '@/lib/utils';
+import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 
@@ -48,7 +48,9 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
           <p
             key={entry.dataKey}
             style={{ backgroundColor: entry.color }}
-            className={`border-foreground/50 flex justify-between rounded-lg border px-2 text-sm ${needsBgTextColor.includes(entry.color) ? 'text-background' : 'text-foreground'}`}
+            className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
+              'text-background': needsBgTextColor.includes(entry.color),
+            })}
           >
             <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
             <span className="ml-1 font-semibold">
@@ -211,7 +213,7 @@ export default function SingleSimulationPortfolioAreaChart({
         </ResponsiveContainer>
       </div>
       <div
-        className={`mt-2 grid grid-cols-2 gap-2 sm:flex sm:justify-center sm:gap-x-4 ${!isSmallScreen ? 'ml-16' : ''}`}
+        className={cn('mt-2 grid grid-cols-2 gap-2 sm:flex sm:justify-center sm:gap-x-4', { 'ml-16': !isSmallScreen })}
         role="group"
         aria-label="Chart legend"
       >
