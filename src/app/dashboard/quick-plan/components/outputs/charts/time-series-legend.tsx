@@ -8,9 +8,15 @@ interface TimeSeriesLegendProps {
 }
 
 export default function TimeSeriesLegend({ colors, legendStrokeColor, dataKeys, isSmallScreen }: TimeSeriesLegendProps) {
+  const useGridLayout = dataKeys.length >= 4 || isSmallScreen;
+
   return (
     <div
-      className={cn('mt-2 grid grid-cols-2 gap-2 sm:flex sm:justify-center sm:gap-x-4', { 'ml-16': !isSmallScreen })}
+      className={cn('mt-2 gap-2 sm:gap-x-4', {
+        'ml-16': !isSmallScreen,
+        'grid grid-cols-2': useGridLayout,
+        'sm:flex sm:justify-center': !useGridLayout,
+      })}
       role="group"
       aria-label="Chart legend"
     >
