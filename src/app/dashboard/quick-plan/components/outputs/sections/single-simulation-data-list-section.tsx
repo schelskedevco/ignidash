@@ -77,7 +77,9 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionDetails>{formatNumber(totalExpenses, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="font-bold">Savings Rate</DescriptionTerm>
-          <DescriptionDetails className="font-bold">{savingsRate !== null ? `${formatNumber(savingsRate, 1)}%` : 'N/A'}</DescriptionDetails>
+          <DescriptionDetails className="font-bold">
+            {savingsRate !== null ? `${formatNumber(savingsRate * 100, 1)}%` : 'N/A'}
+          </DescriptionDetails>
 
           <DescriptionTerm className="font-bold">Operating Cash Flow*</DescriptionTerm>
           <DescriptionDetails className="font-bold">{formatNumber(operatingCashFlow, 2, '$')}</DescriptionDetails>
@@ -230,7 +232,7 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
           <DescriptionTerm className="font-bold">Withdrawal Rate</DescriptionTerm>
           <DescriptionDetails className="font-bold">
-            {withdrawalRate !== null ? `${formatNumber(withdrawalRate, 1)}%` : 'N/A'}
+            {withdrawalRate !== null ? `${formatNumber(withdrawalRate * 100, 1)}%` : 'N/A'}
           </DescriptionDetails>
         </DescriptionList>
       </Card>

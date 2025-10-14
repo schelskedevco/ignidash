@@ -366,7 +366,7 @@ export class SimulationDataExtractor {
 
   static getSavingsRate(dp: SimulationDataPoint): number | null {
     const { earnedIncomeAfterTax, operatingCashFlow } = this.getOperatingCashFlowData(dp);
-    return earnedIncomeAfterTax > 0 ? (operatingCashFlow / earnedIncomeAfterTax) * 100 : null;
+    return earnedIncomeAfterTax > 0 ? operatingCashFlow / earnedIncomeAfterTax : null;
   }
 
   static getWithdrawalRate(dp: SimulationDataPoint): number | null {
@@ -375,6 +375,6 @@ export class SimulationDataExtractor {
     const totalValue = portfolioData.totalValue;
     const annualWithdrawals = portfolioData.withdrawalsForPeriod;
 
-    return totalValue + annualWithdrawals > 0 ? (annualWithdrawals / (totalValue + annualWithdrawals)) * 100 : null;
+    return totalValue + annualWithdrawals > 0 ? annualWithdrawals / (totalValue + annualWithdrawals) : null;
   }
 }

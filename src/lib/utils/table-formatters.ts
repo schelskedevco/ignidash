@@ -36,7 +36,7 @@ const formatValue = (value: unknown, format: ColumnFormat): string => {
     case 'currency':
       return currencyFormatter.format(value as number);
     case 'percentage':
-      return `${(value as number).toFixed(1)}%`;
+      return `${((value as number) * 100).toFixed(1)}%`;
     case 'number':
       return String(value);
     case 'string':

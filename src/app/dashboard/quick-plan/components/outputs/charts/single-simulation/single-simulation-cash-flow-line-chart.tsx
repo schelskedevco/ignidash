@@ -38,7 +38,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   const formatValue = (value: number, mode: 'net' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => {
     switch (mode) {
       case 'savingsRate':
-        return `${value.toFixed(1)}%`;
+        return `${(value * 100).toFixed(1)}%`;
       default:
         return formatNumber(value, 1, '$');
     }
@@ -238,7 +238,7 @@ export default function SingleSimulationCashFlowLineChart({
     case 'savingsRate':
       dataKeys.push('savingsRate');
       strokeColors.push('var(--chart-3)');
-      formatter = (value: number) => `${value.toFixed(1)}%`;
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       break;
     default:
       dataKeys.push('operatingCashFlow');
