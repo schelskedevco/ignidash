@@ -15,6 +15,7 @@ import {
 } from '@/components/catalyst/dropdown';
 import { useMonteCarloSortMode, useUpdateMonteCarloSortMode } from '@/lib/stores/quick-plan-store';
 import { formatChartString } from '@/lib/utils';
+import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
 
 interface SimulationCategorySelectorProps {
   className?: string;
@@ -45,13 +46,15 @@ export default function SimulationCategorySelector({
   const monteCarloSortMode = useMonteCarloSortMode();
   const updateMonteCarloSortMode = useUpdateMonteCarloSortMode();
 
+  const withScrollPreservation = useScrollPreservation();
+
   return (
     <div className="flex items-center justify-between">
       <div className={cn('isolate -ml-1 flex gap-x-2 overflow-x-auto px-1 py-2', className)}>
         {Object.values(SimulationCategory).map((category) => (
           <button
             key={category}
-            onClick={() => setCurrentCategory(category)}
+            onClick={withScrollPreservation(() => setCurrentCategory(category))}
             type="button"
             className={cn(
               'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border/50 relative inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold focus:z-10',
