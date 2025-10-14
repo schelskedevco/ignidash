@@ -22,13 +22,13 @@ export default function SingleSimulationReturnsBarChartCard({
   let title;
   switch (dataView) {
     case 'rates':
-      title = 'Real Rates';
+      title = 'Real Returns';
       break;
     case 'annualAmounts':
-      title = 'Annual Returns';
+      title = 'Annual Growth';
       break;
     case 'cumulativeAmounts':
-      title = 'Cumulative Returns';
+      title = 'Cumulative Growth';
       break;
     case 'custom':
       title = 'Custom Account';
