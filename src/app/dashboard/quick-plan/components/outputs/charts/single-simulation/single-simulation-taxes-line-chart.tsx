@@ -10,6 +10,7 @@ import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Divider } from '@/components/catalyst/divider';
+import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 
 import TimeSeriesLegend from '../time-series-legend';
 
@@ -296,6 +297,8 @@ export default function SingleSimulationTaxesLineChart({
     [onAgeSelect]
   );
 
+  const { getOpacity, handleMouseEnter, handleMouseLeave } = useLineChartLegendEffectOpacity();
+
   return (
     <div>
       <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
@@ -326,6 +329,7 @@ export default function SingleSimulationTaxesLineChart({
                 dot={false}
                 activeDot={false}
                 strokeWidth={3}
+                strokeOpacity={getOpacity(dataKey)}
               />
             ))}
             <Tooltip
@@ -339,7 +343,14 @@ export default function SingleSimulationTaxesLineChart({
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <TimeSeriesLegend colors={COLORS} legendStrokeColor={legendStrokeColor} dataKeys={dataKeys} isSmallScreen={isSmallScreen} />
+      <TimeSeriesLegend
+        colors={COLORS}
+        legendStrokeColor={legendStrokeColor}
+        dataKeys={dataKeys}
+        isSmallScreen={isSmallScreen}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      />
     </div>
   );
 }

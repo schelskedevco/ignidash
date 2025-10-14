@@ -11,6 +11,7 @@ import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/char
 import type { AccountDataWithTransactions } from '@/lib/calc/v2/account';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { uniformLifetimeMap } from '@/lib/calc/data/rmds-table';
+import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 
 import TimeSeriesLegend from '../time-series-legend';
 
@@ -242,6 +243,8 @@ export default function SingleSimulationWithdrawalsLineChart({
     [onAgeSelect]
   );
 
+  const { getOpacity, handleMouseEnter, handleMouseLeave } = useLineChartLegendEffectOpacity();
+
   return (
     <div>
       <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
@@ -272,6 +275,7 @@ export default function SingleSimulationWithdrawalsLineChart({
                 dot={false}
                 activeDot={false}
                 strokeWidth={3}
+                strokeOpacity={getOpacity(dataKey)}
               />
             ))}
             <Tooltip
@@ -285,7 +289,14 @@ export default function SingleSimulationWithdrawalsLineChart({
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <TimeSeriesLegend colors={COLORS} legendStrokeColor={legendStrokeColor} dataKeys={dataKeys} isSmallScreen={isSmallScreen} />
+      <TimeSeriesLegend
+        colors={COLORS}
+        legendStrokeColor={legendStrokeColor}
+        dataKeys={dataKeys}
+        isSmallScreen={isSmallScreen}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      />
     </div>
   );
 }

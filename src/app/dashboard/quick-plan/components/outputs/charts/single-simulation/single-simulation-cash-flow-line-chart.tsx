@@ -11,6 +11,7 @@ import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-d
 import type { IncomeData } from '@/lib/calc/v2/incomes';
 import type { ExpenseData } from '@/lib/calc/v2/expenses';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
+import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 
 import TimeSeriesLegend from '../time-series-legend';
 
@@ -273,6 +274,8 @@ export default function SingleSimulationCashFlowLineChart({
     [onAgeSelect]
   );
 
+  const { getOpacity, handleMouseEnter, handleMouseLeave } = useLineChartLegendEffectOpacity();
+
   return (
     <div>
       <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
@@ -304,6 +307,7 @@ export default function SingleSimulationCashFlowLineChart({
                 dot={false}
                 activeDot={false}
                 strokeWidth={3}
+                strokeOpacity={getOpacity(dataKey)}
               />
             ))}
             <Tooltip
@@ -317,7 +321,14 @@ export default function SingleSimulationCashFlowLineChart({
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <TimeSeriesLegend colors={strokeColors} legendStrokeColor={legendStrokeColor} dataKeys={dataKeys} isSmallScreen={isSmallScreen} />
+      <TimeSeriesLegend
+        colors={strokeColors}
+        legendStrokeColor={legendStrokeColor}
+        dataKeys={dataKeys}
+        isSmallScreen={isSmallScreen}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      />
     </div>
   );
 }

@@ -5,9 +5,18 @@ interface TimeSeriesLegendProps {
   legendStrokeColor: string;
   dataKeys: string[];
   isSmallScreen: boolean;
+  onMouseEnter?: (dataKey: string) => void;
+  onMouseLeave?: () => void;
 }
 
-export default function TimeSeriesLegend({ colors, legendStrokeColor, dataKeys, isSmallScreen }: TimeSeriesLegendProps) {
+export default function TimeSeriesLegend({
+  colors,
+  legendStrokeColor,
+  dataKeys,
+  isSmallScreen,
+  onMouseEnter,
+  onMouseLeave,
+}: TimeSeriesLegendProps) {
   const useGridLayout = dataKeys.length >= 4 || isSmallScreen;
 
   return (
@@ -21,7 +30,12 @@ export default function TimeSeriesLegend({ colors, legendStrokeColor, dataKeys, 
       aria-label="Chart legend"
     >
       {dataKeys.map((dataKey, index) => (
-        <div key={dataKey} className="flex items-center gap-x-2 pr-4 text-sm font-medium">
+        <div
+          key={dataKey}
+          className="flex items-center gap-x-2 pr-4 text-sm font-medium"
+          onMouseEnter={() => onMouseEnter?.(dataKey)}
+          onMouseLeave={() => onMouseLeave?.()}
+        >
           <svg viewBox="0 0 6 6" aria-hidden="true" style={{ fill: colors[index % colors.length] }} className="size-5 shrink-0">
             <rect x={0.5} y={0.5} width={5} height={5} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
           </svg>
