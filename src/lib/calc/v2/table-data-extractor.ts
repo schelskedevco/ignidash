@@ -202,9 +202,6 @@ export class TableDataExtractor {
       const phaseName = data.phase?.name ?? null;
       const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
 
-      const portfolioData = data.portfolio;
-      const totalPortfolioValue = portfolioData.totalValue;
-
       const { stockHoldings, bondHoldings, cashHoldings } = SimulationDataExtractor.getHoldingsByAssetClass(data);
 
       const returnsData = data.returns;
@@ -213,7 +210,6 @@ export class TableDataExtractor {
         year: idx,
         age,
         phaseName: formattedPhaseName,
-        totalPortfolioValue,
         stockRate: returnsData?.annualReturnRates.stocks ?? null,
         cumulativeStockAmount: returnsData?.totalReturnAmounts.stocks ?? null,
         annualStockAmount: returnsData?.returnAmountsForPeriod.stocks ?? null,
