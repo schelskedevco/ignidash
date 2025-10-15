@@ -325,7 +325,6 @@ export class TableDataExtractor {
         cumulativeEarlyWithdrawalPenalties,
         annualRothEarningsWithdrawals: portfolioData.earningsWithdrawnForPeriod,
         cumulativeRothEarningsWithdrawals: portfolioData.totalEarningsWithdrawn,
-
         totalPortfolioValue,
         operatingCashFlow,
         withdrawalRate,
