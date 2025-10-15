@@ -149,6 +149,7 @@ export const singleSimulationTaxesTableRowSchema = z.object({
   phaseName: z.string().nullable(),
   grossIncome: z.number().nullable(),
   adjustedGrossIncome: z.number().nullable(),
+  totalTaxableIncome: z.number().nullable(),
 
   /* Ordinary Income */
   earnedIncome: z.number().nullable(),
@@ -178,7 +179,6 @@ export const singleSimulationTaxesTableRowSchema = z.object({
   cumulativeEarlyWithdrawalPenalties: z.number().nullable(),
 
   /* Totals */
-  totalTaxableIncome: z.number().nullable(),
   annualTotalTaxesAndPenalties: z.number().nullable(),
   cumulativeTotalTaxesAndPenalties: z.number().nullable(),
 
@@ -197,6 +197,7 @@ const SINGLE_SIMULATION_TAXES_COLUMNS = {
   phaseName: { title: 'Phase Name', format: 'string' },
   grossIncome: { title: 'Gross Income', format: 'currency' },
   adjustedGrossIncome: { title: 'Adjusted Gross Income (AGI)', format: 'currency' },
+  totalTaxableIncome: { title: 'Total Taxable Income', format: 'currency' },
   earnedIncome: { title: 'Earned Income', format: 'currency' },
   taxDeferredWithdrawals: { title: 'Tax-Deferred Withdrawals', format: 'currency' },
   earlyRothEarningsWithdrawals: { title: 'Early Roth Earnings Withdrawals', format: 'currency' },
@@ -218,7 +219,6 @@ const SINGLE_SIMULATION_TAXES_COLUMNS = {
   topMarginalCapGainsTaxRate: { title: 'Top Marginal Capital Gains Tax Rate', format: 'percentage' },
   annualEarlyWithdrawalPenalties: { title: 'Annual Early Withdrawal Penalties', format: 'currency' },
   cumulativeEarlyWithdrawalPenalties: { title: 'Cumulative Early Withdrawal Penalties', format: 'currency' },
-  totalTaxableIncome: { title: 'Total Taxable Income', format: 'currency' },
   annualTotalTaxesAndPenalties: { title: 'Annual Total Taxes & Penalties', format: 'currency' },
   cumulativeTotalTaxesAndPenalties: { title: 'Cumulative Total Taxes & Penalties', format: 'currency' },
   taxDeferredContributions: { title: 'Tax-Deferred Contributions', format: 'currency' },
