@@ -231,12 +231,12 @@ export default function SingleSimulationTaxesBarChart({
       desktop: ['Effective Income Tax Rate', 'Effective Cap Gains Tax Rate'],
     },
     annualAmounts: {
-      mobile: ['Income Tax', 'Cap Gains Tax'],
-      desktop: ['Income Tax', 'Cap Gains Tax'],
+      mobile: ['Income Tax', 'Cap Gains Tax', 'EW Penalty'],
+      desktop: ['Income Tax', 'Cap Gains Tax', 'EW Penalties'],
     },
     cumulativeAmounts: {
-      mobile: ['Cumul. Income Tax', 'Cumul. CG Tax'],
-      desktop: ['Cumulative Income Tax', 'Cumulative Cap Gains Tax'],
+      mobile: ['Cumul. Income Tax', 'Cumul. CG Tax', 'Cumul. EW Penalty'],
+      desktop: ['Cumulative Income Tax', 'Cumulative Cap Gains Tax', 'Cumulative EW Penalties'],
     },
     retirementDistributions: {
       mobile: ['Tax-Deferred', 'Early Roth'],
@@ -294,19 +294,21 @@ export default function SingleSimulationTaxesBarChart({
       break;
     }
     case 'annualAmounts': {
-      const [incomeTaxLabel, capGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [incomeTaxLabel, capGainsTaxLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
         { name: incomeTaxLabel, amount: item.annualIncomeTax },
         { name: capGainsTaxLabel, amount: item.annualCapGainsTax },
+        { name: earlyWithdrawalPenaltiesLabel, amount: item.annualEarlyWithdrawalPenalties },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     }
     case 'cumulativeAmounts': {
-      const [incomeTaxLabel, capGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [incomeTaxLabel, capGainsTaxLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
         { name: incomeTaxLabel, amount: item.cumulativeIncomeTax },
         { name: capGainsTaxLabel, amount: item.cumulativeCapGainsTax },
+        { name: earlyWithdrawalPenaltiesLabel, amount: item.cumulativeEarlyWithdrawalPenalties },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
