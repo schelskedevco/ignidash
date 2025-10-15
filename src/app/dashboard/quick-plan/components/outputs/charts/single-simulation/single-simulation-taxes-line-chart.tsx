@@ -93,7 +93,6 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
       break;
     case 'annualAmounts':
     case 'cumulativeAmounts':
-    case 'adjustedGrossIncome':
     case 'investmentIncome':
     case 'retirementDistributions':
     case 'ordinaryIncome':
@@ -114,6 +113,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
       );
       break;
     case 'taxableIncome':
+    case 'adjustedGrossIncome':
       const entry = payload[0].payload;
 
       const adjustments = Object.entries(entry.adjustments).map(([name, value]) => (
@@ -140,9 +140,13 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
           <p className="text-muted-foreground -mb-2 text-xs/6">Adjustments</p>
           {adjustments}
           <Divider />
-          <p className="text-muted-foreground -mb-2 text-xs/6">Deductions</p>
-          {deductions}
-          <Divider />
+          {dataView === 'taxableIncome' && (
+            <>
+              <p className="text-muted-foreground -mb-2 text-xs/6">Deductions</p>
+              {deductions}
+              <Divider />
+            </>
+          )}
         </div>
       );
       break;

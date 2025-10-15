@@ -49,8 +49,8 @@ interface TaxableIncomeTooltipProps {
     | 'adjustmentsAndDeductions';
 }
 
-const TaxableIncomeTooltip = ({ active, payload, startAge, age, disabled, dataView }: TaxableIncomeTooltipProps) => {
-  if (!(active && payload && payload.length) || disabled || dataView !== 'taxableIncome') return null;
+const IncomeCalculationsTooltip = ({ active, payload, startAge, age, disabled, dataView }: TaxableIncomeTooltipProps) => {
+  if (!(active && payload && payload.length) || disabled) return null;
 
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (age - startAge);
@@ -83,9 +83,13 @@ const TaxableIncomeTooltip = ({ active, payload, startAge, age, disabled, dataVi
       <p className="text-muted-foreground -mb-2 text-xs/6">Adjustments</p>
       {adjustments}
       <Divider />
-      <p className="text-muted-foreground -mb-2 text-xs/6">Deductions</p>
-      {deductions}
-      <Divider />
+      {dataView === 'taxableIncome' && (
+        <>
+          <p className="text-muted-foreground -mb-2 text-xs/6">Deductions</p>
+          {deductions}
+          <Divider />
+        </>
+      )}
     </div>
   );
 
@@ -350,8 +354,8 @@ export default function SingleSimulationTaxesBarChart({
       break;
     case 'adjustedGrossIncome':
       transformedChartData = chartData.map((item) => ({
-        name: 'Adjusted Gross Income (AGI)',
-        adjustedGrossIncome: item.adjustedGrossIncome,
+        name: 'AGI',
+        amount: item.adjustedGrossIncome,
       }));
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
@@ -475,10 +479,15 @@ export default function SingleSimulationTaxesBarChart({
                   />
                 </Bar>
               ))}
-            {dataView === 'taxableIncome' && (
+            {(dataView === 'taxableIncome' || dataView === 'adjustedGrossIncome') && (
               <Tooltip
                 content={
-                  <TaxableIncomeTooltip startAge={startAge} age={age} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />
+                  <IncomeCalculationsTooltip
+                    startAge={startAge}
+                    age={age}
+                    disabled={isSmallScreen && clickedOutsideChart}
+                    dataView={dataView}
+                  />
                 }
                 cursor={false}
               />
