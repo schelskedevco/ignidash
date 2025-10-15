@@ -483,12 +483,6 @@ export const useMultiSimulationResult = (
     prevHandleRef.current = handle;
   }, [handle]);
 
-  useEffect(() => {
-    return () => {
-      mutate(() => true, undefined, { revalidate: false });
-    };
-  }, []);
-
   return { analysis, tableData, yearlyTableData, isLoading, completedSimulations };
 };
 
