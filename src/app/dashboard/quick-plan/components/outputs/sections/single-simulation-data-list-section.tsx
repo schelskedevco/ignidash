@@ -93,11 +93,8 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 }
 
 function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
-  const { realizedGains, taxDeferredWithdrawals, earlyRothEarningsWithdrawals, dividendIncome, interestIncome, earnedIncome, grossIncome } =
-    SimulationDataExtractor.getTaxableIncomeSources(dp, selectedAge);
+  const { grossOrdinaryIncome, grossCapGains, grossIncome } = SimulationDataExtractor.getTaxableIncomeSources(dp, selectedAge);
   const { incomeTax, capGainsTax, totalTaxesAndPenalties } = SimulationDataExtractor.getTaxAmountsByType(dp);
-
-  const retirementDistributions = taxDeferredWithdrawals + earlyRothEarningsWithdrawals;
 
   return (
     <Card className="my-0">
@@ -106,20 +103,14 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
         <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
       </Subheading>
       <DescriptionList>
-        <DescriptionTerm>Earned Income</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(earnedIncome, 2, '$')}</DescriptionDetails>
-
-        <DescriptionTerm>Retirement Distributions</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(retirementDistributions, 2, '$')}</DescriptionDetails>
-
-        <DescriptionTerm>Interest Income</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(interestIncome, 2, '$')}</DescriptionDetails>
+        <DescriptionTerm>Ordinary Income</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(grossOrdinaryIncome, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Income Tax</DescriptionTerm>
         <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Realized Capital Gains & Dividends</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(realizedGains + dividendIncome, 2, '$')}</DescriptionDetails>
+        <DescriptionDetails>{formatNumber(grossCapGains, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
         <DescriptionDetails>{formatNumber(capGainsTax, 2, '$')}</DescriptionDetails>
