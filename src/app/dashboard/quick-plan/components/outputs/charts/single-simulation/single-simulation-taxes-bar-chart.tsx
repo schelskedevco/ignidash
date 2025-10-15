@@ -276,39 +276,39 @@ export default function SingleSimulationTaxesBarChart({
 
   switch (dataView) {
     case 'marginalRates': {
-      const [incomeTaxLabel, capGainsLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [incomeTaxLabel, capGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
         { name: incomeTaxLabel, amount: item.topMarginalIncomeTaxRate },
-        { name: capGainsLabel, amount: item.topMarginalCapGainsTaxRate },
+        { name: capGainsTaxLabel, amount: item.topMarginalCapGainsTaxRate },
       ]);
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       break;
     }
     case 'effectiveRates': {
-      const [incomeTaxLabel, capGainsLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [incomeTaxLabel, capGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
         { name: incomeTaxLabel, amount: item.effectiveIncomeTaxRate },
-        { name: capGainsLabel, amount: item.effectiveCapGainsTaxRate },
+        { name: capGainsTaxLabel, amount: item.effectiveCapGainsTaxRate },
       ]);
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       break;
     }
     case 'annualAmounts': {
-      const [incomeTaxLabel, capGainsLabel, totalLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [incomeTaxLabel, capGainsTaxLabel, totalTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
         { name: incomeTaxLabel, amount: item.annualIncomeTax },
-        { name: capGainsLabel, amount: item.annualCapGainsTax },
-        { name: totalLabel, amount: item.annualTotalTaxesAndPenalties },
+        { name: capGainsTaxLabel, amount: item.annualCapGainsTax },
+        { name: totalTaxLabel, amount: item.annualTotalTaxesAndPenalties },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     }
     case 'cumulativeAmounts': {
-      const [incomeTaxLabel, capGainsLabel, totalLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [incomeTaxLabel, capGainsTaxLabel, totalTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
         { name: incomeTaxLabel, amount: item.cumulativeIncomeTax },
-        { name: capGainsLabel, amount: item.cumulativeCapGainsTax },
-        { name: totalLabel, amount: item.cumulativeTotalTaxesAndPenalties },
+        { name: capGainsTaxLabel, amount: item.cumulativeCapGainsTax },
+        { name: totalTaxLabel, amount: item.cumulativeTotalTaxesAndPenalties },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
@@ -352,20 +352,20 @@ export default function SingleSimulationTaxesBarChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'retirementDistributions': {
-      const [taxDeferredLabel, earlyRothLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [taxDeferredWithdrawalsLabel, earlyRothWithdrawalsLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: taxDeferredLabel, amount: item.taxDeferredWithdrawals },
-        { name: earlyRothLabel, amount: item.earlyRothEarningsWithdrawals },
+        { name: taxDeferredWithdrawalsLabel, amount: item.taxDeferredWithdrawals },
+        { name: earlyRothWithdrawalsLabel, amount: item.earlyRothEarningsWithdrawals },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     }
     case 'ordinaryIncome': {
-      const [earnedLabel, interestLabel, retirementLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [earnedIncomeLabel, interestIncomeLabel, retirementDistributionsLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: earnedLabel, amount: item.earnedIncome },
-        { name: interestLabel, amount: item.interestIncome },
-        { name: retirementLabel, amount: item.retirementDistributions },
+        { name: earnedIncomeLabel, amount: item.earnedIncome },
+        { name: interestIncomeLabel, amount: item.interestIncome },
+        { name: retirementDistributionsLabel, amount: item.retirementDistributions },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
@@ -378,19 +378,22 @@ export default function SingleSimulationTaxesBarChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'earlyWithdrawalPenalties': {
-      const [annualLabel, cumulativeLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [annualPenaltiesLabel, cumulativePenaltiesLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: annualLabel, amount: item.annualEarlyWithdrawalPenalties },
-        { name: cumulativeLabel, amount: item.cumulativeEarlyWithdrawalPenalties },
+        { name: annualPenaltiesLabel, amount: item.annualEarlyWithdrawalPenalties },
+        { name: cumulativePenaltiesLabel, amount: item.cumulativeEarlyWithdrawalPenalties },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     }
     case 'adjustmentsAndDeductions': {
-      const [taxDeferredLabel, capLossLabel, standardDeductionLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [taxDeferredContributionsLabel, capLossDeductionLabel, standardDeductionLabel] = getLabelsForScreenSize(
+        dataView,
+        isSmallScreen
+      );
       transformedChartData = chartData.flatMap((item) => [
-        { name: taxDeferredLabel, amount: item.taxDeferredContributions },
-        { name: capLossLabel, amount: item.capitalLossDeduction },
+        { name: taxDeferredContributionsLabel, amount: item.taxDeferredContributions },
+        { name: capLossDeductionLabel, amount: item.capitalLossDeduction },
         { name: standardDeductionLabel, amount: item.standardDeduction },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
