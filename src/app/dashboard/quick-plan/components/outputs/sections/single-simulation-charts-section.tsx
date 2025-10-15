@@ -106,13 +106,14 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
     | 'annualAmounts'
     | 'cumulativeAmounts'
     | 'taxableIncome'
+    | 'adjustedGrossIncome'
     | 'investmentIncome'
     | 'retirementDistributions'
     | 'ordinaryIncome'
     | 'capGainsAndDividends'
     | 'earlyWithdrawalPenalties'
     | 'adjustmentsAndDeductions'
-  >('marginalRates');
+  >('annualAmounts');
 
   const referenceLineModes = ['marginalIncomeTaxRates', 'marginalCapGainsTaxRates', 'hideReferenceLines'] as const;
   const [referenceLineMode, setReferenceLineMode] = useState<(typeof referenceLineModes)[number]>(referenceLineModes[0]);

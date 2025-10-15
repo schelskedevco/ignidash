@@ -40,6 +40,7 @@ interface TaxableIncomeTooltipProps {
     | 'annualAmounts'
     | 'cumulativeAmounts'
     | 'taxableIncome'
+    | 'adjustedGrossIncome'
     | 'investmentIncome'
     | 'retirementDistributions'
     | 'ordinaryIncome'
@@ -133,6 +134,7 @@ const CustomLabelListContent = (props: any) => {
       | 'annualAmounts'
       | 'cumulativeAmounts'
       | 'taxableIncome'
+      | 'adjustedGrossIncome'
       | 'investmentIncome'
       | 'retirementDistributions'
       | 'ordinaryIncome'
@@ -147,6 +149,7 @@ const CustomLabelListContent = (props: any) => {
       case 'annualAmounts':
       case 'cumulativeAmounts':
       case 'taxableIncome':
+      case 'adjustedGrossIncome':
       case 'investmentIncome':
       case 'retirementDistributions':
       case 'ordinaryIncome':
@@ -198,6 +201,7 @@ interface SingleSimulationTaxesBarChartProps {
     | 'annualAmounts'
     | 'cumulativeAmounts'
     | 'taxableIncome'
+    | 'adjustedGrossIncome'
     | 'investmentIncome'
     | 'retirementDistributions'
     | 'ordinaryIncome'
@@ -343,6 +347,13 @@ export default function SingleSimulationTaxesBarChart({
 
       formatter = (value: number) => formatNumber(value, 1, '$');
       isStacked = true;
+      break;
+    case 'adjustedGrossIncome':
+      transformedChartData = chartData.map((item) => ({
+        name: 'Adjusted Gross Income (AGI)',
+        adjustedGrossIncome: item.adjustedGrossIncome,
+      }));
+      formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'investmentIncome':
       transformedChartData = chartData.flatMap((item) => [

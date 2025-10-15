@@ -19,6 +19,7 @@ interface SingleSimulationTaxesLineChartCardProps {
       | 'annualAmounts'
       | 'cumulativeAmounts'
       | 'taxableIncome'
+      | 'adjustedGrossIncome'
       | 'investmentIncome'
       | 'retirementDistributions'
       | 'ordinaryIncome'
@@ -32,6 +33,7 @@ interface SingleSimulationTaxesLineChartCardProps {
     | 'annualAmounts'
     | 'cumulativeAmounts'
     | 'taxableIncome'
+    | 'adjustedGrossIncome'
     | 'investmentIncome'
     | 'retirementDistributions'
     | 'ordinaryIncome'
@@ -74,6 +76,7 @@ export default function SingleSimulationTaxesLineChartCard({
                 | 'annualAmounts'
                 | 'cumulativeAmounts'
                 | 'taxableIncome'
+                | 'adjustedGrossIncome'
                 | 'investmentIncome'
                 | 'retirementDistributions'
                 | 'ordinaryIncome'
@@ -97,11 +100,12 @@ export default function SingleSimulationTaxesLineChartCard({
           </optgroup>
           <optgroup label="Income Calculations">
             <option value="taxableIncome">Taxable Income</option>
+            <option value="adjustedGrossIncome">Adjusted Gross Income (AGI)</option>
           </optgroup>
           <optgroup label="Income Sources">
             <option value="investmentIncome">Investment Income</option>
             <option value="retirementDistributions">Retirement Distributions</option>
-            <option value="ordinaryIncome">Ordinary Income</option>
+            <option value="ordinaryIncome">All Ordinary Income</option>
             <option value="capGainsAndDividends">Capital Gains &amp; Dividends</option>
           </optgroup>
         </Select>

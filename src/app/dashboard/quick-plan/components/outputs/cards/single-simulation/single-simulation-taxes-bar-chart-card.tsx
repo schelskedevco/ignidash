@@ -19,6 +19,7 @@ interface SingleSimulationTaxesBarChartCardProps {
     | 'annualAmounts'
     | 'cumulativeAmounts'
     | 'taxableIncome'
+    | 'adjustedGrossIncome'
     | 'investmentIncome'
     | 'retirementDistributions'
     | 'ordinaryIncome'
@@ -56,6 +57,9 @@ export default function SingleSimulationTaxesBarChartCard({
       break;
     case 'taxableIncome':
       title = 'Taxable Income';
+      break;
+    case 'adjustedGrossIncome':
+      title = 'Adjusted Gross Income (AGI)';
       break;
     case 'investmentIncome':
       title = 'Investment Income';

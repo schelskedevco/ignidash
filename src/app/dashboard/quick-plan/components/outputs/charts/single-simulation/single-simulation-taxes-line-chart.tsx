@@ -32,6 +32,7 @@ interface CustomTooltipProps {
     | 'annualAmounts'
     | 'cumulativeAmounts'
     | 'taxableIncome'
+    | 'adjustedGrossIncome'
     | 'investmentIncome'
     | 'retirementDistributions'
     | 'ordinaryIncome'
@@ -56,6 +57,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
       | 'annualAmounts'
       | 'cumulativeAmounts'
       | 'taxableIncome'
+      | 'adjustedGrossIncome'
       | 'investmentIncome'
       | 'retirementDistributions'
       | 'ordinaryIncome'
@@ -70,6 +72,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
       case 'annualAmounts':
       case 'cumulativeAmounts':
       case 'taxableIncome':
+      case 'adjustedGrossIncome':
       case 'investmentIncome':
       case 'retirementDistributions':
       case 'ordinaryIncome':
@@ -90,6 +93,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
       break;
     case 'annualAmounts':
     case 'cumulativeAmounts':
+    case 'adjustedGrossIncome':
     case 'investmentIncome':
     case 'retirementDistributions':
     case 'ordinaryIncome':
@@ -184,6 +188,7 @@ interface SingleSimulationTaxesLineChartProps {
     | 'annualAmounts'
     | 'cumulativeAmounts'
     | 'taxableIncome'
+    | 'adjustedGrossIncome'
     | 'investmentIncome'
     | 'retirementDistributions'
     | 'ordinaryIncome'
@@ -241,6 +246,10 @@ export default function SingleSimulationTaxesLineChart({
     case 'taxableIncome':
       formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys.push('taxableOrdinaryIncome', 'taxableCapGains', 'totalTaxableIncome');
+      break;
+    case 'adjustedGrossIncome':
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      dataKeys.push('adjustedGrossIncome');
       break;
     case 'investmentIncome':
       formatter = (value: number) => formatNumber(value, 1, '$');
