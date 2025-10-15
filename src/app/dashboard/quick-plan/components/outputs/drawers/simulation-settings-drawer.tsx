@@ -90,7 +90,7 @@ export default function SimulationSettingsDrawer({ setOpen }: SimulationSettings
                       <option value="stochasticReturns">Stochastic Returns</option>
                       <option value="historicalReturns">Historical Returns</option>
                     </optgroup>
-                    <optgroup label="Monte Carlo (1,000 Simulations)">
+                    <optgroup label="Monte Carlo (500 Simulations)">
                       <option value="monteCarloStochasticReturns">Stochastic Returns</option>
                       <option value="monteCarloHistoricalReturns">Historical Returns</option>
                     </optgroup>
