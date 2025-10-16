@@ -19,12 +19,14 @@ interface MultiSimulationMainResultsProps {
   chartData: MultiSimulationChartData;
   setCurrentCategory: (category: SimulationCategory) => void;
   currentCategory: SimulationCategory;
-  setCurrentPercentile: (percentile: 'P10' | 'P25' | 'P50' | 'P75' | 'P90' | null) => void;
-  currentPercentile: 'P10' | 'P25' | 'P50' | 'P75' | 'P90' | null;
-  setSelectedSeed: (seed: number | null) => void;
-  selectedSeed: number | null;
+  setCurrentPercentile: (percentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null) => void;
+  currentPercentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null;
+  removeActiveSeed: () => void;
+  activeSeed?: number | undefined;
+  activeSeedType?: 'table' | 'percentile' | undefined;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
+  setSelectedSeedFromTable: (seed: number | null) => void;
 }
 
 export default function MultiSimulationMainResults({
@@ -36,10 +38,12 @@ export default function MultiSimulationMainResults({
   currentCategory,
   setCurrentPercentile,
   currentPercentile,
-  setSelectedSeed,
-  selectedSeed,
+  removeActiveSeed,
+  activeSeed,
+  activeSeedType,
   onAgeSelect,
   selectedAge,
+  setSelectedSeedFromTable,
 }: MultiSimulationMainResultsProps) {
   return (
     <>
@@ -52,7 +56,7 @@ export default function MultiSimulationMainResults({
           setCurrentCategory={setCurrentCategory}
           currentPercentile={currentPercentile}
           setCurrentPercentile={setCurrentPercentile}
-          selectedSeed={selectedSeed}
+          activeSeedType={activeSeedType}
         />
       </SectionContainer>
       {simulationAndKeyMetrics !== null ? (
@@ -61,8 +65,8 @@ export default function MultiSimulationMainResults({
           onAgeSelect={onAgeSelect}
           selectedAge={selectedAge}
           currentCategory={currentCategory}
-          setSelectedSeed={setSelectedSeed}
-          selectedSeed={selectedSeed}
+          removeActiveSeed={removeActiveSeed}
+          activeSeed={activeSeed}
         />
       ) : (
         <MultiSimulationChartsSection
@@ -77,8 +81,9 @@ export default function MultiSimulationMainResults({
         tableData={tableData}
         yearlyTableData={yearlyTableData}
         currentCategory={currentCategory}
-        setSelectedSeed={setSelectedSeed}
-        selectedSeed={selectedSeed}
+        removeActiveSeed={removeActiveSeed}
+        activeSeed={activeSeed}
+        setSelectedSeedFromTable={setSelectedSeedFromTable}
       />
     </>
   );

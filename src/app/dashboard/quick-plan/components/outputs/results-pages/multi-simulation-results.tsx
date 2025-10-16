@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 import {
   useMultiSimulationResult,
@@ -13,7 +13,6 @@ import SectionContainer from '@/components/ui/section-container';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
-import type { MultiSimulationAnalysis } from '@/lib/calc/v2/multi-simulation-analyzer';
 import { useResultsState } from '@/hooks/use-results-state';
 import ProgressBar from '@/components/ui/progress-bar';
 import { SimulationCategory } from '@/lib/types/simulation-category';
@@ -27,33 +26,37 @@ interface MultiSimulationResultsSharedProps {
   chartData: MultiSimulationChartData;
   setCurrentCategory: (category: SimulationCategory) => void;
   currentCategory: SimulationCategory;
-  setSelectedSeed: (seed: number | null) => void;
-  setCurrentPercentile: (percentile: 'P10' | 'P25' | 'P50' | 'P75' | 'P90' | null) => void;
+  setCurrentPercentile: (percentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null) => void;
+  currentPercentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
+  setSelectedSeedFromTable: (seed: number | null) => void;
+  removeActiveSeed: () => void;
 }
 
-interface MultiSimulationResultsForSelectedSeedProps extends MultiSimulationResultsSharedProps {
-  selectedSeed: number;
+interface MultiSimulationResultsForActiveSeedProps extends MultiSimulationResultsSharedProps {
+  activeSeed: number;
+  activeSeedType: 'table' | 'percentile';
   simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns';
 }
 
-function MultiSimulationResultsForSelectedSeed({
-  selectedSeed,
+function MultiSimulationResultsForActiveSeed({
+  activeSeed,
+  activeSeedType,
   simulationMode,
   ...sharedProps
-}: MultiSimulationResultsForSelectedSeedProps) {
-  let simulationModeForSelectedSeed: 'stochasticReturns' | 'historicalReturns';
+}: MultiSimulationResultsForActiveSeedProps) {
+  let simulationModeForActiveSeed: 'stochasticReturns' | 'historicalReturns';
   switch (simulationMode) {
     case 'monteCarloStochasticReturns':
-      simulationModeForSelectedSeed = 'stochasticReturns';
+      simulationModeForActiveSeed = 'stochasticReturns';
       break;
     case 'monteCarloHistoricalReturns':
-      simulationModeForSelectedSeed = 'historicalReturns';
+      simulationModeForActiveSeed = 'historicalReturns';
       break;
   }
 
-  const simulation: SimulationResult = useSimulationResult(simulationModeForSelectedSeed, selectedSeed)!;
+  const simulation: SimulationResult = useSimulationResult(simulationModeForActiveSeed, activeSeed)!;
   const keyMetrics = useKeyMetrics(simulation)!;
 
   return (
@@ -63,51 +66,8 @@ function MultiSimulationResultsForSelectedSeed({
       </SectionContainer>
       <MultiSimulationMainResults
         simulationAndKeyMetrics={{ simulation, keyMetrics }}
-        currentPercentile={null}
-        selectedSeed={selectedSeed}
-        {...sharedProps}
-      />
-    </>
-  );
-}
-
-interface MultiSimulationResultsForPercentileProps extends MultiSimulationResultsSharedProps {
-  currentPercentile: 'P10' | 'P25' | 'P50' | 'P75' | 'P90';
-  analysis: MultiSimulationAnalysis;
-}
-
-function MultiSimulationResultsForPercentile({ currentPercentile, analysis, ...sharedProps }: MultiSimulationResultsForPercentileProps) {
-  let simulation: SimulationResult;
-  switch (currentPercentile) {
-    case 'P10':
-      ({ result: simulation } = analysis.results.p10);
-      break;
-    case 'P25':
-      ({ result: simulation } = analysis.results.p25);
-      break;
-    case 'P50':
-      ({ result: simulation } = analysis.results.p50);
-      break;
-    case 'P75':
-      ({ result: simulation } = analysis.results.p75);
-      break;
-    case 'P90':
-      ({ result: simulation } = analysis.results.p90);
-      break;
-  }
-
-  const baseMetrics = useKeyMetrics(simulation)!;
-  const keyMetrics = baseMetrics && { ...baseMetrics, success: analysis?.success ?? 0 };
-
-  return (
-    <>
-      <SectionContainer showBottomBorder className="mb-0">
-        <SimulationMetrics keyMetrics={keyMetrics} />
-      </SectionContainer>
-      <MultiSimulationMainResults
-        simulationAndKeyMetrics={{ simulation, keyMetrics }}
-        currentPercentile={currentPercentile}
-        selectedSeed={null}
+        activeSeed={activeSeed}
+        activeSeedType={activeSeedType}
         {...sharedProps}
       />
     </>
@@ -127,11 +87,26 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
     currentCategory
   );
 
-  const [currentPercentile, setCurrentPercentile] = useState<'P10' | 'P25' | 'P50' | 'P75' | 'P90' | null>(null);
-  const [selectedSeed, setSelectedSeed] = useState<number | null>(null);
+  const [currentPercentile, setCurrentPercentile] = useState<'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null>(null);
+  const [selectedSeedFromTable, setSelectedSeedFromTable] = useState<number | null>(null);
+
+  const removeActiveSeed = useCallback(() => {
+    setCurrentPercentile(null);
+    setSelectedSeedFromTable(null);
+  }, []);
+
+  const { activeSeed, activeSeedType } = useMemo(() => {
+    if (selectedSeedFromTable !== null) {
+      return { activeSeed: selectedSeedFromTable, activeSeedType: 'table' as const };
+    } else if (currentPercentile !== null) {
+      return { activeSeed: analysis?.results[currentPercentile].seed, activeSeedType: 'percentile' as const };
+    } else {
+      return { activeSeed: undefined };
+    }
+  }, [selectedSeedFromTable, currentPercentile, analysis]);
 
   const seed = useSimulationSeed();
-  useEffect(() => setSelectedSeed(null), [seed, simulationMode]);
+  useEffect(() => setSelectedSeedFromTable(null), [seed, simulationMode]);
 
   if (!analysis || !tableData || !yearlyTableData || !chartData || isLoadingOrValidating) {
     const roundedSimulations = Math.floor(completedSimulations / 10) * 10;
@@ -153,17 +128,24 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
     chartData,
     setCurrentCategory,
     currentCategory,
-    setSelectedSeed,
     setCurrentPercentile,
+    currentPercentile,
     onAgeSelect,
     selectedAge,
+    setSelectedSeedFromTable,
+    removeActiveSeed,
   };
 
-  if (selectedSeed !== null) {
-    return <MultiSimulationResultsForSelectedSeed selectedSeed={selectedSeed} simulationMode={simulationMode} {...sharedProps} />;
-  } else if (currentPercentile !== null) {
-    return <MultiSimulationResultsForPercentile currentPercentile={currentPercentile} analysis={analysis} {...sharedProps} />;
-  } else {
-    return <MultiSimulationMainResults simulationAndKeyMetrics={null} currentPercentile={null} selectedSeed={null} {...sharedProps} />;
+  if (activeSeed !== undefined) {
+    return (
+      <MultiSimulationResultsForActiveSeed
+        activeSeed={activeSeed}
+        activeSeedType={activeSeedType}
+        simulationMode={simulationMode}
+        {...sharedProps}
+      />
+    );
   }
+
+  return <MultiSimulationMainResults simulationAndKeyMetrics={null} {...sharedProps} />;
 }

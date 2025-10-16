@@ -245,8 +245,8 @@ interface SingleSimulationChartsSectionProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   currentCategory: SimulationCategory;
-  setSelectedSeed?: (seed: number | null) => void;
-  selectedSeed?: number | null;
+  removeActiveSeed?: () => void;
+  activeSeed?: number | null;
 }
 
 function SingleSimulationChartsSection({
@@ -255,8 +255,8 @@ function SingleSimulationChartsSection({
   onAgeSelect,
   selectedAge,
   currentCategory,
-  setSelectedSeed,
-  selectedSeed,
+  removeActiveSeed,
+  activeSeed,
 }: SingleSimulationChartsSectionProps) {
   const startAge = simulation.context.startAge;
   const props: ChartsCategoryProps = { simulation, keyMetrics, onAgeSelect, selectedAge, startAge };
@@ -291,8 +291,8 @@ function SingleSimulationChartsSection({
   }
 
   let headerText: string | React.ReactNode;
-  if (selectedSeed && setSelectedSeed) {
-    headerText = <DrillDownBreadcrumb selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} rootLabel="Charts" />;
+  if (activeSeed && removeActiveSeed) {
+    headerText = <DrillDownBreadcrumb activeSeed={activeSeed} removeActiveSeed={removeActiveSeed} rootLabel="Charts" />;
   } else {
     headerText = 'Charts';
   }

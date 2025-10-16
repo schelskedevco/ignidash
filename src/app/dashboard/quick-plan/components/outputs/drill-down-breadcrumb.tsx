@@ -5,12 +5,12 @@ import { ChevronRightIcon } from '@heroicons/react/20/solid';
 import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
 
 interface DrillDownBreadcrumbProps {
-  selectedSeed: number | null;
-  setSelectedSeed: (seed: number | null) => void;
+  activeSeed: number | undefined;
+  removeActiveSeed: () => void;
   rootLabel: string;
 }
 
-export default function DrillDownBreadcrumb({ selectedSeed, setSelectedSeed, rootLabel }: DrillDownBreadcrumbProps) {
+export default function DrillDownBreadcrumb({ activeSeed, removeActiveSeed, rootLabel }: DrillDownBreadcrumbProps) {
   const withScrollPreservation = useScrollPreservation();
 
   return (
@@ -21,7 +21,7 @@ export default function DrillDownBreadcrumb({ selectedSeed, setSelectedSeed, roo
             <button
               type="button"
               className="text-muted-foreground hover:text-foreground focus-outline"
-              onClick={withScrollPreservation(() => setSelectedSeed(null))}
+              onClick={withScrollPreservation(() => removeActiveSeed())}
             >
               <span>{rootLabel}</span>
             </button>
@@ -30,7 +30,7 @@ export default function DrillDownBreadcrumb({ selectedSeed, setSelectedSeed, roo
         <li>
           <div className="flex items-center">
             <ChevronRightIcon aria-hidden="true" className="size-5 shrink-0" />
-            <span className="ml-2">{`Seed #${selectedSeed}`}</span>
+            <span className="ml-2">{`Seed #${activeSeed}`}</span>
           </div>
         </li>
       </ol>

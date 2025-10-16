@@ -30,8 +30,9 @@ interface MultiSimulationDataTableSectionProps {
   tableData: MultiSimulationTableRow[];
   yearlyTableData: YearlyAggregateTableRow[];
   currentCategory: SimulationCategory;
-  setSelectedSeed: (seed: number | null) => void;
-  selectedSeed: number | null;
+  removeActiveSeed: () => void;
+  activeSeed: number | undefined;
+  setSelectedSeedFromTable: (seed: number | null) => void;
 }
 
 function MultiSimulationDataTableSection({
@@ -39,19 +40,20 @@ function MultiSimulationDataTableSection({
   tableData,
   yearlyTableData,
   currentCategory,
-  setSelectedSeed,
-  selectedSeed,
+  removeActiveSeed,
+  activeSeed,
+  setSelectedSeedFromTable,
 }: MultiSimulationDataTableSectionProps) {
   const [currentTableType, setCurrentTableType] = useState<TableType>(TableType.AllSimulations);
 
   const withScrollPreservation = useScrollPreservation();
-  const handleRowClick = withScrollPreservation((row: MultiSimulationTableRow) => setSelectedSeed(row.seed));
+  const handleRowClick = withScrollPreservation((row: MultiSimulationTableRow) => setSelectedSeedFromTable(row.seed));
 
   let headerText: string | React.ReactNode;
   let headerDesc: string;
 
-  if (selectedSeed !== null && simulation) {
-    headerText = <DrillDownBreadcrumb selectedSeed={selectedSeed} setSelectedSeed={setSelectedSeed} rootLabel="Data Table" />;
+  if (activeSeed !== null && simulation) {
+    headerText = <DrillDownBreadcrumb activeSeed={activeSeed} removeActiveSeed={removeActiveSeed} rootLabel="Data Table" />;
     headerDesc = 'Year-by-year progression and outcome for this simulation.';
   } else if (currentTableType === TableType.YearlyResults) {
     headerText = 'Data Table';
@@ -62,11 +64,11 @@ function MultiSimulationDataTableSection({
   }
 
   let tableComponent;
-  if (selectedSeed !== null && simulation) {
+  if (activeSeed !== null && simulation) {
     tableComponent = (
       <TableWithSelectedSeed
         currentCategory={currentCategory}
-        onEscPressed={withScrollPreservation(() => setSelectedSeed(null))}
+        onEscPressed={withScrollPreservation(() => setSelectedSeedFromTable(null))}
         simulation={simulation}
       />
     );
