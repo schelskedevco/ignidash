@@ -108,7 +108,9 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
   const seed = useSimulationSeed();
   useEffect(() => setSelectedSeedFromTable(null), [seed, simulationMode]);
 
-  if (!analysis || !tableData || !yearlyTableData || !chartData || isLoadingOrValidating) {
+  const p50KeyMetrics = useKeyMetrics(analysis?.results.p50.result);
+
+  if (!analysis || !p50KeyMetrics || !tableData || !yearlyTableData || !chartData || isLoadingOrValidating) {
     const roundedSimulations = Math.floor(completedSimulations / 10) * 10;
     const progressPercent = (roundedSimulations / 500) * 100;
 
@@ -147,5 +149,12 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
     );
   }
 
-  return <MultiSimulationMainResults simulationAndKeyMetrics={null} {...sharedProps} />;
+  return (
+    <>
+      <SectionContainer showBottomBorder className="mb-0">
+        <SimulationMetrics keyMetrics={p50KeyMetrics} />
+      </SectionContainer>
+      <MultiSimulationMainResults simulationAndKeyMetrics={null} {...sharedProps} />
+    </>
+  );
 }
