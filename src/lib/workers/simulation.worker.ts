@@ -5,6 +5,7 @@ import type { MonteCarloSortMode } from '@/lib/stores/quick-plan-store';
 import type { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 import { MultiSimulationAnalyzer, type MultiSimulationAnalysis } from '@/lib/calc/v2/multi-simulation-analyzer';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
+import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 import { TableDataExtractor } from '@/lib/calc/v2/table-data-extractor';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import {
@@ -12,6 +13,7 @@ import {
   LcgHistoricalBacktestSimulationEngine,
   type MultiSimulationResult,
 } from '@/lib/calc/v2/simulation-engine';
+import { ChartDataExtractor } from '../calc/v2/chart-data-extractor';
 
 type CacheEntry = { handle: string; res: MultiSimulationResult };
 let cache: CacheEntry | null = null;
@@ -20,6 +22,7 @@ type DerivedMultiSimulationData = {
   analysis: MultiSimulationAnalysis;
   tableData: MultiSimulationTableRow[];
   yearlyTableData: YearlyAggregateTableRow[];
+  chartData: MultiSimulationChartData;
 };
 
 const simulationAPI = {
@@ -61,11 +64,15 @@ const simulationAPI = {
     const analyzer = new MultiSimulationAnalyzer();
     const analysis = analyzer.analyzeV2(res, sortMode);
 
-    const extractor = new TableDataExtractor();
-    const tableData = extractor.extractMultiSimulationData(res, category);
-    const yearlyTableData = extractor.extractMultiSimulationYearlyAggregateData(res, analysis, category);
+    const tableExtractor = new TableDataExtractor();
+    const tableData = tableExtractor.extractMultiSimulationData(res, category);
+    const yearlyTableData = tableExtractor.extractMultiSimulationYearlyAggregateData(res, analysis, category);
 
-    return { analysis, tableData, yearlyTableData };
+    const chartExtractor = new ChartDataExtractor();
+    const portfolioData = chartExtractor.extractMultiSimulationPortfolioChartData(res);
+    const phasesData = chartExtractor.extractMultiSimulationPhasesChartData(res);
+
+    return { analysis, tableData, yearlyTableData, chartData: { portfolioData, phasesData } };
   },
 };
 

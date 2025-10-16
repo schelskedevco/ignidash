@@ -41,6 +41,7 @@ import type {
   SingleSimulationReturnsChartDataPoint,
   SingleSimulationContributionsChartDataPoint,
   SingleSimulationWithdrawalsChartDataPoint,
+  MultiSimulationChartData,
 } from '@/lib/types/chart-data-points';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 
@@ -444,6 +445,7 @@ export const useMultiSimulationResult = (
   analysis: MultiSimulationAnalysis | undefined;
   tableData: MultiSimulationTableRow[] | undefined;
   yearlyTableData: YearlyAggregateTableRow[] | undefined;
+  chartData: MultiSimulationChartData | undefined;
   isLoadingOrValidating: boolean;
   completedSimulations: number;
 } => {
@@ -472,7 +474,7 @@ export const useMultiSimulationResult = (
   const handle = handleData?.handle;
   const prevHandleRef = useRef(handle);
 
-  const { data: { analysis, tableData, yearlyTableData } = {} } = useSWR(
+  const { data: { analysis, tableData, yearlyTableData, chartData } = {} } = useSWR(
     handle ? ['derived', handle, sortMode, category] : null,
     () => worker.getDerivedMultiSimulationData(handle!, sortMode, category),
     { revalidateOnFocus: false, keepPreviousData: prevHandleRef.current === handle }
@@ -487,7 +489,7 @@ export const useMultiSimulationResult = (
     prevHandleRef.current = handle;
   }, [handle]);
 
-  return { analysis, tableData, yearlyTableData, isLoadingOrValidating: isLoading || isValidating, completedSimulations };
+  return { analysis, tableData, yearlyTableData, chartData, isLoadingOrValidating: isLoading || isValidating, completedSimulations };
 };
 
 export const useKeyMetrics = (simulationResult: SimulationResult | null | undefined): KeyMetrics | null => {
