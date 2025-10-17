@@ -32,6 +32,7 @@ export class PortfolioProcessor {
   private extraSavingsAccount: SavingsAccount;
   private rmdSavingsAccount: SavingsAccount;
   private monthlyData: PortfolioData[] = [];
+  private totalShortfall: number = 0;
 
   constructor(
     private simulationState: SimulationState,
@@ -66,6 +67,7 @@ export class PortfolioProcessor {
       realizedGainsByAccount,
       earningsWithdrawnForPeriod,
       earningsWithdrawnByAccount,
+      shortfallForPeriod,
     } = this.processWithdrawals(grossCashFlow);
 
     const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
@@ -78,7 +80,14 @@ export class PortfolioProcessor {
     );
 
     const portfolioData = this.buildPortfolioData(
-      { withdrawalsForPeriod, contributionsForPeriod, realizedGainsForPeriod, earningsWithdrawnForPeriod, rmdsForPeriod: 0 },
+      {
+        withdrawalsForPeriod,
+        contributionsForPeriod,
+        realizedGainsForPeriod,
+        earningsWithdrawnForPeriod,
+        rmdsForPeriod: 0,
+        shortfallForPeriod,
+      },
       perAccountData
     );
 
@@ -97,6 +106,7 @@ export class PortfolioProcessor {
     let realizedGainsForPeriod = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod;
     let earningsWithdrawnForPeriod = annualPortfolioDataBeforeTaxes.earningsWithdrawnForPeriod;
     const rmdsForPeriod = annualPortfolioDataBeforeTaxes.rmdsForPeriod;
+    let shortfallForPeriod = annualPortfolioDataBeforeTaxes.shortfallForPeriod;
 
     let contributionsByAccount: Record<string, number> = {};
     let withdrawalsByAccount: Record<string, number> = {};
@@ -119,6 +129,7 @@ export class PortfolioProcessor {
       realizedGainsByAccount = res.realizedGainsByAccount;
       earningsWithdrawnForPeriod += res.earningsWithdrawnForPeriod;
       earningsWithdrawnByAccount = res.earningsWithdrawnByAccount;
+      shortfallForPeriod += res.shortfallForPeriod;
     }
 
     const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
@@ -131,7 +142,14 @@ export class PortfolioProcessor {
     );
 
     const portfolioData = this.buildPortfolioData(
-      { withdrawalsForPeriod, contributionsForPeriod, realizedGainsForPeriod, earningsWithdrawnForPeriod, rmdsForPeriod },
+      {
+        withdrawalsForPeriod,
+        contributionsForPeriod,
+        realizedGainsForPeriod,
+        earningsWithdrawnForPeriod,
+        rmdsForPeriod,
+        shortfallForPeriod,
+      },
       perAccountData
     );
 
@@ -211,6 +229,7 @@ export class PortfolioProcessor {
     realizedGainsByAccount: Record<string, number>;
     earningsWithdrawnForPeriod: number;
     earningsWithdrawnByAccount: Record<string, number>;
+    shortfallForPeriod: number;
   } {
     const byAccount: Record<string, number> = {};
     const realizedGainsByAccount: Record<string, number> = {};
@@ -223,6 +242,7 @@ export class PortfolioProcessor {
         realizedGainsByAccount,
         earningsWithdrawnForPeriod: 0,
         earningsWithdrawnByAccount,
+        shortfallForPeriod: 0,
       };
     }
 
@@ -262,6 +282,9 @@ export class PortfolioProcessor {
 
     const totalForPeriod = Math.abs(grossCashFlow) - remainingToWithdraw;
 
+    const shortfallForPeriod = remainingToWithdraw;
+    this.totalShortfall += shortfallForPeriod;
+
     return {
       totalForPeriod,
       byAccount,
@@ -269,6 +292,7 @@ export class PortfolioProcessor {
       realizedGainsByAccount,
       earningsWithdrawnForPeriod,
       earningsWithdrawnByAccount,
+      shortfallForPeriod,
     };
   }
 
@@ -333,6 +357,7 @@ export class PortfolioProcessor {
         realizedGainsForPeriod,
         earningsWithdrawnForPeriod,
         rmdsForPeriod: totalForPeriod,
+        shortfallForPeriod: 0,
       },
       perAccountData
     );
@@ -380,6 +405,7 @@ export class PortfolioProcessor {
       realizedGainsForPeriod: number;
       earningsWithdrawnForPeriod: number;
       rmdsForPeriod: number;
+      shortfallForPeriod: number;
     },
     perAccountData: Record<string, AccountDataWithTransactions>
   ): PortfolioData {
@@ -390,6 +416,7 @@ export class PortfolioProcessor {
       totalRealizedGains: this.simulationState.portfolio.getTotalRealizedGains(),
       totalEarningsWithdrawn: this.simulationState.portfolio.getTotalEarningsWithdrawn(),
       totalRmds: this.simulationState.portfolio.getTotalRmds(),
+      totalShortfall: this.totalShortfall,
       ...forPeriodData,
       perAccountData,
       assetAllocation: this.simulationState.portfolio.getWeightedAssetAllocation(),
@@ -441,6 +468,7 @@ export class PortfolioProcessor {
           acc.realizedGainsForPeriod += curr.realizedGainsForPeriod;
           acc.earningsWithdrawnForPeriod += curr.earningsWithdrawnForPeriod;
           acc.rmdsForPeriod += curr.rmdsForPeriod;
+          acc.shortfallForPeriod += curr.shortfallForPeriod;
 
           Object.entries(curr.perAccountData).forEach(([accountID, accountData]) => {
             acc.perAccountData[accountID] = {
@@ -462,6 +490,7 @@ export class PortfolioProcessor {
           realizedGainsForPeriod: 0,
           earningsWithdrawnForPeriod: 0,
           rmdsForPeriod: 0,
+          shortfallForPeriod: 0,
           perAccountData: {} as Record<string, AccountDataWithTransactions>,
         }
       ),
@@ -476,11 +505,13 @@ export interface PortfolioData {
   totalRealizedGains: number;
   totalEarningsWithdrawn: number;
   totalRmds: number;
+  totalShortfall: number;
   withdrawalsForPeriod: number;
   contributionsForPeriod: number;
   realizedGainsForPeriod: number;
   earningsWithdrawnForPeriod: number;
   rmdsForPeriod: number;
+  shortfallForPeriod: number;
   perAccountData: Record<string, AccountDataWithTransactions>;
   assetAllocation: AssetAllocation | null;
 }
