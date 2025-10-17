@@ -100,6 +100,26 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
     setCurrentCategory(SimulationCategory.Portfolio);
   }, [setCurrentCategory]);
 
+  const handlePercentileChange = useCallback(
+    (percentile: typeof currentPercentile) => {
+      setCurrentPercentile(percentile);
+      if (percentile !== null) {
+        setCurrentCategory(SimulationCategory.Portfolio);
+      }
+    },
+    [setCurrentCategory]
+  );
+
+  const handleSeedFromTableChange = useCallback(
+    (seed: number | null) => {
+      setSelectedSeedFromTable(seed);
+      if (seed !== null) {
+        setCurrentCategory(SimulationCategory.Portfolio);
+      }
+    },
+    [setCurrentCategory]
+  );
+
   const { activeSeed, activeSeedType } = useMemo(() => {
     if (selectedSeedFromTable !== null) {
       return { activeSeed: selectedSeedFromTable, activeSeedType: 'table' as const };
@@ -133,11 +153,11 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
     chartData,
     setCurrentCategory,
     currentCategory,
-    setCurrentPercentile,
+    setCurrentPercentile: handlePercentileChange,
     currentPercentile,
     onAgeSelect,
     selectedAge,
-    setSelectedSeedFromTable,
+    setSelectedSeedFromTable: handleSeedFromTableChange,
     removeActiveSeed,
   };
 
