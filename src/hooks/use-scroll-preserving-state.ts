@@ -6,6 +6,10 @@ export function useScrollPreservation() {
     return (...args: TArgs) => {
       const scrollY = window.scrollY;
 
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+
       flushSync(() => {
         fn(...args);
       });
