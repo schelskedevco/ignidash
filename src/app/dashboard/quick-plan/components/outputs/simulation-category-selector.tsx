@@ -1,6 +1,7 @@
 'use client';
 
 import { ListFilterIcon, CheckIcon, ArrowUpDownIcon } from 'lucide-react';
+import { ChevronRightIcon } from '@heroicons/react/20/solid';
 
 import { cn } from '@/lib/utils';
 import { SimulationCategory } from '@/lib/types/simulation-category';
@@ -16,6 +17,39 @@ import {
 import { useMonteCarloSortMode, useUpdateMonteCarloSortMode } from '@/lib/stores/quick-plan-store';
 import { formatChartString } from '@/lib/utils';
 import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
+
+interface DrillDownBreadcrumbProps {
+  removeActiveSeed: () => void;
+  activeSeed: number | undefined;
+}
+
+function DrillDownBreadcrumb({ removeActiveSeed, activeSeed }: DrillDownBreadcrumbProps) {
+  const withScrollPreservation = useScrollPreservation();
+
+  return (
+    <nav aria-label="Breadcrumb" className="flex">
+      <ol role="list" className="flex items-center space-x-2">
+        <li>
+          <div>
+            <button
+              type="button"
+              className="text-muted-foreground hover:text-foreground focus-outline"
+              onClick={withScrollPreservation(() => removeActiveSeed())}
+            >
+              <span className="lowercase">Monte Carlo Results</span>
+            </button>
+          </div>
+        </li>
+        <li>
+          <div className="flex items-center">
+            <ChevronRightIcon aria-hidden="true" className="size-5 shrink-0" />
+            <span className="ml-2">{`Seed #${activeSeed}`}</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+  );
+}
 
 interface SimulationCategorySelectorProps {
   className?: string;
@@ -36,6 +70,8 @@ export default function SimulationCategorySelector({
   currentCategory,
   setCurrentPercentile,
   currentPercentile,
+  removeActiveSeed,
+  activeSeed,
   activeSeedType,
 }: SimulationCategorySelectorProps) {
   const percentiles = ['p10', 'p25', 'p50', 'p75', 'p90'] as const;
@@ -105,6 +141,7 @@ export default function SimulationCategorySelector({
           </div>
         )}
       </div>
+      {removeActiveSeed && activeSeed && <DrillDownBreadcrumb removeActiveSeed={removeActiveSeed} activeSeed={activeSeed} />}
     </div>
   );
 }
