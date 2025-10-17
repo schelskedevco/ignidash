@@ -204,7 +204,6 @@ export default function Table<T extends Record<string, unknown>>({
                           })();
                         }}
                         onMouseDown={(e) => e.preventDefault()}
-                        onBlur={() => setSelectedRow(null)}
                         tabIndex={0}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
