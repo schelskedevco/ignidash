@@ -2,7 +2,6 @@
 
 import { memo } from 'react';
 
-import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import { SimulationCategory } from '@/lib/types/simulation-category';
@@ -15,12 +14,8 @@ interface SingleSimulationDataTableSectionProps {
 }
 
 function SingleSimulationDataTableSection({ simulation, currentCategory }: SingleSimulationDataTableSectionProps) {
-  const headerText = 'Data Table';
-  const headerDesc = 'Year-by-year progression and outcome for this simulation.';
-
   return (
-    <SectionContainer showBottomBorder>
-      <SectionHeader title={headerText} desc={headerDesc} className="mb-4" />
+    <SectionContainer showBottomBorder className="mb-8">
       <SingleSimulationDataTable simulation={simulation} currentCategory={currentCategory} />
     </SectionContainer>
   );

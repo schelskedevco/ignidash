@@ -2,7 +2,6 @@
 
 import { useState, memo } from 'react';
 
-import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
@@ -13,7 +12,6 @@ import { generateMultiSimulationTableColumns, generateYearlyAggregateTableColumn
 import TableTypeSelector, { TableType } from '../table-type-selector';
 import Table from '../tables/table';
 import SingleSimulationDataTable from '../tables/single-simulation-data-table';
-import DrillDownBreadcrumb from '../drill-down-breadcrumb';
 
 interface TableWithSelectedSeedProps {
   currentCategory: SimulationCategory;
@@ -30,7 +28,6 @@ interface MultiSimulationDataTableSectionProps {
   tableData: MultiSimulationTableRow[];
   yearlyTableData: YearlyAggregateTableRow[];
   currentCategory: SimulationCategory;
-  removeActiveSeed: () => void;
   activeSeed: number | undefined;
   setSelectedSeedFromTable: (seed: number | null) => void;
 }
@@ -40,7 +37,6 @@ function MultiSimulationDataTableSection({
   tableData,
   yearlyTableData,
   currentCategory,
-  removeActiveSeed,
   activeSeed,
   setSelectedSeedFromTable,
 }: MultiSimulationDataTableSectionProps) {
@@ -48,20 +44,6 @@ function MultiSimulationDataTableSection({
 
   const withScrollPreservation = useScrollPreservation();
   const handleRowClick = withScrollPreservation((row: MultiSimulationTableRow) => setSelectedSeedFromTable(row.seed));
-
-  let headerText: string | React.ReactNode;
-  let headerDesc: string;
-
-  if (activeSeed && simulation) {
-    headerText = <DrillDownBreadcrumb activeSeed={activeSeed} removeActiveSeed={removeActiveSeed} rootLabel="Data Table" />;
-    headerDesc = 'Year-by-year progression and outcome for this simulation.';
-  } else if (currentTableType === TableType.YearlyResults) {
-    headerText = 'Data Table';
-    headerDesc = 'View aggregated statistics across all simulations by year.';
-  } else {
-    headerText = 'Data Table';
-    headerDesc = 'Browse all simulation runs. Select one to explore further.';
-  }
 
   let tableComponent;
   if (activeSeed && simulation) {
@@ -93,8 +75,7 @@ function MultiSimulationDataTableSection({
   }
 
   return (
-    <SectionContainer showBottomBorder>
-      <SectionHeader title={headerText} desc={headerDesc} className="mb-4" />
+    <SectionContainer showBottomBorder className="mb-8">
       {!activeSeed && <TableTypeSelector currentType={currentTableType} setCurrentType={setCurrentTableType} />}
       {tableComponent}
     </SectionContainer>

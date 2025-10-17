@@ -2,7 +2,6 @@
 
 import { useState, memo } from 'react';
 
-import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import {
@@ -28,7 +27,6 @@ import SingleSimulationContributionsLineChartCard from '../cards/single-simulati
 import SingleSimulationContributionsBarChartCard from '../cards/single-simulation/single-simulation-contributions-bar-chart-card';
 import SingleSimulationWithdrawalsLineChartCard from '../cards/single-simulation/single-simulation-withdrawals-line-chart-card';
 import SingleSimulationWithdrawalsBarChartCard from '../cards/single-simulation/single-simulation-withdrawals-bar-chart-card';
-import DrillDownBreadcrumb from '../drill-down-breadcrumb';
 import SingleSimulationDataListSection from './single-simulation-data-list-section';
 
 interface ChartsCategoryProps {
@@ -245,8 +243,6 @@ interface SingleSimulationChartsSectionProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   currentCategory: SimulationCategory;
-  removeActiveSeed?: () => void;
-  activeSeed?: number | null;
 }
 
 function SingleSimulationChartsSection({
@@ -255,8 +251,6 @@ function SingleSimulationChartsSection({
   onAgeSelect,
   selectedAge,
   currentCategory,
-  removeActiveSeed,
-  activeSeed,
 }: SingleSimulationChartsSectionProps) {
   const startAge = simulation.context.startAge;
   const props: ChartsCategoryProps = { simulation, keyMetrics, onAgeSelect, selectedAge, startAge };
@@ -290,16 +284,8 @@ function SingleSimulationChartsSection({
       break;
   }
 
-  let headerText: string | React.ReactNode;
-  if (activeSeed && removeActiveSeed) {
-    headerText = <DrillDownBreadcrumb activeSeed={activeSeed} removeActiveSeed={removeActiveSeed} rootLabel="Charts" />;
-  } else {
-    headerText = 'Charts';
-  }
-
   return (
     <SectionContainer showBottomBorder>
-      <SectionHeader title={headerText} desc="Interactive charts to explore your simulation." className="mb-4" />
       <div className="grid grid-cols-1 gap-2 @[96rem]:grid-cols-2">
         {chartsComponents}
         <div className="@[96rem]:col-span-2">

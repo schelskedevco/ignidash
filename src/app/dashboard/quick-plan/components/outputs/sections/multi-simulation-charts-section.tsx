@@ -3,7 +3,6 @@
 import { memo } from 'react';
 
 import { useCurrentAge } from '@/lib/stores/quick-plan-store';
-import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
@@ -79,7 +78,6 @@ function MultiSimulationChartsSection({ chartData, onAgeSelect, selectedAge, cur
 
   return (
     <SectionContainer showBottomBorder>
-      <SectionHeader title="Charts" desc="Interactive charts to explore your simulation." className="mb-4" />
       <div className="grid grid-cols-1 gap-2 @[96rem]:grid-cols-2">
         {chartsComponents}
         <div className="@[96rem]:col-span-2">

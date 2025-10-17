@@ -62,6 +62,8 @@ export default function MultiSimulationMainResults({
           currentCategory={currentCategory}
           currentPercentile={currentPercentile}
           setCurrentPercentile={setCurrentPercentile}
+          removeActiveSeed={removeActiveSeed}
+          activeSeed={activeSeed}
           activeSeedType={activeSeedType}
         />
       </SectionContainer>
@@ -71,8 +73,6 @@ export default function MultiSimulationMainResults({
           onAgeSelect={onAgeSelect}
           selectedAge={selectedAge}
           currentCategory={currentCategory}
-          removeActiveSeed={removeActiveSeed}
-          activeSeed={activeSeed}
         />
       ) : (
         <MultiSimulationChartsSection
@@ -87,7 +87,6 @@ export default function MultiSimulationMainResults({
         tableData={tableData}
         yearlyTableData={yearlyTableData}
         currentCategory={currentCategory}
-        removeActiveSeed={removeActiveSeed}
         activeSeed={activeSeed}
         setSelectedSeedFromTable={setSelectedSeedFromTable}
       />
