@@ -9,6 +9,7 @@ import { SimulationCategory } from '@/lib/types/simulation-category';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 
 import MultiSimulationPortfolioAreaChartCard from '../cards/multi-simulation/multi-simulation-portfolio-area-chart-card';
+import MultiSimulationPortfolioBarChartCard from '../cards/multi-simulation/multi-simulation-portfolio-bar-chart-card';
 
 interface ChartsCategoryProps {
   startAge: number;
@@ -26,6 +27,7 @@ function PortfolioCharts({ chartData, onAgeSelect, selectedAge, startAge }: Char
         selectedAge={selectedAge}
         startAge={startAge}
       />
+      <MultiSimulationPortfolioBarChartCard selectedAge={selectedAge} rawChartData={chartData.portfolioData} />
     </>
   );
 }
