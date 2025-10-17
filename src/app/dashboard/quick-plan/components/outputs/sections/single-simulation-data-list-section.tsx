@@ -284,6 +284,12 @@ function SingleSimulationDataListSection({ simulation, selectedAge, currentCateg
           <WithdrawalsDataListCardV2 {...props} />
         </div>
       );
+    default:
+      return (
+        <div className="text-muted-foreground ml-2 py-10 text-center font-semibold italic">
+          <p>No data available for the selected view.</p>
+        </div>
+      );
   }
 }
 

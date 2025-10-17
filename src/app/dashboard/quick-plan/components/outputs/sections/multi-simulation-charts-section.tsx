@@ -10,6 +10,7 @@ import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 
 import MultiSimulationPortfolioAreaChartCard from '../cards/multi-simulation/multi-simulation-portfolio-area-chart-card';
 import MultiSimulationPortfolioBarChartCard from '../cards/multi-simulation/multi-simulation-portfolio-bar-chart-card';
+import MultiSimulationDataListSection from './multi-simulation-data-list-section';
 
 interface ChartsCategoryProps {
   startAge: number;
@@ -60,7 +61,12 @@ function MultiSimulationChartsSection({ chartData, onAgeSelect, selectedAge, cur
   return (
     <SectionContainer showBottomBorder>
       <SectionHeader title="Charts" desc="Interactive charts to explore your simulation." className="mb-4" />
-      <div className="grid grid-cols-1 gap-2 @[96rem]:grid-cols-2">{chartsComponents}</div>
+      <div className="grid grid-cols-1 gap-2 @[96rem]:grid-cols-2">
+        {chartsComponents}
+        <div className="@[96rem]:col-span-2">
+          <MultiSimulationDataListSection chartData={chartData} selectedAge={selectedAge} currentCategory={currentCategory} />
+        </div>
+      </div>
     </SectionContainer>
   );
 }
