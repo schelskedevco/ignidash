@@ -10,6 +10,7 @@ import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 
 import MultiSimulationPortfolioAreaChartCard from '../cards/multi-simulation/multi-simulation-portfolio-area-chart-card';
 import MultiSimulationPortfolioBarChartCard from '../cards/multi-simulation/multi-simulation-portfolio-bar-chart-card';
+import MultiSimulationPhasesAreaChartCard from '../cards/multi-simulation/multi-simulation-phases-area-chart-card';
 import MultiSimulationDataListSection from './multi-simulation-data-list-section';
 
 interface ChartsCategoryProps {
@@ -33,6 +34,19 @@ function PortfolioCharts({ chartData, onAgeSelect, selectedAge, startAge }: Char
   );
 }
 
+function PhasesCharts({ chartData, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
+  return (
+    <>
+      <MultiSimulationPhasesAreaChartCard
+        rawChartData={chartData.phasesData}
+        onAgeSelect={onAgeSelect}
+        selectedAge={selectedAge}
+        startAge={startAge}
+      />
+    </>
+  );
+}
+
 interface MultiSimulationChartsSectionProps {
   chartData: MultiSimulationChartData;
   onAgeSelect: (age: number) => void;
@@ -48,6 +62,9 @@ function MultiSimulationChartsSection({ chartData, onAgeSelect, selectedAge, cur
   switch (currentCategory) {
     case SimulationCategory.Portfolio:
       chartsComponents = <PortfolioCharts {...props} />;
+      break;
+    case SimulationCategory.Phases:
+      chartsComponents = <PhasesCharts {...props} />;
       break;
     default:
       chartsComponents = (
