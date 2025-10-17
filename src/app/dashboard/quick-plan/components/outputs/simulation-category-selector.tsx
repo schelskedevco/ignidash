@@ -28,7 +28,7 @@ function DrillDownBreadcrumb({ removeActiveSeed, activeSeed }: DrillDownBreadcru
 
   return (
     <nav aria-label="Breadcrumb" className="border-border/50 flex border-t border-dashed py-2">
-      <ol role="list" className="flex items-center space-x-2">
+      <ol role="list" className="flex items-center space-x-2 px-1">
         <li>
           <div>
             <button
