@@ -320,13 +320,17 @@ export class ChartDataExtractor {
 
       const currDateYear = new Date(simulations.simulations[0][1].data[i].date).getFullYear();
 
-      const { percentAccumulation, percentRetirement, percentBankrupt } = SimulationDataExtractor.getPercentInPhaseForYear(simulations, i);
+      const { percentAccumulation, numberAccumulation, percentRetirement, numberRetirement, percentBankrupt, numberBankrupt } =
+        SimulationDataExtractor.getPercentInPhaseForYear(simulations, i);
 
       res.push({
         age: currDateYear - startDateYear + startAge,
         percentAccumulation,
+        numberAccumulation,
         percentRetirement,
+        numberRetirement,
         percentBankrupt,
+        numberBankrupt,
       });
     }
 

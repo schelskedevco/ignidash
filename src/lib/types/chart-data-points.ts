@@ -142,6 +142,9 @@ export interface MultiSimulationPortfolioChartDataPoint {
 export interface MultiSimulationPhasesChartDataPoint {
   age: number;
   percentAccumulation: number;
+  numberAccumulation: number;
   percentRetirement: number;
+  numberRetirement: number;
   percentBankrupt: number;
+  numberBankrupt: number;
 }

@@ -11,6 +11,7 @@ import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 import MultiSimulationPortfolioAreaChartCard from '../cards/multi-simulation/multi-simulation-portfolio-area-chart-card';
 import MultiSimulationPortfolioBarChartCard from '../cards/multi-simulation/multi-simulation-portfolio-bar-chart-card';
 import MultiSimulationPhasesAreaChartCard from '../cards/multi-simulation/multi-simulation-phases-area-chart-card';
+import MultiSimulationPhasesBarChartCard from '../cards/multi-simulation/multi-simulation-phases-bar-chart-card';
 import MultiSimulationDataListSection from './multi-simulation-data-list-section';
 
 interface ChartsCategoryProps {
@@ -43,6 +44,7 @@ function PhasesCharts({ chartData, onAgeSelect, selectedAge, startAge }: ChartsC
         selectedAge={selectedAge}
         startAge={startAge}
       />
+      <MultiSimulationPhasesBarChartCard selectedAge={selectedAge} rawChartData={chartData.phasesData} />
     </>
   );
 }

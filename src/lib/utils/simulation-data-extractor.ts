@@ -75,8 +75,11 @@ export interface TaxableIncomeSources {
 
 export interface PercentInPhaseForYear {
   percentAccumulation: number;
+  numberAccumulation: number;
   percentRetirement: number;
+  numberRetirement: number;
   percentBankrupt: number;
+  numberBankrupt: number;
 }
 
 export class SimulationDataExtractor {
@@ -396,26 +399,33 @@ export class SimulationDataExtractor {
   static getPercentInPhaseForYear(simulations: MultiSimulationResult, year: number): PercentInPhaseForYear {
     const numSimulations = simulations.simulations.length;
 
-    let accumulationCount = 0;
-    let retirementCount = 0;
-    let bankruptCount = 0;
+    let numberAccumulation = 0;
+    let numberRetirement = 0;
+    let numberBankrupt = 0;
 
     for (const [, sim] of simulations.simulations) {
       const phaseName = sim.data[year].phase?.name;
 
       if (sim.data[year].portfolio.totalValue <= 0.1) {
-        bankruptCount++;
+        numberBankrupt++;
       } else if (!phaseName || phaseName === 'accumulation') {
-        accumulationCount++;
+        numberAccumulation++;
       } else if (phaseName === 'retirement') {
-        retirementCount++;
+        numberRetirement++;
       }
     }
 
-    const percentAccumulation = accumulationCount / numSimulations;
-    const percentRetirement = retirementCount / numSimulations;
-    const percentBankrupt = bankruptCount / numSimulations;
+    const percentAccumulation = numberAccumulation / numSimulations;
+    const percentRetirement = numberRetirement / numSimulations;
+    const percentBankrupt = numberBankrupt / numSimulations;
 
-    return { percentAccumulation, percentRetirement, percentBankrupt };
+    return {
+      percentAccumulation,
+      numberAccumulation,
+      percentRetirement,
+      numberRetirement,
+      percentBankrupt,
+      numberBankrupt,
+    };
   }
 }
