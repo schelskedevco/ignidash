@@ -33,6 +33,30 @@ export class StatsUtils {
     return Math.max(0, Math.min(1, norm));
   }
 
+  static average(values: number[]): number {
+    if (values.length === 0) return 0;
+
+    return values.reduce((sum, val) => sum + val, 0) / values.length;
+  }
+
+  static standardDeviation(values: number[]): number {
+    if (values.length === 0) return 0;
+
+    const avg = this.average(values);
+    const squaredDiffs = values.map((val) => Math.pow(val - avg, 2));
+    const variance = squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
+
+    return Math.sqrt(variance);
+  }
+
+  static minFromSorted(sortedValues: number[]): number {
+    return sortedValues[0];
+  }
+
+  static maxFromSorted(sortedValues: number[]): number {
+    return sortedValues[sortedValues.length - 1];
+  }
+
   static calculatePercentile<T>(sortedValues: T[], percentile: number): T {
     const index = Math.floor((percentile / 100) * sortedValues.length);
     return sortedValues[Math.min(index, sortedValues.length - 1)];

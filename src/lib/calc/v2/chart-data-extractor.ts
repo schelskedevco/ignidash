@@ -285,10 +285,15 @@ export class ChartDataExtractor {
       const currDateYear = new Date(simulations.simulations[0][1].data[i].date).getFullYear();
 
       const totalPortfolioValues = simulations.simulations.map(([, sim]) => sim.data[i].portfolio.totalValue);
-      const percentiles: Percentiles<number> = StatsUtils.calculatePercentilesFromValues(totalPortfolioValues.sort((a, b) => a - b));
+      const sortedValues = totalPortfolioValues.sort((a, b) => a - b);
+      const percentiles: Percentiles<number> = StatsUtils.calculatePercentilesFromValues(sortedValues);
 
       res.push({
         age: currDateYear - startDateYear + startAge,
+        averageTotalPortfolioValue: StatsUtils.average(totalPortfolioValues),
+        minTotalPortfolioValue: StatsUtils.minFromSorted(sortedValues),
+        maxTotalPortfolioValue: StatsUtils.maxFromSorted(sortedValues),
+        stdDevTotalPortfolioValue: StatsUtils.standardDeviation(totalPortfolioValues),
         p10TotalPortfolioValue: percentiles.p10,
         p25TotalPortfolioValue: percentiles.p25,
         p50TotalPortfolioValue: percentiles.p50,
