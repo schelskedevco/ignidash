@@ -19,6 +19,7 @@ import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
 
 interface SimulationCategorySelectorProps {
   className?: string;
+  availableCategories: SimulationCategory[];
   setCurrentCategory: (category: SimulationCategory) => void;
   currentCategory: SimulationCategory;
   setCurrentPercentile?: (percentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null) => void;
@@ -28,6 +29,7 @@ interface SimulationCategorySelectorProps {
 
 export default function SimulationCategorySelector({
   className,
+  availableCategories,
   setCurrentCategory,
   currentCategory,
   setCurrentPercentile,
@@ -51,7 +53,7 @@ export default function SimulationCategorySelector({
   return (
     <div className="flex items-center justify-between">
       <div className={cn('isolate -ml-1 flex gap-x-2 overflow-x-auto px-1 py-2', className)}>
-        {Object.values(SimulationCategory).map((category) => (
+        {availableCategories.map((category) => (
           <button
             key={category}
             onClick={withScrollPreservation(() => setCurrentCategory(category))}

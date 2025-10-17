@@ -45,6 +45,9 @@ export default function MultiSimulationMainResults({
   selectedAge,
   setSelectedSeedFromTable,
 }: MultiSimulationMainResultsProps) {
+  const availableCategories =
+    simulationAndKeyMetrics !== null ? Object.values(SimulationCategory) : [SimulationCategory.Portfolio, SimulationCategory.Phases];
+
   return (
     <>
       <SectionContainer
@@ -52,8 +55,9 @@ export default function MultiSimulationMainResults({
         className="from-emphasized-background to-background bg-gradient-to-l py-0 xl:sticky xl:top-[4.3125rem] xl:z-10"
       >
         <SimulationCategorySelector
-          currentCategory={currentCategory}
+          availableCategories={availableCategories}
           setCurrentCategory={setCurrentCategory}
+          currentCategory={currentCategory}
           currentPercentile={currentPercentile}
           setCurrentPercentile={setCurrentPercentile}
           activeSeedType={activeSeedType}

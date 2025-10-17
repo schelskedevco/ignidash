@@ -5,4 +5,5 @@ export enum SimulationCategory {
   Returns = 'Returns',
   Contributions = 'Contributions',
   Withdrawals = 'Withdrawals',
+  Phases = 'Phases',
 }
