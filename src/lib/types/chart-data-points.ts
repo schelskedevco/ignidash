@@ -147,4 +147,18 @@ export interface MultiSimulationPhasesChartDataPoint {
   numberRetirement: number;
   percentBankrupt: number;
   numberBankrupt: number;
+  chanceOfRetirement: number;
+  chanceOfBankruptcy: number;
+  averageYearsToRetirement: number;
+  minYearsToRetirement: number;
+  maxYearsToRetirement: number;
+  averageRetirementAge: number;
+  minRetirementAge: number;
+  maxRetirementAge: number;
+  averageYearsToBankruptcy: number;
+  minYearsToBankruptcy: number;
+  maxYearsToBankruptcy: number;
+  averageBankruptcyAge: number;
+  minBankruptcyAge: number;
+  maxBankruptcyAge: number;
 }

@@ -43,9 +43,29 @@ function PortfolioDataListCardV2({ chartData, selectedAge }: DataListCardProps) 
 
 function PhasesDataListCardV2({ chartData, selectedAge }: DataListCardProps) {
   const data = chartData.phasesData.find((item) => item.age === selectedAge);
-  if (data) return null;
+  if (!data) return null;
 
-  return null;
+  return (
+    <Card className="my-0">
+      <Subheading level={4}>
+        <span className="mr-2">Details</span>
+        <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
+      </Subheading>
+      <DescriptionList>
+        <DescriptionTerm>Chance of Retirement</DescriptionTerm>
+        <DescriptionDetails>{`${formatNumber(data.chanceOfRetirement * 100, 1)}%`}</DescriptionDetails>
+
+        <DescriptionTerm>Average Retirement Age</DescriptionTerm>
+        <DescriptionDetails>{`${formatNumber(data.averageRetirementAge, 0)} (in ${formatNumber(data.averageYearsToRetirement, 0)} years)`}</DescriptionDetails>
+
+        <DescriptionTerm>Chance of Bankruptcy</DescriptionTerm>
+        <DescriptionDetails>{`${formatNumber(data.chanceOfBankruptcy * 100, 1)}%`}</DescriptionDetails>
+
+        <DescriptionTerm>Average Bankruptcy Age</DescriptionTerm>
+        <DescriptionDetails>{`${formatNumber(data.averageBankruptcyAge, 0)} (in ${formatNumber(data.averageYearsToBankruptcy, 0)} years)`}</DescriptionDetails>
+      </DescriptionList>
+    </Card>
+  );
 }
 
 interface MultiSimulationDataListSectionProps {
