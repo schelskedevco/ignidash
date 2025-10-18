@@ -30,7 +30,6 @@ const mergeAPI = {
   async getMergedResult(): Promise<{ handle: string }> {
     const handle = uuidv4();
 
-    // Merge all simulation results into one
     const merged: MultiSimulationResult = { simulations: partialResults.flatMap((r) => r.simulations) };
     partialResults = [];
 
@@ -43,7 +42,11 @@ const mergeAPI = {
     sortMode: MonteCarloSortMode,
     category: SimulationCategory
   ): Promise<DerivedMultiSimulationData> {
-    if (!cache || cache.handle !== handle) throw new Error('Simulation not found');
+    if (!cache || cache.handle !== handle) {
+      console.error('Cache miss or invalid handle in getDerivedMultiSimulationData');
+      throw new Error('Simulation not found');
+    }
+
     const { res } = cache;
 
     const analyzer = new MultiSimulationAnalyzer();
