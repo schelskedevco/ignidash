@@ -57,7 +57,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
   );
 };
 
-const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
+const COLORS = ['var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)', 'var(--chart-4)'];
 
 interface MultiSimulationPortfolioAreaChartProps {
   rawChartData: MultiSimulationPortfolioChartDataPoint[];
@@ -84,9 +84,9 @@ export default function MultiSimulationPortfolioAreaChart({
 
   const chartData: MultiSimulationPortfolioChartDataPoint[] = rawChartData;
   const dataKeys: (keyof MultiSimulationPortfolioChartDataPoint)[] = [
-    'p25TotalPortfolioValue',
-    'p50TotalPortfolioValue',
     'p75TotalPortfolioValue',
+    'p50TotalPortfolioValue',
+    'p25TotalPortfolioValue',
   ];
 
   const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
@@ -134,7 +134,6 @@ export default function MultiSimulationPortfolioAreaChart({
                 key={dataKey}
                 type="monotone"
                 dataKey={dataKey}
-                stackId="1"
                 stroke={COLORS[index % COLORS.length]}
                 fill={COLORS[index % COLORS.length]}
                 fillOpacity={1}
