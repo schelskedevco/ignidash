@@ -16,7 +16,8 @@ import { StochasticReturnsProvider } from '@/lib/calc/returns-providers/stochast
 import { LcgHistoricalBacktestReturnsProvider } from '@/lib/calc/returns-providers/lcg-historical-backtest-returns-provider';
 import { ChartDataExtractor } from '@/lib/calc/v2/chart-data-extractor';
 import { TableDataExtractor } from '@/lib/calc/v2/table-data-extractor';
-import { getSimulationWorker } from '@/lib/workers/simulation-worker-api';
+import { createWorkerPool, releaseWorkerPool } from '@/lib/workers/simulation-worker-api';
+import { getMergeWorker } from '@/lib/workers/merge-worker-api';
 import type {
   SingleSimulationPortfolioTableRow,
   SingleSimulationCashFlowTableRow,
@@ -452,7 +453,7 @@ export const useMultiSimulationResult = (
   const inputs = useQuickPlanStore((state) => state.inputs);
   const simulationSeed = useSimulationSeed();
   const sortMode = useMonteCarloSortMode();
-  const worker = getSimulationWorker();
+  const mergeWorker = getMergeWorker();
 
   const [completedSimulations, setCompletedSimulations] = useState(0);
   const onProgress = useCallback(() => setCompletedSimulations((prev) => prev + 1), []);
@@ -466,7 +467,26 @@ export const useMultiSimulationResult = (
     swrKey,
     async () => {
       await mutate(() => true, undefined, { revalidate: false });
-      return worker.runSimulation(inputs, simulationSeed, 500, simulationMode, Comlink.proxy(onProgress));
+      setCompletedSimulations(0);
+
+      const pool = createWorkerPool();
+      const simulationsPerWorker = Math.ceil(500 / pool.length);
+
+      await Promise.all(
+        pool.map((worker, i) =>
+          worker.runSimulation(
+            inputs,
+            simulationSeed + i * 9973,
+            simulationsPerWorker,
+            simulationMode,
+            mergeWorker,
+            Comlink.proxy(onProgress)
+          )
+        )
+      );
+
+      releaseWorkerPool();
+      return mergeWorker.getMergedResult();
     },
     { revalidateOnFocus: false }
   );
@@ -476,7 +496,7 @@ export const useMultiSimulationResult = (
 
   const { data: { analysis, tableData, yearlyTableData, chartData } = {} } = useSWR(
     handle ? ['derived', handle, sortMode, category] : null,
-    () => worker.getDerivedMultiSimulationData(handle!, sortMode, category),
+    () => mergeWorker.getDerivedMultiSimulationData(handle!, sortMode, category),
     { revalidateOnFocus: false, keepPreviousData: prevHandleRef.current === handle }
   );
 
