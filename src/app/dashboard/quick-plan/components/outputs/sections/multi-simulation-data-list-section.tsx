@@ -34,7 +34,7 @@ function PortfolioDataListCardV2({ chartData, selectedAge }: DataListCardProps) 
         <DescriptionTerm>Max Portfolio Value</DescriptionTerm>
         <DescriptionDetails>{formatNumber(data.maxTotalPortfolioValue, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm>Standard Deviation (±1 SD)</DescriptionTerm>
+        <DescriptionTerm>Standard Deviation</DescriptionTerm>
         <DescriptionDetails>{formatNumber(data.stdDevTotalPortfolioValue, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
