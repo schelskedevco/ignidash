@@ -134,13 +134,12 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
   useEffect(() => setSelectedSeedFromTable(null), [seed, simulationMode]);
 
   if (!analysis || !p50KeyMetrics || !tableData || !yearlyTableData || !chartData || isLoadingOrValidating) {
-    const roundedSimulations = Math.floor(completedSimulations / 10) * 10;
-    const progressPercent = (roundedSimulations / 500) * 100;
+    const progressPercent = (completedSimulations / 500) * 100;
 
     return (
       <div className="flex h-[calc(100vh-7.375rem)] flex-col items-center justify-center gap-8 lg:h-[calc(100vh-4.3125rem)]">
         <p className="text-muted-foreground">
-          Completed <strong>{roundedSimulations}</strong> / <strong>500</strong> simulations...
+          Completed <strong>{completedSimulations}</strong> / <strong>500</strong> simulations...
         </p>
         <ProgressBar progressPercent={progressPercent} />
       </div>

@@ -470,19 +470,32 @@ export const useMultiSimulationResult = (
       setCompletedSimulations(0);
 
       const pool = createWorkerPool();
-      const simulationsPerWorker = Math.ceil(500 / pool.length);
+      const totalSimulations = 500;
+
+      const chunkSize = 10;
+      const chunks: number[] = [];
+      for (let i = 0; i < totalSimulations; i += chunkSize) {
+        chunks.push(Math.min(chunkSize, totalSimulations - i));
+      }
+
+      let chunkIndex = 0;
+      const getNextChunk = () => {
+        if (chunkIndex >= chunks.length) return null;
+
+        return {
+          size: chunks[chunkIndex],
+          seed: simulationSeed + chunkIndex * 9973,
+          index: chunkIndex++,
+        };
+      };
 
       await Promise.all(
-        pool.map((worker, i) =>
-          worker.runSimulation(
-            inputs,
-            simulationSeed + i * 9973,
-            simulationsPerWorker,
-            simulationMode,
-            mergeWorker,
-            Comlink.proxy(onProgress)
-          )
-        )
+        pool.map(async (worker) => {
+          let chunk;
+          while ((chunk = getNextChunk())) {
+            await worker.runSimulation(inputs, chunk.seed, chunk.size, simulationMode, mergeWorker, Comlink.proxy(onProgress));
+          }
+        })
       );
 
       releaseWorkerPool();
