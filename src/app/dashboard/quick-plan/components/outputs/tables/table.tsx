@@ -139,7 +139,7 @@ export default function Table<T extends Record<string, unknown>>({
                             aria-label={`Sort by ${col.title}, currently ${sortDirection}`}
                           >
                             {col.title}
-                            <span className="ml-2 flex-none rounded-sm text-stone-400" aria-hidden="true">
+                            <span className="text-muted-foreground ml-2 flex-none rounded-sm" aria-hidden="true">
                               {isSorted && sortState.direction === 'asc' ? (
                                 <ChevronUpIcon className="size-5" />
                               ) : isSorted && sortState.direction === 'desc' ? (
