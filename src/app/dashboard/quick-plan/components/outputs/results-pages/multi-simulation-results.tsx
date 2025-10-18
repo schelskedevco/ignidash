@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 
 import {
   useMultiSimulationResult,
@@ -8,16 +8,16 @@ import {
   useSimulationResult,
   useSimulationSeed,
   useCurrentAge,
-  useQuickSelectPercentile,
   useUpdateQuickSelectPercentile,
-  useSelectedSeedFromTable,
   useUpdateSelectedSeedFromTable,
+  type QuickSelectPercentile,
 } from '@/lib/stores/quick-plan-store';
 import SectionContainer from '@/components/ui/section-container';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 import { useResultsState } from '@/hooks/use-results-state';
+import { useActiveSeed } from '@/hooks/use-active-seed';
 import ProgressBar from '@/components/ui/progress-bar';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 
@@ -30,11 +30,10 @@ interface MultiSimulationResultsSharedProps {
   chartData: MultiSimulationChartData;
   setCurrentCategory: (category: SimulationCategory) => void;
   currentCategory: SimulationCategory;
-  setCurrentPercentile: (percentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null) => void;
-  currentPercentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null;
+  handlePercentileChange: (percentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null) => void;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setSelectedSeedFromTable: (seed: number | null) => void;
+  handleSeedFromTableChange: (seed: number | null) => void;
   removeActiveSeed: () => void;
 }
 
@@ -93,10 +92,7 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
 
   const p50KeyMetrics = useKeyMetrics(analysis?.results.p50.result);
 
-  const quickSelectPercentile = useQuickSelectPercentile();
   const updateQuickSelectPercentile = useUpdateQuickSelectPercentile();
-
-  const selectedSeedFromTable = useSelectedSeedFromTable();
   const updateSelectedSeedFromTable = useUpdateSelectedSeedFromTable();
 
   const removeActiveSeed = useCallback(() => {
@@ -106,7 +102,7 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
   }, [setCurrentCategory, updateQuickSelectPercentile, updateSelectedSeedFromTable]);
 
   const handlePercentileChange = useCallback(
-    (percentile: typeof quickSelectPercentile) => {
+    (percentile: QuickSelectPercentile) => {
       updateQuickSelectPercentile(percentile);
       setCurrentCategory(SimulationCategory.Portfolio);
     },
@@ -121,15 +117,7 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
     [setCurrentCategory, updateSelectedSeedFromTable]
   );
 
-  const { activeSeed, activeSeedType } = useMemo(() => {
-    if (selectedSeedFromTable !== null) {
-      return { activeSeed: selectedSeedFromTable, activeSeedType: 'table' as const };
-    } else if (quickSelectPercentile !== null) {
-      return { activeSeed: analysis?.results[quickSelectPercentile].seed, activeSeedType: 'percentile' as const };
-    } else {
-      return { activeSeed: undefined };
-    }
-  }, [selectedSeedFromTable, quickSelectPercentile, analysis]);
+  const { activeSeed, activeSeedType } = useActiveSeed(analysis);
 
   const seed = useSimulationSeed();
   useEffect(() => removeActiveSeed(), [seed, simulationMode, removeActiveSeed]);
@@ -153,11 +141,10 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
     chartData,
     setCurrentCategory,
     currentCategory,
-    setCurrentPercentile: handlePercentileChange,
-    currentPercentile: quickSelectPercentile,
+    handlePercentileChange,
     onAgeSelect,
     selectedAge,
-    setSelectedSeedFromTable: handleSeedFromTableChange,
+    handleSeedFromTableChange,
     removeActiveSeed,
   };
 

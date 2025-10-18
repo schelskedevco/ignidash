@@ -29,7 +29,7 @@ interface MultiSimulationDataTableSectionProps {
   yearlyTableData: YearlyAggregateTableRow[];
   currentCategory: SimulationCategory;
   activeSeed: number | undefined;
-  setSelectedSeedFromTable: (seed: number | null) => void;
+  handleSeedFromTableChange: (seed: number | null) => void;
 }
 
 function MultiSimulationDataTableSection({
@@ -38,19 +38,19 @@ function MultiSimulationDataTableSection({
   yearlyTableData,
   currentCategory,
   activeSeed,
-  setSelectedSeedFromTable,
+  handleSeedFromTableChange,
 }: MultiSimulationDataTableSectionProps) {
   const [currentTableType, setCurrentTableType] = useState<TableType>(TableType.AllSimulations);
 
   const withScrollPreservation = useScrollPreservation();
-  const handleRowClick = withScrollPreservation((row: MultiSimulationTableRow) => setSelectedSeedFromTable(row.seed));
+  const handleRowClick = withScrollPreservation((row: MultiSimulationTableRow) => handleSeedFromTableChange(row.seed));
 
   let tableComponent;
   if (activeSeed && simulation) {
     tableComponent = (
       <TableWithSelectedSeed
         currentCategory={currentCategory}
-        onEscPressed={withScrollPreservation(() => setSelectedSeedFromTable(null))}
+        onEscPressed={withScrollPreservation(() => handleSeedFromTableChange(null))}
         simulation={simulation}
       />
     );

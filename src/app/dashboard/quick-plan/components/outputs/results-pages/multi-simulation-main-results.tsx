@@ -19,14 +19,13 @@ interface MultiSimulationMainResultsProps {
   chartData: MultiSimulationChartData;
   setCurrentCategory: (category: SimulationCategory) => void;
   currentCategory: SimulationCategory;
-  setCurrentPercentile: (percentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null) => void;
-  currentPercentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null;
+  handlePercentileChange: (percentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null) => void;
   removeActiveSeed: () => void;
   activeSeed?: number | undefined;
   activeSeedType?: 'table' | 'percentile' | undefined;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setSelectedSeedFromTable: (seed: number | null) => void;
+  handleSeedFromTableChange: (seed: number | null) => void;
 }
 
 export default function MultiSimulationMainResults({
@@ -36,14 +35,13 @@ export default function MultiSimulationMainResults({
   chartData,
   setCurrentCategory,
   currentCategory,
-  setCurrentPercentile,
-  currentPercentile,
+  handlePercentileChange,
   removeActiveSeed,
   activeSeed,
   activeSeedType,
   onAgeSelect,
   selectedAge,
-  setSelectedSeedFromTable,
+  handleSeedFromTableChange,
 }: MultiSimulationMainResultsProps) {
   const availableCategories =
     simulationAndKeyMetrics !== null
@@ -60,8 +58,7 @@ export default function MultiSimulationMainResults({
           availableCategories={availableCategories}
           setCurrentCategory={setCurrentCategory}
           currentCategory={currentCategory}
-          currentPercentile={currentPercentile}
-          setCurrentPercentile={setCurrentPercentile}
+          handlePercentileChange={handlePercentileChange}
           removeActiveSeed={removeActiveSeed}
           activeSeed={activeSeed}
           activeSeedType={activeSeedType}
@@ -88,7 +85,7 @@ export default function MultiSimulationMainResults({
         yearlyTableData={yearlyTableData}
         currentCategory={currentCategory}
         activeSeed={activeSeed}
-        setSelectedSeedFromTable={setSelectedSeedFromTable}
+        handleSeedFromTableChange={handleSeedFromTableChange}
       />
     </>
   );

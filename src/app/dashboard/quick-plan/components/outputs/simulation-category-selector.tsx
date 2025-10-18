@@ -14,7 +14,7 @@ import {
   DropdownHeader,
   DropdownDivider,
 } from '@/components/catalyst/dropdown';
-import { useMonteCarloSortMode, useUpdateMonteCarloSortMode } from '@/lib/stores/quick-plan-store';
+import { useMonteCarloSortMode, useUpdateMonteCarloSortMode, useQuickSelectPercentile } from '@/lib/stores/quick-plan-store';
 import { formatChartString } from '@/lib/utils';
 import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
 
@@ -56,8 +56,7 @@ interface SimulationCategorySelectorProps {
   availableCategories: SimulationCategory[];
   setCurrentCategory: (category: SimulationCategory) => void;
   currentCategory: SimulationCategory;
-  setCurrentPercentile?: (percentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null) => void;
-  currentPercentile?: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null;
+  handlePercentileChange?: (percentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null) => void;
   removeActiveSeed?: () => void;
   activeSeed?: number | undefined;
   activeSeedType?: 'table' | 'percentile' | undefined;
@@ -68,12 +67,12 @@ export default function SimulationCategorySelector({
   availableCategories,
   setCurrentCategory,
   currentCategory,
-  setCurrentPercentile,
-  currentPercentile,
+  handlePercentileChange,
   removeActiveSeed,
   activeSeed,
   activeSeedType,
 }: SimulationCategorySelectorProps) {
+  const quickSelectPercentile = useQuickSelectPercentile();
   const percentiles = ['p10', 'p25', 'p50', 'p75', 'p90'] as const;
   const sortModeOptions = [
     'finalPortfolioValue',
@@ -106,7 +105,7 @@ export default function SimulationCategorySelector({
             </button>
           ))}
         </div>
-        {setCurrentPercentile && (
+        {handlePercentileChange && (
           <div className="border-border/50 flex shrink-0 border-l sm:gap-1.5 sm:px-2">
             <Dropdown>
               <DropdownButton plain aria-label="Open sort mode options" disabled={activeSeedType === 'table'}>
@@ -135,8 +134,11 @@ export default function SimulationCategorySelector({
                 </DropdownHeader>
                 <DropdownDivider />
                 {percentiles.map((percentile) => (
-                  <DropdownItem key={percentile} onClick={() => setCurrentPercentile(currentPercentile !== percentile ? percentile : null)}>
-                    <CheckIcon data-slot="icon" className={cn({ invisible: currentPercentile !== percentile })} />
+                  <DropdownItem
+                    key={percentile}
+                    onClick={() => handlePercentileChange(quickSelectPercentile !== percentile ? percentile : null)}
+                  >
+                    <CheckIcon data-slot="icon" className={cn({ invisible: quickSelectPercentile !== percentile })} />
                     <DropdownLabel className="uppercase">{percentile}</DropdownLabel>
                   </DropdownItem>
                 ))}
