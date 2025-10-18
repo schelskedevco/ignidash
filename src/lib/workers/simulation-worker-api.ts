@@ -27,13 +27,12 @@ export function releaseSimulationWorker(): void {
   }
 }
 
-export function createWorkerPool(size: number): Comlink.Remote<SimulationWorkerAPI>[] {
-  releaseWorkerPool();
-
+export function createWorkerPool(): Comlink.Remote<SimulationWorkerAPI>[] {
   workers = [];
   workerAPIs = [];
 
-  for (let i = 0; i < size; i++) {
+  const optimalSize = getOptimalWorkerCount();
+  for (let i = 0; i < optimalSize; i++) {
     const worker = new Worker(new URL('./simulation.worker.ts', import.meta.url), { type: 'module' });
     const api = Comlink.wrap<SimulationWorkerAPI>(worker);
 
@@ -50,4 +49,9 @@ export function releaseWorkerPool(): void {
 
   workers.forEach((w) => w.terminate());
   workers = [];
+}
+
+function getOptimalWorkerCount(): number {
+  const cores = navigator.hardwareConcurrency || 4;
+  return Math.max(1, cores - 1);
 }
