@@ -114,7 +114,7 @@ export default function SimulationCategorySelector({
               </DropdownButton>
               <DropdownMenu>
                 <DropdownHeader>
-                  <div className="pr-6 text-sm/7 font-semibold">Sort Simulations By</div>
+                  <div className="pr-6 text-sm/7 font-semibold">Quick Select By</div>
                 </DropdownHeader>
                 <DropdownDivider />
                 {sortModeOptions.map((sortMode) => (
@@ -130,6 +130,10 @@ export default function SimulationCategorySelector({
                 <ListFilterIcon data-slot="icon" />
               </DropdownButton>
               <DropdownMenu>
+                <DropdownHeader>
+                  <div className="pr-6 text-sm/7 font-semibold">Quick Select Percentile</div>
+                </DropdownHeader>
+                <DropdownDivider />
                 {percentiles.map((percentile) => (
                   <DropdownItem key={percentile} onClick={() => setCurrentPercentile(currentPercentile !== percentile ? percentile : null)}>
                     <CheckIcon data-slot="icon" className={cn({ invisible: currentPercentile !== percentile })} />
