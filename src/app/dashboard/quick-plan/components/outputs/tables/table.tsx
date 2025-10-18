@@ -158,7 +158,7 @@ export default function Table<T extends Record<string, unknown>>({
                               scope="col"
                               className={cn(
                                 'group py-3.5 pr-3 pl-4 sm:pl-6 lg:pl-8',
-                                hoveredColumn === col.key && 'bg-emphasized-background/50'
+                                hoveredColumn === col.key && 'from-background bg-gradient-to-t to-rose-500/25'
                               )}
                               onMouseEnter={() => setHoveredColumn(col.key)}
                               onMouseLeave={() => setHoveredColumn(null)}
@@ -175,7 +175,7 @@ export default function Table<T extends Record<string, unknown>>({
                             scope="col"
                             className={cn(
                               'group border-border/50 border-l px-3 py-3.5',
-                              hoveredColumn === col.key && 'bg-emphasized-background/50'
+                              hoveredColumn === col.key && 'from-background bg-gradient-to-t to-rose-500/25'
                             )}
                             onMouseEnter={() => setHoveredColumn(col.key)}
                             onMouseLeave={() => setHoveredColumn(null)}
