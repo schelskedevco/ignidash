@@ -103,9 +103,7 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
   const handlePercentileChange = useCallback(
     (percentile: typeof currentPercentile) => {
       setCurrentPercentile(percentile);
-      if (percentile !== null) {
-        setCurrentCategory(SimulationCategory.Portfolio);
-      }
+      setCurrentCategory(SimulationCategory.Portfolio);
     },
     [setCurrentCategory]
   );
@@ -113,9 +111,7 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
   const handleSeedFromTableChange = useCallback(
     (seed: number | null) => {
       setSelectedSeedFromTable(seed);
-      if (seed !== null) {
-        setCurrentCategory(SimulationCategory.Portfolio);
-      }
+      setCurrentCategory(SimulationCategory.Portfolio);
     },
     [setCurrentCategory]
   );
