@@ -139,7 +139,7 @@ export default function Table<T extends Record<string, unknown>>({
                             aria-label={`Sort by ${col.title}, currently ${sortDirection}`}
                           >
                             {col.title}
-                            <span className="ml-2 flex-none rounded-sm text-gray-400" aria-hidden="true">
+                            <span className="ml-2 flex-none rounded-sm text-stone-400" aria-hidden="true">
                               {isSorted && sortState.direction === 'asc' ? (
                                 <ChevronUpIcon className="size-5" />
                               ) : isSorted && sortState.direction === 'desc' ? (
@@ -227,7 +227,8 @@ export default function Table<T extends Record<string, unknown>>({
                                 key={String(col.key)}
                                 className={cn(
                                   'text-foreground py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-6 lg:pl-8',
-                                  hoveredColumn === col.key && 'bg-emphasized-background/50'
+                                  hoveredColumn === col.key && 'bg-emphasized-background/50',
+                                  onRowClick && 'text-primary hover:underline'
                                 )}
                               >
                                 {displayValue}
