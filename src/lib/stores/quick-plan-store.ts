@@ -1,7 +1,7 @@
 'use client';
 
 import * as Comlink from 'comlink';
-import { useMemo, useRef, useEffect, useState, useCallback } from 'react';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
@@ -45,6 +45,7 @@ import type {
   MultiSimulationChartData,
 } from '@/lib/types/chart-data-points';
 import { SimulationCategory } from '@/lib/types/simulation-category';
+import { usePrevious } from '@/hooks/use-previous';
 
 // ================================
 // STATE INTERFACE & DEFAULT STATE
@@ -533,22 +534,18 @@ export const useMultiSimulationResult = (
   );
 
   const handle = handleData?.handle;
-  const prevHandleRef = useRef(handle);
+  const prevHandle = usePrevious(handle);
 
   const { data: { analysis, tableData, yearlyTableData, chartData } = {} } = useSWR(
     handle ? ['derived', handle, sortMode, category] : null,
     () => mergeWorker.getDerivedMultiSimulationData(handle!, sortMode, category),
-    { ...swrOptions, keepPreviousData: prevHandleRef.current === handle }
+    { ...swrOptions, keepPreviousData: prevHandle === handle }
   );
 
   const updateSimulationStatus = useUpdateSimulationStatus();
   useEffect(() => {
     updateSimulationStatus(isLoading || isValidating ? 'loading' : 'none');
   }, [isLoading, isValidating, updateSimulationStatus]);
-
-  useEffect(() => {
-    prevHandleRef.current = handle;
-  }, [handle]);
 
   return { analysis, tableData, yearlyTableData, chartData, isLoadingOrValidating: isLoading || isValidating, completedSimulations };
 };
