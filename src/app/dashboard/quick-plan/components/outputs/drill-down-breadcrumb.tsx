@@ -13,7 +13,7 @@ interface DrillDownBreadcrumbProps {
 }
 
 export default function DrillDownBreadcrumb({ simulationMode }: DrillDownBreadcrumbProps) {
-  const { analysis } = useMultiSimulationResult(simulationMode);
+  const { analysis } = useMultiSimulationResult(simulationMode, { fetchFromCacheOnly: true });
 
   const { activeSeed } = useActiveSeed(analysis);
   const removeActiveSeed = useRemoveActiveSeed();
@@ -37,7 +37,6 @@ export default function DrillDownBreadcrumb({ simulationMode }: DrillDownBreadcr
             <button
               type="button"
               className={cn('focus-outline', { 'text-muted-foreground hover:text-foreground': !!activeSeed })}
-              // navigator.userAgent.includes('Mac') ? '⌘ + esc' : 'Ctrl + Esc'
               onClick={withScrollPreservation(removeActiveSeed)}
               disabled={!activeSeed}
             >
