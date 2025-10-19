@@ -40,14 +40,7 @@ export default function DrillDownBreadcrumb({ simulationMode }: DrillDownBreadcr
               onClick={withScrollPreservation(removeActiveSeed)}
               disabled={!activeSeed}
             >
-              <span className="relative lowercase">
-                Monte Carlo Results
-                {activeSeed && (
-                  <span className="absolute top-6 left-0 text-xs/6 font-medium tracking-tighter">
-                    {navigator.userAgent.includes('Mac') ? '⌘ + esc' : 'Ctrl + Esc'}
-                  </span>
-                )}
-              </span>
+              <span className="relative lowercase">Monte Carlo Results</span>
             </button>
           </div>
         </li>
