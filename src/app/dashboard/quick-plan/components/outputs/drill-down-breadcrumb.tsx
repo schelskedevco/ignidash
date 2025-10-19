@@ -42,16 +42,20 @@ export default function DrillDownBreadcrumb() {
       <ol role="list" className="flex items-center space-x-2">
         <li>
           <div>
-            <Tooltip>
-              <TooltipTrigger asChild>{buttonComponent}</TooltipTrigger>
-              <TooltipContent>
-                <KbdGroup>
-                  <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
-                  <span>+</span>
-                  <Kbd>{isMac ? 'esc' : 'Esc'}</Kbd>
-                </KbdGroup>
-              </TooltipContent>
-            </Tooltip>
+            {activeSeed ? (
+              <Tooltip>
+                <TooltipTrigger asChild>{buttonComponent}</TooltipTrigger>
+                <TooltipContent>
+                  <KbdGroup>
+                    <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+                    <span>+</span>
+                    <Kbd>{isMac ? 'esc' : 'Esc'}</Kbd>
+                  </KbdGroup>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              buttonComponent
+            )}
           </div>
         </li>
         {activeSeed && (
