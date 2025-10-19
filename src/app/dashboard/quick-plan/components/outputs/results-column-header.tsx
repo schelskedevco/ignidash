@@ -10,6 +10,7 @@ import { useRegenSimulation } from '@/hooks/use-regen-simulation';
 import { useSimulationSeed, useSimulationMode } from '@/lib/stores/quick-plan-store';
 
 import SimulationSettingsDrawer from './drawers/simulation-settings-drawer';
+import DrillDownBreadcrumb from './drill-down-breadcrumb';
 
 export default function ResultsColumnHeader() {
   const { icon, label, handleClick, isDisabled, className } = useRegenSimulation();
@@ -25,7 +26,7 @@ export default function ResultsColumnHeader() {
   const seed = useSimulationSeed();
   const simulationMode = useSimulationMode();
 
-  let title;
+  let title: string | React.ReactNode;
   switch (simulationMode) {
     case 'fixedReturns':
       title = 'Results';
@@ -36,7 +37,7 @@ export default function ResultsColumnHeader() {
       break;
     case 'monteCarloStochasticReturns':
     case 'monteCarloHistoricalReturns':
-      title = `Monte Carlo Results`;
+      title = <DrillDownBreadcrumb simulationMode={simulationMode} />;
       break;
   }
 
