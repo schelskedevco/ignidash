@@ -22,10 +22,7 @@ export default function DrillDownBreadcrumb({ simulationMode }: DrillDownBreadcr
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && activeSeed !== undefined) {
-        e.preventDefault();
-        removeActiveSeed();
-      }
+      if (e.key === 'Escape' && activeSeed !== undefined) removeActiveSeed();
     };
 
     document.addEventListener('keydown', handleKeyDown);
