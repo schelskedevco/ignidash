@@ -473,8 +473,7 @@ export const useSimulationResult = (
 };
 
 export const useMultiSimulationResult = (
-  simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns',
-  options: { fetchFromCacheOnly: boolean } = { fetchFromCacheOnly: false }
+  simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns'
 ): {
   analysis: MultiSimulationAnalysis | undefined;
   tableData: MultiSimulationTableRow[] | undefined;
@@ -500,7 +499,7 @@ export const useMultiSimulationResult = (
     isLoading,
     isValidating,
   } = useSWR(
-    !options.fetchFromCacheOnly ? swrKey : null,
+    swrKey,
     async () => {
       await mutate(() => true, undefined, { revalidate: false });
       setCompletedSimulations(0);

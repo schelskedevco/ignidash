@@ -15,7 +15,7 @@ interface DrillDownBreadcrumbProps {
 }
 
 export default function DrillDownBreadcrumb({ simulationMode }: DrillDownBreadcrumbProps) {
-  const { analysis } = useMultiSimulationResult(simulationMode, { fetchFromCacheOnly: true });
+  const { analysis } = useMultiSimulationResult(simulationMode);
 
   const { activeSeed } = useActiveSeed(analysis);
   const removeActiveSeed = useRemoveActiveSeed();
