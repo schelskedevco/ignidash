@@ -37,6 +37,7 @@ export default function DrillDownBreadcrumb({ simulationMode }: DrillDownBreadcr
             <button
               type="button"
               className={cn('focus-outline', { 'text-muted-foreground hover:text-foreground': !!activeSeed })}
+              // navigator.userAgent.includes('Mac') ? '⌘ + esc' : 'Ctrl + Esc'
               onClick={withScrollPreservation(removeActiveSeed)}
               disabled={!activeSeed}
             >
