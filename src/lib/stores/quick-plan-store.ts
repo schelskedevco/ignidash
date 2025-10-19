@@ -527,7 +527,7 @@ export const useMultiSimulationResult = (
       releaseWorkerPool();
       return mergeWorker.getMergedResult();
     },
-    { revalidateOnFocus: false }
+    { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false }
   );
 
   const handle = handleData?.handle;
