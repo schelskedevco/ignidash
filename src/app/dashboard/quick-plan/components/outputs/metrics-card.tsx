@@ -5,10 +5,11 @@ interface MetricsCardProps {
   name: string;
   stat: string | number;
   statContext?: string;
+  statWidget?: React.ReactNode;
   className?: string;
 }
 
-export default function MetricsCard({ name, stat, statContext, className }: MetricsCardProps) {
+export default function MetricsCard({ name, stat, statContext, statWidget, className }: MetricsCardProps) {
   return (
     <Card className={cn('my-0 text-center sm:text-left', className)}>
       <dt className="text-muted-foreground truncate text-sm font-medium">{name}</dt>
@@ -17,6 +18,7 @@ export default function MetricsCard({ name, stat, statContext, className }: Metr
           <span>{stat}</span>
           <span className="text-muted-foreground ml-1 text-sm">{statContext}</span>
         </div>
+        <div className="hidden sm:block">{statWidget}</div>
       </dd>
     </Card>
   );

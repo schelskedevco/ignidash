@@ -60,9 +60,15 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
     progressToRetirementForDisplay,
   } = formatMetrics(keyMetrics);
 
+  const successWidget = (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="inline size-6 fill-green-500 dark:fill-green-400">
+      <circle r={12} cx={12} cy={12} />
+    </svg>
+  );
+
   return (
     <dl className="grid grid-cols-2 grid-rows-4 gap-2 2xl:grid-cols-3 2xl:grid-rows-3">
-      <MetricsCard name="Success" stat={successForDisplay} className="col-span-2 2xl:col-span-1" />
+      <MetricsCard name="Success" stat={successForDisplay} className="col-span-2 2xl:col-span-1" statWidget={successWidget} />
       <MetricsCard name="Progress to Retirement" stat={progressToRetirementForDisplay} />
       <MetricsCard name="Retirement Age" stat={retirementAgeForDisplay} statContext={` (in ${yearsToRetirementForDisplay} years)`} />
       <MetricsCard name="Bankruptcy Age" stat={bankruptcyAgeForDisplay} statContext={` (in ${yearsToBankruptcyForDisplay} years)`} />
