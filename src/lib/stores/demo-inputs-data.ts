@@ -32,7 +32,7 @@ export const demoInputs1: QuickPlanInputs = {
       name: 'living expenses',
       amount: 55000,
       frequency: 'yearly',
-      timeframe: { start: { type: 'now' } },
+      timeframe: { start: { type: 'now' }, end: { type: 'atLifeExpectancy' } },
       growth: { growthRate: 3, growthLimit: 80000 },
     },
     'expense-2': {
@@ -40,7 +40,7 @@ export const demoInputs1: QuickPlanInputs = {
       name: 'vacations',
       amount: 5000,
       frequency: 'yearly',
-      timeframe: { start: { type: 'now' }, end: { type: 'atRetirement' } },
+      timeframe: { start: { type: 'now' }, end: { type: 'atLifeExpectancy' } },
     },
   },
   accounts: {
