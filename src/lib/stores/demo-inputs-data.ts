@@ -173,14 +173,14 @@ export const demoInputs2: QuickPlanInputs = {
     'account-1': {
       type: '401k',
       id: 'account-1',
-      name: 'mega backdoor 401k',
+      name: 'fidelity 401k',
       currentValue: 85000,
       percentBonds: 10,
     },
     'account-2': {
       type: 'rothIra',
       id: 'account-2',
-      name: 'roth ira',
+      name: 'vanguard roth ira',
       currentValue: 42000,
       contributionBasis: 30000,
       percentBonds: 10,
@@ -188,7 +188,7 @@ export const demoInputs2: QuickPlanInputs = {
     'account-3': {
       type: 'taxableBrokerage',
       id: 'account-3',
-      name: 'vanguard taxable',
+      name: 'schwab brokerage',
       currentValue: 120000,
       costBasis: 90000,
       percentBonds: 5,
