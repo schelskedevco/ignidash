@@ -3,7 +3,6 @@
 import { useState, memo } from 'react';
 
 import SectionContainer from '@/components/ui/section-container';
-import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
 import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
 import { generateMultiSimulationTableColumns, generateYearlyAggregateTableColumns } from '@/lib/utils/table-formatters';
@@ -37,9 +36,6 @@ function MultiSimulationDataTableSection({
 }: MultiSimulationDataTableSectionProps) {
   const [currentTableType, setCurrentTableType] = useState<TableType>(TableType.AllSimulations);
 
-  const withScrollPreservation = useScrollPreservation();
-  const handleRowClick = withScrollPreservation((row: MultiSimulationTableRow) => handleSeedFromTableChange(row.seed));
-
   let tableComponent;
   if (activeSeed && simulation) {
     tableComponent = <TableWithSelectedSeed simulation={simulation} />;
@@ -51,7 +47,7 @@ function MultiSimulationDataTableSection({
             columns={generateMultiSimulationTableColumns()}
             data={tableData}
             keyField="seed"
-            onRowClick={handleRowClick}
+            onRowClick={(row: MultiSimulationTableRow) => handleSeedFromTableChange(row.seed)}
           />
         );
         break;

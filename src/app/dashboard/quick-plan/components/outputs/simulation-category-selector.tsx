@@ -126,7 +126,7 @@ export default function SimulationCategorySelector({
                 </DropdownHeader>
                 <DropdownDivider />
                 {sortModeOptions.map((sortMode) => (
-                  <DropdownItem key={sortMode} onClick={() => updateMonteCarloSortMode(sortMode)}>
+                  <DropdownItem key={sortMode} onClick={withScrollPreservation(() => updateMonteCarloSortMode(sortMode))}>
                     <CheckIcon data-slot="icon" className={cn({ invisible: monteCarloSortMode !== sortMode })} />
                     <DropdownLabel>{formatChartString(sortMode)}</DropdownLabel>
                   </DropdownItem>
