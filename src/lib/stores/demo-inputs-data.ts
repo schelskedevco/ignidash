@@ -416,7 +416,7 @@ export const demoInputs4: QuickPlanInputs = {
       name: 'spouse attorney salary',
       amount: 180000,
       frequency: 'yearly',
-      timeframe: { start: { type: 'now' }, end: { type: 'customAge', age: 55 } },
+      timeframe: { start: { type: 'now' }, end: { type: 'customAge', age: 50 } },
       growth: { growthRate: 4, growthLimit: 250000 },
     },
     'income-4': {
@@ -455,7 +455,7 @@ export const demoInputs4: QuickPlanInputs = {
     'expense-4': {
       id: 'expense-4',
       name: 'vacation home purchase',
-      amount: 400000,
+      amount: 500000,
       frequency: 'oneTime',
       timeframe: { start: { type: 'customAge', age: 45 } },
     },
