@@ -61,19 +61,14 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
   } = formatMetrics(keyMetrics);
 
   return (
-    <dl className="grid grid-cols-2 gap-2 2xl:grid-cols-3">
-      <MetricsCard name="Success" stat={successForDisplay} />
+    <dl className="grid grid-cols-2 grid-rows-4 gap-2 2xl:grid-cols-3 2xl:grid-rows-3">
+      <MetricsCard name="Success" stat={successForDisplay} className="col-span-2 2xl:col-span-1" />
       <MetricsCard name="Progress to Retirement" stat={progressToRetirementForDisplay} />
-      <MetricsCard
-        name="Retirement Age"
-        stat={retirementAgeForDisplay}
-        statContext={` (in ${yearsToRetirementForDisplay} years)`}
-        className="sm:col-span-2 2xl:col-span-1"
-      />
+      <MetricsCard name="Retirement Age" stat={retirementAgeForDisplay} statContext={` (in ${yearsToRetirementForDisplay} years)`} />
       <MetricsCard name="Bankruptcy Age" stat={bankruptcyAgeForDisplay} statContext={` (in ${yearsToBankruptcyForDisplay} years)`} />
-      <MetricsCard name="Lifetime Taxes" stat={lifetimeTaxesAndPenaltiesForDisplay} />
-      <MetricsCard name="Retirement Portfolio" stat={portfolioAtRetirementForDisplay} className="2xl:col-span-2" />
-      <MetricsCard name="Final Portfolio" stat={finalPortfolioForDisplay} className="col-span-2 sm:col-span-1" />
+      <MetricsCard name="Lifetime Taxes" stat={lifetimeTaxesAndPenaltiesForDisplay} className="col-span-1 2xl:col-span-2" />
+      <MetricsCard name="Retirement Portfolio" stat={portfolioAtRetirementForDisplay} className="col-span-2" />
+      <MetricsCard name="Final Portfolio" stat={finalPortfolioForDisplay} className="col-span-2 2xl:col-span-1" />
     </dl>
   );
 }
