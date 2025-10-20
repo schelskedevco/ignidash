@@ -349,14 +349,14 @@ export class TableDataExtractor {
 
       const { retirementAge, bankruptcyAge } = SimulationDataExtractor.getMilestonesData(data, startAge);
       const {
-        averageStockReturn,
-        averageBondReturn,
-        averageCashReturn,
-        averageInflationRate,
+        meanStockReturn,
+        meanBondReturn,
+        meanCashReturn,
+        meanInflationRate,
         minStockReturn,
         maxStockReturn,
         earlyRetirementStockReturn,
-      } = SimulationDataExtractor.getAverageReturnsData(result, retirementAge);
+      } = SimulationDataExtractor.getMeanReturnsData(result, retirementAge);
 
       const lastDp = data[data.length - 1];
       const success = retirementAge !== null && lastDp.portfolio.totalValue > 0.1;
@@ -377,11 +377,11 @@ export class TableDataExtractor {
         finalPortfolioValue: lastDp.portfolio.totalValue,
         minStockReturn,
         maxStockReturn,
-        averageStockReturn,
+        meanStockReturn,
         earlyRetirementStockReturn,
-        averageBondReturn,
-        averageCashReturn,
-        averageInflationRate,
+        meanBondReturn,
+        meanCashReturn,
+        meanInflationRate,
         lifetimeIncomeTaxes,
         lifetimeCapGainsTaxes,
         lifetimeEarlyWithdrawalPenalties,

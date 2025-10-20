@@ -58,13 +58,13 @@ export default function SimulationSettingsDrawer({ setOpen }: SimulationSettings
       simulationModeDesc = 'Uses your Expected Returns assumptions for a single deterministic projection.';
       break;
     case 'monteCarloStochasticReturns':
-      simulationModeDesc = 'Uses your Expected Returns assumptions as averages to show success probability.';
+      simulationModeDesc = 'Uses your Expected Returns assumptions as mean values to show success probability.';
       break;
     case 'monteCarloHistoricalReturns':
       simulationModeDesc = 'Uses actual historical market data from different starting years to show success probability.';
       break;
     case 'stochasticReturns':
-      simulationModeDesc = 'Uses your Expected Returns assumptions as averages for one simulation with random returns.';
+      simulationModeDesc = 'Uses your Expected Returns assumptions as mean values for one simulation with random returns.';
       break;
     case 'historicalReturns':
       simulationModeDesc = 'Uses actual historical market data from a single starting year for one simulation with historical returns.';

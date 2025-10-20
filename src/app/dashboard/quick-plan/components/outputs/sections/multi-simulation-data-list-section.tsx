@@ -27,7 +27,7 @@ function PortfolioDataListCardV2({ chartData, selectedAge }: DataListCardProps) 
       </Subheading>
       <DescriptionList>
         <DescriptionTerm>Mean Portfolio Value</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(data.averageTotalPortfolioValue, 2, '$')}</DescriptionDetails>
+        <DescriptionDetails>{formatNumber(data.meanTotalPortfolioValue, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Min Portfolio Value</DescriptionTerm>
         <DescriptionDetails>{formatNumber(data.minTotalPortfolioValue, 2, '$')}</DescriptionDetails>
@@ -46,14 +46,14 @@ function PhasesDataListCardV2({ chartData, selectedAge }: DataListCardProps) {
   const data = chartData.phasesData.find((item) => item.age === selectedAge);
   if (!data) return null;
 
-  const formattedAverageRetirementAge =
-    data.averageRetirementAge !== -1 && data.averageYearsToRetirement !== -1
-      ? `${formatNumber(data.averageRetirementAge, 0)} (in ${formatNumber(data.averageYearsToRetirement, 0)} years)`
+  const formattedMeanRetirementAge =
+    data.meanRetirementAge !== -1 && data.meanYearsToRetirement !== -1
+      ? `${formatNumber(data.meanRetirementAge, 0)} (in ${formatNumber(data.meanYearsToRetirement, 0)} years)`
       : '∞ (never retires)';
 
-  const formattedAverageBankruptcyAge =
-    data.averageBankruptcyAge !== -1 && data.averageYearsToBankruptcy !== -1
-      ? `${formatNumber(data.averageBankruptcyAge, 0)} (in ${formatNumber(data.averageYearsToBankruptcy, 0)} years)`
+  const formattedMeanBankruptcyAge =
+    data.meanBankruptcyAge !== -1 && data.meanYearsToBankruptcy !== -1
+      ? `${formatNumber(data.meanBankruptcyAge, 0)} (in ${formatNumber(data.meanYearsToBankruptcy, 0)} years)`
       : '∞ (never goes bankrupt)';
 
   return (
@@ -67,13 +67,13 @@ function PhasesDataListCardV2({ chartData, selectedAge }: DataListCardProps) {
         <DescriptionDetails>{`${formatNumber(data.chanceOfRetirement * 100, 1)}%`}</DescriptionDetails>
 
         <DescriptionTerm>Mean Retirement Age</DescriptionTerm>
-        <DescriptionDetails>{formattedAverageRetirementAge}</DescriptionDetails>
+        <DescriptionDetails>{formattedMeanRetirementAge}</DescriptionDetails>
 
         <DescriptionTerm>Chance of Bankruptcy</DescriptionTerm>
         <DescriptionDetails>{`${formatNumber(data.chanceOfBankruptcy * 100, 1)}%`}</DescriptionDetails>
 
         <DescriptionTerm>Mean Bankruptcy Age</DescriptionTerm>
-        <DescriptionDetails>{formattedAverageBankruptcyAge}</DescriptionDetails>
+        <DescriptionDetails>{formattedMeanBankruptcyAge}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );

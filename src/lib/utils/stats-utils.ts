@@ -33,7 +33,7 @@ export class StatsUtils {
     return Math.max(0, Math.min(1, norm));
   }
 
-  static average(values: number[]): number {
+  static mean(values: number[]): number {
     if (values.length === 0) return -1;
 
     return values.reduce((sum, val) => sum + val, 0) / values.length;
@@ -42,7 +42,7 @@ export class StatsUtils {
   static standardDeviation(values: number[]): number {
     if (values.length <= 1) return 0;
 
-    const avg = this.average(values);
+    const avg = this.mean(values);
     const squaredDiffs = values.map((val) => Math.pow(val - avg, 2));
     const variance = squaredDiffs.reduce((sum, val) => sum + val, 0) / (values.length - 1);
 

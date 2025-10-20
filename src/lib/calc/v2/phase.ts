@@ -36,12 +36,12 @@ export class PhaseIdentifier {
         const safeWithdrawalRate = this.timeline.retirementStrategy.safeWithdrawalRate / 100;
         const safeWithdrawalAmount = totalPortfolioValue * safeWithdrawalRate;
 
-        const averageAnnualExpenses =
+        const meanAnnualExpenses =
           annualExpensesData.length !== 0
             ? annualExpensesData.reduce((acc, curr) => acc + curr.totalExpenses, 0) / annualExpensesData.length
             : 0;
 
-        return averageAnnualExpenses < safeWithdrawalAmount ? { name: 'retirement' } : { name: 'accumulation' };
+        return meanAnnualExpenses < safeWithdrawalAmount ? { name: 'retirement' } : { name: 'accumulation' };
     }
   }
 

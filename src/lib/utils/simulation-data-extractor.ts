@@ -8,10 +8,10 @@ export interface MilestonesData {
 }
 
 export interface ReturnsStatsData {
-  averageStockReturn: number | null;
-  averageBondReturn: number | null;
-  averageCashReturn: number | null;
-  averageInflationRate: number | null;
+  meanStockReturn: number | null;
+  meanBondReturn: number | null;
+  meanCashReturn: number | null;
+  meanInflationRate: number | null;
   minStockReturn: number;
   maxStockReturn: number;
   earlyRetirementStockReturn: number | null;
@@ -116,7 +116,7 @@ export class SimulationDataExtractor {
     return { yearsToRetirement, retirementAge, yearsToBankruptcy, bankruptcyAge };
   }
 
-  static getAverageReturnsData(result: SimulationResult, retirementAge: number | null): ReturnsStatsData {
+  static getMeanReturnsData(result: SimulationResult, retirementAge: number | null): ReturnsStatsData {
     const { data, context } = result;
 
     const startAge = context.startAge;
@@ -164,17 +164,17 @@ export class SimulationDataExtractor {
         }
       );
 
-    const averageStockReturn = count > 0 ? stocks / count : null;
-    const averageBondReturn = count > 0 ? bonds / count : null;
-    const averageCashReturn = count > 0 ? cash / count : null;
-    const averageInflationRate = count > 0 ? inflation / count : null;
+    const meanStockReturn = count > 0 ? stocks / count : null;
+    const meanBondReturn = count > 0 ? bonds / count : null;
+    const meanCashReturn = count > 0 ? cash / count : null;
+    const meanInflationRate = count > 0 ? inflation / count : null;
     const earlyRetirementStockReturn = yearsOfEarlyRetirement > 0 ? earlyRetirementStocks / yearsOfEarlyRetirement : null;
 
     return {
-      averageStockReturn,
-      averageBondReturn,
-      averageCashReturn,
-      averageInflationRate,
+      meanStockReturn,
+      meanBondReturn,
+      meanCashReturn,
+      meanInflationRate,
       minStockReturn,
       maxStockReturn,
       earlyRetirementStockReturn,

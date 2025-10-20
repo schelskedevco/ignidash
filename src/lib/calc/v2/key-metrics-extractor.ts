@@ -70,7 +70,7 @@ export class KeyMetricsExtractor {
       lifetimeTaxesAndPenalties,
       finalPortfolio,
       progressToRetirement,
-      areValuesAverages: false,
+      areValuesMeans: false,
     };
   }
 
@@ -79,7 +79,7 @@ export class KeyMetricsExtractor {
 
     const avgOrNull = (getter: (km: KeyMetrics) => number | null): number | null => {
       const values = keyMetricsList.map(getter).filter((v): v is number => v !== null);
-      const avg = StatsUtils.average(values);
+      const avg = StatsUtils.mean(values);
       return avg !== -1 ? avg : null;
     };
 
@@ -91,10 +91,10 @@ export class KeyMetricsExtractor {
       bankruptcyAge: avgOrNull((km) => km.bankruptcyAge),
       yearsToBankruptcy: avgOrNull((km) => km.yearsToBankruptcy),
       portfolioAtRetirement: avgOrNull((km) => km.portfolioAtRetirement),
-      lifetimeTaxesAndPenalties: StatsUtils.average(keyMetricsList.map((km) => km.lifetimeTaxesAndPenalties)),
-      finalPortfolio: StatsUtils.average(keyMetricsList.map((km) => km.finalPortfolio)),
+      lifetimeTaxesAndPenalties: StatsUtils.mean(keyMetricsList.map((km) => km.lifetimeTaxesAndPenalties)),
+      finalPortfolio: StatsUtils.mean(keyMetricsList.map((km) => km.finalPortfolio)),
       progressToRetirement: avgOrNull((km) => km.progressToRetirement),
-      areValuesAverages: true,
+      areValuesMeans: true,
     };
   }
 }

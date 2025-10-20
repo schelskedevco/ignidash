@@ -81,7 +81,7 @@ export default function SimulationCategorySelector({
     'finalPortfolioValue',
     'retirementAge',
     'bankruptcyAge',
-    'averageStockReturn',
+    'meanStockReturn',
     'earlyRetirementStockReturn',
   ] as const;
 

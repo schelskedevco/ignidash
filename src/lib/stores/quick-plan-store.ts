@@ -66,7 +66,7 @@ export type MonteCarloSortMode =
   | 'finalPortfolioValue'
   | 'retirementAge'
   | 'bankruptcyAge'
-  | 'averageStockReturn'
+  | 'meanStockReturn'
   | 'earlyRetirementStockReturn';
 
 export type QuickSelectPercentile = 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null;

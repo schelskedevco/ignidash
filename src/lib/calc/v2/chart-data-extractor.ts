@@ -290,7 +290,7 @@ export class ChartDataExtractor {
 
       res.push({
         age: currDateYear - startDateYear + startAge,
-        averageTotalPortfolioValue: StatsUtils.average(totalPortfolioValues),
+        meanTotalPortfolioValue: StatsUtils.mean(totalPortfolioValues),
         minTotalPortfolioValue: StatsUtils.minFromSorted(sortedValues),
         maxTotalPortfolioValue: StatsUtils.maxFromSorted(sortedValues),
         stdDevTotalPortfolioValue: StatsUtils.standardDeviation(totalPortfolioValues),
@@ -335,19 +335,19 @@ export class ChartDataExtractor {
     const chanceOfRetirement = sortedYearsToRetirement.length / milestonesData.length;
     const chanceOfBankruptcy = sortedYearsToBankruptcy.length / milestonesData.length;
 
-    const averageYearsToRetirement = StatsUtils.average(sortedYearsToRetirement);
+    const meanYearsToRetirement = StatsUtils.mean(sortedYearsToRetirement);
     const minYearsToRetirement = StatsUtils.minFromSorted(sortedYearsToRetirement);
     const maxYearsToRetirement = StatsUtils.maxFromSorted(sortedYearsToRetirement);
 
-    const averageRetirementAge = StatsUtils.average(sortedRetirementAge);
+    const meanRetirementAge = StatsUtils.mean(sortedRetirementAge);
     const minRetirementAge = StatsUtils.minFromSorted(sortedRetirementAge);
     const maxRetirementAge = StatsUtils.maxFromSorted(sortedRetirementAge);
 
-    const averageYearsToBankruptcy = StatsUtils.average(sortedYearsToBankruptcy);
+    const meanYearsToBankruptcy = StatsUtils.mean(sortedYearsToBankruptcy);
     const minYearsToBankruptcy = StatsUtils.minFromSorted(sortedYearsToBankruptcy);
     const maxYearsToBankruptcy = StatsUtils.maxFromSorted(sortedYearsToBankruptcy);
 
-    const averageBankruptcyAge = StatsUtils.average(sortedBankruptcyAge);
+    const meanBankruptcyAge = StatsUtils.mean(sortedBankruptcyAge);
     const minBankruptcyAge = StatsUtils.minFromSorted(sortedBankruptcyAge);
     const maxBankruptcyAge = StatsUtils.maxFromSorted(sortedBankruptcyAge);
 
@@ -371,16 +371,16 @@ export class ChartDataExtractor {
         numberBankrupt,
         chanceOfRetirement,
         chanceOfBankruptcy,
-        averageYearsToRetirement,
+        meanYearsToRetirement,
         minYearsToRetirement,
         maxYearsToRetirement,
-        averageYearsToBankruptcy,
+        meanYearsToBankruptcy,
         minYearsToBankruptcy,
         maxYearsToBankruptcy,
-        averageRetirementAge,
+        meanRetirementAge,
         minRetirementAge,
         maxRetirementAge,
-        averageBankruptcyAge,
+        meanBankruptcyAge,
         minBankruptcyAge,
         maxBankruptcyAge,
       });

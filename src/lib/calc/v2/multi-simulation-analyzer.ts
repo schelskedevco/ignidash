@@ -19,7 +19,7 @@ export class MultiSimulationAnalyzer {
       finalPortfolioValue: 0,
       retirementAge: 0,
       bankruptcyAge: 0,
-      averageStockReturn: 0,
+      meanStockReturn: 0,
       earlyRetirementStockReturn: 0,
     };
 
@@ -30,8 +30,8 @@ export class MultiSimulationAnalyzer {
         return { ...base, retirementAge: 1 };
       case 'bankruptcyAge':
         return { ...base, bankruptcyAge: 1 };
-      case 'averageStockReturn':
-        return { ...base, averageStockReturn: 1 };
+      case 'meanStockReturn':
+        return { ...base, meanStockReturn: 1 };
       case 'earlyRetirementStockReturn':
         return { ...base, earlyRetirementStockReturn: 1 };
     }
@@ -52,7 +52,7 @@ export class MultiSimulationAnalyzer {
     );
     const { min: minRetirementAge, range: retirementAgeRange } = StatsUtils.getRange(tableData, (row) => row.retirementAge);
     const { min: minBankruptcyAge, range: bankruptcyAgeRange } = StatsUtils.getRange(tableData, (row) => row.bankruptcyAge);
-    const { min: minAverageStockReturn, range: averageStockReturnRange } = StatsUtils.getRange(tableData, (row) => row.averageStockReturn);
+    const { min: minMeanStockReturn, range: meanStockReturnRange } = StatsUtils.getRange(tableData, (row) => row.meanStockReturn);
     const { min: minEarlyRetirementStockReturn, range: earlyRetirementStockReturnRange } = StatsUtils.getRange(
       tableData,
       (row) => row.earlyRetirementStockReturn
@@ -81,21 +81,11 @@ export class MultiSimulationAnalyzer {
       const normalizedBankruptcyAgeA = StatsUtils.normalize(bankruptcyAgeA, minBankruptcyAge, bankruptcyAgeRange, 1);
       const normalizedBankruptcyAgeB = StatsUtils.normalize(bankruptcyAgeB, minBankruptcyAge, bankruptcyAgeRange, 1);
 
-      const returnsA = SimulationDataExtractor.getAverageReturnsData(a[1], retirementAgeA);
-      const returnsB = SimulationDataExtractor.getAverageReturnsData(b[1], retirementAgeB);
+      const returnsA = SimulationDataExtractor.getMeanReturnsData(a[1], retirementAgeA);
+      const returnsB = SimulationDataExtractor.getMeanReturnsData(b[1], retirementAgeB);
 
-      const normalizedAverageStockReturnA = StatsUtils.normalize(
-        returnsA.averageStockReturn,
-        minAverageStockReturn,
-        averageStockReturnRange,
-        0
-      );
-      const normalizedAverageStockReturnB = StatsUtils.normalize(
-        returnsB.averageStockReturn,
-        minAverageStockReturn,
-        averageStockReturnRange,
-        0
-      );
+      const normalizedMeanStockReturnA = StatsUtils.normalize(returnsA.meanStockReturn, minMeanStockReturn, meanStockReturnRange, 0);
+      const normalizedMeanStockReturnB = StatsUtils.normalize(returnsB.meanStockReturn, minMeanStockReturn, meanStockReturnRange, 0);
 
       const normalizedEarlyRetirementStockReturnA = StatsUtils.normalize(
         returnsA.earlyRetirementStockReturn,
@@ -128,7 +118,7 @@ export class MultiSimulationAnalyzer {
         finalPortfolioValue: normalizedFinalPortfolioValueA,
         retirementAge: normalizedRetirementAgeA,
         bankruptcyAge: normalizedBankruptcyAgeA,
-        averageStockReturn: normalizedAverageStockReturnA,
+        meanStockReturn: normalizedMeanStockReturnA,
         earlyRetirementStockReturn: normalizedEarlyRetirementStockReturnA,
       };
 
@@ -136,7 +126,7 @@ export class MultiSimulationAnalyzer {
         finalPortfolioValue: normalizedFinalPortfolioValueB,
         retirementAge: normalizedRetirementAgeB,
         bankruptcyAge: normalizedBankruptcyAgeB,
-        averageStockReturn: normalizedAverageStockReturnB,
+        meanStockReturn: normalizedMeanStockReturnB,
         earlyRetirementStockReturn: normalizedEarlyRetirementStockReturnB,
       };
 

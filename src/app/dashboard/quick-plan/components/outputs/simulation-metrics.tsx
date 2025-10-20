@@ -90,7 +90,7 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
       </div>
     ) : null;
 
-  const metricName = (name: string) => (keyMetrics.areValuesAverages ? `Mean ${name}` : name);
+  const metricName = (name: string) => (keyMetrics.areValuesMeans ? `Mean ${name}` : name);
 
   return (
     <dl className="grid grid-cols-2 gap-2 2xl:grid-cols-3">

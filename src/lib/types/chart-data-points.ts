@@ -128,7 +128,7 @@ export interface MultiSimulationChartData {
 
 export interface MultiSimulationPortfolioChartDataPoint {
   age: number;
-  averageTotalPortfolioValue: number;
+  meanTotalPortfolioValue: number;
   minTotalPortfolioValue: number;
   maxTotalPortfolioValue: number;
   stdDevTotalPortfolioValue: number;
@@ -149,16 +149,16 @@ export interface MultiSimulationPhasesChartDataPoint {
   numberBankrupt: number;
   chanceOfRetirement: number;
   chanceOfBankruptcy: number;
-  averageYearsToRetirement: number;
+  meanYearsToRetirement: number;
   minYearsToRetirement: number;
   maxYearsToRetirement: number;
-  averageRetirementAge: number;
+  meanRetirementAge: number;
   minRetirementAge: number;
   maxRetirementAge: number;
-  averageYearsToBankruptcy: number;
+  meanYearsToBankruptcy: number;
   minYearsToBankruptcy: number;
   maxYearsToBankruptcy: number;
-  averageBankruptcyAge: number;
+  meanBankruptcyAge: number;
   minBankruptcyAge: number;
   maxBankruptcyAge: number;
 }
