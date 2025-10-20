@@ -249,7 +249,7 @@ export const demoInputs3: QuickPlanInputs = {
   incomes: {
     'income-1': {
       id: 'income-1',
-      name: 'current marketing job',
+      name: 'marketing job',
       amount: 75000,
       frequency: 'yearly',
       timeframe: { start: { type: 'now' }, end: { type: 'customDate', month: 6, year: 2026 } },
@@ -263,14 +263,14 @@ export const demoInputs3: QuickPlanInputs = {
     },
     'income-3': {
       id: 'income-3',
-      name: 'part-time work during school',
+      name: 'part-time work',
       amount: 15000,
       frequency: 'yearly',
       timeframe: { start: { type: 'customDate', month: 7, year: 2026 }, end: { type: 'customDate', month: 6, year: 2027 } },
     },
     'income-4': {
       id: 'income-4',
-      name: 'new UX designer salary',
+      name: 'UX designer salary',
       amount: 65000,
       frequency: 'yearly',
       timeframe: { start: { type: 'customDate', month: 7, year: 2027 }, end: { type: 'atRetirement' } },
@@ -303,15 +303,15 @@ export const demoInputs3: QuickPlanInputs = {
     },
     'expense-3': {
       id: 'expense-3',
-      name: 'certification and tools',
+      name: 'certification & tools',
       amount: 3000,
       frequency: 'oneTime',
       timeframe: { start: { type: 'customDate', month: 1, year: 2027 } },
     },
     'expense-4': {
       id: 'expense-4',
-      name: 'child',
-      amount: 12000,
+      name: 'child daycare',
+      amount: 15000,
       frequency: 'yearly',
       timeframe: { start: { type: 'now' }, end: { type: 'customAge', age: 50 } },
     },
