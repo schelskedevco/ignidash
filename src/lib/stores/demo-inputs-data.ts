@@ -331,7 +331,7 @@ export const demoInputs3: QuickPlanInputs = {
     'account-3': {
       type: 'rothIra',
       id: 'account-3',
-      name: 'spouse roth ira',
+      name: 'spouse roth',
       currentValue: 22000,
       contributionBasis: 15000,
       percentBonds: 25,
