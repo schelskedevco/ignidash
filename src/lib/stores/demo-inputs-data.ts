@@ -1,0 +1,111 @@
+import type { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
+
+export const demoInputs1: QuickPlanInputs = {
+  timeline: {
+    id: 'demo-timeline',
+    name: 'Demo Timeline',
+    lifeExpectancy: 82,
+    currentAge: 31,
+    retirementStrategy: { safeWithdrawalRate: 4, type: 'swrTarget' },
+  },
+  incomes: {
+    'income-1': {
+      id: 'income-1',
+      name: 'software engineer salary',
+      amount: 87500,
+      frequency: 'yearly',
+      timeframe: { start: { type: 'now' }, end: { type: 'atRetirement' } },
+      growth: { growthRate: 3, growthLimit: 200000 },
+    },
+    'income-2': {
+      id: 'income-2',
+      name: 'freelance work',
+      amount: 12000,
+      frequency: 'yearly',
+      timeframe: { start: { type: 'now' }, end: { type: 'atRetirement' } },
+      growth: { growthRate: 2, growthLimit: 50000 },
+    },
+  },
+  expenses: {
+    'expense-1': {
+      id: 'expense-1',
+      name: 'living expenses',
+      amount: 55000,
+      frequency: 'yearly',
+      timeframe: { start: { type: 'now' } },
+      growth: { growthRate: 3, growthLimit: 80000 },
+    },
+    'expense-2': {
+      id: 'expense-2',
+      name: 'vacations',
+      amount: 5000,
+      frequency: 'yearly',
+      timeframe: { start: { type: 'now' }, end: { type: 'atRetirement' } },
+    },
+  },
+  accounts: {
+    'account-1': {
+      type: '401k',
+      id: 'account-1',
+      name: 'fidelity 401k',
+      currentValue: 60000,
+      percentBonds: 25,
+    },
+    'account-2': {
+      type: 'rothIra',
+      id: 'account-2',
+      name: 'vanguard roth ira',
+      currentValue: 30000,
+      contributionBasis: 15000,
+      percentBonds: 20,
+    },
+    'account-3': {
+      type: 'taxableBrokerage',
+      id: 'account-3',
+      name: 'schwab brokerage',
+      currentValue: 20000,
+      costBasis: 12000,
+      percentBonds: 10,
+    },
+    'account-4': {
+      type: 'savings',
+      id: 'account-4',
+      name: 'emergency fund',
+      currentValue: 10000,
+    },
+  },
+  contributionRules: {
+    'contribution-rule-1': {
+      id: 'contribution-rule-1',
+      accountId: 'account-1',
+      rank: 1,
+      contributionType: 'dollarAmount',
+      dollarAmount: 11750,
+      incomeIds: ['income-1'],
+    },
+    'contribution-rule-2': {
+      id: 'contribution-rule-2',
+      accountId: 'account-2',
+      rank: 2,
+      contributionType: 'dollarAmount',
+      dollarAmount: 3500,
+      incomeIds: ['income-1', 'income-2'],
+    },
+    'contribution-rule-3': {
+      id: 'contribution-rule-3',
+      accountId: 'account-3',
+      rank: 3,
+      contributionType: 'percentRemaining',
+      percentRemaining: 50,
+    },
+    'contribution-rule-4': {
+      id: 'contribution-rule-4',
+      accountId: 'account-4',
+      rank: 4,
+      contributionType: 'unlimited',
+      maxValue: 30000,
+    },
+  },
+  baseContributionRule: { type: 'save' },
+  marketAssumptions: { stockReturn: 10, stockYield: 3.5, bondReturn: 5, bondYield: 4.5, cashReturn: 3, inflationRate: 3 },
+};
