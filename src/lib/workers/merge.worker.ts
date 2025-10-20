@@ -54,7 +54,7 @@ const mergeAPI = {
     const analyzer = new MultiSimulationAnalyzer();
     const analysis = analyzer.analyze(res, sortMode);
 
-    const keyMetrics = KeyMetricsExtractor.extractMultiSimulation(res, 'average');
+    const keyMetrics = KeyMetricsExtractor.extractMultiSimulation(res);
 
     const tableExtractor = new TableDataExtractor();
     const tableData = tableExtractor.extractMultiSimulationData(res, category);
