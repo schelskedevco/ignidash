@@ -581,6 +581,8 @@ export const useKeyMetrics = (simulationResult: SimulationResult | null | undefi
     let retirementAge: number | null = null;
     let yearsToRetirement: number | null = null;
 
+    const { bankruptcyAge, yearsToBankruptcy } = SimulationDataExtractor.getMilestonesData(data, startAge);
+
     let portfolioAtRetirement: number | null = null;
     let progressToRetirement: number | null = null;
 
@@ -624,6 +626,8 @@ export const useKeyMetrics = (simulationResult: SimulationResult | null | undefi
       startAge,
       retirementAge,
       yearsToRetirement,
+      bankruptcyAge,
+      yearsToBankruptcy,
       portfolioAtRetirement,
       finalPortfolio,
       progressToRetirement,
