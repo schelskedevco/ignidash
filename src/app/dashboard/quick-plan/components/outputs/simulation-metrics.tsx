@@ -99,8 +99,16 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
         statClassName={cn('ring-black dark:ring-white ring px-1 text-black dark:text-white', successColor)}
       />
       <MetricsCard name="Progress to Retirement" stat={progressToRetirementForDisplay} className="col-span-2" statWidget={progressWidget} />
-      <MetricsCard name="Retirement Age" stat={retirementAgeForDisplay} statContext={` (in ${yearsToRetirementForDisplay} years)`} />
-      <MetricsCard name="Bankruptcy Age" stat={bankruptcyAgeForDisplay} statContext={` (in ${yearsToBankruptcyForDisplay} years)`} />
+      <MetricsCard
+        name="Retirement Age"
+        stat={retirementAgeForDisplay}
+        statContext={yearsToRetirementForDisplay !== '∞' ? ` (in ${yearsToRetirementForDisplay} years)` : undefined}
+      />
+      <MetricsCard
+        name="Bankruptcy Age"
+        stat={bankruptcyAgeForDisplay}
+        statContext={yearsToBankruptcyForDisplay !== '∞' ? ` (in ${yearsToBankruptcyForDisplay} years)` : undefined}
+      />
       <MetricsCard name="Lifetime Taxes" stat={lifetimeTaxesAndPenaltiesForDisplay} className="hidden 2xl:block" />
       <MetricsCard name="Retirement Portfolio" stat={portfolioAtRetirementForDisplay} className="2xl:col-span-2" />
       <MetricsCard name="Final Portfolio" stat={finalPortfolioForDisplay} />
