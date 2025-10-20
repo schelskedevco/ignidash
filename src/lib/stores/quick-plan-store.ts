@@ -135,16 +135,18 @@ interface QuickPlanState {
   };
 }
 
+export const defaultInputs: QuickPlanInputs = {
+  timeline: undefined,
+  incomes: {},
+  expenses: {},
+  accounts: {},
+  contributionRules: {},
+  baseContributionRule: { type: 'save' },
+  marketAssumptions: { stockReturn: 10, stockYield: 3.5, bondReturn: 5, bondYield: 4.5, cashReturn: 3, inflationRate: 3 },
+};
+
 export const defaultState: Omit<QuickPlanState, 'actions'> = {
-  inputs: {
-    timeline: undefined,
-    incomes: {},
-    expenses: {},
-    accounts: {},
-    contributionRules: {},
-    baseContributionRule: { type: 'save' },
-    marketAssumptions: { stockReturn: 10, stockYield: 3.5, bondReturn: 5, bondYield: 4.5, cashReturn: 3, inflationRate: 3 },
-  },
+  inputs: defaultInputs,
   results: {
     quickSelectPercentile: 'p50',
     selectedSeedFromTable: null,
