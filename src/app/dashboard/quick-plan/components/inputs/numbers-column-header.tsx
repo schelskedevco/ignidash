@@ -6,7 +6,7 @@ import { CalculatorIcon, TrendingUpIcon, BanknoteXIcon, HourglassIcon } from 'lu
 import IconButton from '@/components/ui/icon-button';
 import Drawer from '@/components/ui/drawer';
 import ColumnHeader from '@/components/ui/column-header';
-import { demoInputs2 } from '@/lib/stores/demo-inputs-data';
+import { demoInputs3 } from '@/lib/stores/demo-inputs-data';
 import { useUpdateInputs } from '@/lib/stores/quick-plan-store';
 
 import ExpectedReturnsDrawer from './drawers/expected-returns-drawer';
@@ -39,7 +39,7 @@ export default function NumbersColumnHeader() {
 
   const updateInputs = useUpdateInputs();
   useEffect(() => {
-    updateInputs(demoInputs2);
+    updateInputs(demoInputs3);
   }, [updateInputs]);
 
   return (

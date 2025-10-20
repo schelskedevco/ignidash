@@ -115,7 +115,7 @@ export const demoInputs2: QuickPlanInputs = {
   timeline: {
     id: 'fire-timeline',
     name: 'FIRE Timeline',
-    lifeExpectancy: 85,
+    lifeExpectancy: 87,
     currentAge: 28,
     retirementStrategy: { safeWithdrawalRate: 3.5, type: 'swrTarget' },
   },
@@ -239,7 +239,7 @@ export const demoInputs3: QuickPlanInputs = {
   timeline: {
     id: 'career-change-timeline',
     name: 'Career Change Timeline',
-    lifeExpectancy: 85,
+    lifeExpectancy: 77,
     currentAge: 38,
     retirementStrategy: { safeWithdrawalRate: 4, type: 'swrTarget' },
   },
@@ -391,7 +391,7 @@ export const demoInputs5: QuickPlanInputs = {
   timeline: {
     id: 'high-income-timeline',
     name: 'High Income Timeline',
-    lifeExpectancy: 92,
+    lifeExpectancy: 83,
     currentAge: 35,
     retirementStrategy: { safeWithdrawalRate: 4, type: 'swrTarget' },
   },
