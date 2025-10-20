@@ -1,6 +1,6 @@
 'use client';
 
-import { ArmchairIcon, TriangleAlertIcon, ReceiptIcon, PiggyBankIcon, SunsetIcon } from 'lucide-react';
+import { UmbrellaIcon, TriangleAlertIcon, BanknoteXIcon, PiggyBankIcon, SunsetIcon } from 'lucide-react';
 
 import { cn, formatNumber } from '@/lib/utils';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
@@ -99,7 +99,7 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
         statClassName={cn('ring-black dark:ring-white ring px-1 text-black dark:text-white', successColor)}
       />
       <MetricsCard name="Progress to Retirement" stat={progressToRetirementForDisplay} className="col-span-2" statWidget={progressWidget} />
-      <MetricsCard name="Retirement Age" stat={retirementAgeForDisplay} statWidget={<ArmchairIcon className="text-primary h-8 w-8" />} />
+      <MetricsCard name="Retirement Age" stat={retirementAgeForDisplay} statWidget={<UmbrellaIcon className="text-primary h-8 w-8" />} />
       <MetricsCard
         name="Bankruptcy Age"
         stat={bankruptcyAgeForDisplay}
@@ -109,7 +109,7 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
         name="Lifetime Taxes"
         stat={lifetimeTaxesAndPenaltiesForDisplay}
         className="hidden 2xl:block"
-        statWidget={<ReceiptIcon className="text-primary h-8 w-8" />}
+        statWidget={<BanknoteXIcon className="text-primary h-8 w-8" />}
       />
       <MetricsCard
         name="Retirement Portfolio"
