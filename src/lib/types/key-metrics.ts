@@ -6,6 +6,7 @@ export interface KeyMetrics {
   bankruptcyAge: number | null;
   yearsToBankruptcy: number | null;
   portfolioAtRetirement: number | null;
+  lifetimeTaxesAndPenalties: number;
   finalPortfolio: number;
   progressToRetirement: number | null;
 }

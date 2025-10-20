@@ -365,22 +365,8 @@ export class TableDataExtractor {
       const finalPhaseName = lastDp.phase?.name ?? null;
       const formattedFinalPhaseName = finalPhaseName !== null ? finalPhaseName.charAt(0).toUpperCase() + finalPhaseName.slice(1) : null;
 
-      const { lifetimeIncomeTaxes, lifetimeCapGainsTaxes, lifetimeEarlyWithdrawalPenalties } = data.reduce(
-        (acc, dp) => {
-          const incomeTax = dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0;
-          const capGainsTax = dp.taxes?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
-          const earlyWithdrawalPenalty = dp.taxes?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
-
-          return {
-            lifetimeIncomeTaxes: acc.lifetimeIncomeTaxes + incomeTax,
-            lifetimeCapGainsTaxes: acc.lifetimeCapGainsTaxes + capGainsTax,
-            lifetimeEarlyWithdrawalPenalties: acc.lifetimeEarlyWithdrawalPenalties + earlyWithdrawalPenalty,
-          };
-        },
-        { lifetimeIncomeTaxes: 0, lifetimeCapGainsTaxes: 0, lifetimeEarlyWithdrawalPenalties: 0 }
-      );
-
-      const lifetimeTaxesAndPenalties = lifetimeIncomeTaxes + lifetimeCapGainsTaxes + lifetimeEarlyWithdrawalPenalties;
+      const { lifetimeIncomeTaxes, lifetimeCapGainsTaxes, lifetimeEarlyWithdrawalPenalties, lifetimeTaxesAndPenalties } =
+        SimulationDataExtractor.getLifetimeTaxesAndPenalties(data);
 
       return {
         seed,

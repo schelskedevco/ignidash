@@ -73,6 +73,13 @@ export interface TaxableIncomeSources {
   grossCapGains: number;
 }
 
+export interface LifetimeTaxAmounts {
+  lifetimeIncomeTaxes: number;
+  lifetimeCapGainsTaxes: number;
+  lifetimeEarlyWithdrawalPenalties: number;
+  lifetimeTaxesAndPenalties: number;
+}
+
 export interface PercentInPhaseForYear {
   percentAccumulation: number;
   numberAccumulation: number;
@@ -380,6 +387,27 @@ export class SimulationDataExtractor {
       grossOrdinaryIncome,
       grossCapGains,
     };
+  }
+
+  static getLifetimeTaxesAndPenalties(data: SimulationDataPoint[]): LifetimeTaxAmounts {
+    const { lifetimeIncomeTaxes, lifetimeCapGainsTaxes, lifetimeEarlyWithdrawalPenalties } = data.reduce(
+      (acc, dp) => {
+        const incomeTax = dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0;
+        const capGainsTax = dp.taxes?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+        const earlyWithdrawalPenalty = dp.taxes?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
+
+        return {
+          lifetimeIncomeTaxes: acc.lifetimeIncomeTaxes + incomeTax,
+          lifetimeCapGainsTaxes: acc.lifetimeCapGainsTaxes + capGainsTax,
+          lifetimeEarlyWithdrawalPenalties: acc.lifetimeEarlyWithdrawalPenalties + earlyWithdrawalPenalty,
+        };
+      },
+      { lifetimeIncomeTaxes: 0, lifetimeCapGainsTaxes: 0, lifetimeEarlyWithdrawalPenalties: 0 }
+    );
+
+    const lifetimeTaxesAndPenalties = lifetimeIncomeTaxes + lifetimeCapGainsTaxes + lifetimeEarlyWithdrawalPenalties;
+
+    return { lifetimeIncomeTaxes, lifetimeCapGainsTaxes, lifetimeEarlyWithdrawalPenalties, lifetimeTaxesAndPenalties };
   }
 
   static getSavingsRate(dp: SimulationDataPoint): number | null {

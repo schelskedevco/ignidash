@@ -621,6 +621,8 @@ export const useKeyMetrics = (simulationResult: SimulationResult | null | undefi
 
     const success = Number(retirementAge !== null && finalPortfolio > 0.1);
 
+    const { lifetimeTaxesAndPenalties } = SimulationDataExtractor.getLifetimeTaxesAndPenalties(data);
+
     return {
       success,
       startAge,
@@ -629,6 +631,7 @@ export const useKeyMetrics = (simulationResult: SimulationResult | null | undefi
       bankruptcyAge,
       yearsToBankruptcy,
       portfolioAtRetirement,
+      lifetimeTaxesAndPenalties,
       finalPortfolio,
       progressToRetirement,
     };
