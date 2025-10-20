@@ -52,9 +52,9 @@ const formatMetrics = (keyMetrics: KeyMetrics) => {
 const getSuccessColor = (success: number): string => {
   if (success >= 0.8) return 'fill-green-400';
   if (success >= 0.6) return 'fill-blue-500 dark:fill-blue-400';
-  if (success >= 0.4) return 'fill-yellow-500 dark:fill-yellow-400';
-  if (success >= 0.2) return 'fill-orange-500 dark:fill-orange-400';
-  return 'fill-red-500 dark:fill-red-400';
+  if (success >= 0.4) return 'fill-yellow-400';
+  if (success >= 0.2) return 'fill-orange-400';
+  return 'fill-red-500';
 };
 
 export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps) {
