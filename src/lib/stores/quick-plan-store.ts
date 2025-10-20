@@ -16,6 +16,7 @@ import { StochasticReturnsProvider } from '@/lib/calc/returns-providers/stochast
 import { LcgHistoricalBacktestReturnsProvider } from '@/lib/calc/returns-providers/lcg-historical-backtest-returns-provider';
 import { ChartDataExtractor } from '@/lib/calc/v2/chart-data-extractor';
 import { TableDataExtractor } from '@/lib/calc/v2/table-data-extractor';
+import { SimulationDataExtractor } from '@/lib/utils/simulation-data-extractor';
 import { createWorkerPool, releaseWorkerPool } from '@/lib/workers/simulation-worker-api';
 import { getMergeWorker } from '@/lib/workers/merge-worker-api';
 import type {
@@ -577,8 +578,9 @@ export const useKeyMetrics = (simulationResult: SimulationResult | null | undefi
     const initialPortfolio = data[0].portfolio.totalValue;
     const finalPortfolio = data[data.length - 1].portfolio.totalValue;
 
-    let yearsToRetirement: number | null = null;
     let retirementAge: number | null = null;
+    let yearsToRetirement: number | null = null;
+
     let portfolioAtRetirement: number | null = null;
     let progressToRetirement: number | null = null;
 
@@ -602,10 +604,8 @@ export const useKeyMetrics = (simulationResult: SimulationResult | null | undefi
         for (const dp of data) {
           const phase = dp.phase;
           if (phase?.name === 'retirement') {
-            const retirementDate = new Date(dp.date);
+            ({ retirementAge, yearsToRetirement } = SimulationDataExtractor.getMilestonesData(data, startAge));
 
-            yearsToRetirement = retirementDate.getFullYear() - new Date().getFullYear();
-            retirementAge = startAge + yearsToRetirement;
             portfolioAtRetirement = dp.portfolio.totalValue;
             break;
           }
