@@ -82,8 +82,8 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
       <MetricsCard name="Retirement Age" stat={retirementAgeForDisplay} statContext={` (in ${yearsToRetirementForDisplay} years)`} />
       <MetricsCard name="Bankruptcy Age" stat={bankruptcyAgeForDisplay} statContext={` (in ${yearsToBankruptcyForDisplay} years)`} />
       <MetricsCard name="Lifetime Taxes" stat={lifetimeTaxesAndPenaltiesForDisplay} />
-      <MetricsCard name="Retirement Portfolio" stat={portfolioAtRetirementForDisplay} className="col-span-2" />
-      <MetricsCard name="Final Portfolio" stat={finalPortfolioForDisplay} className="col-span-2 2xl:col-span-1" />
+      <MetricsCard name="Retirement Portfolio" stat={portfolioAtRetirementForDisplay} className="2xl:col-span-2" />
+      <MetricsCard name="Final Portfolio" stat={finalPortfolioForDisplay} />
     </dl>
   );
 }
