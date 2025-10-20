@@ -8,7 +8,7 @@ import { formatNumber } from '@/lib/utils';
 import Card from '@/components/ui/card';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import { Subheading } from '@/components/catalyst/heading';
-import { SimulationDataExtractor } from '@/lib/utils/simulation-data-extractor';
+import { SimulationDataExtractor } from '@/lib/calc/v2/data-extractors/simulation-data-extractor';
 import { useResultsCategory } from '@/lib/stores/quick-plan-store';
 
 interface DataListCardProps {

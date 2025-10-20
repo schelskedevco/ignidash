@@ -1,10 +1,10 @@
 import { SimulationCategory } from '@/lib/types/simulation-category';
-import { SimulationDataExtractor } from '@/lib/utils/simulation-data-extractor';
+import { SimulationDataExtractor } from '@/lib/calc/v2/data-extractors/simulation-data-extractor';
 import { type Percentiles, StatsUtils } from '@/lib/utils/stats-utils';
 import type { MonteCarloSortMode } from '@/lib/stores/quick-plan-store';
 
 import type { MultiSimulationResult, SimulationResult } from './simulation-engine';
-import { TableDataExtractor } from './table-data-extractor';
+import { TableDataExtractor } from './data-extractors/table-data-extractor';
 
 export interface MultiSimulationAnalysis {
   success: number;

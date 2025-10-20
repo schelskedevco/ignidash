@@ -1,8 +1,8 @@
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { SimulationDataExtractor } from '@/lib/utils/simulation-data-extractor';
+import { SimulationDataExtractor } from '@/lib/calc/v2/data-extractors/simulation-data-extractor';
 import { StatsUtils } from '@/lib/utils/stats-utils';
 
-import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
+import type { SimulationResult, MultiSimulationResult } from '../simulation-engine';
 
 export abstract class KeyMetricsExtractor {
   static extractSingleSimulationMetrics(simulation: SimulationResult): KeyMetrics {

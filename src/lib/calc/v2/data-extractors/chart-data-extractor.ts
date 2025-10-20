@@ -8,10 +8,10 @@ import type {
   MultiSimulationPortfolioChartDataPoint,
   MultiSimulationPhasesChartDataPoint,
 } from '@/lib/types/chart-data-points';
-import { SimulationDataExtractor } from '@/lib/utils/simulation-data-extractor';
+import { SimulationDataExtractor } from '@/lib/calc/v2/data-extractors/simulation-data-extractor';
 import { type Percentiles, StatsUtils } from '@/lib/utils/stats-utils';
 
-import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
+import type { SimulationResult, MultiSimulationResult } from '../simulation-engine';
 
 export abstract class ChartDataExtractor {
   // ================================
