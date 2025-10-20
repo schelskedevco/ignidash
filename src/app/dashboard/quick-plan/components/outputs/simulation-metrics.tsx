@@ -76,8 +76,8 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
   const successColor = getSuccessColor(keyMetrics.success);
 
   const successWidget = (
-    <svg viewBox="0 0 12 12" aria-hidden="true" className={cn('inline size-12 shrink-0', successColor)}>
-      <rect x={1} y={1} width={10} height={10} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
+    <svg viewBox="0 0 6 6" aria-hidden="true" className={cn('inline size-6 shrink-0', successColor)}>
+      <rect x={0.5} y={0.5} width={5} height={5} stroke={legendStrokeColor} strokeWidth={0.5} paintOrder="stroke" />
     </svg>
   );
 
