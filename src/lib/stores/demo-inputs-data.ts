@@ -426,8 +426,8 @@ export const demoInputs4: QuickPlanInputs = {
     'income-4': {
       id: 'income-4',
       name: 'rental property income',
-      amount: 24000,
-      frequency: 'yearly',
+      amount: 2000,
+      frequency: 'monthly',
       timeframe: { start: { type: 'now' }, end: { type: 'atLifeExpectancy' } },
       growth: { growthRate: 3 },
     },
@@ -444,8 +444,8 @@ export const demoInputs4: QuickPlanInputs = {
     'expense-2': {
       id: 'expense-2',
       name: 'mortgage primary residence',
-      amount: 60000,
-      frequency: 'yearly',
+      amount: 5000,
+      frequency: 'monthly',
       timeframe: { start: { type: 'now' }, end: { type: 'customAge', age: 50 } },
     },
     'expense-3': {
@@ -469,7 +469,7 @@ export const demoInputs4: QuickPlanInputs = {
       amount: 30000,
       frequency: 'yearly',
       timeframe: { start: { type: 'customAge', age: 45 }, end: { type: 'atLifeExpectancy' } },
-      growth: { growthRate: 3 },
+      growth: { growthRate: 5 },
     },
   },
   accounts: {
@@ -490,7 +490,7 @@ export const demoInputs4: QuickPlanInputs = {
     'account-3': {
       type: 'ira',
       id: 'account-3',
-      name: 'backdoor roth conversions',
+      name: 'roth',
       currentValue: 95000,
       percentBonds: 15,
     },
