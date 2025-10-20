@@ -133,6 +133,7 @@ export const demoInputs2: QuickPlanInputs = {
       amount: 35000,
       frequency: 'yearly',
       timeframe: { start: { type: 'now' }, end: { type: 'customAge', age: 35 } },
+      growth: { growthRate: 10 },
     },
     'income-3': {
       id: 'income-3',
@@ -198,7 +199,7 @@ export const demoInputs2: QuickPlanInputs = {
       id: 'account-4',
       name: 'fidelity hsa',
       currentValue: 15000,
-      percentBonds: 0,
+      percentBonds: 10,
     },
   },
   contributionRules: {
@@ -206,17 +207,15 @@ export const demoInputs2: QuickPlanInputs = {
       id: 'contribution-rule-1',
       accountId: 'account-1',
       rank: 1,
-      contributionType: 'dollarAmount',
-      dollarAmount: 23500,
+      contributionType: 'unlimited',
       incomeIds: ['income-1'],
     },
     'contribution-rule-2': {
       id: 'contribution-rule-2',
       accountId: 'account-2',
       rank: 2,
-      contributionType: 'dollarAmount',
-      dollarAmount: 7000,
-      incomeIds: ['income-1'],
+      contributionType: 'unlimited',
+      incomeIds: ['income-1', 'income-2', 'income-3'],
     },
     'contribution-rule-3': {
       id: 'contribution-rule-3',
