@@ -71,7 +71,7 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
   const successColor = getSuccessColor(keyMetrics.success);
 
   return (
-    <dl className="grid grid-cols-2 grid-rows-4 gap-2 2xl:grid-cols-3 2xl:grid-rows-3">
+    <dl className="grid grid-cols-2 gap-2 2xl:grid-cols-3">
       <MetricsCard
         name="Success"
         stat={successForDisplay}
