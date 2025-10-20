@@ -73,7 +73,7 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
   const progressToRetirement = keyMetrics.progressToRetirement;
   const progressWidget =
     progressToRetirement !== null ? (
-      <div className="relative h-8 w-8">
+      <div className="relative h-10 w-10">
         <svg className="h-full w-full -rotate-90" viewBox="0 0 36 36">
           <circle cx="18" cy="18" r="15.5" fill="none" className="stroke-primary/20" strokeWidth="6" />
           <circle
@@ -99,25 +99,25 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
         statClassName={cn('ring-black dark:ring-white ring px-1 text-black dark:text-white', successColor)}
       />
       <MetricsCard name="Progress to Retirement" stat={progressToRetirementForDisplay} className="col-span-2" statWidget={progressWidget} />
-      <MetricsCard name="Retirement Age" stat={retirementAgeForDisplay} statWidget={<UmbrellaIcon className="text-primary h-8 w-8" />} />
+      <MetricsCard name="Retirement Age" stat={retirementAgeForDisplay} statWidget={<UmbrellaIcon className="text-primary h-10 w-10" />} />
       <MetricsCard
         name="Bankruptcy Age"
         stat={bankruptcyAgeForDisplay}
-        statWidget={<TriangleAlertIcon className="text-primary h-8 w-8" />}
+        statWidget={<TriangleAlertIcon className="text-primary h-10 w-10" />}
       />
       <MetricsCard
         name="Lifetime Taxes"
         stat={lifetimeTaxesAndPenaltiesForDisplay}
         className="hidden 2xl:block"
-        statWidget={<BanknoteXIcon className="text-primary h-8 w-8" />}
+        statWidget={<BanknoteXIcon className="text-primary h-10 w-10" />}
       />
       <MetricsCard
         name="Retirement Portfolio"
         stat={portfolioAtRetirementForDisplay}
         className="2xl:col-span-2"
-        statWidget={<PiggyBankIcon className="text-primary h-8 w-8" />}
+        statWidget={<PiggyBankIcon className="text-primary h-10 w-10" />}
       />
-      <MetricsCard name="Final Portfolio" stat={finalPortfolioForDisplay} statWidget={<SunsetIcon className="text-primary h-8 w-8" />} />
+      <MetricsCard name="Final Portfolio" stat={finalPortfolioForDisplay} statWidget={<SunsetIcon className="text-primary h-10 w-10" />} />
     </dl>
   );
 }
