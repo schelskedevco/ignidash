@@ -10,24 +10,40 @@ interface SimulationMetricsProps {
 }
 
 const formatMetrics = (keyMetrics: KeyMetrics) => {
-  const { success, retirementAge, yearsToRetirement, portfolioAtRetirement, finalPortfolio, progressToRetirement } = keyMetrics;
+  const {
+    success,
+    retirementAge,
+    yearsToRetirement,
+    bankruptcyAge,
+    yearsToBankruptcy,
+    portfolioAtRetirement,
+    lifetimeTaxesAndPenalties,
+    finalPortfolio,
+    progressToRetirement,
+  } = keyMetrics;
 
   const formatters = {
     success: (v: number) => (v >= 0.99 ? 'Yes!' : v <= 0.01 ? 'No' : `${formatNumber(v * 100, 1)}%`),
-    progressToRetirement: (v: number | null) => (v !== null ? `${formatNumber(v * 100, 1)}%` : 'N/A'),
     retirementAge: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
     yearsToRetirement: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
+    bankruptcyAge: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
+    yearsToBankruptcy: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
     portfolioAtRetirement: (v: number | null) => (v !== null ? `${formatNumber(v, 2, '$')}` : 'N/A'),
+    lifetimeTaxesAndPenalties: (v: number) => `${formatNumber(v, 2, '$')}`,
     finalPortfolio: (v: number) => `${formatNumber(v, 2, '$')}`,
+    progressToRetirement: (v: number | null) => (v !== null ? `${formatNumber(v * 100, 1)}%` : 'N/A'),
   };
 
   return {
     successForDisplay: formatters.success(success),
-    progressToRetirementForDisplay: formatters.progressToRetirement(progressToRetirement),
     retirementAgeForDisplay: formatters.retirementAge(retirementAge),
     yearsToRetirementForDisplay: formatters.yearsToRetirement(yearsToRetirement),
+    bankruptcyAgeForDisplay: formatters.bankruptcyAge(bankruptcyAge),
+    yearsToBankruptcyForDisplay: formatters.yearsToBankruptcy(yearsToBankruptcy),
     portfolioAtRetirementForDisplay: formatters.portfolioAtRetirement(portfolioAtRetirement),
+    lifetimeTaxesAndPenaltiesForDisplay: formatters.lifetimeTaxesAndPenalties(lifetimeTaxesAndPenalties),
     finalPortfolioForDisplay: formatters.finalPortfolio(finalPortfolio),
+    progressToRetirementForDisplay: formatters.progressToRetirement(progressToRetirement),
   };
 };
 
