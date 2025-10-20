@@ -13,7 +13,7 @@ export interface MultiSimulationAnalysis {
 
 type NormalizedValues = Record<MonteCarloSortMode, number>;
 
-export class MultiSimulationAnalyzer {
+export abstract class MultiSimulationAnalyzer {
   private static buildWeights(sortMode: MonteCarloSortMode) {
     const base: Record<MonteCarloSortMode, number> = {
       finalPortfolioValue: 0,
@@ -37,14 +37,13 @@ export class MultiSimulationAnalyzer {
     }
   }
 
-  analyze(multiSimulationResult: MultiSimulationResult, sortMode: MonteCarloSortMode): MultiSimulationAnalysis {
+  static analyze(multiSimulationResult: MultiSimulationResult, sortMode: MonteCarloSortMode): MultiSimulationAnalysis {
     const simulations = multiSimulationResult.simulations;
 
     const numDataPoints = simulations[0][1]?.data.length;
     if (!numDataPoints) throw new Error('No data points in simulations');
 
-    const extractor = new TableDataExtractor();
-    const tableData = extractor.extractMultiSimulationData(multiSimulationResult, SimulationCategory.Portfolio);
+    const tableData = TableDataExtractor.extractMultiSimulationData(multiSimulationResult, SimulationCategory.Portfolio);
 
     const { min: minFinalPortfolioValue, range: finalPortfolioValueRange } = StatsUtils.getRange(
       tableData,
@@ -58,7 +57,7 @@ export class MultiSimulationAnalyzer {
       (row) => row.earlyRetirementStockReturn
     );
 
-    const weights = MultiSimulationAnalyzer.buildWeights(sortMode);
+    const weights = this.buildWeights(sortMode);
 
     const sortedSimulations = [...simulations].sort((a, b) => {
       const {
@@ -147,7 +146,7 @@ export class MultiSimulationAnalyzer {
     return { success: successCount / simulations.length, results };
   }
 
-  private calculateScore(values: NormalizedValues, weights: Record<MonteCarloSortMode, number>): number {
+  private static calculateScore(values: NormalizedValues, weights: Record<MonteCarloSortMode, number>): number {
     return (Object.keys(weights) as MonteCarloSortMode[]).reduce((sum, key) => sum + weights[key] * values[key], 0);
   }
 }

@@ -4,7 +4,7 @@ import { StatsUtils } from '@/lib/utils/stats-utils';
 
 import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
 
-export class KeyMetricsExtractor {
+export abstract class KeyMetricsExtractor {
   static extractSingleSimulation(simulation: SimulationResult): KeyMetrics {
     const { data, context } = simulation;
 

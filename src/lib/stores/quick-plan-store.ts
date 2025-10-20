@@ -589,43 +589,37 @@ export const useKeyMetrics = (simulationResult: SimulationResult | null | undefi
  */
 export const useSingleSimulationPortfolioChartData = (simulation: SimulationResult): SingleSimulationPortfolioChartDataPoint[] => {
   return useMemo(() => {
-    const extractor = new ChartDataExtractor();
-    return extractor.extractSingleSimulationPortfolioChartData(simulation);
+    return ChartDataExtractor.extractSingleSimulationPortfolioChartData(simulation);
   }, [simulation]);
 };
 
 export const useSingleSimulationCashFlowChartData = (simulation: SimulationResult): SingleSimulationCashFlowChartDataPoint[] => {
   return useMemo(() => {
-    const extractor = new ChartDataExtractor();
-    return extractor.extractSingleSimulationCashFlowChartData(simulation);
+    return ChartDataExtractor.extractSingleSimulationCashFlowChartData(simulation);
   }, [simulation]);
 };
 
 export const useSingleSimulationTaxesChartData = (simulation: SimulationResult): SingleSimulationTaxesChartDataPoint[] => {
   return useMemo(() => {
-    const extractor = new ChartDataExtractor();
-    return extractor.extractSingleSimulationTaxesChartData(simulation);
+    return ChartDataExtractor.extractSingleSimulationTaxesChartData(simulation);
   }, [simulation]);
 };
 
 export const useSingleSimulationReturnsChartData = (simulation: SimulationResult): SingleSimulationReturnsChartDataPoint[] => {
   return useMemo(() => {
-    const extractor = new ChartDataExtractor();
-    return extractor.extractSingleSimulationReturnsChartData(simulation);
+    return ChartDataExtractor.extractSingleSimulationReturnsChartData(simulation);
   }, [simulation]);
 };
 
 export const useSingleSimulationContributionsChartData = (simulation: SimulationResult): SingleSimulationContributionsChartDataPoint[] => {
   return useMemo(() => {
-    const extractor = new ChartDataExtractor();
-    return extractor.extractSingleSimulationContributionsChartData(simulation);
+    return ChartDataExtractor.extractSingleSimulationContributionsChartData(simulation);
   }, [simulation]);
 };
 
 export const useSingleSimulationWithdrawalsChartData = (simulation: SimulationResult): SingleSimulationWithdrawalsChartDataPoint[] => {
   return useMemo(() => {
-    const extractor = new ChartDataExtractor();
-    return extractor.extractSingleSimulationWithdrawalsChartData(simulation);
+    return ChartDataExtractor.extractSingleSimulationWithdrawalsChartData(simulation);
   }, [simulation]);
 };
 
@@ -635,43 +629,37 @@ export const useSingleSimulationWithdrawalsChartData = (simulation: SimulationRe
  */
 export const useSingleSimulationPortfolioTableData = (simulation: SimulationResult): SingleSimulationPortfolioTableRow[] => {
   return useMemo(() => {
-    const extractor = new TableDataExtractor();
-    return extractor.extractSingleSimulationPortfolioData(simulation);
+    return TableDataExtractor.extractSingleSimulationPortfolioData(simulation);
   }, [simulation]);
 };
 
 export const useSingleSimulationCashFlowTableData = (simulation: SimulationResult): SingleSimulationCashFlowTableRow[] => {
   return useMemo(() => {
-    const extractor = new TableDataExtractor();
-    return extractor.extractSingleSimulationCashFlowData(simulation);
+    return TableDataExtractor.extractSingleSimulationCashFlowData(simulation);
   }, [simulation]);
 };
 
 export const useSingleSimulationReturnsTableData = (simulation: SimulationResult): SingleSimulationReturnsTableRow[] => {
   return useMemo(() => {
-    const extractor = new TableDataExtractor();
-    return extractor.extractSingleSimulationReturnsData(simulation);
+    return TableDataExtractor.extractSingleSimulationReturnsData(simulation);
   }, [simulation]);
 };
 
 export const useSingleSimulationTaxesTableData = (simulation: SimulationResult): SingleSimulationTaxesTableRow[] => {
   return useMemo(() => {
-    const extractor = new TableDataExtractor();
-    return extractor.extractSingleSimulationTaxesData(simulation);
+    return TableDataExtractor.extractSingleSimulationTaxesData(simulation);
   }, [simulation]);
 };
 
 export const useSingleSimulationContributionsTableData = (simulation: SimulationResult): SingleSimulationContributionsTableRow[] => {
   return useMemo(() => {
-    const extractor = new TableDataExtractor();
-    return extractor.extractSingleSimulationContributionsData(simulation);
+    return TableDataExtractor.extractSingleSimulationContributionsData(simulation);
   }, [simulation]);
 };
 
 export const useSingleSimulationWithdrawalsTableData = (simulation: SimulationResult): SingleSimulationWithdrawalsTableRow[] => {
   return useMemo(() => {
-    const extractor = new TableDataExtractor();
-    return extractor.extractSingleSimulationWithdrawalsData(simulation);
+    return TableDataExtractor.extractSingleSimulationWithdrawalsData(simulation);
   }, [simulation]);
 };
 

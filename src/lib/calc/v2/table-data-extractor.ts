@@ -14,12 +14,12 @@ import { type Percentiles, StatsUtils } from '@/lib/utils/stats-utils';
 import type { MultiSimulationAnalysis } from './multi-simulation-analyzer';
 import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
 
-export class TableDataExtractor {
+export abstract class TableDataExtractor {
   // ================================
   // SINGLE SIMULATION DATA EXTRACTION
   // ================================
 
-  extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationPortfolioTableRow[] {
+  static extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationPortfolioTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -69,7 +69,7 @@ export class TableDataExtractor {
     });
   }
 
-  extractSingleSimulationCashFlowData(simulation: SimulationResult): SingleSimulationCashFlowTableRow[] {
+  static extractSingleSimulationCashFlowData(simulation: SimulationResult): SingleSimulationCashFlowTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -110,7 +110,7 @@ export class TableDataExtractor {
     });
   }
 
-  extractSingleSimulationTaxesData(simulation: SimulationResult): SingleSimulationTaxesTableRow[] {
+  static extractSingleSimulationTaxesData(simulation: SimulationResult): SingleSimulationTaxesTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -193,7 +193,7 @@ export class TableDataExtractor {
     });
   }
 
-  extractSingleSimulationReturnsData(simulation: SimulationResult): SingleSimulationReturnsTableRow[] {
+  static extractSingleSimulationReturnsData(simulation: SimulationResult): SingleSimulationReturnsTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -232,7 +232,7 @@ export class TableDataExtractor {
     });
   }
 
-  extractSingleSimulationContributionsData(simulation: SimulationResult): SingleSimulationContributionsTableRow[] {
+  static extractSingleSimulationContributionsData(simulation: SimulationResult): SingleSimulationContributionsTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -274,7 +274,7 @@ export class TableDataExtractor {
     });
   }
 
-  extractSingleSimulationWithdrawalsData(simulation: SimulationResult): SingleSimulationWithdrawalsTableRow[] {
+  static extractSingleSimulationWithdrawalsData(simulation: SimulationResult): SingleSimulationWithdrawalsTableRow[] {
     const startAge = simulation.context.startAge;
     const historicalRanges = simulation.context.historicalRanges ?? null;
     const startDateYear = new Date().getFullYear();
@@ -341,7 +341,7 @@ export class TableDataExtractor {
   // MULTI SIMULATION DATA EXTRACTION
   // ================================
 
-  extractMultiSimulationData(simulations: MultiSimulationResult, category: SimulationCategory): MultiSimulationTableRow[] {
+  static extractMultiSimulationData(simulations: MultiSimulationResult, category: SimulationCategory): MultiSimulationTableRow[] {
     return simulations.simulations.map(([seed, result]) => {
       const { data, context } = result;
 
@@ -395,7 +395,7 @@ export class TableDataExtractor {
     });
   }
 
-  extractMultiSimulationYearlyAggregateData(
+  static extractMultiSimulationYearlyAggregateData(
     simulations: MultiSimulationResult,
     analysis: MultiSimulationAnalysis,
     category: SimulationCategory
@@ -436,7 +436,10 @@ export class TableDataExtractor {
     return res;
   }
 
-  private getHistoricalYear(historicalRanges: { startYear: number; endYear: number }[] | null, yearsSinceStart: number): number | null {
+  private static getHistoricalYear(
+    historicalRanges: { startYear: number; endYear: number }[] | null,
+    yearsSinceStart: number
+  ): number | null {
     if (!historicalRanges?.length) return null;
 
     let historicalYear: number | null = null;

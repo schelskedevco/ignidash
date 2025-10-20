@@ -13,12 +13,12 @@ import { type Percentiles, StatsUtils } from '@/lib/utils/stats-utils';
 
 import type { SimulationResult, MultiSimulationResult } from './simulation-engine';
 
-export class ChartDataExtractor {
+export abstract class ChartDataExtractor {
   // ================================
   // SINGLE SIMULATION DATA EXTRACTION
   // ================================
 
-  extractSingleSimulationPortfolioChartData(simulation: SimulationResult): SingleSimulationPortfolioChartDataPoint[] {
+  static extractSingleSimulationPortfolioChartData(simulation: SimulationResult): SingleSimulationPortfolioChartDataPoint[] {
     const startAge = simulation.context.startAge;
     const startDateYear = new Date().getFullYear();
 
@@ -50,7 +50,7 @@ export class ChartDataExtractor {
     });
   }
 
-  extractSingleSimulationCashFlowChartData(simulation: SimulationResult): SingleSimulationCashFlowChartDataPoint[] {
+  static extractSingleSimulationCashFlowChartData(simulation: SimulationResult): SingleSimulationCashFlowChartDataPoint[] {
     const startAge = simulation.context.startAge;
     const startDateYear = new Date().getFullYear();
 
@@ -77,7 +77,7 @@ export class ChartDataExtractor {
     });
   }
 
-  extractSingleSimulationTaxesChartData(simulation: SimulationResult): SingleSimulationTaxesChartDataPoint[] {
+  static extractSingleSimulationTaxesChartData(simulation: SimulationResult): SingleSimulationTaxesChartDataPoint[] {
     const startAge = simulation.context.startAge;
     const startDateYear = new Date().getFullYear();
 
@@ -154,7 +154,7 @@ export class ChartDataExtractor {
     });
   }
 
-  extractSingleSimulationReturnsChartData(simulation: SimulationResult): SingleSimulationReturnsChartDataPoint[] {
+  static extractSingleSimulationReturnsChartData(simulation: SimulationResult): SingleSimulationReturnsChartDataPoint[] {
     const startAge = simulation.context.startAge;
     const startDateYear = new Date().getFullYear();
 
@@ -181,7 +181,7 @@ export class ChartDataExtractor {
     });
   }
 
-  extractSingleSimulationContributionsChartData(simulation: SimulationResult): SingleSimulationContributionsChartDataPoint[] {
+  static extractSingleSimulationContributionsChartData(simulation: SimulationResult): SingleSimulationContributionsChartDataPoint[] {
     const startAge = simulation.context.startAge;
     const startDateYear = new Date().getFullYear();
 
@@ -212,7 +212,7 @@ export class ChartDataExtractor {
     });
   }
 
-  extractSingleSimulationWithdrawalsChartData(simulation: SimulationResult): SingleSimulationWithdrawalsChartDataPoint[] {
+  static extractSingleSimulationWithdrawalsChartData(simulation: SimulationResult): SingleSimulationWithdrawalsChartDataPoint[] {
     const startAge = simulation.context.startAge;
     const startDateYear = new Date().getFullYear();
 
@@ -269,7 +269,7 @@ export class ChartDataExtractor {
   // MULTI SIMULATION DATA EXTRACTION
   // ================================
 
-  extractMultiSimulationPortfolioChartData(simulations: MultiSimulationResult): MultiSimulationPortfolioChartDataPoint[] {
+  static extractMultiSimulationPortfolioChartData(simulations: MultiSimulationResult): MultiSimulationPortfolioChartDataPoint[] {
     const res: MultiSimulationPortfolioChartDataPoint[] = [];
 
     const simulationLength = simulations.simulations[0][1].data.length;
@@ -305,7 +305,7 @@ export class ChartDataExtractor {
     return res;
   }
 
-  extractMultiSimulationPhasesChartData(simulations: MultiSimulationResult): MultiSimulationPhasesChartDataPoint[] {
+  static extractMultiSimulationPhasesChartData(simulations: MultiSimulationResult): MultiSimulationPhasesChartDataPoint[] {
     const res: MultiSimulationPhasesChartDataPoint[] = [];
 
     const simulationLength = simulations.simulations[0][1].data.length;

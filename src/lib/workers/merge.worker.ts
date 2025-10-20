@@ -51,18 +51,14 @@ const mergeAPI = {
 
     const { res } = cache;
 
-    const analyzer = new MultiSimulationAnalyzer();
-    const analysis = analyzer.analyze(res, sortMode);
-
+    const analysis = MultiSimulationAnalyzer.analyze(res, sortMode);
     const keyMetrics = KeyMetricsExtractor.extractMultiSimulation(res);
 
-    const tableExtractor = new TableDataExtractor();
-    const tableData = tableExtractor.extractMultiSimulationData(res, category);
-    const yearlyTableData = tableExtractor.extractMultiSimulationYearlyAggregateData(res, analysis, category);
+    const tableData = TableDataExtractor.extractMultiSimulationData(res, category);
+    const yearlyTableData = TableDataExtractor.extractMultiSimulationYearlyAggregateData(res, analysis, category);
 
-    const chartExtractor = new ChartDataExtractor();
-    const portfolioData = chartExtractor.extractMultiSimulationPortfolioChartData(res);
-    const phasesData = chartExtractor.extractMultiSimulationPhasesChartData(res);
+    const portfolioData = ChartDataExtractor.extractMultiSimulationPortfolioChartData(res);
+    const phasesData = ChartDataExtractor.extractMultiSimulationPhasesChartData(res);
 
     return { analysis, tableData, yearlyTableData, chartData: { portfolioData, phasesData }, keyMetrics };
   },
