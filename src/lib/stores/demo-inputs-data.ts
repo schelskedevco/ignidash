@@ -2,8 +2,8 @@ import type { QuickPlanInputs } from '@/lib/schemas/quick-plan-schema';
 
 export const demoInputs1: QuickPlanInputs = {
   timeline: {
-    id: 'demo-timeline',
-    name: 'Demo Timeline',
+    id: 'demo-timeline1',
+    name: 'Demo Timeline 1',
     lifeExpectancy: 82,
     currentAge: 31,
     retirementStrategy: { safeWithdrawalRate: 4, type: 'swrTarget' },
@@ -113,8 +113,8 @@ export const demoInputs1: QuickPlanInputs = {
 
 export const demoInputs2: QuickPlanInputs = {
   timeline: {
-    id: 'fire-timeline',
-    name: 'FIRE Timeline',
+    id: 'demo-timeline2',
+    name: 'Demo Timeline 2',
     lifeExpectancy: 87,
     currentAge: 28,
     retirementStrategy: { safeWithdrawalRate: 3.5, type: 'swrTarget' },
@@ -237,8 +237,8 @@ export const demoInputs2: QuickPlanInputs = {
 
 export const demoInputs3: QuickPlanInputs = {
   timeline: {
-    id: 'career-change-timeline',
-    name: 'Career Change Timeline',
+    id: 'demo-timeline3',
+    name: 'Demo Timeline 3',
     lifeExpectancy: 77,
     currentAge: 38,
     retirementStrategy: { safeWithdrawalRate: 4, type: 'swrTarget' },
@@ -386,7 +386,7 @@ export const demoInputs3: QuickPlanInputs = {
   marketAssumptions: { stockReturn: 9, stockYield: 2.5, bondReturn: 4.5, bondYield: 4, cashReturn: 3, inflationRate: 3 },
 };
 
-export const demoInputs5: QuickPlanInputs = {
+export const demoInputs4: QuickPlanInputs = {
   timeline: {
     id: 'high-income-timeline',
     name: 'High Income Timeline',
@@ -560,6 +560,6 @@ export const demoInputs5: QuickPlanInputs = {
       percentRemaining: 70,
     },
   },
-  baseContributionRule: { type: 'save' },
+  baseContributionRule: { type: 'spend' },
   marketAssumptions: { stockReturn: 9.5, stockYield: 2.5, bondReturn: 4.5, bondYield: 4, cashReturn: 3.5, inflationRate: 3 },
 };
