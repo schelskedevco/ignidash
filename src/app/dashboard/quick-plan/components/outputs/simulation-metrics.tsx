@@ -1,6 +1,6 @@
 'use client';
 
-import { formatNumber } from '@/lib/utils';
+import { cn, formatNumber } from '@/lib/utils';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 
 import MetricsCard from './metrics-card';
@@ -47,6 +47,14 @@ const formatMetrics = (keyMetrics: KeyMetrics) => {
   };
 };
 
+const getSuccessColor = (success: number): string => {
+  if (success >= 0.95) return 'fill-green-500 dark:fill-green-400';
+  if (success >= 0.8) return 'fill-blue-500 dark:fill-blue-400';
+  if (success >= 0.6) return 'fill-yellow-500 dark:fill-yellow-400';
+  if (success >= 0.3) return 'fill-orange-500 dark:fill-orange-400';
+  return 'fill-red-500 dark:fill-red-400';
+};
+
 export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps) {
   const {
     successForDisplay,
@@ -60,8 +68,10 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
     progressToRetirementForDisplay,
   } = formatMetrics(keyMetrics);
 
+  const successColor = getSuccessColor(keyMetrics.success);
+
   const successWidget = (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="inline size-6 fill-green-500 dark:fill-green-400">
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={cn('inline size-6', successColor)}>
       <circle r={12} cx={12} cy={12} />
     </svg>
   );
