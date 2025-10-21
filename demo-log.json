@@ -32,6 +32,9 @@
       "id": "income-2",
       "name": "RSU vesting",
       "amount": 8750,
+      "growth": {
+        "growthRate": 10
+      },
       "frequency": "quarterly",
       "timeframe": {
         "start": {
@@ -40,11 +43,8 @@
         },
         "end": {
           "type": "customAge",
-          "age": 35
+          "age": 36
         }
-      },
-      "growth": {
-        "growthRate": 10
       }
     },
     "income-3": {
@@ -88,6 +88,9 @@
       "id": "expense-2",
       "name": "apartment rent",
       "amount": 2000,
+      "growth": {
+        "growthRate": 3
+      },
       "frequency": "monthly",
       "timeframe": {
         "start": {
@@ -95,26 +98,24 @@
         },
         "end": {
           "type": "customAge",
-          "age": 35
+          "age": 36
         }
-      },
-      "growth": {
-        "growthRate": 3
       }
     },
     "expense-3": {
       "id": "expense-3",
       "name": "mortgage payment",
       "amount": 2333,
+      "growth": {},
       "frequency": "monthly",
       "timeframe": {
         "start": {
           "type": "customAge",
-          "age": 35
+          "age": 36
         },
         "end": {
           "type": "customAge",
-          "age": 50
+          "age": 51
         }
       }
     }

@@ -119,7 +119,10 @@ export const demoInputs2: QuickPlanInputs = {
     name: 'Demo Timeline 2',
     lifeExpectancy: 87,
     currentAge: 28,
-    retirementStrategy: { safeWithdrawalRate: 3.5, type: 'swrTarget' },
+    retirementStrategy: {
+      safeWithdrawalRate: 3.5,
+      type: 'swrTarget',
+    },
   },
   incomes: {
     'income-1': {
@@ -127,24 +130,54 @@ export const demoInputs2: QuickPlanInputs = {
       name: 'tech salary',
       amount: 145000,
       frequency: 'yearly',
-      timeframe: { start: { type: 'now' }, end: { type: 'atRetirement' } },
-      growth: { growthRate: 5, growthLimit: 250000 },
+      timeframe: {
+        start: {
+          type: 'now',
+        },
+        end: {
+          type: 'atRetirement',
+        },
+      },
+      growth: {
+        growthRate: 5,
+        growthLimit: 250000,
+      },
     },
     'income-2': {
       id: 'income-2',
       name: 'RSU vesting',
       amount: 8750,
+      growth: {
+        growthRate: 10,
+      },
       frequency: 'quarterly',
-      timeframe: { start: { type: 'customAge', age: 30 }, end: { type: 'customAge', age: 35 } },
-      growth: { growthRate: 10 },
+      timeframe: {
+        start: {
+          type: 'customAge',
+          age: 30,
+        },
+        end: {
+          type: 'customAge',
+          age: 36,
+        },
+      },
     },
     'income-3': {
       id: 'income-3',
       name: 'side consulting',
       amount: 800,
       frequency: 'biweekly',
-      timeframe: { start: { type: 'now' }, end: { type: 'atRetirement' } },
-      growth: { growthRate: 3 },
+      timeframe: {
+        start: {
+          type: 'now',
+        },
+        end: {
+          type: 'atRetirement',
+        },
+      },
+      growth: {
+        growthRate: 3,
+      },
     },
   },
   expenses: {
@@ -153,23 +186,53 @@ export const demoInputs2: QuickPlanInputs = {
       name: 'frugal living expenses',
       amount: 35000,
       frequency: 'yearly',
-      timeframe: { start: { type: 'now' }, end: { type: 'atLifeExpectancy' } },
-      growth: { growthRate: 3, growthLimit: 50000 },
+      timeframe: {
+        start: {
+          type: 'now',
+        },
+        end: {
+          type: 'atLifeExpectancy',
+        },
+      },
+      growth: {
+        growthRate: 3,
+        growthLimit: 50000,
+      },
     },
     'expense-2': {
       id: 'expense-2',
       name: 'apartment rent',
       amount: 2000,
+      growth: {
+        growthRate: 3,
+      },
       frequency: 'monthly',
-      timeframe: { start: { type: 'now' }, end: { type: 'customAge', age: 35 } },
-      growth: { growthRate: 3 },
+      timeframe: {
+        start: {
+          type: 'now',
+        },
+        end: {
+          type: 'customAge',
+          age: 36,
+        },
+      },
     },
     'expense-3': {
       id: 'expense-3',
       name: 'mortgage payment',
       amount: 2333,
+      growth: {},
       frequency: 'monthly',
-      timeframe: { start: { type: 'customAge', age: 35 }, end: { type: 'customAge', age: 50 } },
+      timeframe: {
+        start: {
+          type: 'customAge',
+          age: 36,
+        },
+        end: {
+          type: 'customAge',
+          age: 51,
+        },
+      },
     },
   },
   accounts: {
@@ -233,6 +296,15 @@ export const demoInputs2: QuickPlanInputs = {
       percentRemaining: 85,
     },
   },
-  baseContributionRule: { type: 'save' },
-  marketAssumptions: { stockReturn: 9, stockYield: 2, bondReturn: 4, bondYield: 3.5, cashReturn: 3, inflationRate: 3 },
+  baseContributionRule: {
+    type: 'save',
+  },
+  marketAssumptions: {
+    stockReturn: 9,
+    stockYield: 2,
+    bondReturn: 4,
+    bondYield: 3.5,
+    cashReturn: 3,
+    inflationRate: 3,
+  },
 };
