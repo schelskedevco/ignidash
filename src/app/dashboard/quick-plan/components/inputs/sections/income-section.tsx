@@ -10,7 +10,7 @@ import { Button } from '@/components/catalyst/button';
 import { useIncomesData, useDeleteIncome } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { frequencyForDisplay } from '@/lib/schemas/income-form-schema';
+import { frequencyForDisplay } from '@/lib/utils/numbers-item-display-formatters';
 
 import IncomeDialog from '../dialogs/income-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';

@@ -15,7 +15,8 @@ import {
   useMarketAssumptionsData,
   useTimelineData,
 } from '@/lib/stores/quick-plan-store';
-import { expenseFormSchema, type ExpenseInputs, timeFrameForDisplay, growthForDisplay } from '@/lib/schemas/expense-form-schema';
+import { expenseFormSchema, type ExpenseInputs } from '@/lib/schemas/expense-form-schema';
+import { timeFrameForDisplay, growthForDisplay } from '@/lib/utils/numbers-item-display-formatters';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, Fieldset, FieldGroup, Label, ErrorMessage /* Description */ } from '@/components/catalyst/fieldset';

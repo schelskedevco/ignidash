@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { formatNumber } from '@/lib/utils';
 import { currencyFieldForbidsZero } from '@/lib/utils/zod-schema-helpers';
 
 import { growthSchema, frequencyTimeframeSchema } from './income-expenses-shared-schemas';
@@ -41,58 +40,3 @@ export const expenseFormSchema = z
   );
 
 export type ExpenseInputs = z.infer<typeof expenseFormSchema>;
-
-export const timeFrameForDisplay = (
-  startType: ExpenseInputs['timeframe']['start']['type'],
-  endType?: NonNullable<ExpenseInputs['timeframe']['end']>['type']
-) => {
-  function labelFromType(type: ExpenseInputs['timeframe']['start']['type']) {
-    switch (type) {
-      case 'now':
-        return 'Now';
-      case 'atRetirement':
-        return 'Retirement';
-      case 'atLifeExpectancy':
-        return 'Life Expectancy';
-      case 'customDate':
-        return 'Custom Date';
-      case 'customAge':
-        return 'Custom Age';
-    }
-  }
-
-  const startLabel = labelFromType(startType);
-  const endLabel = endType ? labelFromType(endType) : undefined;
-
-  if (!endLabel) return startLabel;
-  return `${startLabel} to ${endLabel}`;
-};
-
-export const growthForDisplay = (
-  growthRate: NonNullable<ExpenseInputs['growth']>['growthRate'],
-  growthLimit: NonNullable<ExpenseInputs['growth']>['growthLimit']
-) => {
-  if (growthRate === undefined) return 'No Growth';
-
-  const rate = formatNumber(growthRate, 1);
-  if (growthLimit === undefined) return `Rate: ${rate}%, No Limit`;
-
-  return `Rate: ${rate}%, Limit: ${formatNumber(growthLimit, 0, '$')}`;
-};
-
-export const frequencyForDisplay = (frequency: NonNullable<ExpenseInputs['frequency']>) => {
-  switch (frequency) {
-    case 'yearly':
-      return 'yearly';
-    case 'oneTime':
-      return 'one-time';
-    case 'quarterly':
-      return 'quarterly';
-    case 'monthly':
-      return 'monthly';
-    case 'biweekly':
-      return 'biweekly';
-    case 'weekly':
-      return 'weekly';
-  }
-};

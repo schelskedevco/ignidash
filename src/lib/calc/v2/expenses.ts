@@ -1,4 +1,5 @@
-import type { ExpenseInputs, TimePoint } from '@/lib/schemas/expense-form-schema';
+import type { ExpenseInputs } from '@/lib/schemas/expense-form-schema';
+import type { TimePoint } from '@/lib/schemas/income-expenses-shared-schemas';
 
 import type { ReturnsData } from './returns';
 import type { SimulationState } from './simulation-engine';

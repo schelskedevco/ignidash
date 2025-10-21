@@ -10,7 +10,7 @@ import { Button } from '@/components/catalyst/button';
 import { useExpensesData, useDeleteExpense } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { frequencyForDisplay } from '@/lib/schemas/expense-form-schema';
+import { frequencyForDisplay } from '@/lib/utils/numbers-item-display-formatters';
 
 import ExpenseDialog from '../dialogs/expense-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';

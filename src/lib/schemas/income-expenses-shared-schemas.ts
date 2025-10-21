@@ -66,3 +66,4 @@ export const growthSchema = z
       path: ['growthLimit'],
     }
   );
+export type Growth = z.infer<typeof growthSchema>;

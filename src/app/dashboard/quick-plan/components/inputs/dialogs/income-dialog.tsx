@@ -9,7 +9,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
 import { useUpdateIncomes, useIncomeData, useIncomesData, useMarketAssumptionsData, useTimelineData } from '@/lib/stores/quick-plan-store';
-import { incomeFormSchema, type IncomeInputs, timeFrameForDisplay, growthForDisplay } from '@/lib/schemas/income-form-schema';
+import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/income-form-schema';
+import { timeFrameForDisplay, growthForDisplay } from '@/lib/utils/numbers-item-display-formatters';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, Fieldset, FieldGroup, Label, ErrorMessage /* Description */ } from '@/components/catalyst/fieldset';
