@@ -1,6 +1,6 @@
 'use client';
 
-import { UmbrellaIcon, TriangleAlertIcon, BanknoteXIcon, LandmarkIcon, SunsetIcon } from 'lucide-react';
+import { PartyPopperIcon, UmbrellaIcon, TriangleAlertIcon, BanknoteXIcon, LandmarkIcon, SunsetIcon } from 'lucide-react';
 
 import { cn, formatNumber } from '@/lib/utils';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
@@ -100,7 +100,13 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
 
   return (
     <dl className="grid grid-cols-2 gap-2 2xl:grid-cols-3">
-      <MetricsCard name="Success" stat={successForDisplay} className="col-span-2 2xl:col-span-1" statClassName={cn('px-1', successColor)} />
+      <MetricsCard
+        name="Success"
+        stat={successForDisplay}
+        className="col-span-2 2xl:col-span-1"
+        statClassName={cn('px-1', successColor)}
+        statWidget={<PartyPopperIcon className="text-primary h-10 w-10" />}
+      />
       <MetricsCard
         name={metricName('Progress to Retirement')}
         stat={progressToRetirementForDisplay}
