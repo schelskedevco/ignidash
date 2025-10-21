@@ -1,0 +1,68 @@
+import { z } from 'zod';
+
+import { coerceNumber, percentageField } from '@/lib/utils/zod-schema-helpers';
+
+export const timePointSchema = z
+  .object({
+    type: z.enum(['now', 'atRetirement', 'atLifeExpectancy', 'customDate', 'customAge']),
+    month: z.number().int().min(1).max(12).optional(),
+    year: z.number().int().min(1900).max(2100).optional(),
+    age: z.number().int().min(0).max(120).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.type === 'customDate') {
+        return data.month !== undefined && data.year !== undefined && data.age === undefined;
+      }
+      if (data.type === 'customAge') {
+        return data.age !== undefined && data.month === undefined && data.year === undefined;
+      }
+      return true;
+    },
+    {
+      message: 'Custom fields are required when custom option is selected',
+    }
+  );
+export type TimePoint = z.infer<typeof timePointSchema>;
+
+export const frequencySchema = z.enum(['yearly', 'oneTime', 'quarterly', 'monthly', 'biweekly', 'weekly']);
+export type Frequency = z.infer<typeof frequencySchema>;
+
+export const frequencyTimeframeSchema = z
+  .object({
+    frequency: frequencySchema,
+    timeframe: z.object({
+      start: timePointSchema,
+      end: timePointSchema.optional(),
+    }),
+  })
+  .refine(
+    (data) => {
+      const isOneTime = data.frequency === 'oneTime';
+      const hasEndTime = !!data.timeframe.end;
+
+      return isOneTime ? !hasEndTime : hasEndTime;
+    },
+    {
+      message: 'One-time frequency should not have an end date, recurring frequencies require an end date',
+      path: ['timeframe', 'end'],
+    }
+  );
+
+export const growthSchema = z
+  .object({
+    growthRate: percentageField(-50, 50, 'Growth rate').optional(),
+    growthLimit: coerceNumber(z.number('Must be a valid growth limit').min(0)).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.growthLimit !== undefined) {
+        return data.growthRate !== undefined;
+      }
+      return true;
+    },
+    {
+      message: 'Growth limit requires a growth rate to be set',
+      path: ['growthLimit'],
+    }
+  );
