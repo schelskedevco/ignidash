@@ -62,7 +62,7 @@ export const accountTypeForDisplay = (type: AccountInputs['type']): string => {
     case 'savings':
       return 'Savings';
     case 'taxableBrokerage':
-      return 'Taxable Brokerage';
+      return 'Taxable';
     case 'roth401k':
       return 'Roth 401(k)';
     case 'rothIra':

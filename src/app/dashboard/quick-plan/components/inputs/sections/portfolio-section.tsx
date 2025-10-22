@@ -68,7 +68,13 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
                     id={id}
                     index={index}
                     name={account.name}
-                    desc={<p>{`${formatNumber(account.currentValue, 2, '$')} | ${accountTypeForDisplay(account.type)}`}</p>}
+                    desc={
+                      <p>
+                        {formatNumber(account.currentValue, 2, '$')} | {accountTypeForDisplay(account.type)}
+                        {account.type !== 'savings' &&
+                          ` | ${account.percentBonds ? `${formatNumber(account.percentBonds, 0)}% Bonds` : 'No Bonds'}`}
+                      </p>
+                    }
                     leftAddOn={account.type === 'savings' ? <PiggyBankIcon className="size-8" /> : <TrendingUpIcon className="size-8" />}
                     onDropdownClickEdit={() => {
                       if (account.type === 'savings') {
