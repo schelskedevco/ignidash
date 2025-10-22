@@ -69,7 +69,7 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
                     index={index}
                     name={account.name}
                     desc={<p>{`${formatNumber(account.currentValue, 2, '$')} | ${accountTypeForDisplay(account.type)}`}</p>}
-                    leftAddOn={account.name.charAt(0).toUpperCase()}
+                    leftAddOn={account.type === 'savings' ? <PiggyBankIcon className="size-8" /> : <TrendingUpIcon className="size-8" />}
                     onDropdownClickEdit={() => {
                       if (account.type === 'savings') {
                         setSavingsDialogOpen(true);
@@ -82,7 +82,7 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
                     onDropdownClickDelete={() => {
                       setAccountToDelete({ id, name: account.name });
                     }}
-                    colorClassName="bg-[var(--chart-3)]"
+                    colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
                   />
                 ))}
               </ul>

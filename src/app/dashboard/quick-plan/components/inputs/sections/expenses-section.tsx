@@ -65,7 +65,7 @@ export default function ExpensesSection({ toggleDisclosure, disclosureButtonRef,
                         <p>{timeFrameForDisplay(expense.timeframe.start, expense.timeframe.end)}</p>
                       </>
                     }
-                    leftAddOn={expense.name.charAt(0).toUpperCase()}
+                    leftAddOn={<BanknoteArrowDownIcon className="size-8" />}
                     onDropdownClickEdit={() => {
                       setExpenseDialogOpen(true);
                       setSelectedExpenseID(id);
@@ -73,7 +73,7 @@ export default function ExpensesSection({ toggleDisclosure, disclosureButtonRef,
                     onDropdownClickDelete={() => {
                       setExpenseToDelete({ id, name: expense.name });
                     }}
-                    colorClassName="bg-[var(--chart-2)]"
+                    colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
                   />
                 ))}
               </ul>

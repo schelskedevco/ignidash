@@ -66,7 +66,7 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
                         <p>{timeFrameForDisplay(income.timeframe.start, income.timeframe.end)}</p>
                       </>
                     }
-                    leftAddOn={income.name.charAt(0).toUpperCase()}
+                    leftAddOn={<BanknoteArrowUpIcon className="size-8" />}
                     onDropdownClickEdit={() => {
                       setIncomeDialogOpen(true);
                       setSelectedIncomeID(id);
@@ -74,7 +74,7 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
                     onDropdownClickDelete={() => {
                       setIncomeToDelete({ id, name: income.name });
                     }}
-                    colorClassName="bg-[var(--chart-1)]"
+                    colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
                   />
                 ))}
               </ul>
