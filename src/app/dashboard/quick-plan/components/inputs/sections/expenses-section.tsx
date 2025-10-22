@@ -10,7 +10,7 @@ import { Button } from '@/components/catalyst/button';
 import { useExpensesData, useDeleteExpense } from '@/lib/stores/quick-plan-store';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { frequencyForDisplay } from '@/lib/utils/numbers-item-display-formatters';
+import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/numbers-item-display-formatters';
 
 import ExpenseDialog from '../dialogs/expense-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';
@@ -59,7 +59,12 @@ export default function ExpensesSection({ toggleDisclosure, disclosureButtonRef,
                     id={id}
                     index={index}
                     name={expense.name}
-                    desc={<p>{formatNumber(expense.amount, 2, '$') + ` ${frequencyForDisplay(expense.frequency)}`}</p>}
+                    desc={
+                      <>
+                        <p>{formatNumber(expense.amount, 2, '$') + ` ${frequencyForDisplay(expense.frequency)}`}</p>
+                        <p>{timeFrameForDisplay(expense.timeframe.start, expense.timeframe.end)}</p>
+                      </>
+                    }
                     leftAddOnCharacter={expense.name.charAt(0).toUpperCase()}
                     onDropdownClickEdit={() => {
                       setExpenseDialogOpen(true);
