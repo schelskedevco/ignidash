@@ -62,7 +62,7 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
                     name={income.name}
                     desc={
                       <>
-                        <p>{formatNumber(income.amount, 2, '$') + ` ${frequencyForDisplay(income.frequency)}`}</p>
+                        <p>{`${formatNumber(income.amount, 2, '$')} ${frequencyForDisplay(income.frequency)}`}</p>
                         <p>{timeFrameForDisplay(income.timeframe.start, income.timeframe.end)}</p>
                       </>
                     }
