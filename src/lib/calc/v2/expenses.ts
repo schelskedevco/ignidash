@@ -90,7 +90,7 @@ export class Expenses {
   private readonly expenses: Expense[];
 
   constructor(data: ExpenseInputs[]) {
-    this.expenses = data.map((expense) => new Expense(expense));
+    this.expenses = data.filter((expense) => !expense.disabled).map((expense) => new Expense(expense));
   }
 
   getActiveExpensesByTimeFrame(simulationState: SimulationState): Expense[] {

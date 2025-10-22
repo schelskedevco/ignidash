@@ -78,7 +78,7 @@ export class Incomes {
   private readonly incomes: Income[];
 
   constructor(data: IncomeInputs[]) {
-    this.incomes = data.map((income) => new Income(income));
+    this.incomes = data.filter((income) => !income.disabled).map((income) => new Income(income));
   }
 
   getActiveIncomesByTimeFrame(simulationState: SimulationState): Income[] {
