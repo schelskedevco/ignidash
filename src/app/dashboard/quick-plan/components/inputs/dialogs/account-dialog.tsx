@@ -149,7 +149,7 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
                       <span className="whitespace-nowrap">Cost Basis</span>
                       <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
                     </Label>
-                    <NumberInput name="costBasis" control={control} id="costBasis" inputMode="decimal" placeholder="—" prefix="$" />
+                    <NumberInput name="costBasis" control={control} id="costBasis" inputMode="decimal" placeholder="–" prefix="$" />
                     {(errors as FieldErrors<Extract<AccountInputs, { type: 'taxableBrokerage' }>>).costBasis?.message && (
                       <ErrorMessage>
                         {(errors as FieldErrors<Extract<AccountInputs, { type: 'taxableBrokerage' }>>).costBasis?.message}
@@ -168,7 +168,7 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
                       control={control}
                       id="contributionBasis"
                       inputMode="decimal"
-                      placeholder="—"
+                      placeholder="–"
                       prefix="$"
                     />
                     {(errors as FieldErrors<Extract<AccountInputs, { type: RothAccountType }>>).contributionBasis?.message && (

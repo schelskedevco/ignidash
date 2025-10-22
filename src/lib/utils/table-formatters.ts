@@ -29,8 +29,8 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 });
 
 const formatValue = (value: unknown, format: ColumnFormat): string => {
-  if (value == null) return '—';
-  if (typeof value !== 'number' && format !== 'string' && format !== 'historicalRanges') return '—';
+  if (value == null) return '–';
+  if (typeof value !== 'number' && format !== 'string' && format !== 'historicalRanges') return '–';
 
   switch (format) {
     case 'currency':
@@ -52,10 +52,10 @@ const formatValue = (value: unknown, format: ColumnFormat): string => {
 };
 
 const formatHistoricalRanges = (ranges: Array<{ startYear: number; endYear: number }>): string => {
-  if (!ranges || ranges.length === 0) return '—';
+  if (!ranges || ranges.length === 0) return '–';
 
   return ranges
-    .map((range) => (range.startYear === range.endYear ? `${range.startYear}` : `${range.startYear}—${range.endYear}`))
+    .map((range) => (range.startYear === range.endYear ? `${range.startYear}` : `${range.startYear}–${range.endYear}`))
     .join(', ');
 };
 

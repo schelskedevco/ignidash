@@ -67,7 +67,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                 <Field>
                   <Label htmlFor="stockYield" className="flex w-full items-center justify-between">
                     <span>Dividend Yield</span>
-                    <span className="text-muted-foreground text-sm/6">—</span>
+                    <span className="text-muted-foreground text-sm/6">–</span>
                   </Label>
                   <NumberInput name="stockYield" control={control} id="stockYield" inputMode="decimal" placeholder="3.5%" suffix="%" />
                   {errors.stockYield && <ErrorMessage>{errors.stockYield?.message}</ErrorMessage>}
@@ -86,7 +86,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                 <Field>
                   <Label htmlFor="bondYield" className="flex w-full items-center justify-between">
                     <span>Bond Yield</span>
-                    <span className="text-muted-foreground text-sm/6">—</span>
+                    <span className="text-muted-foreground text-sm/6">–</span>
                   </Label>
                   <NumberInput id="bondYield" control={control} name="bondYield" inputMode="decimal" placeholder="4.5%" suffix="%" />
                   {errors.bondYield && <ErrorMessage>{errors.bondYield?.message}</ErrorMessage>}
@@ -106,7 +106,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                 <Field>
                   <Label htmlFor="inflationRate" className="flex w-full items-center justify-between">
                     <span>Inflation Rate</span>
-                    <span className="text-muted-foreground text-sm/6">—</span>
+                    <span className="text-muted-foreground text-sm/6">–</span>
                   </Label>
                   <NumberInput id="inflationRate" control={control} name="inflationRate" inputMode="decimal" placeholder="3%" suffix="%" />
                   {errors.inflationRate && <ErrorMessage>{errors.inflationRate?.message}</ErrorMessage>}

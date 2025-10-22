@@ -163,19 +163,19 @@ export default function SimulationSettingsDrawer({ setOpen }: SimulationSettings
           <Card className="mt-4">
             <Subheading level={4}>Notable Historical Years</Subheading>
             <DescriptionList>
-              <DescriptionTerm>1929—1932</DescriptionTerm>
+              <DescriptionTerm>1929–1932</DescriptionTerm>
               <DescriptionDetails>Great Depression</DescriptionDetails>
 
-              <DescriptionTerm>1966—1982</DescriptionTerm>
+              <DescriptionTerm>1966–1982</DescriptionTerm>
               <DescriptionDetails>Stagflation era</DescriptionDetails>
 
-              <DescriptionTerm>1973—1974</DescriptionTerm>
+              <DescriptionTerm>1973–1974</DescriptionTerm>
               <DescriptionDetails>Oil crisis and recession</DescriptionDetails>
 
-              <DescriptionTerm>2000—2002</DescriptionTerm>
+              <DescriptionTerm>2000–2002</DescriptionTerm>
               <DescriptionDetails>Dot-com bubble burst</DescriptionDetails>
 
-              <DescriptionTerm>2008—2009</DescriptionTerm>
+              <DescriptionTerm>2008–2009</DescriptionTerm>
               <DescriptionDetails>Financial Crisis</DescriptionDetails>
             </DescriptionList>
           </Card>
