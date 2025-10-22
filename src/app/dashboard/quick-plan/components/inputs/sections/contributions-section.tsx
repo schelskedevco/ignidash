@@ -79,8 +79,14 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
   const [contributionRuleToDelete, setContributionRuleToDelete] = useState<{ id: string; name: string } | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
 
-  const contributionRules = useContributionRulesData();
-  const sortedRules = useMemo(() => Object.values(contributionRules).sort((a, b) => a.rank - b.rank), [contributionRules]);
+  const contributionRules = Object.values(useContributionRulesData());
+  const colorMap = useMemo(() => {
+    const map: Record<string, string> = {};
+    contributionRules.forEach((rule, i) => (map[rule.id] = COLORS[i % COLORS.length]));
+    return map;
+  }, [contributionRules]);
+
+  const sortedRules = useMemo(() => contributionRules.sort((a, b) => a.rank - b.rank), [contributionRules]);
   const sortedRuleIds = useMemo(() => sortedRules.map((rule) => rule.id), [sortedRules]);
 
   const hasContributionRules = sortedRuleIds.length > 0;
@@ -179,7 +185,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                         onDropdownClickDelete={() => {
                           setContributionRuleToDelete({ id, name: 'Contribution ' + (index + 1) });
                         }}
-                        colorClassName={COLORS[index % COLORS.length]}
+                        colorClassName={colorMap[id]}
                       />
                     ))}
                   </ul>
@@ -202,7 +208,7 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                       onDropdownClickDelete={() => {
                         setContributionRuleToDelete({ id: activeId, name: 'Contribution ' + (activeIndex + 1) });
                       }}
-                      colorClassName={COLORS[activeIndex % COLORS.length]}
+                      colorClassName={colorMap[activeId]}
                     />
                   ) : null}
                 </DragOverlay>
