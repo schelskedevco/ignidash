@@ -68,7 +68,7 @@ export default function PortfolioSection({ toggleDisclosure, disclosureButtonRef
                     id={id}
                     index={index}
                     name={account.name}
-                    desc={`${formatNumber(account.currentValue, 2, '$')} | ${accountTypeForDisplay(account.type)}`}
+                    desc={<p>{`${formatNumber(account.currentValue, 2, '$')} | ${accountTypeForDisplay(account.type)}`}</p>}
                     leftAddOnCharacter={account.name.charAt(0).toUpperCase()}
                     onDropdownClickEdit={() => {
                       if (account.type === 'savings') {

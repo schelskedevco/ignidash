@@ -59,7 +59,7 @@ export default function ExpensesSection({ toggleDisclosure, disclosureButtonRef,
                     id={id}
                     index={index}
                     name={expense.name}
-                    desc={formatNumber(expense.amount, 2, '$') + ` ${frequencyForDisplay(expense.frequency)}`}
+                    desc={<p>{formatNumber(expense.amount, 2, '$') + ` ${frequencyForDisplay(expense.frequency)}`}</p>}
                     leftAddOnCharacter={expense.name.charAt(0).toUpperCase()}
                     onDropdownClickEdit={() => {
                       setExpenseDialogOpen(true);

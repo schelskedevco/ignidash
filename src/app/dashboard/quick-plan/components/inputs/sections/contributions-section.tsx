@@ -45,11 +45,11 @@ import ContributionItem from '../contribution-item';
 function getContributionRuleDesc(contributionInputs: ContributionInputs) {
   switch (contributionInputs.contributionType) {
     case 'dollarAmount':
-      return `${formatNumber(contributionInputs.dollarAmount, 2, '$') + ' per year'}`;
+      return <p>{`${formatNumber(contributionInputs.dollarAmount, 2, '$') + ' per year'}`}</p>;
     case 'percentRemaining':
-      return `${contributionInputs.percentRemaining}% remaining`;
+      return <p>{`${contributionInputs.percentRemaining}% remaining`}</p>;
     case 'unlimited':
-      return 'Unlimited';
+      return <p>Unlimited</p>;
   }
 }
 
