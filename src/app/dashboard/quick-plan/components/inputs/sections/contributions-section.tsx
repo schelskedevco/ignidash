@@ -34,7 +34,7 @@ import {
   useAccountsData,
 } from '@/lib/stores/quick-plan-store';
 import type { ContributionInputs } from '@/lib/schemas/contribution-form-schema';
-import { accountTypeForDisplay } from '@/lib/schemas/account-form-schema';
+import { accountTypeForDisplay, type AccountInputs } from '@/lib/schemas/account-form-schema';
 
 import ContributionRuleDialog from '../dialogs/contribution-rule-dialog';
 import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
@@ -42,14 +42,18 @@ import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state
 import SortableContributionItem from '../sortable-contribution-item';
 import ContributionItem from '../contribution-item';
 
-function getContributionRuleDesc(contributionInputs: ContributionInputs) {
+function getContributionRuleDesc(accounts: Record<string, AccountInputs>, contributionInputs: ContributionInputs) {
   switch (contributionInputs.contributionType) {
     case 'dollarAmount':
-      return <p>{`${formatNumber(contributionInputs.dollarAmount, 2, '$') + ' per year'}`}</p>;
+      return (
+        <p>{`${formatNumber(contributionInputs.dollarAmount, 2, '$') + ' per year'} | ${accountTypeForDisplay(accounts[contributionInputs.accountId]?.type)}`}</p>
+      );
     case 'percentRemaining':
-      return <p>{`${contributionInputs.percentRemaining}% remaining`}</p>;
+      return (
+        <p>{`${contributionInputs.percentRemaining}% remaining | ${accountTypeForDisplay(accounts[contributionInputs.accountId]?.type)}`}</p>
+      );
     case 'unlimited':
-      return <p>Unlimited</p>;
+      return <p>{`Unlimited | ${accountTypeForDisplay(accounts[contributionInputs.accountId]?.type)}`}</p>;
   }
 }
 
@@ -157,8 +161,8 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                         key={id}
                         id={id}
                         index={index}
-                        name={`${accounts[contributionRule.accountId]?.name || 'Unknown'} | ${accountTypeForDisplay(accounts[contributionRule.accountId]?.type)}`}
-                        desc={getContributionRuleDesc({ id, ...contributionRule })}
+                        name={`To ${accounts[contributionRule.accountId]?.name || 'Unknown'}`}
+                        desc={getContributionRuleDesc(accounts, { id, ...contributionRule })}
                         leftAddOn={String(index + 1)}
                         onDropdownClickEdit={() => {
                           setContributionRuleDialogOpen(true);
@@ -180,8 +184,8 @@ export default function ContributionsSection({ toggleDisclosure, disclosureButto
                       key={activeId}
                       id={activeId}
                       index={activeIndex}
-                      name={`${accounts[activeContributionRule.accountId]?.name || 'Unknown'} | ${accountTypeForDisplay(accounts[activeContributionRule.accountId]?.type)}`}
-                      desc={getContributionRuleDesc(activeContributionRule)}
+                      name={`To ${accounts[activeContributionRule.accountId]?.name || 'Unknown'}`}
+                      desc={getContributionRuleDesc(accounts, activeContributionRule)}
                       leftAddOn={String(activeIndex + 1)}
                       onDropdownClickEdit={() => {
                         setContributionRuleDialogOpen(true);
