@@ -161,7 +161,7 @@ export const defaultState: Omit<QuickPlanState, 'actions'> = {
     showReferenceLines: true,
     simulationSeed: 9521,
     sidebarCollapsed: false,
-    simulationSettings: { simulationMode: 'historicalReturns' },
+    simulationSettings: { simulationMode: 'fixedReturns' },
     monteCarloSortMode: 'finalPortfolioValue',
   },
 };
