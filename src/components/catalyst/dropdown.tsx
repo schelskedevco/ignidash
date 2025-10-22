@@ -25,7 +25,6 @@ export function DropdownMenu({
   return (
     <Headless.MenuItems
       {...props}
-      portal
       transition
       anchor={anchor}
       className={cn(

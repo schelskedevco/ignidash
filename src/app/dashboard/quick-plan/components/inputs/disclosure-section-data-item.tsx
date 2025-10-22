@@ -59,7 +59,7 @@ export default function DisclosureSectionDataItem({
             <DropdownButton plain aria-label="Open options">
               <EllipsisVerticalIcon />
             </DropdownButton>
-            <DropdownMenu>
+            <DropdownMenu portal={false}>
               <DropdownItem onClick={onDropdownClickEdit}>Edit</DropdownItem>
               <DropdownItem onClick={onDropdownClickDelete}>Delete</DropdownItem>
             </DropdownMenu>
