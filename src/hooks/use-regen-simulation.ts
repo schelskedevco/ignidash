@@ -1,11 +1,13 @@
 import { RefreshCwIcon } from 'lucide-react';
 
-import { useUpdateSimulationSeed, useSimulationStatus } from '@/lib/stores/quick-plan-store';
+import { useUpdateSimulationSeed, useSimulationStatus, useSimulationMode } from '@/lib/stores/quick-plan-store';
 
 export function useRegenSimulation() {
   const updateSimulationSeed = useUpdateSimulationSeed();
   const simulationStatus = useSimulationStatus();
-  const isDisabled = simulationStatus === 'loading';
+  const simulationMode = useSimulationMode();
+
+  const isDisabled = simulationStatus === 'loading' || simulationMode === 'fixedReturns';
 
   const handleClick = () => {
     if (!isDisabled) updateSimulationSeed();
