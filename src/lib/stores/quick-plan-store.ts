@@ -510,9 +510,13 @@ export const useMultiSimulationResult = (
   const [completedSimulations, setCompletedSimulations] = useState(0);
   const onProgress = useCallback(() => setCompletedSimulations((prev) => prev + 1), []);
 
+  useEffect(() => {
+    setCompletedSimulations(0);
+  }, [simulationSeed, simulationMode]);
+
   const swrOptions = { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false };
 
-  const swrKey = ['simulationHandle', inputs, simulationSeed, simulationMode];
+  const swrKey = ['simulationHandle', simulationSeed, simulationMode];
   const {
     data: handleData,
     isLoading,
@@ -520,7 +524,7 @@ export const useMultiSimulationResult = (
   } = useSWR(
     swrKey,
     async () => {
-      await mutate(() => true, undefined, { revalidate: false });
+      await Promise.all([mutate(() => true, undefined, { revalidate: false }), mergeWorker.reset()]);
       setCompletedSimulations(0);
 
       const pool = createWorkerPool();

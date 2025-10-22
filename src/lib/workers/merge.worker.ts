@@ -62,6 +62,11 @@ const mergeAPI = {
 
     return { analysis, tableData, yearlyTableData, chartData: { portfolioData, phasesData }, keyMetrics };
   },
+
+  async reset(): Promise<void> {
+    cache = null;
+    partialResults = [];
+  },
 };
 
 Comlink.expose(mergeAPI);
