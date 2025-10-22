@@ -1,7 +1,7 @@
 import { formatNumber } from '@/lib/utils';
 import type { TimePoint, Growth, Frequency } from '@/lib/schemas/income-expenses-shared-schemas';
 
-export const timeFrameForDisplay = (startType: TimePoint['type'], endType?: TimePoint['type']) => {
+export const timeFrameForDisplay = (startTimePoint: TimePoint, endTimePoint?: TimePoint) => {
   function labelFromType(type: TimePoint['type']) {
     switch (type) {
       case 'now':
@@ -17,8 +17,8 @@ export const timeFrameForDisplay = (startType: TimePoint['type'], endType?: Time
     }
   }
 
-  const startLabel = labelFromType(startType);
-  const endLabel = endType ? labelFromType(endType) : undefined;
+  const startLabel = labelFromType(startTimePoint.type);
+  const endLabel = endTimePoint ? labelFromType(endTimePoint.type) : undefined;
 
   if (!endLabel) return startLabel;
   return `${startLabel} to ${endLabel}`;

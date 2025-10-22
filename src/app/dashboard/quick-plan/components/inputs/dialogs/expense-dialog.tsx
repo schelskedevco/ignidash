@@ -78,8 +78,10 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
   };
 
   const frequency = useWatch({ control, name: 'frequency' });
-  const startType = useWatch({ control, name: 'timeframe.start.type' });
-  const endType = useWatch({ control, name: 'timeframe.end.type' });
+  const startTimePoint = useWatch({ control, name: 'timeframe.start' });
+  const startType = startTimePoint.type;
+  const endTimePoint = useWatch({ control, name: 'timeframe.end' });
+  const endType = endTimePoint?.type;
   const growthRate = useWatch({ control, name: 'growth.growthRate' }) as number | undefined;
   const growthLimit = useWatch({ control, name: 'growth.growthLimit' }) as number | undefined;
 
@@ -255,7 +257,9 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
                         <CalendarIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
                         <span className="text-base/7 font-semibold">Timeframe</span>
                         <span className="hidden sm:inline">|</span>
-                        <span className="text-muted-foreground hidden truncate sm:inline">{timeFrameForDisplay(startType, endType)}</span>
+                        <span className="text-muted-foreground hidden truncate sm:inline">
+                          {timeFrameForDisplay(startTimePoint, endTimePoint)}
+                        </span>
                       </div>
                       <span className="text-muted-foreground ml-6 flex h-7 items-center">
                         <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
