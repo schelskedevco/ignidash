@@ -8,13 +8,7 @@ import { CalendarIcon, BanknoteArrowDownIcon, TrendingUpIcon } from 'lucide-reac
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
-import {
-  useUpdateExpenses,
-  useExpenseData,
-  useExpensesData,
-  useMarketAssumptionsData,
-  useTimelineData,
-} from '@/lib/stores/quick-plan-store';
+import { useUpdateExpenses, useExpenseData, useExpensesData, useTimelineData } from '@/lib/stores/quick-plan-store';
 import { expenseFormSchema, type ExpenseInputs } from '@/lib/schemas/expense-form-schema';
 import { timeFrameForDisplay, growthForDisplay } from '@/lib/utils/numbers-item-display-formatters';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -183,10 +177,6 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
     },
     [activeDisclosure]
   );
-
-  const marketAssumptions = useMarketAssumptionsData();
-  const inflationRate = marketAssumptions.inflationRate;
-  const realGrowthRate = String(((1 + (growthRate || 0) / 100) / (1 + inflationRate / 100) - 1) * 100);
 
   return (
     <>
@@ -485,10 +475,7 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
                       <DisclosurePanel className="pt-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                           <Field>
-                            <Label htmlFor="growthRate" className="flex w-full items-center justify-between">
-                              <span>Growth Rate</span>
-                              <span className="text-muted-foreground text-sm/6">{Number(realGrowthRate).toFixed(1)}% real</span>
-                            </Label>
+                            <Label htmlFor="growthRate">Annual Growth (real)</Label>
                             <NumberInput
                               name="growth.growthRate"
                               control={control}

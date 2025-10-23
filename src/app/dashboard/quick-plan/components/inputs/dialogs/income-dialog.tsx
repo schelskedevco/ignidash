@@ -8,7 +8,7 @@ import { /* CoinsIcon, */ CalendarIcon, BanknoteArrowUpIcon, TrendingUpIcon } fr
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
-import { useUpdateIncomes, useIncomeData, useIncomesData, useMarketAssumptionsData, useTimelineData } from '@/lib/stores/quick-plan-store';
+import { useUpdateIncomes, useIncomeData, useIncomesData, useTimelineData } from '@/lib/stores/quick-plan-store';
 import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/income-form-schema';
 import { timeFrameForDisplay, growthForDisplay } from '@/lib/utils/numbers-item-display-formatters';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -177,10 +177,6 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
     },
     [activeDisclosure]
   );
-
-  const marketAssumptions = useMarketAssumptionsData();
-  const inflationRate = marketAssumptions.inflationRate;
-  const realGrowthRate = String(((1 + (growthRate || 0) / 100) / (1 + inflationRate / 100) - 1) * 100);
 
   return (
     <>
@@ -479,10 +475,7 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
                       <DisclosurePanel className="pt-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                           <Field>
-                            <Label htmlFor="growthRate" className="flex w-full items-center justify-between">
-                              <span>Growth Rate</span>
-                              <span className="text-muted-foreground text-sm/6">{Number(realGrowthRate).toFixed(1)}% real</span>
-                            </Label>
+                            <Label htmlFor="growthRate">Annual Growth (real)</Label>
                             <NumberInput
                               name="growth.growthRate"
                               control={control}
