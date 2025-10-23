@@ -30,3 +30,6 @@ coverage
 
 # OS
 .DS_Store
+
+# Convex
+convex/_generated
