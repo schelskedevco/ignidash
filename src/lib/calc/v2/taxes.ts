@@ -216,7 +216,7 @@ export class TaxProcessor {
   } {
     const grossRealizedGains = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod + this.capitalLossCarryover;
     if (grossRealizedGains < 0) {
-      const capitalLossDeduction = Math.max(grossRealizedGains, -3000);
+      const capitalLossDeduction = Math.max(-3000, grossRealizedGains);
       this.capitalLossCarryover = grossRealizedGains - capitalLossDeduction;
       return { grossRealizedGains: 0, capitalLossDeduction };
     } else {
