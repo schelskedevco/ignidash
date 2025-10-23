@@ -59,6 +59,8 @@ export const CAPITAL_GAINS_TAX_BRACKETS_SINGLE = [
 ];
 
 export class TaxProcessor {
+  private capitalLossCarryover = 0;
+
   constructor(private simulationState: SimulationState) {}
 
   process(annualPortfolioDataBeforeTaxes: PortfolioData, annualIncomesData: IncomesData, annualReturnsData: ReturnsData): TaxesData {
@@ -68,11 +70,11 @@ export class TaxProcessor {
       annualReturnsData
     );
 
-    const grossRealizedGains = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod;
+    const { grossRealizedGains, capitalLossDeduction } = this.getGrossRealizedGainsAndCapLossDeduction(annualPortfolioDataBeforeTaxes);
+
     const grossDividendIncome = annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
     const grossIncomeTaxedAsCapGains = grossRealizedGains + grossDividendIncome;
 
-    const capitalLossDeduction = Math.min(0, Math.max(-3000, grossRealizedGains));
     const adjustedGrossOrdinaryIncome = Math.max(0, grossOrdinaryIncome + capitalLossDeduction);
 
     const deductionUsedForOrdinary = Math.min(STANDARD_DEDUCTION_SINGLE, adjustedGrossOrdinaryIncome);
@@ -206,6 +208,21 @@ export class TaxProcessor {
         grossIncomeFromIncomes + grossIncomeFromTaxDeferredWithdrawals + grossIncomeFromInterest - taxDeferredContributions,
       taxDeferredContributions,
     };
+  }
+
+  private getGrossRealizedGainsAndCapLossDeduction(annualPortfolioDataBeforeTaxes: PortfolioData): {
+    grossRealizedGains: number;
+    capitalLossDeduction: number;
+  } {
+    const grossRealizedGains = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod + this.capitalLossCarryover;
+    if (grossRealizedGains < 0) {
+      const capitalLossDeduction = Math.max(grossRealizedGains, -3000);
+      this.capitalLossCarryover = grossRealizedGains - capitalLossDeduction;
+      return { grossRealizedGains: 0, capitalLossDeduction };
+    } else {
+      this.capitalLossCarryover = 0;
+      return { grossRealizedGains, capitalLossDeduction: 0 };
+    }
   }
 
   private getContributionsForAccountTypes(annualPortfolioDataBeforeTaxes: PortfolioData, accountTypes: AccountInputs['type'][]): number {
