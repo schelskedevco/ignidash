@@ -57,7 +57,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
               <FieldGroup>
                 <Field>
                   <Label htmlFor="stockReturn" className="flex w-full items-center justify-between">
-                    <span>Stock Return (nominal)</span>
+                    <span>Stock Return</span>
                     <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
                   </Label>
                   <NumberInput name="stockReturn" control={control} id="stockReturn" inputMode="decimal" placeholder="10%" suffix="%" />
@@ -76,7 +76,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                 <Divider />
                 <Field>
                   <Label htmlFor="bondReturn" className="flex w-full items-center justify-between">
-                    <span>Bond Return (nominal)</span>
+                    <span>Bond Return</span>
                     <span className="text-muted-foreground text-sm/6">{bondsRealReturn.toFixed(1)}% real</span>
                   </Label>
                   <NumberInput id="bondReturn" control={control} name="bondReturn" inputMode="decimal" placeholder="5%" suffix="%" />
@@ -95,7 +95,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                 <Divider />
                 <Field>
                   <Label htmlFor="cashReturn" className="flex w-full items-center justify-between">
-                    <span>Cash Return (nominal)</span>
+                    <span>Cash Return</span>
                     <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
                   </Label>
                   <NumberInput id="cashReturn" control={control} name="cashReturn" inputMode="decimal" placeholder="3%" suffix="%" />
