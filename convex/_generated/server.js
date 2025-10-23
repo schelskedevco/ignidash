@@ -17,7 +17,7 @@ import {
   internalMutationGeneric,
   internalQueryGeneric,
   componentsGeneric,
-} from 'convex/server';
+} from "convex/server";
 
 /**
  * Define a query in this Convex app's public API.
