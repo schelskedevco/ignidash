@@ -177,7 +177,6 @@ export default function SignInPage() {
         <Link href="/privacy" className="underline hover:text-stone-700 dark:hover:text-stone-300">
           Privacy Policy
         </Link>
-        .
       </p>
     </div>
   );

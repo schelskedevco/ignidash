@@ -27,8 +27,8 @@ export default function SignUpPage() {
   const handleGoogleSignUp = async () => await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard/quick-plan' });
 
   return (
-    <>
-      <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col">
+      <div className="flex flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <FireIcon className="text-primary mx-auto h-10 w-auto" />
           <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-stone-900 dark:text-white">Sign up for Ignidash</h2>
@@ -124,6 +124,17 @@ export default function SignUpPage() {
           </p>
         </div>
       </div>
-    </>
+      <p className="pb-6 text-center text-xs/6 text-stone-500 dark:text-stone-400">
+        By creating an account, you agree to the{' '}
+        <Link href="/terms" className="underline hover:text-stone-700 dark:hover:text-stone-300">
+          Terms of Service
+        </Link>{' '}
+        and{' '}
+        <Link href="/privacy" className="underline hover:text-stone-700 dark:hover:text-stone-300">
+          Privacy Policy
+        </Link>
+        .
+      </p>
+    </div>
   );
 }
