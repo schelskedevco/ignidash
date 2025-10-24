@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { signInWithGoogle } from '@/lib/auth-client';
 
 export default function SignUpPage() {
-  const handleGoogleSignUp = async () => await signInWithGoogle('/dashboard');
+  const handleGoogleSignUp = async () => await signInWithGoogle('/dashboard/quick-plan');
 
   return (
     <>
