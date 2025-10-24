@@ -13,7 +13,14 @@ export default function SignUpPage() {
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    await authClient.signUp.email({ email, password, name: email.split('@')[0], callbackURL: '/dashboard/quick-plan' });
+    await authClient.signUp.email(
+      { email, password, name: email.split('@')[0], callbackURL: '/dashboard/quick-plan' },
+      {
+        onError: (ctx) => {
+          alert(ctx.error.message);
+        },
+      }
+    );
   };
 
   const handleGoogleSignUp = async () => await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard/quick-plan' });
