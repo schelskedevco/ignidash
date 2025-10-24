@@ -11,7 +11,7 @@ export default function SignUpPage() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-          <div className="border-border/25 bg-emphasized-background border px-6 py-12 shadow-sm sm:rounded-lg sm:px-12 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
+          <div className="border-border/25 from-emphasized-background to-background border bg-gradient-to-bl px-6 py-12 shadow-sm sm:rounded-lg sm:px-12 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
             <form action="#" method="POST" className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm/6 font-medium text-stone-900 dark:text-white">
