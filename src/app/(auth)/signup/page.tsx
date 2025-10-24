@@ -3,10 +3,10 @@
 import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 
-import { signInWithGoogle } from '@/lib/auth-client';
+import { authClient } from '@/lib/auth-client';
 
 export default function SignUpPage() {
-  const handleGoogleSignUp = async () => await signInWithGoogle('/dashboard/quick-plan');
+  const handleGoogleSignUp = async () => await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard/quick-plan' });
 
   return (
     <>
