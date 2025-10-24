@@ -1,7 +1,25 @@
+'use client';
+
 import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 
+import { authClient } from '@/lib/auth-client';
+
 export default function SignInPage() {
+  const handleEmailSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const rememberMe = formData.get('remember-me') === 'on';
+
+    await authClient.signIn.email({ email, password, callbackURL: '/dashboard/quick-plan', rememberMe });
+  };
+
+  const handleGoogleSignIn = async () => await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard/quick-plan' });
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -12,7 +30,7 @@ export default function SignInPage() {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="border-border/25 from-emphasized-background to-background border bg-gradient-to-bl px-6 py-12 shadow-sm sm:rounded-lg sm:px-12 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
-            <form action="#" method="POST" className="space-y-6">
+            <form onSubmit={handleEmailSignIn} method="POST" className="space-y-6">
               <div>
                 <label htmlFor="email" className="block text-sm/6 font-medium text-stone-900 dark:text-white">
                   Email address
@@ -107,8 +125,9 @@ export default function SignInPage() {
               </div>
 
               <div className="mt-6">
-                <a
-                  href="#"
+                <button
+                  onClick={handleGoogleSignIn}
+                  type="button"
                   className="flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-stone-900 shadow-xs inset-ring inset-ring-stone-300 hover:bg-stone-50 focus-visible:inset-ring-transparent dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20"
                 >
                   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
@@ -130,7 +149,7 @@ export default function SignInPage() {
                     />
                   </svg>
                   <span className="text-sm/6 font-semibold">Google</span>
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -144,7 +163,6 @@ export default function SignInPage() {
         </div>
       </div>
       <p className="pb-6 text-center text-xs/6 text-stone-500 dark:text-stone-400">
-        By creating an account, you agree to the{' '}
         <Link href="/terms" className="underline hover:text-stone-700 dark:hover:text-stone-300">
           Terms of Service
         </Link>{' '}
