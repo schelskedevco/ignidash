@@ -15,7 +15,14 @@ export default function SignInPage() {
     const password = formData.get('password') as string;
     const rememberMe = formData.get('remember-me') === 'on';
 
-    await authClient.signIn.email({ email, password, callbackURL: '/dashboard/quick-plan', rememberMe });
+    await authClient.signIn.email(
+      { email, password, callbackURL: '/dashboard/quick-plan', rememberMe },
+      {
+        onError: (ctx) => {
+          alert(ctx.error.message);
+        },
+      }
+    );
   };
 
   const handleGoogleSignIn = async () => await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard/quick-plan' });

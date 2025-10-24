@@ -25,6 +25,11 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
         clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       },
     },
+    user: {
+      deleteUser: {
+        enabled: true,
+      },
+    },
     plugins: [convex()],
   });
 };
