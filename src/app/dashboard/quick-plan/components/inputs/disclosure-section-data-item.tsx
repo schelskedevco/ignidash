@@ -39,7 +39,7 @@ export default function DisclosureSectionDataItem({
   // const needsBgTextColor = ['bg-[var(--chart-1)]'];
 
   return (
-    <li key={id} className="col-span-1 flex shadow-xs dark:shadow-none" ref={ref} style={style}>
+    <li key={id} className="col-span-1 flex shadow-sm dark:shadow-none" ref={ref} style={style}>
       <div
         className={cn(
           'border-foreground/50 flex w-16 shrink-0 items-center justify-center gap-1 border text-xl font-medium text-white',
