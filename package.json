@@ -15,6 +15,7 @@
     "create-demo": "tsx scripts/convert-inputs-json-to-demo-inputs.ts"
   },
   "dependencies": {
+    "@convex-dev/better-auth": "^0.9.6",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
@@ -24,6 +25,7 @@
     "@hookform/resolvers": "^5.2.1",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@redux-devtools/extension": "^3.3.0",
+    "better-auth": "1.3.27",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "comlink": "^4.4.2",
