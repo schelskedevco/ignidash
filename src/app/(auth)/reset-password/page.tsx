@@ -22,7 +22,7 @@ export default function ResetPasswordPage() {
 
     const token = searchParams.get('token');
     if (!token) {
-      alert('Invalid or missing token. Please request a new password reset link.');
+      setErrorMessage('Invalid or missing token. Please request a new password reset link.');
       return;
     }
 
