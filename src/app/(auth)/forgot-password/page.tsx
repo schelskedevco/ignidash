@@ -10,6 +10,8 @@ import EmailInput from '../components/email-input';
 
 export default function ForgotPasswordPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [_dataMessage, setDataMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRequestReset = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -25,6 +27,18 @@ export default function ForgotPasswordPage() {
       {
         onError: (ctx) => {
           setErrorMessage(ctx.error.message);
+          setDataMessage(null);
+          setIsLoading(false);
+        },
+        onRequest() {
+          setErrorMessage(null);
+          setDataMessage(null);
+          setIsLoading(true);
+        },
+        onSuccess: (ctx) => {
+          setErrorMessage(null);
+          setDataMessage(ctx.data.message);
+          setIsLoading(false);
         },
       }
     );
@@ -46,9 +60,10 @@ export default function ForgotPasswordPage() {
               <div>
                 <button
                   type="submit"
-                  className="flex w-full justify-center rounded-md bg-rose-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 dark:bg-rose-500 dark:shadow-none dark:hover:bg-rose-400 dark:focus-visible:outline-rose-500"
+                  disabled={isLoading}
+                  className="flex w-full justify-center rounded-md bg-rose-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-rose-500 dark:shadow-none dark:hover:bg-rose-400 dark:focus-visible:outline-rose-500"
                 >
-                  Send Reset Link
+                  {isLoading ? 'Sending...' : 'Send Reset Link'}
                 </button>
               </div>
             </form>
