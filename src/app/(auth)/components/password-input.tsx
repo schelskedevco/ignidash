@@ -5,9 +5,10 @@ import { useState } from 'react';
 
 interface PasswordInputProps {
   passwordType: 'new' | 'current';
+  isPasswordReset?: boolean;
 }
 
-export default function PasswordInput({ passwordType }: PasswordInputProps) {
+export default function PasswordInput({ passwordType, isPasswordReset = false }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   let autoComplete: string;
@@ -23,7 +24,7 @@ export default function PasswordInput({ passwordType }: PasswordInputProps) {
   return (
     <div>
       <label htmlFor="password" className="block text-sm/6 font-medium text-stone-900 dark:text-white">
-        Password
+        {isPasswordReset ? 'New Password' : 'Password'}
       </label>
       <div className="relative mt-2">
         <input
