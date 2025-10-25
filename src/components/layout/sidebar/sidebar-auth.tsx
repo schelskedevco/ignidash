@@ -1,13 +1,13 @@
 import Image from 'next/image';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { CircleUserRoundIcon } from 'lucide-react';
+import { CircleUserRoundIcon, LogInIcon, LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react';
 import * as Headless from '@headlessui/react';
 import { useRouter } from 'next/navigation';
 import { Unauthenticated, Authenticated } from 'convex/react';
 
 import { authClient } from '@/lib/auth-client';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider } from '@/components/catalyst/dropdown';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider, DropdownLabel } from '@/components/catalyst/dropdown';
 
 export default function SidebarAuth() {
   const router = useRouter();
@@ -44,15 +44,30 @@ export default function SidebarAuth() {
       </Headless.MenuButton>
       <DropdownMenu className="z-[60] min-w-(--button-width)">
         <Authenticated>
-          <DropdownItem href="/profile">My profile</DropdownItem>
-          <DropdownItem href="/settings">Settings</DropdownItem>
+          <DropdownItem href="/profile">
+            <UserIcon data-slot="icon" />
+            <DropdownLabel>My profile</DropdownLabel>
+          </DropdownItem>
+          <DropdownItem href="/settings">
+            <SettingsIcon data-slot="icon" />
+            <DropdownLabel>Settings</DropdownLabel>
+          </DropdownItem>
           <DropdownDivider />
-          <DropdownItem onClick={() => signOut()}>Sign out</DropdownItem>
+          <DropdownItem onClick={() => signOut()}>
+            <LogOutIcon data-slot="icon" />
+            <DropdownLabel>Sign out</DropdownLabel>
+          </DropdownItem>
         </Authenticated>
         <Unauthenticated>
-          <DropdownItem href="/settings">Settings</DropdownItem>
+          <DropdownItem href="/settings">
+            <SettingsIcon data-slot="icon" />
+            <DropdownLabel>Settings</DropdownLabel>
+          </DropdownItem>
           <DropdownDivider />
-          <DropdownItem href="/signin">Sign in</DropdownItem>
+          <DropdownItem href="/signin">
+            <LogInIcon data-slot="icon" />
+            <DropdownLabel>Sign in</DropdownLabel>
+          </DropdownItem>
         </Unauthenticated>
       </DropdownMenu>
     </Dropdown>
