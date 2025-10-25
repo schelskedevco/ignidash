@@ -17,6 +17,7 @@ import GoogleSignIn from '../components/google-sign-in';
 export default function SignInPage() {
   const [showNotification, setShowNotification] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleEmailSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -30,8 +31,16 @@ export default function SignInPage() {
     await authClient.signIn.email(
       { email, password, callbackURL: '/dashboard/quick-plan', rememberMe },
       {
+        onRequest() {
+          setErrorMessage(null);
+          setIsLoading(true);
+        },
+        onSuccess() {
+          setIsLoading(false);
+        },
         onError: (ctx) => {
           setErrorMessage(ctx.error.message);
+          setIsLoading(false);
         },
       }
     );
@@ -117,9 +126,10 @@ export default function SignInPage() {
                 <div>
                   <button
                     type="submit"
-                    className="flex w-full justify-center rounded-md bg-rose-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 dark:bg-rose-500 dark:shadow-none dark:hover:bg-rose-400 dark:focus-visible:outline-rose-500"
+                    disabled={isLoading}
+                    className="flex w-full justify-center rounded-md bg-rose-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-rose-500 dark:shadow-none dark:hover:bg-rose-400 dark:focus-visible:outline-rose-500"
                   >
-                    Sign in
+                    {isLoading ? 'Signing in...' : 'Sign in'}
                   </button>
                 </div>
               </form>
