@@ -13,7 +13,7 @@ export default function SidebarAuth() {
   const user = useQuery(api.auth.getCurrentUser);
 
   const image = user?.image;
-  const name = user?.name ?? 'Tom Cook';
+  const name = user?.name ?? 'Anonymous';
 
   const signOut = async () => {
     await authClient.signOut({
