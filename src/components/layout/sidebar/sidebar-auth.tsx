@@ -39,7 +39,6 @@ export default function SidebarAuth() {
         ) : (
           <CircleUserRoundIcon className="size-8 shrink-0 rounded-full" />
         )}
-        <span className="sr-only">Your profile</span>
         <span className="ml-2 inline group-data-[state=collapsed]/sidebar:hidden" aria-hidden="true">
           {name}
         </span>

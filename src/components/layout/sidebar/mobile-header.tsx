@@ -2,8 +2,16 @@
 
 import Image from 'next/image';
 import { MenuIcon } from 'lucide-react';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { CircleUserRoundIcon, LogInIcon, LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react';
+import * as Headless from '@headlessui/react';
+import { useRouter } from 'next/navigation';
+import { Unauthenticated, Authenticated } from 'convex/react';
 
 import type { NavigationItem } from '@/lib/navigation';
+import { authClient } from '@/lib/auth-client';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider, DropdownLabel } from '@/components/catalyst/dropdown';
 
 interface MobileHeaderProps {
   onMenuClick: () => void;
@@ -12,8 +20,20 @@ interface MobileHeaderProps {
 }
 
 export default function MobileHeader({ onMenuClick, currentPageTitle, currentPageIcon: Icon }: MobileHeaderProps) {
-  const profileLink =
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80';
+  const router = useRouter();
+  const user = useQuery(api.auth.getCurrentUser);
+
+  const image = user?.image;
+
+  const signOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push('/signin');
+        },
+      },
+    });
+  };
 
   return (
     <div className="bg-emphasized-background border-border/50 fixed top-0 z-40 flex w-full items-center gap-x-6 border-b border-dashed px-4 py-4 sm:px-6 lg:hidden">
@@ -25,10 +45,43 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
         <Icon aria-hidden="true" className="text-primary size-5" />
         {currentPageTitle}
       </div>
-      <a className="focus-outline shrink-0" href="#">
-        <span className="sr-only">Your profile</span>
-        <Image alt="" src={profileLink} className="size-8 rounded-full" width={32} height={32} />
-      </a>
+      <Dropdown>
+        <Headless.MenuButton aria-label="Account options" className="focus-outline shrink-0">
+          {image ? (
+            <Image alt="" src={image} className="size-8 shrink-0 rounded-full" width={32} height={32} />
+          ) : (
+            <CircleUserRoundIcon className="size-8 shrink-0 rounded-full" />
+          )}
+        </Headless.MenuButton>
+        <DropdownMenu className="z-[60] min-w-(--button-width)">
+          <Authenticated>
+            <DropdownItem href="/profile">
+              <UserIcon data-slot="icon" />
+              <DropdownLabel>My profile</DropdownLabel>
+            </DropdownItem>
+            <DropdownItem href="/settings">
+              <SettingsIcon data-slot="icon" />
+              <DropdownLabel>Settings</DropdownLabel>
+            </DropdownItem>
+            <DropdownDivider />
+            <DropdownItem onClick={() => signOut()}>
+              <LogOutIcon data-slot="icon" />
+              <DropdownLabel>Sign out</DropdownLabel>
+            </DropdownItem>
+          </Authenticated>
+          <Unauthenticated>
+            <DropdownItem href="/settings">
+              <SettingsIcon data-slot="icon" />
+              <DropdownLabel>Settings</DropdownLabel>
+            </DropdownItem>
+            <DropdownDivider />
+            <DropdownItem href="/signin">
+              <LogInIcon data-slot="icon" />
+              <DropdownLabel>Sign in</DropdownLabel>
+            </DropdownItem>
+          </Unauthenticated>
+        </DropdownMenu>
+      </Dropdown>
     </div>
   );
 }
