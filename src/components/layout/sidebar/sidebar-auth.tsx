@@ -4,6 +4,7 @@ import { api } from '@/convex/_generated/api';
 import { CircleUserRoundIcon } from 'lucide-react';
 import * as Headless from '@headlessui/react';
 import { useRouter } from 'next/navigation';
+import { Unauthenticated, Authenticated } from 'convex/react';
 
 import { authClient } from '@/lib/auth-client';
 import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider } from '@/components/catalyst/dropdown';
@@ -42,10 +43,17 @@ export default function SidebarAuth() {
         </span>
       </Headless.MenuButton>
       <DropdownMenu className="z-[60] min-w-(--button-width)">
-        <DropdownItem href="/profile">My profile</DropdownItem>
-        <DropdownItem href="/settings">Settings</DropdownItem>
-        <DropdownDivider />
-        <DropdownItem onClick={() => signOut()}>Sign out</DropdownItem>
+        <Authenticated>
+          <DropdownItem href="/profile">My profile</DropdownItem>
+          <DropdownItem href="/settings">Settings</DropdownItem>
+          <DropdownDivider />
+          <DropdownItem onClick={() => signOut()}>Sign out</DropdownItem>
+        </Authenticated>
+        <Unauthenticated>
+          <DropdownItem href="/settings">Settings</DropdownItem>
+          <DropdownDivider />
+          <DropdownItem href="/signin">Sign in</DropdownItem>
+        </Unauthenticated>
       </DropdownMenu>
     </Dropdown>
   );
