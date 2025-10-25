@@ -7,6 +7,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { authClient } from '@/lib/auth-client';
+import { cn } from '@/lib/utils';
 
 export default function SignInPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -57,7 +58,13 @@ export default function SignInPage() {
                     autoComplete="email"
                     aria-invalid={!!errorMessage}
                     {...(errorMessage && { 'aria-describedby': 'email-error' })}
-                    className="block w-full rounded-md bg-white px-3 py-1.5 pr-10 text-base text-stone-900 outline-1 -outline-offset-1 outline-stone-400 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/25 dark:placeholder:text-stone-500 dark:focus:outline-rose-500"
+                    className={cn(
+                      'block w-full rounded-md bg-white px-3 py-1.5 pr-10 text-base text-stone-900 outline-1 -outline-offset-1 outline-stone-400 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/25 dark:placeholder:text-stone-500 dark:focus:outline-rose-500',
+                      {
+                        'text-red-900 outline-red-300 placeholder:text-red-300 focus:outline-red-600 dark:text-red-400 dark:outline-red-500/50 dark:placeholder:text-red-400/70 dark:focus:outline-red-400':
+                          !!errorMessage,
+                      }
+                    )}
                   />
                   {!!errorMessage && (
                     <div className="pointer-events-none absolute inset-y-0 right-0 flex shrink-0 items-center pr-3 text-red-500 dark:text-red-400">
