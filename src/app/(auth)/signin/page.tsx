@@ -36,6 +36,7 @@ export default function SignInPage() {
           setIsLoading(true);
         },
         onSuccess() {
+          setErrorMessage(null);
           setIsLoading(false);
         },
         onError: (ctx) => {

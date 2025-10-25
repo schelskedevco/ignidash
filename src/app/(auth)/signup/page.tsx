@@ -31,6 +31,7 @@ export default function SignUpPage() {
           setIsLoading(true);
         },
         onSuccess() {
+          setErrorMessage(null);
           setIsLoading(false);
         },
         onError: (ctx) => {
