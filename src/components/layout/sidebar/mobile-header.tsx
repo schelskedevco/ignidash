@@ -7,7 +7,7 @@ import { api } from '@/convex/_generated/api';
 import { CircleUserRoundIcon, LogInIcon, LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react';
 import * as Headless from '@headlessui/react';
 import { useRouter } from 'next/navigation';
-import { Unauthenticated, Authenticated } from 'convex/react';
+import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
 
 import type { NavigationItem } from '@/lib/navigation';
 import { authClient } from '@/lib/auth-client';
@@ -54,6 +54,22 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
           )}
         </Headless.MenuButton>
         <DropdownMenu className="z-[60] min-w-(--button-width)">
+          <AuthLoading>
+            <DropdownItem onClick={() => {}} disabled>
+              Loading...
+            </DropdownItem>
+          </AuthLoading>
+          <Unauthenticated>
+            <DropdownItem href="/settings">
+              <SettingsIcon data-slot="icon" />
+              <DropdownLabel>Settings</DropdownLabel>
+            </DropdownItem>
+            <DropdownDivider />
+            <DropdownItem href="/signin">
+              <LogInIcon data-slot="icon" />
+              <DropdownLabel>Sign in</DropdownLabel>
+            </DropdownItem>
+          </Unauthenticated>
           <Authenticated>
             <DropdownItem href="/profile">
               <UserIcon data-slot="icon" />
@@ -69,17 +85,6 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
               <DropdownLabel>Sign out</DropdownLabel>
             </DropdownItem>
           </Authenticated>
-          <Unauthenticated>
-            <DropdownItem href="/settings">
-              <SettingsIcon data-slot="icon" />
-              <DropdownLabel>Settings</DropdownLabel>
-            </DropdownItem>
-            <DropdownDivider />
-            <DropdownItem href="/signin">
-              <LogInIcon data-slot="icon" />
-              <DropdownLabel>Sign in</DropdownLabel>
-            </DropdownItem>
-          </Unauthenticated>
         </DropdownMenu>
       </Dropdown>
     </div>
