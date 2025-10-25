@@ -1,6 +1,7 @@
 'use client';
 
 import { FireIcon } from '@heroicons/react/24/solid';
+import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -8,6 +9,7 @@ import Link from 'next/link';
 import { authClient } from '@/lib/auth-client';
 
 export default function SignInPage() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleEmailSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -23,7 +25,7 @@ export default function SignInPage() {
       { email, password, callbackURL: '/dashboard/quick-plan', rememberMe },
       {
         onError: (ctx) => {
-          alert(ctx.error.message);
+          setErrorMessage(ctx.error.message);
         },
       }
     );
@@ -46,16 +48,28 @@ export default function SignInPage() {
                 <label htmlFor="email" className="block text-sm/6 font-medium text-stone-900 dark:text-white">
                   Email address
                 </label>
-                <div className="mt-2">
+                <div className="relative mt-2">
                   <input
                     id="email"
                     name="email"
                     type="email"
                     required
                     autoComplete="email"
-                    className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-stone-900 outline-1 -outline-offset-1 outline-stone-400 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/25 dark:placeholder:text-stone-500 dark:focus:outline-rose-500"
+                    aria-invalid={!!errorMessage}
+                    {...(errorMessage && { 'aria-describedby': 'email-error' })}
+                    className="block w-full rounded-md bg-white px-3 py-1.5 pr-10 text-base text-stone-900 outline-1 -outline-offset-1 outline-stone-400 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/25 dark:placeholder:text-stone-500 dark:focus:outline-rose-500"
                   />
+                  {!!errorMessage && (
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex shrink-0 items-center pr-3 text-red-500 dark:text-red-400">
+                      <ExclamationCircleIcon aria-hidden="true" className="h-5 w-5" />
+                    </div>
+                  )}
                 </div>
+                {!!errorMessage && (
+                  <p id="email-error" className="mt-2 text-sm text-red-600 dark:text-red-400">
+                    {errorMessage}
+                  </p>
+                )}
               </div>
 
               <div>
