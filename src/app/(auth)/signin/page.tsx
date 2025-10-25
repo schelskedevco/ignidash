@@ -186,6 +186,7 @@ export default function SignInPage() {
         </div>
       </div>
       <p className="pb-6 text-center text-xs/6 text-stone-500 dark:text-stone-400">
+        By signing in, you agree to the{' '}
         <Link href="/terms" className="underline hover:text-stone-700 dark:hover:text-stone-300">
           Terms of Service
         </Link>{' '}
@@ -193,6 +194,7 @@ export default function SignInPage() {
         <Link href="/privacy" className="underline hover:text-stone-700 dark:hover:text-stone-300">
           Privacy Policy
         </Link>
+        .
       </p>
     </div>
   );
