@@ -19,10 +19,11 @@ export default function SignUpPage() {
     const formData = new FormData(event.currentTarget);
 
     const email = formData.get('email') as string;
+    const fullName = formData.get('full-name') as string;
     const password = formData.get('password') as string;
 
     await authClient.signUp.email(
-      { email, password, name: email.split('@')[0], callbackURL: '/dashboard/quick-plan' },
+      { email, password, name: fullName, callbackURL: '/dashboard/quick-plan' },
       {
         onError: (ctx) => {
           setErrorMessage(ctx.error.message);
@@ -43,6 +44,21 @@ export default function SignUpPage() {
           <div className="border-border/25 from-emphasized-background to-background border bg-gradient-to-bl px-6 py-12 shadow-sm sm:rounded-lg sm:px-12 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
             <form onSubmit={handleEmailSignUp} method="POST" className="space-y-6">
               <EmailInput errorMessage={errorMessage} />
+              <div>
+                <label htmlFor="full-name" className="block text-sm/6 font-medium text-stone-900 dark:text-white">
+                  Full name
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="full-name"
+                    name="full-name"
+                    type="text"
+                    autoComplete="given-name"
+                    required
+                    className="block w-full rounded-md bg-white px-3 py-1.5 pr-10 text-base text-stone-900 outline-1 -outline-offset-1 outline-stone-400 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/25 dark:placeholder:text-stone-500 dark:focus:outline-rose-500"
+                  />
+                </div>
+              </div>
               <PasswordInput passwordType="new" />
 
               <div>
