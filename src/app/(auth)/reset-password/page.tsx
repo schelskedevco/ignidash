@@ -1,6 +1,7 @@
 'use client';
 
 import { FireIcon } from '@heroicons/react/24/solid';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -9,6 +10,8 @@ import { authClient } from '@/lib/auth-client';
 import PasswordInput from '../components/password-input';
 
 export default function ResetPasswordPage() {
+  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -30,11 +33,16 @@ export default function ResetPasswordPage() {
         token,
       },
       {
-        onError(context) {
-          alert(context.error.message);
+        onRequest() {
+          setIsLoading(true);
         },
         onSuccess() {
+          setIsLoading(false);
           router.push('/signin?reset=success');
+        },
+        onError(context) {
+          setIsLoading(false);
+          alert(context.error.message);
         },
       }
     );
@@ -56,9 +64,10 @@ export default function ResetPasswordPage() {
               <div>
                 <button
                   type="submit"
-                  className="flex w-full justify-center rounded-md bg-rose-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 dark:bg-rose-500 dark:shadow-none dark:hover:bg-rose-400 dark:focus-visible:outline-rose-500"
+                  disabled={isLoading}
+                  className="flex w-full justify-center rounded-md bg-rose-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-rose-500 dark:shadow-none dark:hover:bg-rose-400 dark:focus-visible:outline-rose-500"
                 >
-                  Reset Password
+                  {isLoading ? 'Resetting Password...' : 'Reset Password'}
                 </button>
               </div>
             </form>
