@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Dialog, DialogPanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { FireIcon } from '@heroicons/react/24/solid';
-import { Authenticated, Unauthenticated } from 'convex/react';
+import { Authenticated, Unauthenticated, AuthLoading } from 'convex/react';
 
 const navigation = [
   { name: 'How It Works', href: '/#how-it-works' },
@@ -47,6 +47,9 @@ export default function Navbar() {
           ))}
         </div>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          <AuthLoading>
+            <span className="text-sm/6 font-semibold text-gray-900">Loading...</span>
+          </AuthLoading>
           <Unauthenticated>
             <Link href="/signin" className="text-sm/6 font-semibold text-gray-900">
               Sign in <span aria-hidden="true">&rarr;</span>
@@ -89,6 +92,9 @@ export default function Navbar() {
                 ))}
               </div>
               <div className="py-6">
+                <AuthLoading>
+                  <span className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900">Loading...</span>
+                </AuthLoading>
                 <Unauthenticated>
                   <Link
                     href="/signin"
