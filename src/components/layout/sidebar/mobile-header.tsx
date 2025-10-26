@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { MenuIcon } from 'lucide-react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { CircleUserRoundIcon, LogInIcon, LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react';
+import { CircleUserRoundIcon, LogInIcon, LogOutIcon, SettingsIcon, LoaderIcon } from 'lucide-react';
 import * as Headless from '@headlessui/react';
 import { useRouter } from 'next/navigation';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
@@ -58,7 +58,8 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
         <DropdownMenu className="z-[60] min-w-(--button-width)">
           <AuthLoading>
             <DropdownItem onClick={() => {}} disabled>
-              Loading...
+              <LoaderIcon data-slot="icon" />
+              <DropdownLabel>Loading...</DropdownLabel>
             </DropdownItem>
           </AuthLoading>
           <Unauthenticated>
@@ -66,7 +67,6 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
               <SettingsIcon data-slot="icon" />
               <DropdownLabel>Settings</DropdownLabel>
             </DropdownItem>
-            <DropdownDivider />
             <DropdownItem href="/signin">
               <LogInIcon data-slot="icon" />
               <DropdownLabel>Sign in</DropdownLabel>
@@ -80,15 +80,10 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
               </div>
             </DropdownHeader>
             <DropdownDivider />
-            <DropdownItem href="/profile">
-              <UserIcon data-slot="icon" />
-              <DropdownLabel>My profile</DropdownLabel>
-            </DropdownItem>
             <DropdownItem href="/settings">
               <SettingsIcon data-slot="icon" />
               <DropdownLabel>Settings</DropdownLabel>
             </DropdownItem>
-            <DropdownDivider />
             <DropdownItem onClick={() => signOut()}>
               <LogOutIcon data-slot="icon" />
               <DropdownLabel>Sign out</DropdownLabel>
