@@ -12,11 +12,12 @@ import { useSidebarCollapsed } from '@/lib/stores/quick-plan-store';
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const sidebarCollapsed = useSidebarCollapsed();
+
   const navigation = getNavigation(pathname);
   const secondaryNavigation = getSecondaryNavigation();
   const currentPageTitle = getCurrentPageTitle(pathname);
   const currentPageIcon = getCurrentPageIcon(pathname);
-  const sidebarCollapsed = useSidebarCollapsed();
 
   return (
     <div className="group/sidebar h-full" data-state={sidebarCollapsed ? 'collapsed' : 'expanded'}>
