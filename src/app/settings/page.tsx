@@ -21,20 +21,28 @@ export default function SettingsPage() {
 
   const currentName = user?.name ?? 'Anonymous';
   const [name, setName] = useState(currentName);
-  const [nameFieldError, setNameFieldError] = useState<string | null>(null);
+  const [nameFieldState, setNameFieldState] = useState<{
+    dataMessage: string | null;
+    isLoading: boolean;
+    errorMessage: string | null;
+  }>({
+    dataMessage: null,
+    isLoading: false,
+    errorMessage: null,
+  });
 
   const handleNameSave = async () => {
     await authClient.updateUser(
       { name },
       {
         onError: (ctx) => {
-          setNameFieldError(ctx.error.message);
+          setNameFieldState((prev) => ({ ...prev, errorMessage: ctx.error.message }));
         },
         onRequest() {
-          setNameFieldError(null);
+          setNameFieldState((prev) => ({ ...prev, errorMessage: null }));
         },
         onSuccess: (ctx) => {
-          setNameFieldError(null);
+          setNameFieldState((prev) => ({ ...prev, errorMessage: null }));
         },
       }
     );
@@ -42,20 +50,28 @@ export default function SettingsPage() {
 
   const currentEmail = user?.email ?? '';
   const [email, setEmail] = useState(currentEmail);
-  const [emailFieldError, setEmailFieldError] = useState<string | null>(null);
+  const [emailFieldState, setEmailFieldState] = useState<{
+    dataMessage: string | null;
+    isLoading: boolean;
+    errorMessage: string | null;
+  }>({
+    dataMessage: null,
+    isLoading: false,
+    errorMessage: null,
+  });
 
   const handleEmailSave = async () => {
     await authClient.changeEmail(
       { newEmail: email },
       {
         onError: (ctx) => {
-          setEmailFieldError(ctx.error.message);
+          setEmailFieldState((prev) => ({ ...prev, errorMessage: ctx.error.message }));
         },
         onRequest() {
-          setEmailFieldError(null);
+          setEmailFieldState((prev) => ({ ...prev, errorMessage: null }));
         },
         onSuccess: (ctx) => {
-          setEmailFieldError(null);
+          setEmailFieldState((prev) => ({ ...prev, errorMessage: null }));
         },
       }
     );
@@ -63,20 +79,28 @@ export default function SettingsPage() {
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [passwordFieldError, setPasswordFieldError] = useState<string | null>(null);
+  const [passwordFieldState, setPasswordFieldState] = useState<{
+    dataMessage: string | null;
+    isLoading: boolean;
+    errorMessage: string | null;
+  }>({
+    dataMessage: null,
+    isLoading: false,
+    errorMessage: null,
+  });
 
   const handlePasswordSave = async () => {
     await authClient.changePassword(
       { currentPassword, newPassword, revokeOtherSessions: true },
       {
         onError: (ctx) => {
-          setPasswordFieldError(ctx.error.message);
+          setPasswordFieldState((prev) => ({ ...prev, errorMessage: ctx.error.message }));
         },
         onRequest() {
-          setPasswordFieldError(null);
+          setPasswordFieldState((prev) => ({ ...prev, errorMessage: null }));
         },
         onSuccess: (ctx) => {
-          setPasswordFieldError(null);
+          setPasswordFieldState((prev) => ({ ...prev, errorMessage: null }));
         },
       }
     );
@@ -103,10 +127,10 @@ export default function SettingsPage() {
                         inputMode="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        invalid={!!nameFieldError}
-                        aria-invalid={!!nameFieldError}
+                        invalid={!!nameFieldState.errorMessage}
+                        aria-invalid={!!nameFieldState.errorMessage}
                       />
-                      {nameFieldError && <ErrorMessage>{nameFieldError}</ErrorMessage>}
+                      {nameFieldState.errorMessage && <ErrorMessage>{nameFieldState.errorMessage}</ErrorMessage>}
                     </Field>
                     <Button color="rose" type="button" onClick={handleNameSave} disabled={name === currentName}>
                       Save
@@ -123,10 +147,10 @@ export default function SettingsPage() {
                         inputMode="text"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        invalid={!!emailFieldError}
-                        aria-invalid={!!emailFieldError}
+                        invalid={!!emailFieldState.errorMessage}
+                        aria-invalid={!!emailFieldState.errorMessage}
                       />
-                      {emailFieldError && <ErrorMessage>{emailFieldError}</ErrorMessage>}
+                      {emailFieldState.errorMessage && <ErrorMessage>{emailFieldState.errorMessage}</ErrorMessage>}
                     </Field>
                     <Button color="rose" type="button" onClick={handleEmailSave} disabled={email === currentEmail}>
                       Save
@@ -142,8 +166,8 @@ export default function SettingsPage() {
                       autoComplete="current-password"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      invalid={!!passwordFieldError}
-                      aria-invalid={!!passwordFieldError}
+                      invalid={!!passwordFieldState.errorMessage}
+                      aria-invalid={!!passwordFieldState.errorMessage}
                     />
                   </Field>
                   <Field className="flex-1">
@@ -155,10 +179,10 @@ export default function SettingsPage() {
                       autoComplete="new-password"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      invalid={!!passwordFieldError}
-                      aria-invalid={!!passwordFieldError}
+                      invalid={!!passwordFieldState.errorMessage}
+                      aria-invalid={!!passwordFieldState.errorMessage}
                     />
-                    {passwordFieldError && <ErrorMessage>{passwordFieldError}</ErrorMessage>}
+                    {passwordFieldState.errorMessage && <ErrorMessage>{passwordFieldState.errorMessage}</ErrorMessage>}
                   </Field>
                   <DialogActions>
                     <Button color="rose" type="button" onClick={handlePasswordSave} disabled={!currentPassword || !newPassword}>
