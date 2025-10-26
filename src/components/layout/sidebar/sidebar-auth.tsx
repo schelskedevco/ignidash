@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
 
 import { authClient } from '@/lib/auth-client';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider, DropdownLabel } from '@/components/catalyst/dropdown';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider, DropdownLabel, DropdownHeader } from '@/components/catalyst/dropdown';
 
 export default function SidebarAuth() {
   const router = useRouter();
@@ -17,6 +17,7 @@ export default function SidebarAuth() {
 
   const image = user?.image;
   const name = user?.name ?? 'Anonymous';
+  const email = user?.email;
 
   const signOut = async () => {
     await authClient.signOut({
@@ -62,6 +63,13 @@ export default function SidebarAuth() {
           </DropdownItem>
         </Unauthenticated>
         <Authenticated>
+          <DropdownHeader>
+            <div className="pr-6">
+              <div className="text-xs text-zinc-500 dark:text-zinc-400">Signed in as {name}</div>
+              <div className="text-sm/7 font-semibold text-zinc-800 dark:text-white">{email}</div>
+            </div>
+          </DropdownHeader>
+          <DropdownDivider />
           <DropdownItem href="/profile">
             <UserIcon data-slot="icon" />
             <DropdownLabel>My profile</DropdownLabel>

@@ -11,7 +11,7 @@ import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
 
 import type { NavigationItem } from '@/lib/navigation';
 import { authClient } from '@/lib/auth-client';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider, DropdownLabel } from '@/components/catalyst/dropdown';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider, DropdownLabel, DropdownHeader } from '@/components/catalyst/dropdown';
 
 interface MobileHeaderProps {
   onMenuClick: () => void;
@@ -23,6 +23,8 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
   const router = useRouter();
   const user = useQuery(api.auth.getCurrentUserSafe);
 
+  const name = user?.name ?? 'Anonymous';
+  const email = user?.email;
   const image = user?.image;
 
   const signOut = async () => {
@@ -71,6 +73,13 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
             </DropdownItem>
           </Unauthenticated>
           <Authenticated>
+            <DropdownHeader>
+              <div className="pr-6">
+                <div className="text-xs text-zinc-500 dark:text-zinc-400">Signed in as {name}</div>
+                <div className="text-sm/7 font-semibold text-zinc-800 dark:text-white">{email}</div>
+              </div>
+            </DropdownHeader>
+            <DropdownDivider />
             <DropdownItem href="/profile">
               <UserIcon data-slot="icon" />
               <DropdownLabel>My profile</DropdownLabel>
