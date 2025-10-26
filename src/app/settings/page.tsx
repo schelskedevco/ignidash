@@ -10,6 +10,7 @@ import { Input } from '@/components/catalyst/input';
 import { Fieldset, FieldGroup, Field, Label, Legend } from '@/components/catalyst/fieldset';
 import { Button } from '@/components/catalyst/button';
 import { Text } from '@/components/catalyst/text';
+import { Divider } from '@/components/catalyst/divider';
 import { authClient } from '@/lib/auth-client';
 
 import SettingsNavbar from './settings-navbar';
@@ -22,6 +23,13 @@ export default function SettingsPage() {
 
   const handleNameSave = async () => {
     await authClient.updateUser({ name });
+  };
+
+  const currentEmail = user?.email ?? '';
+  const [email, setEmail] = useState(currentEmail);
+
+  const handleEmailSave = async () => {
+    await authClient.changeEmail({ newEmail: email });
   };
 
   return (
@@ -37,7 +45,7 @@ export default function SettingsPage() {
                 <FieldGroup>
                   <div className="flex items-end gap-2">
                     <Field className="flex-1">
-                      <Label htmlFor="name">First name</Label>
+                      <Label htmlFor="name">Name</Label>
                       <Input
                         id="name"
                         name="name"
@@ -51,6 +59,24 @@ export default function SettingsPage() {
                       Save
                     </Button>
                   </div>
+                  <Divider />
+                  <div className="flex items-end gap-2">
+                    <Field className="flex-1">
+                      <Label htmlFor="email">Email address</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        autoComplete="email"
+                        inputMode="text"
+                        defaultValue={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                      />
+                    </Field>
+                    <Button color="rose" type="button" onClick={handleEmailSave} disabled={email === currentEmail}>
+                      Save
+                    </Button>
+                  </div>
+                  <Divider />
                 </FieldGroup>
               </Fieldset>
             </form>
