@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 
@@ -14,6 +14,7 @@ import { Divider } from '@/components/catalyst/divider';
 import { DialogActions } from '@/components/catalyst/dialog';
 import { authClient } from '@/lib/auth-client';
 import SuccessNotification from '@/components/ui/success-notification';
+import { useSuccessNotification } from '@/hooks/use-success-notification';
 
 import SettingsNavbar from './settings-navbar';
 
@@ -23,31 +24,8 @@ type FieldState = {
   errorMessage: string | null;
 };
 
-type NotificationState = {
-  show: boolean;
-  title: string;
-  desc: string;
-};
-
 export default function SettingsPage() {
-  const [notificationState, setNotificationState] = useState<NotificationState>({ show: false, title: '', desc: '' });
-  const notificationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
-    };
-  }, []);
-
-  const showSuccessNotification = (title: string, desc: string) => {
-    setNotificationState({ show: true, title, desc });
-
-    if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
-
-    notificationTimeoutRef.current = setTimeout(() => {
-      setNotificationState({ show: false, title: '', desc: '' });
-    }, 3000);
-  };
+  const { notificationState, showSuccessNotification, setShow } = useSuccessNotification();
 
   const user = useQuery(api.auth.getCurrentUserSafe);
 
@@ -244,7 +222,7 @@ export default function SettingsPage() {
           <Card>This is card text.</Card>
         </SectionContainer>
       </main>
-      <SuccessNotification {...notificationState} setShow={(show: boolean) => setNotificationState((prev) => ({ ...prev, show }))} />
+      <SuccessNotification {...notificationState} setShow={setShow} />
     </>
   );
 }
