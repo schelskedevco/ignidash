@@ -85,7 +85,7 @@ export default function SettingsPage() {
         <SectionContainer showBottomBorder>
           <Card>This is card text.</Card>
         </SectionContainer>
-        <SectionContainer showBottomBorder>
+        <SectionContainer showBottomBorder={false}>
           <Card>This is card text.</Card>
         </SectionContainer>
       </main>
