@@ -19,12 +19,14 @@ type FieldState = {
 };
 
 interface ProfileInfoFormProps {
-  fetchedName: string;
-  fetchedEmail: string;
+  userData: {
+    fetchedName: string;
+    fetchedEmail: string;
+  };
   showSuccessNotification: (title: string, desc: string) => void;
 }
 
-export default function ProfileInfoForm({ fetchedName = '', fetchedEmail = '', showSuccessNotification }: ProfileInfoFormProps) {
+export default function ProfileInfoForm({ userData: { fetchedName, fetchedEmail }, showSuccessNotification }: ProfileInfoFormProps) {
   const [name, setName] = useState(fetchedName);
   const [nameFieldState, setNameFieldState] = useState<FieldState>({
     dataMessage: null,

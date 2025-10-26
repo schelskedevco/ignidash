@@ -22,8 +22,7 @@ export default function SettingsForms({ preloadedUser }: SettingsFormsProps) {
     <>
       <main className="mx-auto max-w-prose flex-1 overflow-y-auto px-4 pt-[4.25rem]">
         <ProfileInfoForm
-          fetchedName={user?.name ?? ''}
-          fetchedEmail={user?.email ?? ''}
+          userData={{ fetchedName: user?.name ?? '', fetchedEmail: user?.email ?? '' }}
           showSuccessNotification={showSuccessNotification}
         />
         <SectionContainer showBottomBorder>
