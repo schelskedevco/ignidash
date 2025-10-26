@@ -36,13 +36,13 @@ export default function SettingsPage() {
       { name },
       {
         onError: (ctx) => {
-          setNameFieldState((prev) => ({ ...prev, errorMessage: ctx.error.message }));
+          setNameFieldState({ errorMessage: ctx.error.message, dataMessage: null, isLoading: false });
         },
         onRequest() {
-          setNameFieldState((prev) => ({ ...prev, errorMessage: null }));
+          setNameFieldState({ errorMessage: null, dataMessage: null, isLoading: true });
         },
         onSuccess: (ctx) => {
-          setNameFieldState((prev) => ({ ...prev, errorMessage: null }));
+          setNameFieldState({ errorMessage: null, dataMessage: ctx.data.message, isLoading: false });
         },
       }
     );
@@ -65,13 +65,13 @@ export default function SettingsPage() {
       { newEmail: email },
       {
         onError: (ctx) => {
-          setEmailFieldState((prev) => ({ ...prev, errorMessage: ctx.error.message }));
+          setEmailFieldState({ errorMessage: ctx.error.message, dataMessage: null, isLoading: false });
         },
         onRequest() {
-          setEmailFieldState((prev) => ({ ...prev, errorMessage: null }));
+          setEmailFieldState({ errorMessage: null, dataMessage: null, isLoading: true });
         },
         onSuccess: (ctx) => {
-          setEmailFieldState((prev) => ({ ...prev, errorMessage: null }));
+          setEmailFieldState({ errorMessage: null, dataMessage: ctx.data.message, isLoading: false });
         },
       }
     );
@@ -94,13 +94,13 @@ export default function SettingsPage() {
       { currentPassword, newPassword, revokeOtherSessions: true },
       {
         onError: (ctx) => {
-          setPasswordFieldState((prev) => ({ ...prev, errorMessage: ctx.error.message }));
+          setPasswordFieldState({ errorMessage: ctx.error.message, dataMessage: null, isLoading: false });
         },
         onRequest() {
-          setPasswordFieldState((prev) => ({ ...prev, errorMessage: null }));
+          setPasswordFieldState({ errorMessage: null, dataMessage: null, isLoading: true });
         },
         onSuccess: (ctx) => {
-          setPasswordFieldState((prev) => ({ ...prev, errorMessage: null }));
+          setPasswordFieldState({ errorMessage: null, dataMessage: ctx.data.message, isLoading: false });
         },
       }
     );
