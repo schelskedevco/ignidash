@@ -1,13 +1,16 @@
-'use client';
+import { preloadQuery } from 'convex/nextjs';
+import { api } from '@/convex/_generated/api';
 
 import SettingsNavbar from './components/settings-navbar';
 import SettingsForms from './components/settings-forms';
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const user = await preloadQuery(api.auth.getCurrentUserSafe);
+
   return (
     <>
       <SettingsNavbar />
-      <SettingsForms fetchedName="" fetchedEmail="" />
+      <SettingsForms preloadedUser={user} />
     </>
   );
 }
