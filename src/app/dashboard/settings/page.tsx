@@ -2,6 +2,8 @@ import { SettingsIcon } from 'lucide-react';
 
 import MainArea from '@/components/layout/main-area';
 import Card from '@/components/ui/card';
+import SectionHeader from '@/components/ui/section-header';
+import SectionContainer from '@/components/ui/section-container';
 
 export default function SettingsPage() {
   return (
@@ -12,10 +14,13 @@ export default function SettingsPage() {
           <h2 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight">Settings</h2>
         </div>
       </div>
-      <div className="mx-auto min-h-screen max-w-3xl pt-[4.3125rem]">
-        <Card>
-          <p>This is card text.</p>
-        </Card>
+      <div className="mx-auto min-h-screen max-w-7xl pt-[4.3125rem]">
+        <SectionContainer showBottomBorder>
+          <SectionHeader title="Account Settings" desc="Manage your account settings and set e-mail preferences." />
+          <Card>
+            <p>This is card text.</p>
+          </Card>
+        </SectionContainer>
       </div>
     </MainArea>
   );
