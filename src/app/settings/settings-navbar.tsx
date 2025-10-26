@@ -1,7 +1,8 @@
 'use client';
 
+import { FireIcon } from '@heroicons/react/24/solid';
+import Link from 'next/link';
 import Image from 'next/image';
-import { MenuIcon } from 'lucide-react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { CircleUserRoundIcon, LogInIcon, LogOutIcon, SettingsIcon, LoaderIcon } from 'lucide-react';
@@ -9,23 +10,17 @@ import * as Headless from '@headlessui/react';
 import { useRouter } from 'next/navigation';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
 
-import type { NavigationItem } from '@/lib/navigation';
 import { authClient } from '@/lib/auth-client';
 import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider, DropdownLabel, DropdownHeader } from '@/components/catalyst/dropdown';
+import { Navbar, NavbarSpacer } from '@/components/catalyst/navbar';
 
-interface MobileHeaderProps {
-  onMenuClick: () => void;
-  currentPageTitle: string;
-  currentPageIcon: NavigationItem['icon'];
-}
-
-export default function MobileHeader({ onMenuClick, currentPageTitle, currentPageIcon: Icon }: MobileHeaderProps) {
+export default function SettingsNavbar() {
   const router = useRouter();
   const user = useQuery(api.auth.getCurrentUserSafe);
 
+  const image = user?.image;
   const name = user?.name ?? 'Anonymous';
   const email = user?.email;
-  const image = user?.image;
 
   const signOut = async () => {
     await authClient.signOut({
@@ -38,17 +33,16 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
   };
 
   return (
-    <div className="bg-emphasized-background border-border/50 fixed top-0 z-40 flex w-full items-center gap-x-6 border-b border-dashed px-4 py-4 sm:px-6 lg:hidden">
-      <button type="button" onClick={onMenuClick} className="focus-outline -m-2.5 p-2.5 lg:hidden">
-        <span className="sr-only">Open sidebar</span>
-        <MenuIcon aria-hidden="true" className="size-6" />
-      </button>
-      <div className="flex flex-1 items-center gap-2 text-base/6 font-semibold">
-        <Icon aria-hidden="true" className="text-primary size-5" />
-        {currentPageTitle}
+    <Navbar className="border-border/50 from-emphasized-background to-background border-b bg-gradient-to-r">
+      <div className="flex items-center gap-2 px-4">
+        <Link href="/" aria-label="Home">
+          <FireIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
+        </Link>
+        <span className="text-lg tracking-tight">Settings</span>
       </div>
+      <NavbarSpacer />
       <Dropdown>
-        <Headless.MenuButton aria-label="Account options" className="focus-outline shrink-0">
+        <Headless.MenuButton aria-label="Account options" className="focus-outline shrink-0 px-4">
           {image ? (
             <Image alt="" src={image} className="size-8 shrink-0 rounded-full" width={32} height={32} />
           ) : (
@@ -91,6 +85,6 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
           </Authenticated>
         </DropdownMenu>
       </Dropdown>
-    </div>
+    </Navbar>
   );
 }
