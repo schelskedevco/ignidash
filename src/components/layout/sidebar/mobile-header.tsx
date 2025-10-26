@@ -63,7 +63,7 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
             </DropdownItem>
           </AuthLoading>
           <Unauthenticated>
-            <DropdownItem href="/settings">
+            <DropdownItem href="/dashboard/settings">
               <SettingsIcon data-slot="icon" />
               <DropdownLabel>Settings</DropdownLabel>
             </DropdownItem>
@@ -80,7 +80,7 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
               </div>
             </DropdownHeader>
             <DropdownDivider />
-            <DropdownItem href="/settings">
+            <DropdownItem href="/dashboard/settings">
               <SettingsIcon data-slot="icon" />
               <DropdownLabel>Settings</DropdownLabel>
             </DropdownItem>

@@ -52,7 +52,7 @@ export default function SidebarAuth() {
           </DropdownItem>
         </AuthLoading>
         <Unauthenticated>
-          <DropdownItem href="/settings">
+          <DropdownItem href="/dashboard/settings">
             <SettingsIcon data-slot="icon" />
             <DropdownLabel>Settings</DropdownLabel>
           </DropdownItem>
@@ -69,7 +69,7 @@ export default function SidebarAuth() {
             </div>
           </DropdownHeader>
           <DropdownDivider />
-          <DropdownItem href="/settings">
+          <DropdownItem href="/dashboard/settings">
             <SettingsIcon data-slot="icon" />
             <DropdownLabel>Settings</DropdownLabel>
           </DropdownItem>
