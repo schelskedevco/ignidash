@@ -38,15 +38,15 @@ export default function SettingsNavbar() {
         <Link href="/" aria-label="Home">
           <FireIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
         </Link>
-        <NavbarLabel className="text-lg tracking-tight">Settings</NavbarLabel>
+        <NavbarLabel className="text-lg font-semibold tracking-tight">Settings</NavbarLabel>
       </div>
       <NavbarSpacer />
-      <NavbarSection>
+      <NavbarSection className="px-4">
         <NavbarItem href="/help" aria-label="Help">
           <CircleQuestionMarkIcon className="text-muted-foreground size-8" />
         </NavbarItem>
         <Dropdown>
-          <Headless.MenuButton aria-label="Account options" className="focus-outline shrink-0 px-4">
+          <Headless.MenuButton aria-label="Account options" className="focus-outline shrink-0">
             {image ? (
               <Image alt="" src={image} className="size-8 shrink-0 rounded-full" width={32} height={32} />
             ) : (
