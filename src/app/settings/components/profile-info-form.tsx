@@ -32,8 +32,6 @@ export default function ProfileInfoForm({
   userData: { fetchedName, fetchedEmail, ...otherUserData },
   showSuccessNotification,
 }: ProfileInfoFormProps) {
-  console.log('ProfileInfoForm otherUserData:', otherUserData);
-
   const [name, setName] = useState(fetchedName);
   const { fieldState: nameFieldState, createCallbacks: nameCallbacks } = useAccountSettingsFieldState({
     successNotification: 'Update successful!',
@@ -63,7 +61,7 @@ export default function ProfileInfoForm({
     showSuccessNotification,
   });
   const handleSendVerificationEmail = async () =>
-    await authClient.sendVerificationEmail({ email: fetchedEmail, callbackURL: '/' }, sendVerificationEmailCallbacks());
+    await authClient.sendVerificationEmail({ email: fetchedEmail, callbackURL: '/settings' }, sendVerificationEmailCallbacks());
 
   return (
     <>
