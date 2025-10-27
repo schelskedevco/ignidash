@@ -28,11 +28,11 @@ export default function SettingsForms({ preloadedUser }: SettingsFormsProps) {
     const isSignedInWithSocialProvider = accountsData?.some((account) => account.providerId !== 'credential') ?? false;
 
     return {
-      canChangeEmail: !isSignedInWithSocialProvider,
-      canChangePassword: !isSignedInWithSocialProvider,
-      canChangeName: true,
+      canChangeEmail: isAuthenticated && !isSignedInWithSocialProvider,
+      canChangePassword: isAuthenticated && !isSignedInWithSocialProvider,
+      canChangeName: isAuthenticated,
     };
-  }, [accountsData]);
+  }, [accountsData, isAuthenticated]);
 
   const { notificationState, showSuccessNotification, setShow } = useSuccessNotification();
 
