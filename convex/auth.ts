@@ -67,13 +67,22 @@ export const getCurrentUserSafe = query({
   },
 });
 
-export const getIsSignedInWithSocialProvider = query({
+export const getUserSettingsCapabilities = query({
   args: {},
   handler: async (ctx) => {
     const authUser = await authComponent.safeGetAuthUser(ctx);
-    if (!authUser) return false;
+    if (!authUser) return { isSignedInWithSocialProvider: false, canChangeEmail: false, canChangePassword: false, canChangeName: false };
 
     const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
-    return (await auth.api.listUserAccounts({ headers })).some((account) => account.providerId !== 'credential');
+    const isSignedInWithSocialProvider = (await auth.api.listUserAccounts({ headers })).some(
+      (account) => account.providerId !== 'credential'
+    );
+
+    return {
+      isSignedInWithSocialProvider,
+      canChangeEmail: !isSignedInWithSocialProvider,
+      canChangePassword: !isSignedInWithSocialProvider,
+      canChangeName: true,
+    };
   },
 });

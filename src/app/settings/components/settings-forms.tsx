@@ -12,12 +12,12 @@ import ProfileInfoForm from './profile-info-form';
 
 interface SettingsFormsProps {
   preloadedUser: Preloaded<typeof api.auth.getCurrentUserSafe>;
-  preloadedIsSignedInWithSocialProvider: Preloaded<typeof api.auth.getIsSignedInWithSocialProvider>;
+  preloadedSettingsCapabilities: Preloaded<typeof api.auth.getUserSettingsCapabilities>;
 }
 
-export default function SettingsForms({ preloadedUser, preloadedIsSignedInWithSocialProvider }: SettingsFormsProps) {
+export default function SettingsForms({ preloadedUser, preloadedSettingsCapabilities }: SettingsFormsProps) {
   const user = usePreloadedQuery(preloadedUser);
-  const isSignedInWithSocialProvider = usePreloadedQuery(preloadedIsSignedInWithSocialProvider);
+  const settingsCapabilities = usePreloadedQuery(preloadedSettingsCapabilities);
 
   const { notificationState, showSuccessNotification, setShow } = useSuccessNotification();
 
@@ -25,7 +25,7 @@ export default function SettingsForms({ preloadedUser, preloadedIsSignedInWithSo
     <>
       <main className="mx-auto max-w-prose flex-1 overflow-y-auto px-4 pt-[4.25rem]">
         <ProfileInfoForm
-          userData={{ fetchedName: user?.name ?? '', fetchedEmail: user?.email ?? '', isSignedInWithSocialProvider }}
+          userData={{ fetchedName: user?.name ?? '', fetchedEmail: user?.email ?? '', ...settingsCapabilities }}
           showSuccessNotification={showSuccessNotification}
         />
         <SectionContainer showBottomBorder>

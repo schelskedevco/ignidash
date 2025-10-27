@@ -23,6 +23,9 @@ interface ProfileInfoFormProps {
     fetchedName: string;
     fetchedEmail: string;
     isSignedInWithSocialProvider: boolean;
+    canChangeEmail: boolean;
+    canChangePassword: boolean;
+    canChangeName: boolean;
   };
   showSuccessNotification: (title: string, desc: string) => void;
 }
