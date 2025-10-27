@@ -4,7 +4,6 @@ import { Preloaded, usePreloadedQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 
 import Card from '@/components/ui/card';
-import SectionContainer from '@/components/ui/section-container';
 import SuccessNotification from '@/components/ui/success-notification';
 import { useSuccessNotification } from '@/hooks/use-success-notification';
 
@@ -28,12 +27,7 @@ export default function SettingsForms({ preloadedUser, preloadedSettingsCapabili
           userData={{ fetchedName: user?.name ?? '', fetchedEmail: user?.email ?? '', ...settingsCapabilities }}
           showSuccessNotification={showSuccessNotification}
         />
-        <SectionContainer showBottomBorder>
-          <Card>This is card text.</Card>
-        </SectionContainer>
-        <SectionContainer showBottomBorder={false}>
-          <Card>This is card text.</Card>
-        </SectionContainer>
+        <Card>This is card text.</Card>
       </main>
       <SuccessNotification {...notificationState} setShow={setShow} />
     </>
