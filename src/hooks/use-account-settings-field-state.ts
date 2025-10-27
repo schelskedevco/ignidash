@@ -8,7 +8,7 @@ export type SettingsFieldState = {
   errorMessage: string | null;
 };
 
-export function useAccountSettingsFieldState(successNotification: string) {
+export function useAccountSettingsFieldState({ successNotification }: { successNotification: string }) {
   const [fieldState, setFieldState] = useState<SettingsFieldState>({
     dataMessage: null,
     isLoading: false,

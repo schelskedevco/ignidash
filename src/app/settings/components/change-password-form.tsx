@@ -18,7 +18,9 @@ interface ChangePasswordFormProps {
 export default function ChangePasswordForm({ showSuccessNotification }: ChangePasswordFormProps) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const { fieldState: passwordFieldState, createCallbacks: createPasswordCallbacks } = useAccountSettingsFieldState('Update successful!');
+  const { fieldState: passwordFieldState, createCallbacks: createPasswordCallbacks } = useAccountSettingsFieldState({
+    successNotification: 'Update successful!',
+  });
 
   const handlePasswordSave = async () => {
     await authClient.changePassword(

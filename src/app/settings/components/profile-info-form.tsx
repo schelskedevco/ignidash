@@ -33,7 +33,9 @@ export default function ProfileInfoForm({
   showSuccessNotification,
 }: ProfileInfoFormProps) {
   const [name, setName] = useState(fetchedName);
-  const { fieldState: nameFieldState, createCallbacks: createNameCallbacks } = useAccountSettingsFieldState('Update successful!');
+  const { fieldState: nameFieldState, createCallbacks: createNameCallbacks } = useAccountSettingsFieldState({
+    successNotification: 'Update successful!',
+  });
 
   useEffect(() => {
     if (fetchedName) setName(fetchedName);
@@ -44,7 +46,9 @@ export default function ProfileInfoForm({
   };
 
   const [email, setEmail] = useState(fetchedEmail);
-  const { fieldState: emailFieldState, createCallbacks: createEmailCallbacks } = useAccountSettingsFieldState('Update successful!');
+  const { fieldState: emailFieldState, createCallbacks: createEmailCallbacks } = useAccountSettingsFieldState({
+    successNotification: 'Update successful!',
+  });
 
   useEffect(() => {
     if (fetchedEmail) setEmail(fetchedEmail);
@@ -54,8 +58,9 @@ export default function ProfileInfoForm({
     await authClient.changeEmail({ newEmail: email }, createEmailCallbacks());
   };
 
-  const { fieldState: sendVerificationEmailState, createCallbacks: createSendVerificationEmailCallbacks } =
-    useAccountSettingsFieldState('Verification email sent!');
+  const { fieldState: sendVerificationEmailState, createCallbacks: createSendVerificationEmailCallbacks } = useAccountSettingsFieldState({
+    successNotification: 'Verification email sent!',
+  });
 
   const handleSendVerificationEmail = async () => {
     await authClient.sendVerificationEmail({ email: fetchedEmail, callbackURL: '/' }, createSendVerificationEmailCallbacks());
