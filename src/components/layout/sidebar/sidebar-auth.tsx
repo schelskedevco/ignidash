@@ -16,6 +16,8 @@ export default function SidebarAuth() {
   const pathname = usePathname();
   const user = useQuery(api.auth.getCurrentUserSafe);
 
+  const signInUrlWithRedirect = `/signin?redirect=${encodeURIComponent(pathname)}`;
+
   const image = user?.image;
   const name = user?.name ?? 'Anonymous';
   const email = user?.email;
@@ -24,7 +26,7 @@ export default function SidebarAuth() {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push(`/signin?redirect=${encodeURIComponent(pathname)}`);
+          router.push(signInUrlWithRedirect);
         },
       },
     });
@@ -57,7 +59,7 @@ export default function SidebarAuth() {
             <SettingsIcon data-slot="icon" />
             <DropdownLabel>Settings</DropdownLabel>
           </DropdownItem>
-          <DropdownItem href="/signin">
+          <DropdownItem href={signInUrlWithRedirect}>
             <LogInIcon data-slot="icon" />
             <DropdownLabel>Sign in</DropdownLabel>
           </DropdownItem>
