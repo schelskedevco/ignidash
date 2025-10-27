@@ -29,11 +29,14 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
           subject: 'Reset your password',
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <p style="font-size: 16px; color: #333; line-height: 1.5;">
-                Click the link below to reset your password:
+              <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                Hi there,
               </p>
-              <p style="margin: 30px 0;">
-                <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: 600;">Reset Password</a>
+              <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                We received a request to reset the password for your Ignidash account. If you made this request, click the button below to create a new password.
+              </p>
+              <p style="margin: 30px 0; text-align: center;">
+                <a href="${url}" style="display: inline-block; padding: 14px 28px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Reset password</a>
               </p>
             </div>
           `,
@@ -59,14 +62,14 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
             subject: 'Approve email change',
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                <p style="font-size: 16px; color: #333; line-height: 1.5;">
-                  You've requested to change your email address to <strong>${newEmail}</strong>.
+                <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                  Hi there,
                 </p>
-                <p style="font-size: 16px; color: #333; line-height: 1.5;">
-                  Click the link below to approve this change:
+                <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                  You've requested to change your email address to <strong>${newEmail}</strong>. To complete this change, please confirm by clicking the button below.
                 </p>
-                <p style="margin: 30px 0;">
-                  <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: 600;">Approve Email Change</a>
+                <p style="margin: 30px 0; text-align: center;">
+                  <a href="${url}" style="display: inline-block; padding: 14px 28px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Approve email change</a>
                 </p>
               </div>
             `,
@@ -86,11 +89,14 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
           subject: 'Verify your email address',
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-              <p style="font-size: 16px; color: #333; line-height: 1.5;">
-                Click the link below to verify your email:
+              <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                Hi there,
               </p>
-              <p style="margin: 30px 0;">
-                <a href="${url}" style="display: inline-block; padding: 12px 24px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: 600;">Verify Email</a>
+              <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                Thanks for signing up for Ignidash! To get started and access all features, please verify your email address by clicking the button below.
+              </p>
+              <p style="margin: 30px 0; text-align: center;">
+                <a href="${url}" style="display: inline-block; padding: 14px 28px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Verify email address</a>
               </p>
             </div>
           `,

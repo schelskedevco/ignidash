@@ -46,7 +46,7 @@ export default function ProfileInfoForm({
 
   const [email, setEmail] = useState(fetchedEmail);
   const { fieldState: emailFieldState, createCallbacks: emailCallbacks } = useAccountSettingsFieldState({
-    successNotification: 'Update successful!',
+    successNotification: 'Email change confirmation sent!',
     showSuccessNotification,
   });
 
