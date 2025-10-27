@@ -175,7 +175,7 @@ export default function ProfileInfoForm({
         </form>
       </Card>
       <Card className="my-6">
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={handlePasswordSave}>
           <Fieldset>
             <Legend className="flex items-center gap-2">
               <LockIcon className="text-primary h-6 w-6" aria-hidden="true" />
@@ -210,12 +210,7 @@ export default function ProfileInfoForm({
                 {passwordFieldState.errorMessage && <ErrorMessage>{passwordFieldState.errorMessage}</ErrorMessage>}
               </Field>
               <DialogActions>
-                <Button
-                  color="rose"
-                  type="button"
-                  onClick={handlePasswordSave}
-                  disabled={!currentPassword || !newPassword || passwordFieldState.isLoading}
-                >
+                <Button color="rose" type="submit" disabled={!currentPassword || !newPassword || passwordFieldState.isLoading}>
                   {passwordFieldState.isLoading ? 'Saving...' : 'Save'}
                 </Button>
               </DialogActions>
