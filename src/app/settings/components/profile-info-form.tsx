@@ -24,6 +24,7 @@ type UserData = {
   canChangeEmail: boolean;
   canChangePassword: boolean;
   canChangeName: boolean;
+  isEmailVerified: boolean;
 };
 
 interface ProfileInfoFormProps {

@@ -71,7 +71,14 @@ export const getUserSettingsCapabilities = query({
   args: {},
   handler: async (ctx) => {
     const authUser = await authComponent.safeGetAuthUser(ctx);
-    if (!authUser) return { isSignedInWithSocialProvider: false, canChangeEmail: false, canChangePassword: false, canChangeName: false };
+    if (!authUser)
+      return {
+        isSignedInWithSocialProvider: false,
+        canChangeEmail: false,
+        canChangePassword: false,
+        canChangeName: false,
+        isEmailVerified: false,
+      };
 
     const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
     const isSignedInWithSocialProvider = (await auth.api.listUserAccounts({ headers })).some(
@@ -83,6 +90,7 @@ export const getUserSettingsCapabilities = query({
       canChangeEmail: !isSignedInWithSocialProvider,
       canChangePassword: !isSignedInWithSocialProvider,
       canChangeName: true,
+      isEmailVerified: authUser.emailVerified,
     };
   },
 });
