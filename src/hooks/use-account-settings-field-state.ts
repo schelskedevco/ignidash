@@ -19,25 +19,13 @@ export function useAccountSettingsFieldState(successNotification: string) {
 
   const createCallbacks = (onSuccessExtra?: () => void) => ({
     onError: (ctx: { error: { message: string } }) => {
-      setFieldState({
-        errorMessage: ctx.error.message,
-        dataMessage: null,
-        isLoading: false,
-      });
+      setFieldState({ errorMessage: ctx.error.message, dataMessage: null, isLoading: false });
     },
     onRequest: () => {
-      setFieldState({
-        errorMessage: null,
-        dataMessage: null,
-        isLoading: true,
-      });
+      setFieldState({ errorMessage: null, dataMessage: null, isLoading: true });
     },
     onSuccess: (ctx: { data: { message: string } }) => {
-      setFieldState({
-        errorMessage: null,
-        dataMessage: ctx.data.message,
-        isLoading: false,
-      });
+      setFieldState({ errorMessage: null, dataMessage: ctx.data.message, isLoading: false });
       showSuccessNotification(successNotification, ctx.data.message);
       onSuccessExtra?.();
     },
