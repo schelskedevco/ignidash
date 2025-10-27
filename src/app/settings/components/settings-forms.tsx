@@ -51,10 +51,12 @@ export default function SettingsForms() {
   return (
     <>
       <main className="mx-auto h-full max-w-prose flex-1 overflow-y-auto px-4 pt-[4.25rem]">
-        <ProfileInfoForm
-          userData={{ isAuthenticated, fetchedName, fetchedEmail, ...settingsCapabilities }}
-          showSuccessNotification={showSuccessNotification}
-        />
+        {isAuthenticated && (
+          <ProfileInfoForm
+            userData={{ fetchedName, fetchedEmail, ...settingsCapabilities }}
+            showSuccessNotification={showSuccessNotification}
+          />
+        )}
       </main>
       <SuccessNotification {...notificationState} setShow={setShow} />
     </>

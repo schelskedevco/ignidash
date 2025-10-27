@@ -19,7 +19,6 @@ type FieldState = {
 };
 
 type UserData = {
-  isAuthenticated: boolean;
   fetchedName: string;
   fetchedEmail: string;
   canChangeEmail: boolean;
