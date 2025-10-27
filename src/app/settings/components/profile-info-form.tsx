@@ -158,7 +158,7 @@ export default function ProfileInfoForm({
             </Legend>
             <FieldGroup>
               <div className="flex items-end gap-2">
-                <Field className="flex-1">
+                <Field className="flex-1" disabled={!otherUserData.canChangeName}>
                   <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
@@ -178,7 +178,7 @@ export default function ProfileInfoForm({
               </div>
               <Divider />
               <div className="flex items-end gap-2">
-                <Field className="flex-1">
+                <Field className="flex-1" disabled={!otherUserData.canChangeEmail}>
                   <Label htmlFor="email">Email address</Label>
                   <Input
                     id="email"
@@ -241,50 +241,52 @@ export default function ProfileInfoForm({
           </Fieldset>
         </form>
       </Card>
-      <Card className="my-6">
-        <form onSubmit={handlePasswordSave}>
-          <Fieldset>
-            <Legend className="flex items-center gap-2">
-              <LockIcon className="text-primary h-6 w-6" aria-hidden="true" />
-              Change password
-            </Legend>
-            <FieldGroup>
-              <Field className="flex-1">
-                <Label htmlFor="current-password">Current password</Label>
-                <Input
-                  id="current-password"
-                  name="current-password"
-                  type="password"
-                  autoComplete="current-password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  invalid={!!passwordFieldState.errorMessage}
-                  aria-invalid={!!passwordFieldState.errorMessage}
-                />
-              </Field>
-              <Field className="flex-1">
-                <Label htmlFor="new-password">New password</Label>
-                <Input
-                  id="new-password"
-                  name="new-password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  invalid={!!passwordFieldState.errorMessage}
-                  aria-invalid={!!passwordFieldState.errorMessage}
-                />
-                {passwordFieldState.errorMessage && <ErrorMessage>{passwordFieldState.errorMessage}</ErrorMessage>}
-              </Field>
-              <DialogActions>
-                <Button color="rose" type="submit" disabled={!currentPassword || !newPassword || passwordFieldState.isLoading}>
-                  {passwordFieldState.isLoading ? 'Saving...' : 'Save'}
-                </Button>
-              </DialogActions>
-            </FieldGroup>
-          </Fieldset>
-        </form>
-      </Card>
+      {otherUserData.canChangePassword && (
+        <Card className="my-6">
+          <form onSubmit={handlePasswordSave}>
+            <Fieldset>
+              <Legend className="flex items-center gap-2">
+                <LockIcon className="text-primary h-6 w-6" aria-hidden="true" />
+                Change password
+              </Legend>
+              <FieldGroup>
+                <Field className="flex-1">
+                  <Label htmlFor="current-password">Current password</Label>
+                  <Input
+                    id="current-password"
+                    name="current-password"
+                    type="password"
+                    autoComplete="current-password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    invalid={!!passwordFieldState.errorMessage}
+                    aria-invalid={!!passwordFieldState.errorMessage}
+                  />
+                </Field>
+                <Field className="flex-1">
+                  <Label htmlFor="new-password">New password</Label>
+                  <Input
+                    id="new-password"
+                    name="new-password"
+                    type="password"
+                    autoComplete="new-password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    invalid={!!passwordFieldState.errorMessage}
+                    aria-invalid={!!passwordFieldState.errorMessage}
+                  />
+                  {passwordFieldState.errorMessage && <ErrorMessage>{passwordFieldState.errorMessage}</ErrorMessage>}
+                </Field>
+                <DialogActions>
+                  <Button color="rose" type="submit" disabled={!currentPassword || !newPassword || passwordFieldState.isLoading}>
+                    {passwordFieldState.isLoading ? 'Saving...' : 'Save'}
+                  </Button>
+                </DialogActions>
+              </FieldGroup>
+            </Fieldset>
+          </form>
+        </Card>
+      )}
     </>
   );
 }
