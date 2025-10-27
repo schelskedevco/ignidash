@@ -37,29 +37,29 @@ export default function ProfileInfoForm({
     successNotification: 'Update successful!',
   });
 
+  const handleNameSave = async () => await authClient.updateUser({ name }, nameCallbacks());
+
   useEffect(() => {
     if (fetchedName) setName(fetchedName);
   }, [fetchedName]);
-
-  const handleNameSave = async () => await authClient.updateUser({ name }, nameCallbacks());
 
   const [email, setEmail] = useState(fetchedEmail);
   const { fieldState: emailFieldState, createCallbacks: emailCallbacks } = useAccountSettingsFieldState({
     successNotification: 'Update successful!',
   });
 
+  const handleEmailSave = async () => await authClient.changeEmail({ newEmail: email }, emailCallbacks());
+
   useEffect(() => {
     if (fetchedEmail) setEmail(fetchedEmail);
   }, [fetchedEmail]);
 
-  const handleEmailSave = async () => await authClient.changeEmail({ newEmail: email }, emailCallbacks());
-
   const { fieldState: sendVerificationEmailState, createCallbacks: sendVerificationEmailCallbacks } = useAccountSettingsFieldState({
     successNotification: 'Verification email sent!',
   });
-
   const handleSendVerificationEmail = async () =>
     await authClient.sendVerificationEmail({ email: fetchedEmail, callbackURL: '/' }, sendVerificationEmailCallbacks());
+
   return (
     <>
       <Card className="my-6">
