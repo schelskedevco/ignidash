@@ -135,7 +135,7 @@ export default function SignInPage() {
                   </button>
                 </div>
               </form>
-              <GoogleSignIn />
+              <GoogleSignIn safeRedirect={safeRedirect} />
             </div>
 
             <p className="mt-10 text-center text-sm/6 text-stone-500 dark:text-stone-400">

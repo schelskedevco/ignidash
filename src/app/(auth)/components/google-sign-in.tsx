@@ -2,8 +2,12 @@
 
 import { authClient } from '@/lib/auth-client';
 
-export default function GoogleSignIn() {
-  const handleGoogleSignIn = async () => await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard/quick-plan' });
+interface GoogleSignInProps {
+  safeRedirect: string;
+}
+
+export default function GoogleSignIn({ safeRedirect }: GoogleSignInProps) {
+  const handleGoogleSignIn = async () => await authClient.signIn.social({ provider: 'google', callbackURL: safeRedirect });
 
   return (
     <div>
