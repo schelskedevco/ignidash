@@ -26,10 +26,9 @@ export function useAccountsList() {
 
         if (apiError) {
           setError(new Error(apiError.message));
-          return;
+        } else {
+          setAccounts(data);
         }
-
-        setAccounts(data);
       })
       .catch((err) => mounted && setError(err))
       .finally(() => mounted && setIsLoading(false));
