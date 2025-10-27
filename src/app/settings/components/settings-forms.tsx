@@ -1,23 +1,28 @@
 'use client';
 
 import { useMemo } from 'react';
+import { Preloaded, usePreloadedQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
 import SuccessNotification from '@/components/ui/success-notification';
 import { useSuccessNotification } from '@/hooks/use-success-notification';
-import { authClient } from '@/lib/auth-client';
 import { useAccountsList } from '@/hooks/use-accounts-data';
 import { useConvexAuth } from 'convex/react';
 
 import ProfileInfoForm from './profile-info-form';
 
-export default function SettingsForms() {
+interface SettingsFormsProps {
+  preloadedUser: Preloaded<typeof api.auth.getCurrentUserSafe>;
+}
+
+export default function SettingsForms({ preloadedUser }: SettingsFormsProps) {
   const auth = useConvexAuth();
   const isAuthenticated = auth.isAuthenticated;
 
-  const { data: authData, isPending: isAuthDataLoading } = authClient.useSession();
-  const isEmailVerified = authData?.user.emailVerified ?? false;
-  const fetchedName = authData?.user.name ?? '';
-  const fetchedEmail = authData?.user.email ?? '';
+  const authData = usePreloadedQuery(preloadedUser);
+  const isEmailVerified = authData?.emailVerified ?? false;
+  const fetchedName = authData?.name ?? '';
+  const fetchedEmail = authData?.email ?? '';
 
   const { accounts: accountsData, isLoading: isAccountsDataLoading } = useAccountsList();
 
@@ -28,13 +33,12 @@ export default function SettingsForms() {
       canChangeEmail: !isSignedInWithSocialProvider,
       canChangePassword: !isSignedInWithSocialProvider,
       canChangeName: true,
-      isEmailVerified,
     };
-  }, [accountsData, isEmailVerified]);
+  }, [accountsData]);
 
   const { notificationState, showSuccessNotification, setShow } = useSuccessNotification();
 
-  if (isAuthDataLoading || isAccountsDataLoading) {
+  if (isAccountsDataLoading) {
     return (
       <main className="mx-auto h-full max-w-prose flex-1 overflow-y-auto px-4 pt-[4.25rem]">
         <div
@@ -53,7 +57,7 @@ export default function SettingsForms() {
       <main className="mx-auto h-full max-w-prose flex-1 overflow-y-auto px-4 pt-[4.25rem]">
         {isAuthenticated && (
           <ProfileInfoForm
-            userData={{ fetchedName, fetchedEmail, ...settingsCapabilities }}
+            userData={{ fetchedName, fetchedEmail, isEmailVerified, ...settingsCapabilities }}
             showSuccessNotification={showSuccessNotification}
           />
         )}
