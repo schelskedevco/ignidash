@@ -84,9 +84,11 @@ export const getUserSettingsCapabilities = query({
     try {
       const { auth, headers } = await authComponent.getAuth(createAuth, ctx);
       const accounts = await auth.api.listUserAccounts({ headers, method: 'GET' });
+
       isSignedInWithSocialProvider = accounts.some((account) => account.providerId !== 'credential');
     } catch (error) {
       console.error('Error fetching user accounts:', error);
+
       isSignedInWithSocialProvider = false;
     }
 
