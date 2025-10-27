@@ -21,7 +21,16 @@ export function useAccountsList() {
 
     authClient
       .listAccounts()
-      .then(({ data }) => mounted && setAccounts(data))
+      .then(({ data, error: apiError }) => {
+        if (!mounted) return;
+
+        if (apiError) {
+          setError(new Error(apiError.message));
+          return;
+        }
+
+        setAccounts(data);
+      })
       .catch((err) => mounted && setError(err))
       .finally(() => mounted && setIsLoading(false));
 
