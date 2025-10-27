@@ -1,21 +1,34 @@
 'use client';
 
-import { Preloaded, usePreloadedQuery } from 'convex/react';
-import { api } from '@/convex/_generated/api';
+import { useMemo } from 'react';
 
 import SuccessNotification from '@/components/ui/success-notification';
 import { useSuccessNotification } from '@/hooks/use-success-notification';
+import { authClient } from '@/lib/auth-client';
+import { useAccountsList } from '@/hooks/use-accounts-data';
 
 import ProfileInfoForm from './profile-info-form';
 
-interface SettingsFormsProps {
-  preloadedUser: Preloaded<typeof api.auth.getCurrentUserSafe>;
-  preloadedSettingsCapabilities: Preloaded<typeof api.auth.getUserSettingsCapabilities>;
-}
+export default function SettingsForms() {
+  const { data } = authClient.useSession();
 
-export default function SettingsForms({ preloadedUser, preloadedSettingsCapabilities }: SettingsFormsProps) {
-  const user = usePreloadedQuery(preloadedUser);
-  const settingsCapabilities = usePreloadedQuery(preloadedSettingsCapabilities);
+  const isEmailVerified = data?.user.emailVerified ?? false;
+  const fetchedName = data?.user.name ?? '';
+  const fetchedEmail = data?.user.email ?? '';
+
+  const { accounts } = useAccountsList();
+
+  const settingsCapabilities = useMemo(() => {
+    const isSignedInWithSocialProvider = accounts?.some((account) => account.providerId !== 'credential') ?? false;
+
+    return {
+      isSignedInWithSocialProvider,
+      canChangeEmail: !isSignedInWithSocialProvider,
+      canChangePassword: !isSignedInWithSocialProvider,
+      canChangeName: true,
+      isEmailVerified,
+    };
+  }, [accounts, isEmailVerified]);
 
   const { notificationState, showSuccessNotification, setShow } = useSuccessNotification();
 
@@ -23,7 +36,7 @@ export default function SettingsForms({ preloadedUser, preloadedSettingsCapabili
     <>
       <main className="mx-auto max-w-prose flex-1 overflow-y-auto px-4 pt-[4.25rem]">
         <ProfileInfoForm
-          userData={{ fetchedName: user?.name ?? '', fetchedEmail: user?.email ?? '', ...settingsCapabilities }}
+          userData={{ fetchedName, fetchedEmail, ...settingsCapabilities }}
           showSuccessNotification={showSuccessNotification}
         />
       </main>
