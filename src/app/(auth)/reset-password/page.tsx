@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { authClient } from '@/lib/auth-client';
+import { useRedirectUrl } from '@/hooks/use-redirect-url';
 
 import PasswordInput from '../components/password-input';
 import ErrorMessage from '../components/error-message';
@@ -17,6 +18,7 @@ export default function ResetPasswordPage() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { buildRedirectUrl } = useRedirectUrl();
 
   const handleResetPassword = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,7 +46,7 @@ export default function ResetPasswordPage() {
         onSuccess() {
           setErrorMessage(null);
           setIsLoading(false);
-          router.push('/signin?reset=success');
+          router.push(buildRedirectUrl('/signin?reset=success'));
         },
         onError(context) {
           setErrorMessage(context.error.message);

@@ -8,9 +8,14 @@ export const useRedirectUrl = () => {
   const unsafeRedirect = searchParams.get('redirect');
   const safeRedirect = getSafeRedirect(unsafeRedirect);
 
-  const buildRedirectUrl = (path: string): string => {
-    if (!unsafeRedirect) return path;
-    return `${path}?redirect=${encodeURIComponent(safeRedirect)}`;
+  const buildRedirectUrl = (url: string): string => {
+    if (!unsafeRedirect) return url;
+
+    const [pathname, search] = url.split('?');
+    const params = new URLSearchParams(search);
+    params.set('redirect', safeRedirect);
+
+    return `${pathname}?${params.toString()}`;
   };
 
   return { buildRedirectUrl, unsafeRedirect, safeRedirect };

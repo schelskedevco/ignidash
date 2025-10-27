@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { authClient } from '@/lib/auth-client';
+import { useRedirectUrl } from '@/hooks/use-redirect-url';
 
 import EmailInput from '../components/email-input';
 import PasswordInput from '../components/password-input';
@@ -14,6 +15,8 @@ import ErrorMessage from '../components/error-message';
 export default function SignUpPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { safeRedirect, buildRedirectUrl } = useRedirectUrl();
 
   const handleEmailSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -25,7 +28,7 @@ export default function SignUpPage() {
     const password = formData.get('password') as string;
 
     await authClient.signUp.email(
-      { email, password, name: firstName, callbackURL: '/dashboard/quick-plan' },
+      { email, password, name: firstName, callbackURL: safeRedirect },
       {
         onRequest() {
           setErrorMessage(null);
@@ -87,7 +90,10 @@ export default function SignUpPage() {
 
           <p className="mt-10 text-center text-sm/6 text-stone-500 dark:text-stone-400">
             Already have an account?{' '}
-            <Link href="/signin" className="font-semibold text-rose-600 hover:text-rose-500 dark:text-rose-400 dark:hover:text-rose-300">
+            <Link
+              href={buildRedirectUrl('/signin')}
+              className="font-semibold text-rose-600 hover:text-rose-500 dark:text-rose-400 dark:hover:text-rose-300"
+            >
               Sign in
             </Link>
           </p>

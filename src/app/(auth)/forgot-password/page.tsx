@@ -6,6 +6,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 import { authClient } from '@/lib/auth-client';
+import { useRedirectUrl } from '@/hooks/use-redirect-url';
 
 import EmailInput from '../components/email-input';
 
@@ -13,6 +14,8 @@ export default function ForgotPasswordPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [dataMessage, setDataMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { buildRedirectUrl } = useRedirectUrl();
 
   const handleRequestReset = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -23,7 +26,7 @@ export default function ForgotPasswordPage() {
     await authClient.requestPasswordReset(
       {
         email,
-        redirectTo: '/reset-password',
+        redirectTo: buildRedirectUrl('/reset-password'),
       },
       {
         onError: (ctx) => {
