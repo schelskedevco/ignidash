@@ -22,7 +22,6 @@ export default function SettingsForms() {
     const isSignedInWithSocialProvider = accounts?.some((account) => account.providerId !== 'credential') ?? false;
 
     return {
-      isSignedInWithSocialProvider,
       canChangeEmail: !isSignedInWithSocialProvider,
       canChangePassword: !isSignedInWithSocialProvider,
       canChangeName: true,

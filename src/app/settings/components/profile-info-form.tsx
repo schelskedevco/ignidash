@@ -21,7 +21,6 @@ type FieldState = {
 type UserData = {
   fetchedName: string;
   fetchedEmail: string;
-  isSignedInWithSocialProvider: boolean;
   canChangeEmail: boolean;
   canChangePassword: boolean;
   canChangeName: boolean;
