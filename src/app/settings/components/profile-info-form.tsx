@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CircleUserRoundIcon, LockIcon } from 'lucide-react';
+import { CircleUserRoundIcon, LockIcon, MailQuestionMarkIcon } from 'lucide-react';
 
 import Card from '@/components/ui/card';
 import { Input } from '@/components/catalyst/input';
-import { Fieldset, FieldGroup, Field, Label, Legend, ErrorMessage } from '@/components/catalyst/fieldset';
+import { Fieldset, FieldGroup, Field, Label, Legend, Description, ErrorMessage } from '@/components/catalyst/fieldset';
 import { Button } from '@/components/catalyst/button';
 import { Divider } from '@/components/catalyst/divider';
 import { DialogActions } from '@/components/catalyst/dialog';
@@ -122,6 +122,30 @@ export default function ProfileInfoForm({
     );
   };
 
+  const [sendVerificationEmailState, setSendVerificationEmailState] = useState<FieldState>({
+    dataMessage: null,
+    isLoading: false,
+    errorMessage: null,
+  });
+
+  const handleSendVerificationEmail = async () => {
+    await authClient.sendVerificationEmail(
+      { email: fetchedEmail, callbackURL: '/' },
+      {
+        onError(ctx) {
+          setSendVerificationEmailState({ errorMessage: ctx.error.message, dataMessage: null, isLoading: false });
+        },
+        onRequest() {
+          setSendVerificationEmailState({ errorMessage: null, dataMessage: null, isLoading: true });
+        },
+        onSuccess(ctx) {
+          setSendVerificationEmailState({ errorMessage: null, dataMessage: ctx.data.message, isLoading: false });
+          showSuccessNotification('Verification email sent!', ctx.data.message);
+        },
+      }
+    );
+  };
+
   return (
     <>
       <Card className="my-6">
@@ -171,6 +195,34 @@ export default function ProfileInfoForm({
                   {emailFieldState.isLoading ? 'Saving...' : 'Save'}
                 </Button>
               </div>
+            </FieldGroup>
+          </Fieldset>
+        </form>
+      </Card>
+      <Card className="my-6">
+        <form onSubmit={(e) => e.preventDefault()}>
+          <Fieldset>
+            <Legend className="flex items-center gap-2">
+              <MailQuestionMarkIcon className="text-primary h-6 w-6" aria-hidden="true" />
+              Verify email
+            </Legend>
+            <FieldGroup>
+              <Field>
+                <Button
+                  color="rose"
+                  type="button"
+                  className="w-full"
+                  data-slot="control"
+                  onClick={handleSendVerificationEmail}
+                  disabled={sendVerificationEmailState.isLoading}
+                >
+                  {sendVerificationEmailState.isLoading ? 'Sending...' : 'Send verification email'}
+                </Button>
+                <Description>
+                  <strong>Important:</strong> Click to receive a verification link in your email. You must verify your email to access all
+                  features.
+                </Description>
+              </Field>
             </FieldGroup>
           </Fieldset>
         </form>
