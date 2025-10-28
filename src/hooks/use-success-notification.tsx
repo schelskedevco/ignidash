@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 type NotificationState = {
   show: boolean;
@@ -16,15 +16,15 @@ export function useSuccessNotification() {
     };
   }, []);
 
-  const showSuccessNotification = (title: string, desc: string) => {
+  const showSuccessNotification = useCallback((title: string, desc: string) => {
     setNotificationState({ show: true, title, desc });
 
     if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
 
     notificationTimeoutRef.current = setTimeout(() => {
       setNotificationState({ show: false, title: '', desc: '' });
-    }, 3000);
-  };
+    }, 5000);
+  }, []);
 
   const setShow = (show: boolean) => setNotificationState((prev) => ({ ...prev, show }));
 
