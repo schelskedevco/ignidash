@@ -186,6 +186,7 @@ export default function ProfileInfoForm({
                   >
                     {sendVerificationEmailState.isLoading ? 'Sending...' : 'Send verification email'}
                   </Button>
+                  {sendVerificationEmailState.errorMessage && <ErrorMessage>{sendVerificationEmailState.errorMessage}</ErrorMessage>}
                   <Description>
                     <strong>Important:</strong> Click to receive a verification link in your email. You must verify your email to access all
                     features.
