@@ -20,7 +20,7 @@ export default function ChangePasswordForm({ showSuccessNotification }: ChangePa
   const [newPassword, setNewPassword] = useState('');
 
   const { fieldState: passwordFieldState, createCallbacks: createPasswordCallbacks } = useAccountSettingsFieldState({
-    successNotification: 'Update successful!',
+    successNotification: 'Password changed successfully!',
     showSuccessNotification,
   });
 

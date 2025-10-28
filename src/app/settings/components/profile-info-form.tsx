@@ -34,7 +34,7 @@ export default function ProfileInfoForm({
 }: ProfileInfoFormProps) {
   const [name, setName] = useState(fetchedName);
   const { fieldState: nameFieldState, createCallbacks: nameCallbacks } = useAccountSettingsFieldState({
-    successNotification: 'Update successful!',
+    successNotification: 'Name changed successfully!',
     showSuccessNotification,
   });
 
@@ -46,7 +46,7 @@ export default function ProfileInfoForm({
 
   const [email, setEmail] = useState(fetchedEmail);
   const { fieldState: emailFieldState, createCallbacks: emailCallbacks } = useAccountSettingsFieldState({
-    successNotification: 'Email change confirmation sent!',
+    successNotification: 'Confirmation email sent to your current address! Check your inbox to approve this change.',
     showSuccessNotification,
   });
 
@@ -57,7 +57,7 @@ export default function ProfileInfoForm({
   }, [fetchedEmail]);
 
   const { fieldState: sendVerificationEmailState, createCallbacks: sendVerificationEmailCallbacks } = useAccountSettingsFieldState({
-    successNotification: 'Verification email sent!',
+    successNotification: 'Verification email sent! Check your inbox to verify your address.',
     showSuccessNotification,
   });
   const handleSendVerificationEmail = async () =>
