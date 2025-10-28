@@ -46,7 +46,7 @@ export default function ProfileInfoForm({
 
   const [email, setEmail] = useState(fetchedEmail);
   const { fieldState: emailFieldState, createCallbacks: emailCallbacks } = useAccountSettingsFieldState({
-    successNotification: 'Confirmation email sent to your current address! Check your inbox to approve this change.',
+    successNotification: 'Confirmation email sent to your current address!',
     showSuccessNotification,
   });
 
@@ -58,7 +58,7 @@ export default function ProfileInfoForm({
 
   const [isVerificationEmailSent, setIsVerificationEmailSent] = useState(false);
   const { fieldState: sendVerificationEmailState, createCallbacks: sendVerificationEmailCallbacks } = useAccountSettingsFieldState({
-    successNotification: 'Verification email sent! Check your inbox to verify your address.',
+    successNotification: 'Verification email sent!',
     showSuccessNotification,
   });
   const handleSendVerificationEmail = async () =>
