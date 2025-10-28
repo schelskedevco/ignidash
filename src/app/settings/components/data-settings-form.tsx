@@ -19,13 +19,13 @@ interface DataSettingsFormProps {
 export default function DataSettingsForm({ showSuccessNotification }: DataSettingsFormProps) {
   const deleteAppData = useResetStore();
   const [appDataAlertOpen, setAppDataAlertOpen] = useState(false);
-
   const { fieldState: deleteApplicationDataState } = useAccountSettingsFieldState({
     successNotification: 'Application data deleted!',
     showSuccessNotification,
   });
   const handleDeleteApplicationData = async () => deleteAppData();
 
+  const [accountDeletionAlertOpen, setAccountDeletionAlertOpen] = useState(false);
   const { fieldState: deleteAccountState, createCallbacks: deleteAccountCallbacks } = useAccountSettingsFieldState({
     successNotification: 'Account deletion initiated. Check your email for further instructions.',
     showSuccessNotification,
@@ -68,7 +68,7 @@ export default function DataSettingsForm({ showSuccessNotification }: DataSettin
                   type="button"
                   className="w-full"
                   data-slot="control"
-                  onClick={handleDeleteAccount}
+                  onClick={() => setAccountDeletionAlertOpen(true)}
                   disabled={deleteAccountState.isLoading}
                 >
                   {deleteAccountState.isLoading ? 'Sending deletion email...' : 'Delete my account'}
@@ -97,9 +97,32 @@ export default function DataSettingsForm({ showSuccessNotification }: DataSettin
           </Button>
           <Button
             color="red"
-            onClick={() => {
-              handleDeleteApplicationData();
+            onClick={async () => {
+              await handleDeleteApplicationData();
               setAppDataAlertOpen(false);
+            }}
+          >
+            Delete
+          </Button>
+        </AlertActions>
+      </Alert>
+      <Alert
+        open={accountDeletionAlertOpen}
+        onClose={() => {
+          setAccountDeletionAlertOpen(false);
+        }}
+      >
+        <AlertTitle>Are you sure you want to delete your account?</AlertTitle>
+        <AlertDescription>This action cannot be undone.</AlertDescription>
+        <AlertActions>
+          <Button plain onClick={() => setAccountDeletionAlertOpen(false)}>
+            Cancel
+          </Button>
+          <Button
+            color="red"
+            onClick={async () => {
+              await handleDeleteAccount();
+              setAccountDeletionAlertOpen(false);
             }}
           >
             Delete
