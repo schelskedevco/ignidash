@@ -26,7 +26,7 @@ export function useSuccessNotification() {
     }, 5000);
   }, []);
 
-  const setShow = (show: boolean) => setNotificationState((prev) => ({ ...prev, show }));
+  const setShow = useCallback((show: boolean) => setNotificationState((prev) => ({ ...prev, show })), []);
 
   return { notificationState, showSuccessNotification, setShow };
 }
