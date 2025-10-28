@@ -17,19 +17,22 @@ interface DataSettingsFormProps {
 }
 
 export default function DataSettingsForm({ showSuccessNotification }: DataSettingsFormProps) {
-  const deleteAppData = useResetStore();
   const [appDataAlertOpen, setAppDataAlertOpen] = useState(false);
+  const [accountDeletionAlertOpen, setAccountDeletionAlertOpen] = useState(false);
+
   const { fieldState: deleteApplicationDataState } = useAccountSettingsFieldState({
     successNotification: 'Application data deleted!',
     showSuccessNotification,
   });
+
+  const deleteAppData = useResetStore();
   const handleDeleteApplicationData = async () => deleteAppData();
 
-  const [accountDeletionAlertOpen, setAccountDeletionAlertOpen] = useState(false);
   const { fieldState: deleteAccountState, createCallbacks: deleteAccountCallbacks } = useAccountSettingsFieldState({
     successNotification: 'Account deletion initiated. Check your email for further instructions.',
     showSuccessNotification,
   });
+
   const handleDeleteAccount = async () => {
     await authClient.deleteUser({ callbackURL: '/signin?deleted=success' }, deleteAccountCallbacks());
   };
@@ -113,7 +116,7 @@ export default function DataSettingsForm({ showSuccessNotification }: DataSettin
         }}
       >
         <AlertTitle>Are you sure you want to delete your account?</AlertTitle>
-        <AlertDescription>This action cannot be undone.</AlertDescription>
+        <AlertDescription>This action will send a deletion email to your registered email address for confirmation.</AlertDescription>
         <AlertActions>
           <Button plain onClick={() => setAccountDeletionAlertOpen(false)}>
             Cancel
@@ -125,7 +128,7 @@ export default function DataSettingsForm({ showSuccessNotification }: DataSettin
               setAccountDeletionAlertOpen(false);
             }}
           >
-            Delete
+            Send deletion email
           </Button>
         </AlertActions>
       </Alert>
