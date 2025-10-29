@@ -102,7 +102,6 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                   {errors.cashReturn && <ErrorMessage>{errors.cashReturn?.message}</ErrorMessage>}
                   <Description>Expected annual interest rate for cash savings and money market accounts.</Description>
                 </Field>
-                <Divider />
                 <Field>
                   <Label htmlFor="inflationRate" className="flex w-full items-center justify-between">
                     <span>Inflation Rate</span>
