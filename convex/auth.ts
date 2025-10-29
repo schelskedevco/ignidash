@@ -154,3 +154,6 @@ export const getCurrentUserSafe = query({
     return authComponent.safeGetAuthUser(ctx);
   },
 });
+
+export type Auth = ReturnType<typeof createAuth>;
+export type Session = Auth['$Infer']['Session'];

@@ -1,10 +1,20 @@
+import { betterFetch } from '@better-fetch/fetch';
+import type { Session } from '@/convex/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getToken } from '@/lib/auth-server';
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken();
-  if (token) return NextResponse.redirect(new URL('/dashboard/quick-plan', request.url));
+  const { data: session } = await betterFetch<Session>('/api/auth/get-session', {
+    baseURL: request.nextUrl.origin,
+    headers: {
+      cookie: request.headers.get('cookie') || '', // Forward the cookies from the request
+    },
+  });
+
+  if (session) {
+    return NextResponse.redirect(new URL('/dashboard/quick-plan', request.url));
+  }
+
   return NextResponse.next();
 }
 
