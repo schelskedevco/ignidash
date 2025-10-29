@@ -56,14 +56,16 @@ export default function SettingsForms({ preloadedUser }: SettingsFormsProps) {
 
   return (
     <>
-      <main className="mx-auto h-full max-w-prose flex-1 overflow-y-auto px-4 pt-[4.25rem] sm:px-6 lg:px-8">
-        {isAuthenticated && (
-          <ProfileInfoForm
-            userData={{ fetchedName, fetchedEmail, isEmailVerified, ...settingsCapabilities }}
-            showSuccessNotification={showSuccessNotification}
-          />
-        )}
-        <DataSettingsForm showSuccessNotification={showSuccessNotification} isAuthenticated={isAuthenticated} />
+      <main className="h-full overflow-y-auto">
+        <div className="mx-auto h-full max-w-prose px-4 pt-[4.25rem] sm:px-6 lg:px-8">
+          {isAuthenticated && (
+            <ProfileInfoForm
+              userData={{ fetchedName, fetchedEmail, isEmailVerified, ...settingsCapabilities }}
+              showSuccessNotification={showSuccessNotification}
+            />
+          )}
+          <DataSettingsForm showSuccessNotification={showSuccessNotification} isAuthenticated={isAuthenticated} />
+        </div>
       </main>
       <SuccessNotification {...notificationState} setShow={setShow} />
     </>
