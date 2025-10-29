@@ -1,6 +1,6 @@
 'use client';
 
-import { Eye, EyeOff } from 'lucide-react';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useState } from 'react';
 
 interface PasswordInputProps {
@@ -38,11 +38,11 @@ export default function PasswordInput({ passwordType, isPasswordReset = false }:
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute inset-y-0 right-0 flex items-center pr-3 text-stone-400 hover:text-stone-600 dark:hover:text-stone-300"
+          className="focus-outline absolute inset-y-0 right-0 flex items-center pr-3 text-stone-400 hover:text-stone-600 dark:hover:text-stone-300"
           aria-label={showPassword ? 'Hide password' : 'Show password'}
           title={showPassword ? 'Hide password' : 'Show password'}
         >
-          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          {showPassword ? <EyeOffIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
         </button>
       </div>
     </div>
