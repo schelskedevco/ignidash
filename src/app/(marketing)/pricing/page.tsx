@@ -53,7 +53,7 @@ export default function PricingPage() {
           />
         </div>
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-primary text-base/7 font-semibold">Pricing</h2>
+          <h2 className="text-base/7 font-semibold text-rose-600 dark:text-rose-400">Pricing</h2>
           <p className="mt-2 text-5xl font-semibold tracking-tight text-balance text-stone-900 sm:text-6xl dark:text-white">
             Choose the right plan for you
           </p>
@@ -78,7 +78,10 @@ export default function PricingPage() {
                 'rounded-3xl p-8 ring-1 ring-stone-900/10 sm:p-10 dark:ring-white/10'
               )}
             >
-              <h3 id={tier.id} className={classNames(tier.featured ? 'text-rose-400' : 'text-primary', 'text-base/7 font-semibold')}>
+              <h3
+                id={tier.id}
+                className={classNames(tier.featured ? 'text-rose-400' : 'text-rose-600 dark:text-rose-400', 'text-base/7 font-semibold')}
+              >
                 {tier.name}
               </h3>
               <p className="mt-4 flex items-baseline gap-x-2">
@@ -108,7 +111,7 @@ export default function PricingPage() {
                   <li key={feature} className="flex gap-x-3">
                     <CheckIcon
                       aria-hidden="true"
-                      className={classNames(tier.featured ? 'text-rose-400' : 'text-primary', 'h-6 w-5 flex-none')}
+                      className={classNames(tier.featured ? 'text-rose-400' : 'text-rose-600 dark:text-rose-400', 'h-6 w-5 flex-none')}
                     />
                     {feature}
                   </li>
