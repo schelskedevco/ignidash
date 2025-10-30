@@ -1111,16 +1111,28 @@ export default function PrivacyPage() {
                 we may decline your request as permitted by law. These rights include:
               </p>
               <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
-                <li>Right to know whether or not we are processing your personal data</li>
-                <li>Right to access your personal data</li>
-                <li>Right to correct inaccuracies in your personal data</li>
-                <li>Right to request the deletion of your personal data</li>
-                <li>Right to obtain a copy of the personal data you previously shared with us</li>
-                <li>Right to non-discrimination for exercising your rights</li>
                 <li>
-                  Right to opt out of the processing of your personal data if it is used for targeted advertising (or sharing as defined
-                  under California&apos;s privacy law), the sale of personal data, or profiling in furtherance of decisions that produce
-                  legal or similarly significant effects (&quot;profiling&quot;)
+                  <strong>Right to know</strong> whether or not we are processing your personal data
+                </li>
+                <li>
+                  <strong>Right to access</strong> your personal data
+                </li>
+                <li>
+                  <strong>Right to correct</strong> inaccuracies in your personal data
+                </li>
+                <li>
+                  <strong>Right to request</strong> the deletion of your personal data
+                </li>
+                <li>
+                  <strong>Right to obtain a copy</strong> of the personal data you previously shared with us
+                </li>
+                <li>
+                  <strong>Right to non-discrimination</strong> for exercising your rights
+                </li>
+                <li>
+                  <strong>Right to opt out</strong> of the processing of your personal data if it is used for targeted advertising (or
+                  sharing as defined under California&apos;s privacy law), the sale of personal data, or profiling in furtherance of
+                  decisions that produce legal or similarly significant effects (&quot;profiling&quot;)
                 </li>
               </ul>
               <p className="mb-4">Depending upon the state where you live, you may also have the following rights:</p>
