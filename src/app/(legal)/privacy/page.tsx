@@ -284,11 +284,11 @@ export default function PrivacyPage() {
               <p className="mb-4">
                 <strong>Social Media Login Data.</strong> We may provide you with the option to register with us using your existing social
                 media account details, like your Facebook, X, or other social media account. If you choose to register in this way, we will
-                collect certain profile information about you from the social media provider, as described in the section called{' '}
+                collect certain profile information about you from the social media provider, as described in the section called &quot;
                 <a href="#sociallogins" className="text-primary hover:underline">
-                  &quot;HOW DO WE HANDLE YOUR SOCIAL LOGINS?&quot;
-                </a>{' '}
-                below.
+                  HOW DO WE HANDLE YOUR SOCIAL LOGINS?
+                </a>
+                &quot; below.
               </p>
               <p>
                 All personal information that you provide to us must be true, complete, and accurate, and you must notify us of any changes
