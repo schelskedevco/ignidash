@@ -461,7 +461,7 @@ export default function PrivacyPage() {
                 business interests.
               </p>
 
-              <h3 className="mt-6 mb-3 text-xl font-semibold">If you are located in the EU or UK, this section applies to you.</h3>
+              <h3 className="my-6 font-semibold italic underline">If you are located in the EU or UK, this section applies to you.</h3>
               <p className="mb-4">
                 The General Data Protection Regulation (GDPR) and UK GDPR require us to explain the valid legal bases we rely on in order to
                 process your personal information. As such, we may rely on the following legal bases to process your personal information:
@@ -503,7 +503,7 @@ export default function PrivacyPage() {
                 </li>
               </ul>
 
-              <h3 className="mt-6 mb-3 text-xl font-semibold">If you are located in Canada, this section applies to you.</h3>
+              <h3 className="my-6 font-semibold italic underline">If you are located in Canada, this section applies to you.</h3>
               <p className="mb-4">
                 We may process your information if you have given us specific permission (i.e., express consent) to use your personal
                 information for a specific purpose, or in situations where your permission can be inferred (i.e., implied consent). You can
