@@ -20,7 +20,7 @@ export default function TermsPage() {
               </p>
               <p className="mb-4">
                 We operate the website{' '}
-                <a href="https://ignidash.com" className="text-blue-600 hover:underline">
+                <a href="https://www.ignidash.com" className="text-blue-600 hover:underline">
                   ignidash.com
                 </a>{' '}
                 (the &quot;Site&quot;), as well as any other related products and services that refer or link to these legal terms (the
@@ -62,7 +62,7 @@ export default function TermsPage() {
 
             <section className="mb-8">
               <h2 className="mb-4 text-2xl font-semibold">Table of Contents</h2>
-              <ol className="list-inside list-decimal space-y-1">
+              <ol className="list-inside list-decimal space-y-1 uppercase">
                 <li>
                   <a href="#services" className="text-blue-600 hover:underline">
                     Our Services
@@ -247,7 +247,7 @@ export default function TermsPage() {
 
               <h3 className="mt-6 mb-3 text-xl font-semibold">Your use of our Services</h3>
               <p className="mb-4">
-                Subject to your compliance with these Legal Terms, including the &quot;Prohibited Activities&quot; section below, we grant
+                Subject to your compliance with these Legal Terms, including the &quot;PROHIBITED ACTIVITIES&quot; section below, we grant
                 you a non-exclusive, non-transferable, revocable license to:
               </p>
               <ul className="mb-4 list-inside list-disc space-y-2">
@@ -279,7 +279,7 @@ export default function TermsPage() {
 
               <h3 className="mt-6 mb-3 text-xl font-semibold">Your submissions</h3>
               <p className="mb-4">
-                Please review this section and the &quot;Prohibited Activities&quot; section carefully prior to using our Services to
+                Please review this section and the &quot;PROHIBITED ACTIVITIES&quot; section carefully prior to using our Services to
                 understand the (a) rights you give us and (b) obligations you have when you post or upload any content through the Services.
               </p>
               <p className="mb-4">
@@ -294,7 +294,7 @@ export default function TermsPage() {
               </p>
               <ul className="mb-4 list-inside list-disc space-y-2">
                 <li>
-                  confirm that you have read and agree with our &quot;Prohibited Activities&quot; and will not post, send, publish, upload,
+                  confirm that you have read and agree with our &quot;PROHIBITED ACTIVITIES&quot; and will not post, send, publish, upload,
                   or transmit through the Services any Submission that is illegal, harassing, hateful, harmful, defamatory, obscene,
                   bullying, abusive, discriminatory, threatening to any person or group, sexually explicit, false, inaccurate, deceitful, or
                   misleading;
@@ -315,16 +315,14 @@ export default function TermsPage() {
 
             <section id="userreps" className="mb-8">
               <h2 className="mb-4 text-2xl font-semibold">3. User Representations</h2>
-              <p className="mb-4">By using the Services, you represent and warrant that:</p>
-              <ol className="list-inside list-decimal space-y-2">
-                <li>all registration information you submit will be true, accurate, current, and complete;</li>
-                <li>you will maintain the accuracy of such information and promptly update such registration information as necessary;</li>
-                <li>you have the legal capacity and you agree to comply with these Legal Terms;</li>
-                <li>you are not a minor in the jurisdiction in which you reside;</li>
-                <li>you will not access the Services through automated or non-human means, whether through a bot, script or otherwise;</li>
-                <li>you will not use the Services for any illegal or unauthorized purpose; and</li>
-                <li>your use of the Services will not violate any applicable law or regulation.</li>
-              </ol>
+              <p className="mb-4">
+                By using the Services, you represent and warrant that: (1) all registration information you submit will be true, accurate,
+                current, and complete; (2) you will maintain the accuracy of such information and promptly update such registration
+                information as necessary; (3) you have the legal capacity and you agree to comply with these Legal Terms; (4) you are not a
+                minor in the jurisdiction in which you reside; (5) you will not access the Services through automated or non-human means,
+                whether through a bot, script or otherwise; (6) you will not use the Services for any illegal or unauthorized purpose; and
+                (7) your use of the Services will not violate any applicable law or regulation.
+              </p>
               <p className="mt-4">
                 If you provide any information that is untrue, inaccurate, not current, or incomplete, we have the right to suspend or
                 terminate your account and refuse any and all current or future use of the Services (or any portion thereof).
