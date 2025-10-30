@@ -35,7 +35,7 @@ export default function HeroSection() {
               href="/dashboard/quick-plan"
               className="rounded-md bg-rose-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 dark:bg-rose-500 dark:hover:bg-rose-400 dark:focus-visible:outline-rose-500"
             >
-              Get started
+              Start your plan
             </Link>
             <a href="#features" className="text-sm/6 font-semibold">
               See features <span aria-hidden="true">→</span>
