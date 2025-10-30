@@ -253,7 +253,7 @@ export default function TermsPage() {
                 </a>
                 &quot; section below, we grant you a non-exclusive, non-transferable, revocable license to:
               </p>
-              <ul className="mb-4 ml-4 list-inside list-disc space-y-2">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-2">
                 <li>access the Services; and</li>
                 <li>download or print a copy of any portion of the Content to which you have properly gained access,</li>
               </ul>
@@ -299,7 +299,7 @@ export default function TermsPage() {
                 <strong>You are responsible for what you post or upload:</strong> By sending us Submissions through any part of the Services
                 you:
               </p>
-              <ul className="mb-4 ml-4 list-inside list-disc space-y-2">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-2">
                 <li>
                   confirm that you have read and agree with our &quot;
                   <a href="#prohibited" className="text-primary hover:underline">
@@ -351,7 +351,7 @@ export default function TermsPage() {
             <section id="purchases" className="mb-8">
               <h2 className="mb-4 text-2xl font-semibold">5. Purchases and Payment</h2>
               <p className="mb-4">We accept the following forms of payment:</p>
-              <ul className="mb-4 ml-4 list-inside list-disc space-y-1">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>Visa</li>
                 <li>Mastercard</li>
                 <li>American Express</li>
@@ -420,7 +420,7 @@ export default function TermsPage() {
                 by us.
               </p>
               <p className="mb-4">As a user of the Services, you agree not to:</p>
-              <ul className="ml-4 list-inside list-disc space-y-2">
+              <ul className="ml-4 list-outside list-disc space-y-2">
                 <li>
                   Systematically retrieve data or other content from the Services to create or compile, directly or indirectly, a
                   collection, compilation, database, or directory without written permission from us.
@@ -505,7 +505,7 @@ export default function TermsPage() {
                 Services and through third-party websites. As such, any Contributions you transmit may be treated in accordance with the
                 Services&apos; Privacy Policy. When you create or make available any Contributions, you thereby represent and warrant that:
               </p>
-              <ul className="ml-4 list-inside list-disc space-y-2">
+              <ul className="ml-4 list-outside list-disc space-y-2">
                 <li>
                   The creation, distribution, transmission, public display, or performance, and the accessing, downloading, or copying of
                   your Contributions do not and will not infringe the proprietary rights, including but not limited to the copyright,
