@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function HeroSection() {
   return (
-    <div className="relative isolate bg-white px-6 pt-14 lg:px-8">
+    <div className="relative isolate px-6 pt-14 lg:px-8">
       <div aria-hidden="true" className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
         <div
           style={{
@@ -14,30 +14,30 @@ export default function HeroSection() {
       </div>
       <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-          <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+          <div className="relative rounded-full px-3 py-1 text-sm/6 text-stone-600 ring-1 ring-stone-900/10 hover:ring-stone-900/20 dark:text-stone-300 dark:ring-white/10 dark:hover:ring-white/20">
             New: AI insights are coming soon.{' '}
-            <a href="#" className="font-semibold text-rose-600">
+            <a href="#" className="text-primary font-semibold">
               <span aria-hidden="true" className="absolute inset-0" />
               Try free beta <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
         </div>
         <div className="text-center">
-          <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl">
+          <h1 className="text-5xl font-semibold tracking-tight text-balance text-stone-900 sm:text-7xl dark:text-white">
             Financial Planning Made{' '}
             <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">Smarter.</span>
           </h1>
-          <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">
+          <p className="mt-8 text-lg font-medium text-pretty text-stone-500 sm:text-xl/8 dark:text-stone-300">
             AI-powered simulations to explore your financial future.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link
               href="/dashboard/quick-plan"
-              className="rounded-md bg-rose-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600"
+              className="rounded-md bg-rose-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-rose-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 dark:bg-rose-500 dark:hover:bg-rose-400 dark:focus-visible:outline-rose-500"
             >
               Get started
             </Link>
-            <a href="#how-it-works" className="text-sm/6 font-semibold text-gray-900">
+            <a href="#how-it-works" className="text-sm/6 font-semibold text-stone-900 dark:text-white">
               Learn more <span aria-hidden="true">→</span>
             </a>
           </div>
