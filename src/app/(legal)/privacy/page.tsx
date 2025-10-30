@@ -46,7 +46,7 @@ export default function PrivacyPage() {
             </section>
 
             <section className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">Summary of Key Points</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">Summary of Key Points</h2>
               <p className="mb-4">
                 <strong className="italic">
                   This summary provides key points from our Privacy Notice, but you can find out more details about any of these topics by
@@ -138,7 +138,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="tableofcontents" className="mb-8 uppercase">
-              <h2 className="mb-4 text-2xl font-semibold">Table of Contents</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">Table of Contents</h2>
               <ol className="list-inside list-decimal space-y-1 uppercase">
                 <li>
                   <a href="#infocollect" className="text-primary hover:underline">
@@ -229,7 +229,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="infocollect" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">1. What Information Do We Collect?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">1. What Information Do We Collect?</h2>
 
               <h3 className="mt-6 mb-3 text-xl font-semibold">Personal information you disclose to us</h3>
               <p className="mb-4 italic">
@@ -392,7 +392,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="infouse" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">2. How Do We Process Your Information?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">2. How Do We Process Your Information?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> We process your information to provide, improve, and administer our Services, communicate with
                 you, for security and fraud prevention, and to comply with law. We process the personal information for the following
@@ -453,7 +453,9 @@ export default function PrivacyPage() {
             </section>
 
             <section id="legalbases" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">3. What Legal Bases Do We Rely On To Process Your Personal Information?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">
+                3. What Legal Bases Do We Rely On To Process Your Personal Information?
+              </h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> We only process your personal information when we believe it is necessary and we have a valid
                 legal reason (i.e., legal basis) to do so under applicable law, like with your consent, to comply with laws, to provide you
@@ -548,7 +550,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="whoshare" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">4. When And With Whom Do We Share Your Personal Information?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">4. When And With Whom Do We Share Your Personal Information?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> We may share information in specific situations described in this section and/or with the
                 following categories of third parties.
@@ -583,7 +585,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="cookies" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">5. Do We Use Cookies And Other Tracking Technologies?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">5. Do We Use Cookies And Other Tracking Technologies?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> We may use cookies and other tracking technologies to collect and store your information.
               </p>
@@ -624,7 +626,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="ai" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">6. Do We Offer Artificial Intelligence-Based Products?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">6. Do We Offer Artificial Intelligence-Based Products?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> We offer products, features, or tools powered by artificial intelligence, machine learning, or
                 similar technologies.
@@ -668,7 +670,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="sociallogins" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">7. How Do We Handle Your Social Logins?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">7. How Do We Handle Your Social Logins?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> If you choose to register or log in to our Services using a social media account, we may have
                 access to certain information about you.
@@ -690,7 +692,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="intltransfers" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">8. Is Your Information Transferred Internationally?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">8. Is Your Information Transferred Internationally?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> We may transfer, store, and process your information in countries other than your own.
               </p>
@@ -722,7 +724,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="inforetain" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">9. How Long Do We Keep Your Information?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">9. How Long Do We Keep Your Information?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> We keep your information for as long as necessary to fulfill the purposes outlined in this
                 Privacy Notice unless otherwise required by law.
@@ -742,7 +744,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="infosafe" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">10. How Do We Keep Your Information Safe?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">10. How Do We Keep Your Information Safe?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> We aim to protect your personal information through a system of organizational and technical
                 security measures.
@@ -759,7 +761,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="infominors" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">11. Do We Collect Information From Minors?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">11. Do We Collect Information From Minors?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> We do not knowingly collect data from or market to children under 18 years of age or the
                 equivalent age as specified by law in your jurisdiction.
@@ -781,7 +783,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="privacyrights" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">12. What Are Your Privacy Rights?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">12. What Are Your Privacy Rights?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> Depending on your state of residence in the US or in some regions, such as the European Economic
                 Area (EEA), United Kingdom (UK), Switzerland, and Canada, you have rights that allow you greater access to and control over
@@ -895,7 +897,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="DNT" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">13. Controls For Do-Not-Track Features</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">13. Controls For Do-Not-Track Features</h2>
               <p className="mb-4">
                 Most web browsers and some mobile operating systems and mobile applications include a Do-Not-Track (&quot;DNT&quot;) feature
                 or setting you can activate to signal your privacy preference not to have data about your online browsing activities
@@ -911,7 +913,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="uslaws" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">14. Do United States Residents Have Specific Privacy Rights?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">14. Do United States Residents Have Specific Privacy Rights?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> If you are a resident of California, Colorado, Connecticut, Delaware, Florida, Indiana, Iowa,
                 Kentucky, Maryland, Minnesota, Montana, Nebraska, New Hampshire, New Jersey, Oregon, Rhode Island, Tennessee, Texas, Utah,
@@ -1226,7 +1228,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="policyupdates" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">15. Do We Make Updates To This Notice?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">15. Do We Make Updates To This Notice?</h2>
               <p className="mb-4 italic">
                 <strong>In Short:</strong> Yes, we will update this notice as necessary to stay compliant with relevant laws.
               </p>
@@ -1239,7 +1241,7 @@ export default function PrivacyPage() {
             </section>
 
             <section id="contact" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">16. How Can You Contact Us About This Notice?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">16. How Can You Contact Us About This Notice?</h2>
               <p className="mb-4">
                 If you have questions or comments about this notice, you may email us at{' '}
                 <a href="mailto:joe@schelske.dev" className="text-primary hover:underline">
@@ -1258,7 +1260,9 @@ export default function PrivacyPage() {
             </section>
 
             <section id="request" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">17. How Can You Review, Update, Or Delete The Data We Collect From You?</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">
+                17. How Can You Review, Update, Or Delete The Data We Collect From You?
+              </h2>
               <p>
                 Based on the applicable laws of your country or state of residence in the US, you may have the right to request access to
                 the personal information we collect from you, details about how we have processed it, correct inaccuracies, or delete your

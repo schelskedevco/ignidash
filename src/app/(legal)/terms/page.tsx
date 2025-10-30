@@ -13,7 +13,7 @@ export default function TermsPage() {
             </div>
 
             <section className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">Agreement to Our Legal Terms</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">Agreement to Our Legal Terms</h2>
               <p className="mb-4">
                 We are <strong>Schelske Dev Co. LLC</strong> (&quot;Company,&quot; &quot;we,&quot; &quot;us,&quot; &quot;our&quot;), a
                 company registered in Minnesota, United States at 11101 Harrison Ave S, Minneapolis, MN 55437.
@@ -61,7 +61,7 @@ export default function TermsPage() {
             </section>
 
             <section className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">Table of Contents</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">Table of Contents</h2>
               <ol className="list-inside list-decimal space-y-1 uppercase">
                 <li>
                   <a href="#services" className="text-primary hover:underline">
@@ -212,7 +212,7 @@ export default function TermsPage() {
             </section>
 
             <section id="services" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">1. Our Services</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">1. Our Services</h2>
               <p className="mb-4">
                 The information provided when using the Services is not intended for distribution to or use by any person or entity in any
                 jurisdiction or country where such distribution or use would be contrary to law or regulation or which would subject us to
@@ -229,7 +229,7 @@ export default function TermsPage() {
             </section>
 
             <section id="ip" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">2. Intellectual Property Rights</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">2. Intellectual Property Rights</h2>
 
               <h3 className="mt-6 mb-3 text-xl font-semibold">Our intellectual property</h3>
               <p className="mb-4">
@@ -324,7 +324,7 @@ export default function TermsPage() {
             </section>
 
             <section id="userreps" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">3. User Representations</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">3. User Representations</h2>
               <p className="mb-4">
                 By using the Services, you represent and warrant that: (1) all registration information you submit will be true, accurate,
                 current, and complete; (2) you will maintain the accuracy of such information and promptly update such registration
@@ -340,7 +340,7 @@ export default function TermsPage() {
             </section>
 
             <section id="userreg" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">4. User Registration</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">4. User Registration</h2>
               <p>
                 You may be required to register to use the Services. You agree to keep your password confidential and will be responsible
                 for all use of your account and password. We reserve the right to remove, reclaim, or change a username you select if we
@@ -349,7 +349,7 @@ export default function TermsPage() {
             </section>
 
             <section id="purchases" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">5. Purchases and Payment</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">5. Purchases and Payment</h2>
               <p className="mb-4">We accept the following forms of payment:</p>
               <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>Visa</li>
@@ -378,7 +378,7 @@ export default function TermsPage() {
             </section>
 
             <section id="subscriptions" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">6. Subscriptions</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">6. Subscriptions</h2>
 
               <h3 className="mt-6 mb-3 text-xl font-semibold">Billing and Renewal</h3>
               <p className="mb-4">
@@ -413,7 +413,7 @@ export default function TermsPage() {
             </section>
 
             <section id="prohibited" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">7. Prohibited Activities</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">7. Prohibited Activities</h2>
               <p className="mb-4">
                 You may not access or use the Services for any purpose other than that for which we make the Services available. The
                 Services may not be used in connection with any commercial endeavors except those that are specifically endorsed or approved
@@ -496,7 +496,7 @@ export default function TermsPage() {
             </section>
 
             <section id="ugc" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">8. User Generated Contributions</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">8. User Generated Contributions</h2>
               <p className="mb-4">
                 The Services does not offer users to submit or post content. We may provide you with the opportunity to create, submit,
                 post, display, transmit, perform, publish, distribute, or broadcast content and materials to us or on the Services,
@@ -557,7 +557,7 @@ export default function TermsPage() {
             </section>
 
             <section id="license" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">9. Contribution License</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">9. Contribution License</h2>
               <p className="mb-4">
                 You and Services agree that we may access, store, process, and use any information and personal data that you provide
                 following the terms of the Privacy Policy and your choices (including settings).
@@ -576,7 +576,7 @@ export default function TermsPage() {
             </section>
 
             <section id="socialmedia" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">10. Social Media</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">10. Social Media</h2>
               <p className="mb-4">
                 As part of the functionality of the Services, you may link your account with online accounts you have with third-party
                 service providers (each such account, a &quot;Third-Party Account&quot;) by either: (1) providing your Third-Party Account
@@ -624,7 +624,7 @@ export default function TermsPage() {
             </section>
 
             <section id="thirdparty" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">11. Third-Party Websites and Content</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">11. Third-Party Websites and Content</h2>
               <p className="mb-4">
                 The Services may contain (or you may be sent via the Site) links to other websites (&quot;Third-Party Websites&quot;) as
                 well as articles, photographs, text, graphics, pictures, designs, music, sound, video, information, applications, software,
@@ -658,7 +658,7 @@ export default function TermsPage() {
             </section>
 
             <section id="sitemanage" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">12. Services Management</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">12. Services Management</h2>
               <p>
                 We reserve the right, but not the obligation, to: (1) monitor the Services for violations of these Legal Terms; (2) take
                 appropriate legal action against anyone who, in our sole discretion, violates the law or these Legal Terms, including
@@ -672,7 +672,7 @@ export default function TermsPage() {
             </section>
 
             <section id="ppyes" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">13. Privacy Policy</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">13. Privacy Policy</h2>
               <p className="mb-4">
                 We care about data privacy and security. Please review our Privacy Policy:{' '}
                 <a
@@ -695,7 +695,7 @@ export default function TermsPage() {
             </section>
 
             <section id="terms" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">14. Term and Termination</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">14. Term and Termination</h2>
               <p className="mb-4">
                 These Legal Terms shall remain in full force and effect while you use the Services. WITHOUT LIMITING ANY OTHER PROVISION OF
                 THESE LEGAL TERMS, WE RESERVE THE RIGHT TO, IN OUR SOLE DISCRETION AND WITHOUT NOTICE OR LIABILITY, DENY ACCESS TO AND USE
@@ -716,7 +716,7 @@ export default function TermsPage() {
             </section>
 
             <section id="modifications" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">15. Modifications and Interruptions</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">15. Modifications and Interruptions</h2>
               <p className="mb-4">
                 We reserve the right to change, modify, or remove the contents of the Services at any time or for any reason at our sole
                 discretion without notice. However, we have no obligation to update any information on our Services. We will not be liable
@@ -734,7 +734,7 @@ export default function TermsPage() {
             </section>
 
             <section id="law" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">16. Governing Law</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">16. Governing Law</h2>
               <p>
                 These Legal Terms and your use of the Services are governed by and construed in accordance with the laws of the State of
                 Minnesota applicable to agreements made and to be entirely performed within the State of Minnesota, without regard to its
@@ -743,7 +743,7 @@ export default function TermsPage() {
             </section>
 
             <section id="disputes" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">17. Dispute Resolution</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">17. Dispute Resolution</h2>
 
               <h3 className="mt-6 mb-3 text-xl font-semibold">Informal Negotiations</h3>
               <p className="mb-4">
@@ -818,7 +818,7 @@ export default function TermsPage() {
             </section>
 
             <section id="corrections" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">18. Corrections</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">18. Corrections</h2>
               <p>
                 There may be information on the Services that contains typographical errors, inaccuracies, or omissions, including
                 descriptions, pricing, availability, and various other information. We reserve the right to correct any errors,
@@ -827,7 +827,7 @@ export default function TermsPage() {
             </section>
 
             <section id="disclaimer" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">19. Disclaimer</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">19. Disclaimer</h2>
               <p>
                 THE SERVICES ARE PROVIDED ON AN AS-IS AND AS-AVAILABLE BASIS. YOU AGREE THAT YOUR USE OF THE SERVICES WILL BE AT YOUR SOLE
                 RISK. TO THE FULLEST EXTENT PERMITTED BY LAW, WE DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, IN CONNECTION WITH THE
@@ -850,7 +850,7 @@ export default function TermsPage() {
             </section>
 
             <section id="liability" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">20. Limitations of Liability</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">20. Limitations of Liability</h2>
               <p>
                 IN NO EVENT WILL WE OR OUR DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE TO YOU OR ANY THIRD PARTY FOR ANY DIRECT, INDIRECT,
                 CONSEQUENTIAL, EXEMPLARY, INCIDENTAL, SPECIAL, OR PUNITIVE DAMAGES, INCLUDING LOST PROFIT, LOST REVENUE, LOSS OF DATA, OR
@@ -864,7 +864,7 @@ export default function TermsPage() {
             </section>
 
             <section id="indemnification" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">21. Indemnification</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">21. Indemnification</h2>
               <p>
                 You agree to defend, indemnify, and hold us harmless, including our subsidiaries, affiliates, and all of our respective
                 officers, agents, partners, and employees, from and against any loss, damage, liability, claim, or demand, including
@@ -880,7 +880,7 @@ export default function TermsPage() {
             </section>
 
             <section id="userdata" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">22. User Data</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">22. User Data</h2>
               <p>
                 We will maintain certain data that you transmit to the Services for the purpose of managing the performance of the Services,
                 as well as data relating to your use of the Services. Although we perform regular routine backups of data, you are solely
@@ -891,7 +891,7 @@ export default function TermsPage() {
             </section>
 
             <section id="electronic" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">23. Electronic Communications, Transactions, and Signatures</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">23. Electronic Communications, Transactions, and Signatures</h2>
               <p>
                 Visiting the Services, sending us emails, and completing online forms constitute electronic communications. You consent to
                 receive electronic communications, and you agree that all agreements, notices, disclosures, and other communications we
@@ -905,7 +905,7 @@ export default function TermsPage() {
             </section>
 
             <section id="california" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">24. California Users and Residents</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">24. California Users and Residents</h2>
               <p>
                 If any complaint with us is not satisfactorily resolved, you can contact the Complaint Assistance Unit of the Division of
                 Consumer Services of the California Department of Consumer Affairs in writing at 1625 North Market Blvd., Suite N 112,
@@ -914,7 +914,7 @@ export default function TermsPage() {
             </section>
 
             <section id="misc" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">25. Miscellaneous</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">25. Miscellaneous</h2>
               <p>
                 These Legal Terms and any policies or operating rules posted by us on the Services or in respect to the Services constitute
                 the entire agreement and understanding between you and us. Our failure to exercise or enforce any right or provision of
@@ -931,7 +931,7 @@ export default function TermsPage() {
             </section>
 
             <section id="addclause" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">26. Nature of Service and Disclaimer of Financial Advice</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">26. Nature of Service and Disclaimer of Financial Advice</h2>
               <p className="mb-4">
                 Ignidash is a financial planning tool that enables users to create projections, models, and scenarios for educational and
                 informational purposes only. We do not act as a financial advisor, investment advisor, broker-dealer, or any other regulated
@@ -946,7 +946,7 @@ export default function TermsPage() {
             </section>
 
             <section id="addclauseb" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">27. User Responsibility and Consultation with Professionals</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">27. User Responsibility and Consultation with Professionals</h2>
               <p className="mb-4">
                 You are solely responsible for your own investment and financial decisions. Before making any financial decisions or
                 investments, you should consult with qualified financial, tax, and legal professionals who have a fiduciary duty to act in
@@ -959,7 +959,7 @@ export default function TermsPage() {
             </section>
 
             <section id="addclausec" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">28. Accuracy of Projections</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">28. Accuracy of Projections</h2>
               <p>
                 The accuracy of any projections or scenarios generated by the Service depends entirely on the accuracy and completeness of
                 the information you provide. You are responsible for ensuring all information you input into the Service is accurate and
@@ -969,7 +969,7 @@ export default function TermsPage() {
             </section>
 
             <section id="contact" className="mb-8">
-              <h2 className="mb-4 text-2xl font-semibold">29. Contact Us</h2>
+              <h2 className="mb-4 text-2xl font-semibold uppercase">29. Contact Us</h2>
               <p className="mb-4">
                 In order to resolve a complaint regarding the Services or to receive further information regarding use of the Services,
                 please contact us at:
