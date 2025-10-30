@@ -3,8 +3,8 @@ const navigation = {
     { name: 'About', href: '#' },
     { name: 'Pricing', href: '/pricing' },
     { name: 'Blog', href: '#' },
-    { name: 'Privacy', href: '#' },
-    { name: 'Terms', href: '#' },
+    { name: 'Privacy', href: '/privacy' },
+    { name: 'Terms', href: '/terms' },
     { name: 'Contact', href: '#' },
   ],
   social: [
