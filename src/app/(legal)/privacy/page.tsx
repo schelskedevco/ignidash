@@ -139,7 +139,7 @@ export default function PrivacyPage() {
 
             <section id="tableofcontents" className="mb-8 uppercase">
               <h2 className="mb-4 text-2xl font-semibold">Table of Contents</h2>
-              <ol className="ml-4 list-outside list-decimal space-y-1 uppercase">
+              <ol className="list-inside list-decimal space-y-1 uppercase">
                 <li>
                   <a href="#infocollect" className="text-primary hover:underline">
                     What Information Do We Collect?
