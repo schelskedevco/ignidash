@@ -74,24 +74,26 @@ const navigation = {
 
 export default function Footer() {
   return (
-    <footer className="border-t border-gray-200 bg-white">
+    <footer className="border-t border-stone-200 dark:border-none">
       <div className="mx-auto max-w-7xl overflow-hidden px-6 py-20 sm:py-24 lg:px-8">
         <nav aria-label="Footer" className="-mb-6 flex flex-wrap justify-center gap-x-12 gap-y-3 text-sm/6">
           {navigation.main.map((item) => (
-            <a key={item.name} href={item.href} className="text-gray-600 hover:text-gray-900">
+            <a key={item.name} href={item.href} className="text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white">
               {item.name}
             </a>
           ))}
         </nav>
         <div className="mt-16 flex justify-center gap-x-10">
           {navigation.social.map((item) => (
-            <a key={item.name} href={item.href} className="text-gray-600 hover:text-gray-800">
+            <a key={item.name} href={item.href} className="text-stone-600 hover:text-stone-800 dark:text-stone-400 dark:hover:text-white">
               <span className="sr-only">{item.name}</span>
               <item.icon aria-hidden="true" className="size-6" />
             </a>
           ))}
         </div>
-        <p className="mt-10 text-center text-sm/6 text-gray-600">&copy; 2025 Schelske Dev Co. LLC. All rights reserved.</p>
+        <p className="mt-10 text-center text-sm/6 text-stone-600 dark:text-stone-400">
+          &copy; 2025 Schelske Dev Co. LLC. All rights reserved.
+        </p>
       </div>
     </footer>
   );
