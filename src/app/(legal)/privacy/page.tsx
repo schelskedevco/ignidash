@@ -803,7 +803,7 @@ export default function PrivacyPage() {
                 If you are located in the EEA or UK and you believe we are unlawfully processing your personal information, you also have
                 the right to complain to your{' '}
                 <a
-                  href="https://ec.europa.eu/newsroom/article29/items/612080"
+                  href="https://ec.europa.eu/newsroom/article29/items/612080/en"
                   className="text-primary hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -812,7 +812,7 @@ export default function PrivacyPage() {
                 </a>{' '}
                 or{' '}
                 <a
-                  href="https://ico.org.uk/make-a-complaint/data-protection-complaints/data-protection-complaints/"
+                  href="https://ico.org.uk/make-a-complaint/data-protection-complaints/"
                   className="text-primary hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -823,12 +823,7 @@ export default function PrivacyPage() {
               </p>
               <p className="mb-4">
                 If you are located in Switzerland, you may contact the{' '}
-                <a
-                  href="https://www.edoeb.admin.ch/edoeb/en/home.html"
-                  className="text-primary hover:underline"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href="https://www.edoeb.admin.ch/en" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
                   Federal Data Protection and Information Commissioner
                 </a>
                 .
