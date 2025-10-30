@@ -391,13 +391,15 @@ export default function PrivacyPage() {
 
             <section id="infouse" className="mb-8">
               <h2 className="mb-4 text-2xl font-semibold">2. How Do We Process Your Information?</h2>
-              <p className="mb-4">
+              <p className="mb-4 italic">
                 <strong>In Short:</strong> We process your information to provide, improve, and administer our Services, communicate with
                 you, for security and fraud prevention, and to comply with law. We process the personal information for the following
                 purposes listed below. We may also process your information for other purposes only with your prior explicit consent.
               </p>
               <p className="mb-4">
-                We process your personal information for a variety of reasons, depending on how you interact with our Services, including:
+                <strong>
+                  We process your personal information for a variety of reasons, depending on how you interact with our Services, including:
+                </strong>
               </p>
               <ul className="mb-4 ml-4 list-outside list-disc space-y-2">
                 <li>
@@ -427,11 +429,11 @@ export default function PrivacyPage() {
                 <li>
                   <strong>To send you marketing and promotional communications.</strong> We may process the personal information you send to
                   us for our marketing purposes, if this is in accordance with your marketing preferences. You can opt out of our marketing
-                  emails at any time. For more information, see{' '}
+                  emails at any time. For more information, see &quot;
                   <a href="#privacyrights" className="text-primary hover:underline">
-                    &quot;WHAT ARE YOUR PRIVACY RIGHTS?&quot;
-                  </a>{' '}
-                  below.
+                    WHAT ARE YOUR PRIVACY RIGHTS?
+                  </a>
+                  &quot; below.
                 </li>
                 <li>
                   <strong>To protect our Services.</strong> We may process your information as part of our efforts to keep our Services safe
