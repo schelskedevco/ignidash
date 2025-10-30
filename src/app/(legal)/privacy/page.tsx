@@ -349,8 +349,18 @@ export default function PrivacyPage() {
 
               <h3 className="mt-6 mb-3 text-xl font-semibold">Google API</h3>
               <p>
-                Our use of information received from Google APIs will adhere to Google API Services User Data Policy, including the Limited
-                Use requirements.
+                Our use of information received from Google APIs will adhere to{' '}
+                <a href="https://developers.google.com/terms/api-services-user-data-policy" className="text-primary hover:underline">
+                  Google API Services User Data Policy
+                </a>
+                , including the{' '}
+                <a
+                  href="https://developers.google.com/terms/api-services-user-data-policy#limited-use"
+                  className="text-primary hover:underline"
+                >
+                  Limited Use requirements
+                </a>
+                .
               </p>
 
               <h3 className="mt-6 mb-3 text-xl font-semibold" id="othersources">
