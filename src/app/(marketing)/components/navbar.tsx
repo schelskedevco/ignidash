@@ -8,7 +8,7 @@ import { FireIcon } from '@heroicons/react/24/solid';
 import { Authenticated, Unauthenticated, AuthLoading } from 'convex/react';
 
 const navigation = [
-  { name: 'Learn More', href: '/#learn-more' },
+  { name: 'Features', href: '/#features' },
   { name: 'FAQ', href: '/#faq' },
   { name: 'Pricing', href: '/pricing' },
 ];
