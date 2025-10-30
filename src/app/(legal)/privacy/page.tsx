@@ -18,7 +18,7 @@ export default function PrivacyPage() {
                 describes how and why we might access, collect, store, use, and/or share (&quot;process&quot;) your personal information
                 when you use our services (&quot;Services&quot;), including when you:
               </p>
-              <ul className="mb-4 list-inside list-disc space-y-2">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-2">
                 <li>
                   Visit our website at{' '}
                   <a href="https://www.ignidash.com" className="text-primary hover:underline">
@@ -128,12 +128,18 @@ export default function PrivacyPage() {
                 </a>
                 , or by contacting us. We will consider and act upon any request in accordance with applicable data protection laws.
               </p>
-              <p>Want to learn more about what we do with any information we collect? Review the Privacy Notice in full.</p>
+              <p>
+                Want to learn more about what we do with any information we collect?{' '}
+                <a href="#tableofcontents" className="text-primary hover:underline">
+                  Review the Privacy Notice in full
+                </a>
+                .
+              </p>
             </section>
 
             <section id="tableofcontents" className="mb-8 uppercase">
               <h2 className="mb-4 text-2xl font-semibold">Table of Contents</h2>
-              <ol className="list-inside list-decimal space-y-1 uppercase">
+              <ol className="ml-4 list-outside list-decimal space-y-1 uppercase">
                 <li>
                   <a href="#infocollect" className="text-primary hover:underline">
                     What Information Do We Collect?
@@ -239,7 +245,7 @@ export default function PrivacyPage() {
                 your interactions with us and the Services, the choices you make, and the products and features you use. The personal
                 information we collect may include the following:
               </p>
-              <ul className="mb-4 list-inside list-disc space-y-1">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>names</li>
                 <li>email addresses</li>
                 <li>usernames</li>
@@ -259,7 +265,7 @@ export default function PrivacyPage() {
                 <strong>Sensitive Information.</strong> When necessary, with your consent or as otherwise permitted by applicable law, we
                 process the following categories of sensitive information:
               </p>
-              <ul className="mb-4 list-inside list-disc space-y-1">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>financial data</li>
               </ul>
               <p className="mb-4">
@@ -316,7 +322,7 @@ export default function PrivacyPage() {
                 .
               </p>
               <p className="mb-4">The information we collect includes:</p>
-              <ul className="mb-4 list-inside list-disc space-y-2">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-2">
                 <li>
                   <strong>Log and Usage Data.</strong> Log and usage data is service-related, diagnostic, usage, and performance information
                   our servers automatically collect when you access or use our Services and which we record in log files. Depending on how
@@ -383,7 +389,7 @@ export default function PrivacyPage() {
               <p className="mb-4">
                 We process your personal information for a variety of reasons, depending on how you interact with our Services, including:
               </p>
-              <ul className="mb-4 list-inside list-disc space-y-2">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-2">
                 <li>
                   <strong>To facilitate account creation and authentication and otherwise manage user accounts.</strong> We may process your
                   information so you can create and log in to your account, as well as keep your account in working order.
@@ -446,7 +452,7 @@ export default function PrivacyPage() {
                 The General Data Protection Regulation (GDPR) and UK GDPR require us to explain the valid legal bases we rely on in order to
                 process your personal information. As such, we may rely on the following legal bases to process your personal information:
               </p>
-              <ul className="mb-4 list-inside list-disc space-y-2">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-2">
                 <li>
                   <strong>Consent.</strong> We may process your information if you have given us permission (i.e., consent) to use your
                   personal information for a specific purpose. You can withdraw your consent at any time. Learn more about{' '}
@@ -464,7 +470,7 @@ export default function PrivacyPage() {
                   <strong>Legitimate Interests.</strong> We may process your information when we believe it is reasonably necessary to
                   achieve our legitimate business interests and those interests do not outweigh your interests and fundamental rights and
                   freedoms. For example, we may process your personal information for some of the purposes described in order to:
-                  <ul className="mt-2 ml-4 list-inside list-disc space-y-1">
+                  <ul className="mt-2 ml-4 list-outside list-disc space-y-1">
                     <li>Send users information about special offers and discounts on our products and services</li>
                     <li>Analyze how our Services are used so we can improve them to engage and retain users</li>
                     <li>Diagnose problems and/or prevent fraudulent activities</li>
@@ -493,7 +499,7 @@ export default function PrivacyPage() {
                 In some exceptional cases, we may be legally permitted under applicable law to process your information without your
                 consent, including, for example:
               </p>
-              <ul className="mb-4 list-inside list-disc space-y-1">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>If collection is clearly in the interests of an individual and consent cannot be obtained in a timely way</li>
                 <li>For investigations and fraud detection and prevention</li>
                 <li>For business transactions provided certain conditions are met</li>
@@ -539,7 +545,7 @@ export default function PrivacyPage() {
                 us. They also commit to protect the data they hold on our behalf and to retain it for the period we instruct.
               </p>
               <p className="mb-4">The categories of third parties we may share personal information with are as follows:</p>
-              <ul className="mb-4 list-inside list-disc space-y-1">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>Cloud Computing Services</li>
                 <li>Data Analytics Services</li>
                 <li>Payment Processors</li>
@@ -551,7 +557,7 @@ export default function PrivacyPage() {
                 <li>User Account Registration & Authentication Services</li>
               </ul>
               <p className="mb-4">We also may need to share your personal information in the following situations:</p>
-              <ul className="mb-4 list-inside list-disc space-y-2">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-2">
                 <li>
                   <strong>Business Transfers.</strong> We may share or transfer your information in connection with, or during negotiations
                   of, any merger, sale of company assets, financing, or acquisition of all or a portion of our business to another company.
@@ -625,7 +631,7 @@ export default function PrivacyPage() {
 
               <h3 className="mt-6 mb-3 text-xl font-semibold">Our AI Products</h3>
               <p className="mb-4">Our AI Products are designed for the following functions:</p>
-              <ul className="mb-4 list-inside list-disc">
+              <ul className="mb-4 ml-4 list-outside list-disc">
                 <li>AI insights</li>
               </ul>
 
@@ -638,7 +644,7 @@ export default function PrivacyPage() {
 
               <h3 className="mt-6 mb-3 text-xl font-semibold">How to Opt Out</h3>
               <p className="mb-4">We believe in giving you the power to decide how your data is used. To opt out, you can:</p>
-              <ul className="mb-4 list-inside list-disc">
+              <ul className="mb-4 ml-4 list-outside list-disc">
                 <li>Log in to your account settings and update your user account</li>
               </ul>
             </section>
@@ -842,7 +848,7 @@ export default function PrivacyPage() {
               <p className="mb-4">
                 If you would at any time like to review or change the information in your account or terminate your account, you can:
               </p>
-              <ul className="mb-4 list-inside list-disc">
+              <ul className="mb-4 ml-4 list-outside list-disc">
                 <li>Log in to your account settings and update your user account.</li>
               </ul>
               <p className="mb-4">
@@ -1017,13 +1023,13 @@ export default function PrivacyPage() {
                 We may also collect other personal information outside of these categories through instances where you interact with us in
                 person, online, or by phone or mail in the context of:
               </p>
-              <ul className="mb-4 list-inside list-disc space-y-1">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>Receiving help through our customer support channels;</li>
                 <li>Participation in customer surveys or contests; and</li>
                 <li>Facilitation in the delivery of our Services and to respond to your inquiries.</li>
               </ul>
               <p className="mb-4">We will use and retain the collected personal information as needed to provide the Services or for:</p>
-              <ul className="mb-4 list-inside list-disc space-y-1">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>Category A - As long as the user has an account with us</li>
                 <li>Category B - As long as the user has an account with us</li>
                 <li>Category C - As long as the user has an account with us</li>
@@ -1066,7 +1072,7 @@ export default function PrivacyPage() {
                 twelve (12) months. We have disclosed the following categories of personal information to third parties for a business or
                 commercial purpose in the preceding twelve (12) months:
               </p>
-              <ul className="mb-4 list-inside list-disc space-y-1">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>Category A. Identifiers</li>
                 <li>Category B. Personal information as defined in the California Customer Records law</li>
                 <li>Category L. Sensitive personal information</li>
@@ -1084,7 +1090,7 @@ export default function PrivacyPage() {
                 You have rights under certain US state data protection laws. However, these rights are not absolute, and in certain cases,
                 we may decline your request as permitted by law. These rights include:
               </p>
-              <ul className="mb-4 list-inside list-disc space-y-1">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>Right to know whether or not we are processing your personal data</li>
                 <li>Right to access your personal data</li>
                 <li>Right to correct inaccuracies in your personal data</li>
@@ -1098,7 +1104,7 @@ export default function PrivacyPage() {
                 </li>
               </ul>
               <p className="mb-4">Depending upon the state where you live, you may also have the following rights:</p>
-              <ul className="mb-4 list-inside list-disc space-y-1">
+              <ul className="mb-4 ml-4 list-outside list-disc space-y-1">
                 <li>
                   Right to access the categories of personal data being processed (as permitted by applicable law, including the privacy law
                   in Minnesota)
