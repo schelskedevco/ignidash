@@ -23,7 +23,7 @@ function NavbarModeToggle() {
 
   return (
     <NavbarItem aria-label={label} onClick={() => setTheme(newTheme)} className="focus-outline rounded-full">
-      <Icon className="size-8" />
+      <Icon data-slot="icon" />
     </NavbarItem>
   );
 }
