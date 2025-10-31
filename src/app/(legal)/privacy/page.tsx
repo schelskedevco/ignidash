@@ -1,6 +1,6 @@
 import { GlobeLockIcon } from 'lucide-react';
 
-import Footer from '@/app/(marketing)/components/footer';
+import Footer from '@/components/layout/footer';
 
 import LegalNavbar from '../components/legal-navbar';
 

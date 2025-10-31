@@ -1,6 +1,8 @@
 import { CheckIcon } from '@heroicons/react/20/solid';
+
+import Footer from '@/components/layout/footer';
+
 import Navbar from '../components/navbar';
-import Footer from '../components/footer';
 
 const tiers = [
   {
