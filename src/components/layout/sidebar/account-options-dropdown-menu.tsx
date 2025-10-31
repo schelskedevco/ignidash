@@ -1,6 +1,6 @@
 'use client';
 
-import { LogInIcon, LogOutIcon, SettingsIcon, LoaderIcon, SparklesIcon, GlobeLockIcon, HandshakeIcon } from 'lucide-react';
+import { LogInIcon, LogOutIcon, SettingsIcon, LoaderIcon, GemIcon, GlobeLockIcon, HandshakeIcon } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
 
@@ -41,7 +41,7 @@ export default function AccountOptionsDropdownMenu({ fetchedName, fetchedEmail }
       </AuthLoading>
       <Unauthenticated>
         <DropdownItem href="/pricing">
-          <SparklesIcon data-slot="icon" />
+          <GemIcon data-slot="icon" />
           <DropdownLabel>Buy Pro</DropdownLabel>
         </DropdownItem>
         <DropdownDivider />
@@ -72,7 +72,7 @@ export default function AccountOptionsDropdownMenu({ fetchedName, fetchedEmail }
         </DropdownHeader>
         <DropdownDivider />
         <DropdownItem href="/pricing">
-          <SparklesIcon data-slot="icon" />
+          <GemIcon data-slot="icon" />
           <DropdownLabel>Buy Pro</DropdownLabel>
         </DropdownItem>
         <DropdownDivider />
