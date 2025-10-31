@@ -11,7 +11,7 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <Navbar title="Settings" />
+      <Navbar />
       <SettingsForms preloadedUser={preloadedUser} />
       <Footer />
     </>
