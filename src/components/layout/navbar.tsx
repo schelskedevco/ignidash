@@ -2,16 +2,23 @@
 
 import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { CircleUserRoundIcon, LogInIcon, LogOutIcon, LoaderIcon, LayoutDashboardIcon, SettingsIcon } from 'lucide-react';
-import * as Headless from '@headlessui/react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
 
 import { authClient } from '@/lib/auth-client';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider, DropdownLabel, DropdownHeader } from '@/components/catalyst/dropdown';
+import {
+  Dropdown,
+  DropdownButton,
+  DropdownItem,
+  DropdownMenu,
+  DropdownDivider,
+  DropdownLabel,
+  DropdownHeader,
+} from '@/components/catalyst/dropdown';
+import { Avatar } from '@/components/catalyst/avatar';
 import { Navbar as CatalystNavbar, NavbarItem, NavbarLabel, NavbarSection, NavbarSpacer } from '@/components/catalyst/navbar';
 import { useThemeSwitcher } from '@/hooks/use-theme-switcher';
 
@@ -65,13 +72,9 @@ export default function Navbar({ title }: NavbarProps) {
       <NavbarSection className="px-4">
         <NavbarModeToggle />
         <Dropdown>
-          <Headless.MenuButton aria-label="Account options" className="focus-outline shrink-0">
-            {image ? (
-              <Image alt="" src={image} className="size-8 shrink-0 rounded-full" width={32} height={32} />
-            ) : (
-              <CircleUserRoundIcon className="size-8 shrink-0 rounded-full" />
-            )}
-          </Headless.MenuButton>
+          <DropdownButton as={NavbarItem} aria-label="Account options" className="focus-outline">
+            {image ? <Avatar src={image} square /> : <CircleUserRoundIcon data-slot="icon" />}
+          </DropdownButton>
           <DropdownMenu className="z-[60] min-w-(--button-width)">
             <AuthLoading>
               <DropdownItem onClick={() => {}} disabled>
