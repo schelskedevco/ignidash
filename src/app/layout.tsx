@@ -22,9 +22,8 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: 'Ignidash - AI-Powered FIRE Calculator',
-  description:
-    'Plan your path to Financial Independence with AI-powered insights. Model different FIRE strategies, plan life events, and share your journey.',
+  title: 'Ignidash - AI-Powered Financial Planner',
+  description: 'Plan your path to Financial Independence with AI-powered insights.',
   icons: '/flame.svg',
 };
 
