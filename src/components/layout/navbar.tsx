@@ -19,14 +19,7 @@ import {
   DropdownHeader,
 } from '@/components/catalyst/dropdown';
 import { Avatar } from '@/components/catalyst/avatar';
-import {
-  Navbar as CatalystNavbar,
-  NavbarItem,
-  NavbarLabel,
-  NavbarSection,
-  NavbarSpacer,
-  NavbarDivider,
-} from '@/components/catalyst/navbar';
+import { Navbar as CatalystNavbar, NavbarItem, NavbarSection, NavbarSpacer, NavbarDivider } from '@/components/catalyst/navbar';
 import { useThemeSwitcher } from '@/hooks/use-theme-switcher';
 
 function NavbarModeToggle() {
@@ -42,11 +35,7 @@ function NavbarModeToggle() {
   );
 }
 
-interface NavbarProps {
-  title: string;
-}
-
-export default function Navbar({ title }: NavbarProps) {
+export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const user = useQuery(api.auth.getCurrentUserSafe);
@@ -69,23 +58,25 @@ export default function Navbar({ title }: NavbarProps) {
 
   return (
     <CatalystNavbar className="border-border/50 from-emphasized-background to-background fixed top-0 z-40 w-full border-b bg-gradient-to-r shadow-sm">
-      <div className="flex items-center gap-2 px-4">
-        <Link href="/" aria-label="Home">
-          <FireIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
-        </Link>
-        <NavbarLabel className="text-lg font-semibold tracking-tight">{title}</NavbarLabel>
-      </div>
+      <Link href="/" aria-label="Home" className="pl-4">
+        <FireIcon className="text-primary size-10 shrink-0 sm:size-8" aria-hidden="true" />
+      </Link>
+
       <NavbarDivider className="max-lg:hidden" />
       <NavbarSection className="max-lg:hidden">
-        <NavbarItem href="/" current>
-          Home
+        <NavbarItem href="/privacy" current={pathname === '/privacy'}>
+          Privacy
         </NavbarItem>
-        <NavbarItem href="/events">Events</NavbarItem>
-        <NavbarItem href="/orders">Orders</NavbarItem>
+        <NavbarItem href="/terms" current={pathname === '/terms'}>
+          Terms
+        </NavbarItem>
+        <NavbarItem href="/settings" current={pathname === '/settings'}>
+          Settings
+        </NavbarItem>
       </NavbarSection>
       <NavbarSpacer />
       <NavbarSpacer />
-      <NavbarSection className="px-4">
+      <NavbarSection className="pr-4">
         <NavbarModeToggle />
         <Dropdown>
           <DropdownButton as={NavbarItem} aria-label="Account options">
