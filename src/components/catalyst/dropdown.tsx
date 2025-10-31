@@ -73,7 +73,7 @@ export function DropdownItem({
     'col-span-full grid grid-cols-[auto_1fr_1.5rem_0.5rem_auto] items-center supports-[grid-template-columns:subgrid]:grid-cols-subgrid',
     // Icons
     '*:data-[slot=icon]:col-start-1 *:data-[slot=icon]:row-start-1 *:data-[slot=icon]:mr-2.5 *:data-[slot=icon]:-ml-0.5 *:data-[slot=icon]:size-5 sm:*:data-[slot=icon]:mr-2 sm:*:data-[slot=icon]:size-4',
-    '*:data-[slot=icon]:text-stone-500 data-focus:*:data-[slot=icon]:text-white dark:*:data-[slot=icon]:text-stone-400 dark:data-focus:*:data-[slot=icon]:text-white',
+    '*:data-[slot=icon]:text-primary data-focus:*:data-[slot=icon]:text-white dark:data-focus:*:data-[slot=icon]:text-white',
     // Avatar
     '*:data-[slot=avatar]:mr-2.5 *:data-[slot=avatar]:-ml-1 *:data-[slot=avatar]:size-6 sm:*:data-[slot=avatar]:mr-2 sm:*:data-[slot=avatar]:size-5'
   );

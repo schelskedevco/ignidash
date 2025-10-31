@@ -90,7 +90,7 @@ export default function Navbar() {
             <Unauthenticated>
               <DropdownItem href="/pricing">
                 <SparklesIcon data-slot="icon" />
-                <DropdownLabel>Upgrade</DropdownLabel>
+                <DropdownLabel>Buy Pro</DropdownLabel>
               </DropdownItem>
               <DropdownDivider />
               <DropdownItem href="/dashboard/quick-plan">
@@ -117,7 +117,7 @@ export default function Navbar() {
               <DropdownDivider />
               <DropdownItem href="/pricing">
                 <SparklesIcon data-slot="icon" />
-                <DropdownLabel>Upgrade</DropdownLabel>
+                <DropdownLabel>Buy Pro</DropdownLabel>
               </DropdownItem>
               <DropdownDivider />
               <DropdownItem href="/dashboard/quick-plan">

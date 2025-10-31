@@ -42,7 +42,7 @@ export default function AccountOptionsDropdownMenu({ fetchedName, fetchedEmail }
       <Unauthenticated>
         <DropdownItem href="/pricing">
           <SparklesIcon data-slot="icon" />
-          <DropdownLabel>Upgrade</DropdownLabel>
+          <DropdownLabel>Buy Pro</DropdownLabel>
         </DropdownItem>
         <DropdownDivider />
         <DropdownItem href="/privacy">
@@ -73,7 +73,7 @@ export default function AccountOptionsDropdownMenu({ fetchedName, fetchedEmail }
         <DropdownDivider />
         <DropdownItem href="/pricing">
           <SparklesIcon data-slot="icon" />
-          <DropdownLabel>Upgrade</DropdownLabel>
+          <DropdownLabel>Buy Pro</DropdownLabel>
         </DropdownItem>
         <DropdownDivider />
         <DropdownItem href="/privacy">
