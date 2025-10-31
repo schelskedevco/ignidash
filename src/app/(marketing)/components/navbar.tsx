@@ -35,13 +35,12 @@ function SidebarModeToggle() {
   const { newTheme, label, setTheme } = themeSwitcher;
 
   return (
-    <button
-      type="button"
+    <span
       onClick={() => setTheme(newTheme)}
-      className="-mx-3 block w-full rounded-lg px-3 py-2 text-left text-base/7 font-semibold text-stone-900 hover:bg-stone-50 dark:text-white dark:hover:bg-white/5"
+      className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-stone-900 hover:bg-stone-50 dark:text-white dark:hover:bg-white/5"
     >
       {label}
-    </button>
+    </span>
   );
 }
 
