@@ -4,7 +4,7 @@ import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { CircleUserRoundIcon, LogInIcon, LogOutIcon, LoaderIcon, LayoutDashboardIcon, SettingsIcon } from 'lucide-react';
+import { CircleUserRoundIcon, LogInIcon, LogOutIcon, LoaderIcon, LayoutDashboardIcon, SettingsIcon, SparklesIcon } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
 
@@ -61,7 +61,6 @@ export default function Navbar() {
       <Link href="/" aria-label="Home" className="pl-4">
         <FireIcon className="text-primary size-10 shrink-0 sm:size-8" aria-hidden="true" />
       </Link>
-
       <NavbarDivider className="max-lg:hidden" />
       <NavbarSection className="max-lg:hidden">
         <NavbarItem href="/privacy" current={pathname === '/privacy'}>
@@ -74,7 +73,6 @@ export default function Navbar() {
           Settings
         </NavbarItem>
       </NavbarSection>
-      <NavbarSpacer />
       <NavbarSpacer />
       <NavbarSection className="pr-4">
         <NavbarModeToggle />
@@ -90,6 +88,11 @@ export default function Navbar() {
               </DropdownItem>
             </AuthLoading>
             <Unauthenticated>
+              <DropdownItem href="/pricing">
+                <SparklesIcon data-slot="icon" />
+                <DropdownLabel>Upgrade</DropdownLabel>
+              </DropdownItem>
+              <DropdownDivider />
               <DropdownItem href="/dashboard/quick-plan">
                 <LayoutDashboardIcon data-slot="icon" />
                 <DropdownLabel>Dashboard</DropdownLabel>
@@ -98,6 +101,7 @@ export default function Navbar() {
                 <SettingsIcon data-slot="icon" />
                 <DropdownLabel>Settings</DropdownLabel>
               </DropdownItem>
+              <DropdownDivider />
               <DropdownItem href={signInUrlWithRedirect}>
                 <LogInIcon data-slot="icon" />
                 <DropdownLabel>Sign in</DropdownLabel>
@@ -111,6 +115,11 @@ export default function Navbar() {
                 </div>
               </DropdownHeader>
               <DropdownDivider />
+              <DropdownItem href="/pricing">
+                <SparklesIcon data-slot="icon" />
+                <DropdownLabel>Upgrade</DropdownLabel>
+              </DropdownItem>
+              <DropdownDivider />
               <DropdownItem href="/dashboard/quick-plan">
                 <LayoutDashboardIcon data-slot="icon" />
                 <DropdownLabel>Dashboard</DropdownLabel>
@@ -119,6 +128,7 @@ export default function Navbar() {
                 <SettingsIcon data-slot="icon" />
                 <DropdownLabel>Settings</DropdownLabel>
               </DropdownItem>
+              <DropdownDivider />
               <DropdownItem onClick={() => signOut()}>
                 <LogOutIcon data-slot="icon" />
                 <DropdownLabel>Sign out</DropdownLabel>
