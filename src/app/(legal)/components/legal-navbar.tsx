@@ -5,15 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import {
-  CircleUserRoundIcon,
-  LogInIcon,
-  LogOutIcon,
-  LoaderIcon,
-  CircleQuestionMarkIcon,
-  LayoutDashboardIcon,
-  SettingsIcon,
-} from 'lucide-react';
+import { CircleUserRoundIcon, LogInIcon, LogOutIcon, LoaderIcon, LayoutDashboardIcon, SettingsIcon } from 'lucide-react';
 import * as Headless from '@headlessui/react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
@@ -21,6 +13,20 @@ import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
 import { authClient } from '@/lib/auth-client';
 import { Dropdown, DropdownItem, DropdownMenu, DropdownDivider, DropdownLabel, DropdownHeader } from '@/components/catalyst/dropdown';
 import { Navbar, NavbarItem, NavbarLabel, NavbarSection, NavbarSpacer } from '@/components/catalyst/navbar';
+import { useThemeSwitcher } from '@/hooks/use-theme-switcher';
+
+function NavbarModeToggle() {
+  const themeSwitcher = useThemeSwitcher();
+  if (!themeSwitcher) return null;
+
+  const { newTheme, label, icon: Icon, setTheme } = themeSwitcher;
+
+  return (
+    <NavbarItem aria-label={label} onClick={() => setTheme(newTheme)} className="focus-outline rounded-full">
+      <Icon className="size-8" />
+    </NavbarItem>
+  );
+}
 
 interface LegalNavbarProps {
   title: string;
@@ -57,9 +63,7 @@ export default function LegalNavbar({ title }: LegalNavbarProps) {
       </div>
       <NavbarSpacer />
       <NavbarSection className="px-4">
-        <NavbarItem href="/help" aria-label="Help">
-          <CircleQuestionMarkIcon className="text-muted-foreground size-8" />
-        </NavbarItem>
+        <NavbarModeToggle />
         <Dropdown>
           <Headless.MenuButton aria-label="Account options" className="focus-outline shrink-0">
             {image ? (
