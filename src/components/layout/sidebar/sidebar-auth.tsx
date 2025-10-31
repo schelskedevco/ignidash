@@ -3,7 +3,16 @@
 import Image from 'next/image';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { CircleUserRoundIcon, LogInIcon, LogOutIcon, SettingsIcon, LoaderIcon } from 'lucide-react';
+import {
+  CircleUserRoundIcon,
+  LogInIcon,
+  LogOutIcon,
+  SettingsIcon,
+  LoaderIcon,
+  SparklesIcon,
+  GlobeLockIcon,
+  HandshakeIcon,
+} from 'lucide-react';
 import * as Headless from '@headlessui/react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
@@ -55,10 +64,24 @@ export default function SidebarAuth() {
           </DropdownItem>
         </AuthLoading>
         <Unauthenticated>
+          <DropdownItem href="/pricing">
+            <SparklesIcon data-slot="icon" />
+            <DropdownLabel>Upgrade</DropdownLabel>
+          </DropdownItem>
+          <DropdownDivider />
+          <DropdownItem href="/privacy">
+            <GlobeLockIcon data-slot="icon" />
+            <DropdownLabel>Privacy</DropdownLabel>
+          </DropdownItem>
+          <DropdownItem href="/terms">
+            <HandshakeIcon data-slot="icon" />
+            <DropdownLabel>Terms</DropdownLabel>
+          </DropdownItem>
           <DropdownItem href="/settings">
             <SettingsIcon data-slot="icon" />
             <DropdownLabel>Settings</DropdownLabel>
           </DropdownItem>
+          <DropdownDivider />
           <DropdownItem href={signInUrlWithRedirect}>
             <LogInIcon data-slot="icon" />
             <DropdownLabel>Sign in</DropdownLabel>
@@ -72,10 +95,24 @@ export default function SidebarAuth() {
             </div>
           </DropdownHeader>
           <DropdownDivider />
+          <DropdownItem href="/pricing">
+            <SparklesIcon data-slot="icon" />
+            <DropdownLabel>Upgrade</DropdownLabel>
+          </DropdownItem>
+          <DropdownDivider />
+          <DropdownItem href="/privacy">
+            <GlobeLockIcon data-slot="icon" />
+            <DropdownLabel>Privacy</DropdownLabel>
+          </DropdownItem>
+          <DropdownItem href="/terms">
+            <HandshakeIcon data-slot="icon" />
+            <DropdownLabel>Terms</DropdownLabel>
+          </DropdownItem>
           <DropdownItem href="/settings">
             <SettingsIcon data-slot="icon" />
             <DropdownLabel>Settings</DropdownLabel>
           </DropdownItem>
+          <DropdownDivider />
           <DropdownItem onClick={() => signOut()}>
             <LogOutIcon data-slot="icon" />
             <DropdownLabel>Sign out</DropdownLabel>
