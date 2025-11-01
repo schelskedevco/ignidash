@@ -85,12 +85,12 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>
       </div>
-      <div className="divide-border/25 flex h-full items-center divide-x pb-4">
-        <div className="flex-1 pr-4">
+      <div className="divide-border/25 flex h-full items-center pb-4 sm:divide-x">
+        <div className="flex-1 sm:pr-4">
           <SingleSimulationPortfolioPieChart chartData={chartData} />
         </div>
         {totalValue > 0 && (
-          <div className="hidden flex-1 pl-4 sm:block">
+          <div className="hidden flex-1 sm:block sm:pl-4">
             <DescriptionList>
               {chartData.map(({ name, value }) => (
                 <Fragment key={name}>
