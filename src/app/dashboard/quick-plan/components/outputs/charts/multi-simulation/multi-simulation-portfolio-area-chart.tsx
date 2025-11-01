@@ -83,11 +83,7 @@ export default function MultiSimulationPortfolioAreaChart({
   );
 
   const chartData: MultiSimulationPortfolioChartDataPoint[] = rawChartData;
-  const dataKeys: (keyof MultiSimulationPortfolioChartDataPoint)[] = [
-    'p75TotalPortfolioValue',
-    'p50TotalPortfolioValue',
-    'p25TotalPortfolioValue',
-  ];
+  const dataKeys: (keyof MultiSimulationPortfolioChartDataPoint)[] = ['p75PortfolioValue', 'p50PortfolioValue', 'p25PortfolioValue'];
 
   const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
   const foregroundColor = resolvedTheme === 'dark' ? '#f5f5f4' : '#1c1917'; // stone-100 : stone-900

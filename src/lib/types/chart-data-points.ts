@@ -128,15 +128,15 @@ export interface MultiSimulationChartData {
 
 export interface MultiSimulationPortfolioChartDataPoint {
   age: number;
-  meanTotalPortfolioValue: number;
-  minTotalPortfolioValue: number;
-  maxTotalPortfolioValue: number;
-  stdDevTotalPortfolioValue: number;
-  p10TotalPortfolioValue: number;
-  p25TotalPortfolioValue: number;
-  p50TotalPortfolioValue: number;
-  p75TotalPortfolioValue: number;
-  p90TotalPortfolioValue: number;
+  meanPortfolioValue: number;
+  minPortfolioValue: number;
+  maxPortfolioValue: number;
+  stdDevPortfolioValue: number;
+  p10PortfolioValue: number;
+  p25PortfolioValue: number;
+  p50PortfolioValue: number;
+  p75PortfolioValue: number;
+  p90PortfolioValue: number;
 }
 
 export interface MultiSimulationPhasesChartDataPoint {

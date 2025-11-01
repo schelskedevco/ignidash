@@ -56,15 +56,13 @@ export default function MultiSimulationPortfolioBarChart({ age, rawChartData }: 
 
   const chartData: { name: string; amount: number }[] = rawChartData
     .filter((item) => item.age === age)
-    .flatMap(
-      ({ p10TotalPortfolioValue, p25TotalPortfolioValue, p50TotalPortfolioValue, p75TotalPortfolioValue, p90TotalPortfolioValue }) => [
-        { name: 'P10 Value', amount: p10TotalPortfolioValue },
-        { name: 'P25 Value', amount: p25TotalPortfolioValue },
-        { name: 'P50 Value', amount: p50TotalPortfolioValue },
-        { name: 'P75 Value', amount: p75TotalPortfolioValue },
-        { name: 'P90 Value', amount: p90TotalPortfolioValue },
-      ]
-    );
+    .flatMap(({ p10PortfolioValue, p25PortfolioValue, p50PortfolioValue, p75PortfolioValue, p90PortfolioValue }) => [
+      { name: 'P10 Value', amount: p10PortfolioValue },
+      { name: 'P25 Value', amount: p25PortfolioValue },
+      { name: 'P50 Value', amount: p50PortfolioValue },
+      { name: 'P75 Value', amount: p75PortfolioValue },
+      { name: 'P90 Value', amount: p90PortfolioValue },
+    ]);
 
   if (chartData.length === 0) {
     return <div className="flex h-64 w-full items-center justify-center sm:h-72 lg:h-80">No data available for the selected view.</div>;

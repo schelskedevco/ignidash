@@ -290,15 +290,15 @@ export abstract class ChartDataExtractor {
 
       res.push({
         age: currDateYear - startDateYear + startAge,
-        meanTotalPortfolioValue: StatsUtils.mean(totalPortfolioValues),
-        minTotalPortfolioValue: StatsUtils.minFromSorted(sortedValues),
-        maxTotalPortfolioValue: StatsUtils.maxFromSorted(sortedValues),
-        stdDevTotalPortfolioValue: StatsUtils.standardDeviation(totalPortfolioValues),
-        p10TotalPortfolioValue: percentiles.p10,
-        p25TotalPortfolioValue: percentiles.p25,
-        p50TotalPortfolioValue: percentiles.p50,
-        p75TotalPortfolioValue: percentiles.p75,
-        p90TotalPortfolioValue: percentiles.p90,
+        meanPortfolioValue: StatsUtils.mean(totalPortfolioValues),
+        minPortfolioValue: StatsUtils.minFromSorted(sortedValues),
+        maxPortfolioValue: StatsUtils.maxFromSorted(sortedValues),
+        stdDevPortfolioValue: StatsUtils.standardDeviation(totalPortfolioValues),
+        p10PortfolioValue: percentiles.p10,
+        p25PortfolioValue: percentiles.p25,
+        p50PortfolioValue: percentiles.p50,
+        p75PortfolioValue: percentiles.p75,
+        p90PortfolioValue: percentiles.p90,
       });
     }
 

@@ -27,16 +27,16 @@ function PortfolioDataListCardV2({ chartData, selectedAge }: DataListCardProps) 
       </Subheading>
       <DescriptionList>
         <DescriptionTerm>Mean Portfolio Value</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(data.meanTotalPortfolioValue, 2, '$')}</DescriptionDetails>
+        <DescriptionDetails>{formatNumber(data.meanPortfolioValue, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Min Portfolio Value</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(data.minTotalPortfolioValue, 2, '$')}</DescriptionDetails>
+        <DescriptionDetails>{formatNumber(data.minPortfolioValue, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Max Portfolio Value</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(data.maxTotalPortfolioValue, 2, '$')}</DescriptionDetails>
+        <DescriptionDetails>{formatNumber(data.maxPortfolioValue, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Standard Deviation</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(data.stdDevTotalPortfolioValue, 2, '$')}</DescriptionDetails>
+        <DescriptionDetails>{formatNumber(data.stdDevPortfolioValue, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );
