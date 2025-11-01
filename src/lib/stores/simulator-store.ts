@@ -337,7 +337,7 @@ export const useSimulatorStore = create<SimulatorState>()(
       }
     ),
     {
-      name: 'Quick Plan Store',
+      name: 'Simulator Store',
       anonymousActionType: 'simulator/action',
     }
   )
