@@ -13,10 +13,10 @@ const tiers = [
     priceMonthly: '$9',
     description: 'Everything you need to plan your path to financial independence.',
     features: [
-      'Save and compare unlimited scenarios',
-      'Model life events and financial changes',
-      'Explore templates and smart suggestions',
-      'Track progress with exports and summaries',
+      'Create and compare unlimited scenarios',
+      'Track progress with real-time investment data',
+      'Estimate taxes and explore withdrawal strategies',
+      'Stress-test with Monte Carlo and historical data',
     ],
     featured: false,
   },
@@ -54,7 +54,7 @@ export default function PricingPage() {
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-primary text-base/7 font-semibold">Pricing</h2>
           <p className="mt-2 text-5xl font-semibold tracking-tight text-balance text-stone-900 sm:text-6xl dark:text-white">
-            Choose the right plan for you
+            Choose your plan
           </p>
         </div>
         <p className="mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-stone-600 sm:text-xl/8 dark:text-stone-400">
@@ -111,7 +111,7 @@ export default function PricingPage() {
                   'mt-8 block rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 sm:mt-10'
                 )}
               >
-                Get started today
+                Buy {tier.name}
               </a>
             </div>
           ))}
