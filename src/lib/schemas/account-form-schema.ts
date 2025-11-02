@@ -48,15 +48,14 @@ export const accountFormSchema = z.discriminatedUnion('type', [
 ]);
 
 export type AccountInputs = z.infer<typeof accountFormSchema>;
-export type InvestmentAccountInputs = AccountInputs & { type: InvestmentAccountType };
 
 export type RothAccountType = 'roth401k' | 'rothIra';
 export type TraditionalAccountType = '401k' | 'ira';
 export type InvestmentAccountType = Exclude<AccountInputs['type'], 'savings'>;
 
 export const isRothAccount = (type: AccountInputs['type']): type is RothAccountType => type === 'roth401k' || type === 'rothIra';
+export const isTraditionalAccount = (type: AccountInputs['type']): type is TraditionalAccountType => type === '401k' || type === 'ira';
 export const isInvestmentAccount = (type: AccountInputs['type']): type is InvestmentAccountType => type !== 'savings';
-export const hasContributionLimit = (type: AccountInputs['type']): boolean => type !== 'savings' && type !== 'taxableBrokerage';
 
 export const accountTypeForDisplay = (type: AccountInputs['type']): string => {
   switch (type) {
