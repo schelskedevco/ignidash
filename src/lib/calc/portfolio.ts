@@ -42,13 +42,13 @@ export class PortfolioProcessor {
       type: 'savings' as const,
       id: EXTRA_SAVINGS_ACCOUNT_ID,
       name: '[System] Extra Savings',
-      currentValue: 0,
+      balance: 0,
     });
     this.rmdSavingsAccount = new SavingsAccount({
       type: 'savings' as const,
       id: RMD_SAVINGS_ACCOUNT_ID,
       name: '[System] RMD Savings',
-      currentValue: 0,
+      balance: 0,
     });
   }
 
@@ -263,9 +263,9 @@ export class PortfolioProcessor {
 
       for (const account of accountsOfType) {
         if (remainingToWithdraw <= 0) break;
-        if (!(account.getTotalValue() > 0)) continue;
+        if (!(account.getBalance() > 0)) continue;
 
-        let maxWithdrawable = account.getTotalValue();
+        let maxWithdrawable = account.getBalance();
         if (modifier === 'contributionsOnly' && account instanceof TaxFreeAccount) {
           maxWithdrawable = Math.min(maxWithdrawable, account.getContributionBasis());
         }
@@ -315,10 +315,10 @@ export class PortfolioProcessor {
 
     const accountsWithRMDs = this.simulationState.portfolio.getAccounts().filter((account) => account.getHasRMDs());
     for (const account of accountsWithRMDs) {
-      if (!(account.getTotalValue() > 0)) continue;
+      if (!(account.getBalance() > 0)) continue;
 
       const lookupAge = Math.min(Math.floor(age), 120);
-      const rmdAmount = account.getTotalValue() / uniformLifetimeMap[lookupAge];
+      const rmdAmount = account.getBalance() / uniformLifetimeMap[lookupAge];
 
       const { realizedGains, earningsWithdrawn } = account.applyWithdrawal(rmdAmount, 'rmd');
       realizedGainsByAccount[account.getAccountID()] = realizedGains;
@@ -554,7 +554,7 @@ export class Portfolio {
 
     const weightedAllocation = this.accounts.reduce(
       (acc, account) => {
-        const weight = account.getTotalValue() / totalValue;
+        const weight = account.getBalance() / totalValue;
 
         return {
           stocks: acc.stocks + (account.getAccountData().assetAllocation.stocks || 0) * weight,
@@ -573,7 +573,7 @@ export class Portfolio {
   }
 
   getTotalValue(): number {
-    return this.accounts.reduce((acc, account) => acc + account.getTotalValue(), 0);
+    return this.accounts.reduce((acc, account) => acc + account.getBalance(), 0);
   }
 
   getTotalWithdrawals(): number {

@@ -42,11 +42,11 @@ export class ContributionRule {
     age: number,
     incomesData?: IncomesData
   ): number {
-    const currentAccountValue = account.getTotalValue();
+    const currentBalance = account.getBalance();
 
-    const remainingToMaxAccountValue = this.contributionInput.maxValue ? this.contributionInput.maxValue - currentAccountValue : Infinity;
+    const remainingToMaxBalance = this.contributionInput.maxBalance ? this.contributionInput.maxBalance - currentBalance : Infinity;
     const remainingToAccountTypeContributionLimit = this.getRemainingToAccountTypeContributionLimit(account, monthlyPortfolioData, age);
-    let maxContribution = Math.min(remainingToMaxAccountValue, remainingToContribute, remainingToAccountTypeContributionLimit);
+    let maxContribution = Math.min(remainingToMaxBalance, remainingToContribute, remainingToAccountTypeContributionLimit);
 
     const eligibleIncomeIds = new Set(this.contributionInput?.incomeIds);
     if (eligibleIncomeIds.size > 0) {

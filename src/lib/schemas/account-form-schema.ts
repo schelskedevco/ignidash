@@ -6,11 +6,11 @@ import type { TaxCategory } from '@/lib/calc/asset';
 const baseAccountSchema = z.object({
   id: z.string(),
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
-  currentValue: currencyFieldAllowsZero('Value cannot be negative'),
+  balance: currencyFieldAllowsZero('Balance cannot be negative'),
 });
 
 const investmentAccountSchema = baseAccountSchema.extend({
-  percentBonds: percentageField(0, 100, 'Percentage of bonds').optional(),
+  percentBonds: percentageField(0, 100, 'Percentage of bonds'),
 });
 
 export const accountFormSchema = z.discriminatedUnion('type', [

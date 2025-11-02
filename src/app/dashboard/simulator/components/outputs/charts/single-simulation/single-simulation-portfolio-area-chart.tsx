@@ -126,7 +126,7 @@ export default function SingleSimulationPortfolioAreaChart({
         perAccountData
           .filter((account) => account.id === customDataID)
           .map((account) => {
-            const totalValue = account.totalValue;
+            const balance = account.balance;
 
             const assetAllocation = account.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
             const stocksAllocation = assetAllocation.stocks;
@@ -136,9 +136,9 @@ export default function SingleSimulationPortfolioAreaChart({
             return {
               age,
               ...account,
-              stockHoldings: totalValue * stocksAllocation,
-              bondHoldings: totalValue * bondsAllocation,
-              cashHoldings: totalValue * cashAllocation,
+              stockHoldings: balance * stocksAllocation,
+              bondHoldings: balance * bondsAllocation,
+              cashHoldings: balance * cashAllocation,
             };
           })
       );

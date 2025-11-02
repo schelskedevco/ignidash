@@ -23,7 +23,7 @@ import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state
 function getAccountDesc(account: AccountInputs) {
   return (
     <p>
-      {formatNumber(account.currentValue, 2, '$')} | {accountTypeForDisplay(account.type)}
+      {formatNumber(account.balance, 2, '$')} | {accountTypeForDisplay(account.type)}
       {account.type !== 'savings' && ` | ${account.percentBonds ? `${formatNumber(account.percentBonds, 0)}% Bonds` : 'No Bonds'}`}
     </p>
   );

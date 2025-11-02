@@ -320,7 +320,7 @@ export const useSimulatorStore = create<SimulatorState>()(
       })),
       {
         name: 'quick-plan-storage',
-        version: 6,
+        version: 7,
         migrate: () => ({ ...defaultState }),
         partialize: (state) => {
           const baseResult = { preferences: state.preferences };

@@ -79,17 +79,9 @@ export default function SavingsDialog({ onClose, selectedAccountID }: SavingsDia
                 {errors.name && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
               </Field>
               <Field>
-                <Label htmlFor="currentValue">Balance</Label>
-                <NumberInput
-                  name="currentValue"
-                  control={control}
-                  id="currentValue"
-                  inputMode="decimal"
-                  placeholder="$15,000"
-                  prefix="$"
-                  autoFocus
-                />
-                {errors.currentValue && <ErrorMessage>{errors.currentValue?.message}</ErrorMessage>}
+                <Label htmlFor="balance">Balance</Label>
+                <NumberInput name="balance" control={control} id="balance" inputMode="decimal" placeholder="$15,000" prefix="$" autoFocus />
+                {errors.balance && <ErrorMessage>{errors.balance?.message}</ErrorMessage>}
               </Field>
             </FieldGroup>
           </DialogBody>

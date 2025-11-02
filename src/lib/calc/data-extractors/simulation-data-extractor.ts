@@ -285,19 +285,19 @@ export class SimulationDataExtractor {
     for (const account of Object.values(portfolioData.perAccountData)) {
       switch (account.type) {
         case 'savings':
-          cashSavings += account.totalValue;
+          cashSavings += account.balance;
           break;
         case 'taxableBrokerage':
-          taxableBrokerageValue += account.totalValue;
+          taxableBrokerageValue += account.balance;
           break;
         case '401k':
         case 'ira':
         case 'hsa':
-          taxDeferredValue += account.totalValue;
+          taxDeferredValue += account.balance;
           break;
         case 'roth401k':
         case 'rothIra':
-          taxFreeValue += account.totalValue;
+          taxFreeValue += account.balance;
           break;
       }
     }

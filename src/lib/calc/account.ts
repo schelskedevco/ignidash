@@ -5,7 +5,7 @@ import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation, AssetYieldR
 type WithdrawalType = 'rmd' | 'regular';
 
 export interface AccountData {
-  totalValue: number;
+  balance: number;
   totalContributions: number;
   totalWithdrawals: number;
   totalRealizedGains: number;
@@ -29,7 +29,7 @@ export abstract class Account {
   abstract readonly taxCategory: TaxCategory;
 
   constructor(
-    protected totalValue: number,
+    protected balance: number,
     protected name: string,
     protected id: string,
     protected type: AccountInputs['type'],
@@ -42,8 +42,8 @@ export abstract class Account {
     protected totalYields: AssetYieldAmounts
   ) {}
 
-  getTotalValue(): number {
-    return this.totalValue;
+  getBalance(): number {
+    return this.balance;
   }
 
   getAccountName(): string {
@@ -98,7 +98,7 @@ export class SavingsAccount extends Account {
   readonly taxCategory: TaxCategory = 'cashSavings';
 
   constructor(data: AccountInputs) {
-    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, 0, {
+    super(data.balance, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, 0, {
       stocks: 0,
       bonds: 0,
       cash: 0,
@@ -117,7 +117,7 @@ export class SavingsAccount extends Account {
     };
 
     return {
-      totalValue: this.totalValue,
+      balance: this.balance,
       totalWithdrawals: this.totalWithdrawals,
       totalContributions: this.totalContributions,
       totalRealizedGains: this.totalRealizedGains,
@@ -131,9 +131,9 @@ export class SavingsAccount extends Account {
   }
 
   applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts } {
-    const cashReturnsAmount = this.totalValue * returns.cash;
+    const cashReturnsAmount = this.balance * returns.cash;
 
-    this.totalValue += cashReturnsAmount;
+    this.balance += cashReturnsAmount;
     this.totalReturns.cash += cashReturnsAmount;
 
     return { returnsForPeriod: { cash: cashReturnsAmount, bonds: 0, stocks: 0 }, totalReturns: { ...this.totalReturns } };
@@ -142,7 +142,7 @@ export class SavingsAccount extends Account {
   applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts } {
     const { cash: cashYield } = yields;
 
-    const cashYieldAmount = this.totalValue * cashYield;
+    const cashYieldAmount = this.balance * cashYield;
     this.totalYields.cash += cashYieldAmount;
 
     return {
@@ -152,15 +152,15 @@ export class SavingsAccount extends Account {
   }
 
   applyContribution(amount: number): void {
-    this.totalValue += amount;
+    this.balance += amount;
     this.totalContributions += amount;
   }
 
   applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number } {
-    if (amount > this.totalValue) throw new Error('Insufficient funds for withdrawal');
+    if (amount > this.balance) throw new Error('Insufficient funds for withdrawal');
     if (type === 'rmd') throw new Error('Savings account should not have RMDs');
 
-    this.totalValue -= amount;
+    this.balance -= amount;
     this.totalWithdrawals += amount;
 
     return { realizedGains: 0, earningsWithdrawn: 0 };
@@ -172,13 +172,13 @@ export abstract class InvestmentAccount extends Account {
   private currPercentBonds: number;
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
-    super(data.currentValue, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, 0, {
+    super(data.balance, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, 0, {
       stocks: 0,
       bonds: 0,
       cash: 0,
     });
-    this.initialPercentBonds = (data.percentBonds ?? 0) / 100;
-    this.currPercentBonds = (data.percentBonds ?? 0) / 100;
+    this.initialPercentBonds = data.percentBonds / 100;
+    this.currPercentBonds = data.percentBonds / 100;
   }
 
   getHasRMDs(): boolean {
@@ -193,7 +193,7 @@ export abstract class InvestmentAccount extends Account {
     };
 
     return {
-      totalValue: this.totalValue,
+      balance: this.balance,
       totalWithdrawals: this.totalWithdrawals,
       totalContributions: this.totalContributions,
       totalRealizedGains: this.totalRealizedGains,
@@ -210,8 +210,8 @@ export abstract class InvestmentAccount extends Account {
     const bondsPercent = this.currPercentBonds;
     const stocksPercent = 1 - bondsPercent;
 
-    const currentBondsValue = this.totalValue * bondsPercent;
-    const currentStocksValue = this.totalValue * stocksPercent;
+    const currentBondsValue = this.balance * bondsPercent;
+    const currentStocksValue = this.balance * stocksPercent;
 
     const bondReturnsAmount = currentBondsValue * returns.bonds;
     this.totalReturns.bonds += bondReturnsAmount;
@@ -221,8 +221,8 @@ export abstract class InvestmentAccount extends Account {
     this.totalReturns.stocks += stockReturnsAmount;
     const newStocksValue = currentStocksValue + stockReturnsAmount;
 
-    this.totalValue = newBondsValue + newStocksValue;
-    this.currPercentBonds = this.totalValue ? newBondsValue / this.totalValue : this.initialPercentBonds;
+    this.balance = newBondsValue + newStocksValue;
+    this.currPercentBonds = this.balance ? newBondsValue / this.balance : this.initialPercentBonds;
 
     return { returnsForPeriod: { cash: 0, bonds: bondReturnsAmount, stocks: stockReturnsAmount }, totalReturns: { ...this.totalReturns } };
   }
@@ -233,8 +233,8 @@ export abstract class InvestmentAccount extends Account {
     const bondsPercent = this.currPercentBonds;
     const stocksPercent = 1 - bondsPercent;
 
-    const currentBondsValue = this.totalValue * bondsPercent;
-    const currentStocksValue = this.totalValue * stocksPercent;
+    const currentBondsValue = this.balance * bondsPercent;
+    const currentStocksValue = this.balance * stocksPercent;
 
     const bondYieldAmount = currentBondsValue * bondYield;
     const dividendYieldAmount = currentStocksValue * dividendYield;
@@ -252,16 +252,16 @@ export abstract class InvestmentAccount extends Account {
     if (amount < 0) throw new Error('Contribution amount must be non-negative');
     if (amount === 0) return;
 
-    const currentBondValue = this.totalValue * this.currPercentBonds;
+    const currentBondValue = this.balance * this.currPercentBonds;
 
-    const newTotalValue = this.totalValue + amount;
-    const targetBondValue = newTotalValue * this.initialPercentBonds;
+    const newBalance = this.balance + amount;
+    const targetBondValue = newBalance * this.initialPercentBonds;
 
     let bondContribution = targetBondValue - currentBondValue;
     bondContribution = Math.max(0, Math.min(amount, bondContribution));
 
-    this.totalValue = newTotalValue;
-    this.currPercentBonds = newTotalValue ? (currentBondValue + bondContribution) / newTotalValue : this.initialPercentBonds;
+    this.balance = newBalance;
+    this.currPercentBonds = newBalance ? (currentBondValue + bondContribution) / newBalance : this.initialPercentBonds;
 
     this.totalContributions += amount;
   }
@@ -269,18 +269,18 @@ export abstract class InvestmentAccount extends Account {
   protected applyWithdrawalShared(amount: number, type: WithdrawalType): void {
     if (amount < 0) throw new Error('Withdrawal amount must be non-negative');
     if (amount === 0) return;
-    if (amount > this.totalValue) throw new Error('Insufficient funds for withdrawal');
+    if (amount > this.balance) throw new Error('Insufficient funds for withdrawal');
 
-    const currentBondValue = this.totalValue * this.currPercentBonds;
+    const currentBondValue = this.balance * this.currPercentBonds;
 
-    const newTotalValue = this.totalValue - amount;
-    const targetBondValue = newTotalValue * this.initialPercentBonds;
+    const newBalance = this.balance - amount;
+    const targetBondValue = newBalance * this.initialPercentBonds;
 
     let bondWithdrawal = currentBondValue - targetBondValue;
     bondWithdrawal = Math.max(0, Math.min(amount, bondWithdrawal, currentBondValue));
 
-    this.totalValue = newTotalValue;
-    this.currPercentBonds = newTotalValue ? (currentBondValue - bondWithdrawal) / newTotalValue : this.initialPercentBonds;
+    this.balance = newBalance;
+    this.currPercentBonds = newBalance ? (currentBondValue - bondWithdrawal) / newBalance : this.initialPercentBonds;
 
     this.totalWithdrawals += amount;
     if (type === 'rmd') this.totalRmds += amount;
@@ -307,7 +307,7 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
   }
 
   applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number } {
-    const basisProportion = this.costBasis / this.totalValue;
+    const basisProportion = this.costBasis / this.balance;
     const basisWithdrawn = Math.min(amount * basisProportion, this.costBasis);
     this.costBasis -= basisWithdrawn;
 

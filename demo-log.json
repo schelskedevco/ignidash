@@ -90,14 +90,14 @@
       "type": "401k",
       "id": "account-1",
       "name": "fidelity 401k",
-      "currentValue": 60000,
+      "balance": 60000,
       "percentBonds": 25
     },
     "account-2": {
       "type": "rothIra",
       "id": "account-2",
       "name": "vanguard roth",
-      "currentValue": 30000,
+      "balance": 30000,
       "contributionBasis": 15000,
       "percentBonds": 25
     },
@@ -105,7 +105,7 @@
       "type": "taxableBrokerage",
       "id": "account-3",
       "name": "schwab brokerage",
-      "currentValue": 20000,
+      "balance": 20000,
       "costBasis": 12000,
       "percentBonds": 10
     },
@@ -113,7 +113,7 @@
       "type": "savings",
       "id": "account-4",
       "name": "emergency fund",
-      "currentValue": 10000
+      "balance": 10000
     }
   },
   "contributionRules": {

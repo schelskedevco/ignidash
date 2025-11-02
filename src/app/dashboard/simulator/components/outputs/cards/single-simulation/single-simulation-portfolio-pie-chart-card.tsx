@@ -58,7 +58,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
           perAccountData
             .filter((account) => account.id === customDataID)
             .flatMap((account) => {
-              const totalValue = account.totalValue;
+              const balance = account.balance;
 
               const assetAllocation = account.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
               const stocksAllocation = assetAllocation.stocks;
@@ -66,9 +66,9 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
               const cashAllocation = assetAllocation.cash;
 
               return [
-                { name: 'stockHoldings', value: totalValue * stocksAllocation },
-                { name: 'bondHoldings', value: totalValue * bondsAllocation },
-                { name: 'cashHoldings', value: totalValue * cashAllocation },
+                { name: 'stockHoldings', value: balance * stocksAllocation },
+                { name: 'bondHoldings', value: balance * bondsAllocation },
+                { name: 'cashHoldings', value: balance * cashAllocation },
               ];
             })
         );

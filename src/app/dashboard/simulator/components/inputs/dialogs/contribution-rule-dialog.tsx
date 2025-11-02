@@ -189,13 +189,13 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
               </div>
               <Divider />
               <Field>
-                <Label htmlFor="maxValue" className="flex w-full items-center justify-between">
+                <Label htmlFor="maxBalance" className="flex w-full items-center justify-between">
                   <span className="whitespace-nowrap">Account Limit</span>
                   <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
                 </Label>
-                <NumberInput name="maxValue" control={control} id="maxValue" inputMode="decimal" placeholder="$15,000" prefix="$" />
-                {errors.maxValue && <ErrorMessage>{errors.maxValue?.message}</ErrorMessage>}
-                <Description>Limit on the total value of this account. Contributions will stop once reached.</Description>
+                <NumberInput name="maxBalance" control={control} id="maxBalance" inputMode="decimal" placeholder="$15,000" prefix="$" />
+                {errors.maxBalance && <ErrorMessage>{errors.maxBalance?.message}</ErrorMessage>}
+                <Description>Limit on the total balance of this account. Contributions will stop once reached.</Description>
               </Field>
             </FieldGroup>
           </DialogBody>

@@ -36,6 +36,7 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
         name: 'Investment ' + (numAccounts + 1),
         id: '',
         type: '401k' as AccountInputs['type'],
+        percentBonds: 0,
       }) as const satisfies Partial<AccountInputs>,
     [numAccounts]
   );
@@ -59,12 +60,12 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
 
     if (isRothAccount(data.type)) {
       const rothData = processedData as Extract<AccountInputs, { type: RothAccountType }>;
-      rothData.contributionBasis ??= data.currentValue;
+      rothData.contributionBasis ??= data.balance;
     }
 
     if (data.type === 'taxableBrokerage') {
       const taxableData = processedData as Extract<AccountInputs, { type: 'taxableBrokerage' }>;
-      taxableData.costBasis ??= data.currentValue;
+      taxableData.costBasis ??= data.balance;
     }
 
     const accountId = processedData.id === '' ? uuidv4() : processedData.id;
@@ -83,9 +84,6 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
       unregister('costBasis');
     }
   }, [type, unregister]);
-
-  // const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
-  // const percentBonds = clamp(Number(useWatch({ control, name: 'percentBonds' }) || 0), 0, 100);
 
   const getBalanceColSpan = () => {
     if (type === 'taxableBrokerage' || type === 'roth401k' || type === 'rothIra') return 'col-span-1';
@@ -131,17 +129,17 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
                   </Select>
                 </Field>
                 <Field className={getBalanceColSpan()}>
-                  <Label htmlFor="currentValue">Market Value</Label>
+                  <Label htmlFor="balance">Balance</Label>
                   <NumberInput
-                    name="currentValue"
+                    name="balance"
                     control={control}
-                    id="currentValue"
+                    id="balance"
                     inputMode="decimal"
                     placeholder="$15,000"
                     prefix="$"
                     autoFocus
                   />
-                  {errors.currentValue && <ErrorMessage>{errors.currentValue?.message}</ErrorMessage>}
+                  {errors.balance && <ErrorMessage>{errors.balance?.message}</ErrorMessage>}
                 </Field>
                 {type === 'taxableBrokerage' && (
                   <Field>
@@ -160,7 +158,7 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
                 {isRothAccount(type) && (
                   <Field>
                     <Label htmlFor="contributionBasis" className="flex w-full items-center justify-between">
-                      <span className="whitespace-nowrap">Contributions</span>
+                      <span className="whitespace-nowrap">Contribution Basis</span>
                       <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
                     </Label>
                     <NumberInput
@@ -179,10 +177,7 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
                   </Field>
                 )}
                 <Field className="col-span-2">
-                  <Label htmlFor="percentBonds" className="flex w-full items-center justify-between">
-                    <span className="whitespace-nowrap">% Bonds</span>
-                    <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
-                  </Label>
+                  <Label htmlFor="percentBonds">% Bonds</Label>
                   <NumberInput
                     name="percentBonds"
                     control={control}
@@ -201,11 +196,6 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
                     </ErrorMessage>
                   )}
                 </Field>
-                {/* <div aria-hidden="true" className="mt-2">
-                  <div className="overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
-                    <div style={{ width: `${percentBonds}%` }} className="bg-primary h-2 rounded-full" />
-                  </div>
-                </div> */}
               </div>
             </FieldGroup>
           </DialogBody>
