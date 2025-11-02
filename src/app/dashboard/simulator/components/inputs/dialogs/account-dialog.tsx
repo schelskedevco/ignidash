@@ -120,12 +120,18 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
                 <Field className="col-span-2">
                   <Label htmlFor="type">Account Type</Label>
                   <Select {...register('type')} id="type" name="type">
-                    <option value="taxableBrokerage">Taxable Brokerage</option>
-                    <option value="401k">401(k)</option>
-                    <option value="ira">IRA</option>
-                    <option value="roth401k">Roth 401(k)</option>
-                    <option value="rothIra">Roth IRA</option>
-                    <option value="hsa">HSA</option>
+                    <optgroup label="Taxable Accounts">
+                      <option value="taxableBrokerage">Taxable Brokerage</option>
+                    </optgroup>
+                    <optgroup label="Tax-Deferred Accounts">
+                      <option value="401k">401(k)</option>
+                      <option value="ira">IRA</option>
+                      <option value="hsa">HSA</option>
+                    </optgroup>
+                    <optgroup label="Tax-Free Accounts">
+                      <option value="roth401k">Roth 401(k)</option>
+                      <option value="rothIra">Roth IRA</option>
+                    </optgroup>
                   </Select>
                 </Field>
                 <Field className={getBalanceColSpan()}>
