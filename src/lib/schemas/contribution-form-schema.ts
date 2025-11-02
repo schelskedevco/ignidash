@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-schema-helpers';
+import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-schema-utils';
 
 export const baseContributionSchema = z.object({
   type: z.enum(['spend', 'save']),

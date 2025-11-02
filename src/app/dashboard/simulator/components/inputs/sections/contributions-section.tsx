@@ -21,7 +21,7 @@ import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { formatNumber } from '@/lib/utils';
-import { DisclosureState } from '@/lib/types/disclosure-state';
+import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { Divider } from '@/components/catalyst/divider';
 import { Select } from '@/components/catalyst/select';
 import { Field, Label, Description } from '@/components/catalyst/fieldset';

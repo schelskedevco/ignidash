@@ -10,7 +10,7 @@ import { Button } from '@/components/catalyst/button';
 import { useIncomesData, useDeleteIncome, useUpdateIncomes } from '@/lib/stores/simulator-store';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/numbers-item-display-formatters';
+import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 
 import IncomeDialog from '../dialogs/income-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';

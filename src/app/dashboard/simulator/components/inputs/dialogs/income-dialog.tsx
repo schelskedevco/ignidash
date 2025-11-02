@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef, MutableRefObject, useMemo } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
@@ -8,9 +8,10 @@ import { CalendarIcon, BanknoteArrowUpIcon, TrendingUpIcon } from 'lucide-react'
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
+import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { useUpdateIncomes, useIncomeData, useIncomesData, useTimelineData } from '@/lib/stores/simulator-store';
 import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/income-form-schema';
-import { timeFrameForDisplay, growthForDisplay } from '@/lib/utils/numbers-item-display-formatters';
+import { timeFrameForDisplay, growthForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, Fieldset, FieldGroup, Label, ErrorMessage /* Description */ } from '@/components/catalyst/fieldset';
@@ -18,12 +19,6 @@ import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/c
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
-
-interface DisclosureState {
-  open: boolean;
-  close: (focusableElement?: HTMLElement | MutableRefObject<HTMLElement | null> | undefined) => void;
-  key: 'timeframe' | 'rateOfChange';
-}
 
 interface IncomeDialogProps {
   onClose: () => void;

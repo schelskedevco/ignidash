@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-schema-helpers';
+import { currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-schema-utils';
 import type { TaxCategory } from '@/lib/calc/asset';
 
 const baseAccountSchema = z.object({

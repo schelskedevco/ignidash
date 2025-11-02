@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { ageField, percentageField } from '@/lib/utils/zod-schema-helpers';
+import { ageField, percentageField } from '@/lib/utils/zod-schema-utils';
 
 export const retirementStrategySchema = z.discriminatedUnion('type', [
   z.object({

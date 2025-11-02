@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { coerceNumber, percentageField } from '@/lib/utils/zod-schema-helpers';
+import { coerceNumber, percentageField } from '@/lib/utils/zod-schema-utils';
 
 export const timePointSchema = z
   .object({

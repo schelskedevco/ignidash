@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { simulationModes } from '@/lib/stores/simulator-store';
-import { coerceNumber } from '@/lib/utils/zod-schema-helpers';
+import { coerceNumber } from '@/lib/utils/zod-schema-utils';
 
 export const simulationSettingsSchema = z
   .object({
