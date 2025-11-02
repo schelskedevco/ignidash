@@ -56,18 +56,3 @@ export const accountTypeRequiresIncomeForContributions = (type: AccountInputs['t
       return true;
   }
 };
-
-export const annualContributionLimitForAccountType = (type: AccountInputs['type'], age: number): number | null => {
-  switch (type) {
-    case 'roth401k':
-    case '401k':
-      return age < 50 ? 23500 : 31000;
-    case 'rothIra':
-    case 'ira':
-      return age < 50 ? 7000 : 8000;
-    case 'hsa':
-      return age < 55 ? 4300 : 5300;
-    default:
-      return null;
-  }
-};
