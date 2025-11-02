@@ -66,7 +66,12 @@ function getContributionRuleDesc(accounts: Record<string, AccountInputs>, contri
   );
 }
 
-const COLORS = ['bg-[var(--chart-1)]', 'bg-[var(--chart-2)]', 'bg-[var(--chart-3)]', 'bg-[var(--chart-4)]'];
+const COLOR_MAP: Record<TaxCategory, string> = {
+  taxable: 'bg-[var(--chart-1)]',
+  taxDeferred: 'bg-[var(--chart-2)]',
+  taxFree: 'bg-[var(--chart-3)]',
+  cashSavings: 'bg-[var(--chart-4)]',
+} as const;
 
 interface ContributionsSectionProps {
   toggleDisclosure: (newDisclosure: DisclosureState) => void;
@@ -82,13 +87,6 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
 
   const accounts = useAccountsData();
   const contributionRules = Object.values(useContributionRulesData());
-
-  const colorMap: Record<TaxCategory, string> = {
-    taxable: COLORS[0],
-    taxDeferred: COLORS[1],
-    taxFree: COLORS[2],
-    cashSavings: COLORS[3],
-  };
 
   const sortedRules = useMemo(() => contributionRules.sort((a, b) => a.rank - b.rank), [contributionRules]);
   const sortedRuleIds = useMemo(() => sortedRules.map((rule) => rule.id), [sortedRules]);
@@ -180,7 +178,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
                         onDropdownClickDelete={() => {
                           setContributionRuleToDelete({ id, name: 'Contribution ' + (index + 1) });
                         }}
-                        colorClassName={colorMap[taxCategoryFromAccountType(accounts[contributionRule.accountId]?.type)]}
+                        colorClassName={COLOR_MAP[taxCategoryFromAccountType(accounts[contributionRule.accountId]?.type)]}
                       />
                     ))}
                   </ul>
@@ -203,7 +201,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
                       onDropdownClickDelete={() => {
                         setContributionRuleToDelete({ id: activeId, name: 'Contribution ' + (activeIndex + 1) });
                       }}
-                      colorClassName={colorMap[taxCategoryFromAccountType(accounts[activeContributionRule.accountId]?.type)]}
+                      colorClassName={COLOR_MAP[taxCategoryFromAccountType(accounts[activeContributionRule.accountId]?.type)]}
                     />
                   ) : null}
                 </DragOverlay>

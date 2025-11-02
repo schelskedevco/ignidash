@@ -45,10 +45,10 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
     [expenses, updateExpenses]
   );
 
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     setSelectedExpenseID(null);
     setExpenseDialogOpen(false);
-  }, []);
+  };
 
   return (
     <>

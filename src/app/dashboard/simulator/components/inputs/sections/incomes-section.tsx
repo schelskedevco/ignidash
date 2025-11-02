@@ -45,10 +45,10 @@ export default function IncomesSection(props: IncomesSectionProps) {
     [incomes, updateIncomes]
   );
 
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     setSelectedIncomeID(null);
     setIncomeDialogOpen(false);
-  }, []);
+  };
 
   return (
     <>

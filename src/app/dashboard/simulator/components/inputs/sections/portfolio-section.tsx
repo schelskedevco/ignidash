@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, RefObject, useCallback } from 'react';
+import { useState, RefObject } from 'react';
 import { LandmarkIcon, PiggyBankIcon, TrendingUpIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
@@ -19,7 +19,12 @@ import DisclosureSectionDataItem from '../disclosure-section-data-item';
 import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 
-const COLORS = ['bg-[var(--chart-1)]', 'bg-[var(--chart-2)]', 'bg-[var(--chart-3)]', 'bg-[var(--chart-4)]'];
+const COLOR_MAP: Record<TaxCategory, string> = {
+  taxable: 'bg-[var(--chart-1)]',
+  taxDeferred: 'bg-[var(--chart-2)]',
+  taxFree: 'bg-[var(--chart-3)]',
+  cashSavings: 'bg-[var(--chart-4)]',
+} as const;
 
 interface PortfolioSectionProps {
   toggleDisclosure: (newDisclosure: DisclosureState) => void;
@@ -41,21 +46,14 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
 
   const deleteAccount = useDeleteAccount();
 
-  const handleAccountDialogClose = useCallback(() => {
+  const handleAccountDialogClose = () => {
     setSelectedAccountID(null);
     setAccountDialogOpen(false);
-  }, []);
+  };
 
-  const handleSavingsDialogClose = useCallback(() => {
+  const handleSavingsDialogClose = () => {
     setSelectedSavingsID(null);
     setSavingsDialogOpen(false);
-  }, []);
-
-  const colorMap: Record<TaxCategory, string> = {
-    taxable: COLORS[0],
-    taxDeferred: COLORS[1],
-    taxFree: COLORS[2],
-    cashSavings: COLORS[3],
   };
 
   return (
@@ -91,7 +89,7 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
                     onDropdownClickDelete={() => {
                       setAccountToDelete({ id, name: account.name });
                     }}
-                    colorClassName={colorMap[taxCategoryFromAccountType(account.type)]}
+                    colorClassName={COLOR_MAP[taxCategoryFromAccountType(account.type)]}
                   />
                 ))}
               </ul>
