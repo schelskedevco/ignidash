@@ -15,6 +15,7 @@ interface IconButtonProps {
   onClick?: () => void;
   surfaceColor?: SurfaceColor;
   isDisabled?: boolean;
+  tooltipSide?: 'top' | 'right' | 'bottom' | 'left';
 }
 
 export default function IconButton({
@@ -25,6 +26,7 @@ export default function IconButton({
   onClick,
   surfaceColor = 'default',
   isDisabled = false,
+  tooltipSide,
 }: IconButtonProps) {
   let hoverClass;
   switch (surfaceColor) {
@@ -51,7 +53,7 @@ export default function IconButton({
           <Icon aria-hidden="true" className={cn('size-5', iconClassName)} />
         </button>
       </TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
+      <TooltipContent side={tooltipSide}>{label}</TooltipContent>
     </Tooltip>
   );
 }

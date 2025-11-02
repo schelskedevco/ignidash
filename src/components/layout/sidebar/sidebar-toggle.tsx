@@ -24,6 +24,7 @@ export default function SidebarToggle({ className }: SidebarToggleProps) {
       surfaceColor="emphasized"
       className={cn('hidden lg:inline-block', className)}
       iconClassName={sidebarCollapsed ? 'size-6' : 'size-5'}
+      tooltipSide={sidebarCollapsed ? 'right' : undefined}
     />
   );
 }
