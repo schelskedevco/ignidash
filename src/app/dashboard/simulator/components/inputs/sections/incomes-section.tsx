@@ -17,13 +17,13 @@ import DisclosureSectionDataItem from '../disclosure-section-data-item';
 import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 
-interface IncomeSectionProps {
+interface IncomesSectionProps {
   toggleDisclosure: (newDisclosure: DisclosureState) => void;
   disclosureButtonRef: RefObject<HTMLButtonElement | null>;
   disclosureKey: string;
 }
 
-export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, disclosureKey }: IncomeSectionProps) {
+export default function IncomesSection({ toggleDisclosure, disclosureButtonRef, disclosureKey }: IncomesSectionProps) {
   const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
   const [selectedIncomeID, setSelectedIncomeID] = useState<string | null>(null);
 
@@ -54,7 +54,7 @@ export default function IncomeSection({ toggleDisclosure, disclosureButtonRef, d
     <>
       <DisclosureSection
         defaultOpen
-        title="Income"
+        title="Incomes"
         icon={BanknoteArrowUpIcon}
         centerPanelContent={!hasIncomes}
         toggleDisclosure={toggleDisclosure}

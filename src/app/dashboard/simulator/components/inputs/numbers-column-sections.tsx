@@ -4,13 +4,13 @@ import { useState, useCallback, useRef } from 'react';
 
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 
-import IncomeSection from './sections/income-section';
+import IncomesSection from './sections/incomes-section';
 import ExpensesSection from './sections/expenses-section';
 import PortfolioSection from './sections/portfolio-section';
 import ContributionsSection from './sections/contributions-section';
 
 export default function NumbersColumnSections() {
-  const incomeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const incomesButtonRef = useRef<HTMLButtonElement | null>(null);
   const expensesButtonRef = useRef<HTMLButtonElement | null>(null);
   const portfolioButtonRef = useRef<HTMLButtonElement | null>(null);
   const contributionsButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -21,8 +21,8 @@ export default function NumbersColumnSections() {
       if (activeDisclosure?.open && activeDisclosure.key !== newDisclosure.key) {
         let targetRef = undefined;
 
-        if (newDisclosure.key === 'income') {
-          targetRef = incomeButtonRef.current;
+        if (newDisclosure.key === 'incomes') {
+          targetRef = incomesButtonRef.current;
         } else if (newDisclosure.key === 'expenses') {
           targetRef = expensesButtonRef.current;
         } else if (newDisclosure.key === 'portfolio') {
@@ -44,7 +44,7 @@ export default function NumbersColumnSections() {
 
   return (
     <>
-      <IncomeSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={incomeButtonRef} disclosureKey="income" />
+      <IncomesSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={incomesButtonRef} disclosureKey="incomes" />
       <ExpensesSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={expensesButtonRef} disclosureKey="expenses" />
       <PortfolioSection toggleDisclosure={toggleDisclosure} disclosureButtonRef={portfolioButtonRef} disclosureKey="portfolio" />
       <ContributionsSection
