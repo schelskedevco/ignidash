@@ -37,7 +37,7 @@ export default function DisclosureSectionDataItem({
   ...otherProps
 }: DisclosureSectionDataItemProps) {
   return (
-    <li key={id} className="col-span-1 flex shadow-md dark:shadow-black/35" ref={ref} style={style}>
+    <li key={id} className="col-span-1 flex shadow-md dark:shadow-black/25" ref={ref} style={style}>
       <div
         className={cn(
           'border-foreground/50 flex w-16 shrink-0 items-center justify-center gap-1 border text-xl font-medium text-white',
