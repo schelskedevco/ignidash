@@ -1,8 +1,8 @@
 import type { AccountInputs } from '@/lib/schemas/account-form-schema';
 
 import type { SimulationState } from './simulation-engine';
-import { ReturnsProvider } from '../returns-providers/returns-provider';
-import type { AssetReturnRates, AssetReturnAmounts, AssetYieldAmounts, AssetYieldRates, TaxCategory } from '../asset';
+import { ReturnsProvider } from './returns-providers/returns-provider';
+import type { AssetReturnRates, AssetReturnAmounts, AssetYieldAmounts, AssetYieldRates, TaxCategory } from './asset';
 
 export interface AccountDataWithReturns {
   name: string;

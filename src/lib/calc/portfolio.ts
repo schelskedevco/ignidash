@@ -9,12 +9,12 @@ import {
   type AccountDataWithTransactions,
 } from './account';
 import type { SimulationState } from './simulation-engine';
-import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation, AssetYieldRates, AssetYieldAmounts, TaxCategory } from '../asset';
+import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation, AssetYieldRates, AssetYieldAmounts, TaxCategory } from './asset';
 import { ContributionRules } from './contribution-rules';
 import type { IncomesData } from './incomes';
 import type { ExpensesData } from './expenses';
 import type { AccountDataWithReturns } from './returns';
-import { uniformLifetimeMap } from '../data/rmds-table';
+import { uniformLifetimeMap } from './data/rmds-table';
 
 type TransactionsBreakdown = { totalForPeriod: number; byAccount: Record<string, number> };
 

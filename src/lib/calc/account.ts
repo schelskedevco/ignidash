@@ -1,6 +1,6 @@
 import type { AccountInputs, InvestmentAccountType } from '@/lib/schemas/account-form-schema';
 
-import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation, AssetYieldRates, AssetYieldAmounts, TaxCategory } from '../asset';
+import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation, AssetYieldRates, AssetYieldAmounts, TaxCategory } from './asset';
 
 type WithdrawalType = 'rmd' | 'regular';
 

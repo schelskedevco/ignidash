@@ -1,5 +1,5 @@
 import { SimulationCategory } from '@/lib/types/simulation-category';
-import { SimulationDataExtractor } from '@/lib/calc/v2/data-extractors/simulation-data-extractor';
+import { SimulationDataExtractor } from '@/lib/calc/data-extractors/simulation-data-extractor';
 import { type Percentiles, StatsUtils } from '@/lib/utils/stats-utils';
 import type { MonteCarloSortMode } from '@/lib/stores/simulator-store';
 

@@ -3,7 +3,7 @@ import { nyuHistoricalData, type NyuHistoricalYearData, getNyuDataRange } from '
 import { shillerHistoricalData, type ShillerHistoricalYearData } from '../data/shiller-historical-yield-data';
 import type { AssetReturnRates } from '../asset';
 import { SeededRandom } from './seeded-random';
-import type { PhaseData, PhaseName } from '../v2/phase';
+import type { PhaseData, PhaseName } from '../phase';
 
 export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   private readonly historicalDataRange: { startYear: number; endYear: number };

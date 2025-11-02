@@ -1,6 +1,6 @@
 'use client';
 
-import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import type {
   SingleSimulationPortfolioTableRow,
   SingleSimulationCashFlowTableRow,

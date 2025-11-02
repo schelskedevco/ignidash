@@ -20,7 +20,7 @@
  */
 
 import type { AssetReturnRates, AssetYieldRates } from '../asset';
-import type { PhaseData } from '../v2/phase';
+import type { PhaseData } from '../phase';
 
 /**
  * Represents asset returns data combined with relevant metadata.

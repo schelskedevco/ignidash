@@ -1,4 +1,4 @@
-import type { MultiSimulationResult, SimulationDataPoint, SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { MultiSimulationResult, SimulationDataPoint, SimulationResult } from '@/lib/calc/simulation-engine';
 
 export interface MilestonesData {
   yearsToRetirement: number | null;

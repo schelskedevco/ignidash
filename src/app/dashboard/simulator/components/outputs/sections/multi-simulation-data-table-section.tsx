@@ -3,7 +3,7 @@
 import { useState, memo } from 'react';
 
 import SectionContainer from '@/components/ui/section-container';
-import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
 import { generateMultiSimulationTableColumns, generateYearlyAggregateTableColumns } from '@/lib/utils/table-formatters';
 

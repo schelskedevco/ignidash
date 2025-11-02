@@ -1,7 +1,7 @@
-import type { ExpenseData } from '@/lib/calc/v2/expenses';
-import type { IncomeData } from '@/lib/calc/v2/incomes';
-import type { AccountDataWithTransactions } from '@/lib/calc/v2/account';
-import type { AccountDataWithReturns } from '@/lib/calc/v2/returns';
+import type { ExpenseData } from '@/lib/calc/expenses';
+import type { IncomeData } from '@/lib/calc/incomes';
+import type { AccountDataWithTransactions } from '@/lib/calc/account';
+import type { AccountDataWithReturns } from '@/lib/calc/returns';
 
 export interface SingleSimulationPortfolioChartDataPoint {
   age: number;

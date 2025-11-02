@@ -1,6 +1,6 @@
 'use client';
 
-import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import SectionContainer from '@/components/ui/section-container';
 import { useResultsState } from '@/hooks/use-results-state';

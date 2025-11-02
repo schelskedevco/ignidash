@@ -8,7 +8,7 @@ import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
-import { INCOME_TAX_BRACKETS_SINGLE, CAPITAL_GAINS_TAX_BRACKETS_SINGLE } from '@/lib/calc/v2/taxes';
+import { INCOME_TAX_BRACKETS_SINGLE, CAPITAL_GAINS_TAX_BRACKETS_SINGLE } from '@/lib/calc/taxes';
 import { Divider } from '@/components/catalyst/divider';
 
 type IncomeCalculationsTooltipPayload = {

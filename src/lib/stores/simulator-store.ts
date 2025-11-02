@@ -9,14 +9,14 @@ import useSWR, { mutate } from 'swr';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { SimulatorInputs } from '@/lib/schemas/simulator-schema';
-import { FinancialSimulationEngine, type SimulationResult } from '@/lib/calc/v2/simulation-engine';
-import type { MultiSimulationAnalysis } from '@/lib/calc/v2/multi-simulation-analyzer';
+import { FinancialSimulationEngine, type SimulationResult } from '@/lib/calc/simulation-engine';
+import type { MultiSimulationAnalysis } from '@/lib/calc/multi-simulation-analyzer';
 import { FixedReturnsProvider } from '@/lib/calc/returns-providers/fixed-returns-provider';
 import { StochasticReturnsProvider } from '@/lib/calc/returns-providers/stochastic-returns-provider';
 import { LcgHistoricalBacktestReturnsProvider } from '@/lib/calc/returns-providers/lcg-historical-backtest-returns-provider';
-import { KeyMetricsExtractor } from '@/lib/calc/v2/data-extractors/key-metrics-extractor';
-import { ChartDataExtractor } from '@/lib/calc/v2/data-extractors/chart-data-extractor';
-import { TableDataExtractor } from '@/lib/calc/v2/data-extractors/table-data-extractor';
+import { KeyMetricsExtractor } from '@/lib/calc/data-extractors/key-metrics-extractor';
+import { ChartDataExtractor } from '@/lib/calc/data-extractors/chart-data-extractor';
+import { TableDataExtractor } from '@/lib/calc/data-extractors/table-data-extractor';
 import { createWorkerPool, releaseWorkerPool } from '@/lib/workers/simulation-worker-api';
 import { getMergeWorker } from '@/lib/workers/merge-worker-api';
 import type {

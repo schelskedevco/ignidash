@@ -2,14 +2,14 @@ import * as Comlink from 'comlink';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { MonteCarloSortMode } from '@/lib/stores/simulator-store';
-import { MultiSimulationAnalyzer, type MultiSimulationAnalysis } from '@/lib/calc/v2/multi-simulation-analyzer';
+import { MultiSimulationAnalyzer, type MultiSimulationAnalysis } from '@/lib/calc/multi-simulation-analyzer';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
-import { ChartDataExtractor } from '@/lib/calc/v2/data-extractors/chart-data-extractor';
-import { TableDataExtractor } from '@/lib/calc/v2/data-extractors/table-data-extractor';
-import { KeyMetricsExtractor } from '@/lib/calc/v2/data-extractors/key-metrics-extractor';
+import { ChartDataExtractor } from '@/lib/calc/data-extractors/chart-data-extractor';
+import { TableDataExtractor } from '@/lib/calc/data-extractors/table-data-extractor';
+import { KeyMetricsExtractor } from '@/lib/calc/data-extractors/key-metrics-extractor';
 import { SimulationCategory } from '@/lib/types/simulation-category';
-import type { MultiSimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { MultiSimulationResult } from '@/lib/calc/simulation-engine';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 
 type CacheEntry = { handle: string; res: MultiSimulationResult };

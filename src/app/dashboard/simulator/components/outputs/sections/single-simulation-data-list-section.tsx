@@ -2,13 +2,13 @@
 
 import { useMemo, memo } from 'react';
 
-import type { SimulationDataPoint, SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { SimulationDataPoint, SimulationResult } from '@/lib/calc/simulation-engine';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { formatNumber } from '@/lib/utils';
 import Card from '@/components/ui/card';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import { Subheading } from '@/components/catalyst/heading';
-import { SimulationDataExtractor } from '@/lib/calc/v2/data-extractors/simulation-data-extractor';
+import { SimulationDataExtractor } from '@/lib/calc/data-extractors/simulation-data-extractor';
 import { useResultsCategory } from '@/lib/stores/simulator-store';
 
 interface DataListCardProps {

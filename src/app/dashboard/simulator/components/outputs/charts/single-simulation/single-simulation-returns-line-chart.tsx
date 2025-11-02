@@ -8,7 +8,7 @@ import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
-import type { AccountDataWithReturns } from '@/lib/calc/v2/returns';
+import type { AccountDataWithReturns } from '@/lib/calc/returns';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 

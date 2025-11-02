@@ -14,7 +14,7 @@ import {
   type QuickSelectPercentile,
 } from '@/lib/stores/simulator-store';
 import SectionContainer from '@/components/ui/section-container';
-import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/multi-simulation-table-schema';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 import { useResultsState } from '@/hooks/use-results-state';

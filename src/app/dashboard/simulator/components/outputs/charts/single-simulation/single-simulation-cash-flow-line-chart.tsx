@@ -8,8 +8,8 @@ import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
-import type { IncomeData } from '@/lib/calc/v2/incomes';
-import type { ExpenseData } from '@/lib/calc/v2/expenses';
+import type { IncomeData } from '@/lib/calc/incomes';
+import type { ExpenseData } from '@/lib/calc/expenses';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 

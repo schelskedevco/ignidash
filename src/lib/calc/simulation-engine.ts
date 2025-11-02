@@ -1,9 +1,9 @@
 import type { SimulatorInputs } from '@/lib/schemas/simulator-schema';
 import type { TimelineInputs, RetirementStrategyInputs } from '@/lib/schemas/timeline-form-schema';
 
-import type { ReturnsProvider } from '../returns-providers/returns-provider';
-import { StochasticReturnsProvider } from '../returns-providers/stochastic-returns-provider';
-import { LcgHistoricalBacktestReturnsProvider } from '../returns-providers/lcg-historical-backtest-returns-provider';
+import type { ReturnsProvider } from './returns-providers/returns-provider';
+import { StochasticReturnsProvider } from './returns-providers/stochastic-returns-provider';
+import { LcgHistoricalBacktestReturnsProvider } from './returns-providers/lcg-historical-backtest-returns-provider';
 
 import { Portfolio, type PortfolioData, PortfolioProcessor } from './portfolio';
 import type { AccountDataWithTransactions } from './account';

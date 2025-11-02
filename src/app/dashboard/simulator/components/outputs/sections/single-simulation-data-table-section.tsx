@@ -3,7 +3,7 @@
 import { memo } from 'react';
 
 import SectionContainer from '@/components/ui/section-container';
-import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { SimulationResult } from '@/lib/calc/simulation-engine';
 
 import SingleSimulationDataTable from '../tables/single-simulation-data-table';
 

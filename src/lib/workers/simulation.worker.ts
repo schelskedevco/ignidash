@@ -5,7 +5,7 @@ import {
   MonteCarloSimulationEngine,
   LcgHistoricalBacktestSimulationEngine,
   type MultiSimulationResult,
-} from '@/lib/calc/v2/simulation-engine';
+} from '@/lib/calc/simulation-engine';
 
 import type { MergeWorkerAPI } from './merge.worker';
 

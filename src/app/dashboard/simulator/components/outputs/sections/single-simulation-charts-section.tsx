@@ -13,7 +13,7 @@ import {
   useSingleSimulationWithdrawalsChartData,
   useResultsCategory,
 } from '@/lib/stores/simulator-store';
-import type { SimulationResult } from '@/lib/calc/v2/simulation-engine';
+import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 
 import SingleSimulationPortfolioAreaChartCard from '../cards/single-simulation/single-simulation-portfolio-area-chart-card';

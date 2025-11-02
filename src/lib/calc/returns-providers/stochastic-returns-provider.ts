@@ -1,7 +1,7 @@
 import type { SimulatorInputs } from '@/lib/schemas/simulator-schema';
 import { ReturnsProvider, type ReturnsWithMetadata } from './returns-provider';
 import { SeededRandom } from './seeded-random';
-import type { PhaseData } from '../v2/phase';
+import type { PhaseData } from '../phase';
 
 interface MarketVolatility {
   stockReturn: number;
