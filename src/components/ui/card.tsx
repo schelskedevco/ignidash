@@ -12,7 +12,7 @@ export default function Card({ children, className, removeInternalPadding = fals
   return (
     <div
       className={cn(
-        'bg-emphasized-background border-border/50 @container/card my-2 overflow-hidden border shadow-sm dark:shadow-black/50',
+        'bg-emphasized-background border-border/50 @container/card my-2 overflow-hidden border shadow-md dark:shadow-black/50',
         className
       )}
     >
