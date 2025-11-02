@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-schema-utils';
 
+import type { AccountInputs } from './account-form-schema';
+
 export const baseContributionSchema = z.object({
   type: z.enum(['spend', 'save']),
 });
@@ -40,3 +42,32 @@ export const contributionFormSchema = z
   });
 
 export type ContributionInputs = z.infer<typeof contributionFormSchema>;
+
+export const accountTypeRequiresIncomeForContributions = (type: AccountInputs['type']): boolean => {
+  switch (type) {
+    case 'savings':
+    case 'taxableBrokerage':
+    case 'hsa':
+      return false;
+    case 'roth401k':
+    case 'rothIra':
+    case '401k':
+    case 'ira':
+      return true;
+  }
+};
+
+export const annualContributionLimitForAccountType = (type: AccountInputs['type'], age: number): number | null => {
+  switch (type) {
+    case 'roth401k':
+    case '401k':
+      return age < 50 ? 23500 : 31000;
+    case 'rothIra':
+    case 'ira':
+      return age < 50 ? 7000 : 8000;
+    case 'hsa':
+      return age < 55 ? 4300 : 5300;
+    default:
+      return null;
+  }
+};

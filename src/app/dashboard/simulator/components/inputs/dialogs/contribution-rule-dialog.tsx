@@ -14,8 +14,12 @@ import {
   useIncomesData,
 } from '@/lib/stores/simulator-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
-import { contributionFormSchema, type ContributionInputs } from '@/lib/schemas/contribution-form-schema';
-import { accountTypeForDisplay, accountTypeRequiresIncomeForContributions } from '@/lib/schemas/account-form-schema';
+import {
+  contributionFormSchema,
+  type ContributionInputs,
+  accountTypeRequiresIncomeForContributions,
+} from '@/lib/schemas/contribution-form-schema';
+import { accountTypeForDisplay } from '@/lib/schemas/account-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import { Select } from '@/components/catalyst/select';
