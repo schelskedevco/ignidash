@@ -1,9 +1,9 @@
 import MainArea from '@/components/layout/main-area';
 
-export default function PortfolioPage() {
+export default function ComparePage() {
   return (
     <MainArea hasSecondaryColumn={false}>
-      <h1 className="text-4xl font-extrabold tracking-tight">Portfolio</h1>
+      <h1 className="text-4xl font-extrabold tracking-tight">Compare</h1>
     </MainArea>
   );
 }

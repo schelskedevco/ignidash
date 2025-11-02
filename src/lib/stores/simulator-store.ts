@@ -81,15 +81,15 @@ interface SimulatorState {
     selectedSeedFromQuickPercentile: number | null;
     simulationStatus: SimulationStatus;
     category: SimulationCategory;
+    simulationSeed: number;
+    simulationSettings: SimulationSettingsInputs;
+    monteCarloSortMode: MonteCarloSortMode;
   };
 
   preferences: {
     dataStorage: 'localStorage' | 'none';
     showReferenceLines: boolean;
-    simulationSeed: number;
     sidebarCollapsed: boolean;
-    simulationSettings: SimulationSettingsInputs;
-    monteCarloSortMode: MonteCarloSortMode;
   };
 
   actions: {
@@ -124,14 +124,14 @@ interface SimulatorState {
     updateSelectedSeedFromQuickPercentile: (seed: number | null) => void;
     updateSimulationStatus: (status: SimulationStatus) => void;
     updateCategory: (category: SimulationCategory) => void;
+    updateSimulationSeed: () => void;
+    updateSimulationSettings: (data: SimulationSettingsInputs) => void;
+    updateMonteCarloSortMode: (value: SimulatorState['results']['monteCarloSortMode']) => void;
 
     /* Preferences */
     updateDataStoragePreference: (value: SimulatorState['preferences']['dataStorage']) => void;
     updateShowReferenceLines: (value: boolean) => void;
-    updateSimulationSeed: () => void;
     updateSidebarCollapsed: (value: boolean) => void;
-    updateSimulationSettings: (data: SimulationSettingsInputs) => void;
-    updateMonteCarloSortMode: (value: SimulatorState['preferences']['monteCarloSortMode']) => void;
 
     resetStore: () => void;
   };
@@ -155,14 +155,14 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
     selectedSeedFromQuickPercentile: null,
     simulationStatus: 'none',
     category: SimulationCategory.Portfolio,
+    simulationSeed: 9521,
+    simulationSettings: { simulationMode: 'fixedReturns' },
+    monteCarloSortMode: 'finalPortfolioValue',
   },
   preferences: {
     dataStorage: 'localStorage',
     showReferenceLines: true,
-    simulationSeed: 9521,
     sidebarCollapsed: false,
-    simulationSettings: { simulationMode: 'fixedReturns' },
-    monteCarloSortMode: 'finalPortfolioValue',
   },
 };
 
@@ -288,6 +288,18 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               state.results.category = category;
             }),
+          updateSimulationSeed: () =>
+            set((state) => {
+              state.results.simulationSeed = Math.floor(Math.random() * 1000);
+            }),
+          updateSimulationSettings: (data) =>
+            set((state) => {
+              state.results.simulationSettings = { ...data };
+            }),
+          updateMonteCarloSortMode: (value) =>
+            set((state) => {
+              state.results.monteCarloSortMode = value;
+            }),
           updateDataStoragePreference: (value) =>
             set((state) => {
               state.preferences.dataStorage = value as 'localStorage' | 'none';
@@ -296,21 +308,9 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               state.preferences.showReferenceLines = value;
             }),
-          updateSimulationSeed: () =>
-            set((state) => {
-              state.preferences.simulationSeed = Math.floor(Math.random() * 1000);
-            }),
           updateSidebarCollapsed: (value) =>
             set((state) => {
               state.preferences.sidebarCollapsed = value;
-            }),
-          updateSimulationSettings: (data) =>
-            set((state) => {
-              state.preferences.simulationSettings = { ...data };
-            }),
-          updateMonteCarloSortMode: (value) =>
-            set((state) => {
-              state.preferences.monteCarloSortMode = value;
             }),
           resetStore: () =>
             set((state) => {
@@ -351,6 +351,8 @@ export const useSimulatorStore = create<SimulatorState>()(
  * Data selectors (stable references)
  * These hooks provide direct access to specific sections of the form data
  */
+
+// Inputs selectors
 export const useMarketAssumptionsData = () => useSimulatorStore((state) => state.inputs.marketAssumptions);
 
 export const useTimelineData = () => useSimulatorStore((state) => state.inputs.timeline);
@@ -385,11 +387,16 @@ export const useContributionRuleData = (id: string | null) =>
   useSimulatorStore((state) => (id !== null ? state.inputs.contributionRules[id] : null));
 export const useBaseContributionRuleData = () => useSimulatorStore((state) => state.inputs.baseContributionRule);
 
+// Results selectors
 export const useQuickSelectPercentile = () => useSimulatorStore((state) => state.results.quickSelectPercentile);
 export const useSelectedSeedFromTable = () => useSimulatorStore((state) => state.results.selectedSeedFromTable);
 export const useSelectedSeedFromQuickPercentile = () => useSimulatorStore((state) => state.results.selectedSeedFromQuickPercentile);
 export const useSimulationStatus = () => useSimulatorStore((state) => state.results.simulationStatus);
 export const useResultsCategory = () => useSimulatorStore((state) => state.results.category);
+export const useSimulationSeed = () => useSimulatorStore((state) => state.results.simulationSeed);
+export const useSimulationSettings = () => useSimulatorStore((state) => state.results.simulationSettings);
+export const useSimulationMode = () => useSimulatorStore((state) => state.results.simulationSettings.simulationMode);
+export const useMonteCarloSortMode = () => useSimulatorStore((state) => state.results.monteCarloSortMode);
 
 /**
  * Action selectors
@@ -428,11 +435,7 @@ export const useUpdateMonteCarloSortMode = () => useSimulatorStore((state) => st
  */
 export const useDataStoragePreference = () => useSimulatorStore((state) => state.preferences.dataStorage);
 export const useShowReferenceLines = () => useSimulatorStore((state) => state.preferences.showReferenceLines);
-export const useSimulationSeed = () => useSimulatorStore((state) => state.preferences.simulationSeed);
 export const useSidebarCollapsed = () => useSimulatorStore((state) => state.preferences.sidebarCollapsed);
-export const useSimulationSettings = () => useSimulatorStore((state) => state.preferences.simulationSettings);
-export const useSimulationMode = () => useSimulatorStore((state) => state.preferences.simulationSettings.simulationMode);
-export const useMonteCarloSortMode = () => useSimulatorStore((state) => state.preferences.monteCarloSortMode);
 
 /**
  * Utility selectors
@@ -454,12 +457,10 @@ export const useSimulationResult = (
   const preferencesSeed = useSimulationSeed();
   const seed = hasSeedOverride ? seedOverride : preferencesSeed;
 
-  let startYearOverride = useSimulatorStore((state) => state.preferences.simulationSettings.historicalStartYearOverride);
+  let startYearOverride = useSimulatorStore((state) => state.results.simulationSettings.historicalStartYearOverride);
   startYearOverride = !hasSeedOverride ? startYearOverride : undefined;
 
-  let retirementStartYearOverride = useSimulatorStore(
-    (state) => state.preferences.simulationSettings.historicalRetirementStartYearOverride
-  );
+  let retirementStartYearOverride = useSimulatorStore((state) => state.results.simulationSettings.historicalRetirementStartYearOverride);
   retirementStartYearOverride = !hasSeedOverride ? retirementStartYearOverride : undefined;
 
   return useMemo(() => {
