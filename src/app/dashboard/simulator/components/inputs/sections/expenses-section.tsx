@@ -60,6 +60,11 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
     setExpenseDialogOpen(false);
   };
 
+  const handleDropdownClickEdit = (id: string) => {
+    setExpenseDialogOpen(true);
+    setSelectedExpenseID(id);
+  };
+
   return (
     <>
       <DisclosureSection title="Expenses" icon={BanknoteArrowDownIcon} centerPanelContent={!hasExpenses} {...props}>
@@ -76,10 +81,7 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
                     desc={getExpenseDesc(expense)}
                     leftAddOn={<BanknoteArrowDownIcon className="size-8" />}
                     disabled={expense.disabled}
-                    onDropdownClickEdit={() => {
-                      setExpenseDialogOpen(true);
-                      setSelectedExpenseID(id);
-                    }}
+                    onDropdownClickEdit={() => handleDropdownClickEdit(id)}
                     onDropdownClickDelete={() => setExpenseToDelete({ id, name: expense.name })}
                     onDropdownClickDisable={() => disableExpense(id)}
                     colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"

@@ -60,6 +60,11 @@ export default function IncomesSection(props: IncomesSectionProps) {
     setIncomeDialogOpen(false);
   };
 
+  const handleDropdownClickEdit = (id: string) => {
+    setIncomeDialogOpen(true);
+    setSelectedIncomeID(id);
+  };
+
   return (
     <>
       <DisclosureSection defaultOpen title="Incomes" icon={BanknoteArrowUpIcon} centerPanelContent={!hasIncomes} {...props}>
@@ -76,10 +81,7 @@ export default function IncomesSection(props: IncomesSectionProps) {
                     desc={getIncomeDesc(income)}
                     leftAddOn={<BanknoteArrowUpIcon className="size-8" />}
                     disabled={income.disabled}
-                    onDropdownClickEdit={() => {
-                      setIncomeDialogOpen(true);
-                      setSelectedIncomeID(id);
-                    }}
+                    onDropdownClickEdit={() => handleDropdownClickEdit(id)}
                     onDropdownClickDelete={() => setIncomeToDelete({ id, name: income.name })}
                     onDropdownClickDisable={() => disableIncome(id)}
                     colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"

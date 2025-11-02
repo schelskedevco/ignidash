@@ -133,6 +133,11 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
     setActiveId(null);
   };
 
+  const handleDropdownClickEdit = (id: string) => {
+    setContributionRuleDialogOpen(true);
+    setSelectedContributionRuleID(id);
+  };
+
   return (
     <>
       <DisclosureSection title="Contribution Order" icon={HandCoinsIcon} centerPanelContent {...props}>
@@ -171,10 +176,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
                         name={`To ${accounts[contributionRule.accountId]?.name || 'Unknown'}`}
                         desc={getContributionRuleDesc(accounts, { id, ...contributionRule })}
                         leftAddOn={String(index + 1)}
-                        onDropdownClickEdit={() => {
-                          setContributionRuleDialogOpen(true);
-                          setSelectedContributionRuleID(id);
-                        }}
+                        onDropdownClickEdit={() => handleDropdownClickEdit(id)}
                         onDropdownClickDelete={() => setContributionRuleToDelete({ id, name: 'Contribution ' + (index + 1) })}
                         colorClassName={COLOR_MAP[taxCategoryFromAccountType(accounts[contributionRule.accountId]?.type)]}
                       />
@@ -192,10 +194,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
                       name={`To ${accounts[activeContributionRule.accountId]?.name || 'Unknown'}`}
                       desc={getContributionRuleDesc(accounts, activeContributionRule)}
                       leftAddOn={String(activeIndex + 1)}
-                      onDropdownClickEdit={() => {
-                        setContributionRuleDialogOpen(true);
-                        setSelectedContributionRuleID(activeId);
-                      }}
+                      onDropdownClickEdit={() => handleDropdownClickEdit(activeId)}
                       onDropdownClickDelete={() => setContributionRuleToDelete({ id: activeId, name: 'Contribution ' + (activeIndex + 1) })}
                       colorClassName={COLOR_MAP[taxCategoryFromAccountType(accounts[activeContributionRule.accountId]?.type)]}
                     />

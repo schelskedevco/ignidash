@@ -66,6 +66,16 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
     setSavingsDialogOpen(false);
   };
 
+  const handleDropdownClickEdit = (id: string, type: AccountInputs['type']) => {
+    if (type === 'savings') {
+      setSavingsDialogOpen(true);
+      setSelectedSavingsID(id);
+    } else {
+      setAccountDialogOpen(true);
+      setSelectedAccountID(id);
+    }
+  };
+
   return (
     <>
       <DisclosureSection title="Portfolio" icon={LandmarkIcon} centerPanelContent={!hasAccounts} {...props}>
@@ -81,15 +91,7 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
                     name={account.name}
                     desc={getAccountDesc(account)}
                     leftAddOn={account.type === 'savings' ? <PiggyBankIcon className="size-8" /> : <TrendingUpIcon className="size-8" />}
-                    onDropdownClickEdit={() => {
-                      if (account.type === 'savings') {
-                        setSavingsDialogOpen(true);
-                        setSelectedSavingsID(id);
-                      } else {
-                        setAccountDialogOpen(true);
-                        setSelectedAccountID(id);
-                      }
-                    }}
+                    onDropdownClickEdit={() => handleDropdownClickEdit(id, account.type)}
                     onDropdownClickDelete={() => setAccountToDelete({ id, name: account.name })}
                     colorClassName={COLOR_MAP[taxCategoryFromAccountType(account.type)]}
                   />
