@@ -13,7 +13,7 @@ const sharedContributionSchema = z.object({
   id: z.string(),
   accountId: z.string(),
   rank: z.number().int().min(0),
-  maxBalance: currencyFieldForbidsZero('Max value must be greater than zero').optional(),
+  maxBalance: currencyFieldForbidsZero('Max balance must be greater than zero').optional(),
   incomeIds: z.array(z.string()).optional(),
 });
 
