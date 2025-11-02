@@ -4,15 +4,14 @@ import { ageField, percentageField } from '@/lib/utils/zod-schema-utils';
 
 export const retirementStrategySchema = z.discriminatedUnion('type', [
   z.object({
-    retirementAge: ageField(17, 73, {
-      min: 'Retirement age must be at least 17 years',
+    retirementAge: ageField(19, 73, {
+      min: 'Retirement age must be at least 19 years',
       max: 'Retirement age must be at most 73 years',
     }),
     type: z.literal('fixedAge'),
   }),
   z.object({
     safeWithdrawalRate: percentageField(2, 6, 'Safe withdrawal rate'),
-    // expenseMetric: z.enum(['median', 'mean']),
     type: z.literal('swrTarget'),
   }),
 ]);
@@ -25,8 +24,8 @@ export const timelineFormSchema = z
       min: 'Life expectancy must be at least 50 years',
       max: 'Life expectancy must be at most 110 years',
     }),
-    currentAge: ageField(16, 100, {
-      min: 'Age must be at least 16 years',
+    currentAge: ageField(18, 100, {
+      min: 'Age must be at least 18 years',
       max: 'Age must be at most 100 years',
     }),
     retirementStrategy: retirementStrategySchema,

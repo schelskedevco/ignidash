@@ -5,6 +5,8 @@ export const baseContributionSchema = z.object({
   type: z.enum(['spend', 'save']),
 });
 
+export type BaseContributionInputs = z.infer<typeof baseContributionSchema>;
+
 const sharedContributionSchema = z.object({
   id: z.string(),
   accountId: z.string(),
@@ -38,4 +40,3 @@ export const contributionFormSchema = z
   });
 
 export type ContributionInputs = z.infer<typeof contributionFormSchema>;
-export type BaseContributionInputs = z.infer<typeof baseContributionSchema>;
