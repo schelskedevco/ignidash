@@ -132,7 +132,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
               )}
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                 <Field className={getContributionTypeColSpan()}>
-                  <Label htmlFor="contributionType">Type</Label>
+                  <Label htmlFor="contributionType">Contribution Type</Label>
                   <Select
                     {...register('contributionType')}
                     id="contributionType"
