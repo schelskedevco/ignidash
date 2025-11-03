@@ -86,7 +86,7 @@ export default function ResultsSections() {
                           ) : (
                             <XCircleIcon
                               aria-hidden="true"
-                              className="size-full text-stone-300 group-hover:text-stone-400 dark:text-white/25 dark:group-hover:text-white/50"
+                              className="size-full text-zinc-300 group-hover:text-zinc-400 dark:text-white/25 dark:group-hover:text-white/50"
                             />
                           )}
                         </span>

@@ -54,7 +54,7 @@ export default function SignUpForm() {
       <div className="flex flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <FireIcon className="text-primary mx-auto h-10 w-auto" />
-          <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-stone-900 dark:text-white">Sign up for Ignidash</h2>
+          <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-zinc-900 dark:text-white">Sign up for Ignidash</h2>
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
@@ -63,7 +63,7 @@ export default function SignUpForm() {
               <ErrorMessage errorMessage={errorMessage} />
               <EmailInput errorMessage={null} />
               <div>
-                <label htmlFor="full-name" className="block text-sm/6 font-medium text-stone-900 dark:text-white">
+                <label htmlFor="full-name" className="block text-sm/6 font-medium text-zinc-900 dark:text-white">
                   Full name
                 </label>
                 <div className="mt-2">
@@ -73,7 +73,7 @@ export default function SignUpForm() {
                     type="text"
                     autoComplete="given-name"
                     required
-                    className="block w-full rounded-md bg-white px-3 py-1.5 pr-10 text-base text-stone-900 outline-1 -outline-offset-1 outline-stone-400 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/25 dark:placeholder:text-stone-500 dark:focus:outline-rose-500"
+                    className="block w-full rounded-md bg-white px-3 py-1.5 pr-10 text-base text-zinc-900 outline-1 -outline-offset-1 outline-zinc-400 placeholder:text-zinc-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/25 dark:placeholder:text-zinc-500 dark:focus:outline-rose-500"
                   />
                 </div>
               </div>
@@ -91,7 +91,7 @@ export default function SignUpForm() {
             <GoogleSignIn safeRedirect={safeRedirect} />
           </div>
 
-          <p className="mt-10 text-center text-sm/6 text-stone-500 dark:text-stone-400">
+          <p className="mt-10 text-center text-sm/6 text-zinc-500 dark:text-zinc-400">
             Already have an account?{' '}
             <Link
               href={buildRedirectUrl('/signin')}
@@ -102,13 +102,13 @@ export default function SignUpForm() {
           </p>
         </div>
       </div>
-      <p className="pb-6 text-center text-xs/6 text-stone-500 dark:text-stone-400">
+      <p className="pb-6 text-center text-xs/6 text-zinc-500 dark:text-zinc-400">
         By creating an account, you agree to the{' '}
-        <Link href="/terms" className="underline hover:text-stone-700 dark:hover:text-stone-300">
+        <Link href="/terms" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
           Terms of Service
         </Link>{' '}
         and{' '}
-        <Link href="/privacy" className="underline hover:text-stone-700 dark:hover:text-stone-300">
+        <Link href="/privacy" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
           Privacy Policy
         </Link>
         .

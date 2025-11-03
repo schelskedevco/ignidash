@@ -113,8 +113,8 @@ export default function SingleSimulationContributionsBarChart({
     return <div className="flex h-64 w-full items-center justify-center sm:h-72 lg:h-80">No data available for the selected view.</div>;
   }
 
-  const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
-  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
+  const gridColor = resolvedTheme === 'dark' ? '#3f3f46' : '#d4d4d8'; // zinc-700 : zinc-300
+  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d4d4d8' : '#52525b'; // zinc-300 : zinc-600
 
   const shouldUseCustomTick = transformedChartData.length > 5 || (isSmallScreen && transformedChartData.length > 1);
   const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };

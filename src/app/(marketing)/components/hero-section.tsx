@@ -14,7 +14,7 @@ export default function HeroSection() {
       </div>
       <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-          <div className="relative rounded-full px-3 py-1 text-sm/6 text-stone-600 ring-1 ring-stone-900/10 hover:ring-stone-900/20 dark:text-stone-300 dark:ring-white/10 dark:hover:ring-white/20">
+          <div className="relative rounded-full px-3 py-1 text-sm/6 text-zinc-600 ring-1 ring-zinc-900/10 hover:ring-zinc-900/20 dark:text-zinc-300 dark:ring-white/10 dark:hover:ring-white/20">
             New: AI insights are coming soon.{' '}
             <a href="#" className="text-primary font-semibold">
               <span aria-hidden="true" className="absolute inset-0" />
@@ -23,11 +23,11 @@ export default function HeroSection() {
           </div>
         </div>
         <div className="text-center">
-          <h1 className="text-5xl font-semibold tracking-tight text-balance text-stone-900 sm:text-7xl dark:text-white">
+          <h1 className="text-5xl font-semibold tracking-tight text-balance text-zinc-900 sm:text-7xl dark:text-white">
             Financial Planning Made{' '}
             <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">Smarter.</span>
           </h1>
-          <p className="mt-8 text-lg font-medium text-pretty text-stone-500 sm:text-xl/8 dark:text-stone-300">
+          <p className="mt-8 text-lg font-medium text-pretty text-zinc-500 sm:text-xl/8 dark:text-zinc-300">
             Explore your financial future with AI-powered simulations.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">

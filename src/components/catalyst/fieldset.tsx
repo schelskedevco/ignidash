@@ -11,7 +11,7 @@ export function Legend({ className, ...props }: { className?: string } & Omit<He
     <Headless.Legend
       data-slot="legend"
       {...props}
-      className={cn('text-xl/6 font-semibold text-stone-950 data-disabled:opacity-50 sm:text-lg/6 dark:text-white', className)}
+      className={cn('text-xl/6 font-semibold text-zinc-950 data-disabled:opacity-50 sm:text-lg/6 dark:text-white', className)}
     />
   );
 }
@@ -42,7 +42,7 @@ export function Label({ className, ...props }: { className?: string } & Omit<Hea
     <Headless.Label
       data-slot="label"
       {...props}
-      className={cn('text-base/6 text-stone-950 select-none data-disabled:opacity-50 sm:text-sm/6 dark:text-white', className)}
+      className={cn('text-base/6 text-zinc-950 select-none data-disabled:opacity-50 sm:text-sm/6 dark:text-white', className)}
     />
   );
 }
@@ -52,7 +52,7 @@ export function Description({ className, ...props }: { className?: string } & Om
     <Headless.Description
       data-slot="description"
       {...props}
-      className={cn('text-base/6 text-stone-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-stone-400', className)}
+      className={cn('text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400', className)}
     />
   );
 }
