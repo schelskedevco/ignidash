@@ -53,7 +53,7 @@ export function AlertTitle({ className, ...props }: { className?: string } & Omi
       {...props}
       className={clsx(
         className,
-        'text-center text-base/6 font-semibold text-balance text-zinc-950 sm:text-left sm:text-sm/6 sm:text-wrap dark:text-white'
+        'text-center text-base/6 font-semibold text-balance text-stone-950 sm:text-left sm:text-sm/6 sm:text-wrap dark:text-white'
       )}
     />
   );

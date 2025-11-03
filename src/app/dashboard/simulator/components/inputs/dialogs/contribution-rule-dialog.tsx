@@ -12,15 +12,23 @@ import {
   useContributionRulesData,
   useAccountsData,
   useIncomesData,
+  useTimelineData,
 } from '@/lib/stores/simulator-store';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
-import { contributionFormSchema, type ContributionInputs, supportsIncomeAllocation } from '@/lib/schemas/inputs/contribution-form-schema';
+import {
+  contributionFormSchema,
+  type ContributionInputs,
+  supportsIncomeAllocation,
+  getAccountTypeLimitKey,
+  getAnnualContributionLimit,
+} from '@/lib/schemas/inputs/contribution-form-schema';
 import { accountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Divider } from '@/components/catalyst/divider';
+import { formatNumber } from '@/lib/utils';
 
 interface ContributionRuleDialogProps {
   onClose: () => void;
@@ -75,6 +83,12 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
   const accountOptions = Object.entries(accounts).map(([id, account]) => ({ id, name: account.name, type: account.type }));
   const selectedAccount = accountId ? accounts[accountId] : null;
 
+  const timeline = useTimelineData();
+  const currentAge = timeline?.currentAge ?? 18;
+  const selectedAccountAnnualContributionLimit = selectedAccount
+    ? getAnnualContributionLimit(getAccountTypeLimitKey(selectedAccount.type), currentAge)
+    : null;
+
   const incomes = useIncomesData();
   const incomeOptions = Object.entries(incomes).map(([id, income]) => ({ id, name: income.name }));
 
@@ -117,6 +131,11 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                   ))}
                 </Select>
                 {errors.accountId && <ErrorMessage>{errors.accountId?.message}</ErrorMessage>}
+                {selectedAccountAnnualContributionLimit !== null && selectedAccountAnnualContributionLimit !== Infinity && (
+                  <Description>
+                    Annual Contribution Limit: <strong>{formatNumber(selectedAccountAnnualContributionLimit, 0, '$')}</strong>
+                  </Description>
+                )}
               </Field>
               {selectedAccount && supportsIncomeAllocation(selectedAccount.type) && (
                 <Field>
