@@ -190,7 +190,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
               <Divider />
               <Field>
                 <Label htmlFor="maxBalance" className="flex w-full items-center justify-between">
-                  <span className="whitespace-nowrap">Maximum Balance</span>
+                  <span className="whitespace-nowrap">Max Balance</span>
                   <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
                 </Label>
                 <NumberInput name="maxBalance" control={control} id="maxBalance" inputMode="decimal" placeholder="$15,000" prefix="$" />
