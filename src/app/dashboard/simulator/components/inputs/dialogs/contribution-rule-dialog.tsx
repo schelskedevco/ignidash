@@ -131,9 +131,9 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                   ))}
                 </Select>
                 {errors.accountId && <ErrorMessage>{errors.accountId?.message}</ErrorMessage>}
-                {selectedAccountAnnualContributionLimit !== null && selectedAccountAnnualContributionLimit !== Infinity && (
+                {selectedAccountAnnualContributionLimit !== null && Number.isFinite(selectedAccountAnnualContributionLimit) && (
                   <Description>
-                    Annual Contribution Limit: <strong>{formatNumber(selectedAccountAnnualContributionLimit, 0, '$')}</strong>
+                    You can contribute up to <strong>{formatNumber(selectedAccountAnnualContributionLimit, 0, '$')}</strong> per year.
                   </Description>
                 )}
               </Field>
