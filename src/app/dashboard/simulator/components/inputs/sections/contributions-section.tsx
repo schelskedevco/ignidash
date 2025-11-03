@@ -29,6 +29,7 @@ import {
   useContributionRulesData,
   useBaseContributionRuleData,
   useUpdateBaseContributionRule,
+  useUpdateContributionRules,
   useReorderContributionRules,
   useDeleteContributionRule,
   useAccountsData,
@@ -86,9 +87,10 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const accounts = useAccountsData();
-  const contributionRules = Object.values(useContributionRulesData());
+  const contributionRules = useContributionRulesData();
+  const contributionRulesValues = Object.values(contributionRules);
 
-  const sortedRules = useMemo(() => contributionRules.sort((a, b) => a.rank - b.rank), [contributionRules]);
+  const sortedRules = useMemo(() => contributionRulesValues.sort((a, b) => a.rank - b.rank), [contributionRulesValues]);
   const sortedRuleIds = useMemo(() => sortedRules.map((rule) => rule.id), [sortedRules]);
 
   const hasContributionRules = sortedRuleIds.length > 0;
@@ -99,6 +101,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
   const baseContributionRule = useBaseContributionRuleData();
   const updateBaseContributionRule = useUpdateBaseContributionRule();
 
+  const updateContributionRules = useUpdateContributionRules();
   const reorderContributionRules = useReorderContributionRules();
   const deleteContributionRule = useDeleteContributionRule();
 
@@ -107,6 +110,16 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
+  );
+
+  const disableContributionRule = useCallback(
+    (id: string) => {
+      const rule = contributionRules[id];
+      if (!rule) return;
+
+      updateContributionRules({ ...rule, disabled: !rule.disabled });
+    },
+    [contributionRules, updateContributionRules]
   );
 
   const handleClose = useCallback(() => {
@@ -176,8 +189,10 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
                         name={`To ${accounts[contributionRule.accountId]?.name || 'Unknown'}`}
                         desc={getContributionRuleDesc(accounts, { id, ...contributionRule })}
                         leftAddOn={String(index + 1)}
+                        disabled={contributionRule.disabled}
                         onDropdownClickEdit={() => handleDropdownClickEdit(id)}
                         onDropdownClickDelete={() => setContributionRuleToDelete({ id, name: 'Contribution ' + (index + 1) })}
+                        onDropdownClickDisable={() => disableContributionRule(id)}
                         colorClassName={COLOR_MAP[taxCategoryFromAccountType(accounts[contributionRule.accountId]?.type)]}
                       />
                     ))}
@@ -194,8 +209,10 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
                       name={`To ${accounts[activeContributionRule.accountId]?.name || 'Unknown'}`}
                       desc={getContributionRuleDesc(accounts, activeContributionRule)}
                       leftAddOn={String(activeIndex + 1)}
+                      disabled={activeContributionRule.disabled}
                       onDropdownClickEdit={() => handleDropdownClickEdit(activeId)}
                       onDropdownClickDelete={() => setContributionRuleToDelete({ id: activeId, name: 'Contribution ' + (activeIndex + 1) })}
+                      onDropdownClickDisable={() => disableContributionRule(activeId)}
                       colorClassName={COLOR_MAP[taxCategoryFromAccountType(accounts[activeContributionRule.accountId]?.type)]}
                     />
                   ) : null}

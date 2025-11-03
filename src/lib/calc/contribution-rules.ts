@@ -12,7 +12,7 @@ export class ContributionRules {
     rules: ContributionInputs[],
     private baseRule: { type: 'spend' | 'save' }
   ) {
-    this.contributionRules = rules.map((rule) => new ContributionRule(rule));
+    this.contributionRules = rules.filter((rule) => !rule.disabled).map((rule) => new ContributionRule(rule));
   }
 
   getRules(): ContributionRule[] {

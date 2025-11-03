@@ -8,8 +8,10 @@ interface ContributionItemProps {
   name: string | React.ReactNode;
   desc: string | React.ReactNode;
   leftAddOn: string | React.ReactNode;
+  disabled?: boolean;
   onDropdownClickEdit: () => void;
   onDropdownClickDelete: () => void;
+  onDropdownClickDisable: () => void;
   style?: React.CSSProperties;
   colorClassName?: string;
 }

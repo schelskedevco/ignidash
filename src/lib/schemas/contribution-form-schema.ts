@@ -15,6 +15,7 @@ const sharedContributionSchema = z.object({
   rank: z.number().int().min(0),
   maxBalance: currencyFieldForbidsZero('Max balance must be greater than zero').optional(),
   incomeIds: z.array(z.string()).optional(),
+  disabled: z.boolean().optional(),
 });
 
 export const contributionFormSchema = z
