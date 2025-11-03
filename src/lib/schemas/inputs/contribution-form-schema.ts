@@ -44,6 +44,40 @@ export const contributionFormSchema = z
 
 export type ContributionInputs = z.infer<typeof contributionFormSchema>;
 
+export const sharedLimitAccounts: Record<string, AccountInputs['type'][]> = {
+  '401k': ['401k', 'roth401k'],
+  roth401k: ['401k', 'roth401k'],
+  ira: ['ira', 'rothIra'],
+  rothIra: ['ira', 'rothIra'],
+  hsa: ['hsa'],
+};
+
+export const getAccountTypeLimitKey = (accountType: AccountInputs['type']): string => {
+  switch (accountType) {
+    case '401k':
+    case 'roth401k':
+      return '401kCombined';
+    case 'ira':
+    case 'rothIra':
+      return 'iraCombined';
+    default:
+      return accountType;
+  }
+};
+
+export const getAnnualContributionLimit = (limitKey: string, age: number): number => {
+  switch (limitKey) {
+    case '401kCombined':
+      return age < 50 ? 23500 : 31000;
+    case 'iraCombined':
+      return age < 50 ? 7000 : 8000;
+    case 'hsa':
+      return age < 55 ? 4300 : 5300;
+    default:
+      return Infinity;
+  }
+};
+
 export const supportsIncomeAllocation = (type: AccountInputs['type']): boolean => {
   switch (type) {
     case 'savings':
