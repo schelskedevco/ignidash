@@ -9,6 +9,11 @@ export const baseContributionSchema = z.object({
 
 export type BaseContributionInputs = z.infer<typeof baseContributionSchema>;
 
+const employerMatchSchema = z.object({
+  matchRate: percentageField(0, 100, 'Employer match rate'),
+  matchSalaryCap: percentageField(0, 100, 'Employer match salary cap'),
+});
+
 const sharedContributionSchema = z.object({
   id: z.string(),
   accountId: z.string(),
@@ -16,6 +21,7 @@ const sharedContributionSchema = z.object({
   maxBalance: currencyFieldForbidsZero('Max balance must be greater than zero').optional(),
   incomeIds: z.array(z.string()).optional(),
   disabled: z.boolean().optional(),
+  employerMatch: employerMatchSchema.optional(),
 });
 
 export const contributionFormSchema = z
@@ -89,5 +95,19 @@ export const supportsIncomeAllocation = (type: AccountInputs['type']): boolean =
     case 'taxableBrokerage':
     case 'hsa':
       return true;
+  }
+};
+
+export const supportsEmployerMatch = (type: AccountInputs['type']): boolean => {
+  switch (type) {
+    case 'roth401k':
+    case '401k':
+    case 'hsa':
+      return true;
+    case 'savings':
+    case 'rothIra':
+    case 'ira':
+    case 'taxableBrokerage':
+      return false;
   }
 };

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { HandCoinsIcon, OctagonXIcon } from 'lucide-react';
+import { HandCoinsIcon, OctagonXIcon, GiftIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
@@ -22,6 +22,7 @@ import {
   contributionFormSchema,
   type ContributionInputs,
   supportsIncomeAllocation,
+  supportsEmployerMatch,
   getAccountTypeLimitKey,
   getAnnualContributionLimit,
 } from '@/lib/schemas/inputs/contribution-form-schema';
@@ -111,6 +112,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
   }, [contributionType, unregister, selectedAccount]);
 
   const stopContributionsButtonRef = useRef<HTMLButtonElement>(null);
+  const employerMatchButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeDisclosure, setActiveDisclosure] = useState<DisclosureState | null>(null);
   const toggleDisclosure = useCallback(
@@ -120,6 +122,9 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
         switch (newDisclosure.key) {
           case 'stopContributions':
             targetRef = stopContributionsButtonRef.current;
+            break;
+          case 'employerMatch':
+            targetRef = employerMatchButtonRef.current;
             break;
         }
 
@@ -234,6 +239,56 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                   </Field>
                 )}
               </div>
+              {selectedAccount && supportsEmployerMatch(selectedAccount.type) && (
+                <Disclosure as="div" className="border-border/50 border-t pt-4">
+                  {({ open, close }) => (
+                    <>
+                      <DisclosureButton
+                        ref={employerMatchButtonRef}
+                        onClick={() => {
+                          if (!open) close();
+                          toggleDisclosure({ open, close, key: 'employerMatch' });
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            if (!open) close();
+                            toggleDisclosure({ open, close, key: 'employerMatch' });
+                          }
+                        }}
+                        className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
+                      >
+                        <div className="flex items-center gap-2">
+                          <GiftIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
+                          <span className="text-base/7 font-semibold">Employer Match</span>
+                          <span className="hidden sm:inline">|</span>
+                          <span className="text-muted-foreground hidden truncate sm:inline">...</span>
+                        </div>
+                        <span className="text-muted-foreground ml-6 flex h-7 items-center">
+                          <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
+                          <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
+                        </span>
+                      </DisclosureButton>
+                      <DisclosurePanel className="pt-4">
+                        <Field>
+                          <Label htmlFor="employerMatch.matchRate" className="flex w-full items-center justify-between">
+                            <span className="whitespace-nowrap">Match Rate</span>
+                            <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                          </Label>
+                          <NumberInput
+                            name="employerMatch.matchRate"
+                            control={control}
+                            id="employerMatch.matchRate"
+                            inputMode="decimal"
+                            placeholder="50%"
+                            suffix="%"
+                          />
+                          {errors.employerMatch?.matchRate && <ErrorMessage>{errors.employerMatch.matchRate.message}</ErrorMessage>}
+                        </Field>
+                      </DisclosurePanel>
+                    </>
+                  )}
+                </Disclosure>
+              )}
               <Disclosure as="div" className="border-border/50 border-t pt-4">
                 {({ open, close }) => (
                   <>
