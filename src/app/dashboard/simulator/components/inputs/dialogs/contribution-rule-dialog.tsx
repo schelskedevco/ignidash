@@ -269,21 +269,40 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                         </span>
                       </DisclosureButton>
                       <DisclosurePanel className="pt-4">
-                        <Field>
-                          <Label htmlFor="employerMatch.matchRate" className="flex w-full items-center justify-between">
-                            <span className="whitespace-nowrap">Match Rate</span>
-                            <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
-                          </Label>
-                          <NumberInput
-                            name="employerMatch.matchRate"
-                            control={control}
-                            id="employerMatch.matchRate"
-                            inputMode="decimal"
-                            placeholder="50%"
-                            suffix="%"
-                          />
-                          {errors.employerMatch?.matchRate && <ErrorMessage>{errors.employerMatch.matchRate.message}</ErrorMessage>}
-                        </Field>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                          <Field>
+                            <Label htmlFor="employerMatch.matchRate" className="flex w-full items-center justify-between">
+                              <span className="whitespace-nowrap">Match %</span>
+                              <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                            </Label>
+                            <NumberInput
+                              name="employerMatch.matchRate"
+                              control={control}
+                              id="employerMatch.matchRate"
+                              inputMode="decimal"
+                              placeholder="50%"
+                              suffix="%"
+                            />
+                            {errors.employerMatch?.matchRate && <ErrorMessage>{errors.employerMatch.matchRate.message}</ErrorMessage>}
+                          </Field>
+                          <Field>
+                            <Label htmlFor="employerMatch.matchSalaryCap" className="flex w-full items-center justify-between">
+                              <span className="whitespace-nowrap">Salary Cap %</span>
+                              <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                            </Label>
+                            <NumberInput
+                              name="employerMatch.matchSalaryCap"
+                              control={control}
+                              id="employerMatch.matchSalaryCap"
+                              inputMode="decimal"
+                              placeholder="6%"
+                              suffix="%"
+                            />
+                            {errors.employerMatch?.matchSalaryCap && (
+                              <ErrorMessage>{errors.employerMatch.matchSalaryCap.message}</ErrorMessage>
+                            )}
+                          </Field>
+                        </div>
                       </DisclosurePanel>
                     </>
                   )}
