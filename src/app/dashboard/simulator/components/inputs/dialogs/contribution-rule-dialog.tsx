@@ -299,9 +299,9 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                           <Field className="col-span-2">
                             <Label htmlFor="employerMatch.matchType">Match Type</Label>
                             <Select {...register('employerMatch.matchType')} id="employerMatch.matchType" name="employerMatch.matchType">
-                              <option value="none">None</option>
-                              <option value="rate">Match by Rate</option>
-                              <option value="amount">Match by Amount</option>
+                              <option value="none">No Match</option>
+                              <option value="rate">% Match</option>
+                              <option value="amount">Fixed Amount</option>
                             </Select>
                           </Field>
                           {matchType === 'rate' && (
