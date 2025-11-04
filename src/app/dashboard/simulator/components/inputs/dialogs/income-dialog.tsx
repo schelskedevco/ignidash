@@ -266,8 +266,8 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
                     <DisclosurePanel className="pt-4">
                       <div className="grid grid-cols-2 items-end gap-x-4 gap-y-2">
                         <Field className={getStartColSpan()}>
-                          <Label htmlFor="start">Start</Label>
-                          <Select {...register('timeframe.start.type')} id="start" name="timeframe.start.type">
+                          <Label htmlFor="timeframe.start.type">Start</Label>
+                          <Select {...register('timeframe.start.type')} id="timeframe.start.type" name="timeframe.start.type">
                             <option value="now">Now</option>
                             <option value="atRetirement">At Retirement</option>
                             <option value="customDate">Custom Date</option>
@@ -356,8 +356,8 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
                       {frequency !== 'oneTime' && (
                         <div className="mt-4 grid grid-cols-2 items-end gap-x-4 gap-y-2">
                           <Field className={getEndColSpan()}>
-                            <Label htmlFor="end">End</Label>
-                            <Select {...register('timeframe.end.type')} id="end" name="timeframe.end.type">
+                            <Label htmlFor="timeframe.end.type">End</Label>
+                            <Select {...register('timeframe.end.type')} id="timeframe.end.type" name="timeframe.end.type">
                               <option value="atRetirement">At Retirement</option>
                               <option value="atLifeExpectancy">At Life Expectancy</option>
                               <option value="customDate">Custom Date</option>
@@ -482,11 +482,11 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
                       <DisclosurePanel className="pt-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                           <Field>
-                            <Label htmlFor="growthRate">Annual Growth (real)</Label>
+                            <Label htmlFor="growth.growthRate">Annual Growth (real)</Label>
                             <NumberInput
                               name="growth.growthRate"
                               control={control}
-                              id="growthRate"
+                              id="growth.growthRate"
                               inputMode="decimal"
                               placeholder="0%"
                               suffix="%"
@@ -494,14 +494,14 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
                             {errors.growth?.growthRate && <ErrorMessage>{errors.growth?.growthRate?.message}</ErrorMessage>}
                           </Field>
                           <Field>
-                            <Label htmlFor="growthLimit" className="flex w-full items-center justify-between">
+                            <Label htmlFor="growth.growthLimit" className="flex w-full items-center justify-between">
                               <span className="whitespace-nowrap">Limit</span>
                               <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
                             </Label>
                             <NumberInput
                               name="growth.growthLimit"
                               control={control}
-                              id="growthLimit"
+                              id="growth.growthLimit"
                               inputMode="decimal"
                               placeholder="$120,000"
                               prefix="$"
