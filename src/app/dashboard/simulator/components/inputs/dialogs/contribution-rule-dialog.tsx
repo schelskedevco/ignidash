@@ -192,7 +192,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
               )}
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                 <Field className={getContributionTypeColSpan()}>
-                  <Label htmlFor="contributionType">Type</Label>
+                  <Label htmlFor="contributionType">Contribution Type</Label>
                   <Select
                     {...register('contributionType')}
                     id="contributionType"
@@ -288,65 +288,65 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                         </span>
                       </DisclosureButton>
                       <DisclosurePanel className="pt-4">
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                        <div className="grid grid-cols-2 gap-4">
                           <Field className="col-span-2">
                             <Label htmlFor="employerMatch.type">Match Type</Label>
                             <Select {...register('employerMatch.type')} id="employerMatch.type" name="employerMatch.type">
                               <option value="none">None</option>
-                              <option value="percentOfSalary">% of Salary</option>
+                              <option value="percentSalary">% of Salary</option>
                               <option value="fixedDollar">Fixed Dollar</option>
                             </Select>
                           </Field>
-                          {matchType === 'percentOfSalary' && (
+                          {matchType === 'percentSalary' && (
                             <>
                               <Field>
-                                <Label htmlFor="employerMatch.matchRate">Match %</Label>
+                                <Label htmlFor="employerMatch.percentMatch">% Match</Label>
                                 <NumberInput
-                                  name="employerMatch.matchRate"
+                                  name="employerMatch.percentMatch"
                                   control={control}
-                                  id="employerMatch.matchRate"
+                                  id="employerMatch.percentMatch"
                                   inputMode="decimal"
                                   placeholder="50%"
                                   suffix="%"
                                 />
                                 {(
                                   errors.employerMatch as FieldErrors<
-                                    Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentOfSalary' }>
+                                    Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentSalary' }>
                                   >
-                                )?.matchRate?.message && (
+                                )?.percentMatch?.message && (
                                   <ErrorMessage>
                                     {
                                       (
                                         errors.employerMatch as FieldErrors<
-                                          Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentOfSalary' }>
+                                          Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentSalary' }>
                                         >
-                                      ).matchRate?.message
+                                      ).percentMatch?.message
                                     }
                                   </ErrorMessage>
                                 )}
                               </Field>
                               <Field>
-                                <Label htmlFor="employerMatch.salaryCap">Salary Cap %</Label>
+                                <Label htmlFor="employerMatch.percentSalary">% of Salary</Label>
                                 <NumberInput
-                                  name="employerMatch.salaryCap"
+                                  name="employerMatch.percentSalary"
                                   control={control}
-                                  id="employerMatch.salaryCap"
+                                  id="employerMatch.percentSalary"
                                   inputMode="decimal"
                                   placeholder="6%"
                                   suffix="%"
                                 />
                                 {(
                                   errors.employerMatch as FieldErrors<
-                                    Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentOfSalary' }>
+                                    Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentSalary' }>
                                   >
-                                )?.salaryCap?.message && (
+                                )?.percentSalary?.message && (
                                   <ErrorMessage>
                                     {
                                       (
                                         errors.employerMatch as FieldErrors<
-                                          Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentOfSalary' }>
+                                          Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentSalary' }>
                                         >
-                                      ).salaryCap?.message
+                                      ).percentSalary?.message
                                     }
                                   </ErrorMessage>
                                 )}
@@ -355,11 +355,11 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                           )}
                           {matchType === 'fixedDollar' && (
                             <Field className="col-span-2">
-                              <Label htmlFor="employerMatch.dollarCap">Fixed Dollar Amount</Label>
+                              <Label htmlFor="employerMatch.fixedDollar">Fixed Dollar</Label>
                               <NumberInput
-                                name="employerMatch.dollarCap"
+                                name="employerMatch.fixedDollar"
                                 control={control}
-                                id="employerMatch.dollarCap"
+                                id="employerMatch.fixedDollar"
                                 inputMode="decimal"
                                 placeholder="$3,000"
                                 prefix="$"
@@ -368,14 +368,14 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                                 errors.employerMatch as FieldErrors<
                                   Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'fixedDollar' }>
                                 >
-                              )?.dollarCap?.message && (
+                              )?.fixedDollar?.message && (
                                 <ErrorMessage>
                                   {
                                     (
                                       errors.employerMatch as FieldErrors<
                                         Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'fixedDollar' }>
                                       >
-                                    ).dollarCap?.message
+                                    ).fixedDollar?.message
                                   }
                                 </ErrorMessage>
                               )}

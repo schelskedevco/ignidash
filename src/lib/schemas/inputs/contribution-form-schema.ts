@@ -15,13 +15,13 @@ const employerMatchSchema = z
       type: z.literal('none'),
     }),
     z.object({
-      type: z.literal('percentOfSalary'),
-      matchRate: percentageField(0, 100, 'Match rate'),
-      salaryCap: percentageField(0, 25, 'Salary cap'),
+      type: z.literal('percentSalary'),
+      percentMatch: percentageField(0, 100, '% Match'),
+      percentSalary: percentageField(0, 25, '% of Salary'),
     }),
     z.object({
       type: z.literal('fixedDollar'),
-      dollarCap: currencyFieldForbidsZero('Dollar cap must be greater than zero'),
+      fixedDollar: currencyFieldForbidsZero('Fixed dollar must be greater than zero'),
     }),
   ])
   .optional();
