@@ -6,10 +6,23 @@ import { growthSchema, frequencyTimeframeSchema } from './income-expenses-shared
 
 export type TaxTreatmentType = 'wage' | 'selfEmployment' | 'exempt';
 
-export const taxTreatmentSchema = z.object({
-  type: z.enum(['wage', 'selfEmployment', 'exempt']),
-  withholding: percentageField(0, 50, 'Withholding').optional(),
-});
+export const taxTreatmentSchema = z
+  .object({
+    type: z.enum(['wage', 'selfEmployment', 'exempt']),
+    withholding: percentageField(0, 50, 'Withholding').optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.type === 'wage' || data.type === 'selfEmployment') {
+        return data.withholding !== undefined;
+      }
+      return true;
+    },
+    {
+      message: 'Withholding required for wage and self-employment income',
+      path: ['withholding'],
+    }
+  );
 
 export const incomeFormSchema = z
   .object({
