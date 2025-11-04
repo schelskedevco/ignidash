@@ -20,6 +20,7 @@ import {
   type ContributionInputs,
   supportsMaxBalance,
   supportsIncomeAllocation,
+  supportsEmployerMatch,
   getAccountTypeLimitKey,
   getAnnualContributionLimit,
 } from '@/lib/schemas/inputs/contribution-form-schema';
@@ -108,6 +109,10 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
 
     if (!(selectedAccount && supportsIncomeAllocation(selectedAccount.type))) {
       unregister('incomeIds');
+    }
+
+    if (!(selectedAccount && supportsEmployerMatch(selectedAccount.type))) {
+      unregister('employerMatch');
     }
   }, [contributionType, unregister, selectedAccount]);
 
@@ -212,6 +217,24 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                   <NumberInput name="maxBalance" control={control} id="maxBalance" inputMode="decimal" placeholder="$15,000" prefix="$" />
                   {errors.maxBalance && <ErrorMessage>{errors.maxBalance?.message}</ErrorMessage>}
                   <Description>Stop contributing to this account once it reaches this balance.</Description>
+                </Field>
+              )}
+              {selectedAccount && supportsEmployerMatch(selectedAccount.type) && (
+                <Field>
+                  <Label htmlFor="employerMatch" className="flex w-full items-center justify-between">
+                    <span className="whitespace-nowrap">Employer Match</span>
+                    <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                  </Label>
+                  <NumberInput
+                    name="employerMatch"
+                    control={control}
+                    id="employerMatch"
+                    inputMode="decimal"
+                    placeholder="$7,000"
+                    prefix="$"
+                  />
+                  {errors.employerMatch && <ErrorMessage>{errors.employerMatch?.message}</ErrorMessage>}
+                  <Description>Employer will match contributions dollar-for-dollar up to this amount.</Description>
                 </Field>
               )}
             </FieldGroup>
