@@ -10,31 +10,21 @@ export const baseContributionSchema = z.object({
 export type BaseContributionInputs = z.infer<typeof baseContributionSchema>;
 
 const employerMatchSchema = z
-  .object({
-    matchRate: percentageField(0, 100, 'Employer match rate').optional(),
-    matchSalaryCap: percentageField(0, 100, 'Employer match salary cap').optional(),
-  })
-  .optional()
-  .refine(
-    (data) => {
-      if (!data || data.matchSalaryCap === undefined) return true;
-      return data.matchRate !== undefined;
-    },
-    {
-      message: 'Match % required when Salary Cap % is specified',
-      path: ['matchRate'],
-    }
-  )
-  .refine(
-    (data) => {
-      if (!data || data.matchRate === undefined) return true;
-      return data.matchSalaryCap !== undefined;
-    },
-    {
-      message: 'Salary Cap % required when Match % is specified',
-      path: ['matchSalaryCap'],
-    }
-  );
+  .discriminatedUnion('type', [
+    z.object({
+      type: z.literal('none'),
+    }),
+    z.object({
+      type: z.literal('percentOfSalary'),
+      matchRate: percentageField(0, 100, 'Match rate'),
+      salaryCap: percentageField(0, 25, 'Salary cap'),
+    }),
+    z.object({
+      type: z.literal('fixedDollar'),
+      dollarCap: currencyFieldForbidsZero('Dollar cap must be greater than zero'),
+    }),
+  ])
+  .optional();
 
 const sharedContributionSchema = z.object({
   id: z.string(),

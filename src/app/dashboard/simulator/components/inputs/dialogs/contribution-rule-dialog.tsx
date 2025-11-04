@@ -77,6 +77,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
 
   const contributionType = useWatch({ control, name: 'contributionType' });
   const accountId = useWatch({ control, name: 'accountId' });
+  const matchType = useWatch({ control, name: 'employerMatch.type' });
 
   const getContributionTypeColSpan = () => {
     if (contributionType === 'dollarAmount' || contributionType === 'percentRemaining') return 'col-span-1';
@@ -288,38 +289,98 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                       </DisclosureButton>
                       <DisclosurePanel className="pt-4">
                         <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-                          <Field>
-                            <Label htmlFor="employerMatch.matchRate" className="flex w-full items-center justify-between">
-                              <span className="whitespace-nowrap">Match %</span>
-                              <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
-                            </Label>
-                            <NumberInput
-                              name="employerMatch.matchRate"
-                              control={control}
-                              id="employerMatch.matchRate"
-                              inputMode="decimal"
-                              placeholder="50%"
-                              suffix="%"
-                            />
-                            {errors.employerMatch?.matchRate && <ErrorMessage>{errors.employerMatch.matchRate.message}</ErrorMessage>}
+                          <Field className="col-span-2">
+                            <Label htmlFor="employerMatch.type">Match Type</Label>
+                            <Select {...register('employerMatch.type')} id="employerMatch.type" name="employerMatch.type">
+                              <option value="none">None</option>
+                              <option value="percentOfSalary">% of Salary</option>
+                              <option value="fixedDollar">Fixed Dollar</option>
+                            </Select>
                           </Field>
-                          <Field>
-                            <Label htmlFor="employerMatch.matchSalaryCap" className="flex w-full items-center justify-between">
-                              <span className="whitespace-nowrap">Salary Cap %</span>
-                              <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
-                            </Label>
-                            <NumberInput
-                              name="employerMatch.matchSalaryCap"
-                              control={control}
-                              id="employerMatch.matchSalaryCap"
-                              inputMode="decimal"
-                              placeholder="6%"
-                              suffix="%"
-                            />
-                            {errors.employerMatch?.matchSalaryCap && (
-                              <ErrorMessage>{errors.employerMatch.matchSalaryCap.message}</ErrorMessage>
-                            )}
-                          </Field>
+                          {matchType === 'percentOfSalary' && (
+                            <>
+                              <Field>
+                                <Label htmlFor="employerMatch.matchRate">Match %</Label>
+                                <NumberInput
+                                  name="employerMatch.matchRate"
+                                  control={control}
+                                  id="employerMatch.matchRate"
+                                  inputMode="decimal"
+                                  placeholder="50%"
+                                  suffix="%"
+                                />
+                                {(
+                                  errors.employerMatch as FieldErrors<
+                                    Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentOfSalary' }>
+                                  >
+                                )?.matchRate?.message && (
+                                  <ErrorMessage>
+                                    {
+                                      (
+                                        errors.employerMatch as FieldErrors<
+                                          Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentOfSalary' }>
+                                        >
+                                      ).matchRate?.message
+                                    }
+                                  </ErrorMessage>
+                                )}
+                              </Field>
+                              <Field>
+                                <Label htmlFor="employerMatch.salaryCap">Salary Cap %</Label>
+                                <NumberInput
+                                  name="employerMatch.salaryCap"
+                                  control={control}
+                                  id="employerMatch.salaryCap"
+                                  inputMode="decimal"
+                                  placeholder="6%"
+                                  suffix="%"
+                                />
+                                {(
+                                  errors.employerMatch as FieldErrors<
+                                    Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentOfSalary' }>
+                                  >
+                                )?.salaryCap?.message && (
+                                  <ErrorMessage>
+                                    {
+                                      (
+                                        errors.employerMatch as FieldErrors<
+                                          Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'percentOfSalary' }>
+                                        >
+                                      ).salaryCap?.message
+                                    }
+                                  </ErrorMessage>
+                                )}
+                              </Field>
+                            </>
+                          )}
+                          {matchType === 'fixedDollar' && (
+                            <Field className="col-span-2">
+                              <Label htmlFor="employerMatch.dollarCap">Fixed Dollar Amount</Label>
+                              <NumberInput
+                                name="employerMatch.dollarCap"
+                                control={control}
+                                id="employerMatch.dollarCap"
+                                inputMode="decimal"
+                                placeholder="$3,000"
+                                prefix="$"
+                              />
+                              {(
+                                errors.employerMatch as FieldErrors<
+                                  Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'fixedDollar' }>
+                                >
+                              )?.dollarCap?.message && (
+                                <ErrorMessage>
+                                  {
+                                    (
+                                      errors.employerMatch as FieldErrors<
+                                        Extract<NonNullable<ContributionInputs['employerMatch']>, { type: 'fixedDollar' }>
+                                      >
+                                    ).dollarCap?.message
+                                  }
+                                </ErrorMessage>
+                              )}
+                            </Field>
+                          )}
                         </div>
                       </DisclosurePanel>
                     </>
