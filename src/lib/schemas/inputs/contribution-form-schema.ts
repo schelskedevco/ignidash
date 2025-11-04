@@ -106,6 +106,20 @@ export const getAnnualContributionLimit = (limitKey: string, age: number): numbe
   }
 };
 
+export const supportsMaxBalance = (type: AccountInputs['type']): boolean => {
+  switch (type) {
+    case 'savings':
+      return true;
+    case 'roth401k':
+    case 'rothIra':
+    case '401k':
+    case 'ira':
+    case 'taxableBrokerage':
+    case 'hsa':
+      return false;
+  }
+};
+
 export const supportsIncomeAllocation = (type: AccountInputs['type']): boolean => {
   switch (type) {
     case 'savings':

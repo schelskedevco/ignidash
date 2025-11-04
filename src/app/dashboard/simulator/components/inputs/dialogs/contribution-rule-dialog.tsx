@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { HandCoinsIcon, OctagonXIcon, GiftIcon } from 'lucide-react';
+import { HandCoinsIcon, GiftIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
@@ -21,13 +21,13 @@ import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/di
 import {
   contributionFormSchema,
   type ContributionInputs,
+  supportsMaxBalance,
   supportsIncomeAllocation,
   supportsEmployerMatch,
   getAccountTypeLimitKey,
   getAnnualContributionLimit,
 } from '@/lib/schemas/inputs/contribution-form-schema';
 import { accountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
-import { maxBalanceForDisplay } from '@/lib/utils/data-display-formatters';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import { Select } from '@/components/catalyst/select';
@@ -77,7 +77,6 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
 
   const contributionType = useWatch({ control, name: 'contributionType' });
   const accountId = useWatch({ control, name: 'accountId' });
-  const maxBalance = useWatch({ control, name: 'maxBalance' }) as number | undefined;
 
   const getContributionTypeColSpan = () => {
     if (contributionType === 'dollarAmount' || contributionType === 'percentRemaining') return 'col-span-1';
@@ -104,6 +103,10 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
 
     if (!(contributionType === 'percentRemaining')) {
       unregister('percentRemaining');
+    }
+
+    if (!(selectedAccount && supportsMaxBalance(selectedAccount.type))) {
+      unregister('maxBalance');
     }
 
     if (!(selectedAccount && supportsIncomeAllocation(selectedAccount.type))) {
@@ -243,6 +246,17 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                   </Field>
                 )}
               </div>
+              {selectedAccount && supportsMaxBalance(selectedAccount.type) && (
+                <Field>
+                  <Label htmlFor="maxBalance" className="flex w-full items-center justify-between">
+                    <span className="whitespace-nowrap">Maximum Balance</span>
+                    <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                  </Label>
+                  <NumberInput name="maxBalance" control={control} id="maxBalance" inputMode="decimal" placeholder="$15,000" prefix="$" />
+                  {errors.maxBalance && <ErrorMessage>{errors.maxBalance?.message}</ErrorMessage>}
+                  <Description>Stop contributing to this account once it reaches this balance.</Description>
+                </Field>
+              )}
               {selectedAccount && supportsEmployerMatch(selectedAccount.type) && (
                 <Disclosure as="div" className="border-border/50 border-t pt-4">
                   {({ open, close }) => (
@@ -312,55 +326,6 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                   )}
                 </Disclosure>
               )}
-              <Disclosure as="div" className="border-border/50 border-t pt-4">
-                {({ open, close }) => (
-                  <>
-                    <DisclosureButton
-                      ref={stopContributionsButtonRef}
-                      onClick={() => {
-                        if (!open) close();
-                        toggleDisclosure({ open, close, key: 'stopContributions' });
-                      }}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                          if (!open) close();
-                          toggleDisclosure({ open, close, key: 'stopContributions' });
-                        }
-                      }}
-                      className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
-                    >
-                      <div className="flex items-center gap-2">
-                        <OctagonXIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
-                        <span className="text-base/7 font-semibold">Stop Contributions</span>
-                        <span className="hidden sm:inline">|</span>
-                        <span className="text-muted-foreground hidden truncate sm:inline">{maxBalanceForDisplay(maxBalance)}</span>
-                      </div>
-                      <span className="text-muted-foreground ml-6 flex h-7 items-center">
-                        <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
-                        <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
-                      </span>
-                    </DisclosureButton>
-                    <DisclosurePanel className="pt-4">
-                      <Field>
-                        <Label htmlFor="maxBalance" className="flex w-full items-center justify-between">
-                          <span className="whitespace-nowrap">Maximum Balance</span>
-                          <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
-                        </Label>
-                        <NumberInput
-                          name="maxBalance"
-                          control={control}
-                          id="maxBalance"
-                          inputMode="decimal"
-                          placeholder="$15,000"
-                          prefix="$"
-                        />
-                        {errors.maxBalance && <ErrorMessage>{errors.maxBalance?.message}</ErrorMessage>}
-                        <Description>Stop contributing to this account once it reaches this balance.</Description>
-                      </Field>
-                    </DisclosurePanel>
-                  </>
-                )}
-              </Disclosure>
             </FieldGroup>
           </DialogBody>
         </Fieldset>
