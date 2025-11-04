@@ -14,8 +14,9 @@ import { expenseFormSchema, type ExpenseInputs } from '@/lib/schemas/inputs/expe
 import { timeFrameForDisplay, growthForDisplay, expenseTaxTreatmentForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
-import { Field, Fieldset, FieldGroup, Label, ErrorMessage /* Description */ } from '@/components/catalyst/fieldset';
+import { Field, Fieldset, FieldGroup, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/combobox';
+import { Checkbox, CheckboxField } from '@/components/catalyst/checkbox';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
@@ -533,7 +534,20 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
                         <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
                       </span>
                     </DisclosureButton>
-                    <DisclosurePanel className="pt-4"></DisclosurePanel>
+                    <DisclosurePanel className="pt-4">
+                      <CheckboxField>
+                        <Controller
+                          name="taxes.taxDeductible"
+                          defaultValue={false}
+                          control={control}
+                          render={({ field: { onChange, value, name } }) => (
+                            <Checkbox name={name} checked={value} onChange={(checked) => onChange(checked)} />
+                          )}
+                        />
+                        <Label>Tax-Deductible</Label>
+                        <Description>Make this expense tax-deductible, meaning it will reduce your taxable income.</Description>
+                      </CheckboxField>
+                    </DisclosurePanel>
                   </>
                 )}
               </Disclosure>
