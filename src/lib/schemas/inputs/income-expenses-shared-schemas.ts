@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { coerceNumber, percentageField } from '@/lib/utils/zod-schema-utils';
+import { percentageField, currencyFieldAllowsZero } from '@/lib/utils/zod-schema-utils';
 
 // Shared time point schema for income and expenses
 export const timePointSchema = z
@@ -24,10 +24,12 @@ export const timePointSchema = z
       message: 'Custom fields are required when custom option is selected',
     }
   );
+
 export type TimePoint = z.infer<typeof timePointSchema>;
 
 // Shared frequency schema for income and expenses
 export const frequencySchema = z.enum(['yearly', 'oneTime', 'quarterly', 'monthly', 'biweekly', 'weekly']);
+
 export type Frequency = z.infer<typeof frequencySchema>;
 
 // Shared frequency and timeframe schema for income and expenses
@@ -51,13 +53,14 @@ export const frequencyTimeframeSchema = z
       path: ['timeframe', 'end'],
     }
   );
+
 export type FrequencyTimeframe = z.infer<typeof frequencyTimeframeSchema>;
 
 // Shared growth schema for income and expenses
 export const growthSchema = z
   .object({
     growthRate: percentageField(-50, 50, 'Growth rate').optional(),
-    growthLimit: coerceNumber(z.number('Must be a valid growth limit').min(0)).optional(),
+    growthLimit: currencyFieldAllowsZero('Growth limit cannot be negative').optional(),
   })
   .refine(
     (data) => {
@@ -71,4 +74,5 @@ export const growthSchema = z
       path: ['growthLimit'],
     }
   );
+
 export type Growth = z.infer<typeof growthSchema>;
