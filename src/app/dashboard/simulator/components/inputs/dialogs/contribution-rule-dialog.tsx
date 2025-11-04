@@ -330,21 +330,30 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                                 />
                                 {percentSalaryError && <ErrorMessage>{percentSalaryError.message}</ErrorMessage>}
                               </Field>
+                              <p className="col-span-2 -mt-2 text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400">
+                                Employer matches a percentage of your contributions, up to a certain percentage of your salary (e.g., 50%
+                                match on contributions up to 6% of salary).
+                              </p>
                             </>
                           )}
                           {matchType === 'amount' && (
-                            <Field className="col-span-2">
-                              <Label htmlFor="employerMatch.matchAmount">Match Amount</Label>
-                              <NumberInput
-                                name="employerMatch.matchAmount"
-                                control={control}
-                                id="employerMatch.matchAmount"
-                                inputMode="decimal"
-                                placeholder="$5,000"
-                                prefix="$"
-                              />
-                              {matchAmountError && <ErrorMessage>{matchAmountError.message}</ErrorMessage>}
-                            </Field>
+                            <>
+                              <Field className="col-span-2">
+                                <Label htmlFor="employerMatch.matchAmount">Match Amount</Label>
+                                <NumberInput
+                                  name="employerMatch.matchAmount"
+                                  control={control}
+                                  id="employerMatch.matchAmount"
+                                  inputMode="decimal"
+                                  placeholder="$5,000"
+                                  prefix="$"
+                                />
+                                {matchAmountError && <ErrorMessage>{matchAmountError.message}</ErrorMessage>}
+                              </Field>
+                              <p className="col-span-2 -mt-2 text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400">
+                                Employer contributes a fixed dollar amount annually regardless of your contribution level.
+                              </p>
+                            </>
                           )}
                         </div>
                       </DisclosurePanel>
