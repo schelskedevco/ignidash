@@ -63,12 +63,16 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
   };
 
   const frequency = useWatch({ control, name: 'frequency' });
+
   const startTimePoint = useWatch({ control, name: 'timeframe.start' });
   const startType = startTimePoint.type;
+
   const endTimePoint = useWatch({ control, name: 'timeframe.end' });
   const endType = endTimePoint?.type;
+
   const growthRate = useWatch({ control, name: 'growth.growthRate' }) as number | undefined;
   const growthLimit = useWatch({ control, name: 'growth.growthLimit' }) as number | undefined;
+
   const taxTreatmentType = useWatch({ control, name: 'taxTreatment.type' });
 
   useEffect(() => {
