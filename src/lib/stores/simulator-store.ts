@@ -112,7 +112,7 @@ interface SimulatorState {
     updateAccounts: (data: AccountInputs) => void;
     deleteAccount: (id: string) => void;
 
-    /* Contribution Order */
+    /* Contributions */
     updateContributionRules: (data: ContributionInputs) => void;
     reorderContributionRules: (newOrder: string[]) => void;
     deleteContributionRule: (id: string) => void;
