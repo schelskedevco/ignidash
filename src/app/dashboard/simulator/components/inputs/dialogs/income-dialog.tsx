@@ -4,13 +4,13 @@ import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { CalendarIcon, BanknoteArrowUpIcon, TrendingUpIcon } from 'lucide-react';
+import { CalendarIcon, BanknoteArrowUpIcon, TrendingUpIcon, BanknoteXIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { useUpdateIncomes, useIncomeData, useIncomesData, useTimelineData } from '@/lib/stores/simulator-store';
-import { incomeFormSchema, type IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
+import { incomeFormSchema, type IncomeInputs, supportsWithholding } from '@/lib/schemas/inputs/income-form-schema';
 import { timeFrameForDisplay, growthForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
@@ -37,6 +37,7 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
         frequency: 'yearly',
         timeframe: { start: { type: 'now' }, end: { type: 'atRetirement' } },
         growth: { growthRate: 0 },
+        taxTreatment: { type: 'wage', withholding: 20 },
       }) as const satisfies Partial<IncomeInputs>,
     [numIncomes]
   );
@@ -68,6 +69,7 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
   const endType = endTimePoint?.type;
   const growthRate = useWatch({ control, name: 'growth.growthRate' }) as number | undefined;
   const growthLimit = useWatch({ control, name: 'growth.growthLimit' }) as number | undefined;
+  const taxTreatmentType = useWatch({ control, name: 'taxTreatment.type' });
 
   useEffect(() => {
     if (frequency === 'oneTime') {
@@ -101,7 +103,11 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
     if (endType !== 'customAge') {
       unregister('timeframe.end.age');
     }
-  }, [frequency, startType, endType, unregister]);
+
+    if (!supportsWithholding(taxTreatmentType)) {
+      unregister('taxTreatment.withholding');
+    }
+  }, [frequency, startType, endType, unregister, taxTreatmentType]);
 
   const getStartColSpan = () => {
     if (startType === 'customDate') return 'col-span-2';
@@ -113,6 +119,11 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
     if (endType === 'customDate') return 'col-span-2';
     if (endType === 'customAge') return 'col-span-1';
     return 'col-span-2';
+  };
+
+  const getTaxTreatmentTypeColSpan = () => {
+    if (supportsWithholding(taxTreatmentType)) return 'col-span-1';
+    return 'col-span-1 sm:col-span-2';
   };
 
   const months = [
@@ -142,6 +153,7 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
 
   const timeFrameButtonRef = useRef<HTMLButtonElement>(null);
   const rateOfChangeButtonRef = useRef<HTMLButtonElement>(null);
+  const taxTreatmentButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeDisclosure, setActiveDisclosure] = useState<DisclosureState | null>(null);
   const toggleDisclosure = useCallback(
@@ -154,6 +166,9 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
             break;
           case 'rateOfChange':
             targetRef = rateOfChangeButtonRef.current;
+            break;
+          case 'taxTreatment':
+            targetRef = taxTreatmentButtonRef.current;
             break;
         }
 
@@ -493,6 +508,63 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
                   )}
                 </Disclosure>
               )}
+              <Disclosure as="div" className="border-border/50 border-t pt-4">
+                {({ open, close }) => (
+                  <>
+                    <DisclosureButton
+                      ref={taxTreatmentButtonRef}
+                      onClick={() => {
+                        if (!open) close();
+                        toggleDisclosure({ open, close, key: 'taxTreatment' });
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          if (!open) close();
+                          toggleDisclosure({ open, close, key: 'taxTreatment' });
+                        }
+                      }}
+                      className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
+                    >
+                      <div className="flex items-center gap-2">
+                        <BanknoteXIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
+                        <span className="text-base/7 font-semibold">Taxes</span>
+                        <span className="hidden sm:inline">|</span>
+                        <span className="text-muted-foreground hidden truncate sm:inline">...</span>
+                      </div>
+                      <span className="text-muted-foreground ml-6 flex h-7 items-center">
+                        <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
+                        <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
+                      </span>
+                    </DisclosureButton>
+                    <DisclosurePanel className="pt-4">
+                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <Field className={getTaxTreatmentTypeColSpan()}>
+                          <Label htmlFor="taxTreatment.type">Tax Treatment</Label>
+                          <Select {...register('taxTreatment.type')} id="taxTreatment.type" name="taxTreatment.type">
+                            <option value="wage">Wage</option>
+                            <option value="selfEmployment">Self-Employment</option>
+                            <option value="exempt">Tax-Exempt</option>
+                          </Select>
+                        </Field>
+                        {supportsWithholding(taxTreatmentType) && (
+                          <Field>
+                            <Label htmlFor="taxTreatment.withholding">% Withholding</Label>
+                            <NumberInput
+                              name="taxTreatment.withholding"
+                              control={control}
+                              id="taxTreatment.withholding"
+                              inputMode="decimal"
+                              placeholder="20%"
+                              suffix="%"
+                            />
+                            {errors.taxTreatment?.withholding && <ErrorMessage>{errors.taxTreatment?.withholding?.message}</ErrorMessage>}
+                          </Field>
+                        )}
+                      </div>
+                    </DisclosurePanel>
+                  </>
+                )}
+              </Disclosure>
             </FieldGroup>
           </DialogBody>
         </Fieldset>

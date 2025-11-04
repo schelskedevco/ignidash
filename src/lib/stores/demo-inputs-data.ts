@@ -30,6 +30,10 @@ export const demoInputs1: SimulatorInputs = {
         growthRate: 3,
         growthLimit: 150000,
       },
+      taxTreatment: {
+        type: 'wage',
+        withholding: 20,
+      },
     },
     'income-2': {
       id: 'income-2',
@@ -47,6 +51,10 @@ export const demoInputs1: SimulatorInputs = {
       growth: {
         growthRate: 2,
         growthLimit: 25000,
+      },
+      taxTreatment: {
+        type: 'selfEmployment',
+        withholding: 20,
       },
     },
   },
@@ -194,6 +202,10 @@ export const demoInputs2: SimulatorInputs = {
         growthRate: 5,
         growthLimit: 250000,
       },
+      taxTreatment: {
+        type: 'wage',
+        withholding: 25,
+      },
     },
     'income-2': {
       id: 'income-2',
@@ -213,6 +225,10 @@ export const demoInputs2: SimulatorInputs = {
           age: 36,
         },
       },
+      taxTreatment: {
+        type: 'wage',
+        withholding: 25,
+      },
     },
     'income-3': {
       id: 'income-3',
@@ -229,6 +245,10 @@ export const demoInputs2: SimulatorInputs = {
       },
       growth: {
         growthRate: 3,
+      },
+      taxTreatment: {
+        type: 'selfEmployment',
+        withholding: 25,
       },
     },
   },
