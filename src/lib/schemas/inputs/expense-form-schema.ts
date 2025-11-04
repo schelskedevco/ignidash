@@ -4,12 +4,17 @@ import { currencyFieldForbidsZero } from '@/lib/utils/zod-schema-utils';
 
 import { growthSchema, frequencyTimeframeSchema } from './income-expenses-shared-schemas';
 
+export const expenseTaxSchema = z.object({
+  taxDeductible: z.boolean(),
+});
+
 export const expenseFormSchema = z
   .object({
     id: z.string(),
     name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
     amount: currencyFieldForbidsZero('Expense cannot be negative or zero'),
     growth: growthSchema.optional(),
+    taxes: expenseTaxSchema,
     disabled: z.boolean().optional(),
   })
   .extend(frequencyTimeframeSchema.shape)

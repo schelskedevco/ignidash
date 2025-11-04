@@ -76,6 +76,9 @@ export const demoInputs1: SimulatorInputs = {
         growthRate: 3,
         growthLimit: 80000,
       },
+      taxes: {
+        taxDeductible: false,
+      },
     },
     'expense-2': {
       id: 'expense-2',
@@ -93,6 +96,9 @@ export const demoInputs1: SimulatorInputs = {
         end: {
           type: 'atLifeExpectancy',
         },
+      },
+      taxes: {
+        taxDeductible: false,
       },
     },
   },
@@ -270,6 +276,9 @@ export const demoInputs2: SimulatorInputs = {
         growthRate: 3,
         growthLimit: 50000,
       },
+      taxes: {
+        taxDeductible: false,
+      },
     },
     'expense-2': {
       id: 'expense-2',
@@ -288,6 +297,9 @@ export const demoInputs2: SimulatorInputs = {
           age: 36,
         },
       },
+      taxes: {
+        taxDeductible: false,
+      },
     },
     'expense-3': {
       id: 'expense-3',
@@ -304,6 +316,9 @@ export const demoInputs2: SimulatorInputs = {
           type: 'customAge',
           age: 51,
         },
+      },
+      taxes: {
+        taxDeductible: false,
       },
     },
   },

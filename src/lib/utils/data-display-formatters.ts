@@ -79,3 +79,7 @@ export const incomeTaxTreatmentForDisplay = (type: IncomeType, withholding: numb
 
   return `${typeLabel}, ${formatNumber(withholding, 0)}% Withheld`;
 };
+
+export const expenseTaxTreatmentForDisplay = (taxDeductible: boolean) => {
+  return taxDeductible ? 'Tax-Deductible' : 'Not Tax-Deductible';
+};
