@@ -331,8 +331,15 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                                 {percentSalaryError && <ErrorMessage>{percentSalaryError.message}</ErrorMessage>}
                               </Field>
                               <p className="col-span-2 -mt-2 text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400">
-                                Employer matches a percentage of your contributions, up to a certain percentage of your salary (e.g., 50%
-                                match on contributions up to 6% of salary).
+                                Employer matches a percentage of your contributions, up to a certain percentage of your salary.{' '}
+                                <a
+                                  href="https://www.investopedia.com/articles/personal-finance/112315/how-401k-matching-works.asp#toc-examples-of-401k-matching-schemes"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary hidden whitespace-nowrap hover:underline sm:inline"
+                                >
+                                  Learn more →
+                                </a>
                               </p>
                             </>
                           )}
