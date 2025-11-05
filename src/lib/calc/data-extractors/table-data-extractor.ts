@@ -248,6 +248,7 @@ export abstract class TableDataExtractor {
       const portfolioData = data.portfolio;
       const totalPortfolioValue = portfolioData.totalValue;
       const annualContributions = portfolioData.contributionsForPeriod;
+      const annualEmployerMatch = portfolioData.employerMatchForPeriod;
 
       const {
         taxableBrokerageContributions: taxableBrokerage,
@@ -267,6 +268,10 @@ export abstract class TableDataExtractor {
         taxDeferred,
         taxFree,
         cashSavings,
+        annualEmployerMatch,
+        cumulativeEmployerMatch: portfolioData.totalEmployerMatch,
+        annualPersonalContributions: annualContributions - annualEmployerMatch,
+        cumulativePersonalContributions: portfolioData.totalContributions - portfolioData.totalEmployerMatch,
         totalPortfolioValue,
         operatingCashFlow,
         historicalYear,

@@ -162,6 +162,7 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const portfolioData = dp.portfolio;
   const totalValue = portfolioData.totalValue;
   const annualContributions = portfolioData.contributionsForPeriod;
+  const annualEmployerMatch = portfolioData.employerMatchForPeriod;
 
   const { operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(dp);
 
@@ -178,6 +179,12 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
           <DescriptionTerm>Operating Cash Flow*</DescriptionTerm>
           <DescriptionDetails>{formatNumber(operatingCashFlow, 2, '$')}</DescriptionDetails>
+
+          <DescriptionTerm>Annual Employer Match</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(annualEmployerMatch, 2, '$')}</DescriptionDetails>
+
+          <DescriptionTerm>Annual Personal Contributions</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(annualContributions - annualEmployerMatch, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="font-bold">Annual Contributions</DescriptionTerm>
           <DescriptionDetails className="font-bold">{formatNumber(annualContributions, 2, '$')}</DescriptionDetails>

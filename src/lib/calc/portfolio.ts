@@ -250,7 +250,7 @@ export class PortfolioProcessor {
       }
     }
 
-    const totalForPeriod = grossCashFlow - remainingToContribute;
+    const totalForPeriod = grossCashFlow - remainingToContribute + employerMatchForPeriod;
 
     return { totalForPeriod, byAccount, discretionaryExpense, employerMatchForPeriod, employerMatchByAccount };
   }
