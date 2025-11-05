@@ -28,7 +28,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
+  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch';
 }
 
 const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -88,7 +88,7 @@ interface SingleSimulationContributionsLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
+  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch';
   customDataID: string;
   startAge: number;
 }
@@ -128,6 +128,9 @@ export default function SingleSimulationContributionsLineChart({
       break;
     case 'taxCategory':
       dataKeys.push('taxableContributions', 'taxDeferredContributions', 'taxFreeContributions', 'cashContributions');
+      break;
+    case 'employerMatch':
+      dataKeys.push('annualEmployerMatch', 'cumulativeEmployerMatch');
       break;
     case 'custom':
       if (!customDataID) {

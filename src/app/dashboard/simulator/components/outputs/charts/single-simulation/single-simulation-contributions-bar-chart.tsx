@@ -47,7 +47,7 @@ const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--cha
 
 interface SingleSimulationContributionsBarChartProps {
   age: number;
-  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
+  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch';
   rawChartData: SingleSimulationContributionsChartDataPoint[];
   customDataID: string;
 }
@@ -65,6 +65,10 @@ export default function SingleSimulationContributionsBarChart({
     taxCategory: {
       mobile: ['Taxable', 'Tax-Deferred', 'Tax-Free', 'Cash'],
       desktop: ['Taxable Contributions', 'Tax-Deferred Contributions', 'Tax-Free Contributions', 'Cash Contributions'],
+    },
+    employerMatch: {
+      mobile: ['Annual Match', 'Cumul. Match'],
+      desktop: ['Annual Employer Match', 'Cumulative Employer Match'],
     },
   };
 
@@ -89,6 +93,14 @@ export default function SingleSimulationContributionsBarChart({
         { name: taxDeferredLabel, amount: item.taxDeferredContributions },
         { name: taxFreeLabel, amount: item.taxFreeContributions },
         { name: cashLabel, amount: item.cashContributions },
+      ]);
+      break;
+    }
+    case 'employerMatch': {
+      const [annualMatchLabel, cumulativeMatchLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      transformedChartData = chartData.flatMap((item) => [
+        { name: annualMatchLabel, amount: item.annualEmployerMatch },
+        { name: cumulativeMatchLabel, amount: item.cumulativeEmployerMatch },
       ]);
       break;
     }

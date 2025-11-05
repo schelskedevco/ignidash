@@ -203,6 +203,8 @@ export abstract class ChartDataExtractor {
         age,
         cumulativeContributions: portfolioData.totalContributions,
         annualContributions,
+        cumulativeEmployerMatch: portfolioData.totalEmployerMatch,
+        annualEmployerMatch: portfolioData.employerMatchForPeriod,
         perAccountData: Object.values(portfolioData.perAccountData),
         taxableContributions,
         taxDeferredContributions,

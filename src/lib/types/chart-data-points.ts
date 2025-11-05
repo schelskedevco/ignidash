@@ -92,6 +92,8 @@ export interface SingleSimulationContributionsChartDataPoint {
   age: number;
   cumulativeContributions: number;
   annualContributions: number;
+  cumulativeEmployerMatch: number;
+  annualEmployerMatch: number;
   perAccountData: AccountDataWithTransactions[];
   taxableContributions: number;
   taxDeferredContributions: number;

@@ -14,8 +14,8 @@ import SingleSimulationContributionsLineChart from '../../charts/single-simulati
 interface SingleSimulationContributionsLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom') => void;
-  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
+  setDataView: (view: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch') => void;
+  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch';
   setCustomDataID: (name: string) => void;
   customDataID: string;
   rawChartData: SingleSimulationContributionsChartDataPoint[];
@@ -59,12 +59,15 @@ export default function SingleSimulationContributionsLineChartCard({
           value={dataView === 'custom' ? customDataID : dataView}
           onChange={(e) => {
             const isCustomSelection =
-              e.target.value !== 'annualAmounts' && e.target.value !== 'cumulativeAmounts' && e.target.value !== 'taxCategory';
+              e.target.value !== 'annualAmounts' &&
+              e.target.value !== 'cumulativeAmounts' &&
+              e.target.value !== 'taxCategory' &&
+              e.target.value !== 'employerMatch';
             if (isCustomSelection) {
               setDataView('custom');
               setCustomDataID(e.target.value);
             } else {
-              setDataView(e.target.value as 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory');
+              setDataView(e.target.value as 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'employerMatch');
               setCustomDataID('');
             }
           }}
@@ -72,6 +75,7 @@ export default function SingleSimulationContributionsLineChartCard({
           <option value="taxCategory">Tax Category</option>
           <option value="annualAmounts">Annual Contributions</option>
           <option value="cumulativeAmounts">Cumulative Contributions</option>
+          <option value="employerMatch">Employer Match</option>
           <optgroup label="By Account">
             {uniqueAccounts.map((account) => (
               <option key={account.id} value={account.id}>
