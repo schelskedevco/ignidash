@@ -201,7 +201,7 @@ export class TaxProcessor {
       grossIncomeFromTaxDeferredWithdrawals += this.getEarningsWithdrawnFromRothAccountTypes(annualPortfolioDataBeforeTaxes);
     }
 
-    const taxDeferredContributions = this.getContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira', 'hsa']);
+    const taxDeferredContributions = this.getPersonalContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira', 'hsa']);
 
     return {
       grossOrdinaryIncome:
@@ -225,10 +225,13 @@ export class TaxProcessor {
     }
   }
 
-  private getContributionsForAccountTypes(annualPortfolioDataBeforeTaxes: PortfolioData, accountTypes: AccountInputs['type'][]): number {
+  private getPersonalContributionsForAccountTypes(
+    annualPortfolioDataBeforeTaxes: PortfolioData,
+    accountTypes: AccountInputs['type'][]
+  ): number {
     return Object.values(annualPortfolioDataBeforeTaxes.perAccountData)
       .filter((account) => accountTypes.includes(account.type))
-      .reduce((sum, account) => sum + account.contributionsForPeriod, 0);
+      .reduce((sum, account) => sum + (account.contributionsForPeriod - account.employerMatchForPeriod), 0);
   }
 
   private getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes: PortfolioData, accountTypes: AccountInputs['type'][]): number {

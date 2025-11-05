@@ -54,7 +54,7 @@ export class ContributionRule {
       maxContribution = Math.min(maxContribution, totalEligibleGrossIncome);
     }
 
-    const contributionsSoFar = this.getContributionsSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
+    const contributionsSoFar = this.getPersonalContributionsSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
 
     const desiredContribution = this.calculateDesiredContribution(remainingToContribute, contributionsSoFar);
     const contributionAmount = Math.min(desiredContribution, maxContribution);
@@ -97,22 +97,25 @@ export class ContributionRule {
     const limit = getAnnualContributionLimit(getAccountTypeLimitKey(accountType), age);
     if (!Number.isFinite(limit)) return Infinity;
 
-    const contributionsSoFar = this.getContributionsSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
+    const contributionsSoFar = this.getPersonalContributionsSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
     return Math.max(0, limit - contributionsSoFar);
   }
 
-  private getContributionsSoFarByAccountTypes(monthlyPortfolioData: PortfolioData[], accountTypes: AccountInputs['type'][]): number {
+  private getPersonalContributionsSoFarByAccountTypes(
+    monthlyPortfolioData: PortfolioData[],
+    accountTypes: AccountInputs['type'][]
+  ): number {
     return monthlyPortfolioData
       .flatMap((data) => Object.values(data.perAccountData))
       .filter((account) => accountTypes.includes(account.type))
-      .reduce((sum, account) => sum + account.contributionsForPeriod, 0);
+      .reduce((sum, account) => sum + (account.contributionsForPeriod - account.employerMatchForPeriod), 0);
   }
 
-  private getContributionsSoFarByAccountID(monthlyPortfolioData: PortfolioData[], accountID: string): number {
+  private getPersonalContributionsSoFarByAccountID(monthlyPortfolioData: PortfolioData[], accountID: string): number {
     return monthlyPortfolioData
       .flatMap((data) => Object.values(data.perAccountData))
       .filter((account) => account.id === accountID)
-      .reduce((sum, account) => sum + account.contributionsForPeriod, 0);
+      .reduce((sum, account) => sum + (account.contributionsForPeriod - account.employerMatchForPeriod), 0);
   }
 
   private getEmployerMatchSoFarByAccountID(monthlyPortfolioData: PortfolioData[], accountID: string): number {
