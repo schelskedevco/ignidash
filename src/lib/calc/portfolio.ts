@@ -56,8 +56,11 @@ export class PortfolioProcessor {
     const grossCashFlow = incomesData.totalIncomeAfterWithholding - expensesData.totalExpenses;
 
     const {
-      transactionsBreakdown: { totalForPeriod: contributionsForPeriod, byAccount: contributionsByAccount },
+      totalForPeriod: contributionsForPeriod,
+      byAccount: contributionsByAccount,
       discretionaryExpense,
+      employerMatchForPeriod,
+      employerMatchByAccount,
     } = this.processContributions(grossCashFlow, incomesData);
 
     const {
@@ -73,6 +76,7 @@ export class PortfolioProcessor {
     const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
       {}, // baseAccountData
       contributionsByAccount,
+      employerMatchByAccount,
       withdrawalsByAccount,
       realizedGainsByAccount,
       earningsWithdrawnByAccount,
@@ -83,6 +87,7 @@ export class PortfolioProcessor {
       {
         withdrawalsForPeriod,
         contributionsForPeriod,
+        employerMatchForPeriod,
         realizedGainsForPeriod,
         earningsWithdrawnForPeriod,
         rmdsForPeriod: 0,
@@ -103,12 +108,14 @@ export class PortfolioProcessor {
 
     let withdrawalsForPeriod = annualPortfolioDataBeforeTaxes.withdrawalsForPeriod;
     let contributionsForPeriod = annualPortfolioDataBeforeTaxes.contributionsForPeriod;
+    let employerMatchForPeriod = annualPortfolioDataBeforeTaxes.employerMatchForPeriod;
     let realizedGainsForPeriod = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod;
     let earningsWithdrawnForPeriod = annualPortfolioDataBeforeTaxes.earningsWithdrawnForPeriod;
     const rmdsForPeriod = annualPortfolioDataBeforeTaxes.rmdsForPeriod;
     let shortfallForPeriod = annualPortfolioDataBeforeTaxes.shortfallForPeriod;
 
     let contributionsByAccount: Record<string, number> = {};
+    let employerMatchByAccount: Record<string, number> = {};
     let withdrawalsByAccount: Record<string, number> = {};
     let realizedGainsByAccount: Record<string, number> = {};
     let earningsWithdrawnByAccount: Record<string, number> = {};
@@ -118,10 +125,12 @@ export class PortfolioProcessor {
 
     let discretionaryExpense = 0;
     if (taxesRefundAfterShortfall > 0) {
-      const { transactionsBreakdown: res, discretionaryExpense: expense } = this.processContributions(taxesRefundAfterShortfall);
+      const res = this.processContributions(taxesRefundAfterShortfall);
       contributionsForPeriod += res.totalForPeriod;
       contributionsByAccount = res.byAccount;
-      discretionaryExpense += expense;
+      discretionaryExpense += res.discretionaryExpense;
+      employerMatchForPeriod += res.employerMatchForPeriod;
+      employerMatchByAccount = res.employerMatchByAccount;
     }
 
     if (taxesData.totalTaxesDue > 0) {
@@ -138,6 +147,7 @@ export class PortfolioProcessor {
     const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
       perAccountDataBeforeTaxes,
       contributionsByAccount,
+      employerMatchByAccount,
       withdrawalsByAccount,
       realizedGainsByAccount,
       earningsWithdrawnByAccount,
@@ -148,6 +158,7 @@ export class PortfolioProcessor {
       {
         withdrawalsForPeriod,
         contributionsForPeriod,
+        employerMatchForPeriod,
         realizedGainsForPeriod,
         earningsWithdrawnForPeriod,
         rmdsForPeriod,
@@ -162,14 +173,21 @@ export class PortfolioProcessor {
   private processContributions(
     grossCashFlow: number,
     incomesData?: IncomesData
-  ): { transactionsBreakdown: TransactionsBreakdown; discretionaryExpense: number } {
+  ): TransactionsBreakdown & {
+    discretionaryExpense: number;
+    employerMatchForPeriod: number;
+    employerMatchByAccount: Record<string, number>;
+  } {
     const byAccount: Record<string, number> = {};
+    const employerMatchByAccount: Record<string, number> = {};
     if (!(grossCashFlow > 0)) {
-      return { transactionsBreakdown: { totalForPeriod: 0, byAccount }, discretionaryExpense: 0 };
+      return { totalForPeriod: 0, byAccount, discretionaryExpense: 0, employerMatchForPeriod: 0, employerMatchByAccount };
     }
 
     const age = this.simulationState.time.age;
     const contributionRules = this.contributionRules.getRules().sort((a, b) => a.getRank() - b.getRank());
+
+    let employerMatchForPeriod = 0;
 
     let remainingToContribute = grossCashFlow;
     let currentRuleIndex = 0;
@@ -185,14 +203,24 @@ export class PortfolioProcessor {
         continue;
       }
 
-      const contributionAmount = rule.getContributionAmount(remainingToContribute, contributeToAccount, this.monthlyData, age, incomesData);
+      const { contributionAmount, employerMatchAmount } = rule.getContributionAmount(
+        remainingToContribute,
+        contributeToAccount,
+        this.monthlyData,
+        age,
+        incomesData
+      );
       if (contributionAmount <= 0) {
         currentRuleIndex++;
         continue;
       }
 
-      contributeToAccount.applyContribution(contributionAmount);
-      byAccount[contributeToAccountID] = contributionAmount;
+      contributeToAccount.applyContribution(contributionAmount, 'self');
+      byAccount[contributeToAccountID] = contributionAmount + employerMatchAmount;
+
+      if (employerMatchAmount > 0) contributeToAccount.applyContribution(employerMatchAmount, 'employer');
+      employerMatchByAccount[contributeToAccountID] = employerMatchAmount;
+      employerMatchForPeriod += employerMatchAmount;
 
       remainingToContribute -= contributionAmount;
       currentRuleIndex++;
@@ -213,7 +241,7 @@ export class PortfolioProcessor {
             this.simulationState.portfolio.addExtraSavingsAccount(this.extraSavingsAccount);
           }
 
-          this.extraSavingsAccount.applyContribution(remainingToContribute);
+          this.extraSavingsAccount.applyContribution(remainingToContribute, 'self');
           byAccount[this.extraSavingsAccount.getAccountID()] =
             (byAccount[this.extraSavingsAccount.getAccountID()] || 0) + remainingToContribute;
 
@@ -224,7 +252,7 @@ export class PortfolioProcessor {
 
     const totalForPeriod = grossCashFlow - remainingToContribute;
 
-    return { transactionsBreakdown: { totalForPeriod, byAccount }, discretionaryExpense };
+    return { totalForPeriod, byAccount, discretionaryExpense, employerMatchForPeriod, employerMatchByAccount };
   }
 
   private processWithdrawals(grossCashFlow: number): TransactionsBreakdown & {
@@ -340,13 +368,14 @@ export class PortfolioProcessor {
       this.simulationState.portfolio.addRmdSavingsAccount(this.rmdSavingsAccount);
     }
 
-    this.rmdSavingsAccount.applyContribution(totalForPeriod);
+    this.rmdSavingsAccount.applyContribution(totalForPeriod, 'self');
     contributionsByAccount[this.rmdSavingsAccount.getAccountID()] =
       (contributionsByAccount[this.rmdSavingsAccount.getAccountID()] || 0) + totalForPeriod;
 
     const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
       {}, // baseAccountData
       contributionsByAccount,
+      {}, // employerMatchByAccount
       withdrawalsByAccount,
       realizedGainsByAccount,
       earningsWithdrawnByAccount,
@@ -356,6 +385,7 @@ export class PortfolioProcessor {
     const portfolioData = this.buildPortfolioData(
       {
         withdrawalsForPeriod: totalForPeriod,
+        employerMatchForPeriod: 0,
         contributionsForPeriod: totalForPeriod,
         realizedGainsForPeriod,
         earningsWithdrawnForPeriod,
@@ -372,6 +402,7 @@ export class PortfolioProcessor {
   private buildPerAccountData(
     baseAccountData: Record<string, AccountDataWithTransactions>,
     contributionsByAccount: Record<string, number>,
+    employerMatchByAccount: Record<string, number>,
     withdrawalsByAccount: Record<string, number>,
     realizedGainsByAccount: Record<string, number>,
     earningsWithdrawnByAccount: Record<string, number>,
@@ -391,6 +422,7 @@ export class PortfolioProcessor {
           {
             ...accountData,
             contributionsForPeriod: addToBase(accountID, 'contributionsForPeriod', contributionsByAccount[accountID] || 0),
+            employerMatchForPeriod: addToBase(accountID, 'employerMatchForPeriod', employerMatchByAccount[accountID] || 0),
             withdrawalsForPeriod: addToBase(accountID, 'withdrawalsForPeriod', withdrawalsByAccount[accountID] || 0),
             realizedGainsForPeriod: addToBase(accountID, 'realizedGainsForPeriod', realizedGainsByAccount[accountID] || 0),
             earningsWithdrawnForPeriod: addToBase(accountID, 'earningsWithdrawnForPeriod', earningsWithdrawnByAccount[accountID] || 0),
@@ -405,6 +437,7 @@ export class PortfolioProcessor {
     forPeriodData: {
       withdrawalsForPeriod: number;
       contributionsForPeriod: number;
+      employerMatchForPeriod: number;
       realizedGainsForPeriod: number;
       earningsWithdrawnForPeriod: number;
       rmdsForPeriod: number;
@@ -416,6 +449,7 @@ export class PortfolioProcessor {
       totalValue: this.simulationState.portfolio.getTotalValue(),
       totalWithdrawals: this.simulationState.portfolio.getTotalWithdrawals(),
       totalContributions: this.simulationState.portfolio.getTotalContributions(),
+      totalEmployerMatch: this.simulationState.portfolio.getTotalEmployerMatch(),
       totalRealizedGains: this.simulationState.portfolio.getTotalRealizedGains(),
       totalEarningsWithdrawn: this.simulationState.portfolio.getTotalEarningsWithdrawn(),
       totalRmds: this.simulationState.portfolio.getTotalRmds(),
@@ -467,6 +501,7 @@ export class PortfolioProcessor {
       ...this.monthlyData.reduce(
         (acc, curr) => {
           acc.contributionsForPeriod += curr.contributionsForPeriod;
+          acc.employerMatchForPeriod += curr.employerMatchForPeriod;
           acc.withdrawalsForPeriod += curr.withdrawalsForPeriod;
           acc.realizedGainsForPeriod += curr.realizedGainsForPeriod;
           acc.earningsWithdrawnForPeriod += curr.earningsWithdrawnForPeriod;
@@ -477,6 +512,7 @@ export class PortfolioProcessor {
             acc.perAccountData[accountID] = {
               ...accountData,
               contributionsForPeriod: (acc.perAccountData[accountID]?.contributionsForPeriod ?? 0) + accountData.contributionsForPeriod,
+              employerMatchForPeriod: (acc.perAccountData[accountID]?.employerMatchForPeriod ?? 0) + accountData.employerMatchForPeriod,
               withdrawalsForPeriod: (acc.perAccountData[accountID]?.withdrawalsForPeriod ?? 0) + accountData.withdrawalsForPeriod,
               realizedGainsForPeriod: (acc.perAccountData[accountID]?.realizedGainsForPeriod ?? 0) + accountData.realizedGainsForPeriod,
               earningsWithdrawnForPeriod:
@@ -489,6 +525,7 @@ export class PortfolioProcessor {
         },
         {
           contributionsForPeriod: 0,
+          employerMatchForPeriod: 0,
           withdrawalsForPeriod: 0,
           realizedGainsForPeriod: 0,
           earningsWithdrawnForPeriod: 0,
@@ -505,12 +542,14 @@ export interface PortfolioData {
   totalValue: number;
   totalWithdrawals: number;
   totalContributions: number;
+  totalEmployerMatch: number;
   totalRealizedGains: number;
   totalEarningsWithdrawn: number;
   totalRmds: number;
   totalShortfall: number;
   withdrawalsForPeriod: number;
   contributionsForPeriod: number;
+  employerMatchForPeriod: number;
   realizedGainsForPeriod: number;
   earningsWithdrawnForPeriod: number;
   rmdsForPeriod: number;
@@ -582,6 +621,10 @@ export class Portfolio {
 
   getTotalContributions(): number {
     return this.accounts.reduce((acc, account) => acc + account.getTotalContributions(), 0);
+  }
+
+  getTotalEmployerMatch(): number {
+    return this.accounts.reduce((acc, account) => acc + account.getTotalEmployerMatch(), 0);
   }
 
   getTotalRealizedGains(): number {

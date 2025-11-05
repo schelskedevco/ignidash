@@ -219,7 +219,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
                 </Field>
               )}
               {selectedAccount && supportsEmployerMatch(selectedAccount.type) && (
-                <Field disabled>
+                <Field>
                   <Label htmlFor="employerMatch" className="flex w-full items-center justify-between">
                     <span className="whitespace-nowrap">Employer Match</span>
                     <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>

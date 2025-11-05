@@ -207,6 +207,7 @@ export class FinancialSimulationEngine {
 
     const defaultTransactionsData = {
       contributionsForPeriod: 0,
+      employerMatchForPeriod: 0,
       withdrawalsForPeriod: 0,
       realizedGainsForPeriod: 0,
       earningsWithdrawnForPeriod: 0,
@@ -224,12 +225,14 @@ export class FinancialSimulationEngine {
       portfolio: {
         totalValue: totalPortfolioValue,
         totalContributions: 0,
+        totalEmployerMatch: 0,
         totalWithdrawals: 0,
         totalRealizedGains: 0,
         totalEarningsWithdrawn: 0,
         totalRmds: 0,
         totalShortfall: 0,
         contributionsForPeriod: 0,
+        employerMatchForPeriod: 0,
         withdrawalsForPeriod: 0,
         realizedGainsForPeriod: 0,
         earningsWithdrawnForPeriod: 0,

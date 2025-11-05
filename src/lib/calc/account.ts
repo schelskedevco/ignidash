@@ -3,10 +3,12 @@ import type { AccountInputs, InvestmentAccountType } from '@/lib/schemas/inputs/
 import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation, AssetYieldRates, AssetYieldAmounts, TaxCategory } from './asset';
 
 type WithdrawalType = 'rmd' | 'regular';
+type ContributionType = 'self' | 'employer';
 
 export interface AccountData {
   balance: number;
   totalContributions: number;
+  totalEmployerMatch: number;
   totalWithdrawals: number;
   totalRealizedGains: number;
   totalEarningsWithdrawn: number;
@@ -19,6 +21,7 @@ export interface AccountData {
 
 export interface AccountDataWithTransactions extends AccountData {
   contributionsForPeriod: number;
+  employerMatchForPeriod: number;
   withdrawalsForPeriod: number;
   realizedGainsForPeriod: number;
   earningsWithdrawnForPeriod: number;
@@ -35,6 +38,7 @@ export abstract class Account {
     protected type: AccountInputs['type'],
     protected totalReturns: AssetReturnAmounts,
     protected totalContributions: number,
+    protected totalEmployerMatch: number,
     protected totalWithdrawals: number,
     protected totalRealizedGains: number,
     protected totalEarningsWithdrawn: number,
@@ -66,6 +70,10 @@ export abstract class Account {
     return this.totalContributions;
   }
 
+  getTotalEmployerMatch(): number {
+    return this.totalEmployerMatch;
+  }
+
   getTotalWithdrawals(): number {
     return this.totalWithdrawals;
   }
@@ -90,7 +98,7 @@ export abstract class Account {
   abstract getAccountData(): AccountData;
   abstract applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts };
   abstract applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts };
-  abstract applyContribution(amount: number): void;
+  abstract applyContribution(amount: number, type: ContributionType): void;
   abstract applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number };
 }
 
@@ -98,7 +106,7 @@ export class SavingsAccount extends Account {
   readonly taxCategory: TaxCategory = 'cashSavings';
 
   constructor(data: AccountInputs) {
-    super(data.balance, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, 0, {
+    super(data.balance, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, 0, 0, {
       stocks: 0,
       bonds: 0,
       cash: 0,
@@ -120,6 +128,7 @@ export class SavingsAccount extends Account {
       balance: this.balance,
       totalWithdrawals: this.totalWithdrawals,
       totalContributions: this.totalContributions,
+      totalEmployerMatch: this.totalEmployerMatch,
       totalRealizedGains: this.totalRealizedGains,
       totalEarningsWithdrawn: this.totalEarningsWithdrawn,
       totalRmds: this.totalRmds,
@@ -151,9 +160,10 @@ export class SavingsAccount extends Account {
     };
   }
 
-  applyContribution(amount: number): void {
+  applyContribution(amount: number, type: ContributionType): void {
     this.balance += amount;
     this.totalContributions += amount;
+    if (type === 'employer') this.totalEmployerMatch += amount;
   }
 
   applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number } {
@@ -172,7 +182,7 @@ export abstract class InvestmentAccount extends Account {
   private currPercentBonds: number;
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
-    super(data.balance, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, 0, {
+    super(data.balance, data.name, data.id, data.type, { cash: 0, bonds: 0, stocks: 0 }, 0, 0, 0, 0, 0, 0, {
       stocks: 0,
       bonds: 0,
       cash: 0,
@@ -196,6 +206,7 @@ export abstract class InvestmentAccount extends Account {
       balance: this.balance,
       totalWithdrawals: this.totalWithdrawals,
       totalContributions: this.totalContributions,
+      totalEmployerMatch: this.totalEmployerMatch,
       totalRealizedGains: this.totalRealizedGains,
       totalEarningsWithdrawn: this.totalEarningsWithdrawn,
       totalRmds: this.totalRmds,
@@ -248,7 +259,7 @@ export abstract class InvestmentAccount extends Account {
     };
   }
 
-  protected applyContributionShared(amount: number): void {
+  protected applyContributionShared(amount: number, type: ContributionType): void {
     if (amount < 0) throw new Error('Contribution amount must be non-negative');
     if (amount === 0) return;
 
@@ -264,6 +275,7 @@ export abstract class InvestmentAccount extends Account {
     this.currPercentBonds = newBalance ? (currentBondValue + bondContribution) / newBalance : this.initialPercentBonds;
 
     this.totalContributions += amount;
+    if (type === 'employer') this.totalEmployerMatch += amount;
   }
 
   protected applyWithdrawalShared(amount: number, type: WithdrawalType): void {
@@ -301,8 +313,8 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
     return this.costBasis;
   }
 
-  applyContribution(amount: number): void {
-    super.applyContributionShared(amount);
+  applyContribution(amount: number, type: ContributionType): void {
+    super.applyContributionShared(amount, type);
     this.costBasis += amount;
   }
 
@@ -327,8 +339,8 @@ export class TaxDeferredAccount extends InvestmentAccount {
     super(data);
   }
 
-  applyContribution(amount: number): void {
-    super.applyContributionShared(amount);
+  applyContribution(amount: number, type: ContributionType): void {
+    super.applyContributionShared(amount, type);
   }
 
   applyWithdrawal(amount: number, type: WithdrawalType): { realizedGains: number; earningsWithdrawn: number } {
@@ -351,8 +363,8 @@ export class TaxFreeAccount extends InvestmentAccount {
     return this.contributionBasis;
   }
 
-  applyContribution(amount: number): void {
-    super.applyContributionShared(amount);
+  applyContribution(amount: number, type: ContributionType): void {
+    super.applyContributionShared(amount, type);
     this.contributionBasis += amount;
   }
 

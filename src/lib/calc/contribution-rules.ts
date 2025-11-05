@@ -38,7 +38,7 @@ export class ContributionRule {
     monthlyPortfolioData: PortfolioData[],
     age: number,
     incomesData?: IncomesData
-  ): number {
+  ): { contributionAmount: number; employerMatchAmount: number } {
     const currentBalance = account.getBalance();
     const maxBalance = this.contributionInput.maxBalance;
 
@@ -54,18 +54,19 @@ export class ContributionRule {
       maxContribution = Math.min(maxContribution, totalEligibleGrossIncome);
     }
 
-    let contributionAmount;
-    switch (this.contributionInput.contributionType) {
-      case 'dollarAmount':
-        const contributionsSoFar = this.getContributionsSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
-        contributionAmount = Math.max(0, this.contributionInput.dollarAmount - contributionsSoFar);
-        return Math.min(contributionAmount, maxContribution);
-      case 'percentRemaining':
-        contributionAmount = remainingToContribute * (this.contributionInput.percentRemaining / 100);
-        return Math.min(contributionAmount, maxContribution);
-      case 'unlimited':
-        return maxContribution;
+    const contributionsSoFar = this.getContributionsSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
+
+    const desiredContribution = this.calculateDesiredContribution(remainingToContribute, contributionsSoFar);
+    const contributionAmount = Math.min(desiredContribution, maxContribution);
+
+    let employerMatchAmount: number = 0;
+    if (this.contributionInput.employerMatch) {
+      const employerMatchSoFar = this.getEmployerMatchSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
+      const remainingToMaxEmployerMatch = Math.max(0, this.contributionInput.employerMatch - employerMatchSoFar);
+      employerMatchAmount = Math.min(contributionAmount, remainingToMaxEmployerMatch);
     }
+
+    return { contributionAmount, employerMatchAmount };
   }
 
   getAccountID(): string {
@@ -74,6 +75,17 @@ export class ContributionRule {
 
   getRank(): number {
     return this.contributionInput.rank;
+  }
+
+  private calculateDesiredContribution(remainingToContribute: number, contributionsSoFar: number): number {
+    switch (this.contributionInput.contributionType) {
+      case 'dollarAmount':
+        return Math.max(0, this.contributionInput.dollarAmount - contributionsSoFar);
+      case 'percentRemaining':
+        return remainingToContribute * (this.contributionInput.percentRemaining / 100);
+      case 'unlimited':
+        return Infinity;
+    }
   }
 
   private getRemainingToAccountTypeContributionLimit(account: Account, monthlyPortfolioData: PortfolioData[], age: number): number {
@@ -101,5 +113,12 @@ export class ContributionRule {
       .flatMap((data) => Object.values(data.perAccountData))
       .filter((account) => account.id === accountID)
       .reduce((sum, account) => sum + account.contributionsForPeriod, 0);
+  }
+
+  private getEmployerMatchSoFarByAccountID(monthlyPortfolioData: PortfolioData[], accountID: string): number {
+    return monthlyPortfolioData
+      .flatMap((data) => Object.values(data.perAccountData))
+      .filter((account) => account.id === accountID)
+      .reduce((sum, account) => sum + (account.employerMatchForPeriod || 0), 0);
   }
 }
