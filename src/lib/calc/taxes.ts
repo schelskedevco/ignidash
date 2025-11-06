@@ -64,18 +64,18 @@ export class TaxProcessor {
   constructor(private simulationState: SimulationState) {}
 
   process(annualPortfolioDataBeforeTaxes: PortfolioData, annualIncomesData: IncomesData, annualReturnsData: ReturnsData): TaxesData {
-    const { grossOrdinaryIncome, taxDeferredContributions } = this.getGrossOrdinaryIncome(
+    const { adjustedOrdinaryIncome, taxDeferredContributions } = this.getIncomeData(
       annualPortfolioDataBeforeTaxes,
       annualIncomesData,
       annualReturnsData
     );
 
-    const { grossRealizedGains, capitalLossDeduction } = this.getGrossRealizedGainsAndCapLossDeduction(annualPortfolioDataBeforeTaxes);
+    const { adjustedRealizedGains, capitalLossDeduction } = this.getRealizedGainsAndCapLossDeductionData(annualPortfolioDataBeforeTaxes);
 
     const grossDividendIncome = annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
-    const grossIncomeTaxedAsCapGains = grossRealizedGains + grossDividendIncome;
+    const grossIncomeTaxedAsCapGains = adjustedRealizedGains + grossDividendIncome;
 
-    const adjustedGrossOrdinaryIncome = Math.max(0, grossOrdinaryIncome + capitalLossDeduction);
+    const adjustedGrossOrdinaryIncome = Math.max(0, adjustedOrdinaryIncome + capitalLossDeduction);
 
     const deductionUsedForOrdinary = Math.min(STANDARD_DEDUCTION_SINGLE, adjustedGrossOrdinaryIncome);
     const deductionUsedForGains = STANDARD_DEDUCTION_SINGLE - deductionUsedForOrdinary;
@@ -87,9 +87,9 @@ export class TaxProcessor {
     const incomeTaxes: IncomeTaxesData = {
       taxableOrdinaryIncome,
       incomeTaxAmount,
-      effectiveIncomeTaxRate: grossOrdinaryIncome > 0 ? incomeTaxAmount / grossOrdinaryIncome : 0,
+      effectiveIncomeTaxRate: adjustedOrdinaryIncome > 0 ? incomeTaxAmount / adjustedOrdinaryIncome : 0,
       topMarginalTaxRate,
-      netIncome: grossOrdinaryIncome - incomeTaxAmount,
+      netIncome: adjustedOrdinaryIncome - incomeTaxAmount,
       capitalLossDeduction: capitalLossDeduction !== 0 ? capitalLossDeduction : undefined,
     };
 
@@ -184,11 +184,11 @@ export class TaxProcessor {
     return { taxDeferredPenaltyAmount, taxFreePenaltyAmount, totalPenaltyAmount: taxDeferredPenaltyAmount + taxFreePenaltyAmount };
   }
 
-  private getGrossOrdinaryIncome(
+  private getIncomeData(
     annualPortfolioDataBeforeTaxes: PortfolioData,
     annualIncomesData: IncomesData,
     annualReturnsData: ReturnsData
-  ): { grossOrdinaryIncome: number; taxDeferredContributions: number } {
+  ): { totalIncome: number; grossOrdinaryIncome: number; adjustedOrdinaryIncome: number; taxDeferredContributions: number } {
     const grossIncomeFromIncomes = annualIncomesData.totalGrossIncome;
     const grossIncomeFromInterest =
       annualReturnsData.yieldAmountsForPeriod.taxable.bonds + annualReturnsData.yieldAmountsForPeriod.cashSavings.cash;
@@ -204,31 +204,30 @@ export class TaxProcessor {
     const taxDeferredContributions = this.getEmployeeContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira', 'hsa']);
     const taxExemptIncome = annualIncomesData.totalTaxExemptIncome;
 
+    const totalIncome = grossIncomeFromIncomes + grossIncomeFromInterest + grossIncomeFromTaxDeferredWithdrawals + taxExemptIncome;
+    const grossOrdinaryIncome = Math.max(0, totalIncome - taxExemptIncome);
+    const adjustedOrdinaryIncome = Math.max(0, grossOrdinaryIncome - taxDeferredContributions);
+
     return {
-      grossOrdinaryIncome: Math.max(
-        0,
-        grossIncomeFromIncomes +
-          grossIncomeFromTaxDeferredWithdrawals +
-          grossIncomeFromInterest -
-          taxDeferredContributions -
-          taxExemptIncome
-      ),
+      totalIncome,
+      grossOrdinaryIncome,
+      adjustedOrdinaryIncome,
       taxDeferredContributions,
     };
   }
 
-  private getGrossRealizedGainsAndCapLossDeduction(annualPortfolioDataBeforeTaxes: PortfolioData): {
-    grossRealizedGains: number;
+  private getRealizedGainsAndCapLossDeductionData(annualPortfolioDataBeforeTaxes: PortfolioData): {
+    adjustedRealizedGains: number;
     capitalLossDeduction: number;
   } {
-    const grossRealizedGains = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod + this.capitalLossCarryover;
-    if (grossRealizedGains < 0) {
-      const capitalLossDeduction = Math.max(-3000, grossRealizedGains);
-      this.capitalLossCarryover = grossRealizedGains - capitalLossDeduction;
-      return { grossRealizedGains: 0, capitalLossDeduction };
+    const adjustedRealizedGains = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod + this.capitalLossCarryover;
+    if (adjustedRealizedGains < 0) {
+      const capitalLossDeduction = Math.max(-3000, adjustedRealizedGains);
+      this.capitalLossCarryover = adjustedRealizedGains - capitalLossDeduction;
+      return { adjustedRealizedGains: 0, capitalLossDeduction };
     } else {
       this.capitalLossCarryover = 0;
-      return { grossRealizedGains, capitalLossDeduction: 0 };
+      return { adjustedRealizedGains, capitalLossDeduction: 0 };
     }
   }
 
