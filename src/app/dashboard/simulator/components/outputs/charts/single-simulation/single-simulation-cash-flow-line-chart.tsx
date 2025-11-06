@@ -54,7 +54,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
       const entry: SingleSimulationCashFlowChartDataPoint = payload[0].payload as SingleSimulationCashFlowChartDataPoint;
 
       const earnedIncome = entry.earnedIncome;
-      const taxesAndPenalties = entry.incomeTax + entry.capGainsTax + entry.earlyWithdrawalPenalties;
+      const taxesAndPenalties = entry.totalTaxesAndPenalties;
       const expenses = entry.expenses;
       const operatingCashFlow = entry.operatingCashFlow;
 
@@ -203,7 +203,7 @@ export default function SingleSimulationCashFlowLineChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'expenses':
-      dataKeys.push('expenses', 'incomeTax', 'capGainsTax', 'earlyWithdrawalPenalties');
+      dataKeys.push('expenses', 'incomeTax', 'capGainsTax', 'otherTaxes');
       strokeColors.push('var(--chart-4)', 'var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;

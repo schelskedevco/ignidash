@@ -64,9 +64,9 @@ export default function SingleSimulationCashFlowBarChart({
   let transformedChartData: { name: string; amount: number; type: string }[] = [];
   switch (dataView) {
     case 'net':
-      transformedChartData = chartData.flatMap(({ earnedIncome, expenses, incomeTax, capGainsTax, earlyWithdrawalPenalties }) => [
+      transformedChartData = chartData.flatMap(({ earnedIncome, expenses, totalTaxesAndPenalties }) => [
         { name: 'Earned Income', amount: earnedIncome, type: 'income' },
-        { name: 'Taxes & Penalties', amount: -(incomeTax + capGainsTax + earlyWithdrawalPenalties), type: 'expense' },
+        { name: 'Taxes & Penalties', amount: -totalTaxesAndPenalties, type: 'expense' },
         { name: 'Expenses', amount: -expenses, type: 'expense' },
       ]);
       break;
@@ -76,10 +76,10 @@ export default function SingleSimulationCashFlowBarChart({
       );
       break;
     case 'expenses':
-      transformedChartData = chartData.flatMap(({ perExpenseData, incomeTax, capGainsTax, earlyWithdrawalPenalties }) =>
+      transformedChartData = chartData.flatMap(({ perExpenseData, totalTaxesAndPenalties }) =>
         perExpenseData
           .map(({ name, amount }) => ({ name, amount, type: 'expense' }))
-          .concat({ name: 'Taxes & Penalties', amount: incomeTax + capGainsTax + earlyWithdrawalPenalties, type: 'expense' })
+          .concat({ name: 'Taxes & Penalties', amount: totalTaxesAndPenalties, type: 'expense' })
       );
       break;
     case 'custom':

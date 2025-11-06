@@ -21,8 +21,11 @@ export interface SingleSimulationCashFlowChartDataPoint {
   perExpenseData: ExpenseData[];
   earnedIncome: number;
   incomeTax: number;
+  ficaTax: number;
   capGainsTax: number;
   earlyWithdrawalPenalties: number;
+  otherTaxes: number;
+  totalTaxesAndPenalties: number;
   expenses: number;
   operatingCashFlow: number;
   savingsRate: number | null;

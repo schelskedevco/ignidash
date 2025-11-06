@@ -58,7 +58,8 @@ export abstract class ChartDataExtractor {
       const currDateYear = new Date(data.date).getFullYear();
       const age = currDateYear - startDateYear + startAge;
 
-      const { incomeTax, capGainsTax, earlyWithdrawalPenalties } = SimulationDataExtractor.getTaxAmountsByType(data);
+      const { incomeTax, ficaTax, capGainsTax, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
+        SimulationDataExtractor.getTaxAmountsByType(data);
       const { earnedIncome, totalExpenses: expenses, operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
 
@@ -68,8 +69,11 @@ export abstract class ChartDataExtractor {
         perExpenseData: Object.values(data.expenses!.perExpenseData),
         earnedIncome,
         incomeTax,
+        ficaTax,
         capGainsTax,
         earlyWithdrawalPenalties,
+        otherTaxes: ficaTax + earlyWithdrawalPenalties,
+        totalTaxesAndPenalties,
         expenses,
         operatingCashFlow,
         savingsRate,
