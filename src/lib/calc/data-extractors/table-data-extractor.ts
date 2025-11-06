@@ -270,8 +270,6 @@ export abstract class TableDataExtractor {
         cashSavings,
         annualEmployerMatch,
         cumulativeEmployerMatch: portfolioData.totalEmployerMatch,
-        annualPersonalContributions: annualContributions - annualEmployerMatch,
-        cumulativePersonalContributions: portfolioData.totalContributions - portfolioData.totalEmployerMatch,
         totalPortfolioValue,
         operatingCashFlow,
         historicalYear,

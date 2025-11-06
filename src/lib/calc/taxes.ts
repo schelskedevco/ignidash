@@ -209,7 +209,7 @@ export class TaxProcessor {
       grossIncomeFromTaxDeferredWithdrawals += this.getEarningsWithdrawnFromRothAccountTypes(annualPortfolioDataBeforeTaxes);
     }
 
-    const taxDeferredContributions = this.getPersonalContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira', 'hsa']);
+    const taxDeferredContributions = this.getEmployeeContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira', 'hsa']);
     const taxExemptIncome = annualIncomesData.totalTaxExemptIncome;
     const taxDeductibleExpenses = annualExpensesData.totalTaxDeductibleExpenses;
 
@@ -244,7 +244,7 @@ export class TaxProcessor {
     }
   }
 
-  private getPersonalContributionsForAccountTypes(
+  private getEmployeeContributionsForAccountTypes(
     annualPortfolioDataBeforeTaxes: PortfolioData,
     accountTypes: AccountInputs['type'][]
   ): number {

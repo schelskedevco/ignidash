@@ -54,7 +54,7 @@ export class ContributionRule {
       maxContribution = Math.min(maxContribution, totalEligibleGrossIncome);
     }
 
-    const contributionsSoFar = this.getPersonalContributionsSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
+    const contributionsSoFar = this.getEmployeeContributionsSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
 
     const desiredContribution = this.calculateDesiredContribution(remainingToContribute, contributionsSoFar);
     const contributionAmount = Math.min(desiredContribution, maxContribution);
@@ -97,11 +97,11 @@ export class ContributionRule {
     const limit = getAnnualContributionLimit(getAccountTypeLimitKey(accountType), age);
     if (!Number.isFinite(limit)) return Infinity;
 
-    const contributionsSoFar = this.getPersonalContributionsSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
+    const contributionsSoFar = this.getEmployeeContributionsSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
     return Math.max(0, limit - contributionsSoFar);
   }
 
-  private getPersonalContributionsSoFarByAccountTypes(
+  private getEmployeeContributionsSoFarByAccountTypes(
     monthlyPortfolioData: PortfolioData[],
     accountTypes: AccountInputs['type'][]
   ): number {
@@ -111,7 +111,7 @@ export class ContributionRule {
       .reduce((sum, account) => sum + (account.contributionsForPeriod - account.employerMatchForPeriod), 0);
   }
 
-  private getPersonalContributionsSoFarByAccountID(monthlyPortfolioData: PortfolioData[], accountID: string): number {
+  private getEmployeeContributionsSoFarByAccountID(monthlyPortfolioData: PortfolioData[], accountID: string): number {
     return monthlyPortfolioData
       .flatMap((data) => Object.values(data.perAccountData))
       .filter((account) => account.id === accountID)
