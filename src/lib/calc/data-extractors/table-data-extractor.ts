@@ -82,7 +82,7 @@ export abstract class TableDataExtractor {
       const phaseName = data.phase?.name ?? null;
       const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
 
-      const { incomeTax, capGainsTax, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
+      const { incomeTax, ficaTax, capGainsTax, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
         SimulationDataExtractor.getTaxAmountsByType(data);
       const {
         earnedIncome,
@@ -99,6 +99,7 @@ export abstract class TableDataExtractor {
         earnedIncome,
         earnedIncomeAfterTax,
         incomeTax,
+        ficaTax,
         capGainsTax,
         earlyWithdrawalPenalties,
         totalTaxesAndPenalties,
