@@ -12,12 +12,12 @@ import { Subheading } from '@/components/catalyst/heading';
 import { SimulationDataExtractor } from '@/lib/calc/data-extractors/simulation-data-extractor';
 import { useResultsCategory } from '@/lib/stores/simulator-store';
 
-function OperatingCashFlowTooltip() {
+function OperatingCashFlowTooltip({ taxExemptIncome }: { taxExemptIncome: number }) {
   return (
     <Tooltip>
       <TooltipTrigger className="border-border/50 bg-background ml-3 rounded-full border px-1.5 text-xs/5">?</TooltipTrigger>
       <TooltipContent>
-        <p>Earned income minus all taxes and expenses.</p>
+        <p>{`${taxExemptIncome !== 0 ? 'Earned and tax-exempt income' : 'Earned income'} minus all taxes and expenses.`}</p>
         <p>Investment income and portfolio withdrawals are excluded.</p>
       </TooltipContent>
     </Tooltip>
@@ -104,7 +104,7 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
           <DescriptionTerm className="font-bold">
             Operating Cash Flow
-            <OperatingCashFlowTooltip />
+            <OperatingCashFlowTooltip taxExemptIncome={taxExemptIncome} />
           </DescriptionTerm>
           <DescriptionDetails className="font-bold">{formatNumber(operatingCashFlow, 2, '$')}</DescriptionDetails>
         </DescriptionList>
@@ -184,7 +184,7 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const annualContributions = portfolioData.contributionsForPeriod;
   const annualEmployerMatch = portfolioData.employerMatchForPeriod;
 
-  const { operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(dp);
+  const { taxExemptIncome, operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(dp);
 
   return (
     <div>
@@ -199,7 +199,7 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
           <DescriptionTerm>
             Operating Cash Flow
-            <OperatingCashFlowTooltip />
+            <OperatingCashFlowTooltip taxExemptIncome={taxExemptIncome} />
           </DescriptionTerm>
           <DescriptionDetails>{formatNumber(operatingCashFlow, 2, '$')}</DescriptionDetails>
 
@@ -219,7 +219,7 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const totalValue = portfolioData.totalValue;
   const annualWithdrawals = portfolioData.withdrawalsForPeriod;
 
-  const { operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(dp);
+  const { taxExemptIncome, operatingCashFlow } = SimulationDataExtractor.getOperatingCashFlowData(dp);
   const withdrawalRate = SimulationDataExtractor.getWithdrawalRate(dp);
 
   return (
@@ -235,7 +235,7 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
           <DescriptionTerm>
             Operating Cash Flow
-            <OperatingCashFlowTooltip />
+            <OperatingCashFlowTooltip taxExemptIncome={taxExemptIncome} />
           </DescriptionTerm>
           <DescriptionDetails>{formatNumber(operatingCashFlow, 2, '$')}</DescriptionDetails>
 

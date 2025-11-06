@@ -207,7 +207,7 @@ export class SimulationDataExtractor {
     const earnedIncome = (incomesData?.totalGrossIncome ?? 0) - taxExemptIncome;
     const earnedIncomeAfterTax = earnedIncome - totalTaxesAndPenalties;
     const totalExpenses = expensesData?.totalExpenses ?? 0;
-    const operatingCashFlow = earnedIncomeAfterTax - totalExpenses;
+    const operatingCashFlow = earnedIncomeAfterTax + taxExemptIncome - totalExpenses;
 
     return { earnedIncome, earnedIncomeAfterTax, taxExemptIncome, totalExpenses, operatingCashFlow };
   }
