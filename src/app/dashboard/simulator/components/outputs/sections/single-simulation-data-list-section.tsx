@@ -4,12 +4,25 @@ import { useMemo, memo } from 'react';
 
 import type { SimulationDataPoint, SimulationResult } from '@/lib/calc/simulation-engine';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { formatNumber } from '@/lib/utils';
 import Card from '@/components/ui/card';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import { Subheading } from '@/components/catalyst/heading';
 import { SimulationDataExtractor } from '@/lib/calc/data-extractors/simulation-data-extractor';
 import { useResultsCategory } from '@/lib/stores/simulator-store';
+
+function OperatingCashFlowTooltip() {
+  return (
+    <Tooltip>
+      <TooltipTrigger className="border-border/50 bg-background ml-3 rounded-full border px-1.5 text-xs/5">?</TooltipTrigger>
+      <TooltipContent>
+        <p>Earned income minus all taxes and expenses.</p>
+        <p>Investment income and portfolio withdrawals are excluded.</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 interface DataListCardProps {
   dp: SimulationDataPoint;
@@ -89,13 +102,13 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
             {savingsRate !== null ? `${formatNumber(savingsRate * 100, 1)}%` : 'N/A'}
           </DescriptionDetails>
 
-          <DescriptionTerm className="font-bold">Operating Cash Flow*</DescriptionTerm>
+          <DescriptionTerm className="font-bold">
+            Operating Cash Flow
+            <OperatingCashFlowTooltip />
+          </DescriptionTerm>
           <DescriptionDetails className="font-bold">{formatNumber(operatingCashFlow, 2, '$')}</DescriptionDetails>
         </DescriptionList>
       </Card>
-      <p className="text-muted-foreground mt-2 ml-2 text-sm/6">
-        *Earned income minus all taxes and expenses. Investment income and portfolio withdrawals are excluded.
-      </p>
     </div>
   );
 }
@@ -184,7 +197,10 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionTerm>Total Portfolio Value</DescriptionTerm>
           <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm>Operating Cash Flow*</DescriptionTerm>
+          <DescriptionTerm>
+            Operating Cash Flow
+            <OperatingCashFlowTooltip />
+          </DescriptionTerm>
           <DescriptionDetails>{formatNumber(operatingCashFlow, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm>Annual Employer Match</DescriptionTerm>
@@ -194,9 +210,6 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionDetails className="font-bold">{formatNumber(annualContributions, 2, '$')}</DescriptionDetails>
         </DescriptionList>
       </Card>
-      <p className="text-muted-foreground mt-2 ml-2 text-sm/6">
-        *Earned income minus all taxes and expenses. Investment income and portfolio withdrawals are excluded.
-      </p>
     </div>
   );
 }
@@ -220,7 +233,10 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionTerm>Total Portfolio Value</DescriptionTerm>
           <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm>Operating Cash Flow*</DescriptionTerm>
+          <DescriptionTerm>
+            Operating Cash Flow
+            <OperatingCashFlowTooltip />
+          </DescriptionTerm>
           <DescriptionDetails>{formatNumber(operatingCashFlow, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="font-bold">Annual Withdrawals</DescriptionTerm>
@@ -232,9 +248,6 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           </DescriptionDetails>
         </DescriptionList>
       </Card>
-      <p className="text-muted-foreground mt-2 ml-2 text-sm/6">
-        *Earned income minus all taxes and expenses. Investment income and portfolio withdrawals are excluded.
-      </p>
     </div>
   );
 }
