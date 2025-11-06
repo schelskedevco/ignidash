@@ -86,7 +86,6 @@ export abstract class TableDataExtractor {
         SimulationDataExtractor.getTaxAmountsByType(data);
       const {
         earnedIncome,
-        earnedIncomeAfterTax,
         taxExemptIncome,
         totalExpenses: expenses,
         operatingCashFlow,
@@ -98,7 +97,6 @@ export abstract class TableDataExtractor {
         age,
         phaseName: formattedPhaseName,
         earnedIncome,
-        earnedIncomeAfterTax,
         taxExemptIncome,
         incomeTax,
         ficaTax,
