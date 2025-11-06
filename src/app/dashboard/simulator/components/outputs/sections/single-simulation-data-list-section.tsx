@@ -118,7 +118,7 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
 function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const { grossOrdinaryIncome, grossCapGains, grossIncome } = SimulationDataExtractor.getTaxableIncomeSources(dp, selectedAge);
-  const { incomeTax, capGainsTax, totalTaxesAndPenalties } = SimulationDataExtractor.getTaxAmountsByType(dp);
+  const { incomeTax, ficaTax, capGainsTax, totalTaxesAndPenalties } = SimulationDataExtractor.getTaxAmountsByType(dp);
 
   return (
     <Card className="my-0">
@@ -132,6 +132,9 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
         <DescriptionTerm>Income Tax</DescriptionTerm>
         <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>FICA Tax</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(ficaTax, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Realized Capital Gains & Dividends</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossCapGains, 2, '$')}</DescriptionDetails>

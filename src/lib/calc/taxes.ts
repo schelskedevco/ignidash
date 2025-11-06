@@ -196,7 +196,7 @@ export class TaxProcessor {
     annualIncomesData: IncomesData,
     annualExpensesData: ExpensesData,
     annualReturnsData: ReturnsData
-  ): { grossOrdinaryIncome: number; taxDeferredContributions: number; taxExemptIncome: number; taxDeductibleExpenses: number } {
+  ): { grossOrdinaryIncome: number; taxDeferredContributions: number } {
     const grossIncomeFromIncomes = annualIncomesData.totalGrossIncome;
     const grossIncomeFromInterest =
       annualReturnsData.yieldAmountsForPeriod.taxable.bonds + annualReturnsData.yieldAmountsForPeriod.cashSavings.cash;
@@ -224,8 +224,6 @@ export class TaxProcessor {
           taxDeductibleExpenses
       ),
       taxDeferredContributions,
-      taxExemptIncome,
-      taxDeductibleExpenses,
     };
   }
 

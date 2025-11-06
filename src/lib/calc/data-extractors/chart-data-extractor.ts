@@ -92,6 +92,7 @@ export abstract class ChartDataExtractor {
     const startDateYear = new Date().getFullYear();
 
     let cumulativeIncomeTax = 0;
+    let cumulativeFicaTax = 0;
     let cumulativeCapGainsTax = 0;
     let cumulativeEarlyWithdrawalPenalties = 0;
     let cumulativeTotalTaxesAndPenalties = 0;
@@ -102,12 +103,14 @@ export abstract class ChartDataExtractor {
 
       const {
         incomeTax: annualIncomeTax,
+        ficaTax: annualFicaTax,
         capGainsTax: annualCapGainsTax,
         earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties,
         totalTaxesAndPenalties: annualTotalTaxesAndPenalties,
       } = SimulationDataExtractor.getTaxAmountsByType(data);
 
       cumulativeIncomeTax += annualIncomeTax;
+      cumulativeFicaTax += annualFicaTax;
       cumulativeCapGainsTax += annualCapGainsTax;
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeTotalTaxesAndPenalties += annualTotalTaxesAndPenalties;
@@ -142,6 +145,8 @@ export abstract class ChartDataExtractor {
         taxableOrdinaryIncome: taxesData.incomeTaxes.taxableOrdinaryIncome,
         annualIncomeTax,
         cumulativeIncomeTax,
+        annualFicaTax,
+        cumulativeFicaTax,
         effectiveIncomeTaxRate: taxesData.incomeTaxes.effectiveIncomeTaxRate,
         topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalTaxRate,
         realizedGains,

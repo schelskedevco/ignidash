@@ -63,6 +63,8 @@ export interface SingleSimulationTaxesChartDataPoint {
   taxableOrdinaryIncome: number;
   annualIncomeTax: number;
   cumulativeIncomeTax: number;
+  annualFicaTax: number;
+  cumulativeFicaTax: number;
   effectiveIncomeTaxRate: number;
   topMarginalIncomeTaxRate: number;
 

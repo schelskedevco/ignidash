@@ -241,11 +241,11 @@ export default function SingleSimulationTaxesLineChart({
       break;
     case 'annualAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('annualIncomeTax', 'annualCapGainsTax', 'annualEarlyWithdrawalPenalties');
+      dataKeys.push('annualIncomeTax', 'annualFicaTax', 'annualCapGainsTax', 'annualEarlyWithdrawalPenalties');
       break;
     case 'cumulativeAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('cumulativeIncomeTax', 'cumulativeCapGainsTax', 'cumulativeEarlyWithdrawalPenalties');
+      dataKeys.push('cumulativeIncomeTax', 'cumulativeFicaTax', 'cumulativeCapGainsTax', 'cumulativeEarlyWithdrawalPenalties');
       break;
     case 'taxableIncome':
       formatter = (value: number) => formatNumber(value, 1, '$');
