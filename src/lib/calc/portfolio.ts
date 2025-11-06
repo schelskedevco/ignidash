@@ -53,7 +53,7 @@ export class PortfolioProcessor {
   }
 
   processCashFlows(incomesData: IncomesData, expensesData: ExpensesData): { portfolioData: PortfolioData; discretionaryExpense: number } {
-    const grossCashFlow = incomesData.totalIncomeAfterWithholding - expensesData.totalExpenses;
+    const grossCashFlow = incomesData.totalIncomeAfterPayrollDeductions - expensesData.totalExpenses;
 
     const {
       totalForPeriod: contributionsForPeriod,

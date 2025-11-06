@@ -4,23 +4,32 @@ import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-schem
 
 import { growthSchema, frequencyTimeframeSchema } from './income-expenses-shared-schemas';
 
-export type IncomeType = 'wage' | 'selfEmployment' | 'exempt';
+export type IncomeType = 'wage' | 'exempt' | 'selfEmployment' | 'socialSecurity' | 'pension';
 
 export const incomeTaxSchema = z
   .object({
-    incomeType: z.enum(['wage', 'selfEmployment', 'exempt']),
+    incomeType: z.enum(['wage', 'exempt', 'selfEmployment', 'socialSecurity', 'pension']),
     withholding: percentageField(0, 50, 'Withholding').optional(),
   })
   .refine(
     (data) => {
-      if (data.incomeType === 'wage' || data.incomeType === 'selfEmployment') {
+      if (data.incomeType === 'wage') {
         return data.withholding !== undefined;
       }
       return true;
     },
     {
-      message: 'Withholding required for wage and self-employment income',
+      message: 'Withholding required for wage income',
       path: ['withholding'],
+    }
+  )
+  .refine(
+    (data) => {
+      return !['selfEmployment', 'socialSecurity', 'pension'].includes(data.incomeType);
+    },
+    {
+      message: 'This income type is not yet supported',
+      path: ['incomeType'],
     }
   );
 
@@ -66,9 +75,11 @@ export type IncomeInputs = z.infer<typeof incomeFormSchema>;
 export const supportsWithholding = (incomeType: IncomeType): boolean => {
   switch (incomeType) {
     case 'wage':
-    case 'selfEmployment':
       return true;
     case 'exempt':
+    case 'selfEmployment':
+    case 'socialSecurity':
+    case 'pension':
       return false;
   }
 };

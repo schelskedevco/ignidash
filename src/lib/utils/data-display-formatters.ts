@@ -67,8 +67,10 @@ export const maxBalanceForDisplay = (maxBalance: number | undefined) => {
 export const incomeTaxTreatmentForDisplay = (type: IncomeType, withholding: number | undefined) => {
   const typeLabels: Record<IncomeType, string> = {
     wage: 'Wage',
-    selfEmployment: 'Self-Employment',
     exempt: 'Tax-Exempt',
+    selfEmployment: 'Self-Employment',
+    socialSecurity: 'Social Security',
+    pension: 'Pension',
   };
 
   const typeLabel = typeLabels[type];
