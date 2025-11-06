@@ -157,11 +157,12 @@ export class Income {
     }
 
     const grossIncome = Math.max((annualAmount / timesToApplyPerYear) * timesToApplyPerMonth, 0);
-    const amountWithheld = grossIncome * (this.withholdingRate / 100);
 
+    let amountWithheld: number = 0;
     let ficaTax: number = 0;
     switch (this.incomeType) {
       case 'wage':
+        amountWithheld = grossIncome * (this.withholdingRate / 100);
         ficaTax = grossIncome * 0.0765;
         break;
       default:
