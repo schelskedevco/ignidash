@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, memo } from 'react';
+import { CircleQuestionMarkIcon } from 'lucide-react';
 
 import type { SimulationDataPoint, SimulationResult } from '@/lib/calc/simulation-engine';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
@@ -15,7 +16,9 @@ import { useResultsCategory } from '@/lib/stores/simulator-store';
 function OperatingCashFlowTooltip({ taxExemptIncome }: { taxExemptIncome: number }) {
   return (
     <Tooltip>
-      <TooltipTrigger className="border-border/50 bg-background ml-3 rounded-full border px-1.5 text-xs/5">?</TooltipTrigger>
+      <TooltipTrigger>
+        <CircleQuestionMarkIcon className="size-4 fill-white dark:fill-zinc-950" />
+      </TooltipTrigger>
       <TooltipContent>
         <p>{`${taxExemptIncome !== 0 ? 'Earned and tax-exempt income' : 'Earned income'} minus all taxes and expenses.`}</p>
         <p>Investment income and portfolio withdrawals are excluded.</p>
@@ -102,7 +105,7 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
             {savingsRate !== null ? `${formatNumber(savingsRate * 100, 1)}%` : 'N/A'}
           </DescriptionDetails>
 
-          <DescriptionTerm className="font-bold">
+          <DescriptionTerm className="flex items-center gap-3 font-bold">
             Operating Cash Flow
             <OperatingCashFlowTooltip taxExemptIncome={taxExemptIncome} />
           </DescriptionTerm>
@@ -197,7 +200,7 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionTerm>Total Portfolio Value</DescriptionTerm>
           <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm>
+          <DescriptionTerm className="flex items-center gap-3">
             Operating Cash Flow
             <OperatingCashFlowTooltip taxExemptIncome={taxExemptIncome} />
           </DescriptionTerm>
@@ -233,7 +236,7 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionTerm>Total Portfolio Value</DescriptionTerm>
           <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm>
+          <DescriptionTerm className="flex items-center gap-3">
             Operating Cash Flow
             <OperatingCashFlowTooltip taxExemptIncome={taxExemptIncome} />
           </DescriptionTerm>
