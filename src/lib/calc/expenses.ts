@@ -34,7 +34,7 @@ export class ExpensesProcessor {
   processDiscretionaryExpense(expense: number): ExpensesData {
     const discretionaryExpense: ExpenseData = {
       id: '4ad31cac-7e17-47c4-af4e-784e080c05dd',
-      name: '[System] Extra Spending',
+      name: 'Extra Spending',
       expense,
     };
 

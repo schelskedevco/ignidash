@@ -207,7 +207,7 @@ const CustomLabelListContent = (props: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
-  const truncateText = (text: string, maxLength = 18) => {
+  const truncateText = (text: string, maxLength = 22) => {
     return text.length > maxLength ? text.substring(0, maxLength - 3) + '…' : text;
   };
 
@@ -470,11 +470,11 @@ export default function SingleSimulationTaxesBarChart({
 
   const shouldUseCustomTick = transformedChartData.length > 3 || (isSmallScreen && transformedChartData.length > 1);
   const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
-  const bottomMargin = shouldUseCustomTick ? 50 : 0;
+  const bottomMargin = shouldUseCustomTick ? 80 : 25;
 
   return (
     <div>
-      <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
+      <div ref={chartRef} className="h-full min-h-64 w-full sm:min-h-72 lg:min-h-80 [&_svg:focus]:outline-none">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={transformedChartData}

@@ -41,13 +41,13 @@ export class PortfolioProcessor {
     this.extraSavingsAccount = new SavingsAccount({
       type: 'savings' as const,
       id: EXTRA_SAVINGS_ACCOUNT_ID,
-      name: '[System] Extra Savings',
+      name: 'Extra Savings',
       balance: 0,
     });
     this.rmdSavingsAccount = new SavingsAccount({
       type: 'savings' as const,
       id: RMD_SAVINGS_ACCOUNT_ID,
-      name: '[System] RMD Savings',
+      name: 'RMD Savings',
       balance: 0,
     });
   }
