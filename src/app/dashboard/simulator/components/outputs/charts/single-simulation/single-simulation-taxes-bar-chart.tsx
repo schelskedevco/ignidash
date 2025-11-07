@@ -473,101 +473,99 @@ export default function SingleSimulationTaxesBarChart({
   const bottomMargin = shouldUseCustomTick ? 80 : 25;
 
   return (
-    <div>
-      <div ref={chartRef} className="h-full min-h-64 w-full sm:min-h-72 lg:min-h-80 [&_svg:focus]:outline-none">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={transformedChartData}
-            className="text-xs"
-            margin={{ top: 0, right: 10, left: 10, bottom: bottomMargin }}
-            tabIndex={-1}
-          >
-            <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-            <XAxis tick={tick} axisLine={false} tickLine={false} dataKey="name" interval={0} />
-            <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-            {!isStacked &&
-              dataKeys.map((dataKey, idx) => (
-                <Bar key={`${dataKey}-${idx}`} dataKey={dataKey} maxBarSize={250} minPointSize={20}>
-                  {transformedChartData.map((entry, idx) => (
-                    <Cell
-                      key={`cell-${idx}`}
-                      fill={COLORS[idx % COLORS.length]}
-                      stroke={COLORS[idx % COLORS.length]}
-                      strokeWidth={3}
-                      fillOpacity={0.5}
-                    />
-                  ))}
-                  <LabelList
-                    dataKey={dataKey}
-                    position="middle"
-                    content={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
+    <div ref={chartRef} className="h-full min-h-64 w-full sm:min-h-72 lg:min-h-80 [&_svg:focus]:outline-none">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={transformedChartData}
+          className="text-xs"
+          margin={{ top: 0, right: 10, left: 10, bottom: bottomMargin }}
+          tabIndex={-1}
+        >
+          <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
+          <XAxis tick={tick} axisLine={false} tickLine={false} dataKey="name" interval={0} />
+          <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
+          {!isStacked &&
+            dataKeys.map((dataKey, idx) => (
+              <Bar key={`${dataKey}-${idx}`} dataKey={dataKey} maxBarSize={250} minPointSize={20}>
+                {transformedChartData.map((entry, idx) => (
+                  <Cell
+                    key={`cell-${idx}`}
+                    fill={COLORS[idx % COLORS.length]}
+                    stroke={COLORS[idx % COLORS.length]}
+                    strokeWidth={3}
+                    fillOpacity={0.5}
                   />
-                </Bar>
-              ))}
-            {isStacked &&
-              dataKeys.map((dataKey, idx) => (
-                <Bar
-                  key={`${dataKey}-${idx}`}
+                ))}
+                <LabelList
                   dataKey={dataKey}
-                  stackId="stack"
-                  maxBarSize={250}
-                  minPointSize={20}
-                  fill={stackedColors[idx]}
-                  stroke={stackedColors[idx]}
-                  strokeWidth={3}
-                  fillOpacity={0.5}
-                >
-                  <LabelList
-                    dataKey={dataKey}
-                    position="middle"
-                    content={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
-                  />
-                </Bar>
-              ))}
-            {(dataView === 'taxableIncome' || dataView === 'adjustedGrossIncome') && (
-              <Tooltip
-                content={
-                  <IncomeCalculationsTooltip
-                    startAge={startAge}
-                    age={age}
-                    disabled={isSmallScreen && clickedOutsideChart}
-                    dataView={dataView}
-                  />
-                }
-                cursor={false}
+                  position="middle"
+                  content={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
+                />
+              </Bar>
+            ))}
+          {isStacked &&
+            dataKeys.map((dataKey, idx) => (
+              <Bar
+                key={`${dataKey}-${idx}`}
+                dataKey={dataKey}
+                stackId="stack"
+                maxBarSize={250}
+                minPointSize={20}
+                fill={stackedColors[idx]}
+                stroke={stackedColors[idx]}
+                strokeWidth={3}
+                fillOpacity={0.5}
+              >
+                <LabelList
+                  dataKey={dataKey}
+                  position="middle"
+                  content={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
+                />
+              </Bar>
+            ))}
+          {(dataView === 'taxableIncome' || dataView === 'adjustedGrossIncome') && (
+            <Tooltip
+              content={
+                <IncomeCalculationsTooltip
+                  startAge={startAge}
+                  age={age}
+                  disabled={isSmallScreen && clickedOutsideChart}
+                  dataView={dataView}
+                />
+              }
+              cursor={false}
+            />
+          )}
+          {referenceLineMode === 'marginalIncomeTaxRates' &&
+            INCOME_TAX_BRACKETS_SINGLE.map((bracket, index) => (
+              <ReferenceLine
+                key={index}
+                y={bracket.min}
+                stroke={foregroundMutedColor}
+                label={{
+                  value: `${(bracket.rate * 100).toFixed(0)}% (${formatNumber(bracket.min, 1, '$')})`,
+                  position: 'insideBottomRight',
+                  fill: foregroundColor,
+                  fontWeight: '600',
+                }}
               />
-            )}
-            {referenceLineMode === 'marginalIncomeTaxRates' &&
-              INCOME_TAX_BRACKETS_SINGLE.map((bracket, index) => (
-                <ReferenceLine
-                  key={index}
-                  y={bracket.min}
-                  stroke={foregroundMutedColor}
-                  label={{
-                    value: `${(bracket.rate * 100).toFixed(0)}% (${formatNumber(bracket.min, 1, '$')})`,
-                    position: 'insideBottomRight',
-                    fill: foregroundColor,
-                    fontWeight: '600',
-                  }}
-                />
-              ))}
-            {referenceLineMode === 'marginalCapGainsTaxRates' &&
-              CAPITAL_GAINS_TAX_BRACKETS_SINGLE.map((bracket, index) => (
-                <ReferenceLine
-                  key={index}
-                  y={bracket.min}
-                  stroke={foregroundMutedColor}
-                  label={{
-                    value: `${(bracket.rate * 100).toFixed(0)}% (${formatNumber(bracket.min, 1, '$')})`,
-                    position: 'insideBottomRight',
-                    fill: foregroundColor,
-                    fontWeight: '600',
-                  }}
-                />
-              ))}
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+            ))}
+          {referenceLineMode === 'marginalCapGainsTaxRates' &&
+            CAPITAL_GAINS_TAX_BRACKETS_SINGLE.map((bracket, index) => (
+              <ReferenceLine
+                key={index}
+                y={bracket.min}
+                stroke={foregroundMutedColor}
+                label={{
+                  value: `${(bracket.rate * 100).toFixed(0)}% (${formatNumber(bracket.min, 1, '$')})`,
+                  position: 'insideBottomRight',
+                  fill: foregroundColor,
+                  fontWeight: '600',
+                }}
+              />
+            ))}
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }
