@@ -135,7 +135,6 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
 function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const { grossOrdinaryIncome, grossCapGains, grossIncome, w2Income } = SimulationDataExtractor.getTaxableIncomeSources(dp, selectedAge);
-  const { incomeTax, ficaTax, capGainsTax, totalTaxesAndPenalties } = SimulationDataExtractor.getTaxAmountsByType(dp);
 
   return (
     <Card className="my-0">
@@ -147,26 +146,14 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
         <DescriptionTerm>Ordinary Income</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossOrdinaryIncome, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm>Income Tax</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(incomeTax, 2, '$')}</DescriptionDetails>
-
         <DescriptionTerm>W-2 Income</DescriptionTerm>
         <DescriptionDetails>{formatNumber(w2Income, 2, '$')}</DescriptionDetails>
-
-        <DescriptionTerm>FICA Tax</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(ficaTax, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Realized Capital Gains & Dividends</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossCapGains, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm>Capital Gains Tax</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(capGainsTax, 2, '$')}</DescriptionDetails>
-
         <DescriptionTerm className="font-bold">Total Gross Income</DescriptionTerm>
         <DescriptionDetails className="font-bold">{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
-
-        <DescriptionTerm className="font-bold">Total Taxes & Penalties</DescriptionTerm>
-        <DescriptionDetails className="font-bold">{formatNumber(totalTaxesAndPenalties, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );

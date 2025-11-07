@@ -11,7 +11,6 @@ import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/sch
 import { SimulationDataExtractor } from '@/lib/calc/data-extractors/simulation-data-extractor';
 import { type Percentiles, StatsUtils } from '@/lib/utils/stats-utils';
 
-import type { MultiSimulationAnalysis } from '../analysis/multi-simulation-analyzer';
 import type { SimulationResult, MultiSimulationResult } from '../simulation-engine';
 
 export abstract class TableDataExtractor {
@@ -146,16 +145,12 @@ export abstract class TableDataExtractor {
 
       const {
         realizedGains,
-        taxDeferredWithdrawals,
-        earlyRothEarningsWithdrawals,
-        totalRetirementDistributions,
+        totalRetirementDistributions: retirementDistributions,
         dividendIncome,
         interestIncome,
         earnedIncome,
         taxExemptIncome,
         grossIncome,
-        grossOrdinaryIncome,
-        grossCapGains,
       } = SimulationDataExtractor.getTaxableIncomeSources(data, age);
 
       const taxesData = data.taxes;
@@ -166,15 +161,10 @@ export abstract class TableDataExtractor {
         phaseName: formattedPhaseName,
         grossIncome,
         adjustedGrossIncome: taxesData?.adjustedGrossIncome ?? 0,
-        totalTaxableIncome: taxesData?.totalTaxableIncome ?? 0,
+        taxableIncome: taxesData?.totalTaxableIncome ?? 0,
         earnedIncome,
-        taxExemptIncome,
-        taxDeferredWithdrawals,
-        earlyRothEarningsWithdrawals,
-        totalRetirementDistributions,
+        retirementDistributions,
         interestIncome,
-        grossOrdinaryIncome,
-        taxableOrdinaryIncome: taxesData?.incomeTaxes.taxableOrdinaryIncome ?? 0,
         annualIncomeTax,
         cumulativeIncomeTax,
         annualFicaTax,
@@ -183,14 +173,13 @@ export abstract class TableDataExtractor {
         topMarginalIncomeTaxRate: taxesData?.incomeTaxes.topMarginalTaxRate ?? 0,
         realizedGains,
         dividendIncome,
-        grossCapGains,
-        taxableCapGains: taxesData?.capitalGainsTaxes.taxableCapitalGains ?? 0,
         annualCapGainsTax,
         cumulativeCapGainsTax,
         effectiveCapGainsTaxRate: taxesData?.capitalGainsTaxes.effectiveCapitalGainsTaxRate ?? 0,
         topMarginalCapGainsTaxRate: taxesData?.capitalGainsTaxes.topMarginalCapitalGainsTaxRate ?? 0,
         annualEarlyWithdrawalPenalties,
         cumulativeEarlyWithdrawalPenalties,
+        taxExemptIncome,
         annualTotalTaxesAndPenalties,
         cumulativeTotalTaxesAndPenalties,
         taxDeferredContributions: taxesData?.adjustments.taxDeferredContributions ?? null,
@@ -407,11 +396,7 @@ export abstract class TableDataExtractor {
     });
   }
 
-  static extractMultiSimulationYearlyAggregateData(
-    simulations: MultiSimulationResult,
-    analysis: MultiSimulationAnalysis,
-    category: SimulationCategory
-  ): YearlyAggregateTableRow[] {
+  static extractMultiSimulationYearlyAggregateData(simulations: MultiSimulationResult): YearlyAggregateTableRow[] {
     const res: YearlyAggregateTableRow[] = [];
 
     const simulationLength = simulations.simulations[0][1].data.length;

@@ -77,6 +77,7 @@ export interface TaxableIncomeSources {
   grossIncome: number;
   grossOrdinaryIncome: number;
   grossCapGains: number;
+  totalIncome: number;
 }
 
 export interface LifetimeTaxAmounts {
@@ -388,6 +389,7 @@ export class SimulationDataExtractor {
     const grossOrdinaryIncome = earnedIncome + retirementDistributions + interestIncome;
     const grossCapGains = realizedGains + dividendIncome;
     const grossIncome = grossOrdinaryIncome + grossCapGains;
+    const totalIncome = grossIncome + taxExemptIncome;
 
     return {
       realizedGains,
@@ -403,6 +405,7 @@ export class SimulationDataExtractor {
       grossIncome,
       grossOrdinaryIncome,
       grossCapGains,
+      totalIncome,
     };
   }
 
