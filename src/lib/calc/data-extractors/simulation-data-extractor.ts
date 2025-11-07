@@ -71,6 +71,7 @@ export interface TaxableIncomeSources {
   dividendIncome: number;
   interestIncome: number;
   earnedIncome: number;
+  w2Income: number;
   taxExemptIncome: number;
   grossIncome: number;
   grossOrdinaryIncome: number;
@@ -380,6 +381,7 @@ export class SimulationDataExtractor {
     const incomesData = dp.incomes;
     const taxExemptIncome = incomesData?.totalTaxExemptIncome ?? 0;
     const earnedIncome = (incomesData?.totalIncome ?? 0) - taxExemptIncome;
+    const w2Income = earnedIncome; // Note: earnedIncome is currently all W-2 income
 
     const grossOrdinaryIncome = earnedIncome + retirementDistributions + interestIncome;
     const grossCapGains = realizedGains + dividendIncome;
@@ -394,6 +396,7 @@ export class SimulationDataExtractor {
       dividendIncome,
       interestIncome,
       earnedIncome,
+      w2Income,
       taxExemptIncome,
       grossIncome,
       grossOrdinaryIncome,
