@@ -41,6 +41,34 @@ function SavingsRateTooltip() {
   );
 }
 
+function GrossIncomeTooltip() {
+  return (
+    <Tooltip>
+      <TooltipTrigger>
+        <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Total income before taxes.</p>
+        <p>Includes earned income, retirement distributions, interest income, realized capital gains, and dividends.</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
+function TotalIncomeTooltip() {
+  return (
+    <Tooltip>
+      <TooltipTrigger>
+        <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>All income including gross income and tax-exempt income.</p>
+        <p>Tax-exempt income includes gifts, inheritances, or other non-taxable sources.</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 interface DataListCardProps {
   dp: SimulationDataPoint;
   selectedAge: number;
@@ -162,10 +190,15 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
         <DescriptionTerm>Realized Capital Gains & Dividends</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossCapGains, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm className="font-bold">Gross Income</DescriptionTerm>
+        <DescriptionTerm className="flex items-center gap-3 font-bold">
+          Gross Income
+          <GrossIncomeTooltip />
+        </DescriptionTerm>
         <DescriptionDetails className="font-bold">{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm className="font-bold">Total Income</DescriptionTerm>
+        <DescriptionTerm className="flex items-center gap-3 font-bold">
+          Total Income <TotalIncomeTooltip />
+        </DescriptionTerm>
         <DescriptionDetails className="font-bold">{formatNumber(totalIncome, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
