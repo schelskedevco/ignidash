@@ -27,6 +27,20 @@ function OperatingCashFlowTooltip({ taxExemptIncome }: { taxExemptIncome: number
   );
 }
 
+function SavingsRateTooltip() {
+  return (
+    <Tooltip>
+      <TooltipTrigger>
+        <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>The percentage of your after-tax income that you save rather than spend.</p>
+        <p>Investment income and portfolio withdrawals are excluded.</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 interface DataListCardProps {
   dp: SimulationDataPoint;
   selectedAge: number;
@@ -100,7 +114,10 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionTerm>Expenses</DescriptionTerm>
           <DescriptionDetails>{formatNumber(totalExpenses, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm className="font-bold">Savings Rate</DescriptionTerm>
+          <DescriptionTerm className="flex items-center gap-3 font-bold">
+            Savings Rate
+            <SavingsRateTooltip />
+          </DescriptionTerm>
           <DescriptionDetails className="font-bold">
             {savingsRate !== null ? `${formatNumber(savingsRate * 100, 1)}%` : 'N/A'}
           </DescriptionDetails>
