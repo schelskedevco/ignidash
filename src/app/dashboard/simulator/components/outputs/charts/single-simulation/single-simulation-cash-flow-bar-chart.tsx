@@ -134,7 +134,7 @@ export default function SingleSimulationCashFlowBarChart({
   const incomeBarColor = 'var(--chart-2)';
   const expenseBarColor = 'var(--chart-4)';
 
-  const shouldUseCustomTick = transformedChartData.length > 5 || (isSmallScreen && transformedChartData.length > 1);
+  const shouldUseCustomTick = transformedChartData.length > 4 || (isSmallScreen && transformedChartData.length > 1);
   const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
   const bottomMargin = shouldUseCustomTick ? 50 : 0;
 

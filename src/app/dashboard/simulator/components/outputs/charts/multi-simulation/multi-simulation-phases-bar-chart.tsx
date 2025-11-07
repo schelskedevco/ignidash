@@ -69,7 +69,7 @@ export default function MultiSimulationPhasesBarChart({ age, rawChartData }: Mul
   const gridColor = resolvedTheme === 'dark' ? '#3f3f46' : '#d4d4d8'; // zinc-700 : zinc-300
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d4d4d8' : '#52525b'; // zinc-300 : zinc-600
 
-  const shouldUseCustomTick = chartData.length > 5 || (isSmallScreen && chartData.length > 1);
+  const shouldUseCustomTick = chartData.length > 4 || (isSmallScreen && chartData.length > 1);
   const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
   const bottomMargin = shouldUseCustomTick ? 50 : 0;
 
