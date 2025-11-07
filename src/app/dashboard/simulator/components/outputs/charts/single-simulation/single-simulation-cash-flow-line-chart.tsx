@@ -223,11 +223,11 @@ export default function SingleSimulationCashFlowLineChart({
         break;
       }
 
-      const perIncomeData = chartData.flatMap(({ age, perIncomeData }) => {
-        return Object.values(perIncomeData)
+      const perIncomeData = chartData.flatMap(({ age, perIncomeData }) =>
+        Object.values(perIncomeData)
           .map((income) => ({ age, ...income }))
-          .filter((income) => income.id === customDataID && income.income !== 0);
-      });
+          .filter((income) => income.id === customDataID && income.income !== 0)
+      );
 
       if (perIncomeData.length > 0) {
         chartData = perIncomeData;
@@ -237,11 +237,11 @@ export default function SingleSimulationCashFlowLineChart({
         break;
       }
 
-      const perExpenseData = chartData.flatMap(({ age, perExpenseData }) => {
-        return Object.values(perExpenseData)
+      const perExpenseData = chartData.flatMap(({ age, perExpenseData }) =>
+        Object.values(perExpenseData)
           .map((expense) => ({ age, ...expense }))
-          .filter((expense) => expense.id === customDataID && expense.expense !== 0);
-      });
+          .filter((expense) => expense.id === customDataID && expense.expense !== 0)
+      );
 
       if (perExpenseData.length > 0) {
         chartData = perExpenseData;
@@ -256,11 +256,6 @@ export default function SingleSimulationCashFlowLineChart({
       dataKeys.push('savingsRate');
       strokeColors.push('var(--chart-3)');
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
-      break;
-    default:
-      dataKeys.push('cashFlow');
-      strokeColors.push('url(#colorGradient)');
-      formatter = (value: number) => formatNumber(value, 1, '$');
       break;
   }
 
