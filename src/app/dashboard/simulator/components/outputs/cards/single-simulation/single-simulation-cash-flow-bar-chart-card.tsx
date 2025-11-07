@@ -22,7 +22,7 @@ export default function SingleSimulationCashFlowBarChartCard({
   let title;
   switch (dataView) {
     case 'net':
-      title = 'Cash Flow';
+      title = 'Inflows & Outflows';
       break;
     case 'incomes':
       title = 'All Incomes';
