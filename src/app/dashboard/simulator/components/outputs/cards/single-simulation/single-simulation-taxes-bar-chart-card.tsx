@@ -86,7 +86,7 @@ export default function SingleSimulationTaxesBarChartCard({
   }
 
   return (
-    <Card className="my-0">
+    <Card className="relative my-0">
       <div className="mb-4 flex items-center justify-between">
         <Subheading level={4}>
           <span className="mr-2">{title}</span>
@@ -94,7 +94,7 @@ export default function SingleSimulationTaxesBarChartCard({
         </Subheading>
         {dataView === 'taxableIncome' && (
           <Dropdown>
-            <DropdownButton plain aria-label="Open chart view options">
+            <DropdownButton plain aria-label="Open chart view options" className="absolute top-3 right-3 sm:top-5 sm:right-5">
               <EyeIcon data-slot="icon" />
             </DropdownButton>
             <DropdownMenu>

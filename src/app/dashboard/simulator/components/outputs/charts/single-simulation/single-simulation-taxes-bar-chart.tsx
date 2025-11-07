@@ -366,7 +366,7 @@ export default function SingleSimulationTaxesBarChart({
         hasCapGains = item.taxableCapGains > 0 || hasCapGains;
 
         return {
-          name: 'Total Taxable Income',
+          name: 'Taxable Income',
           taxableOrdinaryIncome: item.taxableOrdinaryIncome,
           taxableCapGains: item.taxableCapGains,
           grossIncome: item.grossIncome,
