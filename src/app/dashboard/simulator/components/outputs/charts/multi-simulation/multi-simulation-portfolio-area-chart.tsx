@@ -84,6 +84,7 @@ export default function MultiSimulationPortfolioAreaChart({
 
   const chartData: MultiSimulationPortfolioChartDataPoint[] = rawChartData;
   const dataKeys: (keyof MultiSimulationPortfolioChartDataPoint)[] = ['p75PortfolioValue', 'p50PortfolioValue', 'p25PortfolioValue'];
+  const formatter = (value: number) => formatNumber(value, 1, '$');
 
   const gridColor = resolvedTheme === 'dark' ? '#3f3f46' : '#d4d4d8'; // zinc-700 : zinc-300
   const foregroundColor = resolvedTheme === 'dark' ? '#f4f4f5' : '#18181b'; // zinc-100 : zinc-900
@@ -118,13 +119,7 @@ export default function MultiSimulationPortfolioAreaChart({
           >
             <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
             <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-            <YAxis
-              tick={{ fill: foregroundMutedColor }}
-              axisLine={false}
-              tickLine={false}
-              hide={isSmallScreen}
-              tickFormatter={(value: number) => formatNumber(value, 1, '$')}
-            />
+            <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
             {dataKeys.map((dataKey, index) => (
               <Area
                 key={dataKey}

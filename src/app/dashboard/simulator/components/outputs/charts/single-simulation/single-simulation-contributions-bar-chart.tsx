@@ -79,6 +79,7 @@ export default function SingleSimulationContributionsBarChart({
   const chartData = rawChartData.filter((item) => item.age === age);
 
   let transformedChartData: { name: string; amount: number }[] = [];
+  const formatter = (value: number) => formatNumber(value, 1, '$');
   switch (dataView) {
     case 'annualAmounts':
       transformedChartData = chartData.flatMap((item) => [{ name: 'Annual Contributions', amount: item.annualContributions }]);
@@ -144,13 +145,7 @@ export default function SingleSimulationContributionsBarChart({
         >
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} tickLine={false} dataKey="name" interval={0} />
-          <YAxis
-            tick={{ fill: foregroundMutedColor }}
-            axisLine={false}
-            tickLine={false}
-            hide={isSmallScreen}
-            tickFormatter={(value: number) => formatNumber(value, 1, '$')}
-          />
+          <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
           <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
             {transformedChartData.map((entry, index) => (
               <Cell

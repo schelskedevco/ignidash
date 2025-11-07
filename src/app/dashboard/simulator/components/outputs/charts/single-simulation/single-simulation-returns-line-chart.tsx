@@ -138,7 +138,6 @@ export default function SingleSimulationReturnsLineChart({
     rawChartData;
 
   const dataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
-  const yAxisDomain: [number, number] | undefined = undefined;
   let formatter = undefined;
   switch (dataView) {
     case 'rates':
@@ -214,14 +213,7 @@ export default function SingleSimulationReturnsLineChart({
           >
             <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
             <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-            <YAxis
-              tick={{ fill: foregroundMutedColor }}
-              axisLine={false}
-              tickLine={false}
-              hide={isSmallScreen}
-              tickFormatter={formatter}
-              domain={yAxisDomain}
-            />
+            <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
             {dataKeys.map((dataKey, index) => (
               <Line
                 key={dataKey}

@@ -54,6 +54,7 @@ export default function MultiSimulationPortfolioBarChart({ age, rawChartData }: 
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 
+  const formatter = (value: number) => formatNumber(value, 1, '$');
   const chartData: { name: string; amount: number }[] = rawChartData
     .filter((item) => item.age === age)
     .flatMap(({ p10PortfolioValue, p25PortfolioValue, p50PortfolioValue, p75PortfolioValue, p90PortfolioValue }) => [
@@ -82,13 +83,7 @@ export default function MultiSimulationPortfolioBarChart({ age, rawChartData }: 
           <BarChart data={chartData} className="text-xs" margin={{ top: 0, right: 10, left: 10, bottom: bottomMargin }} tabIndex={-1}>
             <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
             <XAxis tick={tick} axisLine={false} tickLine={false} dataKey="name" interval={0} />
-            <YAxis
-              tick={{ fill: foregroundMutedColor }}
-              axisLine={false}
-              tickLine={false}
-              hide={isSmallScreen}
-              tickFormatter={(value: number) => formatNumber(value, 1, '$')}
-            />
+            <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
             <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
               {chartData.map((entry, index) => (
                 <Cell

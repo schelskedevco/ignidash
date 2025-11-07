@@ -77,6 +77,7 @@ export default function SingleSimulationCashFlowBarChart({
   const chartData = rawChartData.filter((item) => item.age === age);
 
   let transformedChartData: { name: string; amount: number; type: string }[] = [];
+  const formatter = (value: number) => formatNumber(value, 1, '$');
   switch (dataView) {
     case 'net': {
       const [earnedIncomeLabel, taxExemptIncomeLabel, taxesAndPenaltiesLabel, expensesLabel] = getLabelsForScreenSize(
@@ -149,13 +150,7 @@ export default function SingleSimulationCashFlowBarChart({
         >
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} tickLine={false} dataKey="name" interval={0} />
-          <YAxis
-            tick={{ fill: foregroundMutedColor }}
-            axisLine={false}
-            tickLine={false}
-            hide={isSmallScreen}
-            tickFormatter={(value: number) => formatNumber(value, 1, '$')}
-          />
+          <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
           <Bar dataKey="amount" maxBarSize={250} minPointSize={20}>
             {transformedChartData.map((entry, index) => (
               <Cell

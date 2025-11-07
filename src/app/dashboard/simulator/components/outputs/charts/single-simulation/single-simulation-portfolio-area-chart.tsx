@@ -109,6 +109,7 @@ export default function SingleSimulationPortfolioAreaChart({
     rawChartData;
 
   const dataKeys: (keyof SingleSimulationPortfolioChartDataPoint | keyof AccountDataWithTransactions)[] = [];
+  const formatter = (value: number) => formatNumber(value, 1, '$');
   switch (dataView) {
     case 'assetClass':
       dataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
@@ -181,13 +182,7 @@ export default function SingleSimulationPortfolioAreaChart({
           >
             <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
             <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-            <YAxis
-              tick={{ fill: foregroundMutedColor }}
-              axisLine={false}
-              tickLine={false}
-              hide={isSmallScreen}
-              tickFormatter={(value: number) => formatNumber(value, 1, '$')}
-            />
+            <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
             {dataKeys.map((dataKey, index) => (
               <Area
                 key={dataKey}
