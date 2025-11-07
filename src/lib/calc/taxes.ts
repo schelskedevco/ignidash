@@ -69,11 +69,9 @@ export class TaxProcessor {
       annualIncomesData,
       annualReturnsData
     );
-
     const { adjustedRealizedGains, capitalLossDeduction } = this.getRealizedGainsAndCapLossDeductionData(annualPortfolioDataBeforeTaxes);
 
     const adjustedIncomeTaxedAsIncome = Math.max(0, adjustedOrdinaryIncome + capitalLossDeduction);
-
     const adjustedIncomeTaxedAsCapGains = adjustedRealizedGains + annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
 
     const deductionUsedForOrdinary = Math.min(STANDARD_DEDUCTION_SINGLE, adjustedIncomeTaxedAsIncome);
