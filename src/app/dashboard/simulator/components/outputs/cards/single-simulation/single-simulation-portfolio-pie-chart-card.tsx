@@ -34,27 +34,28 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
       title = 'By Asset Class';
       chartData = rawChartData
         .filter((data) => data.age === selectedAge)
-        .flatMap(({ age, perAccountData, ...rest }) =>
-          Object.entries(rest)
-            .filter(([name]) => ['stockHoldings', 'bondHoldings', 'cashHoldings'].includes(name))
-            .map(([name, value]) => ({ name, value }))
-        );
+        .flatMap(({ stockHoldings, bondHoldings, cashHoldings }) => [
+          { name: 'stockHoldings', value: stockHoldings },
+          { name: 'bondHoldings', value: bondHoldings },
+          { name: 'cashHoldings', value: cashHoldings },
+        ]);
       break;
     case 'taxCategory':
       title = 'By Tax Category';
       chartData = rawChartData
         .filter((data) => data.age === selectedAge)
-        .flatMap(({ age, perAccountData, ...rest }) =>
-          Object.entries(rest)
-            .filter(([name]) => ['taxableValue', 'taxDeferredValue', 'taxFreeValue', 'cashSavings'].includes(name))
-            .map(([name, value]) => ({ name, value }))
-        );
+        .flatMap(({ taxableValue, taxDeferredValue, taxFreeValue, cashSavings }) => [
+          { name: 'taxableValue', value: taxableValue },
+          { name: 'taxDeferredValue', value: taxDeferredValue },
+          { name: 'taxFreeValue', value: taxFreeValue },
+          { name: 'cashSavings', value: cashSavings },
+        ]);
       break;
     case 'custom':
       title = accountData ? `${accountData.name} — ${taxCategoryFromAccountTypeForDisplay(accountData.type)}` : 'Custom Account';
       chartData = rawChartData
         .filter((data) => data.age === selectedAge)
-        .flatMap(({ age, perAccountData }) =>
+        .flatMap(({ perAccountData }) =>
           perAccountData
             .filter((account) => account.id === customDataID)
             .flatMap((account) => {
