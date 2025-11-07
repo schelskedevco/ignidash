@@ -79,9 +79,17 @@ export default function SingleSimulationReturnsBarChart({
       mobile: ['Stock Return', 'Bond Return', 'Cash Return', 'Inflation Rate'],
       desktop: ['Real Stock Return', 'Real Bond Return', 'Real Cash Return', 'Inflation Rate'],
     },
+    annualAmounts: {
+      mobile: ['Stock Growth', 'Bond Growth', 'Cash Growth'],
+      desktop: ['Annual Stock Growth', 'Annual Bond Growth', 'Annual Cash Growth'],
+    },
     cumulativeAmounts: {
       mobile: ['Cumul. Stock', 'Cumul. Bond', 'Cumul. Cash'],
       desktop: ['Cumul. Stock Growth', 'Cumul. Bond Growth', 'Cumul. Cash Growth'],
+    },
+    custom: {
+      mobile: ['Stock Growth', 'Bond Growth', 'Cash Growth'],
+      desktop: ['Annual Stock Growth', 'Annual Bond Growth', 'Annual Cash Growth'],
     },
   };
 
@@ -105,14 +113,16 @@ export default function SingleSimulationReturnsBarChart({
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       break;
     }
-    case 'annualAmounts':
+    case 'annualAmounts': {
+      const [stockLabel, bondLabel, cashLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Annual Stock Growth', amount: item.annualStockGrowth },
-        { name: 'Annual Bond Growth', amount: item.annualBondGrowth },
-        { name: 'Annual Cash Growth', amount: item.annualCashGrowth },
+        { name: stockLabel, amount: item.annualStockGrowth },
+        { name: bondLabel, amount: item.annualBondGrowth },
+        { name: cashLabel, amount: item.annualCashGrowth },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
+    }
     case 'cumulativeAmounts': {
       const [stockLabel, bondLabel, cashLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
@@ -123,26 +133,28 @@ export default function SingleSimulationReturnsBarChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     }
-    case 'custom':
+    case 'custom': {
       if (!customDataID) {
         console.warn('Custom data name is required for custom data view');
         transformedChartData = [];
         break;
       }
 
+      const [stockLabel, bondLabel, cashLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = [
         ...chartData
           .flatMap(({ perAccountData }) =>
             perAccountData.flatMap(({ id, returnAmountsForPeriod }) => [
-              { id, name: 'Annual Stock Growth', amount: returnAmountsForPeriod.stocks },
-              { id, name: 'Annual Bond Growth', amount: returnAmountsForPeriod.bonds },
-              { id, name: 'Annual Cash Growth', amount: returnAmountsForPeriod.cash },
+              { id, name: stockLabel, amount: returnAmountsForPeriod.stocks },
+              { id, name: bondLabel, amount: returnAmountsForPeriod.bonds },
+              { id, name: cashLabel, amount: returnAmountsForPeriod.cash },
             ])
           )
           .filter(({ id }) => id === customDataID),
       ];
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
+    }
   }
 
   if (transformedChartData.length === 0) {
