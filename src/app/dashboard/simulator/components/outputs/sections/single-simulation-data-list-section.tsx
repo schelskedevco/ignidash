@@ -69,6 +69,20 @@ function TotalIncomeTooltip() {
   );
 }
 
+function WithdrawalRateTooltip() {
+  return (
+    <Tooltip>
+      <TooltipTrigger>
+        <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>The percentage of your total portfolio value that you withdraw annually.</p>
+        <p>This rate helps assess the sustainability of your withdrawals over time.</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 interface DataListCardProps {
   dp: SimulationDataPoint;
   selectedAge: number;
@@ -301,7 +315,9 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionTerm className="font-bold">Annual Withdrawals</DescriptionTerm>
           <DescriptionDetails className="font-bold">{formatNumber(annualWithdrawals, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm className="font-bold">Withdrawal Rate</DescriptionTerm>
+          <DescriptionTerm className="flex items-center gap-3 font-bold">
+            Withdrawal Rate <WithdrawalRateTooltip />
+          </DescriptionTerm>
           <DescriptionDetails className="font-bold">
             {withdrawalRate !== null ? `${formatNumber(withdrawalRate * 100, 1)}%` : 'N/A'}
           </DescriptionDetails>
