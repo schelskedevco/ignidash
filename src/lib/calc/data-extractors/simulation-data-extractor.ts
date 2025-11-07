@@ -18,7 +18,7 @@ export interface ReturnsStatsData {
 }
 
 export interface CashFlowData {
-  totalIncome: number;
+  totalIncomeFromIncomes: number;
   earnedIncome: number;
   taxExemptIncome: number;
   totalExpenses: number;
@@ -206,15 +206,15 @@ export class SimulationDataExtractor {
 
     const { totalTaxesAndPenalties } = this.getTaxAmountsByType(dp);
 
-    const totalIncome = incomesData?.totalIncome ?? 0;
+    const totalIncomeFromIncomes = incomesData?.totalIncome ?? 0;
     const taxExemptIncome = incomesData?.totalTaxExemptIncome ?? 0;
-    const earnedIncome = totalIncome - taxExemptIncome;
+    const earnedIncome = totalIncomeFromIncomes - taxExemptIncome;
 
     const totalExpenses = expensesData?.totalExpenses ?? 0;
 
-    const cashFlow = totalIncome - totalExpenses - totalTaxesAndPenalties;
+    const cashFlow = totalIncomeFromIncomes - totalExpenses - totalTaxesAndPenalties;
 
-    return { totalIncome, earnedIncome, taxExemptIncome, totalExpenses, totalTaxesAndPenalties, cashFlow };
+    return { totalIncomeFromIncomes, earnedIncome, taxExemptIncome, totalExpenses, totalTaxesAndPenalties, cashFlow };
   }
 
   static getContributionsByTaxCategory(dp: SimulationDataPoint): ContributionsByTaxCategory {
@@ -428,8 +428,8 @@ export class SimulationDataExtractor {
   }
 
   static getSavingsRate(dp: SimulationDataPoint): number | null {
-    const { totalIncome, totalTaxesAndPenalties, cashFlow } = this.getCashFlowData(dp);
-    const totalIncomeMinusTaxes = totalIncome - totalTaxesAndPenalties;
+    const { totalIncomeFromIncomes, totalTaxesAndPenalties, cashFlow } = this.getCashFlowData(dp);
+    const totalIncomeMinusTaxes = totalIncomeFromIncomes - totalTaxesAndPenalties;
     return totalIncomeMinusTaxes > 0 ? cashFlow / totalIncomeMinusTaxes : null;
   }
 
