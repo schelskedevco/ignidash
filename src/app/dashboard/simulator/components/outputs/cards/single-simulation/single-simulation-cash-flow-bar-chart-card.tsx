@@ -3,6 +3,7 @@
 import Card from '@/components/ui/card';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
+import { useIncomeData, useExpenseData } from '@/lib/stores/simulator-store';
 
 import SingleSimulationCashFlowBarChart from '../../charts/single-simulation/single-simulation-cash-flow-bar-chart';
 
@@ -19,6 +20,9 @@ export default function SingleSimulationCashFlowBarChartCard({
   dataView,
   customDataID,
 }: SingleSimulationCashFlowBarChartCardProps) {
+  const incomeData = useIncomeData(customDataID !== '' ? customDataID : null);
+  const expenseData = useExpenseData(customDataID !== '' ? customDataID : null);
+
   let title;
   switch (dataView) {
     case 'net':
@@ -31,7 +35,13 @@ export default function SingleSimulationCashFlowBarChartCard({
       title = 'All Expenses';
       break;
     case 'custom':
-      title = 'Custom';
+      if (incomeData) {
+        title = `${incomeData.name} — Income`;
+      } else if (expenseData) {
+        title = `${expenseData.name} — Expense`;
+      } else {
+        title = 'Custom';
+      }
       break;
     case 'savingsRate':
       title = 'Savings Rate';
