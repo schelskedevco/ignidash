@@ -265,11 +265,11 @@ export default function SingleSimulationTaxesBarChart({
     },
     annualAmounts: {
       mobile: ['Income Tax', 'FICA Tax', 'Cap Gains Tax', 'EW Penalty'],
-      desktop: ['Income Tax', 'FICA Tax', 'Cap Gains Tax', 'EW Penalties'],
+      desktop: ['Annual Income Tax', 'Annual FICA Tax', 'Annual Cap Gains Tax', 'Annual EW Penalties'],
     },
     cumulativeAmounts: {
       mobile: ['Cumul. Income Tax', 'Cumul. FICA Tax', 'Cumul. CG Tax', 'Cumul. EW Penalty'],
-      desktop: ['Cumulative Income Tax', 'Cumulative FICA Tax', 'Cumulative Cap Gains Tax', 'Cumulative EW Penalties'],
+      desktop: ['Cumul. Income Tax', 'Cumul. FICA Tax', 'Cumul. Cap Gains Tax', 'Cumul. EW Penalties'],
     },
     retirementDistributions: {
       mobile: ['Tax-Deferred', 'Early Roth'],
@@ -281,7 +281,7 @@ export default function SingleSimulationTaxesBarChart({
     },
     earlyWithdrawalPenalties: {
       mobile: ['Annual EW Penalty', 'Cumul. EW Penalty'],
-      desktop: ['Annual EW Penalties', 'Cumulative EW Penalties'],
+      desktop: ['Annual EW Penalties', 'Cumul. EW Penalties'],
     },
     adjustmentsAndDeductions: {
       mobile: ['Tax-Deferred', 'CL Deduction', 'Std. Deduction'],
