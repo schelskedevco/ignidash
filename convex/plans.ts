@@ -6,7 +6,7 @@ export const listPlans = query({
   args: {},
   handler: async (ctx) => {
     const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?.userId;
+    const userId = user?._id;
 
     if (!userId) throw new Error('User not authenticated');
 

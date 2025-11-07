@@ -3,7 +3,7 @@ import { v } from 'convex/values';
 
 export default defineSchema({
   plans: defineTable({
-    userId: v.string(),
+    userId: v.id('user'),
     name: v.string(),
 
     timeline: v.union(

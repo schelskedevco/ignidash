@@ -10,7 +10,7 @@ export const initDefaultPlan = mutation({
   handler: async (ctx) => {
     const user = await authComponent.safeGetAuthUser(ctx);
 
-    const userId = user?.userId;
+    const userId = user?._id;
     const userName = user?.name || 'Anonymous';
 
     if (!userId) throw new Error('User not authenticated');
