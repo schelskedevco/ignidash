@@ -20,7 +20,6 @@ export interface ReturnsStatsData {
 export interface CashFlowData {
   totalIncome: number;
   earnedIncome: number;
-  w2Income: number;
   taxExemptIncome: number;
   totalExpenses: number;
   totalTaxesAndPenalties: number;
@@ -72,7 +71,6 @@ export interface TaxableIncomeSources {
   dividendIncome: number;
   interestIncome: number;
   earnedIncome: number;
-  w2Income: number;
   taxExemptIncome: number;
   grossIncome: number;
   grossOrdinaryIncome: number;
@@ -211,13 +209,12 @@ export class SimulationDataExtractor {
     const totalIncome = incomesData?.totalIncome ?? 0;
     const taxExemptIncome = incomesData?.totalTaxExemptIncome ?? 0;
     const earnedIncome = totalIncome - taxExemptIncome;
-    const w2Income = earnedIncome;
 
     const totalExpenses = expensesData?.totalExpenses ?? 0;
 
     const cashFlow = totalIncome - totalExpenses - totalTaxesAndPenalties;
 
-    return { totalIncome, earnedIncome, w2Income, taxExemptIncome, totalExpenses, totalTaxesAndPenalties, cashFlow };
+    return { totalIncome, earnedIncome, taxExemptIncome, totalExpenses, totalTaxesAndPenalties, cashFlow };
   }
 
   static getContributionsByTaxCategory(dp: SimulationDataPoint): ContributionsByTaxCategory {
@@ -384,7 +381,6 @@ export class SimulationDataExtractor {
     const incomesData = dp.incomes;
     const taxExemptIncome = incomesData?.totalTaxExemptIncome ?? 0;
     const earnedIncome = (incomesData?.totalIncome ?? 0) - taxExemptIncome;
-    const w2Income = earnedIncome;
 
     const grossOrdinaryIncome = earnedIncome + retirementDistributions + interestIncome;
     const grossCapGains = realizedGains + dividendIncome;
@@ -400,7 +396,6 @@ export class SimulationDataExtractor {
       dividendIncome,
       interestIncome,
       earnedIncome,
-      w2Income,
       taxExemptIncome,
       grossIncome,
       grossOrdinaryIncome,

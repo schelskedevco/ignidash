@@ -134,7 +134,14 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 }
 
 function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
-  const { grossOrdinaryIncome, grossCapGains, grossIncome, w2Income } = SimulationDataExtractor.getTaxableIncomeSources(dp, selectedAge);
+  const {
+    earnedIncome,
+    totalRetirementDistributions: retirementDistributions,
+    interestIncome,
+    grossCapGains,
+    grossIncome,
+    totalIncome,
+  } = SimulationDataExtractor.getTaxableIncomeSources(dp, selectedAge);
 
   return (
     <Card className="my-0">
@@ -143,17 +150,23 @@ function TaxesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
         <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
       </Subheading>
       <DescriptionList>
-        <DescriptionTerm>Ordinary Income</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(grossOrdinaryIncome, 2, '$')}</DescriptionDetails>
+        <DescriptionTerm>Earned Income</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(earnedIncome, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm>W-2 Income</DescriptionTerm>
-        <DescriptionDetails>{formatNumber(w2Income, 2, '$')}</DescriptionDetails>
+        <DescriptionTerm>Retirement Distributions</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(retirementDistributions, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm>Interest Income</DescriptionTerm>
+        <DescriptionDetails>{formatNumber(interestIncome, 2, '$')}</DescriptionDetails>
 
         <DescriptionTerm>Realized Capital Gains & Dividends</DescriptionTerm>
         <DescriptionDetails>{formatNumber(grossCapGains, 2, '$')}</DescriptionDetails>
 
-        <DescriptionTerm className="font-bold">Total Gross Income</DescriptionTerm>
+        <DescriptionTerm className="font-bold">Gross Income</DescriptionTerm>
         <DescriptionDetails className="font-bold">{formatNumber(grossIncome, 2, '$')}</DescriptionDetails>
+
+        <DescriptionTerm className="font-bold">Total Income</DescriptionTerm>
+        <DescriptionDetails className="font-bold">{formatNumber(totalIncome, 2, '$')}</DescriptionDetails>
       </DescriptionList>
     </Card>
   );
