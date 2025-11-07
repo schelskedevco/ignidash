@@ -23,7 +23,7 @@ interface CustomTooltipProps {
     dataKey: keyof SingleSimulationReturnsChartDataPoint;
     payload:
       | SingleSimulationReturnsChartDataPoint
-      | ({ age: number; annualStockGrowth: number; annualBondGrowth: number; annualCashGrowth: number } & AccountDataWithReturns);
+      | ({ age: number; stockGrowth: number; bondGrowth: number; cashGrowth: number } & AccountDataWithReturns);
   }>;
   label?: number;
   startAge: number;
@@ -134,8 +134,7 @@ export default function SingleSimulationReturnsLineChart({
 
   let chartData:
     | SingleSimulationReturnsChartDataPoint[]
-    | Array<{ age: number; annualStockGrowth: number; annualBondGrowth: number; annualCashGrowth: number } & AccountDataWithReturns> =
-    rawChartData;
+    | Array<{ age: number; stockGrowth: number; bondGrowth: number; cashGrowth: number } & AccountDataWithReturns> = rawChartData;
 
   const dataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
   const yAxisDomain: [number, number] | undefined = undefined;
@@ -147,7 +146,7 @@ export default function SingleSimulationReturnsLineChart({
       break;
     case 'annualAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('annualStockGrowth', 'annualBondGrowth', 'annualCashGrowth');
+      dataKeys.push('stockGrowth', 'bondGrowth', 'cashGrowth');
       break;
     case 'cumulativeAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
@@ -166,16 +165,16 @@ export default function SingleSimulationReturnsLineChart({
             return {
               age,
               ...account,
-              annualStockGrowth: account.returnAmountsForPeriod.stocks,
-              annualBondGrowth: account.returnAmountsForPeriod.bonds,
-              annualCashGrowth: account.returnAmountsForPeriod.cash,
+              stockGrowth: account.returnAmountsForPeriod.stocks,
+              bondGrowth: account.returnAmountsForPeriod.bonds,
+              cashGrowth: account.returnAmountsForPeriod.cash,
             };
           })
       );
 
       chartData = perAccountData;
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('annualStockGrowth', 'annualBondGrowth', 'annualCashGrowth');
+      dataKeys.push('stockGrowth', 'bondGrowth', 'cashGrowth');
       break;
   }
 

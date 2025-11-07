@@ -81,7 +81,7 @@ export default function SingleSimulationReturnsBarChart({
     },
     cumulativeAmounts: {
       mobile: ['Cumul. Stock', 'Cumul. Bond', 'Cumul. Cash'],
-      desktop: ['Cumulative Stock Growth', 'Cumulative Bond Growth', 'Cumulative Cash Growth'],
+      desktop: ['Cumul. Stock Growth', 'Cumul. Bond Growth', 'Cumul. Cash Growth'],
     },
   };
 
@@ -107,9 +107,9 @@ export default function SingleSimulationReturnsBarChart({
     }
     case 'annualAmounts':
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Stock Growth', amount: item.annualStockGrowth },
-        { name: 'Bond Growth', amount: item.annualBondGrowth },
-        { name: 'Cash Growth', amount: item.annualCashGrowth },
+        { name: 'Stock Growth', amount: item.stockGrowth },
+        { name: 'Bond Growth', amount: item.bondGrowth },
+        { name: 'Cash Growth', amount: item.cashGrowth },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;

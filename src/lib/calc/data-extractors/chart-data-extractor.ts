@@ -190,9 +190,9 @@ export abstract class ChartDataExtractor {
         cumulativeStockGrowth: returnsData.totalReturnAmounts.stocks,
         cumulativeBondGrowth: returnsData.totalReturnAmounts.bonds,
         cumulativeCashGrowth: returnsData.totalReturnAmounts.cash,
-        annualStockGrowth: returnsData.returnAmountsForPeriod.stocks,
-        annualBondGrowth: returnsData.returnAmountsForPeriod.bonds,
-        annualCashGrowth: returnsData.returnAmountsForPeriod.cash,
+        stockGrowth: returnsData.returnAmountsForPeriod.stocks,
+        bondGrowth: returnsData.returnAmountsForPeriod.bonds,
+        cashGrowth: returnsData.returnAmountsForPeriod.cash,
         perAccountData: Object.values(returnsData.perAccountData),
       };
     });

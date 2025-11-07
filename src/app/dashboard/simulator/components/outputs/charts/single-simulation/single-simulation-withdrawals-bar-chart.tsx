@@ -76,16 +76,16 @@ export default function SingleSimulationWithdrawalsBarChart({
       desktop: ['Taxable Withdrawals', 'Tax-Deferred Withdrawals', 'Tax-Free Withdrawals', 'Cash Withdrawals'],
     },
     realizedGains: {
-      mobile: ['Annual Gains', 'Cumulative Gains'],
-      desktop: ['Annual Realized Gains', 'Cumulative Realized Gains'],
+      mobile: ['Annual Gains', 'Cumul. Gains'],
+      desktop: ['Annual Realized Gains', 'Cumul. Realized Gains'],
     },
     earlyWithdrawalPenalties: {
       mobile: ['Annual EW Penalty', 'Cumul. EW Penalty'],
-      desktop: ['Annual EW Penalties', 'Cumulative EW Penalties'],
+      desktop: ['Annual EW Penalties', 'Cumul. EW Penalties'],
     },
     earlyWithdrawals: {
-      mobile: ['Annual EWs', 'Cumulative EWs'],
-      desktop: ['Annual Early Withdrawals', 'Cumulative Early Withdrawals'],
+      mobile: ['Annual EWs', 'Cumul. EWs'],
+      desktop: ['Annual Early Withdrawals', 'Cumul. Early Withdrawals'],
     },
   };
 
@@ -101,7 +101,7 @@ export default function SingleSimulationWithdrawalsBarChart({
       transformedChartData = chartData.flatMap((item) => [{ name: 'Annual Withdrawals', amount: item.annualWithdrawals }]);
       break;
     case 'cumulativeAmounts':
-      transformedChartData = chartData.flatMap((item) => [{ name: 'Cumulative Withdrawals', amount: item.cumulativeWithdrawals }]);
+      transformedChartData = chartData.flatMap((item) => [{ name: 'Cumul. Withdrawals', amount: item.cumulativeWithdrawals }]);
       break;
     case 'taxCategory': {
       const [taxableLabel, taxDeferredLabel, taxFreeLabel, cashLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
@@ -124,7 +124,7 @@ export default function SingleSimulationWithdrawalsBarChart({
     case 'requiredMinimumDistributions':
       transformedChartData = chartData.flatMap((item) => [
         { name: 'Annual RMDs', amount: item.annualRequiredMinimumDistributions },
-        { name: 'Cumulative RMDs', amount: item.cumulativeRequiredMinimumDistributions },
+        { name: 'Cumul. RMDs', amount: item.cumulativeRequiredMinimumDistributions },
       ]);
       break;
     case 'earlyWithdrawalPenalties': {

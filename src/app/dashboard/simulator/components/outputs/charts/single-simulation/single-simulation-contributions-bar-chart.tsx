@@ -68,7 +68,7 @@ export default function SingleSimulationContributionsBarChart({
     },
     employerMatch: {
       mobile: ['Annual Match', 'Cumul. Match'],
-      desktop: ['Annual Employer Match', 'Cumulative Employer Match'],
+      desktop: ['Annual Employer Match', 'Cumul. Employer Match'],
     },
   };
 
