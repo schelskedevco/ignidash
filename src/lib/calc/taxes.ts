@@ -73,15 +73,15 @@ export class TaxProcessor {
     const { adjustedRealizedGains, capitalLossDeduction } = this.getRealizedGainsAndCapLossDeductionData(annualPortfolioDataBeforeTaxes);
 
     const grossDividendIncome = annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
-    const grossIncomeTaxedAsCapGains = adjustedRealizedGains + grossDividendIncome;
+    const adjustedIncomeTaxedAsCapGains = adjustedRealizedGains + grossDividendIncome;
 
-    const adjustedGrossOrdinaryIncome = Math.max(0, adjustedOrdinaryIncome + capitalLossDeduction);
+    const adjustedIncomeTaxedAsIncome = Math.max(0, adjustedOrdinaryIncome + capitalLossDeduction);
 
-    const deductionUsedForOrdinary = Math.min(STANDARD_DEDUCTION_SINGLE, adjustedGrossOrdinaryIncome);
+    const deductionUsedForOrdinary = Math.min(STANDARD_DEDUCTION_SINGLE, adjustedIncomeTaxedAsIncome);
     const deductionUsedForGains = STANDARD_DEDUCTION_SINGLE - deductionUsedForOrdinary;
 
-    const taxableOrdinaryIncome = Math.max(0, adjustedGrossOrdinaryIncome - deductionUsedForOrdinary);
-    const taxableCapitalGains = Math.max(0, grossIncomeTaxedAsCapGains - deductionUsedForGains);
+    const taxableOrdinaryIncome = Math.max(0, adjustedIncomeTaxedAsIncome - deductionUsedForOrdinary);
+    const taxableCapitalGains = Math.max(0, adjustedIncomeTaxedAsCapGains - deductionUsedForGains);
 
     const { incomeTaxAmount, topMarginalTaxRate } = this.processIncomeTaxes(taxableOrdinaryIncome);
     const incomeTaxes: IncomeTaxesData = {
@@ -100,9 +100,9 @@ export class TaxProcessor {
     const capitalGainsTaxes: CapitalGainsTaxesData = {
       taxableCapitalGains,
       capitalGainsTaxAmount,
-      effectiveCapitalGainsTaxRate: grossIncomeTaxedAsCapGains > 0 ? capitalGainsTaxAmount / grossIncomeTaxedAsCapGains : 0,
+      effectiveCapitalGainsTaxRate: adjustedIncomeTaxedAsCapGains > 0 ? capitalGainsTaxAmount / adjustedIncomeTaxedAsCapGains : 0,
       topMarginalCapitalGainsTaxRate,
-      netCapitalGains: grossIncomeTaxedAsCapGains - capitalGainsTaxAmount,
+      netCapitalGains: adjustedIncomeTaxedAsCapGains - capitalGainsTaxAmount,
     };
 
     const earlyWithdrawalPenalties = this.processEarlyWithdrawalPenalties(annualPortfolioDataBeforeTaxes);
@@ -112,7 +112,7 @@ export class TaxProcessor {
     const difference = totalTaxLiability - annualIncomesData.totalAmountWithheld;
 
     return {
-      adjustedGrossIncome: adjustedGrossOrdinaryIncome + grossIncomeTaxedAsCapGains,
+      adjustedGrossIncome: adjustedIncomeTaxedAsIncome + adjustedIncomeTaxedAsCapGains,
       incomeTaxes,
       capitalGainsTaxes,
       earlyWithdrawalPenalties,
