@@ -168,7 +168,6 @@ export default function SingleSimulationWithdrawalsLineChart({
     | Array<{ age: number; annualWithdrawals: number; cumulativeWithdrawals: number } & AccountDataWithTransactions> = rawChartData;
 
   const dataKeys: (keyof SingleSimulationWithdrawalsChartDataPoint)[] = [];
-  const yAxisDomain: [number, number] | undefined = undefined;
   let formatter = undefined;
   switch (dataView) {
     case 'annualAmounts':
@@ -261,14 +260,7 @@ export default function SingleSimulationWithdrawalsLineChart({
           >
             <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
             <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-            <YAxis
-              tick={{ fill: foregroundMutedColor }}
-              axisLine={false}
-              tickLine={false}
-              hide={isSmallScreen}
-              tickFormatter={formatter}
-              domain={yAxisDomain}
-            />
+            <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
             {dataKeys.map((dataKey, index) => (
               <Line
                 key={dataKey}

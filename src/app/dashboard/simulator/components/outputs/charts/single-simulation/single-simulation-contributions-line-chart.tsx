@@ -118,7 +118,7 @@ export default function SingleSimulationContributionsLineChart({
     | Array<{ age: number; annualContributions: number; cumulativeContributions: number } & AccountDataWithTransactions> = rawChartData;
 
   const dataKeys: (keyof SingleSimulationContributionsChartDataPoint)[] = [];
-  const yAxisDomain: [number, number] | undefined = undefined;
+  const formatter = (value: number) => formatNumber(value, 1, '$');
   switch (dataView) {
     case 'annualAmounts':
       dataKeys.push('annualContributions');
@@ -189,14 +189,7 @@ export default function SingleSimulationContributionsLineChart({
           >
             <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
             <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-            <YAxis
-              tick={{ fill: foregroundMutedColor }}
-              axisLine={false}
-              tickLine={false}
-              hide={isSmallScreen}
-              tickFormatter={(value: number) => formatNumber(value, 1, '$')}
-              domain={yAxisDomain}
-            />
+            <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
             {dataKeys.map((dataKey, index) => (
               <Line
                 key={dataKey}
