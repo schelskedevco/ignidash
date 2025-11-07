@@ -10,6 +10,8 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
+import type * as plans from "../plans.js";
+import type * as userInit from "../userInit.js";
 
 import type {
   ApiFromModules,
@@ -28,6 +30,8 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   http: typeof http;
+  plans: typeof plans;
+  userInit: typeof userInit;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
