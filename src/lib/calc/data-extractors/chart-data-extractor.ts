@@ -140,7 +140,7 @@ export abstract class ChartDataExtractor {
         annualIncomeTax,
         cumulativeIncomeTax,
         effectiveIncomeTaxRate: taxesData.incomeTaxes.effectiveIncomeTaxRate,
-        topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalTaxRate,
+        topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalIncomeTaxRate,
         realizedGains,
         dividendIncome,
         taxableCapGains: taxesData.capitalGainsTaxes.taxableCapitalGains,

@@ -165,7 +165,7 @@ export abstract class TableDataExtractor {
         annualFicaTax,
         cumulativeFicaTax,
         effectiveIncomeTaxRate: taxesData?.incomeTaxes.effectiveIncomeTaxRate ?? 0,
-        topMarginalIncomeTaxRate: taxesData?.incomeTaxes.topMarginalTaxRate ?? 0,
+        topMarginalIncomeTaxRate: taxesData?.incomeTaxes.topMarginalIncomeTaxRate ?? 0,
         realizedGains,
         dividendIncome,
         annualCapGainsTax,
