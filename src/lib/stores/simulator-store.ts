@@ -264,6 +264,7 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               delete state.inputs.contributionRules[id];
             }),
+          // To here
           updateBaseContributionRule: (data) =>
             set((state) => {
               state.inputs.baseContributionRule = { ...data };

@@ -20,8 +20,7 @@ export const upsertIncome = mutation({
     if (!plan) throw new Error('Plan not found');
     if (plan.userId !== userId) throw new Error('Not authorized to update this plan');
 
-    const otherIncomes = plan.incomes.filter((i) => i.id !== income.id);
-    const updatedIncomes = [...otherIncomes, income];
+    const updatedIncomes = [...plan.incomes.filter((i) => i.id !== income.id), income];
 
     await ctx.db.patch(planId, { incomes: updatedIncomes });
   },
