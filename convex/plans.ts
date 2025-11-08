@@ -18,7 +18,7 @@ export const listPlans = query({
   },
 });
 
-export const getPlanById = query({
+export const getPlan = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
     const userId = await getUserIdOrThrow(ctx);
@@ -32,7 +32,7 @@ export const getPlanById = query({
   },
 });
 
-export const createBlankPlan = mutation({
+export const createPlan = mutation({
   args: { newPlanName: v.string() },
   handler: async (ctx, { newPlanName }) => {
     const userId = await getUserIdOrThrow(ctx);
@@ -51,7 +51,7 @@ export const createBlankPlan = mutation({
   },
 });
 
-export const cloneExistingPlan = mutation({
+export const clonePlan = mutation({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
     const userId = await getUserIdOrThrow(ctx);
