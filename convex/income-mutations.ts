@@ -1,8 +1,9 @@
 import { v } from 'convex/values';
 import { mutation } from './_generated/server';
-import { authComponent } from './auth';
 
 import { incomeValidator } from './validators/incomes-validator';
+import { getUserIdOrThrow } from './utils/auth-utils';
+import { getPlanForUserId } from './utils/plan-utils';
 
 export const upsertIncome = mutation({
   args: {
@@ -10,15 +11,8 @@ export const upsertIncome = mutation({
     income: incomeValidator,
   },
   handler: async (ctx, { planId, income }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to update this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    const plan = await getPlanForUserId(ctx, planId, userId);
 
     const updatedIncomes = [...plan.incomes.filter((i) => i.id !== income.id), income];
 
@@ -32,15 +26,8 @@ export const deleteIncome = mutation({
     incomeId: v.string(),
   },
   handler: async (ctx, { planId, incomeId }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to update this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    const plan = await getPlanForUserId(ctx, planId, userId);
 
     const updatedContributionRules = plan.contributionRules.map((rule) => {
       if (rule.incomeIds?.includes(incomeId)) {

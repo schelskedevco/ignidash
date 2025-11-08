@@ -1,14 +1,12 @@
 import { v } from 'convex/values';
 import { query } from './_generated/server';
-import { authComponent } from './auth';
+
+import { getUserIdOrThrow } from './utils/auth-utils';
 
 export const listPlans = query({
   args: {},
   handler: async (ctx) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
+    const userId = await getUserIdOrThrow(ctx);
 
     const plans = await ctx.db
       .query('plans')
@@ -22,10 +20,7 @@ export const listPlans = query({
 export const getPlanById = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?.userId;
-
-    if (!userId) throw new Error('User not authenticated');
+    const userId = await getUserIdOrThrow(ctx);
 
     const plan = await ctx.db.get(planId);
 
