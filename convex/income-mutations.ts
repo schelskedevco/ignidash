@@ -3,7 +3,7 @@ import { mutation } from './_generated/server';
 
 import { incomeValidator } from './validators/incomes-validator';
 import { getUserIdOrThrow } from './utils/auth-utils';
-import { getPlanForUserId } from './utils/plan-utils';
+import { getPlanForUserIdOrThrow } from './utils/plan-utils';
 
 export const upsertIncome = mutation({
   args: {
@@ -12,7 +12,7 @@ export const upsertIncome = mutation({
   },
   handler: async (ctx, { planId, income }) => {
     const userId = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserId(ctx, planId, userId);
+    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const updatedIncomes = [...plan.incomes.filter((i) => i.id !== income.id), income];
 
@@ -27,7 +27,7 @@ export const deleteIncome = mutation({
   },
   handler: async (ctx, { planId, incomeId }) => {
     const userId = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserId(ctx, planId, userId);
+    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const updatedContributionRules = plan.contributionRules.map((rule) => {
       if (rule.incomeIds?.includes(incomeId)) {

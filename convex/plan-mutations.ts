@@ -1,18 +1,16 @@
 import { v } from 'convex/values';
 import { mutation } from './_generated/server';
-import { authComponent } from './auth';
 
 import { timelineValidator } from './validators/timeline-validator';
 import { baseContributionRuleValidator } from './validators/contribution-rules-validator';
 import { marketAssumptionsValidator } from './validators/market-assumptions-validator';
+import { getUserIdOrThrow } from './utils/auth-utils';
+import { getPlanForUserIdOrThrow } from './utils/plan-utils';
 
 export const createBlankPlan = mutation({
   args: { newPlanName: v.string() },
   handler: async (ctx, { newPlanName }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
+    const userId = await getUserIdOrThrow(ctx);
 
     return await ctx.db.insert('plans', {
       userId,
@@ -31,15 +29,8 @@ export const createBlankPlan = mutation({
 export const cloneExistingPlan = mutation({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to clone this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const { timeline, incomes, expenses, accounts, contributionRules, baseContributionRule, marketAssumptions } = plan;
     const clonedData = {
@@ -59,15 +50,8 @@ export const cloneExistingPlan = mutation({
 export const deletePlan = mutation({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to delete this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     await ctx.db.delete(planId);
   },
@@ -76,15 +60,8 @@ export const deletePlan = mutation({
 export const updatePlanName = mutation({
   args: { planId: v.id('plans'), name: v.string() },
   handler: async (ctx, { planId, name }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to update this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     await ctx.db.patch(planId, { name });
   },
@@ -96,15 +73,8 @@ export const updatePlanTimeline = mutation({
     timeline: timelineValidator,
   },
   handler: async (ctx, { planId, timeline }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to update this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     await ctx.db.patch(planId, { timeline });
   },
@@ -116,15 +86,8 @@ export const updateBaseContributionRule = mutation({
     baseContributionRule: baseContributionRuleValidator,
   },
   handler: async (ctx, { planId, baseContributionRule }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to update this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     await ctx.db.patch(planId, { baseContributionRule });
   },
@@ -136,15 +99,8 @@ export const updateMarketAssumptions = mutation({
     marketAssumptions: marketAssumptionsValidator,
   },
   handler: async (ctx, { planId, marketAssumptions }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to update this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     await ctx.db.patch(planId, { marketAssumptions });
   },

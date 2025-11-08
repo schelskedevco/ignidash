@@ -10,7 +10,7 @@
 
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
-import type * as planMutations from "../planMutations.js";
+import type * as planMutations from "../plan-mutations.js";
 import type * as plans from "../plans.js";
 import type * as userInit from "../userInit.js";
 
