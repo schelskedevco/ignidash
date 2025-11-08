@@ -1,7 +1,7 @@
 import { v } from 'convex/values';
 import { query, mutation } from './_generated/server';
 
-import { contributionRulesValidator } from './validators/contribution-rules-validator';
+import { contributionRulesValidator, baseContributionRuleValidator } from './validators/contribution-rules-validator';
 import { getUserIdOrThrow } from './utils/auth-utils';
 import { getPlanForUserIdOrThrow } from './utils/plan-utils';
 
@@ -23,16 +23,6 @@ export const getContributionRule = query({
 
     const rule = plan.contributionRules.find((rule) => rule.id === ruleId);
     return rule || null;
-  },
-});
-
-export const getBaseContributionRule = query({
-  args: { planId: v.id('plans') },
-  handler: async (ctx, { planId }) => {
-    const userId = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
-
-    return plan.baseContributionRule;
   },
 });
 
@@ -84,5 +74,28 @@ export const deleteContributionRule = mutation({
       .map((rule, idx) => ({ ...rule, rank: idx + 1 }));
 
     await ctx.db.patch(planId, { contributionRules: updatedContributionRules });
+  },
+});
+
+export const getBaseRule = query({
+  args: { planId: v.id('plans') },
+  handler: async (ctx, { planId }) => {
+    const userId = await getUserIdOrThrow(ctx);
+    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+
+    return plan.baseContributionRule;
+  },
+});
+
+export const updateBaseRule = mutation({
+  args: {
+    planId: v.id('plans'),
+    baseContributionRule: baseContributionRuleValidator,
+  },
+  handler: async (ctx, { planId, baseContributionRule }) => {
+    const userId = await getUserIdOrThrow(ctx);
+    await getPlanForUserIdOrThrow(ctx, planId, userId);
+
+    await ctx.db.patch(planId, { baseContributionRule });
   },
 });
