@@ -1,8 +1,9 @@
 import { v } from 'convex/values';
 import { mutation } from './_generated/server';
-import { authComponent } from './auth';
 
 import { contributionRulesValidator } from './validators/contribution-rules-validator';
+import { getUserIdOrThrow } from './utils/auth-utils';
+import { getPlanForUserIdOrThrow } from './utils/plan-utils';
 
 export const upsertContributionRule = mutation({
   args: {
@@ -10,15 +11,8 @@ export const upsertContributionRule = mutation({
     contributionRule: contributionRulesValidator,
   },
   handler: async (ctx, { planId, contributionRule }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to update this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const updatedContributionRules = [...plan.contributionRules.filter((cr) => cr.id !== contributionRule.id), contributionRule];
 
@@ -32,15 +26,8 @@ export const reorderContributionRules = mutation({
     newOrder: v.array(v.string()),
   },
   handler: async (ctx, { planId, newOrder }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to update this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const reorderedContributionRules = newOrder.map((id, index) => {
       const cr = plan.contributionRules.find((c) => c.id === id);
@@ -58,15 +45,8 @@ export const deleteContributionRule = mutation({
     contributionRuleId: v.string(),
   },
   handler: async (ctx, { planId, contributionRuleId }) => {
-    const user = await authComponent.safeGetAuthUser(ctx);
-    const userId = user?._id;
-
-    if (!userId) throw new Error('User not authenticated');
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new Error('Plan not found');
-    if (plan.userId !== userId) throw new Error('Not authorized to update this plan');
+    const userId = await getUserIdOrThrow(ctx);
+    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const updatedContributionRules = plan.contributionRules
       .filter((rule) => rule.id !== contributionRuleId)
