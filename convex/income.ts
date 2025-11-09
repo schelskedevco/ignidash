@@ -1,14 +1,14 @@
 import { v } from 'convex/values';
 import { query, mutation } from './_generated/server';
 
-import { incomeValidator } from './validators/incomes-validator';
-import { getUserIdOrThrow } from './utils/auth-utils';
-import { getPlanForUserIdOrThrow } from './utils/plan-utils';
+import { incomeValidator } from './validators/incomes_validator';
+import { getUserIdOrThrow } from './utils/auth_utils';
+import { getPlanForUserIdOrThrow } from './utils/plan_utils';
 
 export const getIncomes = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     return plan.incomes;
@@ -16,9 +16,9 @@ export const getIncomes = query({
 });
 
 export const getIncome = query({
-  args: { planId: v.id('plans'), incomeId: v.string() },
+  args: { planId: v.id('plans'), incomeId: v.union(v.string(), v.null()) },
   handler: async (ctx, { planId, incomeId }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const income = plan.incomes.find((inc) => inc.id === incomeId);
@@ -32,7 +32,7 @@ export const upsertIncome = mutation({
     income: incomeValidator,
   },
   handler: async (ctx, { planId, income }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const updatedIncomes = [...plan.incomes.filter((i) => i.id !== income.id), income];
@@ -47,7 +47,7 @@ export const deleteIncome = mutation({
     incomeId: v.string(),
   },
   handler: async (ctx, { planId, incomeId }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const updatedContributionRules = plan.contributionRules.map((rule) => {

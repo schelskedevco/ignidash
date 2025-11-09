@@ -12,7 +12,7 @@ interface SortableContributionItemProps {
   disabled?: boolean;
   onDropdownClickEdit: () => void;
   onDropdownClickDelete: () => void;
-  onDropdownClickDisable: () => void;
+  onDropdownClickDisable?: () => Promise<void>;
   colorClassName?: string;
 }
 

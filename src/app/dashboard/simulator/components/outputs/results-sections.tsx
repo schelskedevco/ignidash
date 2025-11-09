@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 
+import { usePlanData } from '@/hooks/use-convex-data';
 import { useIsCalculationReady, useSimulationMode } from '@/lib/stores/simulator-store';
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { Subheading } from '@/components/catalyst/heading';
@@ -17,7 +18,9 @@ import ExpenseDialog from '../inputs/dialogs/expense-dialog';
 import SavingsDialog from '../inputs/dialogs/savings-dialog';
 
 export default function ResultsSections() {
-  const { timelineIsReady, accountsAreReady, incomesAreReady, expensesAreReady } = useIsCalculationReady();
+  const inputs = usePlanData();
+
+  const { timelineIsReady, accountsAreReady, incomesAreReady, expensesAreReady } = useIsCalculationReady(inputs);
   const simulationMode = useSimulationMode();
 
   const steps = [
@@ -120,9 +123,9 @@ export default function ResultsSections() {
     case 'fixedReturns':
     case 'historicalReturns':
     case 'stochasticReturns':
-      return <SingleSimulationResults simulationMode={simulationMode} />;
+      return <SingleSimulationResults inputs={inputs!} simulationMode={simulationMode} />;
     case 'monteCarloStochasticReturns':
     case 'monteCarloHistoricalReturns':
-      return <MultiSimulationResults simulationMode={simulationMode} />;
+      return <MultiSimulationResults inputs={inputs!} simulationMode={simulationMode} />;
   }
 }

@@ -4,7 +4,7 @@ import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/
 interface DisclosureSectionDeleteDataAlertProps {
   dataToDelete: { id: string; name: string } | null;
   setDataToDelete: (data: { id: string; name: string } | null) => void;
-  deleteData: (id: string) => void;
+  deleteData: (id: string) => Promise<void>;
 }
 
 export default function DisclosureSectionDeleteDataAlert({
@@ -27,8 +27,8 @@ export default function DisclosureSectionDeleteDataAlert({
         </Button>
         <Button
           color="red"
-          onClick={() => {
-            deleteData(dataToDelete!.id);
+          onClick={async () => {
+            await deleteData(dataToDelete!.id);
             setDataToDelete(null);
           }}
         >

@@ -1,14 +1,14 @@
 import { v } from 'convex/values';
 import { query, mutation } from './_generated/server';
 
-import { contributionRulesValidator, baseContributionRuleValidator } from './validators/contribution-rules-validator';
-import { getUserIdOrThrow } from './utils/auth-utils';
-import { getPlanForUserIdOrThrow } from './utils/plan-utils';
+import { contributionRulesValidator, baseContributionRuleValidator } from './validators/contribution_rules_validator';
+import { getUserIdOrThrow } from './utils/auth_utils';
+import { getPlanForUserIdOrThrow } from './utils/plan_utils';
 
 export const getContributionRules = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     return plan.contributionRules;
@@ -16,9 +16,9 @@ export const getContributionRules = query({
 });
 
 export const getContributionRule = query({
-  args: { planId: v.id('plans'), ruleId: v.string() },
+  args: { planId: v.id('plans'), ruleId: v.union(v.string(), v.null()) },
   handler: async (ctx, { planId, ruleId }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const rule = plan.contributionRules.find((rule) => rule.id === ruleId);
@@ -32,7 +32,7 @@ export const upsertContributionRule = mutation({
     contributionRule: contributionRulesValidator,
   },
   handler: async (ctx, { planId, contributionRule }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const updatedContributionRules = [...plan.contributionRules.filter((cr) => cr.id !== contributionRule.id), contributionRule];
@@ -47,7 +47,7 @@ export const reorderContributionRules = mutation({
     newOrder: v.array(v.string()),
   },
   handler: async (ctx, { planId, newOrder }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const reorderedContributionRules = newOrder.map((id, index) => {
@@ -66,7 +66,7 @@ export const deleteContributionRule = mutation({
     contributionRuleId: v.string(),
   },
   handler: async (ctx, { planId, contributionRuleId }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const updatedContributionRules = plan.contributionRules
@@ -80,7 +80,7 @@ export const deleteContributionRule = mutation({
 export const getBaseRule = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     return plan.baseContributionRule;
@@ -93,7 +93,7 @@ export const updateBaseRule = mutation({
     baseContributionRule: baseContributionRuleValidator,
   },
   handler: async (ctx, { planId, baseContributionRule }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     await ctx.db.patch(planId, { baseContributionRule });

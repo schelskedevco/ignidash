@@ -1,10 +1,12 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { useState, RefObject } from 'react';
 import { LandmarkIcon, PiggyBankIcon, TrendingUpIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
-import { useAccountsData, useDeleteAccount } from '@/lib/stores/simulator-store';
+import { useAccountsData } from '@/hooks/use-convex-data';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
@@ -13,6 +15,7 @@ import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { accountTypeForDisplay, taxCategoryFromAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import type { TaxCategory } from '@/lib/calc/asset';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
 
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
@@ -43,6 +46,8 @@ interface PortfolioSectionProps {
 }
 
 export default function PortfolioSection(props: PortfolioSectionProps) {
+  const planId = useSelectedPlanId();
+
   const [accountDialogOpen, setAccountDialogOpen] = useState(false);
   const [selectedAccountID, setSelectedAccountID] = useState<string | null>(null);
 
@@ -54,7 +59,10 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
   const accounts = useAccountsData();
   const hasAccounts = Object.keys(accounts).length > 0;
 
-  const deleteAccount = useDeleteAccount();
+  const m = useMutation(api.account.deleteAccount);
+  const deleteAccount = async (accountId: string) => {
+    await m({ accountId, planId });
+  };
 
   const handleAccountDialogClose = () => {
     setSelectedAccountID(null);

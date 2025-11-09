@@ -1,5 +1,7 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { useState, RefObject, useCallback, useMemo } from 'react';
 import { HandCoinsIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
@@ -17,6 +19,8 @@ import {
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 
+import { useContributionRulesData, useBaseContributionRuleData, useAccountsData } from '@/hooks/use-convex-data';
+import { contributionToConvex, baseContributionToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
@@ -25,18 +29,10 @@ import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { Divider } from '@/components/catalyst/divider';
 import { Select } from '@/components/catalyst/select';
 import { Field, Label, Description } from '@/components/catalyst/fieldset';
-import {
-  useContributionRulesData,
-  useBaseContributionRuleData,
-  useUpdateBaseContributionRule,
-  useUpdateContributionRules,
-  useReorderContributionRules,
-  useDeleteContributionRule,
-  useAccountsData,
-} from '@/lib/stores/simulator-store';
-import type { ContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
+import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
 import { accountTypeForDisplay, type AccountInputs, taxCategoryFromAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import type { TaxCategory } from '@/lib/calc/asset';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
 
 import ContributionRuleDialog from '../dialogs/contribution-rule-dialog';
 import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
@@ -81,6 +77,8 @@ interface ContributionsSectionProps {
 }
 
 export default function ContributionsSection(props: ContributionsSectionProps) {
+  const planId = useSelectedPlanId();
+
   const [contributionRuleDialogOpen, setContributionRuleDialogOpen] = useState(false);
   const [selectedContributionRuleID, setSelectedContributionRuleID] = useState<string | null>(null);
   const [contributionRuleToDelete, setContributionRuleToDelete] = useState<{ id: string; name: string } | null>(null);
@@ -99,11 +97,40 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
   const activeContributionRule = activeIndex !== -1 ? sortedRules[activeIndex] : null;
 
   const baseContributionRule = useBaseContributionRuleData();
-  const updateBaseContributionRule = useUpdateBaseContributionRule();
 
-  const updateContributionRules = useUpdateContributionRules();
-  const reorderContributionRules = useReorderContributionRules();
-  const deleteContributionRule = useDeleteContributionRule();
+  const updateBaseRuleMutation = useMutation(api.contribution_rule.updateBaseRule);
+  const updateBaseContributionRule = useCallback(
+    async (data: BaseContributionInputs) => {
+      const baseContributionRule = baseContributionToConvex(data);
+      await updateBaseRuleMutation({ baseContributionRule, planId });
+    },
+    [updateBaseRuleMutation, planId]
+  );
+
+  const updateRuleMutation = useMutation(api.contribution_rule.upsertContributionRule);
+  const updateContributionRules = useCallback(
+    async (data: ContributionInputs) => {
+      const contributionRule = contributionToConvex(data);
+      await updateRuleMutation({ contributionRule, planId });
+    },
+    [updateRuleMutation, planId]
+  );
+
+  const reorderRulesMutation = useMutation(api.contribution_rule.reorderContributionRules);
+  const reorderContributionRules = useCallback(
+    async (newOrder: string[]) => {
+      await reorderRulesMutation({ newOrder, planId });
+    },
+    [reorderRulesMutation, planId]
+  );
+
+  const deleteRuleMutation = useMutation(api.contribution_rule.deleteContributionRule);
+  const deleteContributionRule = useCallback(
+    async (contributionRuleId: string) => {
+      await deleteRuleMutation({ contributionRuleId, planId });
+    },
+    [deleteRuleMutation, planId]
+  );
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -113,11 +140,11 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
   );
 
   const disableContributionRule = useCallback(
-    (id: string) => {
+    async (id: string) => {
       const rule = contributionRules[id];
       if (!rule) return;
 
-      updateContributionRules({ ...rule, disabled: !rule.disabled });
+      await updateContributionRules({ ...rule, disabled: !rule.disabled });
     },
     [contributionRules, updateContributionRules]
   );
@@ -132,7 +159,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
     setActiveId(active.id.toString());
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
@@ -140,7 +167,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
       const newIndex = sortedRuleIds.indexOf(over.id.toString());
 
       const newOrder = arrayMove(sortedRuleIds, oldIndex, newIndex);
-      reorderContributionRules(newOrder);
+      await reorderContributionRules(newOrder);
     }
 
     setActiveId(null);
@@ -159,8 +186,8 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
             <Label className="sr-only">Base Rule</Label>
             <Select
               name="status"
-              value={baseContributionRule.type}
-              onChange={(e) => updateBaseContributionRule({ type: e.target.value as 'spend' | 'save' })}
+              value={baseContributionRule?.type ?? 'save'}
+              onChange={async (e) => await updateBaseContributionRule({ type: e.target.value as 'spend' | 'save' })}
             >
               <option value="spend">Spend anything left</option>
               <option value="save">Save anything left</option>
@@ -192,7 +219,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
                         disabled={contributionRule.disabled}
                         onDropdownClickEdit={() => handleDropdownClickEdit(id)}
                         onDropdownClickDelete={() => setContributionRuleToDelete({ id, name: 'Contribution ' + (index + 1) })}
-                        onDropdownClickDisable={() => disableContributionRule(id)}
+                        onDropdownClickDisable={async () => await disableContributionRule(id)}
                         colorClassName={COLOR_MAP[taxCategoryFromAccountType(accounts[contributionRule.accountId]?.type)]}
                       />
                     ))}
@@ -212,7 +239,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
                       disabled={activeContributionRule.disabled}
                       onDropdownClickEdit={() => handleDropdownClickEdit(activeId)}
                       onDropdownClickDelete={() => setContributionRuleToDelete({ id: activeId, name: 'Contribution ' + (activeIndex + 1) })}
-                      onDropdownClickDisable={() => disableContributionRule(activeId)}
+                      onDropdownClickDisable={async () => await disableContributionRule(activeId)}
                       colorClassName={COLOR_MAP[taxCategoryFromAccountType(accounts[activeContributionRule.accountId]?.type)]}
                     />
                   ) : null}

@@ -1,17 +1,21 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { useState, RefObject, useCallback } from 'react';
 import { BanknoteArrowDownIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
+import { useExpensesData } from '@/hooks/use-convex-data';
+import { expenseToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
-import { useExpensesData, useDeleteExpense, useUpdateExpenses } from '@/lib/stores/simulator-store';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
 
 import ExpenseDialog from '../dialogs/expense-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';
@@ -34,6 +38,8 @@ interface ExpensesSectionProps {
 }
 
 export default function ExpensesSection(props: ExpensesSectionProps) {
+  const planId = useSelectedPlanId();
+
   const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
   const [selectedExpenseID, setSelectedExpenseID] = useState<string | null>(null);
 
@@ -42,15 +48,29 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
   const expenses = useExpensesData();
   const hasExpenses = Object.keys(expenses).length > 0;
 
-  const updateExpenses = useUpdateExpenses();
-  const deleteExpense = useDeleteExpense();
+  const updateMutation = useMutation(api.expense.upsertExpense);
+  const updateExpenses = useCallback(
+    async (data: ExpenseInputs) => {
+      const expense = expenseToConvex(data);
+      await updateMutation({ expense, planId });
+    },
+    [updateMutation, planId]
+  );
+
+  const deleteMutation = useMutation(api.expense.deleteExpense);
+  const deleteExpense = useCallback(
+    async (expenseId: string) => {
+      await deleteMutation({ expenseId, planId });
+    },
+    [deleteMutation, planId]
+  );
 
   const disableExpense = useCallback(
-    (id: string) => {
+    async (id: string) => {
       const expense = expenses[id];
       if (!expense) return;
 
-      updateExpenses({ ...expense, disabled: !expense.disabled });
+      await updateExpenses({ ...expense, disabled: !expense.disabled });
     },
     [expenses, updateExpenses]
   );
@@ -83,7 +103,7 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
                     disabled={expense.disabled}
                     onDropdownClickEdit={() => handleDropdownClickEdit(id)}
                     onDropdownClickDelete={() => setExpenseToDelete({ id, name: expense.name })}
-                    onDropdownClickDisable={() => disableExpense(id)}
+                    onDropdownClickDisable={async () => await disableExpense(id)}
                     colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
                   />
                 ))}

@@ -3,7 +3,7 @@
 import Card from '@/components/ui/card';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
-import { useIncomeData, useExpenseData } from '@/lib/stores/simulator-store';
+import { useIncomeData, useExpenseData } from '@/hooks/use-convex-data';
 
 import SingleSimulationCashFlowBarChart from '../../charts/single-simulation/single-simulation-cash-flow-bar-chart';
 

@@ -8,7 +8,7 @@ import { contributionFormSchema, baseContributionSchema } from './contribution-f
 import { marketAssumptionsSchema } from './market-assumptions-schema';
 
 export const simulatorSchema = z.object({
-  timeline: timelineFormSchema.optional(),
+  timeline: timelineFormSchema.nullable(),
   incomes: z.record(z.string(), incomeFormSchema),
   accounts: z.record(z.string(), accountFormSchema),
   expenses: z.record(z.string(), expenseFormSchema),

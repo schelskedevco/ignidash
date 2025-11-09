@@ -11,7 +11,7 @@ interface ContributionItemProps {
   disabled?: boolean;
   onDropdownClickEdit: () => void;
   onDropdownClickDelete: () => void;
-  onDropdownClickDisable: () => void;
+  onDropdownClickDisable?: () => Promise<void>;
   style?: React.CSSProperties;
   colorClassName?: string;
 }

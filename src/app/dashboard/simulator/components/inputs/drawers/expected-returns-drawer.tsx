@@ -1,15 +1,13 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
+import { useEffect } from 'react';
 
-import {
-  useMarketAssumptionsData,
-  useUpdateMarketAssumptions,
-  useStocksRealReturn,
-  useBondsRealReturn,
-  useCashRealReturn,
-} from '@/lib/stores/simulator-store';
+import { useMarketAssumptionsData } from '@/hooks/use-convex-data';
+import { marketAssumptionsToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { type MarketAssumptionsInputs, marketAssumptionsSchema } from '@/lib/schemas/inputs/market-assumptions-schema';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
@@ -19,13 +17,20 @@ import { Field, FieldGroup, Fieldset, Label, Description, ErrorMessage } from '@
 import { Divider } from '@/components/catalyst/divider';
 import { Button } from '@/components/catalyst/button';
 import { DialogActions } from '@/components/catalyst/dialog';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
+
+function calculateRealReturn(nominalReturn: number, inflationRate: number): number {
+  const realReturn = (1 + nominalReturn / 100) / (1 + inflationRate / 100) - 1;
+  return realReturn * 100;
+}
 
 interface ExpectedReturnsDrawerProps {
   setOpen: (open: boolean) => void;
 }
 
 export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawerProps) {
-  const marketAssumptions = useMarketAssumptionsData();
+  const planId = useSelectedPlanId();
+  const marketAssumptions = useMarketAssumptionsData()!;
 
   const {
     control,
@@ -37,15 +42,24 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
     defaultValues: marketAssumptions,
   });
 
-  const updateMarketAssumptions = useUpdateMarketAssumptions();
-  const onSubmit = (data: MarketAssumptionsInputs) => {
-    updateMarketAssumptions({ ...data });
+  useEffect(() => {
+    if (marketAssumptions) reset(marketAssumptions);
+  }, [marketAssumptions, reset]);
+
+  const m = useMutation(api.market_assumptions.update);
+  const onSubmit = async (data: MarketAssumptionsInputs) => {
+    await m({ marketAssumptions: marketAssumptionsToConvex(data), planId });
     setOpen(false);
   };
 
-  const stocksRealReturn = useStocksRealReturn();
-  const bondsRealReturn = useBondsRealReturn();
-  const cashRealReturn = useCashRealReturn();
+  const stockReturn = useWatch({ control, name: 'stockReturn' }) as number;
+  const bondReturn = useWatch({ control, name: 'bondReturn' }) as number;
+  const cashReturn = useWatch({ control, name: 'cashReturn' }) as number;
+  const inflationRate = useWatch({ control, name: 'inflationRate' }) as number;
+
+  const realStockReturn = calculateRealReturn(stockReturn, inflationRate);
+  const realBondReturn = calculateRealReturn(bondReturn, inflationRate);
+  const realCashReturn = calculateRealReturn(cashReturn, inflationRate);
 
   return (
     <>
@@ -58,7 +72,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                 <Field>
                   <Label htmlFor="stockReturn" className="flex w-full items-center justify-between">
                     <span>Stock Return</span>
-                    <span className="text-muted-foreground text-sm/6">{stocksRealReturn.toFixed(1)}% real</span>
+                    <span className="text-muted-foreground text-sm/6">{realStockReturn.toFixed(1)}% real</span>
                   </Label>
                   <NumberInput name="stockReturn" control={control} id="stockReturn" inputMode="decimal" placeholder="10%" suffix="%" />
                   {errors.stockReturn && <ErrorMessage>{errors.stockReturn?.message}</ErrorMessage>}
@@ -77,7 +91,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                 <Field>
                   <Label htmlFor="bondReturn" className="flex w-full items-center justify-between">
                     <span>Bond Return</span>
-                    <span className="text-muted-foreground text-sm/6">{bondsRealReturn.toFixed(1)}% real</span>
+                    <span className="text-muted-foreground text-sm/6">{realBondReturn.toFixed(1)}% real</span>
                   </Label>
                   <NumberInput id="bondReturn" control={control} name="bondReturn" inputMode="decimal" placeholder="5%" suffix="%" />
                   {errors.bondReturn && <ErrorMessage>{errors.bondReturn?.message}</ErrorMessage>}
@@ -96,7 +110,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
                 <Field>
                   <Label htmlFor="cashReturn" className="flex w-full items-center justify-between">
                     <span>Cash Return</span>
-                    <span className="text-muted-foreground text-sm/6">{cashRealReturn.toFixed(1)}% real</span>
+                    <span className="text-muted-foreground text-sm/6">{realCashReturn.toFixed(1)}% real</span>
                   </Label>
                   <NumberInput id="cashReturn" control={control} name="cashReturn" inputMode="decimal" placeholder="3%" suffix="%" />
                   {errors.cashReturn && <ErrorMessage>{errors.cashReturn?.message}</ErrorMessage>}

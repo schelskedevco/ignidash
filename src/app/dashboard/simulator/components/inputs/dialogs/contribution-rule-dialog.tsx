@@ -1,5 +1,7 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { useEffect, useMemo } from 'react';
 import { HandCoinsIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,13 +9,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 
 import {
-  useUpdateContributionRules,
   useContributionRuleData,
   useContributionRulesData,
   useAccountsData,
   useIncomesData,
   useTimelineData,
-} from '@/lib/stores/simulator-store';
+} from '@/hooks/use-convex-data';
+import { contributionToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import {
   contributionFormSchema,
@@ -30,6 +32,7 @@ import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { formatNumber } from '@/lib/utils';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
 
 interface ContributionRuleDialogProps {
   onClose: () => void;
@@ -37,6 +40,7 @@ interface ContributionRuleDialogProps {
 }
 
 export default function ContributionRuleDialog({ onClose, selectedContributionRuleID }: ContributionRuleDialogProps) {
+  const planId = useSelectedPlanId();
   const existingContributionRuleData = useContributionRuleData(selectedContributionRuleID);
 
   const contributionRules = useContributionRulesData();
@@ -59,6 +63,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
     unregister,
     control,
     handleSubmit,
+    reset,
     getFieldState,
     formState: { errors },
   } = useForm({
@@ -66,10 +71,14 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
     defaultValues,
   });
 
-  const updateContributionRules = useUpdateContributionRules();
-  const onSubmit = (data: ContributionInputs) => {
+  useEffect(() => {
+    if (existingContributionRuleData) reset(existingContributionRuleData);
+  }, [existingContributionRuleData, reset]);
+
+  const m = useMutation(api.contribution_rule.upsertContributionRule);
+  const onSubmit = async (data: ContributionInputs) => {
     const contributionRuleId = data.id === '' ? uuidv4() : data.id;
-    updateContributionRules({ ...data, id: contributionRuleId });
+    await m({ contributionRule: contributionToConvex({ ...data, id: contributionRuleId }), planId });
     onClose();
   };
 

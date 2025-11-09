@@ -2,17 +2,18 @@
 
 import { useEffect, useCallback } from 'react';
 
+import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 import {
   useMultiSimulationResult,
   useKeyMetrics,
   useSimulationResult,
   useSimulationSeed,
-  useCurrentAge,
   useUpdateQuickSelectPercentile,
   useUpdateSelectedSeedFromTable,
   useUpdateResultsCategory,
   type QuickSelectPercentile,
 } from '@/lib/stores/simulator-store';
+import { useCurrentAge } from '@/hooks/use-convex-data';
 import SectionContainer from '@/components/ui/section-container';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/tables/multi-simulation-table-schema';
@@ -38,12 +39,14 @@ interface MultiSimulationResultsSharedProps {
 }
 
 interface MultiSimulationResultsForActiveSeedProps extends MultiSimulationResultsSharedProps {
+  inputs: SimulatorInputs;
   activeSeed: number;
   activeSeedType: 'table' | 'percentile';
   simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns';
 }
 
 function MultiSimulationResultsForActiveSeed({
+  inputs,
   activeSeed,
   activeSeedType,
   simulationMode,
@@ -59,7 +62,7 @@ function MultiSimulationResultsForActiveSeed({
       break;
   }
 
-  const simulation: SimulationResult = useSimulationResult(simulationModeForActiveSeed, activeSeed)!;
+  const simulation: SimulationResult = useSimulationResult(inputs, simulationModeForActiveSeed, activeSeed)!;
   const keyMetrics = useKeyMetrics(simulation)!;
 
   return (
@@ -79,15 +82,16 @@ function MultiSimulationResultsForActiveSeed({
 }
 
 interface MultiSimulationResultsProps {
+  inputs: SimulatorInputs;
   simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns';
 }
 
-export default function MultiSimulationResults({ simulationMode }: MultiSimulationResultsProps) {
+export default function MultiSimulationResults({ inputs, simulationMode }: MultiSimulationResultsProps) {
   const startAge = useCurrentAge()!;
   const { selectedAge, onAgeSelect } = useResultsState(startAge);
 
   const { analysis, tableData, yearlyTableData, chartData, keyMetrics, isLoadingOrValidating, completedSimulations } =
-    useMultiSimulationResult(simulationMode);
+    useMultiSimulationResult(inputs, simulationMode);
 
   const updateQuickSelectPercentile = useUpdateQuickSelectPercentile();
   const updateSelectedSeedFromTable = useUpdateSelectedSeedFromTable();
@@ -146,6 +150,7 @@ export default function MultiSimulationResults({ simulationMode }: MultiSimulati
   if (activeSeed !== undefined) {
     return (
       <MultiSimulationResultsForActiveSeed
+        inputs={inputs}
         activeSeed={activeSeed}
         activeSeedType={activeSeedType}
         simulationMode={simulationMode}

@@ -13,7 +13,7 @@ interface DisclosureSectionDataItemProps {
   disabled?: boolean;
   onDropdownClickEdit: () => void;
   onDropdownClickDelete: () => void;
-  onDropdownClickDisable?: () => void;
+  onDropdownClickDisable?: () => Promise<void>;
   ref?: React.Ref<HTMLLIElement>;
   style?: React.CSSProperties;
   showDragHandle?: boolean;

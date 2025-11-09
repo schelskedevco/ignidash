@@ -1,17 +1,21 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { useState, RefObject, useCallback } from 'react';
 import { BanknoteArrowUpIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
+import { useIncomesData } from '@/hooks/use-convex-data';
+import { incomeToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
-import { useIncomesData, useDeleteIncome, useUpdateIncomes } from '@/lib/stores/simulator-store';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
 
 import IncomeDialog from '../dialogs/income-dialog';
 import DisclosureSectionDataItem from '../disclosure-section-data-item';
@@ -34,6 +38,8 @@ interface IncomesSectionProps {
 }
 
 export default function IncomesSection(props: IncomesSectionProps) {
+  const planId = useSelectedPlanId();
+
   const [incomeDialogOpen, setIncomeDialogOpen] = useState(false);
   const [selectedIncomeID, setSelectedIncomeID] = useState<string | null>(null);
 
@@ -42,15 +48,29 @@ export default function IncomesSection(props: IncomesSectionProps) {
   const incomes = useIncomesData();
   const hasIncomes = Object.keys(incomes).length > 0;
 
-  const updateIncomes = useUpdateIncomes();
-  const deleteIncome = useDeleteIncome();
+  const updateMutation = useMutation(api.income.upsertIncome);
+  const updateIncomes = useCallback(
+    async (data: IncomeInputs) => {
+      const income = incomeToConvex(data);
+      await updateMutation({ income, planId });
+    },
+    [updateMutation, planId]
+  );
+
+  const deleteMutation = useMutation(api.income.deleteIncome);
+  const deleteIncome = useCallback(
+    async (incomeId: string) => {
+      await deleteMutation({ incomeId, planId });
+    },
+    [deleteMutation, planId]
+  );
 
   const disableIncome = useCallback(
-    (id: string) => {
+    async (id: string) => {
       const income = incomes[id];
       if (!income) return;
 
-      updateIncomes({ ...income, disabled: !income.disabled });
+      await updateIncomes({ ...income, disabled: !income.disabled });
     },
     [incomes, updateIncomes]
   );
@@ -83,7 +103,7 @@ export default function IncomesSection(props: IncomesSectionProps) {
                     disabled={income.disabled}
                     onDropdownClickEdit={() => handleDropdownClickEdit(id)}
                     onDropdownClickDelete={() => setIncomeToDelete({ id, name: income.name })}
-                    onDropdownClickDisable={() => disableIncome(id)}
+                    onDropdownClickDisable={async () => await disableIncome(id)}
                     colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
                   />
                 ))}

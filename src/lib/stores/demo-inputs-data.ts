@@ -3,8 +3,6 @@ import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 // Standard Demo Inputs
 export const demoInputs1: SimulatorInputs = {
   timeline: {
-    id: 'demo-timeline1',
-    name: 'Demo Timeline 1',
     lifeExpectancy: 82,
     currentAge: 31,
     retirementStrategy: {
@@ -175,8 +173,6 @@ export const demoInputs1: SimulatorInputs = {
 // Early Retirement Demo Inputs
 export const demoInputs2: SimulatorInputs = {
   timeline: {
-    id: 'demo-timeline2',
-    name: 'Demo Timeline 2',
     lifeExpectancy: 87,
     currentAge: 28,
     retirementStrategy: {

@@ -1,18 +1,22 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { useMemo, useEffect } from 'react';
 import { PiggyBankIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { useUpdateAccounts, useSavingsData, useAccountsData } from '@/lib/stores/simulator-store';
+import { useSavingsData, useAccountsData } from '@/hooks/use-convex-data';
+import { accountToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
 
 interface SavingsDialogProps {
   onClose: () => void;
@@ -20,9 +24,11 @@ interface SavingsDialogProps {
 }
 
 export default function SavingsDialog({ onClose, selectedAccountID }: SavingsDialogProps) {
+  const planId = useSelectedPlanId();
   const existingAccountData = useSavingsData(selectedAccountID);
 
-  const numAccounts = Object.entries(useAccountsData()).length;
+  const accounts = useAccountsData();
+  const numAccounts = Object.entries(accounts).length;
   const newAccountDefaultValues = useMemo(
     () =>
       ({
@@ -39,16 +45,21 @@ export default function SavingsDialog({ onClose, selectedAccountID }: SavingsDia
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(accountFormSchema),
     defaultValues,
   });
 
-  const updateAccounts = useUpdateAccounts();
-  const onSubmit = (data: AccountInputs) => {
+  useEffect(() => {
+    if (existingAccountData) reset(existingAccountData);
+  }, [existingAccountData, reset]);
+
+  const m = useMutation(api.account.upsertAccount);
+  const onSubmit = async (data: AccountInputs) => {
     const accountId = data.id === '' ? uuidv4() : data.id;
-    updateAccounts({ ...data, id: accountId });
+    await m({ account: accountToConvex({ ...data, id: accountId }), planId });
     onClose();
   };
 

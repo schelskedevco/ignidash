@@ -3,7 +3,7 @@
 import Card from '@/components/ui/card';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
-import { useAccountData } from '@/lib/stores/simulator-store';
+import { useAccountData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 
 import SingleSimulationReturnsBarChart from '../../charts/single-simulation/single-simulation-returns-bar-chart';

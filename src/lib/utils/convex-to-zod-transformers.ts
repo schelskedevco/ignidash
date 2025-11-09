@@ -1,0 +1,283 @@
+import type { Doc } from '@/convex/_generated/dataModel';
+
+import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
+import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
+import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
+import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
+import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assumptions-schema';
+import type { TimelineInputs } from '@/lib/schemas/inputs/timeline-form-schema';
+import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
+
+// ============================================================================
+// CONVEX TO ZOD TRANSFORMERS
+// ============================================================================
+
+/**
+ * Transforms a Convex account to Zod AccountInputs format
+ */
+export function accountFromConvex(account: Doc<'plans'>['accounts'][number]): AccountInputs {
+  const base = { id: account.id, name: account.name, balance: account.balance };
+
+  switch (account.type) {
+    case 'savings':
+      return { ...base, type: 'savings' };
+    case 'taxableBrokerage':
+      return { ...base, type: 'taxableBrokerage', percentBonds: account.percentBonds!, costBasis: account.costBasis };
+    case 'roth401k':
+    case 'rothIra':
+      return { ...base, type: account.type, percentBonds: account.percentBonds!, contributionBasis: account.contributionBasis };
+    case '401k':
+    case 'ira':
+    case 'hsa':
+      return { ...base, type: account.type, percentBonds: account.percentBonds! };
+  }
+}
+
+/**
+ * Transforms a Convex contribution rule to Zod ContributionInputs format
+ */
+export function contributionFromConvex(contribution: Doc<'plans'>['contributionRules'][number]): ContributionInputs {
+  const base = {
+    id: contribution.id,
+    accountId: contribution.accountId,
+    rank: contribution.rank,
+    maxBalance: contribution.maxBalance,
+    incomeIds: contribution.incomeIds,
+    disabled: contribution.disabled ?? false,
+    employerMatch: contribution.employerMatch,
+  };
+
+  switch (contribution.amount.type) {
+    case 'dollarAmount':
+      return { ...base, contributionType: 'dollarAmount', dollarAmount: contribution.amount.dollarAmount };
+    case 'percentRemaining':
+      return { ...base, contributionType: 'percentRemaining', percentRemaining: contribution.amount.percentRemaining };
+    case 'unlimited':
+      return { ...base, contributionType: 'unlimited' };
+  }
+}
+
+/**
+ * Transforms a Convex base contribution rule to Zod BaseContributionInputs format
+ */
+export function baseContributionFromConvex(baseContribution: Doc<'plans'>['baseContributionRule']): BaseContributionInputs {
+  return { type: baseContribution.type };
+}
+
+/**
+ * Transforms a Convex expense to Zod ExpenseInputs format
+ */
+export function expenseFromConvex(expense: Doc<'plans'>['expenses'][number]): ExpenseInputs {
+  return {
+    id: expense.id,
+    name: expense.name,
+    amount: expense.amount,
+    frequency: expense.frequency,
+    timeframe: { start: expense.timeframe.start, end: expense.timeframe.end },
+    growth: expense.growth,
+    disabled: expense.disabled ?? false,
+  };
+}
+
+/**
+ * Transforms a Convex income to Zod IncomeInputs format
+ */
+export function incomeFromConvex(income: Doc<'plans'>['incomes'][number]): IncomeInputs {
+  return {
+    id: income.id,
+    name: income.name,
+    amount: income.amount,
+    frequency: income.frequency,
+    timeframe: { start: income.timeframe.start, end: income.timeframe.end },
+    growth: income.growth,
+    taxes: { incomeType: income.taxes.incomeType, withholding: income.taxes.withholding },
+    disabled: income.disabled ?? false,
+  };
+}
+
+/**
+ * Transforms Convex market assumptions to Zod MarketAssumptionsInputs format
+ */
+export function marketAssumptionsFromConvex(marketAssumptions: Doc<'plans'>['marketAssumptions']): MarketAssumptionsInputs {
+  return {
+    stockReturn: marketAssumptions.stockReturn,
+    stockYield: marketAssumptions.stockYield,
+    bondReturn: marketAssumptions.bondReturn,
+    bondYield: marketAssumptions.bondYield,
+    cashReturn: marketAssumptions.cashReturn,
+    inflationRate: marketAssumptions.inflationRate,
+  };
+}
+
+/**
+ * Transforms a Convex timeline to Zod TimelineInputs format
+ */
+export function timelineFromConvex(timeline: Doc<'plans'>['timeline']): TimelineInputs | null {
+  return timeline ? { ...timeline } : null;
+}
+
+/**
+ * Transforms a complete Convex plan to Zod SimulatorInputs format
+ */
+export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
+  const incomes = Object.fromEntries(plan.incomes.map((income) => [income.id, incomeFromConvex(income)]));
+  const accounts = Object.fromEntries(plan.accounts.map((account) => [account.id, accountFromConvex(account)]));
+  const expenses = Object.fromEntries(plan.expenses.map((expense) => [expense.id, expenseFromConvex(expense)]));
+  const contributionRules = Object.fromEntries(plan.contributionRules.map((rule) => [rule.id, contributionFromConvex(rule)]));
+
+  return {
+    timeline: timelineFromConvex(plan.timeline),
+    incomes,
+    accounts,
+    expenses,
+    contributionRules,
+    baseContributionRule: baseContributionFromConvex(plan.baseContributionRule),
+    marketAssumptions: marketAssumptionsFromConvex(plan.marketAssumptions),
+  };
+}
+
+// ============================================================================
+// ZOD TO CONVEX TRANSFORMERS
+// ============================================================================
+
+/**
+ * Transforms Zod AccountInputs to Convex account format
+ */
+export function accountToConvex(account: AccountInputs): Doc<'plans'>['accounts'][number] {
+  const base = { id: account.id, name: account.name, balance: account.balance };
+
+  switch (account.type) {
+    case 'savings':
+      return { ...base, type: 'savings' };
+    case 'taxableBrokerage':
+      return { ...base, type: 'taxableBrokerage', percentBonds: account.percentBonds, costBasis: account.costBasis };
+    case 'roth401k':
+    case 'rothIra':
+      return { ...base, type: account.type, percentBonds: account.percentBonds, contributionBasis: account.contributionBasis };
+    case '401k':
+    case 'ira':
+    case 'hsa':
+      return { ...base, type: account.type, percentBonds: account.percentBonds };
+  }
+}
+
+/**
+ * Transforms Zod ContributionInputs to Convex contribution rule format
+ */
+export function contributionToConvex(contribution: ContributionInputs): Doc<'plans'>['contributionRules'][number] {
+  const base = {
+    id: contribution.id,
+    accountId: contribution.accountId,
+    rank: contribution.rank,
+    disabled: contribution.disabled ?? false,
+    maxBalance: contribution.maxBalance,
+    incomeIds: contribution.incomeIds,
+    employerMatch: contribution.employerMatch,
+  };
+
+  switch (contribution.contributionType) {
+    case 'dollarAmount':
+      return { ...base, amount: { type: 'dollarAmount', dollarAmount: contribution.dollarAmount } };
+    case 'percentRemaining':
+      return { ...base, amount: { type: 'percentRemaining', percentRemaining: contribution.percentRemaining } };
+    case 'unlimited':
+      return { ...base, amount: { type: 'unlimited' } };
+  }
+}
+
+/**
+ * Transforms Zod BaseContributionInputs to Convex base contribution rule format
+ */
+export function baseContributionToConvex(baseContribution: BaseContributionInputs): Doc<'plans'>['baseContributionRule'] {
+  return { type: baseContribution.type };
+}
+
+/**
+ * Transforms Zod ExpenseInputs to Convex expense format
+ */
+export function expenseToConvex(expense: ExpenseInputs): Doc<'plans'>['expenses'][number] {
+  return {
+    id: expense.id,
+    name: expense.name,
+    amount: expense.amount,
+    frequency: expense.frequency,
+    timeframe: { start: expense.timeframe.start, end: expense.timeframe.end },
+    growth: expense.growth,
+    disabled: expense.disabled ?? false,
+  };
+}
+
+/**
+ * Transforms Zod IncomeInputs to Convex income format
+ */
+export function incomeToConvex(income: IncomeInputs): Doc<'plans'>['incomes'][number] {
+  return {
+    id: income.id,
+    name: income.name,
+    amount: income.amount,
+    frequency: income.frequency,
+    timeframe: { start: income.timeframe.start, end: income.timeframe.end },
+    growth: income.growth,
+    taxes: { incomeType: income.taxes.incomeType, withholding: income.taxes.withholding },
+    disabled: income.disabled ?? false,
+  };
+}
+
+/**
+ * Transforms Zod MarketAssumptionsInputs to Convex market assumptions format
+ */
+export function marketAssumptionsToConvex(marketAssumptions: MarketAssumptionsInputs): Doc<'plans'>['marketAssumptions'] {
+  return {
+    stockReturn: marketAssumptions.stockReturn,
+    stockYield: marketAssumptions.stockYield,
+    bondReturn: marketAssumptions.bondReturn,
+    bondYield: marketAssumptions.bondYield,
+    cashReturn: marketAssumptions.cashReturn,
+    inflationRate: marketAssumptions.inflationRate,
+  };
+}
+
+/**
+ * Transforms Zod TimelineInputs to Convex timeline format
+ */
+export function timelineToConvex(timeline: TimelineInputs | null): Doc<'plans'>['timeline'] {
+  return timeline ? { ...timeline } : null;
+}
+
+/**
+ * Transforms Zod SimulatorInputs to partial Convex plan format (without userId and name)
+ */
+export function simulatorToConvex(simulator: SimulatorInputs): Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId' | 'name'> {
+  const incomes = Object.values(simulator.incomes).map(incomeToConvex);
+  const accounts = Object.values(simulator.accounts).map(accountToConvex);
+  const expenses = Object.values(simulator.expenses).map(expenseToConvex);
+  const contributionRules = Object.values(simulator.contributionRules).map(contributionToConvex);
+
+  return {
+    timeline: timelineToConvex(simulator.timeline),
+    incomes,
+    accounts,
+    expenses,
+    contributionRules,
+    baseContributionRule: baseContributionToConvex(simulator.baseContributionRule),
+    marketAssumptions: marketAssumptionsToConvex(simulator.marketAssumptions),
+  };
+}
+
+// ============================================================================
+// HELPER FUNCTIONS
+// ============================================================================
+
+/**
+ * Converts an array of items to a record keyed by ID
+ */
+export function arrayToRecord<T extends { id: string }>(items: T[]): Record<string, T> {
+  return Object.fromEntries(items.map((item) => [item.id, item]));
+}
+
+/**
+ * Converts a record to an array of items
+ */
+export function recordToArray<T>(record: Record<string, T>): T[] {
+  return Object.values(record);
+}

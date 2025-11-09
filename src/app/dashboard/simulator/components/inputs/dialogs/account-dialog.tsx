@@ -1,12 +1,15 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { useEffect, useMemo } from 'react';
 import { TrendingUpIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 
-import { useUpdateAccounts, useInvestmentData, useAccountsData } from '@/lib/stores/simulator-store';
+import { useInvestmentData, useAccountsData } from '@/hooks/use-convex-data';
+import { accountToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs, isRothAccount, type RothAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import NumberInput from '@/components/ui/number-input';
@@ -14,6 +17,7 @@ import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/c
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
 
 interface AccountDialogProps {
   onClose: () => void;
@@ -21,9 +25,11 @@ interface AccountDialogProps {
 }
 
 export default function AccountDialog({ onClose, selectedAccountID }: AccountDialogProps) {
+  const planId = useSelectedPlanId();
   const existingAccountData = useInvestmentData(selectedAccountID);
 
-  const numAccounts = Object.entries(useAccountsData()).length;
+  const accounts = useAccountsData();
+  const numAccounts = Object.entries(accounts).length;
   const newAccountDefaultValues = useMemo(
     () =>
       ({
@@ -42,6 +48,7 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
     unregister,
     control,
     handleSubmit,
+    reset,
     getFieldState,
     formState: { errors },
   } = useForm({
@@ -49,8 +56,12 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
     defaultValues,
   });
 
-  const updateAccounts = useUpdateAccounts();
-  const onSubmit = (data: AccountInputs) => {
+  useEffect(() => {
+    if (existingAccountData) reset(existingAccountData);
+  }, [existingAccountData, reset]);
+
+  const m = useMutation(api.account.upsertAccount);
+  const onSubmit = async (data: AccountInputs) => {
     const processedData = { ...data };
 
     if (isRothAccount(data.type)) {
@@ -64,7 +75,7 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
     }
 
     const accountId = processedData.id === '' ? uuidv4() : processedData.id;
-    updateAccounts({ ...processedData, id: accountId });
+    await m({ account: accountToConvex({ ...processedData, id: accountId }), planId });
     onClose();
   };
 

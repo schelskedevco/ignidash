@@ -1,5 +1,7 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
@@ -8,8 +10,9 @@ import { CalendarIcon, BanknoteArrowDownIcon, TrendingUpIcon } from 'lucide-reac
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
+import { useExpenseData, useExpensesData, useTimelineData } from '@/hooks/use-convex-data';
+import { expenseToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { useUpdateExpenses, useExpenseData, useExpensesData, useTimelineData } from '@/lib/stores/simulator-store';
 import { expenseFormSchema, type ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import { timeFrameForDisplay, growthForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -19,6 +22,7 @@ import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/c
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
 
 interface ExpenseDialogProps {
   onClose: () => void;
@@ -26,9 +30,11 @@ interface ExpenseDialogProps {
 }
 
 export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDialogProps) {
+  const planId = useSelectedPlanId();
   const existingExpenseData = useExpenseData(selectedExpenseID);
 
-  const numExpenses = Object.entries(useExpensesData()).length;
+  const expenses = useExpensesData();
+  const numExpenses = Object.entries(expenses).length;
   const newExpenseDefaultValues = useMemo(
     () =>
       ({
@@ -48,16 +54,21 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
     unregister,
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(expenseFormSchema),
     defaultValues,
   });
 
-  const updateExpenses = useUpdateExpenses();
-  const onSubmit = (data: ExpenseInputs) => {
+  useEffect(() => {
+    if (existingExpenseData) reset(existingExpenseData);
+  }, [existingExpenseData, reset]);
+
+  const m = useMutation(api.expense.upsertExpense);
+  const onSubmit = async (data: ExpenseInputs) => {
     const expenseId = data.id === '' ? uuidv4() : data.id;
-    updateExpenses({ ...data, id: expenseId, disabled: false });
+    await m({ expense: expenseToConvex({ ...data, id: expenseId }), planId });
     onClose();
   };
 

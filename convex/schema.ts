@@ -1,16 +1,16 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 
-import { timelineValidator } from './validators/timeline-validator';
-import { incomeValidator } from './validators/incomes-validator';
-import { expenseValidator } from './validators/expenses-validator';
-import { accountValidator } from './validators/accounts-validator';
-import { contributionRulesValidator, baseContributionRuleValidator } from './validators/contribution-rules-validator';
-import { marketAssumptionsValidator } from './validators/market-assumptions-validator';
+import { timelineValidator } from './validators/timeline_validator';
+import { incomeValidator } from './validators/incomes_validator';
+import { expenseValidator } from './validators/expenses_validator';
+import { accountValidator } from './validators/accounts_validator';
+import { contributionRulesValidator, baseContributionRuleValidator } from './validators/contribution_rules_validator';
+import { marketAssumptionsValidator } from './validators/market_assumptions_validator';
 
 export default defineSchema({
   plans: defineTable({
-    userId: v.id('user'),
+    userId: v.string(),
     name: v.string(),
     timeline: v.union(timelineValidator, v.null()),
     incomes: v.array(incomeValidator),

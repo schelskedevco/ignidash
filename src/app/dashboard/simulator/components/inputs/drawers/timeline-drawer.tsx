@@ -1,11 +1,13 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { useEffect, useMemo } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, type FieldErrors } from 'react-hook-form';
 
-import { useUpdateTimeline, useTimelineData } from '@/lib/stores/simulator-store';
+import { useTimelineData } from '@/hooks/use-convex-data';
+import { timelineToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { timelineFormSchema, type TimelineInputs, type RetirementStrategyInputs } from '@/lib/schemas/inputs/timeline-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import SectionHeader from '@/components/ui/section-header';
@@ -16,6 +18,7 @@ import { Select } from '@/components/catalyst/select';
 import { Divider } from '@/components/catalyst/divider';
 import { Button } from '@/components/catalyst/button';
 import { DialogActions } from '@/components/catalyst/dialog';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
 
 function getRetirementStrategyDesc(retirementStrategyType: 'fixedAge' | 'swrTarget') {
   switch (retirementStrategyType) {
@@ -53,13 +56,12 @@ interface TimelineDrawerProps {
 }
 
 export default function TimelineDrawer({ setOpen }: TimelineDrawerProps) {
+  const planId = useSelectedPlanId();
   const existingTimelineData = useTimelineData();
 
   const newTimelineDefaultValues = useMemo(
     () =>
       ({
-        name: 'Timeline 1',
-        id: '',
         retirementStrategy: {
           type: 'swrTarget',
           safeWithdrawalRate: 4,
@@ -82,10 +84,13 @@ export default function TimelineDrawer({ setOpen }: TimelineDrawerProps) {
     defaultValues,
   });
 
-  const updateTimeline = useUpdateTimeline();
-  const onSubmit = (data: TimelineInputs) => {
-    const timelineId = data.id === '' ? uuidv4() : data.id;
-    updateTimeline({ ...data, id: timelineId });
+  useEffect(() => {
+    if (existingTimelineData) reset(existingTimelineData);
+  }, [existingTimelineData, reset]);
+
+  const m = useMutation(api.timeline.update);
+  const onSubmit = async (data: TimelineInputs) => {
+    await m({ timeline: timelineToConvex(data)!, planId });
     setOpen(false);
   };
 

@@ -1,13 +1,13 @@
 import { v } from 'convex/values';
 import { query, mutation } from './_generated/server';
 
-import { getUserIdOrThrow } from './utils/auth-utils';
-import { getPlanForUserIdOrThrow } from './utils/plan-utils';
+import { getUserIdOrThrow } from './utils/auth_utils';
+import { getPlanForUserIdOrThrow } from './utils/plan_utils';
 
 export const listPlans = query({
   args: {},
   handler: async (ctx) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
 
     const plans = await ctx.db
       .query('plans')
@@ -21,7 +21,7 @@ export const listPlans = query({
 export const getPlan = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
 
     const plan = await ctx.db.get(planId);
 
@@ -32,10 +32,37 @@ export const getPlan = query({
   },
 });
 
+export const getOrCreateDefaultPlan = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const { userId, userName } = await getUserIdOrThrow(ctx);
+
+    const existingPlan = await ctx.db
+      .query('plans')
+      .withIndex('by_userId', (q) => q.eq('userId', userId))
+      .first();
+    if (existingPlan) return existingPlan;
+
+    const newPlanId = await ctx.db.insert('plans', {
+      userId,
+      name: `${userName}'s Plan`,
+      timeline: null,
+      incomes: [],
+      expenses: [],
+      accounts: [],
+      contributionRules: [],
+      baseContributionRule: { type: 'save' },
+      marketAssumptions: { stockReturn: 10, stockYield: 3.5, bondReturn: 5, bondYield: 4.5, cashReturn: 3, inflationRate: 3 },
+    });
+
+    return ctx.db.get(newPlanId);
+  },
+});
+
 export const createPlan = mutation({
   args: { newPlanName: v.string() },
   handler: async (ctx, { newPlanName }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
 
     return await ctx.db.insert('plans', {
       userId,
@@ -54,7 +81,7 @@ export const createPlan = mutation({
 export const clonePlan = mutation({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const { timeline, incomes, expenses, accounts, contributionRules, baseContributionRule, marketAssumptions } = plan;
@@ -75,7 +102,7 @@ export const clonePlan = mutation({
 export const deletePlan = mutation({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     await ctx.db.delete(planId);
@@ -85,7 +112,7 @@ export const deletePlan = mutation({
 export const updatePlanName = mutation({
   args: { planId: v.id('plans'), name: v.string() },
   handler: async (ctx, { planId, name }) => {
-    const userId = await getUserIdOrThrow(ctx);
+    const { userId } = await getUserIdOrThrow(ctx);
     await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     await ctx.db.patch(planId, { name });

@@ -1,12 +1,12 @@
 'use client';
 
+import type { Id } from '@/convex/_generated/dataModel';
 import * as Comlink from 'comlink';
 import { useMemo, useEffect, useState, useCallback } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import useSWR, { mutate } from 'swr';
-import { v4 as uuidv4 } from 'uuid';
 
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 import { FinancialSimulationEngine, type SimulationResult } from '@/lib/calc/simulation-engine';
@@ -28,12 +28,6 @@ import type {
   SingleSimulationWithdrawalsTableRow,
 } from '@/lib/schemas/tables/single-simulation-table-schema';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/tables/multi-simulation-table-schema';
-import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
-import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
-import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
-import type { TimelineInputs } from '@/lib/schemas/inputs/timeline-form-schema';
-import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
-import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assumptions-schema';
 import type { SimulationSettingsInputs } from '@/lib/schemas/simulation-settings-schema';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type {
@@ -73,7 +67,7 @@ export type QuickSelectPercentile = 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null
 export type SimulationStatus = 'none' | 'loading';
 
 interface SimulatorState {
-  inputs: SimulatorInputs;
+  selectedPlanId: Id<'plans'> | null;
 
   results: {
     quickSelectPercentile: QuickSelectPercentile;
@@ -87,36 +81,13 @@ interface SimulatorState {
   };
 
   preferences: {
-    dataStorage: 'localStorage' | 'none';
     showReferenceLines: boolean;
     sidebarCollapsed: boolean;
   };
 
   actions: {
-    updateInputs: (data: SimulatorInputs) => void;
-
-    /* Expected Returns */
-    updateMarketAssumptions: (data: MarketAssumptionsInputs) => void;
-
-    /* Timeline */
-    updateTimeline: (data: TimelineInputs) => void;
-
-    /* Cash Flows */
-    updateIncomes: (data: IncomeInputs) => void;
-    deleteIncome: (id: string) => void;
-
-    updateExpenses: (data: ExpenseInputs) => void;
-    deleteExpense: (id: string) => void;
-
-    /* Portfolio */
-    updateAccounts: (data: AccountInputs) => void;
-    deleteAccount: (id: string) => void;
-
-    /* Contributions */
-    updateContributionRules: (data: ContributionInputs) => void;
-    reorderContributionRules: (newOrder: string[]) => void;
-    deleteContributionRule: (id: string) => void;
-    updateBaseContributionRule: (data: BaseContributionInputs) => void;
+    /* Plan */
+    updateSelectedPlanId: (id: Id<'plans'>) => void;
 
     /* Results */
     updateQuickSelectPercentile: (percentile: QuickSelectPercentile) => void;
@@ -129,26 +100,13 @@ interface SimulatorState {
     updateMonteCarloSortMode: (value: SimulatorState['results']['monteCarloSortMode']) => void;
 
     /* Preferences */
-    updateDataStoragePreference: (value: SimulatorState['preferences']['dataStorage']) => void;
     updateShowReferenceLines: (value: boolean) => void;
     updateSidebarCollapsed: (value: boolean) => void;
-
-    resetStore: () => void;
   };
 }
 
-export const defaultInputs: SimulatorInputs = {
-  timeline: undefined,
-  incomes: {},
-  expenses: {},
-  accounts: {},
-  contributionRules: {},
-  baseContributionRule: { type: 'save' },
-  marketAssumptions: { stockReturn: 10, stockYield: 3.5, bondReturn: 5, bondYield: 4.5, cashReturn: 3, inflationRate: 3 },
-};
-
 export const defaultState: Omit<SimulatorState, 'actions'> = {
-  inputs: defaultInputs,
+  selectedPlanId: 'jd70yfqpvpj078bjmw6pnmb9xh7v3zxv' as Id<'plans'>, // Demo Plan
   results: {
     quickSelectPercentile: 'p50',
     selectedSeedFromTable: null,
@@ -160,7 +118,6 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
     monteCarloSortMode: 'finalPortfolioValue',
   },
   preferences: {
-    dataStorage: 'localStorage',
     showReferenceLines: true,
     sidebarCollapsed: false,
   },
@@ -176,98 +133,9 @@ export const useSimulatorStore = create<SimulatorState>()(
       immer((set, get) => ({
         ...defaultState,
         actions: {
-          updateInputs: (data) =>
+          updateSelectedPlanId: (id) =>
             set((state) => {
-              state.inputs = { ...data };
-            }),
-          updateMarketAssumptions: (data) =>
-            set((state) => {
-              state.inputs.marketAssumptions = { ...data };
-            }),
-          updateTimeline: (data) =>
-            set((state) => {
-              state.inputs.timeline = { ...data };
-            }),
-          updateIncomes: (data) =>
-            set((state) => {
-              state.inputs.incomes = { ...state.inputs.incomes, [data.id]: data };
-            }),
-          deleteIncome: (id) =>
-            set((state) => {
-              Object.values(state.inputs.contributionRules).forEach((rule) => {
-                if (rule.incomeIds?.includes(id)) rule.incomeIds = rule.incomeIds.filter((incomeId) => incomeId !== id);
-              });
-
-              delete state.inputs.incomes[id];
-            }),
-          updateAccounts: (data) =>
-            set((state) => {
-              if (!(data.id in get().inputs.accounts)) {
-                const contributionRulesCount = Object.keys(get().inputs.contributionRules).length;
-
-                const contributionRuleId = uuidv4();
-                const contributionRuleData: ContributionInputs = {
-                  id: contributionRuleId,
-                  accountId: data.id,
-                  rank: contributionRulesCount + 1,
-                  contributionType: 'unlimited',
-                };
-
-                state.inputs.contributionRules = { ...state.inputs.contributionRules, [contributionRuleId]: contributionRuleData };
-              }
-
-              state.inputs.accounts = { ...state.inputs.accounts, [data.id]: data };
-            }),
-          deleteAccount: (id) =>
-            set((state) => {
-              const contributionRules = Object.values(state.inputs.contributionRules);
-              const contributionRulesToDelete = contributionRules.filter((rule) => rule.accountId === id);
-
-              if (contributionRulesToDelete.length > 0) {
-                contributionRulesToDelete.sort((a, b) => a.rank - b.rank);
-
-                contributionRulesToDelete.forEach((ruleToDelete) => {
-                  delete state.inputs.contributionRules[ruleToDelete.id];
-
-                  const deletedRank = ruleToDelete.rank;
-                  Object.values(state.inputs.contributionRules).forEach((rule) => {
-                    if (rule.rank > deletedRank) rule.rank--;
-                  });
-                });
-              }
-
-              delete state.inputs.accounts[id];
-            }),
-          updateExpenses: (data) =>
-            set((state) => {
-              state.inputs.expenses = { ...state.inputs.expenses, [data.id]: data };
-            }),
-          deleteExpense: (id) =>
-            set((state) => {
-              delete state.inputs.expenses[id];
-            }),
-          updateContributionRules: (data) =>
-            set((state) => {
-              state.inputs.contributionRules = { ...state.inputs.contributionRules, [data.id]: data };
-            }),
-          reorderContributionRules: (newOrder) => {
-            set((state) => {
-              newOrder.forEach((id, index) => {
-                const contributionRule = state.inputs.contributionRules[id];
-                if (contributionRule) {
-                  contributionRule.rank = index + 1;
-                }
-              });
-            });
-          },
-          deleteContributionRule: (id) =>
-            set((state) => {
-              delete state.inputs.contributionRules[id];
-            }),
-          // To here
-          updateBaseContributionRule: (data) =>
-            set((state) => {
-              state.inputs.baseContributionRule = { ...data };
+              state.selectedPlanId = id;
             }),
           updateQuickSelectPercentile: (percentile) =>
             set((state) => {
@@ -301,10 +169,6 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               state.results.monteCarloSortMode = value;
             }),
-          updateDataStoragePreference: (value) =>
-            set((state) => {
-              state.preferences.dataStorage = value as 'localStorage' | 'none';
-            }),
           updateShowReferenceLines: (value) =>
             set((state) => {
               state.preferences.showReferenceLines = value;
@@ -313,25 +177,14 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               state.preferences.sidebarCollapsed = value;
             }),
-          resetStore: () =>
-            set((state) => {
-              state.inputs = { ...defaultState.inputs };
-            }),
         },
       })),
       {
         name: 'quick-plan-storage',
-        version: 8,
+        version: 9,
         migrate: () => ({ ...defaultState }),
         partialize: (state) => {
           const baseResult = { preferences: state.preferences };
-
-          if (state.preferences.dataStorage === 'localStorage') {
-            return {
-              ...baseResult,
-              inputs: state.inputs,
-            };
-          }
 
           return baseResult;
         },
@@ -352,43 +205,7 @@ export const useSimulatorStore = create<SimulatorState>()(
  * Data selectors (stable references)
  * These hooks provide direct access to specific sections of the form data
  */
-
-// Inputs selectors
-export const useMarketAssumptionsData = () => useSimulatorStore((state) => state.inputs.marketAssumptions);
-
-export const useTimelineData = () => useSimulatorStore((state) => state.inputs.timeline);
-export const useCurrentAge = () => useSimulatorStore((state) => state.inputs.timeline?.currentAge);
-
-export const useIncomesData = () => useSimulatorStore((state) => state.inputs.incomes);
-export const useIncomeData = (id: string | null) => useSimulatorStore((state) => (id !== null ? state.inputs.incomes[id] : null));
-
-export const useExpensesData = () => useSimulatorStore((state) => state.inputs.expenses);
-export const useExpenseData = (id: string | null) => useSimulatorStore((state) => (id !== null ? state.inputs.expenses[id] : null));
-
-export const useAccountsData = () => useSimulatorStore((state) => state.inputs.accounts);
-export const useAccountData = (id: string | null) => useSimulatorStore((state) => (id !== null ? state.inputs.accounts[id] : null));
-
-export const useSavingsData = (id: string | null) =>
-  useSimulatorStore((state) => {
-    if (id === null) return null;
-
-    const account = state.inputs.accounts[id];
-    return account?.type === 'savings' ? account : null;
-  });
-export const useInvestmentData = (id: string | null) =>
-  useSimulatorStore((state) => {
-    if (id === null) return null;
-
-    const account = state.inputs.accounts[id];
-    return account?.type !== 'savings' ? account : null;
-  });
-
-export const useContributionRulesData = () => useSimulatorStore((state) => state.inputs.contributionRules);
-export const useContributionRuleData = (id: string | null) =>
-  useSimulatorStore((state) => (id !== null ? state.inputs.contributionRules[id] : null));
-export const useBaseContributionRuleData = () => useSimulatorStore((state) => state.inputs.baseContributionRule);
-
-// Results selectors
+export const useSelectedPlanId = () => useSimulatorStore((state) => state.selectedPlanId)!;
 export const useQuickSelectPercentile = () => useSimulatorStore((state) => state.results.quickSelectPercentile);
 export const useSelectedSeedFromTable = () => useSimulatorStore((state) => state.results.selectedSeedFromTable);
 export const useSelectedSeedFromQuickPercentile = () => useSimulatorStore((state) => state.results.selectedSeedFromQuickPercentile);
@@ -403,27 +220,13 @@ export const useMonteCarloSortMode = () => useSimulatorStore((state) => state.re
  * Action selectors
  * These hooks provide access to update functions with built-in validation
  */
-export const useUpdateInputs = () => useSimulatorStore((state) => state.actions.updateInputs);
-export const useUpdateMarketAssumptions = () => useSimulatorStore((state) => state.actions.updateMarketAssumptions);
-export const useUpdateTimeline = () => useSimulatorStore((state) => state.actions.updateTimeline);
-export const useUpdateIncomes = () => useSimulatorStore((state) => state.actions.updateIncomes);
-export const useDeleteIncome = () => useSimulatorStore((state) => state.actions.deleteIncome);
-export const useUpdateExpenses = () => useSimulatorStore((state) => state.actions.updateExpenses);
-export const useDeleteExpense = () => useSimulatorStore((state) => state.actions.deleteExpense);
-export const useUpdateAccounts = () => useSimulatorStore((state) => state.actions.updateAccounts);
-export const useDeleteAccount = () => useSimulatorStore((state) => state.actions.deleteAccount);
-export const useUpdateContributionRules = () => useSimulatorStore((state) => state.actions.updateContributionRules);
-export const useReorderContributionRules = () => useSimulatorStore((state) => state.actions.reorderContributionRules);
-export const useDeleteContributionRule = () => useSimulatorStore((state) => state.actions.deleteContributionRule);
-export const useUpdateBaseContributionRule = () => useSimulatorStore((state) => state.actions.updateBaseContributionRule);
-
+export const useUpdateSelectedPlanId = () => useSimulatorStore((state) => state.actions.updateSelectedPlanId);
 export const useUpdateQuickSelectPercentile = () => useSimulatorStore((state) => state.actions.updateQuickSelectPercentile);
 export const useUpdateSelectedSeedFromTable = () => useSimulatorStore((state) => state.actions.updateSelectedSeedFromTable);
 export const useUpdateSelectedSeedFromQuickPercentile = () =>
   useSimulatorStore((state) => state.actions.updateSelectedSeedFromQuickPercentile);
 export const useUpdateSimulationStatus = () => useSimulatorStore((state) => state.actions.updateSimulationStatus);
 export const useUpdateResultsCategory = () => useSimulatorStore((state) => state.actions.updateCategory);
-export const useUpdateDataStoragePreference = () => useSimulatorStore((state) => state.actions.updateDataStoragePreference);
 export const useUpdateShowReferenceLines = () => useSimulatorStore((state) => state.actions.updateShowReferenceLines);
 export const useUpdateSimulationSeed = () => useSimulatorStore((state) => state.actions.updateSimulationSeed);
 export const useUpdateSidebarCollapsed = () => useSimulatorStore((state) => state.actions.updateSidebarCollapsed);
@@ -434,26 +237,19 @@ export const useUpdateMonteCarloSortMode = () => useSimulatorStore((state) => st
  * Preferences selectors
  * These hooks manage user preferences and settings
  */
-export const useDataStoragePreference = () => useSimulatorStore((state) => state.preferences.dataStorage);
 export const useShowReferenceLines = () => useSimulatorStore((state) => state.preferences.showReferenceLines);
 export const useSidebarCollapsed = () => useSimulatorStore((state) => state.preferences.sidebarCollapsed);
-
-/**
- * Utility selectors
- * These hooks provide access to store management functions
- */
-export const useResetStore = () => useSimulatorStore((state) => state.actions.resetStore);
 
 /**
  * Simulation & Analysis Hooks
  * These hooks provide access to simulation and analysis functions
  */
 export const useSimulationResult = (
+  inputs: SimulatorInputs,
   simulationMode: 'fixedReturns' | 'stochasticReturns' | 'historicalReturns',
   seedOverride?: number | null
 ): SimulationResult | null => {
   const hasSeedOverride = seedOverride !== undefined && seedOverride !== null;
-  const inputs = useSimulatorStore((state) => state.inputs);
 
   const preferencesSeed = useSimulationSeed();
   const seed = hasSeedOverride ? seedOverride : preferencesSeed;
@@ -495,6 +291,7 @@ export const useSimulationResult = (
 };
 
 export const useMultiSimulationResult = (
+  inputs: SimulatorInputs,
   simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns'
 ): {
   analysis: MultiSimulationAnalysis | undefined;
@@ -505,7 +302,6 @@ export const useMultiSimulationResult = (
   isLoadingOrValidating: boolean;
   completedSimulations: number;
 } => {
-  const inputs = useSimulatorStore((state) => state.inputs);
   const simulationSeed = useSimulationSeed();
   const mergeWorker = getMergeWorker();
 
@@ -678,42 +474,13 @@ export const useSingleSimulationWithdrawalsTableData = (simulation: SimulationRe
 };
 
 /**
- * Real Return Rate Calculations
- * These hooks calculate real (inflation-adjusted) returns using the Fisher equation
- */
-export const useStocksRealReturn = () =>
-  useSimulatorStore((state) => {
-    const nominalReturn = state.inputs.marketAssumptions.stockReturn;
-    const inflationRate = state.inputs.marketAssumptions.inflationRate;
-    const realReturn = (1 + nominalReturn / 100) / (1 + inflationRate / 100) - 1;
-    return realReturn * 100;
-  });
-
-export const useBondsRealReturn = () =>
-  useSimulatorStore((state) => {
-    const nominalReturn = state.inputs.marketAssumptions.bondReturn;
-    const inflationRate = state.inputs.marketAssumptions.inflationRate;
-    const realReturn = (1 + nominalReturn / 100) / (1 + inflationRate / 100) - 1;
-    return realReturn * 100;
-  });
-
-export const useCashRealReturn = () =>
-  useSimulatorStore((state) => {
-    const nominalReturn = state.inputs.marketAssumptions.cashReturn;
-    const inflationRate = state.inputs.marketAssumptions.inflationRate;
-    const realReturn = (1 + nominalReturn / 100) / (1 + inflationRate / 100) - 1;
-    return realReturn * 100;
-  });
-
-/**
  * Validation State Selectors
  * These hooks check if sections or the entire form have valid data for calculations
  */
-export const useIsCalculationReady = () => {
-  const timeline = useTimelineData();
-  const accounts = useAccountsData();
-  const incomes = useIncomesData();
-  const expenses = useExpensesData();
+export const useIsCalculationReady = (inputs: SimulatorInputs | null) => {
+  if (!inputs) return { timelineIsReady: false, accountsAreReady: false, incomesAreReady: false, expensesAreReady: false };
+
+  const { timeline, accounts, incomes, expenses } = inputs;
 
   return {
     timelineIsReady: timeline !== undefined,

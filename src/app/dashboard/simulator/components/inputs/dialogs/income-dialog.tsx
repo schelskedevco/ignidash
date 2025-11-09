@@ -1,5 +1,7 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
@@ -8,8 +10,9 @@ import { CalendarIcon, BanknoteArrowUpIcon, TrendingUpIcon, BanknoteXIcon } from
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
+import { useIncomeData, useIncomesData, useTimelineData } from '@/hooks/use-convex-data';
+import { incomeToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { useUpdateIncomes, useIncomeData, useIncomesData, useTimelineData } from '@/lib/stores/simulator-store';
 import { incomeFormSchema, type IncomeInputs, supportsWithholding } from '@/lib/schemas/inputs/income-form-schema';
 import { timeFrameForDisplay, growthForDisplay, incomeTaxTreatmentForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -19,6 +22,7 @@ import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/c
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
+import { useSelectedPlanId } from '@/lib/stores/simulator-store';
 
 interface IncomeDialogProps {
   onClose: () => void;
@@ -26,9 +30,11 @@ interface IncomeDialogProps {
 }
 
 export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialogProps) {
+  const planId = useSelectedPlanId();
   const existingIncomeData = useIncomeData(selectedIncomeID);
 
-  const numIncomes = Object.entries(useIncomesData()).length;
+  const incomes = useIncomesData();
+  const numIncomes = Object.entries(incomes).length;
   const newIncomeDefaultValues = useMemo(
     () =>
       ({
@@ -49,16 +55,21 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
     unregister,
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(incomeFormSchema),
     defaultValues,
   });
 
-  const updateIncomes = useUpdateIncomes();
-  const onSubmit = (data: IncomeInputs) => {
+  useEffect(() => {
+    if (existingIncomeData) reset(existingIncomeData);
+  }, [existingIncomeData, reset]);
+
+  const m = useMutation(api.income.upsertIncome);
+  const onSubmit = async (data: IncomeInputs) => {
     const incomeId = data.id === '' ? uuidv4() : data.id;
-    updateIncomes({ ...data, id: incomeId, disabled: false });
+    await m({ income: incomeToConvex({ ...data, id: incomeId }), planId });
     onClose();
   };
 

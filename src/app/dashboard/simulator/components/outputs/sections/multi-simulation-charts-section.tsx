@@ -2,7 +2,8 @@
 
 import { memo } from 'react';
 
-import { useCurrentAge, useResultsCategory } from '@/lib/stores/simulator-store';
+import { useResultsCategory } from '@/lib/stores/simulator-store';
+import { useCurrentAge } from '@/hooks/use-convex-data';
 import SectionContainer from '@/components/ui/section-container';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';

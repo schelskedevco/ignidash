@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { defaultState } from '@/lib/stores/simulator-store';
+import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 
 import { StochasticReturnsProvider } from './stochastic-returns-provider';
 import type { PhaseData } from '../phase';
@@ -10,9 +10,19 @@ describe('StochasticReturnsProvider', () => {
     name: 'accumulation',
   };
 
+  const defaultInputs: SimulatorInputs = {
+    timeline: null,
+    incomes: {},
+    expenses: {},
+    accounts: {},
+    contributionRules: {},
+    baseContributionRule: { type: 'save' },
+    marketAssumptions: { stockReturn: 10, stockYield: 3.5, bondReturn: 5, bondYield: 4.5, cashReturn: 3, inflationRate: 3 },
+  };
+
   describe('generateNormalReturn', () => {
     it('should apply normal distribution formula correctly', () => {
-      const provider = new StochasticReturnsProvider(defaultState.inputs, 12345);
+      const provider = new StochasticReturnsProvider(defaultInputs, 12345);
       const generateNormalReturn = StochasticReturnsProvider.prototype['generateNormalReturn'];
 
       const expectedReturn = 0.08; // 8%
@@ -26,7 +36,7 @@ describe('StochasticReturnsProvider', () => {
     });
 
     it('should handle zero volatility correctly', () => {
-      const provider = new StochasticReturnsProvider(defaultState.inputs, 12345);
+      const provider = new StochasticReturnsProvider(defaultInputs, 12345);
       const generateNormalReturn = StochasticReturnsProvider.prototype['generateNormalReturn'];
 
       const expectedReturn = 0.05; // 5%
@@ -42,7 +52,7 @@ describe('StochasticReturnsProvider', () => {
 
   describe('generateLogNormalReturn', () => {
     it('should apply log-normal distribution formula correctly and maintain constraints', () => {
-      const provider = new StochasticReturnsProvider(defaultState.inputs, 12345);
+      const provider = new StochasticReturnsProvider(defaultInputs, 12345);
       const generateLogNormalReturn = StochasticReturnsProvider.prototype['generateLogNormalReturn'];
 
       const expectedReturn = 0.1; // 10%
@@ -66,7 +76,7 @@ describe('StochasticReturnsProvider', () => {
     });
 
     it('should handle zero volatility by returning expected return', () => {
-      const provider = new StochasticReturnsProvider(defaultState.inputs, 12345);
+      const provider = new StochasticReturnsProvider(defaultInputs, 12345);
       const generateLogNormalReturn = StochasticReturnsProvider.prototype['generateLogNormalReturn'];
 
       const expectedReturn = 0.12; // 12%
@@ -81,7 +91,7 @@ describe('StochasticReturnsProvider', () => {
   });
 
   it('should produce log-normal distribution with correct statistical properties', () => {
-    const provider = new StochasticReturnsProvider(defaultState.inputs, 54321);
+    const provider = new StochasticReturnsProvider(defaultInputs, 54321);
     const generateLogNormalReturn = StochasticReturnsProvider.prototype['generateLogNormalReturn'];
 
     const expectedReturn = 0.1; // 10%
@@ -126,7 +136,7 @@ describe('StochasticReturnsProvider', () => {
   });
 
   it('should handle extreme parameter combinations correctly', () => {
-    const provider = new StochasticReturnsProvider(defaultState.inputs, 12345);
+    const provider = new StochasticReturnsProvider(defaultInputs, 12345);
     const generateLogNormalReturn = StochasticReturnsProvider.prototype['generateLogNormalReturn'];
 
     // High volatility, low expected return (stress scenario)
@@ -155,8 +165,8 @@ describe('StochasticReturnsProvider', () => {
 
   describe('getReturns integration', () => {
     it('should produce deterministic results with seeded random generation', () => {
-      const provider1 = new StochasticReturnsProvider(defaultState.inputs, 999);
-      const provider2 = new StochasticReturnsProvider(defaultState.inputs, 999);
+      const provider1 = new StochasticReturnsProvider(defaultInputs, 999);
+      const provider2 = new StochasticReturnsProvider(defaultInputs, 999);
 
       const result1 = provider1.getReturns(phaseData); // Year 1 of simulation
       const result2 = provider2.getReturns(phaseData); // Year 1 of simulation
@@ -169,7 +179,7 @@ describe('StochasticReturnsProvider', () => {
 
     it('should converge to expected statistical properties across many simulations', () => {
       const inputs = {
-        ...defaultState.inputs,
+        ...defaultInputs,
         marketAssumptions: {
           stockReturn: 10,
           stockYield: 3,
@@ -330,7 +340,7 @@ describe('StochasticReturnsProvider', () => {
 
     it('should generate yields with correct lognormal distribution properties', () => {
       const inputs = {
-        ...defaultState.inputs,
+        ...defaultInputs,
         marketAssumptions: {
           stockReturn: 10,
           stockYield: 3.5,

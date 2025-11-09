@@ -8,11 +8,23 @@
  * @module
  */
 
+import type * as account from "../account.js";
 import type * as auth from "../auth.js";
+import type * as contribution_rule from "../contribution_rule.js";
+import type * as expense from "../expense.js";
 import type * as http from "../http.js";
-import type * as planMutations from "../plan-mutations.js";
+import type * as income from "../income.js";
+import type * as market_assumptions from "../market_assumptions.js";
 import type * as plans from "../plans.js";
-import type * as userInit from "../userInit.js";
+import type * as timeline from "../timeline.js";
+import type * as utils_auth_utils from "../utils/auth_utils.js";
+import type * as utils_plan_utils from "../utils/plan_utils.js";
+import type * as validators_accounts_validator from "../validators/accounts_validator.js";
+import type * as validators_contribution_rules_validator from "../validators/contribution_rules_validator.js";
+import type * as validators_expenses_validator from "../validators/expenses_validator.js";
+import type * as validators_incomes_validator from "../validators/incomes_validator.js";
+import type * as validators_market_assumptions_validator from "../validators/market_assumptions_validator.js";
+import type * as validators_timeline_validator from "../validators/timeline_validator.js";
 
 import type {
   ApiFromModules,
@@ -29,11 +41,23 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  account: typeof account;
   auth: typeof auth;
+  contribution_rule: typeof contribution_rule;
+  expense: typeof expense;
   http: typeof http;
-  planMutations: typeof planMutations;
+  income: typeof income;
+  market_assumptions: typeof market_assumptions;
   plans: typeof plans;
-  userInit: typeof userInit;
+  timeline: typeof timeline;
+  "utils/auth_utils": typeof utils_auth_utils;
+  "utils/plan_utils": typeof utils_plan_utils;
+  "validators/accounts_validator": typeof validators_accounts_validator;
+  "validators/contribution_rules_validator": typeof validators_contribution_rules_validator;
+  "validators/expenses_validator": typeof validators_expenses_validator;
+  "validators/incomes_validator": typeof validators_incomes_validator;
+  "validators/market_assumptions_validator": typeof validators_market_assumptions_validator;
+  "validators/timeline_validator": typeof validators_timeline_validator;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 
