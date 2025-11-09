@@ -116,7 +116,20 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
     [updateRuleMutation, planId]
   );
 
-  const reorderRulesMutation = useMutation(api.contribution_rule.reorderContributionRules);
+  const reorderRulesMutation = useMutation(api.contribution_rule.reorderContributionRules).withOptimisticUpdate(
+    (localStorage, { newOrder, planId }) => {
+      const currentContributionRules = localStorage.getQuery(api.contribution_rule.getContributionRules, { planId });
+      if (!currentContributionRules) return;
+
+      const reorderedContributionRules = newOrder.map((id, index) => {
+        const cr = currentContributionRules.find((c) => c.id === id);
+        if (!cr) throw new Error(`Contribution rule ${id} not found`);
+        return { ...cr, rank: index + 1 };
+      });
+
+      localStorage.setQuery(api.contribution_rule.getContributionRules, { planId }, reorderedContributionRules);
+    }
+  );
   const reorderContributionRules = useCallback(
     async (newOrder: string[]) => {
       await reorderRulesMutation({ newOrder, planId });
