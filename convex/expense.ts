@@ -15,6 +15,16 @@ export const getExpenses = query({
   },
 });
 
+export const getCountOfExpenses = query({
+  args: { planId: v.id('plans') },
+  handler: async (ctx, { planId }) => {
+    const { userId } = await getUserIdOrThrow(ctx);
+    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+
+    return plan.expenses.length;
+  },
+});
+
 export const getExpense = query({
   args: { planId: v.id('plans'), expenseId: v.union(v.string(), v.null()) },
   handler: async (ctx, { planId, expenseId }) => {

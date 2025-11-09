@@ -10,7 +10,7 @@ import { CalendarIcon, BanknoteArrowDownIcon, TrendingUpIcon } from 'lucide-reac
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
-import { useExpenseData, useExpensesData, useTimelineData } from '@/hooks/use-convex-data';
+import { useExpenseData, useCountOfExpenses, useTimelineData } from '@/hooks/use-convex-data';
 import { expenseToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { expenseFormSchema, type ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
@@ -33,8 +33,7 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
   const planId = useSelectedPlanId();
   const existingExpenseData = useExpenseData(selectedExpenseID);
 
-  const expenses = useExpensesData();
-  const numExpenses = Object.entries(expenses).length;
+  const numExpenses = useCountOfExpenses();
   const newExpenseDefaultValues = useMemo(
     () =>
       ({

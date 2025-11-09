@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 
-import { useInvestmentData, useAccountsData } from '@/hooks/use-convex-data';
+import { useInvestmentData, useCountOfAccounts } from '@/hooks/use-convex-data';
 import { accountToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs, isRothAccount, type RothAccountType } from '@/lib/schemas/inputs/account-form-schema';
@@ -28,8 +28,7 @@ export default function AccountDialog({ onClose, selectedAccountID }: AccountDia
   const planId = useSelectedPlanId();
   const existingAccountData = useInvestmentData(selectedAccountID);
 
-  const accounts = useAccountsData();
-  const numAccounts = Object.entries(accounts).length;
+  const numAccounts = useCountOfAccounts();
   const newAccountDefaultValues = useMemo(
     () =>
       ({

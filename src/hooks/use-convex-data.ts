@@ -46,6 +46,12 @@ export const useIncomesData = () => {
   return useMemo(() => (q ? Object.fromEntries(q.map((income) => [income.id, incomeFromConvex(income)])) : {}), [q]);
 };
 
+export const useCountOfIncomes = () => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.income.getCountOfIncomes, { planId });
+  return useMemo(() => (q ? q : 0), [q]);
+};
+
 export const useIncomeData = (incomeId: string | null) => {
   const planId = useSelectedPlanId();
   const q = useQuery(api.income.getIncome, { planId, incomeId });
@@ -59,6 +65,12 @@ export const useExpensesData = () => {
   return useMemo(() => (q ? Object.fromEntries(q.map((expense) => [expense.id, expenseFromConvex(expense)])) : {}), [q]);
 };
 
+export const useCountOfExpenses = () => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.expense.getCountOfExpenses, { planId });
+  return useMemo(() => (q ? q : 0), [q]);
+};
+
 export const useExpenseData = (expenseId: string | null) => {
   const planId = useSelectedPlanId();
   const q = useQuery(api.expense.getExpense, { planId, expenseId });
@@ -70,6 +82,12 @@ export const useAccountsData = () => {
   const planId = useSelectedPlanId();
   const q = useQuery(api.account.getAccounts, { planId });
   return useMemo(() => (q ? Object.fromEntries(q.map((account) => [account.id, accountFromConvex(account)])) : {}), [q]);
+};
+
+export const useCountOfAccounts = () => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.account.getCountOfAccounts, { planId });
+  return useMemo(() => (q ? q : 0), [q]);
 };
 
 export const useAccountData = (accountId: string | null) => {
@@ -95,6 +113,12 @@ export const useContributionRulesData = () => {
   const planId = useSelectedPlanId();
   const q = useQuery(api.contribution_rule.getContributionRules, { planId });
   return useMemo(() => (q ? Object.fromEntries(q.map((rule) => [rule.id, contributionFromConvex(rule)])) : {}), [q]);
+};
+
+export const useCountOfContributionRules = () => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.contribution_rule.getCountOfContributionRules, { planId });
+  return useMemo(() => (q ? q : 0), [q]);
 };
 
 export const useContributionRuleData = (ruleId: string | null) => {

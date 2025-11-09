@@ -10,7 +10,7 @@ import { useForm, useWatch } from 'react-hook-form';
 
 import {
   useContributionRuleData,
-  useContributionRulesData,
+  useCountOfContributionRules,
   useAccountsData,
   useIncomesData,
   useTimelineData,
@@ -43,9 +43,8 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
   const planId = useSelectedPlanId();
   const existingContributionRuleData = useContributionRuleData(selectedContributionRuleID);
 
-  const contributionRules = useContributionRulesData();
-  const contributionRulesCount = Object.keys(contributionRules).length;
-  const defaultRank = contributionRulesCount + 1;
+  const numContributionRules = useCountOfContributionRules();
+  const defaultRank = numContributionRules + 1;
   const newContributionRuleDefaultValues = useMemo(
     () =>
       ({

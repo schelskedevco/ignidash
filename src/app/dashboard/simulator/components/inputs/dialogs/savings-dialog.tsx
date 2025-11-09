@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { useSavingsData, useAccountsData } from '@/hooks/use-convex-data';
+import { useSavingsData, useCountOfAccounts } from '@/hooks/use-convex-data';
 import { accountToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
@@ -27,8 +27,7 @@ export default function SavingsDialog({ onClose, selectedAccountID }: SavingsDia
   const planId = useSelectedPlanId();
   const existingAccountData = useSavingsData(selectedAccountID);
 
-  const accounts = useAccountsData();
-  const numAccounts = Object.entries(accounts).length;
+  const numAccounts = useCountOfAccounts();
   const newAccountDefaultValues = useMemo(
     () =>
       ({

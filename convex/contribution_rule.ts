@@ -15,6 +15,16 @@ export const getContributionRules = query({
   },
 });
 
+export const getCountOfContributionRules = query({
+  args: { planId: v.id('plans') },
+  handler: async (ctx, { planId }) => {
+    const { userId } = await getUserIdOrThrow(ctx);
+    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+
+    return plan.contributionRules.length;
+  },
+});
+
 export const getContributionRule = query({
   args: { planId: v.id('plans'), ruleId: v.union(v.string(), v.null()) },
   handler: async (ctx, { planId, ruleId }) => {

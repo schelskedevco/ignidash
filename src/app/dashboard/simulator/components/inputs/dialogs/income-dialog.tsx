@@ -10,7 +10,7 @@ import { CalendarIcon, BanknoteArrowUpIcon, TrendingUpIcon, BanknoteXIcon } from
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
-import { useIncomeData, useIncomesData, useTimelineData } from '@/hooks/use-convex-data';
+import { useIncomeData, useCountOfIncomes, useTimelineData } from '@/hooks/use-convex-data';
 import { incomeToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { incomeFormSchema, type IncomeInputs, supportsWithholding } from '@/lib/schemas/inputs/income-form-schema';
@@ -33,8 +33,7 @@ export default function IncomeDialog({ onClose, selectedIncomeID }: IncomeDialog
   const planId = useSelectedPlanId();
   const existingIncomeData = useIncomeData(selectedIncomeID);
 
-  const incomes = useIncomesData();
-  const numIncomes = Object.entries(incomes).length;
+  const numIncomes = useCountOfIncomes();
   const newIncomeDefaultValues = useMemo(
     () =>
       ({
