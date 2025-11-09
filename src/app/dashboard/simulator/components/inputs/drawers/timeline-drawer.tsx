@@ -57,9 +57,9 @@ interface TimelineDrawerProps {
 
 export default function TimelineDrawer({ setOpen }: TimelineDrawerProps) {
   const planId = useSelectedPlanId();
-  const existingTimelineData = useTimelineData();
+  const timeline = useTimelineData();
 
-  const newTimelineDefaultValues = useMemo(
+  const timelineDefaultValues = useMemo(
     () =>
       ({
         retirementStrategy: {
@@ -70,7 +70,7 @@ export default function TimelineDrawer({ setOpen }: TimelineDrawerProps) {
     []
   );
 
-  const defaultValues = (existingTimelineData || newTimelineDefaultValues) as never;
+  const defaultValues = (timeline || timelineDefaultValues) as never;
 
   const {
     register,
@@ -85,8 +85,8 @@ export default function TimelineDrawer({ setOpen }: TimelineDrawerProps) {
   });
 
   useEffect(() => {
-    if (existingTimelineData) reset(existingTimelineData);
-  }, [existingTimelineData, reset]);
+    if (timeline) reset(timeline);
+  }, [timeline, reset]);
 
   const m = useMutation(api.timeline.update);
   const onSubmit = async (data: TimelineInputs) => {

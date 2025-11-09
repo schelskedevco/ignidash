@@ -4,7 +4,7 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useMarketAssumptionsData } from '@/hooks/use-convex-data';
 import { marketAssumptionsToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -30,7 +30,22 @@ interface ExpectedReturnsDrawerProps {
 
 export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawerProps) {
   const planId = useSelectedPlanId();
-  const marketAssumptions = useMarketAssumptionsData()!;
+  const marketAssumptions = useMarketAssumptionsData();
+
+  const marketAssumptionsDefaultValues = useMemo(
+    () =>
+      ({
+        stockReturn: 10,
+        stockYield: 3.5,
+        bondReturn: 5,
+        bondYield: 4.5,
+        cashReturn: 3,
+        inflationRate: 3,
+      }) as const satisfies MarketAssumptionsInputs,
+    []
+  );
+
+  const defaultValues = (marketAssumptions || marketAssumptionsDefaultValues) as never;
 
   const {
     control,
@@ -39,7 +54,7 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
     formState: { errors },
   } = useForm({
     resolver: zodResolver(marketAssumptionsSchema),
-    defaultValues: marketAssumptions,
+    defaultValues: defaultValues,
   });
 
   useEffect(() => {
