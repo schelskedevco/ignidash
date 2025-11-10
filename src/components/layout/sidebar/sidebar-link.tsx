@@ -15,15 +15,14 @@ interface SidebarLinkProps {
 }
 
 export default function SidebarLink({ href, current, disabled = false, children, tooltipLabel }: SidebarLinkProps) {
+  const linkClasses = cn(
+    'group focus-outline my-1 flex items-center text-base/6',
+    { 'bg-background ring-primary text-primary ring': current },
+    { 'hover:bg-background hover:ring-border hover:ring': !current }
+  );
+
   const linkComponent = (
-    <Link
-      href={href}
-      className={cn(
-        'group focus-outline my-1 flex items-center text-base/6',
-        { 'bg-background ring-primary text-primary ring': current },
-        { 'hover:bg-background hover:ring-border hover:ring': !current }
-      )}
-    >
+    <Link href={href} className={linkClasses}>
       {children}
     </Link>
   );
