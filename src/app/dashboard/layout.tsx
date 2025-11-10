@@ -12,7 +12,7 @@ import { useSidebarCollapsed } from '@/lib/stores/simulator-store';
 import PageLoading from '@/components/ui/page-loading';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useConvexAuth();
+  const { isAuthenticated, isLoading } = useConvexAuth();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
@@ -34,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <DesktopSidebar navigation={navigation} secondaryNavigation={secondaryNavigation} />
       <div className="flex h-full flex-col">
         <MobileHeader onMenuClick={() => setSidebarOpen(true)} currentPageTitle={currentPageTitle} currentPageIcon={currentPageIcon} />
-        {!isAuthenticated ? <PageLoading message="Redirecting to sign-in" /> : children}
+        {!isAuthenticated && !isLoading ? <PageLoading message="Redirecting to sign-in" /> : children}
       </div>
     </div>
   );
