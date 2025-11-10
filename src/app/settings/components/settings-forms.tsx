@@ -8,6 +8,7 @@ import { useConvexAuth } from 'convex/react';
 import SuccessNotification from '@/components/ui/success-notification';
 import { useSuccessNotification } from '@/hooks/use-success-notification';
 import { useAccountsList } from '@/hooks/use-accounts-data';
+import PageLoading from '@/components/ui/page-loading';
 
 import ProfileInfoForm from './profile-info-form';
 import DataSettingsForm from './data-settings-form';
@@ -39,13 +40,7 @@ export default function SettingsForms({ preloadedUser }: SettingsFormsProps) {
   if (isAccountsDataLoading || isAuthLoading || (isAuthenticated && !authData)) {
     return (
       <main className="mx-auto flex min-h-dvh max-w-prose items-center justify-center px-4 pt-[4.25rem]">
-        <div
-          role="status"
-          aria-label="Loading settings"
-          className="text-muted-foreground flex h-full items-center justify-center text-2xl sm:text-xl"
-        >
-          Loading settings<span className="loading-ellipsis" aria-hidden="true"></span>
-        </div>
+        <PageLoading ariaLabel="Loading settings" message="Loading settings" />
       </main>
     );
   }

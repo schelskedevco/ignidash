@@ -1,15 +1,10 @@
 import MainArea from '@/components/layout/main-area';
+import PageLoading from '@/components/ui/page-loading';
 
 export default function SimulatorLoading() {
   return (
     <MainArea hasSecondaryColumn={false}>
-      <div
-        role="status"
-        aria-label="Loading dashboard"
-        className="text-muted-foreground flex h-full items-center justify-center text-2xl sm:text-xl"
-      >
-        Loading<span className="loading-ellipsis" aria-hidden="true"></span>
-      </div>
+      <PageLoading ariaLabel="Loading dashboard" message="Loading" />
     </MainArea>
   );
 }
