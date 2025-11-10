@@ -19,7 +19,7 @@ export default function SidebarLink({ href, current, disabled = false, children,
     'group focus-outline my-1 flex items-center text-base/6',
     { 'bg-background ring-primary text-primary ring': current },
     { 'hover:bg-background hover:ring-border hover:ring': !current },
-    { 'opacity-50 cursor-not-allowed': disabled }
+    { 'hover:opacity-50 cursor-not-allowed': disabled }
   );
 
   const linkComponent = disabled ? (
