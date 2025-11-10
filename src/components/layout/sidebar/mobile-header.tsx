@@ -7,18 +7,19 @@ import { api } from '@/convex/_generated/api';
 import { CircleUserRoundIcon } from 'lucide-react';
 import * as Headless from '@headlessui/react';
 
-import type { NavigationItem } from '@/lib/navigation';
 import { Dropdown } from '@/components/catalyst/dropdown';
 
 import AccountDropdownMenu from './auth/account-dropdown-menu';
+import { useCurrentPageIcon, useCurrentPageTitle } from '@/hooks/use-sidebar-navigation';
 
 interface MobileHeaderProps {
   onMenuClick: () => void;
-  currentPageTitle: string;
-  currentPageIcon: NavigationItem['icon'];
 }
 
-export default function MobileHeader({ onMenuClick, currentPageTitle, currentPageIcon: Icon }: MobileHeaderProps) {
+export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
+  const currentPageTitle = useCurrentPageTitle();
+  const CurrentPageIcon = useCurrentPageIcon();
+
   const user = useQuery(api.auth.getCurrentUserSafe);
 
   const name = user?.name ?? 'Anonymous';
@@ -32,7 +33,7 @@ export default function MobileHeader({ onMenuClick, currentPageTitle, currentPag
         <MenuIcon aria-hidden="true" className="size-6" />
       </button>
       <div className="flex flex-1 items-center gap-2 text-base/6 font-semibold">
-        <Icon aria-hidden="true" className="text-primary size-5" />
+        <CurrentPageIcon aria-hidden="true" className="text-primary size-5" />
         {currentPageTitle}
       </div>
       <Dropdown>

@@ -3,18 +3,14 @@
 import { Dialog, DialogBackdrop, DialogPanel, TransitionChild } from '@headlessui/react';
 import { X } from 'lucide-react';
 
-import type { NavigationItem } from '@/lib/navigation';
-
 import MobileSidebarContent from './mobile-sidebar-content';
 
 interface MobileSidebarProps {
   open: boolean;
   onClose: () => void;
-  navigation: NavigationItem[];
-  secondaryNavigation: NavigationItem[];
 }
 
-export default function MobileSidebar({ open, onClose, navigation, secondaryNavigation }: MobileSidebarProps) {
+export default function MobileSidebar({ open, onClose }: MobileSidebarProps) {
   return (
     <Dialog open={open} onClose={onClose} className="relative z-50 lg:hidden">
       <DialogBackdrop
@@ -35,7 +31,7 @@ export default function MobileSidebar({ open, onClose, navigation, secondaryNavi
               </button>
             </div>
           </TransitionChild>
-          <MobileSidebarContent navigation={navigation} secondaryNavigation={secondaryNavigation} onClose={onClose} />
+          <MobileSidebarContent onClose={onClose} />
         </DialogPanel>
       </div>
     </Dialog>

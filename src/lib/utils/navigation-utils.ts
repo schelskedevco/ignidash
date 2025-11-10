@@ -1,6 +1,4 @@
-import { navigationItems } from '../navigation';
-
-const ALLOWED_REDIRECTS = ['/', '/settings', ...navigationItems.map((item) => item.href)];
+const ALLOWED_REDIRECTS = ['/', '/settings', '/dashboard', '/dashboard/simulator', '/dashboard/compare', '/dashboard/insights'];
 const DEFAULT_REDIRECT = '/dashboard/simulator';
 
 export function getSafeRedirect(redirectParam: string | null): string {

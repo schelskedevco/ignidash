@@ -1,19 +1,15 @@
 'use client';
 
-import type { NavigationItem } from '@/lib/navigation';
 import { SidebarModeToggle } from '@/components/mode-toggle';
-import { cn } from '@/lib/utils';
 
-import SidebarLink from './sidebar-link';
 import SidebarBrand from './sidebar-brand';
+import MobileSidebarNavigation, { MobileSidebarSecondaryNavigation } from './mobile-sidebar-navigation';
 
 interface MobileSidebarContentProps {
-  navigation: NavigationItem[];
-  secondaryNavigation: NavigationItem[];
   onClose: () => void;
 }
 
-export default function MobileSidebarContent({ navigation, secondaryNavigation, onClose }: MobileSidebarContentProps) {
+export default function MobileSidebarContent({ onClose }: MobileSidebarContentProps) {
   return (
     <div className="bg-emphasized-background border-border/50 flex grow flex-col border-r">
       <div className="px-3">
@@ -22,18 +18,7 @@ export default function MobileSidebarContent({ navigation, secondaryNavigation, 
       <nav className="flex flex-1 flex-col overflow-y-auto px-3">
         <ul role="list" className="flex flex-1 flex-col">
           <li className="mt-1">
-            <ul role="list" className="space-y-1.5">
-              {navigation.map((item) => (
-                <li key={item.name} onClick={onClose}>
-                  <SidebarLink href={item.href} current={item.current}>
-                    <div className="p-2">
-                      <item.icon aria-hidden="true" className="size-6 shrink-0" />
-                    </div>
-                    <span className="ml-1">{item.name}</span>
-                  </SidebarLink>
-                </li>
-              ))}
-            </ul>
+            <MobileSidebarNavigation onClose={onClose} />
           </li>
           <li className="my-3 flex-1">
             <div
@@ -54,16 +39,7 @@ export default function MobileSidebarContent({ navigation, secondaryNavigation, 
               <li key="dark-mode">
                 <SidebarModeToggle />
               </li>
-              {secondaryNavigation.map((item) => (
-                <li key={item.name}>
-                  <SidebarLink href={item.href} current={item.current}>
-                    <div className="p-2">
-                      <item.icon aria-hidden="true" className={cn('size-6 shrink-0', { 'text-primary': item.href === '/pricing' })} />
-                    </div>
-                    <span className="ml-1 inline group-data-[state=collapsed]/sidebar:hidden">{item.name}</span>
-                  </SidebarLink>
-                </li>
-              ))}
+              <MobileSidebarSecondaryNavigation />
             </ul>
           </li>
         </ul>
