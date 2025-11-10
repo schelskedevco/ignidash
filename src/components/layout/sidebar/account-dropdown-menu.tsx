@@ -44,6 +44,10 @@ export default function AccountDropdownMenu({ fetchedName, fetchedEmail }: Accou
           <GemIcon data-slot="icon" />
           <DropdownLabel>Buy Pro</DropdownLabel>
         </DropdownItem>
+        <DropdownItem href="/settings">
+          <SettingsIcon data-slot="icon" />
+          <DropdownLabel>Settings</DropdownLabel>
+        </DropdownItem>
         <DropdownDivider />
         <DropdownItem href="/privacy">
           <GlobeLockIcon data-slot="icon" />
@@ -52,10 +56,6 @@ export default function AccountDropdownMenu({ fetchedName, fetchedEmail }: Accou
         <DropdownItem href="/terms">
           <HandshakeIcon data-slot="icon" />
           <DropdownLabel>Terms</DropdownLabel>
-        </DropdownItem>
-        <DropdownItem href="/settings">
-          <SettingsIcon data-slot="icon" />
-          <DropdownLabel>Settings</DropdownLabel>
         </DropdownItem>
         <DropdownDivider />
         <DropdownItem href={signInUrlWithRedirect}>
@@ -75,6 +75,10 @@ export default function AccountDropdownMenu({ fetchedName, fetchedEmail }: Accou
           <GemIcon data-slot="icon" />
           <DropdownLabel>Buy Pro</DropdownLabel>
         </DropdownItem>
+        <DropdownItem href="/settings">
+          <SettingsIcon data-slot="icon" />
+          <DropdownLabel>Settings</DropdownLabel>
+        </DropdownItem>
         <DropdownDivider />
         <DropdownItem href="/privacy">
           <GlobeLockIcon data-slot="icon" />
@@ -83,10 +87,6 @@ export default function AccountDropdownMenu({ fetchedName, fetchedEmail }: Accou
         <DropdownItem href="/terms">
           <HandshakeIcon data-slot="icon" />
           <DropdownLabel>Terms</DropdownLabel>
-        </DropdownItem>
-        <DropdownItem href="/settings">
-          <SettingsIcon data-slot="icon" />
-          <DropdownLabel>Settings</DropdownLabel>
         </DropdownItem>
         <DropdownDivider />
         <DropdownItem onClick={() => signOut()}>
