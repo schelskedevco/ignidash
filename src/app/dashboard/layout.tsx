@@ -15,6 +15,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { isAuthenticated, isLoading } = useConvexAuth();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const handleSidebarClose = () => setSidebarOpen(false);
+
   const pathname = usePathname();
   const sidebarCollapsed = useSidebarCollapsed();
 
@@ -25,12 +27,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="group/sidebar h-full" data-state={sidebarCollapsed ? 'collapsed' : 'expanded'}>
-      <MobileSidebar
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        navigation={navigation}
-        secondaryNavigation={secondaryNavigation}
-      />
+      <MobileSidebar open={sidebarOpen} onClose={handleSidebarClose} navigation={navigation} secondaryNavigation={secondaryNavigation} />
       <DesktopSidebar navigation={navigation} secondaryNavigation={secondaryNavigation} />
       <div className="flex h-full flex-col">
         <MobileHeader onMenuClick={() => setSidebarOpen(true)} currentPageTitle={currentPageTitle} currentPageIcon={currentPageIcon} />
