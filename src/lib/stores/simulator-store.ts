@@ -470,7 +470,7 @@ export const useIsCalculationReady = (inputs: SimulatorInputs | null) => {
   const { timeline, accounts, incomes, expenses } = inputs;
 
   return {
-    timelineIsReady: timeline !== undefined,
+    timelineIsReady: timeline !== null,
     accountsAreReady: Object.keys(accounts).length > 0,
     incomesAreReady: Object.keys(incomes).length > 0,
     expensesAreReady: Object.keys(expenses).length > 0,
