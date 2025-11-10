@@ -1,11 +1,10 @@
-'use client';
-
-import { LogInIcon, LogOutIcon, SettingsIcon, LoaderIcon, GemIcon, GlobeLockIcon, HandshakeIcon } from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation';
+import { SettingsIcon, LoaderIcon, GemIcon, GlobeLockIcon, HandshakeIcon } from 'lucide-react';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
 
-import { authClient } from '@/lib/auth-client';
 import { DropdownItem, DropdownMenu, DropdownDivider, DropdownLabel, DropdownHeader } from '@/components/catalyst/dropdown';
+
+import SignInDropdownItem from './sign-in-dropdown-item';
+import SignOutDropdownItem from './sign-out-dropdown-item';
 
 interface AccountDropdownMenuProps {
   fetchedName: string | undefined;
@@ -13,23 +12,8 @@ interface AccountDropdownMenuProps {
 }
 
 export default function AccountDropdownMenu({ fetchedName, fetchedEmail }: AccountDropdownMenuProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const signInUrlWithRedirect = `/signin?redirect=${encodeURIComponent(pathname)}`;
-
   const name = fetchedName ?? 'Anonymous';
   const email = fetchedEmail;
-
-  const signOut = async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push(signInUrlWithRedirect);
-        },
-      },
-    });
-  };
 
   return (
     <DropdownMenu className="z-[60] min-w-(--button-width)">
@@ -58,10 +42,7 @@ export default function AccountDropdownMenu({ fetchedName, fetchedEmail }: Accou
           <DropdownLabel>Terms</DropdownLabel>
         </DropdownItem>
         <DropdownDivider />
-        <DropdownItem href={signInUrlWithRedirect}>
-          <LogInIcon data-slot="icon" />
-          <DropdownLabel>Sign in</DropdownLabel>
-        </DropdownItem>
+        <SignInDropdownItem />
       </Unauthenticated>
       <Authenticated>
         <DropdownHeader>
@@ -89,10 +70,7 @@ export default function AccountDropdownMenu({ fetchedName, fetchedEmail }: Accou
           <DropdownLabel>Terms</DropdownLabel>
         </DropdownItem>
         <DropdownDivider />
-        <DropdownItem onClick={() => signOut()}>
-          <LogOutIcon data-slot="icon" />
-          <DropdownLabel>Sign out</DropdownLabel>
-        </DropdownItem>
+        <SignOutDropdownItem />
       </Authenticated>
     </DropdownMenu>
   );
