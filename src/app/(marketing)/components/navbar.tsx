@@ -86,7 +86,7 @@ export default function Navbar() {
             </Link>
           </Unauthenticated>
           <Authenticated>
-            <Link href="/dashboard/simulator" className="text-sm/6 font-semibold">
+            <Link href="/dashboard" className="text-sm/6 font-semibold">
               Dashboard <span aria-hidden="true">&rarr;</span>
             </Link>
           </Authenticated>
@@ -142,7 +142,7 @@ export default function Navbar() {
                 </Unauthenticated>
                 <Authenticated>
                   <Link
-                    href="/dashboard/simulator"
+                    href="/dashboard"
                     className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-zinc-900 hover:bg-zinc-50 dark:text-white dark:hover:bg-white/5"
                   >
                     Dashboard

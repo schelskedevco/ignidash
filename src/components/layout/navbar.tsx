@@ -93,7 +93,7 @@ export default function Navbar() {
                 <DropdownLabel>Buy Pro</DropdownLabel>
               </DropdownItem>
               <DropdownDivider />
-              <DropdownItem href="/dashboard/simulator">
+              <DropdownItem href="/dashboard">
                 <LayoutDashboardIcon data-slot="icon" />
                 <DropdownLabel>Dashboard</DropdownLabel>
               </DropdownItem>
@@ -120,7 +120,7 @@ export default function Navbar() {
                 <DropdownLabel>Buy Pro</DropdownLabel>
               </DropdownItem>
               <DropdownDivider />
-              <DropdownItem href="/dashboard/simulator">
+              <DropdownItem href="/dashboard">
                 <LayoutDashboardIcon data-slot="icon" />
                 <DropdownLabel>Dashboard</DropdownLabel>
               </DropdownItem>
