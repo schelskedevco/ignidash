@@ -24,7 +24,7 @@ export const secondaryNavigationItems: Omit<NavigationItem, 'current'>[] = [
 export function getNavigation(currentPath: string): NavigationItem[] {
   return navigationItems.map((item) => ({
     ...item,
-    current: currentPath === item.href,
+    current: isCurrentPath(currentPath, item.href),
   }));
 }
 
@@ -36,11 +36,16 @@ export function getSecondaryNavigation(): NavigationItem[] {
 }
 
 export function getCurrentPageTitle(currentPath: string): string {
-  const item = navigationItems.find((item) => item.href === currentPath);
+  const item = navigationItems.find((item) => isCurrentPath(item.href, currentPath));
   return item?.name || 'Dashboard';
 }
 
 export function getCurrentPageIcon(currentPath: string): NavigationItem['icon'] {
-  const item = navigationItems.find((item) => item.href === currentPath);
+  const item = navigationItems.find((item) => isCurrentPath(item.href, currentPath));
   return item?.icon || LayoutDashboardIcon;
+}
+
+function isCurrentPath(currentPath: string, itemHref: string): boolean {
+  if (itemHref === '/dashboard') return currentPath === '/dashboard';
+  return currentPath === itemHref || currentPath.startsWith(`${itemHref}/`);
 }
