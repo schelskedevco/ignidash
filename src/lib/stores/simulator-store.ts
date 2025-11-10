@@ -106,7 +106,7 @@ interface SimulatorState {
 }
 
 export const defaultState: Omit<SimulatorState, 'actions'> = {
-  selectedPlanId: 'jd75zkawkv1eebgdaa74qvejxx7v3h04' as Id<'plans'>, // Demo Plan
+  selectedPlanId: 'jd7aqt0x9h0jsf453dc0kn1r197v47gv' as Id<'plans'>, // Demo Plan
   results: {
     quickSelectPercentile: 'p50',
     selectedSeedFromTable: null,
