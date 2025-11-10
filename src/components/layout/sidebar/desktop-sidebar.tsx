@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 import SidebarLink from './sidebar-link';
 import SidebarBrand from './sidebar-brand';
-import SidebarAuth from './sidebar-auth';
+import SidebarAuth from './auth/sidebar-auth';
 
 interface DesktopSidebarProps {
   navigation: NavigationItem[];

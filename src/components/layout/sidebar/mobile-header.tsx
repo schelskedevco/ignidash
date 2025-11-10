@@ -10,7 +10,7 @@ import * as Headless from '@headlessui/react';
 import type { NavigationItem } from '@/lib/navigation';
 import { Dropdown } from '@/components/catalyst/dropdown';
 
-import AccountDropdownMenu from './account-dropdown-menu';
+import AccountDropdownMenu from './auth/account-dropdown-menu';
 
 interface MobileHeaderProps {
   onMenuClick: () => void;
