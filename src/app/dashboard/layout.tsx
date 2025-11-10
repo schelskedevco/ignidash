@@ -9,17 +9,15 @@ import { useSidebarCollapsed } from '@/lib/stores/simulator-store';
 import UnauthenticatedWrapper from '@/components/layout/unauthenticated-wrapper';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const handleSidebarClose = () => setSidebarOpen(false);
-
-  const sidebarCollapsed = useSidebarCollapsed();
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const desktopSidebarCollapsed = useSidebarCollapsed();
 
   return (
-    <div className="group/sidebar h-full" data-state={sidebarCollapsed ? 'collapsed' : 'expanded'}>
-      <MobileSidebar open={sidebarOpen} onClose={handleSidebarClose} />
+    <div className="group/sidebar h-full" data-state={desktopSidebarCollapsed ? 'collapsed' : 'expanded'}>
+      <MobileSidebar open={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
       <DesktopSidebar />
       <div className="flex h-full flex-col">
-        <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
+        <MobileHeader onMenuClick={() => setMobileSidebarOpen(true)} />
         <UnauthenticatedWrapper>{children}</UnauthenticatedWrapper>
       </div>
     </div>
