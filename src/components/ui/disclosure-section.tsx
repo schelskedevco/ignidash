@@ -58,7 +58,7 @@ function DisclosureSectionContent({
               toggleDisclosure({ open, close, key: disclosureKey });
             }
           }}
-          className="focus-visible:ring-primary group from-emphasized-background to-background flex w-full items-center justify-between bg-gradient-to-r px-4 py-4 hover:to-rose-500/50 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset lg:py-8"
+          className="focus-visible:ring-primary group from-emphasized-background to-background flex w-full items-center justify-between bg-gradient-to-l px-4 py-4 hover:to-rose-500/50 focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset lg:py-8"
         >
           <div className="flex w-full items-center justify-between text-left">
             <div className="flex items-center gap-2 font-medium">
