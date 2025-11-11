@@ -17,13 +17,16 @@ export default function PlansList({ preloadedPlans }: PlansListProps) {
 
   return (
     <>
-      <Heading level={3} className="mt-4 mb-2">
+      <Heading level={3} className="mx-2 my-4">
         Simulations
       </Heading>
       <div className="grid w-full grid-cols-1 gap-2 lg:grid-cols-2">
         {plans.map((plan) => (
-          <Card key={plan._id} className="w-full">
-            <Subheading>{plan.name}</Subheading>
+          <Card key={plan._id} className="my-0 w-full">
+            <Subheading level={4}>
+              <span className="mr-2">{plan.name}</span>
+              <span className="text-muted-foreground hidden sm:inline">{new Date(plan._creationTime).toLocaleDateString()}</span>
+            </Subheading>
             <DescriptionList>
               <DescriptionTerm>Portfolio Value</DescriptionTerm>
               <DescriptionDetails>
