@@ -26,11 +26,9 @@ export default function SectionContainer({ children, showBottomBorder, location 
       break;
   }
 
-  const borderClass = showBottomBorder ? 'border-border/50 border-b' : '';
-
   return (
     <motion.div
-      className={cn('py-5', borderClass, outerXMarginClass, className)}
+      className={cn('py-5', { 'border-border/50 border-b': showBottomBorder }, outerXMarginClass, className)}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
