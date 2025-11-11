@@ -7,8 +7,11 @@ import MobileHeader from '@/components/layout/sidebar/mobile-header';
 import MobileSidebar from '@/components/layout/sidebar/mobile-sidebar';
 import { useSidebarCollapsed } from '@/lib/stores/simulator-store';
 import UnauthenticatedWrapper from '@/components/layout/unauthenticated-wrapper';
+import { useAuthMonitor } from '@/hooks/use-auth-monitor';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  useAuthMonitor();
+
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const desktopSidebarCollapsed = useSidebarCollapsed();
 
