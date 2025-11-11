@@ -99,7 +99,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
                   <DescriptionDetails>{`${formatNumber(value, 2, '$')} (${formatNumber((value / totalValue) * 100, 1)}%)`}</DescriptionDetails>
                 </Fragment>
               ))}
-              <DescriptionTerm className="font-bold">Total Portfolio Value</DescriptionTerm>
+              <DescriptionTerm className="font-bold">Portfolio Value</DescriptionTerm>
               <DescriptionDetails className="font-bold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
             </DescriptionList>
           </div>
