@@ -1,11 +1,13 @@
 'use client';
 
+import { PencilSquareIcon } from '@heroicons/react/20/solid';
 import { Preloaded, usePreloadedQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 
 import Card from '@/components/ui/card';
 import { Heading, Subheading } from '@/components/catalyst/heading';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
+import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 import { formatNumber } from '@/lib/utils';
 
 interface PlansListProps {
@@ -23,10 +25,23 @@ export default function PlansList({ preloadedPlans }: PlansListProps) {
       <div className="grid w-full grid-cols-1 gap-2 xl:grid-cols-2">
         {plans.map((plan) => (
           <Card key={plan._id} className="my-0 w-full">
-            <Subheading level={4}>
-              <span className="mr-2">{plan.name}</span>
-              <span className="text-muted-foreground hidden sm:inline">{new Date(plan._creationTime).toLocaleDateString()}</span>
-            </Subheading>
+            <div className="mb-4 flex items-center justify-between">
+              <Subheading level={4}>
+                <span className="mr-2">{plan.name}</span>
+                <span className="text-muted-foreground hidden sm:inline">{new Date(plan._creationTime).toLocaleDateString()}</span>
+              </Subheading>
+              <div className="shrink-0">
+                <Dropdown>
+                  <DropdownButton plain aria-label="Open options">
+                    <PencilSquareIcon />
+                  </DropdownButton>
+                  <DropdownMenu portal={false}>
+                    <DropdownItem onClick={() => {}}>Edit</DropdownItem>
+                    <DropdownItem onClick={() => {}}>Delete</DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </div>
+            </div>
             <DescriptionList>
               <DescriptionTerm>Portfolio Value</DescriptionTerm>
               <DescriptionDetails>
