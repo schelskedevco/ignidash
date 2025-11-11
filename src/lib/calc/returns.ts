@@ -124,7 +124,7 @@ export class ReturnsProcessor {
     });
 
     return {
-      ...this.monthlyData[0],
+      ...this.monthlyData[this.monthlyData.length - 1],
       ...this.monthlyData.reduce(
         (acc, curr) => {
           acc.returnAmountsForPeriod.stocks += curr.returnAmountsForPeriod.stocks;
