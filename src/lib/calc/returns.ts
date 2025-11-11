@@ -123,8 +123,10 @@ export class ReturnsProcessor {
       cash: (a?.cash ?? 0) + b.cash,
     });
 
+    const lastMonthData = this.monthlyData[this.monthlyData.length - 1];
+
     return {
-      ...this.monthlyData[this.monthlyData.length - 1],
+      ...lastMonthData,
       ...this.monthlyData.reduce(
         (acc, curr) => {
           acc.returnAmountsForPeriod.stocks += curr.returnAmountsForPeriod.stocks;
