@@ -202,10 +202,9 @@ export default function Example() {
   return (
     <>
       <div className="-mx-2 sm:-mx-3 lg:-mx-4 lg:pr-96">
-        <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
-          <h1 className="text-base/7 font-semibold text-zinc-900 dark:text-white">Deployments</h1>
+        <div className="from-emphasized-background to-background flex items-center justify-between border-b border-zinc-200 bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
+          <h1 className="text-base/7 font-semibold text-zinc-900 dark:text-white">Simulations</h1>
 
-          {/* Sort dropdown */}
           <Menu as="div" className="relative">
             <MenuButton className="flex items-center gap-x-1 text-sm/6 font-medium text-zinc-900 dark:text-white">
               Sort by
