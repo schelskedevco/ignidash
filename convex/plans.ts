@@ -1,5 +1,6 @@
 import { v } from 'convex/values';
 import { query, mutation } from './_generated/server';
+import { Doc } from './_generated/dataModel';
 
 import { getUserIdOrThrow } from './utils/auth_utils';
 import { getPlanForUserIdOrThrow } from './utils/plan_utils';
@@ -10,6 +11,8 @@ import { accountValidator } from './validators/accounts_validator';
 import { contributionRulesValidator, baseContributionRuleValidator } from './validators/contribution_rules_validator';
 import { marketAssumptionsValidator } from './validators/market_assumptions_validator';
 import { api } from './_generated/api';
+import { basicTemplate } from './templates/basic';
+import { earlyRetirementTemplate } from './templates/early_retirement';
 
 export const listPlans = query({
   args: {},
@@ -129,10 +132,18 @@ export const createPlanWithData = mutation({
 });
 
 export const clonePlan = mutation({
-  args: { newPlanName: v.string(), planId: v.id('plans') },
+  args: { newPlanName: v.string(), planId: v.union(v.id('plans'), v.literal('template1'), v.literal('template2')) },
   handler: async (ctx, { newPlanName, planId }) => {
     const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+
+    let plan: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId' | 'name'>;
+    if (planId === 'template1') {
+      plan = basicTemplate;
+    } else if (planId === 'template2') {
+      plan = earlyRetirementTemplate;
+    } else {
+      plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    }
 
     const { timeline, incomes, expenses, accounts, contributionRules, baseContributionRule, marketAssumptions } = plan;
     const clonedData = {

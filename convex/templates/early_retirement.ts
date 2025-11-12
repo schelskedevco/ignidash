@@ -1,6 +1,6 @@
 import { Doc } from '../_generated/dataModel';
 
-export const earlyRetirement: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId' | 'name'> = {
+export const earlyRetirementTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId' | 'name'> = {
   timeline: {
     lifeExpectancy: 87,
     currentAge: 28,

@@ -54,7 +54,7 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
     if (initialSelectedPlan) {
       await updateNameMutation({ planId: initialSelectedPlan!.id, name: data.name });
     } else if (data.clonedPlanId) {
-      await clonePlanMutation({ planId: data.clonedPlanId as Id<'plans'>, newPlanName: data.name });
+      await clonePlanMutation({ planId: data.clonedPlanId as Id<'plans'> | 'template1' | 'template2', newPlanName: data.name });
     } else {
       await createPlanMutation({ newPlanName: data.name });
     }
@@ -93,11 +93,17 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
                   <Label htmlFor="clonedPlanId">With Template</Label>
                   <Select {...register('clonedPlanId')} id="clonedPlanId" name="clonedPlanId">
                     <option value="">Blank plan</option>
-                    {allPlans.map((plan) => (
-                      <option key={plan.id} value={plan.id}>
-                        Copy of {plan.name}
-                      </option>
-                    ))}
+                    <optgroup label="Your Plans">
+                      {allPlans.map((plan) => (
+                        <option key={plan.id} value={plan.id}>
+                          Copy of {plan.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="Templates">
+                      <option value="template1">Basic Example</option>
+                      <option value="template2">Tech / Early Retirement</option>
+                    </optgroup>
                   </Select>
                 </Field>
               )}
