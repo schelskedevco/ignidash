@@ -6,7 +6,6 @@ import { Preloaded, usePreloadedQuery } from 'convex/react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { EllipsisVerticalIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
@@ -167,12 +166,9 @@ function PlanListItem({ plan, onDropdownClickEdit, onDropdownClickClone, onDropd
         </div>
       </div>
       <div className="flex flex-none items-center gap-x-4">
-        <Link
-          href={`/dashboard/simulator/${plan._id}`}
-          className="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-zinc-900 shadow-xs inset-ring inset-ring-zinc-300 hover:bg-zinc-50 sm:block dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20"
-        >
+        <Button outline href={`/dashboard/simulator/${plan._id}`}>
           View plan<span className="sr-only">, {plan.name}</span>
-        </Link>
+        </Button>
         <div className="relative flex-none">
           <Dropdown>
             <DropdownButton plain aria-label="Open options">
