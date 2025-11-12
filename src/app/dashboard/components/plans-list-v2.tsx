@@ -202,7 +202,7 @@ export default function Example() {
   return (
     <>
       <div className="-mx-2 sm:-mx-3 lg:-mx-4 lg:pr-96">
-        <header className="from-emphasized-background to-background flex items-center justify-between border-b border-zinc-200 bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
+        <header className="from-emphasized-background to-background border-border/50 flex items-center justify-between border-b bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
           <h1 className="text-base/7 font-semibold text-zinc-900 dark:text-white">Simulations</h1>
           <Menu as="div" className="relative">
             <MenuButton className="flex items-center gap-x-1 text-sm/6 font-medium text-zinc-900 dark:text-white">
@@ -240,7 +240,7 @@ export default function Example() {
             </MenuItems>
           </Menu>
         </header>
-        <ul role="list" className="divide-y divide-zinc-100 dark:divide-white/5">
+        <ul role="list" className="divide-border/25 divide-y">
           {deployments.map((deployment) => (
             <li key={deployment.id} className="relative flex items-center space-x-4 px-4 py-4 sm:px-6 lg:px-8">
               <div className="min-w-0 flex-auto">
@@ -278,14 +278,14 @@ export default function Example() {
           ))}
         </ul>
       </div>
-      <aside className="-mx-2 bg-zinc-50 sm:-mx-3 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:mx-0 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-zinc-200 dark:bg-black/10 dark:lg:border-white/5">
-        <header className="from-emphasized-background to-background flex items-center justify-between border-b border-zinc-200 bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
+      <aside className="lg:border-border/50 -mx-2 bg-zinc-50 sm:-mx-3 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:mx-0 lg:w-96 lg:overflow-y-auto lg:border-l dark:bg-black/10">
+        <header className="from-emphasized-background to-background border-border/50 flex items-center justify-between border-b bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
           <h2 className="text-base/7 font-semibold text-zinc-900 dark:text-white">Your Finances</h2>
           <a href="#" className="text-sm/6 font-semibold text-rose-600 dark:text-rose-400">
             View all
           </a>
         </header>
-        <ul role="list" className="divide-y divide-zinc-100 dark:divide-white/5">
+        <ul role="list" className="divide-border/25 divide-y">
           {activityItems.map((item) => (
             <li key={item.commit} className="px-4 py-4 sm:px-6 lg:px-8">
               <div className="flex items-center gap-x-3">
