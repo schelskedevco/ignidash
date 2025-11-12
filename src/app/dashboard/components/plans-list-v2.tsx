@@ -201,8 +201,8 @@ function classNames(...classes: string[]) {
 export default function Example() {
   return (
     <>
-      <main className="-mx-2 sm:-mx-3 lg:-mx-4 lg:pr-96">
-        <header className="flex items-center justify-between border-b border-zinc-200 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
+      <div className="-mx-2 sm:-mx-3 lg:-mx-4 lg:pr-96">
+        <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
           <h1 className="text-base/7 font-semibold text-zinc-900 dark:text-white">Deployments</h1>
 
           {/* Sort dropdown */}
@@ -241,9 +241,8 @@ export default function Example() {
               </MenuItem>
             </MenuItems>
           </Menu>
-        </header>
+        </div>
 
-        {/* Deployment list */}
         <ul role="list" className="divide-y divide-zinc-100 dark:divide-white/5">
           {deployments.map((deployment) => (
             <li key={deployment.id} className="relative flex items-center space-x-4 px-4 py-4 sm:px-6 lg:px-8">
@@ -281,9 +280,8 @@ export default function Example() {
             </li>
           ))}
         </ul>
-      </main>
+      </div>
 
-      {/* Activity feed */}
       <aside className="bg-zinc-50 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-zinc-200 dark:bg-black/10 dark:lg:border-white/5">
         <header className="flex items-center justify-between border-b border-zinc-200 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
           <h2 className="text-base/7 font-semibold text-zinc-900 dark:text-white">Activity feed</h2>
