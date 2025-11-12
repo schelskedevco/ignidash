@@ -155,7 +155,7 @@ export default function PlansList({ preloadedPlans }: PlansListProps) {
               Create
             </Button>
           </div>
-          <div className="grid w-full grid-cols-1 gap-2 xl:grid-cols-2">
+          <div className="grid w-full grid-cols-1 gap-2 lg:grid-cols-2">
             {plans.map((plan) => {
               const planMetadata = { id: plan._id, name: plan.name };
               return (
