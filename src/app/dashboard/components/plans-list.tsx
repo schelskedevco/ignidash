@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useState, useCallback } from 'react';
-import { PencilSquareIcon } from '@heroicons/react/20/solid';
+import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
+import { PlusIcon } from '@heroicons/react/16/solid';
 import { Doc, Id } from '@/convex/_generated/dataModel';
 import { Preloaded, usePreloadedQuery } from 'convex/react';
 import { useMutation } from 'convex/react';
@@ -17,17 +18,9 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/componen
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
-import { Select } from '@/components/catalyst/select';
-import {
-  useResultsCategory,
-  useUpdateResultsCategory,
-  useSimulationResult,
-  useKeyMetrics,
-  useSingleSimulationPortfolioChartData,
-} from '@/lib/stores/simulator-store';
+import { useSimulationResult, useKeyMetrics, useSingleSimulationPortfolioChartData } from '@/lib/stores/simulator-store';
 import { simulatorFromConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { formatNumber } from '@/lib/utils';
-import { SimulationCategory } from '@/lib/types/simulation-category';
 
 import PortfolioPreviewChart from './charts/portfolio-preview-chart';
 import PlanDialog from './dialogs/plan-dialog';
@@ -66,7 +59,7 @@ function PlanCard({ plan, onDropdownClickEdit, onDropdownClickDelete }: PlanCard
         <div className="shrink-0">
           <Dropdown>
             <DropdownButton plain aria-label="Open options">
-              <PencilSquareIcon />
+              <EllipsisVerticalIcon />
             </DropdownButton>
             <DropdownMenu portal={false}>
               <DropdownItem onClick={onDropdownClickEdit}>Edit</DropdownItem>
@@ -102,9 +95,6 @@ export default function PlansList({ preloadedPlans }: PlansListProps) {
   const plans = usePreloadedQuery(preloadedPlans);
   const allPlans = useMemo(() => plans.map((plan) => ({ id: plan._id, name: plan.name })), [plans]);
 
-  const resultsCategory = useResultsCategory();
-  const updateResultsCategory = useUpdateResultsCategory();
-
   const [planDialogOpen, setPlanDialogOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<{ id: Id<'plans'>; name: string } | null>(null);
 
@@ -133,20 +123,10 @@ export default function PlansList({ preloadedPlans }: PlansListProps) {
       <SectionContainer showBottomBorder={false}>
         <div className="mx-2 mb-4 flex items-center justify-between">
           <Heading level={3}>Simulations</Heading>
-          <Select
-            className="max-w-48 sm:max-w-64"
-            id="results-category-select"
-            name="results-category-select"
-            value={resultsCategory}
-            onChange={(e) => updateResultsCategory(e.target.value as SimulationCategory)}
-          >
-            <option value={SimulationCategory.Portfolio}>{SimulationCategory.Portfolio}</option>
-            <option value={SimulationCategory.CashFlow}>{SimulationCategory.CashFlow}</option>
-            <option value={SimulationCategory.Taxes}>{SimulationCategory.Taxes}</option>
-            <option value={SimulationCategory.Returns}>{SimulationCategory.Returns}</option>
-            <option value={SimulationCategory.Contributions}>{SimulationCategory.Contributions}</option>
-            <option value={SimulationCategory.Withdrawals}>{SimulationCategory.Withdrawals}</option>
-          </Select>
+          <Button color="rose" onClick={() => setPlanDialogOpen(true)}>
+            <PlusIcon />
+            Create Plan
+          </Button>
         </div>
         <div className="grid w-full grid-cols-1 gap-2 xl:grid-cols-2">
           {plans.map((plan) => {
