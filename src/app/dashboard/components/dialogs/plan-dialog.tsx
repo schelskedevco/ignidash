@@ -23,10 +23,16 @@ interface PlanDialogProps {
 }
 
 export default function PlanDialog({ onClose, numPlans, selectedPlan, allPlans, planToClone }: PlanDialogProps) {
-  const defaultValues =
-    selectedPlan !== null
-      ? { ...selectedPlan, clonedPlanId: undefined }
-      : ({ name: 'Plan ' + (numPlans + 1), clonedPlanId: planToClone?.id ?? undefined } as const satisfies PlanMetadata);
+  const getDefaultName = () => {
+    if (selectedPlan !== null) return selectedPlan.name;
+    if (planToClone) return `Copy of ${planToClone.name}`;
+    return `Plan ${numPlans + 1}`;
+  };
+
+  const defaultValues: PlanMetadata = {
+    name: getDefaultName(),
+    clonedPlanId: selectedPlan !== null ? undefined : (planToClone?.id ?? undefined),
+  };
 
   const {
     register,
