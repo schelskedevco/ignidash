@@ -158,7 +158,9 @@ function PlanListItem({ plan, onDropdownClickEdit, onDropdownClickClone, onDropd
           ) : null}
         </div>
         <div className="mt-1 flex items-center gap-x-2 text-xs/5 text-zinc-500 dark:text-zinc-400">
-          <p className="whitespace-nowrap">Created {new Date(plan._creationTime).toLocaleDateString()}</p>
+          <p className="whitespace-nowrap">
+            Created <time dateTime={new Date(plan._creationTime).toISOString()}>{new Date(plan._creationTime).toLocaleDateString()}</time>
+          </p>
           <svg viewBox="0 0 2 2" className="size-0.5 fill-current">
             <circle r={1} cx={1} cy={1} />
           </svg>
