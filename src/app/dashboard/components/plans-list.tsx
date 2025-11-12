@@ -52,9 +52,9 @@ function PlanCard({ plan }: PlanCardProps) {
   return (
     <Card key={plan._id} className="my-0 w-full">
       <div className="mb-4 flex items-center justify-between">
-        <Subheading level={4}>
+        <Subheading level={4} className="flex flex-col">
           <span className="mr-2">{plan.name}</span>
-          <span className="text-muted-foreground hidden sm:inline">{new Date(plan._creationTime).toLocaleDateString()}</span>
+          <span className="text-muted-foreground hidden sm:inline">Created {new Date(plan._creationTime).toLocaleDateString()}</span>
         </Subheading>
         <div className="shrink-0">
           <Dropdown>
