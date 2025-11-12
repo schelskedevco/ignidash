@@ -13,6 +13,8 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import Card from '@/components/ui/card';
 import SectionContainer from '@/components/ui/section-container';
 import { Heading, Subheading } from '@/components/catalyst/heading';
+import { Divider } from '@/components/catalyst/divider';
+import { DialogActions } from '@/components/catalyst/dialog';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 import { Dialog } from '@/components/catalyst/dialog';
@@ -94,6 +96,12 @@ function PlanCard({ plan, onDropdownClickEdit, onDropdownClickClone, onDropdownC
           <DescriptionDetails>...</DescriptionDetails>
         </DescriptionList>
       )}
+      <Divider className="my-4" />
+      <DialogActions>
+        <Button outline href={`/dashboard/simulator/${plan._id}`}>
+          View <span aria-hidden="true">→</span>
+        </Button>
+      </DialogActions>
     </Card>
   );
 }
