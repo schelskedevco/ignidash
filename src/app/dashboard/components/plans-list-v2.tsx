@@ -5,13 +5,13 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { ChevronRightIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 
 const statuses = {
-  offline: 'text-gray-400 bg-gray-100 dark:text-gray-500 dark:bg-gray-100/10',
+  offline: 'text-zinc-400 bg-zinc-100 dark:text-zinc-500 dark:bg-zinc-100/10',
   online: 'text-green-500 bg-green-500/10 dark:text-green-400 dark:bg-green-400/10',
   error: 'text-rose-500 bg-rose-500/10 dark:text-rose-400 dark:bg-rose-400/10',
 };
 const environments = {
-  Preview: 'text-gray-500 bg-gray-50 ring-gray-200 dark:text-gray-400 dark:bg-gray-400/10 dark:ring-gray-400/20',
-  Production: 'text-indigo-500 bg-indigo-50 ring-indigo-200 dark:text-indigo-400 dark:bg-indigo-400/10 dark:ring-indigo-400/30',
+  Preview: 'text-zinc-500 bg-zinc-50 ring-zinc-200 dark:text-zinc-400 dark:bg-zinc-400/10 dark:ring-zinc-400/20',
+  Production: 'text-rose-500 bg-rose-50 ring-rose-200 dark:text-rose-400 dark:bg-rose-400/10 dark:ring-rose-400/30',
 };
 const deployments = [
   {
@@ -201,131 +201,121 @@ function classNames(...classes: string[]) {
 export default function Example() {
   return (
     <>
-      {/*
-        This example requires updating your template:
+      <main className="-mx-2 sm:-mx-3 lg:-mx-4 lg:pr-96">
+        <header className="flex items-center justify-between border-b border-zinc-200 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
+          <h1 className="text-base/7 font-semibold text-zinc-900 dark:text-white">Deployments</h1>
 
-        ```
-        <html class="h-full bg-white dark:bg-gray-900">
-        <body class="h-full">
-        ```
-      */}
-      <div>
-        <main className="lg:pr-96">
-          <header className="flex items-center justify-between border-b border-gray-200 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
-            <h1 className="text-base/7 font-semibold text-gray-900 dark:text-white">Deployments</h1>
-
-            {/* Sort dropdown */}
-            <Menu as="div" className="relative">
-              <MenuButton className="flex items-center gap-x-1 text-sm/6 font-medium text-gray-900 dark:text-white">
-                Sort by
-                <ChevronUpDownIcon aria-hidden="true" className="size-5 text-gray-500" />
-              </MenuButton>
-              <MenuItems
-                transition
-                className="absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white py-2 shadow-lg outline-1 outline-gray-900/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10"
-              >
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden dark:text-white dark:data-focus:bg-white/5"
-                  >
-                    Name
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden dark:text-white dark:data-focus:bg-white/5"
-                  >
-                    Date updated
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-3 py-1 text-sm/6 text-gray-900 data-focus:bg-gray-50 data-focus:outline-hidden dark:text-white dark:data-focus:bg-white/5"
-                  >
-                    Environment
-                  </a>
-                </MenuItem>
-              </MenuItems>
-            </Menu>
-          </header>
-
-          {/* Deployment list */}
-          <ul role="list" className="divide-y divide-gray-100 dark:divide-white/5">
-            {deployments.map((deployment) => (
-              <li key={deployment.id} className="relative flex items-center space-x-4 px-4 py-4 sm:px-6 lg:px-8">
-                <div className="min-w-0 flex-auto">
-                  <div className="flex items-center gap-x-3">
-                    <div className={classNames(statuses[deployment.status as keyof typeof statuses], 'flex-none rounded-full p-1')}>
-                      <div className="size-2 rounded-full bg-current" />
-                    </div>
-                    <h2 className="min-w-0 text-sm/6 font-semibold text-gray-900 dark:text-white">
-                      <a href={deployment.href} className="flex gap-x-2">
-                        <span className="truncate">{deployment.teamName}</span>
-                        <span className="text-gray-400">/</span>
-                        <span className="whitespace-nowrap">{deployment.projectName}</span>
-                        <span className="absolute inset-0" />
-                      </a>
-                    </h2>
-                  </div>
-                  <div className="mt-3 flex items-center gap-x-2.5 text-xs/5 text-gray-500 dark:text-gray-400">
-                    <p className="truncate">{deployment.description}</p>
-                    <svg viewBox="0 0 2 2" className="size-0.5 flex-none fill-gray-300 dark:fill-gray-500">
-                      <circle r={1} cx={1} cy={1} />
-                    </svg>
-                    <p className="whitespace-nowrap">{deployment.statusText}</p>
-                  </div>
-                </div>
-                <div
-                  className={classNames(
-                    environments[deployment.environment as keyof typeof environments],
-                    'flex-none rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset'
-                  )}
+          {/* Sort dropdown */}
+          <Menu as="div" className="relative">
+            <MenuButton className="flex items-center gap-x-1 text-sm/6 font-medium text-zinc-900 dark:text-white">
+              Sort by
+              <ChevronUpDownIcon aria-hidden="true" className="size-5 text-zinc-500" />
+            </MenuButton>
+            <MenuItems
+              transition
+              className="absolute right-0 z-10 mt-2.5 w-40 origin-top-right rounded-md bg-white py-2 shadow-lg outline-1 outline-zinc-900/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-zinc-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10"
+            >
+              <MenuItem>
+                <a
+                  href="#"
+                  className="block px-3 py-1 text-sm/6 text-zinc-900 data-focus:bg-zinc-50 data-focus:outline-hidden dark:text-white dark:data-focus:bg-white/5"
                 >
-                  {deployment.environment}
-                </div>
-                <ChevronRightIcon aria-hidden="true" className="size-5 flex-none text-gray-400" />
-              </li>
-            ))}
-          </ul>
-        </main>
+                  Name
+                </a>
+              </MenuItem>
+              <MenuItem>
+                <a
+                  href="#"
+                  className="block px-3 py-1 text-sm/6 text-zinc-900 data-focus:bg-zinc-50 data-focus:outline-hidden dark:text-white dark:data-focus:bg-white/5"
+                >
+                  Date updated
+                </a>
+              </MenuItem>
+              <MenuItem>
+                <a
+                  href="#"
+                  className="block px-3 py-1 text-sm/6 text-zinc-900 data-focus:bg-zinc-50 data-focus:outline-hidden dark:text-white dark:data-focus:bg-white/5"
+                >
+                  Environment
+                </a>
+              </MenuItem>
+            </MenuItems>
+          </Menu>
+        </header>
 
-        {/* Activity feed */}
-        <aside className="bg-gray-50 lg:fixed lg:top-16 lg:right-0 lg:bottom-0 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-gray-200 dark:bg-black/10 dark:lg:border-white/5">
-          <header className="flex items-center justify-between border-b border-gray-200 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
-            <h2 className="text-base/7 font-semibold text-gray-900 dark:text-white">Activity feed</h2>
-            <a href="#" className="text-sm/6 font-semibold text-indigo-600 dark:text-indigo-400">
-              View all
-            </a>
-          </header>
-          <ul role="list" className="divide-y divide-gray-100 dark:divide-white/5">
-            {activityItems.map((item) => (
-              <li key={item.commit} className="px-4 py-4 sm:px-6 lg:px-8">
+        {/* Deployment list */}
+        <ul role="list" className="divide-y divide-zinc-100 dark:divide-white/5">
+          {deployments.map((deployment) => (
+            <li key={deployment.id} className="relative flex items-center space-x-4 px-4 py-4 sm:px-6 lg:px-8">
+              <div className="min-w-0 flex-auto">
                 <div className="flex items-center gap-x-3">
-                  <Image
-                    width={24}
-                    height={24}
-                    alt=""
-                    src={item.user.imageUrl}
-                    className="size-6 flex-none rounded-full bg-gray-100 outline -outline-offset-1 outline-black/5 dark:bg-gray-800 dark:outline-white/10"
-                  />
-                  <h3 className="flex-auto truncate text-sm/6 font-semibold text-gray-900 dark:text-white">{item.user.name}</h3>
-                  <time dateTime={item.dateTime} className="flex-none text-xs text-gray-500 dark:text-gray-600">
-                    {item.date}
-                  </time>
+                  <div className={classNames(statuses[deployment.status as keyof typeof statuses], 'flex-none rounded-full p-1')}>
+                    <div className="size-2 rounded-full bg-current" />
+                  </div>
+                  <h2 className="min-w-0 text-sm/6 font-semibold text-zinc-900 dark:text-white">
+                    <a href={deployment.href} className="flex gap-x-2">
+                      <span className="truncate">{deployment.teamName}</span>
+                      <span className="text-zinc-400">/</span>
+                      <span className="whitespace-nowrap">{deployment.projectName}</span>
+                      <span className="absolute inset-0" />
+                    </a>
+                  </h2>
                 </div>
-                <p className="mt-3 truncate text-sm text-gray-500">
-                  Pushed to <span className="text-gray-700 dark:text-gray-400">{item.projectName}</span> (
-                  <span className="font-mono text-gray-700 dark:text-gray-400">{item.commit}</span> on{' '}
-                  <span className="text-gray-700 dark:text-gray-400">{item.branch}</span>)
-                </p>
-              </li>
-            ))}
-          </ul>
-        </aside>
-      </div>
+                <div className="mt-3 flex items-center gap-x-2.5 text-xs/5 text-zinc-500 dark:text-zinc-400">
+                  <p className="truncate">{deployment.description}</p>
+                  <svg viewBox="0 0 2 2" className="size-0.5 flex-none fill-zinc-300 dark:fill-zinc-500">
+                    <circle r={1} cx={1} cy={1} />
+                  </svg>
+                  <p className="whitespace-nowrap">{deployment.statusText}</p>
+                </div>
+              </div>
+              <div
+                className={classNames(
+                  environments[deployment.environment as keyof typeof environments],
+                  'flex-none rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset'
+                )}
+              >
+                {deployment.environment}
+              </div>
+              <ChevronRightIcon aria-hidden="true" className="size-5 flex-none text-zinc-400" />
+            </li>
+          ))}
+        </ul>
+      </main>
+
+      {/* Activity feed */}
+      <aside className="bg-zinc-50 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-zinc-200 dark:bg-black/10 dark:lg:border-white/5">
+        <header className="flex items-center justify-between border-b border-zinc-200 px-4 py-4 sm:px-6 sm:py-6 lg:px-8 dark:border-white/5">
+          <h2 className="text-base/7 font-semibold text-zinc-900 dark:text-white">Activity feed</h2>
+          <a href="#" className="text-sm/6 font-semibold text-rose-600 dark:text-rose-400">
+            View all
+          </a>
+        </header>
+        <ul role="list" className="divide-y divide-zinc-100 dark:divide-white/5">
+          {activityItems.map((item) => (
+            <li key={item.commit} className="px-4 py-4 sm:px-6 lg:px-8">
+              <div className="flex items-center gap-x-3">
+                <Image
+                  width={24}
+                  height={24}
+                  alt=""
+                  src={item.user.imageUrl}
+                  className="size-6 flex-none rounded-full bg-zinc-100 outline -outline-offset-1 outline-black/5 dark:bg-zinc-800 dark:outline-white/10"
+                />
+                <h3 className="flex-auto truncate text-sm/6 font-semibold text-zinc-900 dark:text-white">{item.user.name}</h3>
+                <time dateTime={item.dateTime} className="flex-none text-xs text-zinc-500 dark:text-zinc-600">
+                  {item.date}
+                </time>
+              </div>
+              <p className="mt-3 truncate text-sm text-zinc-500">
+                Pushed to <span className="text-zinc-700 dark:text-zinc-400">{item.projectName}</span> (
+                <span className="font-mono text-zinc-700 dark:text-zinc-400">{item.commit}</span> on{' '}
+                <span className="text-zinc-700 dark:text-zinc-400">{item.branch}</span>)
+              </p>
+            </li>
+          ))}
+        </ul>
+      </aside>
     </>
   );
 }
