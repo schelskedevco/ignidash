@@ -13,6 +13,7 @@ import { EllipsisVerticalIcon, ChevronUpDownIcon } from '@heroicons/react/20/sol
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
+import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 import { useSimulationResult, useKeyMetrics, useIsCalculationReady } from '@/lib/stores/simulator-store';
 import { simulatorFromConvex } from '@/lib/utils/convex-to-zod-transformers';
 
@@ -134,7 +135,7 @@ function PlanListItem({ plan, onDropdownClickEdit, onDropdownClickClone, onDropd
 
   const status = !isCalculationReady ? 'In progress' : keyMetrics?.success ? 'Success' : 'Failed';
 
-  //   const { disableEdit, disableClone, disableDelete } = disableActions;
+  const { disableEdit, disableClone, disableDelete } = disableActions;
 
   return (
     <li key={plan._id} className="relative flex items-center space-x-4 px-4 py-4 sm:px-6 lg:px-8">
@@ -148,6 +149,11 @@ function PlanListItem({ plan, onDropdownClickEdit, onDropdownClickClone, onDropd
           ) : null}
           {status === 'Success' ? (
             <p className="mt-0.5 rounded-md bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:inset-ring-green-500/20">
+              {status}
+            </p>
+          ) : null}
+          {status === 'Failed' ? (
+            <p className="mt-0.5 rounded-md bg-red-50 px-1.5 py-0.5 text-xs font-medium text-red-700 inset-ring inset-ring-red-600/20 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-500/20">
               {status}
             </p>
           ) : null}
@@ -167,42 +173,24 @@ function PlanListItem({ plan, onDropdownClickEdit, onDropdownClickClone, onDropd
         >
           View plan<span className="sr-only">, {plan.name}</span>
         </Link>
-        <Menu as="div" className="relative flex-none">
-          <MenuButton className="relative block text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
-            <span className="absolute -inset-2.5" />
-            <span className="sr-only">Open options</span>
-            <EllipsisVerticalIcon aria-hidden="true" className="size-5" />
-          </MenuButton>
-          <MenuItems
-            transition
-            className="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg outline-1 outline-zinc-900/5 transition data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-zinc-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10"
-          >
-            <MenuItem>
-              <a
-                href="#"
-                className="block px-3 py-1 text-sm/6 text-zinc-900 data-focus:bg-zinc-50 data-focus:outline-hidden dark:text-white dark:data-focus:bg-white/5"
-              >
-                Edit<span className="sr-only">, {plan.name}</span>
-              </a>
-            </MenuItem>
-            <MenuItem>
-              <a
-                href="#"
-                className="block px-3 py-1 text-sm/6 text-zinc-900 data-focus:bg-zinc-50 data-focus:outline-hidden dark:text-white dark:data-focus:bg-white/5"
-              >
-                Move<span className="sr-only">, {plan.name}</span>
-              </a>
-            </MenuItem>
-            <MenuItem>
-              <a
-                href="#"
-                className="block px-3 py-1 text-sm/6 text-zinc-900 data-focus:bg-zinc-50 data-focus:outline-hidden dark:text-white dark:data-focus:bg-white/5"
-              >
-                Delete<span className="sr-only">, {plan.name}</span>
-              </a>
-            </MenuItem>
-          </MenuItems>
-        </Menu>
+        <div className="relative flex-none">
+          <Dropdown>
+            <DropdownButton plain aria-label="Open options">
+              <EllipsisVerticalIcon />
+            </DropdownButton>
+            <DropdownMenu portal={false}>
+              <DropdownItem disabled={disableEdit} onClick={onDropdownClickEdit}>
+                Edit
+              </DropdownItem>
+              <DropdownItem disabled={disableClone} onClick={onDropdownClickClone}>
+                Clone
+              </DropdownItem>
+              <DropdownItem disabled={disableDelete} onClick={onDropdownClickDelete}>
+                Delete
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
       </div>
     </li>
   );
