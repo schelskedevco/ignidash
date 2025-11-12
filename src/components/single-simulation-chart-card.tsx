@@ -246,7 +246,7 @@ interface SingleSimulationChartProps {
   selectedAge: number;
 }
 
-export default function SingleSimulationChart({ simulation, keyMetrics, onAgeSelect, selectedAge }: SingleSimulationChartProps) {
+export default function SingleSimulationChartCard({ simulation, keyMetrics, onAgeSelect, selectedAge }: SingleSimulationChartProps) {
   const resultsCategory = useResultsCategory();
 
   const startAge = simulation.context.startAge;

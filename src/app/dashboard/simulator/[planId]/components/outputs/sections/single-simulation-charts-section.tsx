@@ -5,7 +5,7 @@ import { memo } from 'react';
 import SectionContainer from '@/components/ui/section-container';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
-import SingleSimulationChart from '@/components/single-simulation-chart-card';
+import SingleSimulationChartCard from '@/components/single-simulation-chart-card';
 
 import SingleSimulationDataListSection from './single-simulation-data-list-section';
 
@@ -23,7 +23,7 @@ function SingleSimulationChartsSection({ simulation, keyMetrics, onAgeSelect, se
   return (
     <SectionContainer showBottomBorder>
       <div className="grid grid-cols-1 gap-2 @[96rem]:grid-cols-2">
-        <SingleSimulationChart {...props} />
+        <SingleSimulationChartCard {...props} />
         <div className="@[96rem]:col-span-2">
           <SingleSimulationDataListSection simulation={simulation} selectedAge={selectedAge} />
         </div>
