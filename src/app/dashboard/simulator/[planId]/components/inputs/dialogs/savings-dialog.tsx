@@ -2,7 +2,7 @@
 
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { PiggyBankIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +13,7 @@ import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/di
 import { accountFormSchema, type AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
+import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
@@ -49,10 +50,18 @@ export default function SavingsDialog({ onClose, selectedAccount, numAccounts }:
   });
 
   const m = useMutation(api.account.upsertAccount);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const onSubmit = async (data: AccountInputs) => {
     const accountId = data.id === '' ? uuidv4() : data.id;
-    await m({ account: accountToConvex({ ...data, id: accountId }), planId });
-    onClose();
+    try {
+      setSaveError(null);
+      await m({ account: accountToConvex({ ...data, id: accountId }), planId });
+      onClose();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Failed to save account.');
+      console.error('Error saving account: ', error);
+    }
   };
 
   return (
@@ -67,6 +76,7 @@ export default function SavingsDialog({ onClose, selectedAccount, numAccounts }:
         <Fieldset aria-label="Account details">
           <DialogBody>
             <FieldGroup>
+              {saveError && <ErrorMessageCard errorMessage={saveError} />}
               <Field>
                 <Label htmlFor="name">Name</Label>
                 <Input

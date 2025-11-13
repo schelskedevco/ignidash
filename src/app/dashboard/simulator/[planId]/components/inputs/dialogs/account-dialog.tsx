@@ -2,7 +2,7 @@
 
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TrendingUpIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +13,7 @@ import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/di
 import { accountFormSchema, type AccountInputs, isRothAccount, type RothAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
+import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
@@ -53,6 +54,8 @@ export default function AccountDialog({ onClose, selectedAccount, numAccounts }:
   });
 
   const m = useMutation(api.account.upsertAccount);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const onSubmit = async (data: AccountInputs) => {
     const processedData = { ...data };
 
@@ -67,8 +70,14 @@ export default function AccountDialog({ onClose, selectedAccount, numAccounts }:
     }
 
     const accountId = processedData.id === '' ? uuidv4() : processedData.id;
-    await m({ account: accountToConvex({ ...processedData, id: accountId }), planId });
-    onClose();
+    try {
+      setSaveError(null);
+      await m({ account: accountToConvex({ ...processedData, id: accountId }), planId });
+      onClose();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Failed to save account.');
+      console.error('Error saving account: ', error);
+    }
   };
 
   const type = useWatch({ control, name: 'type' });
@@ -104,6 +113,7 @@ export default function AccountDialog({ onClose, selectedAccount, numAccounts }:
         <Fieldset aria-label="Account details">
           <DialogBody>
             <FieldGroup>
+              {saveError && <ErrorMessageCard errorMessage={saveError} />}
               <div className="grid grid-cols-2 gap-4">
                 <Field className="col-span-2">
                   <Label htmlFor="name">Name</Label>
