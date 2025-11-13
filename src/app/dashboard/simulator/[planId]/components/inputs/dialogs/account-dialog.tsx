@@ -25,8 +25,9 @@ interface AccountDialogProps {
   numAccounts: number;
 }
 
-export default function AccountDialog({ onClose, selectedAccount, numAccounts }: AccountDialogProps) {
+export default function AccountDialog({ onClose, selectedAccount: _selectedAccount, numAccounts }: AccountDialogProps) {
   const planId = useSelectedPlanId();
+  const [selectedAccount] = useState(_selectedAccount);
 
   const newAccountDefaultValues = useMemo(
     () =>

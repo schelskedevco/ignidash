@@ -82,8 +82,8 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
   };
 
   const handleDropdownClickEdit = (expense: ExpenseInputs) => {
-    setExpenseDialogOpen(true);
     setSelectedExpense(expense);
+    setExpenseDialogOpen(true);
   };
 
   return (

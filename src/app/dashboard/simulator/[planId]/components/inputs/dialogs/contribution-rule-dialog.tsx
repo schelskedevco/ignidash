@@ -35,8 +35,13 @@ interface ContributionRuleDialogProps {
   numContributionRules: number;
 }
 
-export default function ContributionRuleDialog({ onClose, selectedContributionRule, numContributionRules }: ContributionRuleDialogProps) {
+export default function ContributionRuleDialog({
+  onClose,
+  selectedContributionRule: _selectedContributionRule,
+  numContributionRules,
+}: ContributionRuleDialogProps) {
   const planId = useSelectedPlanId();
+  const [selectedContributionRule] = useState(_selectedContributionRule);
 
   const defaultRank = numContributionRules + 1;
   const newContributionRuleDefaultValues = useMemo(

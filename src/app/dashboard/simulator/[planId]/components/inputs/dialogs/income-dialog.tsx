@@ -31,8 +31,9 @@ interface IncomeDialogProps {
   numIncomes: number;
 }
 
-export default function IncomeDialog({ onClose, selectedIncome, numIncomes }: IncomeDialogProps) {
+export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome, numIncomes }: IncomeDialogProps) {
   const planId = useSelectedPlanId();
+  const [selectedIncome] = useState(_selectedIncome);
 
   const newIncomeDefaultValues = useMemo(
     () =>

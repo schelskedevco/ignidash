@@ -77,11 +77,11 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
 
   const handleDropdownClickEdit = (account: AccountInputs) => {
     if (account.type === 'savings') {
-      setSavingsDialogOpen(true);
       setSelectedSavings(account);
+      setSavingsDialogOpen(true);
     } else {
-      setAccountDialogOpen(true);
       setSelectedAccount(account);
+      setAccountDialogOpen(true);
     }
   };
 

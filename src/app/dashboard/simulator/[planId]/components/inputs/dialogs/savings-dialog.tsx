@@ -24,8 +24,9 @@ interface SavingsDialogProps {
   numAccounts: number;
 }
 
-export default function SavingsDialog({ onClose, selectedAccount, numAccounts }: SavingsDialogProps) {
+export default function SavingsDialog({ onClose, selectedAccount: _selectedAccount, numAccounts }: SavingsDialogProps) {
   const planId = useSelectedPlanId();
+  const [selectedAccount] = useState(_selectedAccount);
 
   const newAccountDefaultValues = useMemo(
     () =>

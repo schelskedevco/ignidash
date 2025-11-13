@@ -24,17 +24,17 @@ interface PlanDialogProps {
 }
 
 export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedPlan, allPlans, planToClone }: PlanDialogProps) {
-  const [initialSelectedPlan] = useState(_selectedPlan);
+  const [selectedPlan] = useState(_selectedPlan);
 
   const getDefaultName = () => {
-    if (initialSelectedPlan !== null) return initialSelectedPlan.name;
+    if (selectedPlan !== null) return selectedPlan.name;
     if (planToClone) return `Copy of ${planToClone.name}`;
     return `Plan ${numPlans + 1}`;
   };
 
   const defaultValues: PlanMetadata = {
     name: getDefaultName(),
-    clonedPlanId: initialSelectedPlan !== null ? undefined : planToClone?.id,
+    clonedPlanId: selectedPlan !== null ? undefined : planToClone?.id,
   };
 
   const {
@@ -51,8 +51,8 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
   const createPlanMutation = useMutation(api.plans.createBlankPlan);
 
   const onSubmit = async (data: PlanMetadata) => {
-    if (initialSelectedPlan) {
-      await updateNameMutation({ planId: initialSelectedPlan!.id, name: data.name });
+    if (selectedPlan) {
+      await updateNameMutation({ planId: selectedPlan!.id, name: data.name });
     } else if (data.clonedPlanId) {
       await clonePlanMutation({ planId: data.clonedPlanId as Id<'plans'> | 'template1' | 'template2', newPlanName: data.name });
     } else {
@@ -67,7 +67,7 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
       <DialogTitle onClose={onClose}>
         <div className="flex items-center gap-4">
           <FileTextIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
-          <span>{initialSelectedPlan ? 'Edit Plan' : 'New Plan'}</span>
+          <span>{selectedPlan ? 'Edit Plan' : 'New Plan'}</span>
         </div>
       </DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -88,7 +88,7 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
                 />
                 {errors.name && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
               </Field>
-              {!initialSelectedPlan && (
+              {!selectedPlan && (
                 <Field>
                   <Label htmlFor="clonedPlanId">With Template</Label>
                   <Select {...register('clonedPlanId')} id="clonedPlanId" name="clonedPlanId">

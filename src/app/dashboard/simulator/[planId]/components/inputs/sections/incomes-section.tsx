@@ -82,8 +82,8 @@ export default function IncomesSection(props: IncomesSectionProps) {
   };
 
   const handleDropdownClickEdit = (income: IncomeInputs) => {
-    setIncomeDialogOpen(true);
     setSelectedIncome(income);
+    setIncomeDialogOpen(true);
   };
 
   return (

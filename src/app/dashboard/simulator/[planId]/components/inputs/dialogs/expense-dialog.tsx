@@ -31,8 +31,9 @@ interface ExpenseDialogProps {
   numExpenses: number;
 }
 
-export default function ExpenseDialog({ onClose, selectedExpense, numExpenses }: ExpenseDialogProps) {
+export default function ExpenseDialog({ onClose, selectedExpense: _selectedExpense, numExpenses }: ExpenseDialogProps) {
   const planId = useSelectedPlanId();
+  const [selectedExpense] = useState(_selectedExpense);
 
   const newExpenseDefaultValues = useMemo(
     () =>

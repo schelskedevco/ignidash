@@ -163,10 +163,10 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
     [contributionRules, updateContributionRules]
   );
 
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     setSelectedContributionRule(null);
     setContributionRuleDialogOpen(false);
-  }, []);
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -188,8 +188,8 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
   };
 
   const handleDropdownClickEdit = (rule: ContributionInputs) => {
-    setContributionRuleDialogOpen(true);
     setSelectedContributionRule(rule);
+    setContributionRuleDialogOpen(true);
   };
 
   return (
