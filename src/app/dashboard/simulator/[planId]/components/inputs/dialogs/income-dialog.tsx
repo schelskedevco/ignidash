@@ -53,7 +53,7 @@ export default function IncomeDialog({ onClose, selectedIncome, numIncomes }: In
     unregister,
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(incomeFormSchema),
     defaultValues,
@@ -590,8 +590,8 @@ export default function IncomeDialog({ onClose, selectedIncome, numIncomes }: In
           <Button plain onClick={onClose} className="hidden sm:inline-flex">
             Cancel
           </Button>
-          <Button color="rose" type="submit">
-            Save
+          <Button color="rose" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Saving...' : 'Save'}
           </Button>
         </DialogActions>
       </form>
