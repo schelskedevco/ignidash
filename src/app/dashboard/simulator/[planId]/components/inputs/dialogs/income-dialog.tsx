@@ -565,6 +565,7 @@ export default function IncomeDialog({ onClose, selectedIncome, numIncomes }: In
                               Pension (coming soon!)
                             </option>
                           </Select>
+                          {errors.taxes?.incomeType && <ErrorMessage>{errors.taxes?.incomeType?.message}</ErrorMessage>}
                         </Field>
                         {supportsWithholding(incomeType) && (
                           <Field>
