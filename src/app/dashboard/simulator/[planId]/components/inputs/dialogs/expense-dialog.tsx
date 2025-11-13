@@ -10,7 +10,7 @@ import { CalendarIcon, BanknoteArrowDownIcon, TrendingUpIcon } from 'lucide-reac
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 
-import { useExpenseData, useCountOfExpenses, useTimelineData } from '@/hooks/use-convex-data';
+import { useTimelineData } from '@/hooks/use-convex-data';
 import { expenseToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { expenseFormSchema, type ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
@@ -26,14 +26,13 @@ import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
 interface ExpenseDialogProps {
   onClose: () => void;
-  selectedExpenseID: string | null;
+  selectedExpense: ExpenseInputs | null;
+  numExpenses: number;
 }
 
-export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDialogProps) {
+export default function ExpenseDialog({ onClose, selectedExpense, numExpenses }: ExpenseDialogProps) {
   const planId = useSelectedPlanId();
-  const existingExpenseData = useExpenseData(selectedExpenseID);
 
-  const numExpenses = useCountOfExpenses();
   const newExpenseDefaultValues = useMemo(
     () =>
       ({
@@ -46,23 +45,18 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
     [numExpenses]
   );
 
-  const defaultValues = existingExpenseData || newExpenseDefaultValues;
+  const defaultValues = selectedExpense || newExpenseDefaultValues;
 
   const {
     register,
     unregister,
     control,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(expenseFormSchema),
     defaultValues,
   });
-
-  useEffect(() => {
-    if (existingExpenseData) reset(existingExpenseData);
-  }, [existingExpenseData, reset]);
 
   const m = useMutation(api.expense.upsertExpense);
   const onSubmit = async (data: ExpenseInputs) => {
@@ -84,14 +78,12 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
 
   useEffect(() => {
     if (frequency === 'oneTime') {
-      // Unregister end time point fields
       unregister('timeframe.end');
       unregister('timeframe.end.type');
       unregister('timeframe.end.age');
       unregister('timeframe.end.month');
       unregister('timeframe.end.year');
 
-      // Unregister growth fields
       unregister('growth');
       unregister('growth.growthRate');
       unregister('growth.growthLimit');
@@ -186,7 +178,7 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
       <DialogTitle onClose={onClose}>
         <div className="flex items-center gap-4">
           <BanknoteArrowDownIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
-          <span>{selectedExpenseID ? 'Edit Expense' : 'New Expense'}</span>
+          <span>{selectedExpense ? 'Edit Expense' : 'New Expense'}</span>
         </div>
       </DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -223,6 +215,7 @@ export default function ExpenseDialog({ onClose, selectedExpenseID }: ExpenseDia
                     <option value="biweekly">Biweekly</option>
                     <option value="weekly">Weekly</option>
                   </Select>
+                  {errors.frequency && <ErrorMessage>{errors.frequency?.message}</ErrorMessage>}
                 </Field>
               </div>
               <Disclosure as="div" className="border-border/50 border-t pt-4">

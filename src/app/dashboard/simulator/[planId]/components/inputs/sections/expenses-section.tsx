@@ -41,12 +41,13 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
   const planId = useSelectedPlanId();
 
   const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
-  const [selectedExpenseID, setSelectedExpenseID] = useState<string | null>(null);
+  const [selectedExpense, setSelectedExpense] = useState<ExpenseInputs | null>(null);
 
   const [expenseToDelete, setExpenseToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const expenses = useExpensesData();
-  const hasExpenses = Object.keys(expenses).length > 0;
+  const numExpenses = Object.keys(expenses).length;
+  const hasExpenses = numExpenses > 0;
 
   const updateMutation = useMutation(api.expense.upsertExpense);
   const updateExpenses = useCallback(
@@ -76,13 +77,13 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
   );
 
   const handleClose = () => {
-    setSelectedExpenseID(null);
+    setSelectedExpense(null);
     setExpenseDialogOpen(false);
   };
 
-  const handleDropdownClickEdit = (id: string) => {
+  const handleDropdownClickEdit = (expense: ExpenseInputs) => {
     setExpenseDialogOpen(true);
-    setSelectedExpenseID(id);
+    setSelectedExpense(expense);
   };
 
   return (
@@ -101,7 +102,7 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
                     desc={getExpenseDesc(expense)}
                     leftAddOn={<BanknoteArrowDownIcon className="size-8" />}
                     disabled={expense.disabled}
-                    onDropdownClickEdit={() => handleDropdownClickEdit(id)}
+                    onDropdownClickEdit={() => handleDropdownClickEdit(expense)}
                     onDropdownClickDelete={() => setExpenseToDelete({ id, name: expense.name })}
                     onDropdownClickDisable={async () => await disableExpense(id)}
                     colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
@@ -109,7 +110,7 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
                 ))}
               </ul>
               <div className="mt-auto flex items-center justify-end">
-                <Button outline onClick={() => setExpenseDialogOpen(true)} disabled={!!selectedExpenseID}>
+                <Button outline onClick={() => setExpenseDialogOpen(true)} disabled={!!selectedExpense}>
                   <PlusIcon />
                   Expense
                 </Button>
@@ -126,7 +127,7 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
         </div>
       </DisclosureSection>
       <Dialog size="xl" open={expenseDialogOpen} onClose={handleClose}>
-        <ExpenseDialog selectedExpenseID={selectedExpenseID} onClose={handleClose} />
+        <ExpenseDialog selectedExpense={selectedExpense} numExpenses={numExpenses} onClose={handleClose} />
       </Dialog>
       <DisclosureSectionDeleteDataAlert dataToDelete={expenseToDelete} setDataToDelete={setExpenseToDelete} deleteData={deleteExpense} />
     </>
