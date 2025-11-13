@@ -235,6 +235,7 @@ export default function IncomeDialog({ onClose, selectedIncome, numIncomes }: In
                     <option value="biweekly">Biweekly</option>
                     <option value="weekly">Weekly</option>
                   </Select>
+                  {errors.frequency && <ErrorMessage>{errors.frequency?.message}</ErrorMessage>}
                 </Field>
               </div>
               <Disclosure as="div" className="border-border/50 border-t pt-4">
