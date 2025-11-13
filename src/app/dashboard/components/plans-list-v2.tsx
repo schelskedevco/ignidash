@@ -108,7 +108,7 @@ export default function PlanListV2({ preloadedPlans }: PlanListV2Props) {
 
   const [planDialogOpen, setPlanDialogOpen] = useState(false);
 
-  const [selectedPlan, setSelectedPlan] = useState<{ id: Id<'plans'>; name: string } | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<Doc<'plans'> | null>(null);
   const [planToClone, setPlanToClone] = useState<{ id: Id<'plans'>; name: string } | undefined>(undefined);
 
   const handleClose = () => {
@@ -117,7 +117,7 @@ export default function PlanListV2({ preloadedPlans }: PlanListV2Props) {
     setPlanDialogOpen(false);
   };
 
-  const handleEdit = (plan: { id: Id<'plans'>; name: string }) => {
+  const handleEdit = (plan: Doc<'plans'>) => {
     setSelectedPlan(plan);
     setPlanDialogOpen(true);
   };
@@ -154,7 +154,7 @@ export default function PlanListV2({ preloadedPlans }: PlanListV2Props) {
                 key={plan._id}
                 plan={plan}
                 disableActions={{ disableDelete: plans.length <= 1 }}
-                onDropdownClickEdit={() => handleEdit(planMetadata)}
+                onDropdownClickEdit={() => handleEdit(plan)}
                 onDropdownClickClone={() => handleClone(planMetadata)}
                 onDropdownClickDelete={() => setPlanToDelete(planMetadata)}
               />

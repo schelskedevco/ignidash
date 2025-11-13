@@ -2,7 +2,7 @@
 
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import type { Id } from '@/convex/_generated/dataModel';
+import type { Id, Doc } from '@/convex/_generated/dataModel';
 import { FileTextIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -19,7 +19,7 @@ import { Input } from '@/components/catalyst/input';
 interface PlanDialogProps {
   onClose: () => void;
   numPlans: number;
-  selectedPlan: { id: Id<'plans'>; name: string } | null;
+  selectedPlan: Doc<'plans'> | null;
   allPlans: { id: Id<'plans'>; name: string }[];
   planToClone?: { id: Id<'plans'>; name: string };
 }
@@ -57,7 +57,7 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
     try {
       setSaveError(null);
       if (selectedPlan) {
-        await updateNameMutation({ planId: selectedPlan!.id, name: data.name });
+        await updateNameMutation({ planId: selectedPlan._id, name: data.name });
       } else if (data.clonedPlanId) {
         await clonePlanMutation({ planId: data.clonedPlanId as Id<'plans'> | 'template1' | 'template2', newPlanName: data.name });
       } else {
