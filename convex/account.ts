@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { v } from 'convex/values';
+import { v, ConvexError } from 'convex/values';
 import { query, mutation } from './_generated/server';
 
 import { accountValidator } from './validators/accounts_validator';
@@ -73,6 +73,8 @@ export const upsertAccount = mutation({
 
     const existingIndex = plan.accounts.findIndex((acc) => acc.id === account.id);
     if (existingIndex === -1) {
+      if (plan.accounts.length >= 15) throw new ConvexError('Maximum of 15 accounts reached.');
+
       // Add a default contribution rule for the new account
       updatedContributionRules.push({
         id: uuidv4(),

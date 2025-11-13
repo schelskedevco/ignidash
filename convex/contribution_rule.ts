@@ -46,7 +46,7 @@ export const upsertContributionRule = mutation({
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
     const existingIndex = plan.contributionRules.findIndex((cr) => cr.id === contributionRule.id);
-    if (existingIndex === -1 && plan.contributionRules.length >= 15) throw new ConvexError('Maximum of 15 contribution rules reached.');
+    if (existingIndex === -1 && plan.contributionRules.length >= 20) throw new ConvexError('Maximum of 20 contribution rules reached.');
 
     const updatedContributionRules =
       existingIndex !== -1
