@@ -9,7 +9,7 @@ import { authClient } from '@/lib/auth-client';
 import { useRedirectUrl } from '@/hooks/use-redirect-url';
 
 import PasswordInput from '../components/password-input';
-import ErrorMessage from '../components/error-message';
+import ErrorMessage from '../../../components/ui/error-message';
 
 export default function ResetPasswordForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

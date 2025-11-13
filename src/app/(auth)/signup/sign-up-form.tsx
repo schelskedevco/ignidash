@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import EmailInput from '../components/email-input';
 import PasswordInput from '../components/password-input';
 import GoogleSignIn from '../components/google-sign-in';
-import ErrorMessage from '../components/error-message';
+import ErrorMessage from '@/components/ui/error-message';
 
 export default function SignUpForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
