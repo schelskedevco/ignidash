@@ -69,7 +69,7 @@ export function baseContributionFromConvex(baseContribution: Doc<'plans'>['baseC
  * Transforms Convex tax settings to Zod TaxSettingsInputs format
  */
 export function taxSettingsFromConvex(taxSettings: Doc<'plans'>['taxSettings']): TaxSettingsInputs {
-  return { filingStatus: taxSettings?.filingStatus ?? 'single' };
+  return { filingStatus: taxSettings.filingStatus };
 }
 
 /**

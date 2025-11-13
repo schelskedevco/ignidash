@@ -20,6 +20,6 @@ export default defineSchema({
     contributionRules: v.array(contributionRulesValidator),
     baseContributionRule: baseContributionRuleValidator,
     marketAssumptions: marketAssumptionsValidator,
-    taxSettings: v.optional(taxSettingsValidator),
+    taxSettings: taxSettingsValidator,
   }).index('by_userId', ['userId']),
 });
