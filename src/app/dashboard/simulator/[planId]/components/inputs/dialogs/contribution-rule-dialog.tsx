@@ -2,7 +2,7 @@
 
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { HandCoinsIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,6 +23,7 @@ import {
 import { accountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
+import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { formatNumber } from '@/lib/utils';
@@ -63,10 +64,18 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
   });
 
   const m = useMutation(api.contribution_rule.upsertContributionRule);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const onSubmit = async (data: ContributionInputs) => {
     const contributionRuleId = data.id === '' ? uuidv4() : data.id;
-    await m({ contributionRule: contributionToConvex({ ...data, id: contributionRuleId }), planId });
-    onClose();
+    try {
+      setSaveError(null);
+      await m({ contributionRule: contributionToConvex({ ...data, id: contributionRuleId }), planId });
+      onClose();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Failed to save contribution rule.');
+      console.error('Error saving contribution rule: ', error);
+    }
   };
 
   const contributionType = useWatch({ control, name: 'contributionType' });
@@ -127,6 +136,7 @@ export default function ContributionRuleDialog({ onClose, selectedContributionRu
         <Fieldset aria-label="Contribution details">
           <DialogBody>
             <FieldGroup>
+              {saveError && <ErrorMessageCard errorMessage={saveError} />}
               <Field>
                 <Label htmlFor="accountId">To Account</Label>
                 <Select {...register('accountId')} id="accountId" name="accountId" defaultValue="" invalid={!!errors.accountId}>
