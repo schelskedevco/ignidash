@@ -18,6 +18,7 @@ import { timeFrameForDisplay, growthForDisplay } from '@/lib/utils/data-display-
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, Fieldset, FieldGroup, Label, ErrorMessage } from '@/components/catalyst/fieldset';
+import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/combobox';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
@@ -59,10 +60,18 @@ export default function ExpenseDialog({ onClose, selectedExpense, numExpenses }:
   });
 
   const m = useMutation(api.expense.upsertExpense);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const onSubmit = async (data: ExpenseInputs) => {
     const expenseId = data.id === '' ? uuidv4() : data.id;
-    await m({ expense: expenseToConvex({ ...data, id: expenseId }), planId });
-    onClose();
+    try {
+      setSaveError(null);
+      await m({ expense: expenseToConvex({ ...data, id: expenseId }), planId });
+      onClose();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Failed to save expense.');
+      console.error('Error saving expense: ', error);
+    }
   };
 
   const frequency = useWatch({ control, name: 'frequency' });
@@ -185,6 +194,7 @@ export default function ExpenseDialog({ onClose, selectedExpense, numExpenses }:
         <Fieldset aria-label="Expense details">
           <DialogBody>
             <FieldGroup>
+              {saveError && <ErrorMessageCard errorMessage={saveError} />}
               <div className="grid grid-cols-2 gap-4">
                 <Field className="col-span-2">
                   <Label htmlFor="name">Name</Label>

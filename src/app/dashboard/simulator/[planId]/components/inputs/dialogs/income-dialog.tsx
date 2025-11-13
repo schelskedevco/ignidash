@@ -61,10 +61,18 @@ export default function IncomeDialog({ onClose, selectedIncome, numIncomes }: In
   });
 
   const m = useMutation(api.income.upsertIncome);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const onSubmit = async (data: IncomeInputs) => {
     const incomeId = data.id === '' ? uuidv4() : data.id;
-    await m({ income: incomeToConvex({ ...data, id: incomeId }), planId });
-    onClose();
+    try {
+      setSaveError(null);
+      await m({ income: incomeToConvex({ ...data, id: incomeId }), planId });
+      onClose();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Failed to save income.');
+      console.error('Error saving income: ', error);
+    }
   };
 
   const frequency = useWatch({ control, name: 'frequency' });
@@ -204,7 +212,7 @@ export default function IncomeDialog({ onClose, selectedIncome, numIncomes }: In
         <Fieldset aria-label="Income details">
           <DialogBody>
             <FieldGroup>
-              {errors.root?.message && <ErrorMessageCard errorMessage={errors.root?.message} />}
+              {saveError && <ErrorMessageCard errorMessage={saveError} />}
               <div className="grid grid-cols-2 gap-4">
                 <Field className="col-span-2">
                   <Label htmlFor="name">Name</Label>
