@@ -118,7 +118,10 @@ export default function TimelineDrawer({ setOpen }: TimelineDrawerProps) {
   return (
     <>
       <SectionContainer showBottomBorder={false} location="drawer">
-        <SectionHeader title="Timeline" desc="Set when your simulation should start, when it should end, and when you want to retire." />
+        <SectionHeader
+          title="Timeline"
+          desc="Configure when your simulation should start, when it should end, and when you want to retire."
+        />
         <Card>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Fieldset aria-label="Timeline details">
