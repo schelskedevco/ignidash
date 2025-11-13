@@ -1,6 +1,5 @@
 export type IncomeTaxBracket = { min: number; max: number; rate: number };
 
-// 2025 tax year
 export const INCOME_TAX_BRACKETS_SINGLE: IncomeTaxBracket[] = [
   { min: 0, max: 11925, rate: 0.1 },
   { min: 11925, max: 48475, rate: 0.12 },
