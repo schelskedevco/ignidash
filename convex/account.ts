@@ -71,7 +71,7 @@ export const upsertAccount = mutation({
 
     const updatedContributionRules = plan.contributionRules;
 
-    const existingIndex = plan.accounts.findIndex((i) => i.id === account.id);
+    const existingIndex = plan.accounts.findIndex((acc) => acc.id === account.id);
     if (existingIndex === -1) {
       // Add a default contribution rule for the new account
       updatedContributionRules.push({
@@ -84,7 +84,7 @@ export const upsertAccount = mutation({
     }
 
     const updatedAccounts =
-      existingIndex !== -1 ? plan.accounts.map((i, index) => (index === existingIndex ? account : i)) : [...plan.accounts, account];
+      existingIndex !== -1 ? plan.accounts.map((acc, index) => (index === existingIndex ? account : acc)) : [...plan.accounts, account];
 
     await ctx.db.patch(planId, { accounts: updatedAccounts, contributionRules: updatedContributionRules });
   },

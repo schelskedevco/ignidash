@@ -45,9 +45,9 @@ export const upsertExpense = mutation({
     const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
-    const existingIndex = plan.expenses.findIndex((i) => i.id === expense.id);
+    const existingIndex = plan.expenses.findIndex((exp) => exp.id === expense.id);
     const updatedExpenses =
-      existingIndex !== -1 ? plan.expenses.map((i, index) => (index === existingIndex ? expense : i)) : [...plan.expenses, expense];
+      existingIndex !== -1 ? plan.expenses.map((exp, index) => (index === existingIndex ? expense : exp)) : [...plan.expenses, expense];
 
     await ctx.db.patch(planId, { expenses: updatedExpenses });
   },
