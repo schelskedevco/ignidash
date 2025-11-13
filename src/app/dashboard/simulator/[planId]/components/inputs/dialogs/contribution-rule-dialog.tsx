@@ -79,7 +79,7 @@ export default function ContributionRuleDialog({
       await m({ contributionRule: contributionToConvex({ ...data, id: contributionRuleId }), planId });
       onClose();
     } catch (error) {
-      setSaveError(error instanceof ConvexError ? error.message : 'Failed to save contribution rule.');
+      setSaveError(error instanceof ConvexError ? (error.data as { message: string }).message : 'Failed to save contribution rule.');
       console.error('Error saving contribution rule: ', error);
     }
   };

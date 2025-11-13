@@ -71,7 +71,7 @@ export default function ExpenseDialog({ onClose, selectedExpense: _selectedExpen
       await m({ expense: expenseToConvex({ ...data, id: expenseId }), planId });
       onClose();
     } catch (error) {
-      setSaveError(error instanceof ConvexError ? error.message : 'Failed to save expense.');
+      setSaveError(error instanceof ConvexError ? (error.data as { message: string }).message : 'Failed to save expense.');
       console.error('Error saving expense: ', error);
     }
   };

@@ -99,7 +99,7 @@ export default function TimelineDrawer({ setOpen }: TimelineDrawerProps) {
       await m({ timeline: timelineToConvex(data)!, planId });
       setOpen(false);
     } catch (error) {
-      setSaveError(error instanceof ConvexError ? error.message : 'Failed to save timeline.');
+      setSaveError(error instanceof ConvexError ? (error.data as { message: string }).message : 'Failed to save timeline.');
       console.error('Error saving timeline: ', error);
     }
   };

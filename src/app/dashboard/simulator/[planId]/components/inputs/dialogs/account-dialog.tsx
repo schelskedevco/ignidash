@@ -77,7 +77,7 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
       await m({ account: accountToConvex({ ...processedData, id: accountId }), planId });
       onClose();
     } catch (error) {
-      setSaveError(error instanceof ConvexError ? error.message : 'Failed to save account.');
+      setSaveError(error instanceof ConvexError ? (error.data as { message: string }).message : 'Failed to save account.');
       console.error('Error saving account: ', error);
     }
   };

@@ -72,7 +72,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
       await m({ income: incomeToConvex({ ...data, id: incomeId }), planId });
       onClose();
     } catch (error) {
-      setSaveError(error instanceof ConvexError ? error.message : 'Failed to save income.');
+      setSaveError(error instanceof ConvexError ? (error.data as { message: string }).message : 'Failed to save income.');
       console.error('Error saving income: ', error);
     }
   };

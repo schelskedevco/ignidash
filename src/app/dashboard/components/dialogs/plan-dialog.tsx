@@ -67,7 +67,7 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
 
       onClose();
     } catch (error) {
-      setSaveError(error instanceof ConvexError ? error.message : 'Failed to save plan.');
+      setSaveError(error instanceof ConvexError ? (error.data as { message: string }).message : 'Failed to save plan.');
       console.error('Error saving plan: ', error);
     }
   };

@@ -72,8 +72,8 @@ export default function ExpectedReturnsDrawer({ setOpen }: ExpectedReturnsDrawer
       await m({ marketAssumptions: marketAssumptionsToConvex(data), planId });
       setOpen(false);
     } catch (error) {
-      setSaveError(error instanceof ConvexError ? error.message : 'Failed to save market assumptions.');
-      console.error('Error saving market assumptions: ', error);
+      setSaveError(error instanceof ConvexError ? (error.data as { message: string }).message : 'Failed to save expected returns.');
+      console.error('Error saving expected returns: ', error);
     }
   };
 

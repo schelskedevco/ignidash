@@ -55,7 +55,7 @@ export default function TaxSettingsDrawer({ setOpen }: TaxSettingsDrawerProps) {
       await m({ taxSettings: taxSettingsToConvex(data), planId });
       setOpen(false);
     } catch (error) {
-      setSaveError(error instanceof ConvexError ? error.message : 'Failed to save tax settings.');
+      setSaveError(error instanceof ConvexError ? (error.data as { message: string }).message : 'Failed to save tax settings.');
       console.error('Error saving tax settings: ', error);
     }
   };
