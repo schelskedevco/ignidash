@@ -45,7 +45,9 @@ export const upsertIncome = mutation({
     const { userId } = await getUserIdOrThrow(ctx);
     const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
 
-    const updatedIncomes = [...plan.incomes.filter((i) => i.id !== income.id), income];
+    const existingIndex = plan.incomes.findIndex((i) => i.id === income.id);
+    const updatedIncomes =
+      existingIndex !== -1 ? plan.incomes.map((i, index) => (index === existingIndex ? income : i)) : [...plan.incomes, income];
 
     await ctx.db.patch(planId, { incomes: updatedIncomes });
   },
