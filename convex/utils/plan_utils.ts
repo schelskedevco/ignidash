@@ -10,3 +10,10 @@ export async function getPlanForUserIdOrThrow(ctx: QueryCtx, planId: Id<'plans'>
 
   return plan;
 }
+
+export async function getAllPlans(ctx: QueryCtx, userId: string): Promise<Doc<'plans'>[]> {
+  return await ctx.db
+    .query('plans')
+    .withIndex('by_userId', (q) => q.eq('userId', userId))
+    .collect();
+}

@@ -4,7 +4,7 @@ import type { Doc } from './_generated/dataModel';
 import { api } from './_generated/api';
 
 import { getUserIdOrThrow } from './utils/auth_utils';
-import { getPlanForUserIdOrThrow } from './utils/plan_utils';
+import { getPlanForUserIdOrThrow, getAllPlans } from './utils/plan_utils';
 import { timelineValidator } from './validators/timeline_validator';
 import { incomeValidator } from './validators/incomes_validator';
 import { expenseValidator } from './validators/expenses_validator';
@@ -21,12 +21,7 @@ export const listPlans = query({
   handler: async (ctx) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
-    const plans = await ctx.db
-      .query('plans')
-      .withIndex('by_userId', (q) => q.eq('userId', userId))
-      .collect();
-
-    return plans;
+    return await getAllPlans(ctx, userId);
   },
 });
 
@@ -35,10 +30,7 @@ export const getCountOfPlans = query({
   handler: async (ctx) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
-    const plans = await ctx.db
-      .query('plans')
-      .withIndex('by_userId', (q) => q.eq('userId', userId))
-      .collect();
+    const plans = await getAllPlans(ctx, userId);
 
     return plans.length;
   },
@@ -238,7 +230,7 @@ export const setPlanAsDefault = mutation({
 
     if (planToSetAsDefault.isDefault) return;
 
-    const plans = await ctx.runQuery(api.plans.listPlans, {});
+    const plans = await getAllPlans(ctx, userId);
     for (const plan of plans) {
       if (plan.isDefault) await ctx.db.patch(plan._id, { isDefault: false });
     }
