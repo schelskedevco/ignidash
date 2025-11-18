@@ -98,11 +98,11 @@ function PlanListItem({ plan, onDropdownClickEdit, onDropdownClickClone, onDropd
   );
 }
 
-interface PlanListV2Props {
+interface PlanListProps {
   preloadedPlans: Preloaded<typeof api.plans.listPlans>;
 }
 
-export default function PlanListV2({ preloadedPlans }: PlanListV2Props) {
+export default function PlanList({ preloadedPlans }: PlanListProps) {
   const plans = usePreloadedQuery(preloadedPlans);
   const allPlans = useMemo(() => plans.map((plan) => ({ id: plan._id, name: plan.name })), [plans]);
 
@@ -128,6 +128,7 @@ export default function PlanListV2({ preloadedPlans }: PlanListV2Props) {
   };
 
   const [planToDelete, setPlanToDelete] = useState<{ id: Id<'plans'>; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const deleteMutation = useMutation(api.plans.deletePlan);
   const deletePlan = useCallback(
     async (planId: Id<'plans'>) => {
@@ -194,12 +195,18 @@ export default function PlanListV2({ preloadedPlans }: PlanListV2Props) {
           </Button>
           <Button
             color="red"
+            disabled={isDeleting}
             onClick={async () => {
-              await deletePlan(planToDelete!.id);
-              setPlanToDelete(null);
+              setIsDeleting(true);
+              try {
+                await deletePlan(planToDelete!.id);
+                setPlanToDelete(null);
+              } finally {
+                setIsDeleting(false);
+              }
             }}
           >
-            Delete
+            {isDeleting ? 'Deleting...' : 'Delete'}
           </Button>
         </AlertActions>
       </Alert>
