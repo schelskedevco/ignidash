@@ -28,7 +28,7 @@ export default function DisclosureSectionDeleteDataAlert({
       <AlertTitle>Are you sure you want to delete {dataToDelete ? `"${dataToDelete.name}"` : 'this'}?</AlertTitle>
       <AlertDescription>This action cannot be undone.</AlertDescription>
       <AlertActions>
-        <Button plain onClick={() => setDataToDelete(null)} disabled={isDeleting}>
+        <Button plain onClick={() => setDataToDelete(null)}>
           Cancel
         </Button>
         <Button
