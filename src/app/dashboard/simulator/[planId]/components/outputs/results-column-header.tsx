@@ -55,7 +55,9 @@ export default function ResultsColumnHeader() {
               onClick={() => setSimulationSettingsOpen(true)}
               surfaceColor="emphasized"
             />
-            <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
+            {!isDisabled && (
+              <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
+            )}
           </div>
         }
         className="w-[calc(100%-42rem)] group-data-[state=collapsed]/sidebar:w-[calc(100%-28rem)]"

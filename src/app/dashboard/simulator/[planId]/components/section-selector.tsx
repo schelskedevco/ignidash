@@ -116,7 +116,9 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
                 onClick={() => setSimulationSettingsOpen(true)}
                 surfaceColor="emphasized"
               />
-              <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
+              {!isDisabled && (
+                <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
+              )}
             </div>
           )}
         </div>
