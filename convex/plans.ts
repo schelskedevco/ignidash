@@ -3,7 +3,7 @@ import { query, mutation } from './_generated/server';
 import type { Doc } from './_generated/dataModel';
 
 import { getUserIdOrThrow } from './utils/auth_utils';
-import { getPlanForUserIdOrThrow, getAllPlans } from './utils/plan_utils';
+import { getPlanForUserIdOrThrow, getAllPlansForUser } from './utils/plan_utils';
 import { timelineValidator } from './validators/timeline_validator';
 import { incomeValidator } from './validators/incomes_validator';
 import { expenseValidator } from './validators/expenses_validator';
@@ -20,7 +20,7 @@ export const listPlans = query({
   handler: async (ctx) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
-    return await getAllPlans(ctx, userId);
+    return await getAllPlansForUser(ctx, userId);
   },
 });
 
@@ -29,7 +29,7 @@ export const getCountOfPlans = query({
   handler: async (ctx) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
-    const plans = await getAllPlans(ctx, userId);
+    const plans = await getAllPlansForUser(ctx, userId);
 
     return plans.length;
   },
@@ -82,7 +82,7 @@ export const createBlankPlan = mutation({
   handler: async (ctx, { newPlanName }) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
-    const plans = await getAllPlans(ctx, userId);
+    const plans = await getAllPlansForUser(ctx, userId);
     if (plans.length >= 10) throw new ConvexError('Maximum of 10 plans reached');
 
     return await ctx.db.insert('plans', {
@@ -134,7 +134,7 @@ export const createPlanWithData = mutation({
   ) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
-    const plans = await getAllPlans(ctx, userId);
+    const plans = await getAllPlansForUser(ctx, userId);
     if (plans.length >= 10) throw new ConvexError('Maximum of 10 plans reached');
 
     return await ctx.db.insert('plans', {
@@ -159,7 +159,7 @@ export const clonePlan = mutation({
   handler: async (ctx, { newPlanName, planId }) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
-    const plans = await getAllPlans(ctx, userId);
+    const plans = await getAllPlansForUser(ctx, userId);
     if (plans.length >= 10) throw new ConvexError('Maximum of 10 plans reached');
 
     let plan: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId' | 'name'>;
@@ -204,7 +204,7 @@ export const deletePlan = mutation({
     const { userId } = await getUserIdOrThrow(ctx);
     await getPlanForUserIdOrThrow(ctx, planId, userId);
 
-    const plans = await getAllPlans(ctx, userId);
+    const plans = await getAllPlansForUser(ctx, userId);
     if (plans.length <= 1) throw new ConvexError('You cannot delete your only plan.');
 
     await ctx.db.delete(planId);
@@ -229,7 +229,7 @@ export const setPlanAsDefault = mutation({
 
     if (planToSetAsDefault.isDefault) return;
 
-    const plans = await getAllPlans(ctx, userId);
+    const plans = await getAllPlansForUser(ctx, userId);
     for (const plan of plans) {
       if (plan.isDefault) await ctx.db.patch(plan._id, { isDefault: false });
     }

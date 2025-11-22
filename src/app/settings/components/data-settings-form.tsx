@@ -1,5 +1,7 @@
 'use client';
 
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { ConvexError } from 'convex/values';
 import { useState } from 'react';
 import { Trash2Icon } from 'lucide-react';
@@ -27,8 +29,8 @@ export default function DataSettingsForm({ showSuccessNotification, isAuthentica
   const [accountDeletionAlertOpen, setAccountDeletionAlertOpen] = useState(false);
 
   const { fieldState: deleteApplicationDataState } = useAccountSettingsFieldState();
-  const deleteAppData = () => alert('Delete application data function called');
-  const handleDeleteApplicationData = async () => deleteAppData();
+  const deleteAppDataMutation = useMutation(api.app_data.deleteAppData);
+  const handleDeleteApplicationData = async () => deleteAppDataMutation();
 
   const { fieldState: deleteAccountState, createCallbacks: deleteAccountCallbacks } = useAccountSettingsFieldState();
   const handleDeleteAccount = async () => {

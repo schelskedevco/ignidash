@@ -118,6 +118,9 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
             `,
           });
         },
+        afterDelete: async (user, request) => {
+          console.log(`User with email ${user.email} has deleted their account.`);
+        },
       },
     },
     plugins: [convex()],

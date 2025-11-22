@@ -9,6 +9,7 @@
  */
 
 import type * as account from "../account.js";
+import type * as app_data from "../app_data.js";
 import type * as auth from "../auth.js";
 import type * as contribution_rule from "../contribution_rule.js";
 import type * as expense from "../expense.js";
@@ -47,6 +48,7 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   account: typeof account;
+  app_data: typeof app_data;
   auth: typeof auth;
   contribution_rule: typeof contribution_rule;
   expense: typeof expense;

@@ -1,5 +1,5 @@
 import { ConvexError } from 'convex/values';
-import { QueryCtx } from '../_generated/server';
+import { QueryCtx, MutationCtx } from '../_generated/server';
 import type { Id, Doc } from '../_generated/dataModel';
 
 export async function getPlanForUserIdOrThrow(ctx: QueryCtx, planId: Id<'plans'>, userId: string): Promise<Doc<'plans'>> {
@@ -11,9 +11,16 @@ export async function getPlanForUserIdOrThrow(ctx: QueryCtx, planId: Id<'plans'>
   return plan;
 }
 
-export async function getAllPlans(ctx: QueryCtx, userId: string): Promise<Doc<'plans'>[]> {
+export async function getAllPlansForUser(ctx: QueryCtx, userId: string): Promise<Doc<'plans'>[]> {
   return await ctx.db
     .query('plans')
     .withIndex('by_userId', (q) => q.eq('userId', userId))
     .collect();
+}
+
+export async function deleteAllPlansForUser(ctx: MutationCtx, userId: string): Promise<void> {
+  const plans = await getAllPlansForUser(ctx, userId);
+  for (const plan of plans) {
+    await ctx.db.delete(plan._id);
+  }
 }
