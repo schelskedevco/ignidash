@@ -1,11 +1,13 @@
 'use client';
 
+import { ConvexError } from 'convex/values';
 import { useState } from 'react';
 import { Trash2Icon } from 'lucide-react';
 
 import Card from '@/components/ui/card';
 import { Fieldset, FieldGroup, Field, Legend, Description, ErrorMessage } from '@/components/catalyst/fieldset';
-import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
+import { Alert, AlertActions, AlertDescription, AlertTitle, AlertBody } from '@/components/catalyst/alert';
+import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Button } from '@/components/catalyst/button';
 import { Divider } from '@/components/catalyst/divider';
 import { authClient } from '@/lib/auth-client';
@@ -17,7 +19,11 @@ interface DataSettingsFormProps {
 }
 
 export default function DataSettingsForm({ showSuccessNotification, isAuthenticated }: DataSettingsFormProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const [appDataAlertOpen, setAppDataAlertOpen] = useState(false);
+  const [appDataDeleteError, setAppDataDeleteError] = useState<string | null>(null);
+
   const [accountDeletionAlertOpen, setAccountDeletionAlertOpen] = useState(false);
 
   const { fieldState: deleteApplicationDataState } = useAccountSettingsFieldState();
@@ -93,19 +99,30 @@ export default function DataSettingsForm({ showSuccessNotification, isAuthentica
       >
         <AlertTitle>Are you sure you want to delete your application data?</AlertTitle>
         <AlertDescription>This action cannot be undone.</AlertDescription>
+        <AlertBody>{appDataDeleteError && <ErrorMessageCard errorMessage={appDataDeleteError} />}</AlertBody>
         <AlertActions>
-          <Button plain onClick={() => setAppDataAlertOpen(false)}>
+          <Button plain onClick={() => setAppDataAlertOpen(false)} disabled={isDeleting}>
             Cancel
           </Button>
           <Button
             color="red"
+            disabled={isDeleting}
             onClick={async () => {
-              await handleDeleteApplicationData();
-              setAppDataAlertOpen(false);
-              showSuccessNotification('Application data deleted!');
+              setIsDeleting(true);
+              setAppDataDeleteError(null);
+              try {
+                await handleDeleteApplicationData();
+                setAppDataAlertOpen(false);
+                showSuccessNotification('Application data deleted!');
+              } catch (error) {
+                setAppDataDeleteError(error instanceof ConvexError ? error.message : 'Failed to delete.');
+                console.error('Error during deletion: ', error);
+              } finally {
+                setIsDeleting(false);
+              }
             }}
           >
-            Delete now
+            {isDeleting ? 'Deleting...' : 'Delete now'}
           </Button>
         </AlertActions>
       </Alert>
