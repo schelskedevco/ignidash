@@ -1,5 +1,6 @@
 'use client';
 
+import { ConvexError } from 'convex/values';
 import { useMemo, useState, useCallback } from 'react';
 import type { Doc, Id } from '@/convex/_generated/dataModel';
 import { Preloaded, usePreloadedQuery } from 'convex/react';
@@ -11,7 +12,8 @@ import { PlusIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { Heading } from '@/components/catalyst/heading';
-import { Alert, AlertActions, AlertDescription, AlertTitle } from '@/components/catalyst/alert';
+import { Alert, AlertActions, AlertDescription, AlertTitle, AlertBody } from '@/components/catalyst/alert';
+import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 import { useSimulationResult, useKeyMetrics, useIsCalculationReady } from '@/lib/stores/simulator-store';
 import { simulatorFromConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -131,6 +133,7 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
 
   const [planToDelete, setPlanToDelete] = useState<{ id: Id<'plans'>; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const deleteMutation = useMutation(api.plans.deletePlan);
   const deletePlan = useCallback(
     async (planId: Id<'plans'>) => {
@@ -191,6 +194,7 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
       >
         <AlertTitle>Are you sure you want to delete {planToDelete ? `"${planToDelete.name}"` : 'this'}?</AlertTitle>
         <AlertDescription>This action cannot be undone.</AlertDescription>
+        <AlertBody>{deleteError && <ErrorMessageCard errorMessage={deleteError} />}</AlertBody>
         <AlertActions>
           <Button plain onClick={() => setPlanToDelete(null)} disabled={isDeleting}>
             Cancel
@@ -200,9 +204,13 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
             disabled={isDeleting}
             onClick={async () => {
               setIsDeleting(true);
+              setDeleteError(null);
               try {
                 await deletePlan(planToDelete!.id);
                 setPlanToDelete(null);
+              } catch (error) {
+                setDeleteError(error instanceof ConvexError ? error.message : 'Failed to delete.');
+                console.error('Error during deletion: ', error);
               } finally {
                 setIsDeleting(false);
               }
