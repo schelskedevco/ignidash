@@ -69,10 +69,14 @@ function PlanListItem({ plan, onDropdownClickEdit, onDropdownClickClone, onDropd
           <p className="whitespace-nowrap">
             Created <time dateTime={new Date(plan._creationTime).toISOString()}>{new Date(plan._creationTime).toLocaleDateString()}</time>
           </p>
-          <svg viewBox="0 0 2 2" className="size-0.5 fill-current">
-            <circle r={1} cx={1} cy={1} />
-          </svg>
-          <p className="truncate">Created by Joe</p>
+          {plan.isDefault && (
+            <>
+              <svg viewBox="0 0 2 2" className="size-0.5 fill-current">
+                <circle r={1} cx={1} cy={1} />
+              </svg>
+              <p className="truncate">Default plan</p>
+            </>
+          )}
         </div>
       </div>
       <div className="flex flex-none items-center gap-x-4">
