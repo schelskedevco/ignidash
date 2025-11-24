@@ -49,16 +49,25 @@ export const getPlan = query({
   },
 });
 
+export const getDefaultPlanId = query({
+  args: {},
+  handler: async (ctx) => {
+    const { userId } = await getUserIdOrThrow(ctx);
+
+    const plans = await getAllPlansForUser(ctx, userId);
+
+    return plans.find((plan) => plan.isDefault)?._id ?? null;
+  },
+});
+
 export const getOrCreateDefaultPlan = mutation({
   args: {},
   handler: async (ctx) => {
     const { userId, userName } = await getUserIdOrThrow(ctx);
 
-    const existingPlan = await ctx.db
-      .query('plans')
-      .withIndex('by_userId', (q) => q.eq('userId', userId))
-      .first();
-    if (existingPlan) return existingPlan._id;
+    const plans = await getAllPlansForUser(ctx, userId);
+    const defaultPlan = plans.find((plan) => plan.isDefault);
+    if (defaultPlan) return defaultPlan._id;
 
     return await ctx.db.insert('plans', {
       userId,

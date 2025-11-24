@@ -1,7 +1,7 @@
 import { LayoutDashboardIcon, ChartNoAxesCombinedIcon, Layers2Icon, ZapIcon, CircleQuestionMarkIcon, GemIcon } from 'lucide-react';
 import { api } from '@/convex/_generated/api';
-import { useMutation } from 'convex/react';
-import { useEffect, useState, useMemo } from 'react';
+import { useQuery, useMutation } from 'convex/react';
+import { useEffect, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 
 export interface NavigationItem {
@@ -16,16 +16,15 @@ export interface NavigationItem {
 
 export const useNavigationItems = () => {
   const m = useMutation(api.plans.getOrCreateDefaultPlan);
-  const [defaultPlanId, setDefaultPlanId] = useState<string | null>(null);
 
   useEffect(() => {
     async function createDefaultPlan() {
-      const planId = await m({});
-      setDefaultPlanId(planId);
+      await m({});
     }
 
     createDefaultPlan();
   }, [m]);
+  const defaultPlanId = useQuery(api.plans.getDefaultPlanId);
 
   const pathname = usePathname();
 
