@@ -20,10 +20,5 @@ export function useRegenSimulation() {
     if (!isDisabled) await m({ simulationSettings: { ...simulationSettings, simulationSeed: Math.floor(Math.random() * 1000) }, planId });
   };
 
-  return {
-    icon: RefreshCwIcon,
-    label: 'Regenerate Simulation',
-    handleClick,
-    isDisabled,
-  };
+  return { icon: RefreshCwIcon, label: 'Regenerate Simulation', handleClick, isDisabled };
 }
