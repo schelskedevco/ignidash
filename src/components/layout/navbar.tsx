@@ -4,7 +4,7 @@ import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { CircleUserRoundIcon, LogInIcon, LogOutIcon, LoaderIcon, LayoutDashboardIcon, SettingsIcon, GemIcon } from 'lucide-react';
+import { CircleUserRoundIcon, LogInIcon, LogOutIcon, LoaderIcon, LayoutDashboardIcon, GemIcon } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
 
@@ -92,14 +92,9 @@ export default function Navbar() {
                 <GemIcon data-slot="icon" />
                 <DropdownLabel>Buy Pro</DropdownLabel>
               </DropdownItem>
-              <DropdownDivider />
               <DropdownItem href="/dashboard">
                 <LayoutDashboardIcon data-slot="icon" />
                 <DropdownLabel>Dashboard</DropdownLabel>
-              </DropdownItem>
-              <DropdownItem href="/settings">
-                <SettingsIcon data-slot="icon" />
-                <DropdownLabel>Settings</DropdownLabel>
               </DropdownItem>
               <DropdownDivider />
               <DropdownItem href={signInUrlWithRedirect}>
@@ -119,14 +114,9 @@ export default function Navbar() {
                 <GemIcon data-slot="icon" />
                 <DropdownLabel>Buy Pro</DropdownLabel>
               </DropdownItem>
-              <DropdownDivider />
               <DropdownItem href="/dashboard">
                 <LayoutDashboardIcon data-slot="icon" />
                 <DropdownLabel>Dashboard</DropdownLabel>
-              </DropdownItem>
-              <DropdownItem href="/settings">
-                <SettingsIcon data-slot="icon" />
-                <DropdownLabel>Settings</DropdownLabel>
               </DropdownItem>
               <DropdownDivider />
               <DropdownItem onClick={() => signOut()}>
