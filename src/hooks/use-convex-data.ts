@@ -35,10 +35,6 @@ export const useTimelineData = () => {
   return useMemo(() => (q ? timelineFromConvex(q) : null), [q]);
 };
 
-export const useCurrentAge = () => {
-  return useTimelineData()?.currentAge;
-};
-
 // Incomes
 export const useIncomesData = () => {
   const planId = useSelectedPlanId();

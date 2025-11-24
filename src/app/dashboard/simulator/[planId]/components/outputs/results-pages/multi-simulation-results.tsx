@@ -13,7 +13,6 @@ import {
   useUpdateResultsCategory,
   type QuickSelectPercentile,
 } from '@/lib/stores/simulator-store';
-import { useCurrentAge } from '@/hooks/use-convex-data';
 import SectionContainer from '@/components/ui/section-container';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/tables/multi-simulation-table-schema';
@@ -28,6 +27,7 @@ import MultiSimulationMainResults from './multi-simulation-main-results';
 import FooterDisclaimer from './footer-disclaimer';
 
 interface MultiSimulationResultsSharedProps {
+  startAge: number;
   tableData: MultiSimulationTableRow[];
   yearlyTableData: YearlyAggregateTableRow[];
   chartData: MultiSimulationChartData;
@@ -87,7 +87,7 @@ interface MultiSimulationResultsProps {
 }
 
 export default function MultiSimulationResults({ inputs, simulationMode }: MultiSimulationResultsProps) {
-  const startAge = useCurrentAge()!;
+  const startAge = inputs.timeline!.currentAge;
   const { selectedAge, onAgeSelect } = useResultsState(startAge);
 
   const { analysis, tableData, yearlyTableData, chartData, keyMetrics, isLoadingOrValidating, completedSimulations } =
@@ -137,6 +137,7 @@ export default function MultiSimulationResults({ inputs, simulationMode }: Multi
   }
 
   const sharedProps: MultiSimulationResultsSharedProps = {
+    startAge,
     tableData,
     yearlyTableData,
     chartData,

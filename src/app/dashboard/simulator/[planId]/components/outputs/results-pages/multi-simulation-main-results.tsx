@@ -14,6 +14,7 @@ import MultiSimulationDataTableSection from '../sections/multi-simulation-data-t
 
 interface MultiSimulationMainResultsProps {
   simulationAndKeyMetrics: { simulation: SimulationResult; keyMetrics: KeyMetrics } | null;
+  startAge: number;
   tableData: MultiSimulationTableRow[];
   yearlyTableData: YearlyAggregateTableRow[];
   chartData: MultiSimulationChartData;
@@ -28,6 +29,7 @@ interface MultiSimulationMainResultsProps {
 
 export default function MultiSimulationMainResults({
   simulationAndKeyMetrics,
+  startAge,
   tableData,
   yearlyTableData,
   chartData,
@@ -61,7 +63,7 @@ export default function MultiSimulationMainResults({
       {simulationAndKeyMetrics !== null ? (
         <SingleSimulationChartsSection {...simulationAndKeyMetrics} onAgeSelect={onAgeSelect} selectedAge={selectedAge} />
       ) : (
-        <MultiSimulationChartsSection chartData={chartData} onAgeSelect={onAgeSelect} selectedAge={selectedAge} />
+        <MultiSimulationChartsSection startAge={startAge} chartData={chartData} onAgeSelect={onAgeSelect} selectedAge={selectedAge} />
       )}
       <MultiSimulationDataTableSection
         simulation={simulationAndKeyMetrics?.simulation}

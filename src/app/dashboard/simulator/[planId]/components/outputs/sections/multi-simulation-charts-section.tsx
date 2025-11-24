@@ -3,7 +3,6 @@
 import { memo } from 'react';
 
 import { useResultsCategory } from '@/lib/stores/simulator-store';
-import { useCurrentAge } from '@/hooks/use-convex-data';
 import SectionContainer from '@/components/ui/section-container';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
@@ -50,15 +49,15 @@ function PhasesCharts({ chartData, onAgeSelect, selectedAge, startAge }: ChartsC
 }
 
 interface MultiSimulationChartsSectionProps {
+  startAge: number;
   chartData: MultiSimulationChartData;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
 
-function MultiSimulationChartsSection({ chartData, onAgeSelect, selectedAge }: MultiSimulationChartsSectionProps) {
+function MultiSimulationChartsSection({ startAge, chartData, onAgeSelect, selectedAge }: MultiSimulationChartsSectionProps) {
   const resultsCategory = useResultsCategory();
 
-  const startAge = useCurrentAge()!;
   const props: ChartsCategoryProps = { chartData, onAgeSelect, selectedAge, startAge };
 
   let chartsComponents = null;
