@@ -1,41 +1,38 @@
 'use client';
 
 import Card from '@/components/ui/card';
-import type { SingleSimulationContributionsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
 import { useAccountData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 
-import SingleSimulationContributionsBarChart from '../charts/single-simulation-contributions-bar-chart';
+import SingleSimulationReturnsBarChart from '../../charts/single-simulation/single-simulation-returns-bar-chart';
 
-interface SingleSimulationContributionsBarChartCardProps {
+interface SingleSimulationReturnsBarChartCardProps {
   selectedAge: number;
-  rawChartData: SingleSimulationContributionsChartDataPoint[];
-  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch';
+  rawChartData: SingleSimulationReturnsChartDataPoint[];
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
   customDataID: string;
 }
 
-export default function SingleSimulationContributionsBarChartCard({
+export default function SingleSimulationReturnsBarChartCard({
   selectedAge,
   rawChartData,
   dataView,
   customDataID,
-}: SingleSimulationContributionsBarChartCardProps) {
+}: SingleSimulationReturnsBarChartCardProps) {
   const accountData = useAccountData(customDataID !== '' ? customDataID : null);
 
   let title;
   switch (dataView) {
+    case 'rates':
+      title = 'Real Returns';
+      break;
     case 'annualAmounts':
-      title = 'Annual Contributions';
+      title = 'Annual Growth';
       break;
     case 'cumulativeAmounts':
-      title = 'Cumulative Contributions';
-      break;
-    case 'taxCategory':
-      title = 'By Tax Category';
-      break;
-    case 'employerMatch':
-      title = 'Employer Match';
+      title = 'Cumulative Growth';
       break;
     case 'custom':
       title = accountData ? `${accountData.name} — ${taxCategoryFromAccountTypeForDisplay(accountData.type)}` : 'Custom Account';
@@ -50,12 +47,7 @@ export default function SingleSimulationContributionsBarChartCard({
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>
       </div>
-      <SingleSimulationContributionsBarChart
-        age={selectedAge}
-        rawChartData={rawChartData}
-        dataView={dataView}
-        customDataID={customDataID}
-      />
+      <SingleSimulationReturnsBarChart age={selectedAge} rawChartData={rawChartData} dataView={dataView} customDataID={customDataID} />
     </Card>
   );
 }

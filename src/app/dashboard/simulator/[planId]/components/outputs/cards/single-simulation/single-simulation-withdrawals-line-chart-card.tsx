@@ -4,26 +4,46 @@ import { useMemo, useCallback } from 'react';
 
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
-import type { SingleSimulationContributionsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
 import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Subheading } from '@/components/catalyst/heading';
 
-import SingleSimulationContributionsLineChart from '../charts/single-simulation-contributions-line-chart';
+import SingleSimulationWithdrawalsLineChart from '../../charts/single-simulation/single-simulation-withdrawals-line-chart';
 
-interface SingleSimulationContributionsLineChartCardProps {
+interface SingleSimulationWithdrawalsLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch') => void;
-  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch';
+  setDataView: (
+    view:
+      | 'annualAmounts'
+      | 'cumulativeAmounts'
+      | 'taxCategory'
+      | 'realizedGains'
+      | 'requiredMinimumDistributions'
+      | 'earlyWithdrawalPenalties'
+      | 'earlyWithdrawals'
+      | 'withdrawalRate'
+      | 'custom'
+  ) => void;
+  dataView:
+    | 'annualAmounts'
+    | 'cumulativeAmounts'
+    | 'taxCategory'
+    | 'realizedGains'
+    | 'requiredMinimumDistributions'
+    | 'earlyWithdrawalPenalties'
+    | 'earlyWithdrawals'
+    | 'withdrawalRate'
+    | 'custom';
   setCustomDataID: (name: string) => void;
   customDataID: string;
-  rawChartData: SingleSimulationContributionsChartDataPoint[];
+  rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
   keyMetrics: KeyMetrics;
   startAge: number;
 }
 
-export default function SingleSimulationContributionsLineChartCard({
+export default function SingleSimulationWithdrawalsLineChartCard({
   onAgeSelect,
   selectedAge,
   setDataView,
@@ -33,7 +53,7 @@ export default function SingleSimulationContributionsLineChartCard({
   rawChartData,
   keyMetrics,
   startAge,
-}: SingleSimulationContributionsLineChartCardProps) {
+}: SingleSimulationWithdrawalsLineChartCardProps) {
   const showReferenceLines = useShowReferenceLines();
 
   const getUniqueItems = useCallback((items: Array<{ id: string; name: string }>) => {
@@ -49,33 +69,55 @@ export default function SingleSimulationContributionsLineChartCard({
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
         <Subheading level={4}>
-          <span className="mr-2">Contributions</span>
+          <span className="mr-2">Withdrawals</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
         <Select
           className="max-w-48 sm:max-w-64"
-          id="contributions-data-view"
-          name="contributions-data-view"
+          id="withdrawals-data-view"
+          name="withdrawals-data-view"
           value={dataView === 'custom' ? customDataID : dataView}
           onChange={(e) => {
             const isCustomSelection =
               e.target.value !== 'annualAmounts' &&
               e.target.value !== 'cumulativeAmounts' &&
               e.target.value !== 'taxCategory' &&
-              e.target.value !== 'employerMatch';
+              e.target.value !== 'realizedGains' &&
+              e.target.value !== 'requiredMinimumDistributions' &&
+              e.target.value !== 'earlyWithdrawalPenalties' &&
+              e.target.value !== 'earlyWithdrawals' &&
+              e.target.value !== 'withdrawalRate';
             if (isCustomSelection) {
               setDataView('custom');
               setCustomDataID(e.target.value);
             } else {
-              setDataView(e.target.value as 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'employerMatch');
+              setDataView(
+                e.target.value as
+                  | 'annualAmounts'
+                  | 'cumulativeAmounts'
+                  | 'taxCategory'
+                  | 'realizedGains'
+                  | 'requiredMinimumDistributions'
+                  | 'earlyWithdrawalPenalties'
+                  | 'earlyWithdrawals'
+                  | 'withdrawalRate'
+              );
               setCustomDataID('');
             }
           }}
         >
           <option value="taxCategory">Tax Category</option>
-          <option value="annualAmounts">Annual Contributions</option>
-          <option value="cumulativeAmounts">Cumulative Contributions</option>
-          <option value="employerMatch">Employer Match</option>
+          <option value="annualAmounts">Annual Withdrawals</option>
+          <option value="cumulativeAmounts">Cumulative Withdrawals</option>
+          <option value="requiredMinimumDistributions">Required Minimum Distributions</option>
+          <option value="withdrawalRate">Withdrawal Rate</option>
+          <optgroup label="Taxable Brokerage">
+            <option value="realizedGains">Realized Gains</option>
+          </optgroup>
+          <optgroup label="Issues & Penalties">
+            <option value="earlyWithdrawals">Early Withdrawals</option>
+            <option value="earlyWithdrawalPenalties">Early Withdrawal Penalties</option>
+          </optgroup>
           <optgroup label="By Account">
             {uniqueAccounts.map((account) => (
               <option key={account.id} value={account.id}>
@@ -85,7 +127,7 @@ export default function SingleSimulationContributionsLineChartCard({
           </optgroup>
         </Select>
       </div>
-      <SingleSimulationContributionsLineChart
+      <SingleSimulationWithdrawalsLineChart
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
         rawChartData={rawChartData}

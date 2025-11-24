@@ -8,7 +8,7 @@ import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data
 import { Subheading } from '@/components/catalyst/heading';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu, DropdownLabel } from '@/components/catalyst/dropdown';
 
-import SingleSimulationTaxesBarChart from '../charts/single-simulation-taxes-bar-chart';
+import SingleSimulationTaxesBarChart from '../../charts/single-simulation/single-simulation-taxes-bar-chart';
 
 interface SingleSimulationTaxesBarChartCardProps {
   selectedAge: number;

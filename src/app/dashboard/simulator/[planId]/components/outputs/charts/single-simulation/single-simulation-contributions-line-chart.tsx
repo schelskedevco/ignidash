@@ -11,8 +11,7 @@ import type { SingleSimulationContributionsChartDataPoint } from '@/lib/types/ch
 import type { AccountDataWithTransactions } from '@/lib/calc/account';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
-
-import TimeSeriesLegend from '../time-series-legend';
+import TimeSeriesLegend from '@/components/time-series-legend';
 
 interface CustomTooltipProps {
   active?: boolean;

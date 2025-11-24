@@ -12,8 +12,7 @@ import type { IncomeData } from '@/lib/calc/incomes';
 import type { ExpenseData } from '@/lib/calc/expenses';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
-
-import TimeSeriesLegend from '../time-series-legend';
+import TimeSeriesLegend from '@/components/time-series-legend';
 
 interface CustomTooltipProps {
   active?: boolean;

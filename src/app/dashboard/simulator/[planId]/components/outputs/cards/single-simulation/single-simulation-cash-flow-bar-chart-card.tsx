@@ -5,7 +5,7 @@ import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-d
 import { Subheading } from '@/components/catalyst/heading';
 import { useIncomeData, useExpenseData } from '@/hooks/use-convex-data';
 
-import SingleSimulationCashFlowBarChart from '../charts/single-simulation-cash-flow-bar-chart';
+import SingleSimulationCashFlowBarChart from '../../charts/single-simulation/single-simulation-cash-flow-bar-chart';
 
 interface SingleSimulationCashFlowBarChartCardProps {
   selectedAge: number;

@@ -9,7 +9,7 @@ import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
 
-import SingleSimulationPortfolioAreaChart from '../charts/single-simulation-portfolio-area-chart';
+import SingleSimulationPortfolioAreaChart from '../../charts/single-simulation/single-simulation-portfolio-area-chart';
 
 interface SingleSimulationPortfolioAreaChartCardProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];

@@ -9,7 +9,7 @@ import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
 
-import SingleSimulationCashFlowLineChart from '../charts/single-simulation-cash-flow-line-chart';
+import SingleSimulationCashFlowLineChart from '../../charts/single-simulation/single-simulation-cash-flow-line-chart';
 
 interface SingleSimulationCashFlowLineChartCardProps {
   onAgeSelect: (age: number) => void;

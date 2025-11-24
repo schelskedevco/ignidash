@@ -7,12 +7,12 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
-import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
+import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { AccountDataWithTransactions } from '@/lib/calc/account';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { Divider } from '@/components/catalyst/divider';
+import { uniformLifetimeMap } from '@/lib/calc/historical-data/rmds-table';
 import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
-
-import TimeSeriesLegend from '../time-series-legend';
+import TimeSeriesLegend from '@/components/time-series-legend';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -20,26 +20,24 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof SingleSimulationTaxesChartDataPoint;
-    payload: SingleSimulationTaxesChartDataPoint;
+    dataKey: keyof SingleSimulationWithdrawalsChartDataPoint;
+    payload:
+      | SingleSimulationWithdrawalsChartDataPoint
+      | ({ age: number; annualWithdrawals: number; cumulativeWithdrawals: number } & AccountDataWithTransactions);
   }>;
   label?: number;
   startAge: number;
   disabled: boolean;
   dataView:
-    | 'marginalRates'
-    | 'effectiveRates'
     | 'annualAmounts'
     | 'cumulativeAmounts'
-    | 'taxableIncome'
-    | 'adjustedGrossIncome'
-    | 'investmentIncome'
-    | 'retirementDistributions'
-    | 'taxExemptIncome'
-    | 'ordinaryIncome'
-    | 'capGainsAndDividends'
+    | 'taxCategory'
+    | 'realizedGains'
+    | 'requiredMinimumDistributions'
     | 'earlyWithdrawalPenalties'
-    | 'adjustmentsAndDeductions';
+    | 'earlyWithdrawals'
+    | 'withdrawalRate'
+    | 'custom';
 }
 
 const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -53,108 +51,48 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   const formatValue = (
     value: number,
     mode:
-      | 'marginalRates'
-      | 'effectiveRates'
       | 'annualAmounts'
       | 'cumulativeAmounts'
-      | 'taxableIncome'
-      | 'adjustedGrossIncome'
-      | 'investmentIncome'
-      | 'retirementDistributions'
-      | 'taxExemptIncome'
-      | 'ordinaryIncome'
-      | 'capGainsAndDividends'
+      | 'taxCategory'
+      | 'realizedGains'
+      | 'requiredMinimumDistributions'
       | 'earlyWithdrawalPenalties'
-      | 'adjustmentsAndDeductions'
+      | 'earlyWithdrawals'
+      | 'withdrawalRate'
+      | 'custom'
   ) => {
     switch (mode) {
-      case 'marginalRates':
-      case 'effectiveRates':
+      case 'withdrawalRate':
         return `${(value * 100).toFixed(1)}%`;
-      case 'annualAmounts':
-      case 'cumulativeAmounts':
-      case 'taxableIncome':
-      case 'adjustedGrossIncome':
-      case 'investmentIncome':
-      case 'retirementDistributions':
-      case 'taxExemptIncome':
-      case 'ordinaryIncome':
-      case 'capGainsAndDividends':
-      case 'earlyWithdrawalPenalties':
-      case 'adjustmentsAndDeductions':
-        return formatNumber(value, 1, '$');
       default:
-        return value;
+        return formatNumber(value, 1, '$');
     }
   };
 
-  let header = null;
-  let totalFooter = null;
-  switch (dataView) {
-    case 'marginalRates':
-    case 'effectiveRates':
-      break;
-    case 'annualAmounts':
-    case 'cumulativeAmounts':
-    case 'investmentIncome':
-    case 'retirementDistributions':
-    case 'ordinaryIncome':
-    case 'capGainsAndDividends':
-    case 'earlyWithdrawalPenalties':
-    case 'adjustmentsAndDeductions':
-      totalFooter = (
-        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
-          <span className="mr-2">Total:</span>
-          <span className="ml-1 font-semibold">
-            {formatNumber(
-              payload.reduce((sum, item) => sum + item.value, 0),
-              3,
-              '$'
-            )}
-          </span>
-        </p>
-      );
-      break;
-    case 'taxableIncome':
-    case 'adjustedGrossIncome':
-      const entry = payload[0].payload;
-
-      const adjustments = Object.entries(entry.adjustments).map(([name, value]) => (
-        <p key={name} className="flex justify-between text-sm font-semibold">
-          <span className="mr-2">{`${formatChartString(name)}:`}</span>
-          <span className="ml-1 font-semibold">{formatNumber(value, 1, '$')}</span>
-        </p>
-      ));
-
-      const deductions = Object.entries(entry.deductions).map(([name, value]) => (
-        <p key={name} className="flex justify-between text-sm font-semibold">
-          <span className="mr-2">{`${formatChartString(name)}:`}</span>
-          <span className="ml-1 font-semibold">{formatNumber(value, 1, '$')}</span>
-        </p>
-      ));
-
-      header = (
-        <div className="mx-1 mb-2 flex flex-col gap-2">
-          <p className="flex justify-between text-sm font-semibold">
-            <span className="mr-2">Gross Income:</span>
-            <span className="ml-1 font-semibold">{formatNumber(entry.grossIncome, 1, '$')}</span>
-          </p>
-          <Divider />
-          <p className="text-muted-foreground -mb-2 text-xs/6">Adjustments</p>
-          {adjustments}
-          <Divider />
-          {dataView === 'taxableIncome' && (
-            <>
-              <p className="text-muted-foreground -mb-2 text-xs/6">Deductions</p>
-              {deductions}
-              <Divider />
-            </>
+  let tooltipFooterComponent = null;
+  if (dataView === 'taxCategory') {
+    tooltipFooterComponent = (
+      <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+        <span className="mr-2">Total:</span>
+        <span className="ml-1 font-semibold">
+          {formatNumber(
+            payload.reduce((sum, item) => sum + item.value, 0),
+            3,
+            '$'
           )}
-        </div>
-      );
-      break;
-    case 'taxExemptIncome':
-      break;
+        </span>
+      </p>
+    );
+  } else if (dataView === 'requiredMinimumDistributions' && label && label >= 73) {
+    const lookupAge = Math.min(Math.floor(label), 120);
+    const lifeExpectancyFactor = uniformLifetimeMap[lookupAge];
+
+    tooltipFooterComponent = (
+      <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+        <span className="mr-2">Life Expectancy Factor:</span>
+        <span className="ml-1 font-semibold">{lifeExpectancyFactor}</span>
+      </p>
+    );
   }
 
   return (
@@ -163,7 +101,6 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
         <span>Age {label}</span>
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
-      {header}
       <div className="flex flex-col gap-2">
         {payload.map((entry) => (
           <p
@@ -178,45 +115,43 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
           </p>
         ))}
       </div>
-      {totalFooter}
+      {tooltipFooterComponent}
     </div>
   );
 };
 
-const COLORS = ['var(--chart-2)', 'var(--chart-4)', 'var(--chart-3)', 'var(--chart-1)'];
+const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
 
-interface SingleSimulationTaxesLineChartProps {
-  rawChartData: SingleSimulationTaxesChartDataPoint[];
+interface SingleSimulationWithdrawalsLineChartProps {
+  rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
   keyMetrics: KeyMetrics;
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   dataView:
-    | 'marginalRates'
-    | 'effectiveRates'
     | 'annualAmounts'
     | 'cumulativeAmounts'
-    | 'taxableIncome'
-    | 'adjustedGrossIncome'
-    | 'investmentIncome'
-    | 'retirementDistributions'
-    | 'taxExemptIncome'
-    | 'ordinaryIncome'
-    | 'capGainsAndDividends'
+    | 'taxCategory'
+    | 'realizedGains'
+    | 'requiredMinimumDistributions'
     | 'earlyWithdrawalPenalties'
-    | 'adjustmentsAndDeductions';
+    | 'earlyWithdrawals'
+    | 'withdrawalRate'
+    | 'custom';
+  customDataID: string;
   startAge: number;
 }
 
-export default function SingleSimulationTaxesLineChart({
+export default function SingleSimulationWithdrawalsLineChart({
   rawChartData,
   keyMetrics,
   showReferenceLines,
   onAgeSelect,
   selectedAge,
   dataView,
+  customDataID,
   startAge,
-}: SingleSimulationTaxesLineChartProps) {
+}: SingleSimulationWithdrawalsLineChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
   const { resolvedTheme } = useTheme();
@@ -227,62 +162,65 @@ export default function SingleSimulationTaxesLineChart({
     () => setClickedOutsideChart(false)
   );
 
-  const chartData: SingleSimulationTaxesChartDataPoint[] = rawChartData;
+  let chartData:
+    | SingleSimulationWithdrawalsChartDataPoint[]
+    | Array<{ age: number; annualWithdrawals: number; cumulativeWithdrawals: number } & AccountDataWithTransactions> = rawChartData;
 
-  const dataKeys: (keyof SingleSimulationTaxesChartDataPoint)[] = [];
+  const dataKeys: (keyof SingleSimulationWithdrawalsChartDataPoint)[] = [];
   let formatter = undefined;
   switch (dataView) {
-    case 'marginalRates':
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
-      dataKeys.push('topMarginalIncomeTaxRate', 'topMarginalCapGainsTaxRate');
-      break;
-    case 'effectiveRates':
-      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
-      dataKeys.push('effectiveIncomeTaxRate', 'effectiveCapGainsTaxRate');
-      break;
     case 'annualAmounts':
+      dataKeys.push('annualWithdrawals');
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('annualIncomeTax', 'annualFicaTax', 'annualCapGainsTax', 'annualEarlyWithdrawalPenalties');
       break;
     case 'cumulativeAmounts':
+      dataKeys.push('cumulativeWithdrawals');
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('cumulativeIncomeTax', 'cumulativeFicaTax', 'cumulativeCapGainsTax', 'cumulativeEarlyWithdrawalPenalties');
       break;
-    case 'taxableIncome':
+    case 'taxCategory':
+      dataKeys.push('taxableWithdrawals', 'taxDeferredWithdrawals', 'taxFreeWithdrawals', 'cashWithdrawals');
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('taxableOrdinaryIncome', 'taxableCapGains', 'taxableIncome');
       break;
-    case 'adjustedGrossIncome':
+    case 'realizedGains':
+      dataKeys.push('annualRealizedGains', 'cumulativeRealizedGains');
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('adjustedGrossIncome');
       break;
-    case 'investmentIncome':
+    case 'requiredMinimumDistributions':
+      dataKeys.push('annualRequiredMinimumDistributions', 'cumulativeRequiredMinimumDistributions');
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('interestIncome', 'dividendIncome');
-      break;
-    case 'retirementDistributions':
-      formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('taxDeferredWithdrawals', 'earlyRothEarningsWithdrawals');
-      break;
-    case 'taxExemptIncome':
-      formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('taxExemptIncome');
-      break;
-    case 'ordinaryIncome':
-      formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('earnedIncome', 'interestIncome', 'retirementDistributions');
-      break;
-    case 'capGainsAndDividends':
-      formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('realizedGains', 'dividendIncome');
       break;
     case 'earlyWithdrawalPenalties':
-      formatter = (value: number) => formatNumber(value, 1, '$');
       dataKeys.push('annualEarlyWithdrawalPenalties', 'cumulativeEarlyWithdrawalPenalties');
-      break;
-    case 'adjustmentsAndDeductions':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('taxDeferredContributions', 'capitalLossDeduction', 'standardDeduction');
+      break;
+    case 'earlyWithdrawals':
+      dataKeys.push('annualEarlyWithdrawals', 'cumulativeEarlyWithdrawals');
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      break;
+    case 'withdrawalRate':
+      dataKeys.push('withdrawalRate');
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      break;
+    case 'custom':
+      if (!customDataID) {
+        console.warn('Custom data name is required for custom data view');
+        break;
+      }
+
+      const perAccountData = chartData.flatMap(({ age, perAccountData }) =>
+        perAccountData
+          .filter((account) => account.id === customDataID)
+          .map((account) => ({
+            age,
+            ...account,
+            annualWithdrawals: account.withdrawalsForPeriod,
+            cumulativeWithdrawals: account.totalWithdrawals,
+          }))
+      );
+
+      chartData = perAccountData;
+      dataKeys.push('annualWithdrawals', 'cumulativeWithdrawals');
+      formatter = (value: number) => formatNumber(value, 1, '$');
       break;
   }
 

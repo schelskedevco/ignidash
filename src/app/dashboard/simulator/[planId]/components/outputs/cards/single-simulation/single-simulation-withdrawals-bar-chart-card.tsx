@@ -6,7 +6,7 @@ import { Subheading } from '@/components/catalyst/heading';
 import { useAccountData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 
-import SingleSimulationWithdrawalsBarChart from '../charts/single-simulation-withdrawals-bar-chart';
+import SingleSimulationWithdrawalsBarChart from '../../charts/single-simulation/single-simulation-withdrawals-bar-chart';
 
 interface SingleSimulationWithdrawalsBarChartCardProps {
   selectedAge: number;

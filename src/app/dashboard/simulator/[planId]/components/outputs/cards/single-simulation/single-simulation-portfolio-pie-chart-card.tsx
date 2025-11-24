@@ -10,7 +10,7 @@ import { formatChartString, formatNumber } from '@/lib/utils';
 import { useAccountData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 
-import SingleSimulationPortfolioPieChart from '../charts/single-simulation-portfolio-pie-chart';
+import SingleSimulationPortfolioPieChart from '../../charts/single-simulation/single-simulation-portfolio-pie-chart';
 
 interface SingleSimulationPortfolioAssetTypePieChartCardProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];

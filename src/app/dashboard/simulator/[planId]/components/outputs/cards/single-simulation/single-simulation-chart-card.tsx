@@ -15,18 +15,18 @@ import {
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 
-import SingleSimulationPortfolioAreaChartCard from './cards/single-simulation-portfolio-area-chart-card';
-import SingleSimulationPortfolioPieChartCard from './cards/single-simulation-portfolio-pie-chart-card';
-import SingleSimulationCashFlowLineChartCard from './cards/single-simulation-cash-flow-line-chart-card';
-import SingleSimulationCashFlowBarChartCard from './cards/single-simulation-cash-flow-bar-chart-card';
-import SingleSimulationReturnsLineChartCard from './cards/single-simulation-returns-line-chart-card';
-import SingleSimulationReturnsBarChartCard from './cards/single-simulation-returns-bar-chart-card';
-import SingleSimulationTaxesLineChartCard from './cards/single-simulation-taxes-line-chart-card';
-import SingleSimulationTaxesBarChartCard from './cards/single-simulation-taxes-bar-chart-card';
-import SingleSimulationContributionsLineChartCard from './cards/single-simulation-contributions-line-chart-card';
-import SingleSimulationContributionsBarChartCard from './cards/single-simulation-contributions-bar-chart-card';
-import SingleSimulationWithdrawalsLineChartCard from './cards/single-simulation-withdrawals-line-chart-card';
-import SingleSimulationWithdrawalsBarChartCard from './cards/single-simulation-withdrawals-bar-chart-card';
+import SingleSimulationPortfolioAreaChartCard from './single-simulation-portfolio-area-chart-card';
+import SingleSimulationPortfolioPieChartCard from './single-simulation-portfolio-pie-chart-card';
+import SingleSimulationCashFlowLineChartCard from './single-simulation-cash-flow-line-chart-card';
+import SingleSimulationCashFlowBarChartCard from './single-simulation-cash-flow-bar-chart-card';
+import SingleSimulationReturnsLineChartCard from './single-simulation-returns-line-chart-card';
+import SingleSimulationReturnsBarChartCard from './single-simulation-returns-bar-chart-card';
+import SingleSimulationTaxesLineChartCard from './single-simulation-taxes-line-chart-card';
+import SingleSimulationTaxesBarChartCard from './single-simulation-taxes-bar-chart-card';
+import SingleSimulationContributionsLineChartCard from './single-simulation-contributions-line-chart-card';
+import SingleSimulationContributionsBarChartCard from './single-simulation-contributions-bar-chart-card';
+import SingleSimulationWithdrawalsLineChartCard from './single-simulation-withdrawals-line-chart-card';
+import SingleSimulationWithdrawalsBarChartCard from './single-simulation-withdrawals-bar-chart-card';
 
 interface ChartsCategoryProps {
   startAge: number;

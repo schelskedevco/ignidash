@@ -7,7 +7,7 @@ import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Subheading } from '@/components/catalyst/heading';
 
-import SingleSimulationTaxesLineChart from '../charts/single-simulation-taxes-line-chart';
+import SingleSimulationTaxesLineChart from '../../charts/single-simulation/single-simulation-taxes-line-chart';
 
 interface SingleSimulationTaxesLineChartCardProps {
   onAgeSelect: (age: number) => void;

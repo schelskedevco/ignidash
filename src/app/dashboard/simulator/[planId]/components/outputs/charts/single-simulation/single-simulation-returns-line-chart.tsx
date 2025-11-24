@@ -2,16 +2,16 @@
 
 import { useTheme } from 'next-themes';
 import { useState, useCallback } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
 
-import type { KeyMetrics } from '@/lib/types/key-metrics';
-import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
-import type { AccountDataWithTransactions } from '@/lib/calc/account';
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
-
-import TimeSeriesLegend from '../time-series-legend';
+import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { AccountDataWithReturns } from '@/lib/calc/returns';
+import type { KeyMetrics } from '@/lib/types/key-metrics';
+import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
+import TimeSeriesLegend from '@/components/time-series-legend';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -19,25 +19,59 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof SingleSimulationPortfolioChartDataPoint;
+    dataKey: keyof SingleSimulationReturnsChartDataPoint;
     payload:
-      | SingleSimulationPortfolioChartDataPoint
-      | ({ age: number; stockHoldings: number; bondHoldings: number; cashHoldings: number } & AccountDataWithTransactions);
+      | SingleSimulationReturnsChartDataPoint
+      | ({ age: number; annualStockGrowth: number; annualBondGrowth: number; annualCashGrowth: number } & AccountDataWithReturns);
   }>;
   label?: number;
   startAge: number;
   disabled: boolean;
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
 }
 
-const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomTooltipProps) => {
+const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - startAge);
 
-  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)'];
+  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--foreground)'];
 
-  const total = payload.reduce((sum, item) => sum + item.value, 0);
+  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom') => {
+    switch (mode) {
+      case 'rates':
+        return `${(value * 100).toFixed(1)}%`;
+      case 'annualAmounts':
+      case 'cumulativeAmounts':
+      case 'custom':
+        return formatNumber(value, 1, '$');
+      default:
+        return value;
+    }
+  };
+
+  let totalFooter = null;
+  switch (dataView) {
+    case 'rates':
+      break;
+    case 'annualAmounts':
+    case 'cumulativeAmounts':
+    case 'custom':
+      totalFooter = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="mr-2">Total:</span>
+          <span className="ml-1 font-semibold">
+            {formatNumber(
+              payload.reduce((sum, item) => sum + item.value, 0),
+              3,
+              '$'
+            )}
+          </span>
+        </p>
+      );
+      break;
+  }
 
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
@@ -55,44 +89,38 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled }: CustomToo
             })}
           >
             <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-            <span className="ml-1 font-semibold">
-              {formatNumber(entry.value, 1, '$')}
-              {total > 0 && ` (${formatNumber((entry.value / total) * 100, 1)}%)`}
-            </span>
+            <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
           </p>
         ))}
       </div>
-      <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
-        <span className="mr-2">Total:</span>
-        <span className="ml-1 font-semibold">{formatNumber(total, 3, '$')}</span>
-      </p>
+      {totalFooter}
     </div>
   );
 };
 
-const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
+const COLORS = ['var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--foreground)'];
 
-interface SingleSimulationPortfolioAreaChartProps {
-  rawChartData: SingleSimulationPortfolioChartDataPoint[];
-  startAge: number;
+interface SingleSimulationReturnsLineChartProps {
+  rawChartData: SingleSimulationReturnsChartDataPoint[];
   keyMetrics: KeyMetrics;
   showReferenceLines: boolean;
-  dataView: 'assetClass' | 'taxCategory' | 'custom';
-  customDataID: string;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
+  customDataID: string;
+  startAge: number;
 }
 
-export default function SingleSimulationPortfolioAreaChart({
+export default function SingleSimulationReturnsLineChart({
   rawChartData,
-  startAge,
   keyMetrics,
   showReferenceLines,
-  dataView,
-  customDataID,
   onAgeSelect,
   selectedAge,
-}: SingleSimulationPortfolioAreaChartProps) {
+  dataView,
+  customDataID,
+  startAge,
+}: SingleSimulationReturnsLineChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
   const { resolvedTheme } = useTheme();
@@ -104,18 +132,24 @@ export default function SingleSimulationPortfolioAreaChart({
   );
 
   let chartData:
-    | SingleSimulationPortfolioChartDataPoint[]
-    | Array<{ age: number; stockHoldings: number; bondHoldings: number; cashHoldings: number } & AccountDataWithTransactions> =
+    | SingleSimulationReturnsChartDataPoint[]
+    | Array<{ age: number; annualStockGrowth: number; annualBondGrowth: number; annualCashGrowth: number } & AccountDataWithReturns> =
     rawChartData;
 
-  const dataKeys: (keyof SingleSimulationPortfolioChartDataPoint | keyof AccountDataWithTransactions)[] = [];
-  const formatter = (value: number) => formatNumber(value, 1, '$');
+  const dataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
+  let formatter = undefined;
   switch (dataView) {
-    case 'assetClass':
-      dataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
+    case 'rates':
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      dataKeys.push('realStockReturn', 'realBondReturn', 'realCashReturn', 'inflationRate');
       break;
-    case 'taxCategory':
-      dataKeys.push('taxableValue', 'taxDeferredValue', 'taxFreeValue', 'cashSavings');
+    case 'annualAmounts':
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      dataKeys.push('annualStockGrowth', 'annualBondGrowth', 'annualCashGrowth');
+      break;
+    case 'cumulativeAmounts':
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      dataKeys.push('cumulativeStockGrowth', 'cumulativeBondGrowth', 'cumulativeCashGrowth');
       break;
     case 'custom':
       if (!customDataID) {
@@ -127,25 +161,19 @@ export default function SingleSimulationPortfolioAreaChart({
         perAccountData
           .filter((account) => account.id === customDataID)
           .map((account) => {
-            const balance = account.balance;
-
-            const assetAllocation = account.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
-            const stocksAllocation = assetAllocation.stocks;
-            const bondsAllocation = assetAllocation.bonds;
-            const cashAllocation = assetAllocation.cash;
-
             return {
               age,
               ...account,
-              stockHoldings: balance * stocksAllocation,
-              bondHoldings: balance * bondsAllocation,
-              cashHoldings: balance * cashAllocation,
+              annualStockGrowth: account.returnAmountsForPeriod.stocks,
+              annualBondGrowth: account.returnAmountsForPeriod.bonds,
+              annualCashGrowth: account.returnAmountsForPeriod.cash,
             };
           })
       );
 
       chartData = perAccountData;
-      dataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
+      formatter = (value: number) => formatNumber(value, 1, '$');
+      dataKeys.push('annualStockGrowth', 'annualBondGrowth', 'annualCashGrowth');
       break;
   }
 
@@ -169,11 +197,13 @@ export default function SingleSimulationPortfolioAreaChart({
     [onAgeSelect]
   );
 
+  const { getOpacity, handleMouseEnter, handleMouseLeave } = useLineChartLegendEffectOpacity();
+
   return (
     <div>
       <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_svg:focus]:outline-none">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
+          <LineChart
             data={chartData}
             className="text-xs"
             margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
@@ -184,32 +214,36 @@ export default function SingleSimulationPortfolioAreaChart({
             <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
             <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
             {dataKeys.map((dataKey, index) => (
-              <Area
+              <Line
                 key={dataKey}
                 type="monotone"
                 dataKey={dataKey}
-                stackId="1"
                 stroke={COLORS[index % COLORS.length]}
-                fill={COLORS[index % COLORS.length]}
-                fillOpacity={1}
+                dot={false}
                 activeDot={false}
+                strokeWidth={3}
+                strokeOpacity={getOpacity(dataKey)}
               />
             ))}
             <Tooltip
-              content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
+              content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
               cursor={{ stroke: foregroundColor }}
             />
             {keyMetrics.retirementAge && showReferenceLines && (
               <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
             )}
             {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
-            {keyMetrics.portfolioAtRetirement && showReferenceLines && dataView !== 'custom' && (
-              <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
-            )}
-          </AreaChart>
+          </LineChart>
         </ResponsiveContainer>
       </div>
-      <TimeSeriesLegend colors={COLORS} legendStrokeColor={legendStrokeColor} dataKeys={dataKeys} isSmallScreen={isSmallScreen} />
+      <TimeSeriesLegend
+        colors={COLORS}
+        legendStrokeColor={legendStrokeColor}
+        dataKeys={dataKeys}
+        isSmallScreen={isSmallScreen}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      />
     </div>
   );
 }
