@@ -8,6 +8,7 @@ import { contributionFormSchema, baseContributionSchema } from './contribution-f
 import { marketAssumptionsSchema } from './market-assumptions-schema';
 import { taxSettingsSchema } from './tax-settings-schema';
 import { privacySettingsSchema } from './privacy-settings-schema';
+import { simulationSettingsSchema } from '../simulation-settings-schema';
 
 export const simulatorSchema = z.object({
   timeline: timelineFormSchema.nullable(),
@@ -19,6 +20,7 @@ export const simulatorSchema = z.object({
   marketAssumptions: marketAssumptionsSchema,
   taxSettings: taxSettingsSchema,
   privacySettings: privacySettingsSchema,
+  simulationSettings: simulationSettingsSchema,
 });
 
 export type SimulatorInputs = z.infer<typeof simulatorSchema>;

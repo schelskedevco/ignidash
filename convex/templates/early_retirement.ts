@@ -221,4 +221,8 @@ export const earlyRetirementTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime'
   privacySettings: {
     isPrivate: true,
   },
+  simulationSettings: {
+    simulationMode: 'fixedReturns',
+    simulationSeed: 9521,
+  },
 };

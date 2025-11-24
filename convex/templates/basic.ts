@@ -191,4 +191,8 @@ export const basicTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId
   privacySettings: {
     isPrivate: true,
   },
+  simulationSettings: {
+    simulationMode: 'fixedReturns',
+    simulationSeed: 9521,
+  },
 };

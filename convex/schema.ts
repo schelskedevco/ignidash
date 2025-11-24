@@ -9,6 +9,7 @@ import { contributionRulesValidator, baseContributionRuleValidator } from './val
 import { marketAssumptionsValidator } from './validators/market_assumptions_validator';
 import { taxSettingsValidator } from './validators/tax_settings_validator';
 import { privacySettingsValidator } from './validators/privacy_settings_validator';
+import { simulationSettingsValidator } from './validators/simulation_settings_validator';
 
 export default defineSchema({
   plans: defineTable({
@@ -24,5 +25,6 @@ export default defineSchema({
     marketAssumptions: marketAssumptionsValidator,
     taxSettings: taxSettingsValidator,
     privacySettings: privacySettingsValidator,
+    simulationSettings: simulationSettingsValidator,
   }).index('by_userId', ['userId']),
 });

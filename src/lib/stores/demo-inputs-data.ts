@@ -174,6 +174,10 @@ export const demoInputs1: SimulatorInputs = {
   privacySettings: {
     isPrivate: true,
   },
+  simulationSettings: {
+    simulationSeed: 9521,
+    simulationMode: 'fixedReturns',
+  },
 };
 
 // Early Retirement Demo Inputs
@@ -386,5 +390,9 @@ export const demoInputs2: SimulatorInputs = {
   },
   privacySettings: {
     isPrivate: true,
+  },
+  simulationSettings: {
+    simulationSeed: 9521,
+    simulationMode: 'fixedReturns',
   },
 };

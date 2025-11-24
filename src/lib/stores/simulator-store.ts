@@ -107,7 +107,7 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
     simulationStatus: 'none',
     category: SimulationCategory.Portfolio,
     simulationSeed: 9521,
-    simulationSettings: { simulationMode: 'fixedReturns' },
+    simulationSettings: { simulationSeed: 9521, simulationMode: 'fixedReturns' },
     monteCarloSortMode: 'finalPortfolioValue',
   },
   preferences: {

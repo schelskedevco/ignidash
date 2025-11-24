@@ -8,6 +8,7 @@ import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assump
 import type { TimelineInputs } from '@/lib/schemas/inputs/timeline-form-schema';
 import type { TaxSettingsInputs } from '@/lib/schemas/inputs/tax-settings-schema';
 import type { PrivacySettingsInputs } from '@/lib/schemas/inputs/privacy-settings-schema';
+import type { SimulationSettingsInputs } from '@/lib/schemas/simulation-settings-schema';
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 
 // ============================================================================
@@ -81,6 +82,13 @@ export function privacySettingsFromConvex(privacySettings: Doc<'plans'>['privacy
 }
 
 /**
+ * Transforms Convex simulation settings to Zod SimulationSettingsInputs format
+ */
+export function simulationSettingsFromConvex(simulationSettings: Doc<'plans'>['simulationSettings']): SimulationSettingsInputs {
+  return { ...simulationSettings };
+}
+
+/**
  * Transforms a Convex expense to Zod ExpenseInputs format
  */
 export function expenseFromConvex(expense: Doc<'plans'>['expenses'][number]): ExpenseInputs {
@@ -129,7 +137,7 @@ export function marketAssumptionsFromConvex(marketAssumptions: Doc<'plans'>['mar
  * Transforms a Convex timeline to Zod TimelineInputs format
  */
 export function timelineFromConvex(timeline: Doc<'plans'>['timeline']): TimelineInputs | null {
-  return timeline ? { ...timeline } : null;
+  return timeline ? structuredClone(timeline) : null;
 }
 
 /**
@@ -151,6 +159,7 @@ export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
     marketAssumptions: marketAssumptionsFromConvex(plan.marketAssumptions),
     taxSettings: taxSettingsFromConvex(plan.taxSettings),
     privacySettings: privacySettingsFromConvex(plan.privacySettings),
+    simulationSettings: simulationSettingsFromConvex(plan.simulationSettings),
   };
 }
 
@@ -225,6 +234,13 @@ export function privacySettingsToConvex(privacySettings: PrivacySettingsInputs):
 }
 
 /**
+ * Transforms Zod SimulationSettingsInputs to Convex simulation settings format
+ */
+export function simulationSettingsToConvex(simulationSettings: SimulationSettingsInputs): Doc<'plans'>['simulationSettings'] {
+  return { ...simulationSettings };
+}
+
+/**
  * Transforms Zod ExpenseInputs to Convex expense format
  */
 export function expenseToConvex(expense: ExpenseInputs): Doc<'plans'>['expenses'][number] {
@@ -273,7 +289,7 @@ export function marketAssumptionsToConvex(marketAssumptions: MarketAssumptionsIn
  * Transforms Zod TimelineInputs to Convex timeline format
  */
 export function timelineToConvex(timeline: TimelineInputs | null): Doc<'plans'>['timeline'] {
-  return timeline ? { ...timeline } : null;
+  return timeline ? structuredClone(timeline) : null;
 }
 
 /**
@@ -297,6 +313,7 @@ export function simulatorToConvex(
     marketAssumptions: marketAssumptionsToConvex(simulator.marketAssumptions),
     taxSettings: taxSettingsToConvex(simulator.taxSettings),
     privacySettings: privacySettingsToConvex(simulator.privacySettings),
+    simulationSettings: simulationSettingsToConvex(simulator.simulationSettings),
   };
 }
 
