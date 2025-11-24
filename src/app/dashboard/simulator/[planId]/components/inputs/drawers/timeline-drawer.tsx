@@ -154,6 +154,7 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
                       id="retirementStrategy.retirementAge"
                       inputMode="numeric"
                       placeholder="62"
+                      autoFocus
                     />
                     <ErrorMessage>{getRetirementStrategyError(errors, retirementStrategyType)}</ErrorMessage>
                     <Description>{getRetirementStrategyDesc(retirementStrategyType)}</Description>
@@ -169,6 +170,7 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
                       inputMode="decimal"
                       placeholder="4%"
                       suffix="%"
+                      autoFocus
                     />
                     <ErrorMessage>{getRetirementStrategyError(errors, retirementStrategyType)}</ErrorMessage>
                     <Description>{getRetirementStrategyDesc(retirementStrategyType)}</Description>

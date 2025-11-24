@@ -122,6 +122,7 @@ export default function SimulationSettingsDrawer({ setOpen, simulationSettings }
                       min={1}
                       max={9999}
                       disableThousandsSeparator
+                      autoFocus
                     />
                     {errors.simulationSeed && <ErrorMessage>{errors.simulationSeed?.message}</ErrorMessage>}
                     <Description>

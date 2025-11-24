@@ -99,7 +99,15 @@ export default function ExpectedReturnsDrawer({ setOpen, marketAssumptions }: Ex
                     <span>Stock Return</span>
                     <span className="text-muted-foreground text-sm/6">{realStockReturn.toFixed(1)}% real</span>
                   </Label>
-                  <NumberInput name="stockReturn" control={control} id="stockReturn" inputMode="decimal" placeholder="10%" suffix="%" />
+                  <NumberInput
+                    name="stockReturn"
+                    control={control}
+                    id="stockReturn"
+                    inputMode="decimal"
+                    placeholder="10%"
+                    suffix="%"
+                    autoFocus
+                  />
                   {errors.stockReturn && <ErrorMessage>{errors.stockReturn?.message}</ErrorMessage>}
                   <Description>Expected annual return for stocks and other volatile investments.</Description>
                 </Field>
