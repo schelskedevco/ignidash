@@ -48,19 +48,19 @@ function PlanListItem({ plan, onDropdownClickEdit, onDropdownClickClone, onDropd
     >
       <div className="min-w-0 flex-auto">
         <div className="flex items-center gap-x-3">
-          <p className="text-sm/6 font-semibold text-zinc-900 dark:text-white">{plan.name}</p>
+          <p className="truncate text-sm/6 font-semibold text-zinc-900 dark:text-white">{plan.name}</p>
           {status === 'In progress' ? (
-            <p className="mt-0.5 rounded-md bg-zinc-50 px-1.5 py-0.5 text-xs font-medium text-zinc-600 inset-ring inset-ring-zinc-500/10 dark:bg-zinc-400/10 dark:text-zinc-400 dark:inset-ring-zinc-400/20">
+            <p className="mt-0.5 hidden rounded-md bg-zinc-50 px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-zinc-600 inset-ring inset-ring-zinc-500/10 sm:block dark:bg-zinc-400/10 dark:text-zinc-400 dark:inset-ring-zinc-400/20">
               {status}
             </p>
           ) : null}
           {status === 'Success' ? (
-            <p className="mt-0.5 rounded-md bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:inset-ring-green-500/20">
+            <p className="mt-0.5 hidden rounded-md bg-green-50 px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-green-700 inset-ring inset-ring-green-600/20 sm:block dark:bg-green-400/10 dark:text-green-400 dark:inset-ring-green-500/20">
               {status}
             </p>
           ) : null}
           {status === 'Failed' ? (
-            <p className="mt-0.5 rounded-md bg-red-50 px-1.5 py-0.5 text-xs font-medium text-red-700 inset-ring inset-ring-red-600/20 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-500/20">
+            <p className="mt-0.5 hidden rounded-md bg-red-50 px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-red-700 inset-ring inset-ring-red-600/20 sm:block dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-500/20">
               {status}
             </p>
           ) : null}
