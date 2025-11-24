@@ -1,5 +1,5 @@
 import { v } from 'convex/values';
-import { mutation } from './_generated/server';
+import { mutation, internalMutation } from './_generated/server';
 
 import { getUserIdOrThrow } from './utils/auth_utils';
 import { deleteAllPlansForUser } from './utils/plan_utils';
@@ -28,5 +28,14 @@ export const deleteAppData = mutation({
         privacySettings: { isPrivate: true },
       });
     }
+  },
+});
+
+export const deleteAppDataForUser = internalMutation({
+  args: {
+    userId: v.string(),
+  },
+  handler: async (ctx, { userId }) => {
+    await deleteAllPlansForUser(ctx, userId);
   },
 });

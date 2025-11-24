@@ -119,8 +119,20 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
           });
         },
         afterDelete: async (user, request) => {
-          // Delete associated application data here if needed
           console.log(`User with email ${user.email} has deleted their account.`);
+
+          try {
+            await fetch(`${process.env.CONVEX_SITE_URL}/deleteUserData`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${process.env.CONVEX_API_SECRET}`,
+              },
+              body: JSON.stringify({ userId: user.id }),
+            });
+          } catch (error) {
+            console.error('Error deleting user data from Convex:', error);
+          }
         },
       },
     },
