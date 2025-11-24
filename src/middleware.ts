@@ -15,13 +15,13 @@ export async function middleware(request: NextRequest) {
   const isAuthPage = ['/signin', '/signup', '/forgot-password'].some((path) => request.nextUrl.pathname.startsWith(path));
   if (session && isAuthPage) return NextResponse.redirect(new URL('/dashboard', request.url));
 
-  const isDashboardPage = request.nextUrl.pathname.startsWith('/dashboard');
-  if (!session && isDashboardPage)
+  const isProtectedPage = request.nextUrl.pathname.startsWith('/dashboard') || request.nextUrl.pathname.startsWith('/settings');
+  if (!session && isProtectedPage)
     return NextResponse.redirect(new URL(`/signin?redirect=${encodeURIComponent(request.nextUrl.pathname)}`, request.url));
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/signin', '/signup', '/forgot-password', '/dashboard/:path*'],
+  matcher: ['/signin', '/signup', '/forgot-password', '/dashboard/:path*', '/settings'],
 };
