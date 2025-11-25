@@ -42,8 +42,11 @@ function getLiabilityDesc(liability: LiabilityInputs) {
         {formatNumber(liability.balance, 0, '$')} | {liabilityTypeForDisplay(liability.type)}
       </p>
       <p>
-        {formatNumber(liability.interestRate, 2)}% | {formatNumber(liability.monthlyPayment, 0, '$')} monthly
+        Updated <time dateTime={new Date(liability.updatedAt).toISOString()}>{new Date(liability.updatedAt).toLocaleDateString()}</time>
       </p>
+      {/* <p>
+        {formatNumber(liability.interestRate, 2)}% | {formatNumber(liability.monthlyPayment, 0, '$')} monthly
+      </p> */}
     </>
   );
 }
@@ -140,7 +143,7 @@ export default function Finances() {
               ))}
             </ul>
           )}
-          <Divider className="my-4 hidden sm:block" />
+          <Divider className="my-2" />
           {!hasLiabilities ? (
             <DataListEmptyStateButton onClick={() => setLiabilityDialogOpen(true)} icon={CreditCardIcon} buttonText="Add liability" />
           ) : (
