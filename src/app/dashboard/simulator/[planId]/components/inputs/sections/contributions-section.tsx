@@ -36,7 +36,7 @@ import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import ContributionRuleDialog from '../dialogs/contribution-rule-dialog';
-import DataListEmptyStateButton from '../disclosure-section-empty-state-button';
+import DataListEmptyStateButton from '../data-list-empty-state-button';
 import SortableContributionItem from '../sortable-contribution-item';
 import ContributionItem from '../contribution-item';
 

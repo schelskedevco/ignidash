@@ -20,7 +20,7 @@ import DataItem from '@/components/ui/data-item';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import IncomeDialog from '../dialogs/income-dialog';
-import DataListEmptyStateButton from '../disclosure-section-empty-state-button';
+import DataListEmptyStateButton from '../data-list-empty-state-button';
 
 function getIncomeDesc(income: IncomeInputs) {
   return (

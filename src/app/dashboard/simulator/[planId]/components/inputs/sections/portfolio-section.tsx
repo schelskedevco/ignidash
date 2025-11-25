@@ -21,7 +21,7 @@ import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
-import DataListEmptyStateButton from '../disclosure-section-empty-state-button';
+import DataListEmptyStateButton from '../data-list-empty-state-button';
 
 function getAccountDesc(account: AccountInputs) {
   return (
