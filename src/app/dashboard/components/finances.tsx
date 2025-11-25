@@ -153,14 +153,14 @@ export default function Finances() {
                       leftAddOn={<Icon className="size-8" />}
                       onDropdownClickEdit={() => handleEditAsset(asset)}
                       onDropdownClickDelete={() => setAssetToDelete({ id: asset.id, name: asset.name })}
-                      colorClassName="bg-[var(--chart-3)]"
+                      colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
                     />
                   );
                 })}
               </ul>
             </>
           )}
-          <Divider className="my-2" />
+          <Divider className="my-2" soft />
           {!hasLiabilities ? (
             <DataListEmptyStateButton onClick={() => setLiabilityDialogOpen(true)} icon={CreditCardIcon} buttonText="Add liability" />
           ) : (
@@ -186,7 +186,7 @@ export default function Finances() {
                       leftAddOn={<Icon className="size-8" />}
                       onDropdownClickEdit={() => handleEditLiability(liability)}
                       onDropdownClickDelete={() => setLiabilityToDelete({ id: liability.id, name: liability.name })}
-                      colorClassName="bg-[var(--chart-4)]"
+                      colorClassName="bg-[var(--chart-2)] dark:bg-[var(--chart-3)]"
                     />
                   );
                 })}

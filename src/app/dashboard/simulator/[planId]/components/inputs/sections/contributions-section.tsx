@@ -208,7 +208,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
             </Select>
             <Description className="sr-only">Allocate any leftover cash after your contribution rules are applied.</Description>
           </Field>
-          <Divider className="my-4" />
+          <Divider className="my-4" soft />
           {hasContributionRules && (
             <>
               <DndContext
