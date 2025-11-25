@@ -15,6 +15,7 @@ import { useAssetData, useLiabilityData } from '@/hooks/use-convex-data';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { Divider } from '@/components/catalyst/divider';
 import DataItem from '@/components/ui/data-item';
+import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
 
 import AssetDialog from './dialogs/asset-dialog';
 import LiabilityDialog from './dialogs/liability-dialog';
@@ -91,14 +92,7 @@ export default function Finances() {
         </header>
         <div className="flex h-full gap-2 px-4 py-5 sm:flex-col sm:py-6 lg:h-[calc(100%-5.3125rem)]">
           {!hasAssets ? (
-            <button
-              type="button"
-              className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
-              onClick={() => setAssetDialogOpen(true)}
-            >
-              <WalletIcon aria-hidden="true" className="text-primary mx-auto size-12" />
-              <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add asset</span>
-            </button>
+            <DataListEmptyStateButton onClick={() => setAssetDialogOpen(true)} icon={WalletIcon} buttonText="Add asset" />
           ) : (
             <ul role="list" className="grid grid-cols-1 gap-3">
               {assets!.map((asset, index) => (
@@ -118,14 +112,7 @@ export default function Finances() {
           )}
           <Divider className="my-4 hidden sm:block" />
           {!hasLiabilities ? (
-            <button
-              type="button"
-              className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
-              onClick={() => setLiabilityDialogOpen(true)}
-            >
-              <CreditCardIcon aria-hidden="true" className="text-primary mx-auto size-12" />
-              <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add liability</span>
-            </button>
+            <DataListEmptyStateButton onClick={() => setLiabilityDialogOpen(true)} icon={CreditCardIcon} buttonText="Add liability" />
           ) : (
             <ul role="list" className="grid grid-cols-1 gap-3">
               {liabilities!.map((liability, index) => (
