@@ -10,6 +10,8 @@ import type { TaxSettingsInputs } from '@/lib/schemas/inputs/tax-settings-schema
 import type { PrivacySettingsInputs } from '@/lib/schemas/inputs/privacy-settings-schema';
 import type { SimulationSettingsInputs } from '@/lib/schemas/simulation-settings-schema';
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
+import type { AssetInputs } from '@/lib/schemas/finances/asset-schema';
+import type { LiabilityInputs } from '@/lib/schemas/finances/liability-schema';
 
 // ============================================================================
 // CONVEX TO ZOD TRANSFORMERS
@@ -161,6 +163,20 @@ export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
     privacySettings: privacySettingsFromConvex(plan.privacySettings),
     simulationSettings: simulationSettingsFromConvex(plan.simulationSettings),
   };
+}
+
+/**
+ * Transforms a Convex asset to Zod AssetInputs format
+ */
+export function assetFromConvex(asset: Doc<'finances'>['assets'][number]): AssetInputs {
+  return { ...asset };
+}
+
+/**
+ * Transforms a Convex liability to Zod LiabilityInputs format
+ */
+export function liabilityFromConvex(liability: Doc<'finances'>['liabilities'][number]): LiabilityInputs {
+  return { ...liability };
 }
 
 // ============================================================================
@@ -315,6 +331,20 @@ export function simulatorToConvex(
     privacySettings: privacySettingsToConvex(simulator.privacySettings),
     simulationSettings: simulationSettingsToConvex(simulator.simulationSettings),
   };
+}
+
+/**
+ * Transforms Zod AssetInputs to Convex asset format
+ */
+export function assetToConvex(asset: AssetInputs): Doc<'finances'>['assets'][number] {
+  return { ...asset };
+}
+
+/**
+ * Transforms Zod LiabilityInputs to Convex liability format
+ */
+export function liabilityToConvex(liability: LiabilityInputs): Doc<'finances'>['liabilities'][number] {
+  return { ...liability };
 }
 
 // ============================================================================

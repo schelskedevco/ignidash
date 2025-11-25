@@ -149,3 +149,14 @@ export const useSimulationSettingsData = () => {
   const q = useQuery(api.simulation_settings.get, { planId });
   return useMemo(() => (q ? q : null), [q]);
 };
+
+// Finances
+export const useAssetData = () => {
+  const q = useQuery(api.finances.getAssets);
+  return useMemo(() => (q ? q : null), [q]);
+};
+
+export const useLiabilityData = () => {
+  const q = useQuery(api.finances.getLiabilities);
+  return useMemo(() => (q ? q : null), [q]);
+};

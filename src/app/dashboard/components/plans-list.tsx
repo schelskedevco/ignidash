@@ -7,7 +7,7 @@ import { Preloaded, usePreloadedQuery } from 'convex/react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
-import { PlusIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
+import { PlusIcon, WalletIcon as MicroWalletIcon, CreditCardIcon as MicroCreditCardIcon } from '@heroicons/react/16/solid';
 import { WalletIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 
 import { Dialog } from '@/components/catalyst/dialog';
@@ -18,8 +18,12 @@ import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 import { useSimulationResult, useKeyMetrics, useIsCalculationReady } from '@/lib/stores/simulator-store';
 import { simulatorFromConvex } from '@/lib/utils/convex-to-zod-transformers';
+import Drawer from '@/components/ui/drawer';
+import { useAssetData, useLiabilityData } from '@/hooks/use-convex-data';
 
 import PlanDialog from './dialogs/plan-dialog';
+import AssetDrawer from './drawers/asset-drawer';
+import LiabilityDrawer from './drawers/liability-drawer';
 
 interface PlanListItems {
   plan: Doc<'plans'>;
@@ -121,6 +125,24 @@ interface PlanListProps {
 }
 
 export default function PlanList({ preloadedPlans }: PlanListProps) {
+  const [assetDrawerOpen, setAssetDrawerOpen] = useState(false);
+  const assets = useAssetData();
+  const assetDrawerTitleComponent = (
+    <div className="flex items-center gap-2">
+      <WalletIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+      <span>Assets</span>
+    </div>
+  );
+
+  const [liabilityDrawerOpen, setLiabilityDrawerOpen] = useState(false);
+  const liabilities = useLiabilityData();
+  const liabilityDrawerTitleComponent = (
+    <div className="flex items-center gap-2">
+      <CreditCardIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+      <span>Liabilities</span>
+    </div>
+  );
+
   const plans = usePreloadedQuery(preloadedPlans);
   const allPlans = useMemo(() => plans.map((plan) => ({ id: plan._id, name: plan.name })), [plans]);
 
@@ -194,16 +216,20 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
       <aside className="border-border/50 -mx-2 border-t sm:-mx-3 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:mx-0 lg:w-96 lg:overflow-y-auto lg:border-t-0 lg:border-l lg:bg-zinc-50 dark:lg:bg-black/10">
         <header className="from-emphasized-background to-background border-border/50 flex items-center justify-between border-b bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
           <Heading level={4}>Finances</Heading>
-          <Button outline onClick={() => {}}>
-            <PencilSquareIcon />
-            Edit
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button outline onClick={() => setAssetDrawerOpen(true)}>
+              <MicroWalletIcon />
+            </Button>
+            <Button outline onClick={() => setLiabilityDrawerOpen(true)}>
+              <MicroCreditCardIcon />
+            </Button>
+          </div>
         </header>
         <div className="flex h-full gap-2 px-4 py-5 sm:flex-col sm:py-6 lg:h-[calc(100%-5.3125rem)]">
           <button
             type="button"
             className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
-            onClick={() => {}}
+            onClick={() => setAssetDrawerOpen(true)}
           >
             <WalletIcon aria-hidden="true" className="text-primary mx-auto size-12" />
             <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add asset</span>
@@ -211,7 +237,7 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
           <button
             type="button"
             className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
-            onClick={() => {}}
+            onClick={() => setLiabilityDrawerOpen(true)}
           >
             <CreditCardIcon aria-hidden="true" className="text-primary mx-auto size-12" />
             <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add liability</span>
@@ -261,6 +287,12 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
           </Button>
         </AlertActions>
       </Alert>
+      <Drawer open={assetDrawerOpen} setOpen={setAssetDrawerOpen} title={assetDrawerTitleComponent}>
+        <AssetDrawer setOpen={setAssetDrawerOpen} assets={assets} />
+      </Drawer>
+      <Drawer open={liabilityDrawerOpen} setOpen={setLiabilityDrawerOpen} title={liabilityDrawerTitleComponent}>
+        <LiabilityDrawer setOpen={setLiabilityDrawerOpen} liabilities={liabilities} />
+      </Drawer>
     </>
   );
 }
