@@ -21,7 +21,7 @@ import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
-import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
+import DataListEmptyStateButton from '../disclosure-section-empty-state-button';
 
 function getAccountDesc(account: AccountInputs) {
   return (
@@ -120,12 +120,8 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
           )}
           {!hasAccounts && (
             <div className="flex h-full gap-2 sm:flex-col">
-              <DisclosureSectionEmptyStateButton onClick={() => setSavingsDialogOpen(true)} icon={PiggyBankIcon} buttonText="Add savings" />
-              <DisclosureSectionEmptyStateButton
-                onClick={() => setAccountDialogOpen(true)}
-                icon={TrendingUpIcon}
-                buttonText="Add investment"
-              />
+              <DataListEmptyStateButton onClick={() => setSavingsDialogOpen(true)} icon={PiggyBankIcon} buttonText="Add savings" />
+              <DataListEmptyStateButton onClick={() => setAccountDialogOpen(true)} icon={TrendingUpIcon} buttonText="Add investment" />
             </div>
           )}
         </div>

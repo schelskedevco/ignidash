@@ -20,7 +20,7 @@ import DataItem from '@/components/ui/data-item';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import IncomeDialog from '../dialogs/income-dialog';
-import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
+import DataListEmptyStateButton from '../disclosure-section-empty-state-button';
 
 function getIncomeDesc(income: IncomeInputs) {
   return (
@@ -118,11 +118,7 @@ export default function IncomesSection(props: IncomesSectionProps) {
             </>
           )}
           {!hasIncomes && (
-            <DisclosureSectionEmptyStateButton
-              onClick={() => setIncomeDialogOpen(true)}
-              icon={BanknoteArrowUpIcon}
-              buttonText="Add income"
-            />
+            <DataListEmptyStateButton onClick={() => setIncomeDialogOpen(true)} icon={BanknoteArrowUpIcon} buttonText="Add income" />
           )}
         </div>
       </DisclosureSection>

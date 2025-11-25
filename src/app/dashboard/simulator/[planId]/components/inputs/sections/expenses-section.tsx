@@ -20,7 +20,7 @@ import DataItem from '@/components/ui/data-item';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import ExpenseDialog from '../dialogs/expense-dialog';
-import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
+import DataListEmptyStateButton from '../disclosure-section-empty-state-button';
 
 function getExpenseDesc(expense: ExpenseInputs) {
   return (
@@ -118,11 +118,7 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
             </>
           )}
           {!hasExpenses && (
-            <DisclosureSectionEmptyStateButton
-              onClick={() => setExpenseDialogOpen(true)}
-              icon={BanknoteArrowDownIcon}
-              buttonText="Add expense"
-            />
+            <DataListEmptyStateButton onClick={() => setExpenseDialogOpen(true)} icon={BanknoteArrowDownIcon} buttonText="Add expense" />
           )}
         </div>
       </DisclosureSection>

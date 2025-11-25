@@ -1,4 +1,4 @@
-interface DisclosureSectionEmptyStateButtonProps {
+interface DataListEmptyStateButtonProps {
   onClick: () => void;
   icon: React.ForwardRefExoticComponent<
     React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & { title?: string; titleId?: string } & React.RefAttributes<SVGSVGElement>
@@ -6,7 +6,7 @@ interface DisclosureSectionEmptyStateButtonProps {
   buttonText: string;
 }
 
-export default function DisclosureSectionEmptyStateButton({ onClick, icon: Icon, buttonText }: DisclosureSectionEmptyStateButtonProps) {
+export default function DataListEmptyStateButton({ onClick, icon: Icon, buttonText }: DataListEmptyStateButtonProps) {
   return (
     <button
       type="button"
