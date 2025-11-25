@@ -33,9 +33,9 @@ import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/i
 import { accountTypeForDisplay, type AccountInputs, taxCategoryFromAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import type { TaxCategory } from '@/lib/calc/asset';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import ContributionRuleDialog from '../dialogs/contribution-rule-dialog';
-import DeleteDataItemAlert from '../delete-data-item-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 import SortableContributionItem from '../sortable-contribution-item';
 import ContributionItem from '../contribution-item';

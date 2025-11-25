@@ -17,9 +17,9 @@ import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-displ
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DataItem from '@/components/ui/data-item';
+import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import ExpenseDialog from '../dialogs/expense-dialog';
-import DeleteDataItemAlert from '../delete-data-item-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 
 function getExpenseDesc(expense: ExpenseInputs) {

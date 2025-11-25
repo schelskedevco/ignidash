@@ -17,9 +17,9 @@ import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-displ
 import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DataItem from '@/components/ui/data-item';
+import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import IncomeDialog from '../dialogs/income-dialog';
-import DeleteDataItemAlert from '../delete-data-item-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 
 function getIncomeDesc(income: IncomeInputs) {

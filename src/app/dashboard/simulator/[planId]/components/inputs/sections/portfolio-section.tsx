@@ -17,10 +17,10 @@ import type { TaxCategory } from '@/lib/calc/asset';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DataItem from '@/components/ui/data-item';
+import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
-import DeleteDataItemAlert from '../delete-data-item-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 
 function getAccountDesc(account: AccountInputs) {
