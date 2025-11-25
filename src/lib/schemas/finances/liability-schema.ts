@@ -8,6 +8,7 @@ export const liabilityFormSchema = z.object({
   balance: currencyFieldAllowsZero('Balance cannot be negative'),
   interestRate: percentageField(0, 999, 'Interest rate'),
   monthlyPayment: currencyFieldAllowsZero('Monthly payment cannot be negative'),
+  updatedAt: z.number(),
   type: z.enum(['mortgage', 'autoLoan', 'studentLoan', 'personalLoan', 'creditCard', 'medicalDebt', 'other']),
 });
 

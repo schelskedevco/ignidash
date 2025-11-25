@@ -6,6 +6,7 @@ export const liabilityValidator = v.object({
   balance: v.number(),
   interestRate: v.number(),
   monthlyPayment: v.number(),
+  updatedAt: v.number(),
   type: v.union(
     v.literal('mortgage'),
     v.literal('autoLoan'),

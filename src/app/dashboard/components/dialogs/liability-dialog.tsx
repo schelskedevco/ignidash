@@ -33,6 +33,7 @@ export default function LiabilityDialog({ onClose, selectedLiability: _selectedL
       ({
         name: 'Liability ' + (numLiabilities + 1),
         id: '',
+        updatedAt: Date.now(),
         type: 'creditCard' as LiabilityInputs['type'],
       }) as const satisfies Partial<LiabilityInputs>,
     [numLiabilities]
@@ -57,7 +58,7 @@ export default function LiabilityDialog({ onClose, selectedLiability: _selectedL
     const liabilityId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
-      await m({ liability: liabilityToConvex({ ...data, id: liabilityId }) });
+      await m({ liability: liabilityToConvex({ ...data, id: liabilityId, updatedAt: Date.now() }) });
       onClose();
     } catch (error) {
       setSaveError(error instanceof ConvexError ? error.message : 'Failed to save liability.');
