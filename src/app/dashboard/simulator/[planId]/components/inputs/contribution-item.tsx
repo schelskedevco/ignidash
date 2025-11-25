@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 
-import DisclosureSectionDataItem from './disclosure-section-data-item';
+import DataItem from '@/components/ui/data-item';
 
 interface ContributionItemProps {
   id: string;
@@ -17,7 +17,7 @@ interface ContributionItemProps {
 }
 
 export const ContributionItem = forwardRef<HTMLLIElement, ContributionItemProps>(({ id, ...props }, ref) => {
-  return <DisclosureSectionDataItem id={id} {...props} ref={ref} showDragHandle />;
+  return <DataItem id={id} {...props} ref={ref} showDragHandle />;
 });
 
 ContributionItem.displayName = 'ContributionItem';

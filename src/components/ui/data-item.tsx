@@ -4,7 +4,7 @@ import { GripVerticalIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 
-interface DisclosureSectionDataItemProps {
+interface DataItemProps {
   id: string;
   index: number;
   name: string | React.ReactNode;
@@ -20,7 +20,7 @@ interface DisclosureSectionDataItemProps {
   colorClassName?: string;
 }
 
-export default function DisclosureSectionDataItem({
+export default function DataItem({
   id,
   index,
   name,
@@ -35,7 +35,7 @@ export default function DisclosureSectionDataItem({
   showDragHandle,
   colorClassName,
   ...otherProps
-}: DisclosureSectionDataItemProps) {
+}: DataItemProps) {
   return (
     <li key={id} className="col-span-1 flex shadow-md dark:shadow-black/25" ref={ref} style={style}>
       <div

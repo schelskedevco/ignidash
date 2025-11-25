@@ -18,7 +18,7 @@ import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
 import ExpenseDialog from '../dialogs/expense-dialog';
-import DisclosureSectionDataItem from '../disclosure-section-data-item';
+import DataItem from '@/components/ui/data-item';
 import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 
@@ -94,7 +94,7 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
             <>
               <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
                 {Object.entries(expenses).map(([id, expense], index) => (
-                  <DisclosureSectionDataItem
+                  <DataItem
                     key={id}
                     id={id}
                     index={index}

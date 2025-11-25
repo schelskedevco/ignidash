@@ -19,7 +19,7 @@ import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
-import DisclosureSectionDataItem from '../disclosure-section-data-item';
+import DataItem from '@/components/ui/data-item';
 import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 
@@ -93,7 +93,7 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
             <>
               <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
                 {Object.entries(accounts).map(([id, account], index) => (
-                  <DisclosureSectionDataItem
+                  <DataItem
                     key={id}
                     id={id}
                     index={index}

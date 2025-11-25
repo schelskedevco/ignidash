@@ -18,7 +18,7 @@ import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
 import IncomeDialog from '../dialogs/income-dialog';
-import DisclosureSectionDataItem from '../disclosure-section-data-item';
+import DataItem from '@/components/ui/data-item';
 import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 
@@ -94,7 +94,7 @@ export default function IncomesSection(props: IncomesSectionProps) {
             <>
               <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
                 {Object.entries(incomes).map(([id, income], index) => (
-                  <DisclosureSectionDataItem
+                  <DataItem
                     key={id}
                     id={id}
                     index={index}
