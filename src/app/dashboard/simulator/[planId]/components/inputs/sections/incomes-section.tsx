@@ -18,9 +18,9 @@ import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DataItem from '@/components/ui/data-item';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
+import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
 
 import IncomeDialog from '../dialogs/income-dialog';
-import DataListEmptyStateButton from '../data-list-empty-state-button';
 
 function getIncomeDesc(income: IncomeInputs) {
   return (

@@ -18,10 +18,10 @@ import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DataItem from '@/components/ui/data-item';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
+import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
 
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
-import DataListEmptyStateButton from '../data-list-empty-state-button';
 
 function getAccountDesc(account: AccountInputs) {
   return (
