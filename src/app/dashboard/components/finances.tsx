@@ -44,7 +44,6 @@ export default function Finances() {
 
   const hasAssets = numAssets > 0;
   const hasLiabilities = numLiabilities > 0;
-  const hasAssetsOrLiabilities = hasAssets || hasLiabilities;
 
   const deleteAssetMutation = useMutation(api.finances.deleteAsset);
   const deleteAsset = async (assetId: string) => {
@@ -91,27 +90,16 @@ export default function Finances() {
           </div>
         </header>
         <div className="flex h-full gap-2 px-4 py-5 sm:flex-col sm:py-6 lg:h-[calc(100%-5.3125rem)]">
-          {!hasAssetsOrLiabilities && (
-            <>
-              <button
-                type="button"
-                className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
-                onClick={() => setAssetDialogOpen(true)}
-              >
-                <WalletIcon aria-hidden="true" className="text-primary mx-auto size-12" />
-                <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add asset</span>
-              </button>
-              <button
-                type="button"
-                className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
-                onClick={() => setLiabilityDialogOpen(true)}
-              >
-                <CreditCardIcon aria-hidden="true" className="text-primary mx-auto size-12" />
-                <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add liability</span>
-              </button>
-            </>
-          )}
-          {hasAssets && (
+          {!hasAssets ? (
+            <button
+              type="button"
+              className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
+              onClick={() => setAssetDialogOpen(true)}
+            >
+              <WalletIcon aria-hidden="true" className="text-primary mx-auto size-12" />
+              <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add asset</span>
+            </button>
+          ) : (
             <ul role="list" className="grid grid-cols-1 gap-3">
               {assets!.map((asset, index) => (
                 <DataItem
@@ -128,8 +116,17 @@ export default function Finances() {
               ))}
             </ul>
           )}
-          {hasAssetsOrLiabilities && <Divider className="my-4" />}
-          {hasLiabilities && (
+          <Divider className="my-4 hidden sm:block" />
+          {!hasLiabilities ? (
+            <button
+              type="button"
+              className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
+              onClick={() => setLiabilityDialogOpen(true)}
+            >
+              <CreditCardIcon aria-hidden="true" className="text-primary mx-auto size-12" />
+              <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add liability</span>
+            </button>
+          ) : (
             <ul role="list" className="grid grid-cols-1 gap-3">
               {liabilities!.map((liability, index) => (
                 <DataItem
