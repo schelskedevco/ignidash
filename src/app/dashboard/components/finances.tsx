@@ -24,9 +24,14 @@ import LiabilityDialog from './dialogs/liability-dialog';
 
 function getAssetDesc(asset: AssetInputs) {
   return (
-    <p>
-      {formatNumber(asset.value, 0, '$')} | {assetTypeForDisplay(asset.type)}
-    </p>
+    <>
+      <p>
+        {formatNumber(asset.value, 0, '$')} | {assetTypeForDisplay(asset.type)}
+      </p>
+      <p>
+        Updated <time dateTime={new Date(asset.updatedAt).toISOString()}>{new Date(asset.updatedAt).toLocaleDateString()}</time>
+      </p>
+    </>
   );
 }
 
