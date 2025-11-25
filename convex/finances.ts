@@ -1,4 +1,4 @@
-import { v } from 'convex/values';
+import { ConvexError } from 'convex/values';
 import { query, mutation } from './_generated/server';
 
 import { assetValidator } from './validators/asset_validator';
@@ -28,31 +28,53 @@ export const getLiabilities = query({
   },
 });
 
-export const upsertAssets = mutation({
+export const upsertAsset = mutation({
   args: {
-    assets: v.array(assetValidator),
+    asset: assetValidator,
   },
-  handler: async (ctx, { assets }) => {
+  handler: async (ctx, { asset }) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
     const finances = await getFinancesForUserId(ctx, userId);
 
-    if (!finances) return await ctx.db.insert('finances', { userId, assets, liabilities: [] });
-    return await ctx.db.patch(finances._id, { assets });
+    if (!finances) {
+      await ctx.db.insert('finances', { userId, assets: [asset], liabilities: [] });
+      return;
+    }
+
+    const existingIndex = finances.assets.findIndex((a) => a.id === asset.id);
+    if (existingIndex === -1 && finances.assets.length >= 25) throw new ConvexError('Maximum of 25 assets reached.');
+
+    const updatedAssets =
+      existingIndex !== -1 ? finances.assets.map((a, index) => (index === existingIndex ? asset : a)) : [...finances.assets, asset];
+
+    await ctx.db.patch(finances._id, { assets: updatedAssets });
   },
 });
 
-export const upsertLiabilities = mutation({
+export const upsertLiability = mutation({
   args: {
-    liabilities: v.array(liabilityValidator),
+    liability: liabilityValidator,
   },
-  handler: async (ctx, { liabilities }) => {
+  handler: async (ctx, { liability }) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
     const finances = await getFinancesForUserId(ctx, userId);
 
-    if (!finances) return await ctx.db.insert('finances', { userId, assets: [], liabilities });
-    return await ctx.db.patch(finances._id, { liabilities });
+    if (!finances) {
+      await ctx.db.insert('finances', { userId, assets: [], liabilities: [liability] });
+      return;
+    }
+
+    const existingIndex = finances.liabilities.findIndex((l) => l.id === liability.id);
+    if (existingIndex === -1 && finances.liabilities.length >= 25) throw new ConvexError('Maximum of 25 liabilities reached.');
+
+    const updatedLiabilities =
+      existingIndex !== -1
+        ? finances.liabilities.map((l, index) => (index === existingIndex ? liability : l))
+        : [...finances.liabilities, liability];
+
+    await ctx.db.patch(finances._id, { liabilities: updatedLiabilities });
   },
 });
 

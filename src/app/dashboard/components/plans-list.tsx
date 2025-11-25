@@ -10,6 +10,8 @@ import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 import { PlusIcon, WalletIcon as MicroWalletIcon, CreditCardIcon as MicroCreditCardIcon } from '@heroicons/react/16/solid';
 import { WalletIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 
+import type { AssetInputs } from '@/lib/schemas/finances/asset-schema';
+import type { LiabilityInputs } from '@/lib/schemas/finances/liability-schema';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { Heading } from '@/components/catalyst/heading';
@@ -18,13 +20,12 @@ import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 import { useSimulationResult, useKeyMetrics, useIsCalculationReady } from '@/lib/stores/simulator-store';
 import { simulatorFromConvex } from '@/lib/utils/convex-to-zod-transformers';
-import Drawer from '@/components/ui/drawer';
 import { useAssetData, useLiabilityData } from '@/hooks/use-convex-data';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 import PlanDialog from './dialogs/plan-dialog';
-import AssetDrawer from './drawers/asset-drawer';
-import LiabilityDrawer from './drawers/liability-drawer';
+import AssetDialog from './dialogs/asset-dialog';
+import LiabilityDialog from './dialogs/liability-dialog';
 
 interface PlanListItems {
   plan: Doc<'plans'>;
@@ -127,23 +128,27 @@ interface PlanListProps {
 }
 
 export default function PlanList({ preloadedPlans }: PlanListProps) {
-  const [assetDrawerOpen, setAssetDrawerOpen] = useState(false);
-  const assets = useAssetData();
-  const assetDrawerTitleComponent = (
-    <div className="flex items-center gap-2">
-      <WalletIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
-      <span>Assets</span>
-    </div>
-  );
+  const [assetDialogOpen, setAssetDialogOpen] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState<AssetInputs | null>(null);
 
-  const [liabilityDrawerOpen, setLiabilityDrawerOpen] = useState(false);
+  const assets = useAssetData();
+  const numAssets = assets?.length ?? 0;
+
+  const handleAssetDialogClose = () => {
+    setAssetDialogOpen(false);
+    setSelectedAsset(null);
+  };
+
+  const [liabilityDialogOpen, setLiabilityDialogOpen] = useState(false);
+  const [selectedLiability, setSelectedLiability] = useState<LiabilityInputs | null>(null);
+
   const liabilities = useLiabilityData();
-  const liabilityDrawerTitleComponent = (
-    <div className="flex items-center gap-2">
-      <CreditCardIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
-      <span>Liabilities</span>
-    </div>
-  );
+  const numLiabilities = liabilities?.length ?? 0;
+
+  const handleLiabilityDialogClose = () => {
+    setLiabilityDialogOpen(false);
+    setSelectedLiability(null);
+  };
 
   const plans = usePreloadedQuery(preloadedPlans);
   const allPlans = useMemo(() => plans.map((plan) => ({ id: plan._id, name: plan.name })), [plans]);
@@ -153,7 +158,7 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
   const [selectedPlan, setSelectedPlan] = useState<Doc<'plans'> | null>(null);
   const [planToClone, setPlanToClone] = useState<{ id: Id<'plans'>; name: string } | undefined>(undefined);
 
-  const handleClose = () => {
+  const handlePlanDialogClose = () => {
     setSelectedPlan(null);
     setPlanToClone(undefined);
     setPlanDialogOpen(false);
@@ -221,19 +226,19 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
           <div className="flex items-center gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button outline onClick={() => setAssetDrawerOpen(true)}>
+                <Button outline onClick={() => setAssetDialogOpen(true)}>
                   <MicroWalletIcon />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Assets</TooltipContent>
+              <TooltipContent>Add asset</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button outline onClick={() => setLiabilityDrawerOpen(true)}>
+                <Button outline onClick={() => setLiabilityDialogOpen(true)}>
                   <MicroCreditCardIcon />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Liabilities</TooltipContent>
+              <TooltipContent>Add liability</TooltipContent>
             </Tooltip>
           </div>
         </header>
@@ -241,7 +246,7 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
           <button
             type="button"
             className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
-            onClick={() => setAssetDrawerOpen(true)}
+            onClick={() => setAssetDialogOpen(true)}
           >
             <WalletIcon aria-hidden="true" className="text-primary mx-auto size-12" />
             <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add asset</span>
@@ -249,21 +254,27 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
           <button
             type="button"
             className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
-            onClick={() => setLiabilityDrawerOpen(true)}
+            onClick={() => setLiabilityDialogOpen(true)}
           >
             <CreditCardIcon aria-hidden="true" className="text-primary mx-auto size-12" />
             <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add liability</span>
           </button>
         </div>
       </aside>
-      <Dialog size="xl" open={planDialogOpen} onClose={handleClose}>
+      <Dialog size="xl" open={planDialogOpen} onClose={handlePlanDialogClose}>
         <PlanDialog
           numPlans={plans.length}
           selectedPlan={selectedPlan}
           allPlans={allPlans}
           planToClone={planToClone}
-          onClose={handleClose}
+          onClose={handlePlanDialogClose}
         />
+      </Dialog>
+      <Dialog size="xl" open={assetDialogOpen} onClose={handleAssetDialogClose}>
+        <AssetDialog onClose={handleAssetDialogClose} selectedAsset={selectedAsset} numAssets={numAssets} />
+      </Dialog>
+      <Dialog size="xl" open={liabilityDialogOpen} onClose={handleLiabilityDialogClose}>
+        <LiabilityDialog onClose={handleLiabilityDialogClose} selectedLiability={selectedLiability} numLiabilities={numLiabilities} />
       </Dialog>
       <Alert
         open={!!planToDelete}
@@ -299,12 +310,6 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
           </Button>
         </AlertActions>
       </Alert>
-      <Drawer open={assetDrawerOpen} setOpen={setAssetDrawerOpen} title={assetDrawerTitleComponent}>
-        <AssetDrawer setOpen={setAssetDrawerOpen} assets={assets} />
-      </Drawer>
-      <Drawer open={liabilityDrawerOpen} setOpen={setLiabilityDrawerOpen} title={liabilityDrawerTitleComponent}>
-        <LiabilityDrawer setOpen={setLiabilityDrawerOpen} liabilities={liabilities} />
-      </Drawer>
     </>
   );
 }
