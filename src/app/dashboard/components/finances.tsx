@@ -129,7 +129,9 @@ export default function Finances() {
           ) : (
             <>
               <div className="flex w-full items-center justify-between">
-                <Subheading level={5}>Total Assets:</Subheading>
+                <Subheading level={5} className="font-medium italic">
+                  Total Assets
+                </Subheading>
                 <span className="text-base/7 font-bold text-zinc-950 sm:text-sm/6 dark:text-white">
                   {formatNumber(
                     assets!.reduce((acc, asset) => acc + asset.value, 0),
@@ -161,7 +163,9 @@ export default function Finances() {
           ) : (
             <>
               <div className="flex w-full items-center justify-between">
-                <Subheading level={5}>Total Liabilities:</Subheading>
+                <Subheading level={5} className="font-medium italic">
+                  Total Liabilities
+                </Subheading>
                 <span className="text-base/7 font-bold text-zinc-950 sm:text-sm/6 dark:text-white">
                   {formatNumber(
                     liabilities!.reduce((acc, liability) => acc + liability.balance, 0),
