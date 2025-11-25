@@ -99,11 +99,18 @@ export default function Finances() {
     setLiabilityDialogOpen(true);
   };
 
+  const totalAssets = assets?.reduce((acc, asset) => acc + asset.value, 0) ?? 0;
+  const totalLiabilities = liabilities?.reduce((acc, liability) => acc + liability.balance, 0) ?? 0;
+  const netWorth = totalAssets - totalLiabilities;
+
   return (
     <>
       <aside className="border-border/50 -mx-2 border-t sm:-mx-3 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:mx-0 lg:w-96 lg:overflow-y-auto lg:border-t-0 lg:border-l lg:bg-zinc-50 dark:lg:bg-black/10">
         <header className="from-emphasized-background to-background border-border/50 flex items-center justify-between border-b bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
-          <Heading level={4}>Finances</Heading>
+          <div className="flex w-full items-center gap-3">
+            <Heading level={4}>Net Worth</Heading>
+            <span className="text-muted-foreground text-2xl/8 font-normal sm:text-xl/8">{formatNumber(netWorth, 0, '$')}</span>
+          </div>
           <div className="flex items-center gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
@@ -133,11 +140,7 @@ export default function Finances() {
                   Assets
                 </Subheading>
                 <span className="text-base/7 font-bold text-zinc-950 sm:text-sm/6 dark:text-white">
-                  {formatNumber(
-                    assets!.reduce((acc, asset) => acc + asset.value, 0),
-                    0,
-                    '$'
-                  )}
+                  {formatNumber(totalAssets, 0, '$')}
                 </span>
               </div>
               <ul role="list" className="grid grid-cols-1 gap-3">
@@ -167,11 +170,7 @@ export default function Finances() {
                   Liabilities
                 </Subheading>
                 <span className="text-base/7 font-bold text-zinc-950 sm:text-sm/6 dark:text-white">
-                  {formatNumber(
-                    liabilities!.reduce((acc, liability) => acc + liability.balance, 0),
-                    0,
-                    '$'
-                  )}
+                  {formatNumber(totalLiabilities, 0, '$')}
                 </span>
               </div>
               <ul role="list" className="grid grid-cols-1 gap-3">
