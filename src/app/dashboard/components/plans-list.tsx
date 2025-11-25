@@ -6,6 +6,7 @@ import type { Doc, Id } from '@/convex/_generated/dataModel';
 import { Preloaded, usePreloadedQuery } from 'convex/react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { BanknoteIcon } from 'lucide-react';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 import { PlusIcon, PencilSquareIcon } from '@heroicons/react/16/solid';
 
@@ -198,14 +199,14 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
             Edit
           </Button>
         </header>
-        <div className="flex h-full flex-col px-4 py-5 sm:py-6">
+        <div className="flex h-full flex-col px-4 py-5 sm:py-6 lg:h-[calc(100%-5.3125rem)]">
           <button
             type="button"
             className="focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 dark:border-white/15 dark:hover:border-white/25"
             onClick={() => {}}
           >
-            <PencilSquareIcon aria-hidden="true" className="text-primary mx-auto size-12" />
-            <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add Finances</span>
+            <BanknoteIcon aria-hidden="true" className="text-primary mx-auto size-12" />
+            <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">Add finances</span>
           </button>
         </div>
       </aside>
