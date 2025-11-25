@@ -129,7 +129,7 @@ export default function Finances() {
           ) : (
             <>
               <div className="flex w-full items-center justify-between">
-                <Subheading level={5} className="font-medium italic">
+                <Subheading level={5} className="font-medium">
                   Total Assets
                 </Subheading>
                 <span className="text-base/7 font-bold text-zinc-950 sm:text-sm/6 dark:text-white">
@@ -163,7 +163,7 @@ export default function Finances() {
           ) : (
             <>
               <div className="flex w-full items-center justify-between">
-                <Subheading level={5} className="font-medium italic">
+                <Subheading level={5} className="font-medium">
                   Total Liabilities
                 </Subheading>
                 <span className="text-base/7 font-bold text-zinc-950 sm:text-sm/6 dark:text-white">
