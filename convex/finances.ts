@@ -1,4 +1,4 @@
-import { ConvexError } from 'convex/values';
+import { v, ConvexError } from 'convex/values';
 import { query, mutation } from './_generated/server';
 
 import { assetValidator } from './validators/asset_validator';
@@ -105,5 +105,37 @@ export const deleteAllLiabilities = mutation({
     const finances = await getFinancesForUserId(ctx, userId);
 
     if (finances) await ctx.db.patch(finances._id, { liabilities: [] });
+  },
+});
+
+export const deleteAsset = mutation({
+  args: {
+    assetId: v.string(),
+  },
+  handler: async (ctx, { assetId }) => {
+    const { userId } = await getUserIdOrThrow(ctx);
+
+    const finances = await getFinancesForUserId(ctx, userId);
+    if (!finances) return;
+
+    const updatedAssets = finances.assets.filter((a) => a.id !== assetId);
+
+    await ctx.db.patch(finances._id, { assets: updatedAssets });
+  },
+});
+
+export const deleteLiability = mutation({
+  args: {
+    liabilityId: v.string(),
+  },
+  handler: async (ctx, { liabilityId }) => {
+    const { userId } = await getUserIdOrThrow(ctx);
+
+    const finances = await getFinancesForUserId(ctx, userId);
+    if (!finances) return;
+
+    const updatedLiabilities = finances.liabilities.filter((l) => l.id !== liabilityId);
+
+    await ctx.db.patch(finances._id, { liabilities: updatedLiabilities });
   },
 });

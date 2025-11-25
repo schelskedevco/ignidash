@@ -16,9 +16,9 @@ import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import DataItem from '@/components/ui/data-item';
 
 import IncomeDialog from '../dialogs/income-dialog';
-import DataItem from '@/components/ui/data-item';
 import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 

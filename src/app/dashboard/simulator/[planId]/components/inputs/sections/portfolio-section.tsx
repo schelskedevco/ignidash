@@ -16,10 +16,10 @@ import { accountTypeForDisplay, taxCategoryFromAccountType } from '@/lib/schemas
 import type { TaxCategory } from '@/lib/calc/asset';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import DataItem from '@/components/ui/data-item';
 
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
-import DataItem from '@/components/ui/data-item';
 import DisclosureSectionDeleteDataAlert from '../disclosure-section-delete-data-alert';
 import DisclosureSectionEmptyStateButton from '../disclosure-section-empty-state-button';
 
