@@ -9,21 +9,21 @@ const sectionHeader = {
 const features = [
   {
     name: 'Compare paths.',
-    description: 'Create multiple plans and view key results side-by-side to see how different choices shape your future.',
+    description: 'Create multiple plans and view key outcomes side-by-side to see how different choices shape your future.',
     icon: ChartBarIcon,
   },
   {
-    name: 'Estimate taxes.',
-    description: 'See projected taxes year by year so you can time contributions and withdrawals wisely.',
+    name: 'Project your taxes.',
+    description: 'See year-by-year tax estimates so you can time contributions and withdrawals wisely.',
     icon: BanknotesIcon,
   },
   {
-    name: 'Stress-test with simulations.',
-    description: 'Run Monte Carlo analysis to understand your probability of success across hundreds of market outcomes.',
+    name: 'Stress-test with Monte Carlo.',
+    description: 'Run hundreds of simulations at once to understand your probability of success across a wide variety of market outcomes.',
     icon: ArrowPathIcon,
   },
   {
-    name: 'Learn from real history.',
+    name: 'Learn from history.',
     description: 'Replay your plan against decades of actual market data to see how it would have held up.',
     icon: AcademicCapIcon,
   },
@@ -33,7 +33,7 @@ const features = [
     icon: BeakerIcon,
   },
   {
-    name: 'Stay in control.',
+    name: 'Stay in control of your data.',
     description: 'No account linking required. Enter what you want and delete it anytime.',
     icon: ShieldCheckIcon,
   },
