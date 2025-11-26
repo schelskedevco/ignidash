@@ -9,7 +9,7 @@ export default function ComparePage() {
           <h2 className="mt-2 text-5xl font-semibold tracking-tight text-zinc-900 sm:text-7xl dark:text-white">Compare</h2>
           <p className="mt-8 text-lg font-medium text-pretty text-zinc-500 sm:text-xl/8 dark:text-zinc-400">
             Compare two simulation results side-by-side. See how different choices affect your outcomes and understand the trade-offs
-            between paths.
+            between plans.
           </p>
         </div>
       </div>
