@@ -50,7 +50,7 @@ export default function HeroSection() {
           src="/most-zoomed-sim-light.webp"
           width={2362}
           height={1328}
-          className="ring-border/50 mt-16 rounded-md bg-gray-50 shadow-xl ring-1 sm:mt-24 dark:hidden"
+          className="ring-border/25 mt-16 rounded-md bg-gray-50 shadow-xl ring-1 sm:mt-24 dark:hidden"
           quality={95}
           priority
         />
@@ -59,12 +59,12 @@ export default function HeroSection() {
           src="/most-zoomed-sim-dark.webp"
           width={2362}
           height={1328}
-          className="ring-border/50 mt-16 rounded-md bg-white/5 shadow-2xl ring-1 not-dark:hidden sm:mt-24"
+          className="ring-border/25 mt-16 rounded-md bg-white/5 shadow-2xl ring-1 not-dark:hidden sm:mt-24"
           quality={95}
           priority
         />
 
-        <img
+        {/* <img
           alt="App screenshot"
           src="https://tailwindcss.com/plus-assets/img/component-images/project-app-screenshot.png"
           width={2432}
@@ -77,7 +77,7 @@ export default function HeroSection() {
           width={2432}
           height={1442}
           className="ring-border/50 mt-16 rounded-md bg-white/5 shadow-2xl ring-1 not-dark:hidden sm:mt-24"
-        />
+        /> */}
       </div>
       <div
         aria-hidden="true"
