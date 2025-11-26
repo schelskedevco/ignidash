@@ -45,31 +45,35 @@ export default function HeroSection() {
         </div>
       </div>
       <div className="mx-auto max-w-7xl px-6 pb-32 sm:pb-48 lg:px-8 lg:pb-56">
-        <Image
-          alt="App screenshot"
-          src="/most-zoomed-sim-light.webp"
-          width={2362}
-          height={1328}
-          className="ring-border/25 mt-16 rounded-md bg-gray-50 shadow-xl ring-1 sm:mt-24 dark:hidden"
-          quality={95}
-          priority
-        />
-        <Image
-          alt="App screenshot"
-          src="/most-zoomed-sim-dark.webp"
-          width={2362}
-          height={1328}
-          className="ring-border/25 mt-16 rounded-md bg-white/5 shadow-2xl ring-1 not-dark:hidden sm:mt-24"
-          quality={95}
-          priority
-        />
+        <div className="mt-16 flow-root sm:mt-24">
+          <div className="-m-2 rounded-xl bg-zinc-900/5 p-2 ring-1 ring-zinc-900/10 ring-inset lg:-m-4 lg:rounded-2xl lg:p-4 dark:bg-white/2.5 dark:ring-white/10">
+            <Image
+              alt="App screenshot"
+              src="/most-zoomed-sim-light.webp"
+              width={2362}
+              height={1328}
+              className="ring-border/50 rounded-md bg-zinc-50 shadow-xl ring-1 dark:hidden"
+              quality={95}
+              priority
+            />
+            <Image
+              alt="App screenshot"
+              src="/most-zoomed-sim-dark.webp"
+              width={2362}
+              height={1328}
+              className="ring-border/50 rounded-md bg-white/5 shadow-2xl ring-1 not-dark:hidden"
+              quality={95}
+              priority
+            />
+          </div>
+        </div>
 
         {/* <img
           alt="App screenshot"
           src="https://tailwindcss.com/plus-assets/img/component-images/project-app-screenshot.png"
           width={2432}
           height={1442}
-          className="ring-border/50 mt-16 rounded-md bg-gray-50 shadow-xl ring-1 sm:mt-24 dark:hidden"
+          className="ring-border/50 mt-16 rounded-md bg-zinc-50 shadow-xl ring-1 sm:mt-24 dark:hidden"
         />
         <img
           alt="App screenshot"
