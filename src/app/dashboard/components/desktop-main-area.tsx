@@ -1,5 +1,6 @@
 import { preloadQuery } from 'convex/nextjs';
 import { api } from '@/convex/_generated/api';
+import { redirect } from 'next/navigation';
 
 import { getToken } from '@/lib/auth-server';
 
@@ -8,7 +9,7 @@ import DashboardContent from './dashboard-content';
 
 export default async function DesktopMainArea() {
   const token = await getToken();
-  if (!token) throw new Error('User not authenticated');
+  if (!token) redirect('/signin');
 
   const preloadedUser = await preloadQuery(api.auth.getCurrentUserSafe, {}, { token });
 
