@@ -64,20 +64,20 @@ export default function HeroSection() {
           priority
         />
 
-        {/* <img
+        <img
           alt="App screenshot"
           src="https://tailwindcss.com/plus-assets/img/component-images/project-app-screenshot.png"
           width={2432}
           height={1442}
-          className="mt-16 rounded-md bg-gray-50 shadow-xl ring-1 ring-border/50 sm:mt-24 dark:hidden"
+          className="ring-border/50 mt-16 rounded-md bg-gray-50 shadow-xl ring-1 sm:mt-24 dark:hidden"
         />
         <img
           alt="App screenshot"
           src="https://tailwindcss.com/plus-assets/img/component-images/dark-project-app-screenshot.png"
           width={2432}
           height={1442}
-          className="mt-16 rounded-md bg-white/5 shadow-2xl ring-1 ring-border/50 not-dark:hidden sm:mt-24"
-        /> */}
+          className="ring-border/50 mt-16 rounded-md bg-white/5 shadow-2xl ring-1 not-dark:hidden sm:mt-24"
+        />
       </div>
       <div
         aria-hidden="true"
