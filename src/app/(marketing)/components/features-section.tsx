@@ -1,4 +1,4 @@
-import { SparklesIcon, ArrowPathIcon, ChartBarIcon, BanknotesIcon, ShieldCheckIcon } from '@heroicons/react/20/solid';
+import { SparklesIcon, LightBulbIcon, ArrowPathIcon, ChartBarIcon, BanknotesIcon, ShieldCheckIcon } from '@heroicons/react/20/solid';
 
 const sectionHeader = {
   eyebrow: 'Everything you need',
@@ -14,6 +14,16 @@ const features = [
     icon: SparklesIcon,
   },
   {
+    name: 'Automatic insights.',
+    description: "Get an assessment of your plan's health in areas like tax efficiency, spending sustainability, and more.",
+    icon: LightBulbIcon,
+  },
+  {
+    name: 'Test your resilience.',
+    description: 'Run Monte Carlo simulations and historical backtests to calculate your probability of success.',
+    icon: ArrowPathIcon,
+  },
+  {
     name: 'Compare paths.',
     description: 'Create up to 10 plans and view key outcomes side-by-side to see how different choices affect your future.',
     icon: ChartBarIcon,
@@ -24,13 +34,8 @@ const features = [
     icon: BanknotesIcon,
   },
   {
-    name: 'Test your resilience.',
-    description: 'Run Monte Carlo simulations and historical backtests to understand your probability of success.',
-    icon: ArrowPathIcon,
-  },
-  {
     name: 'You control your data.',
-    description: 'No account linking required. Manually enter the data you want and delete it anytime.',
+    description: 'No account linking required. Manually enter the financial data you want and delete it anytime.',
     icon: ShieldCheckIcon,
   },
 ];
