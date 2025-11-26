@@ -1,34 +1,40 @@
 import { ArrowPathIcon, ChartBarIcon, BeakerIcon, BanknotesIcon, AcademicCapIcon, ShieldCheckIcon } from '@heroicons/react/20/solid';
 
+const sectionHeader = {
+  eyebrow: 'Plan with confidence',
+  headline: 'Tools to model. AI to guide.',
+  subhead: 'Model your financial future, stress-test your assumptions, and learn the concepts that matter—all in one place.',
+};
+
 const features = [
   {
-    name: 'Compare scenarios.',
-    description: 'Create up to 10 different plans and compare them side by side to find your optimal path forward.',
+    name: 'Compare paths.',
+    description: 'Build multiple scenarios side by side to see how different choices shape your future.',
     icon: ChartBarIcon,
   },
   {
-    name: 'Understand your taxes.',
-    description: 'See tax estimates for each year of your plan so you can make informed decisions about contributions and withdrawals.',
+    name: 'Estimate taxes.',
+    description: 'See projected taxes year by year so you can time contributions and withdrawals wisely.',
     icon: BanknotesIcon,
   },
   {
-    name: 'Test resilience.',
-    description: 'Run Monte Carlo simulations to understand what could derail your plan and your overall probability of success.',
+    name: 'Stress-test with simulations.',
+    description: 'Run Monte Carlo analysis to understand your probability of success across thousands of market outcomes.',
     icon: ArrowPathIcon,
   },
   {
-    name: 'Learn from history.',
-    description: 'Stress-test your plan against decades of real market data to see how it would have performed.',
+    name: 'Learn from real history.',
+    description: 'Replay your plan against decades of actual market data to see how it would have held up.',
     icon: AcademicCapIcon,
   },
   {
-    name: 'Optimize your strategy.',
-    description: 'Experiment with different investment approaches, account types, and contribution sequences to maximize your outcomes.',
+    name: 'Refine your strategy.',
+    description: 'Experiment with account types, contribution order, and withdrawal sequences to find what works.',
     icon: BeakerIcon,
   },
   {
-    name: 'Your data, your control.',
-    description: 'No account syncing means you enter what matters and can delete it anytime. Track your net worth on your terms.',
+    name: 'Stay in control.',
+    description: 'No account linking required. Enter what you want, delete it anytime.',
     icon: ShieldCheckIcon,
   },
 ];
@@ -38,14 +44,11 @@ export default function FeaturesSection() {
     <div className="bg-white py-24 sm:py-32 dark:bg-zinc-800">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
-          <h2 className="text-base/7 font-semibold text-rose-600 dark:text-rose-400">Built for everyone</h2>
+          <h2 className="text-base/7 font-semibold text-rose-600 dark:text-rose-400">{sectionHeader.eyebrow}</h2>
           <p className="mt-2 text-4xl font-semibold tracking-tight text-pretty text-zinc-900 sm:text-5xl dark:text-white">
-            No expertise? No problem.
+            {sectionHeader.headline}
           </p>
-          <p className="mt-6 text-lg/8 text-zinc-700 dark:text-zinc-300">
-            Plan your financial future with confidence. Our AI guides you through complex decisions and teaches you core concepts along the
-            way.
-          </p>
+          <p className="mt-6 text-lg/8 text-zinc-700 dark:text-zinc-300">{sectionHeader.subhead}</p>
         </div>
         <dl className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 text-base/7 text-zinc-600 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:gap-x-16 dark:text-zinc-400">
           {features.map((feature) => (
