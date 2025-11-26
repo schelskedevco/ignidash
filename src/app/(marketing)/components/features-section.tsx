@@ -9,7 +9,7 @@ const sectionHeader = {
 const features = [
   {
     name: 'Compare paths.',
-    description: 'Create multiple plans and view key outcomes side-by-side to see how different choices shape your future.',
+    description: 'Create multiple plans and view key outcomes side-by-side to see how different choices affect your future.',
     icon: ChartBarIcon,
   },
   {
@@ -19,12 +19,12 @@ const features = [
   },
   {
     name: 'Stress-test with Monte Carlo.',
-    description: 'Run hundreds of simulations at once to understand your probability of success across a wide variety of market outcomes.',
+    description: 'Run hundreds of simulations to understand your probability of success across a wide variety of market outcomes.',
     icon: ArrowPathIcon,
   },
   {
     name: 'Learn from history.',
-    description: 'Replay your plan against decades of actual market data to see how it would have held up.',
+    description: "Test your plan against real data from history's worst market conditions to see how it would have held up.",
     icon: AcademicCapIcon,
   },
   {
