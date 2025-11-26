@@ -1,4 +1,4 @@
-import { SparklesIcon, ArrowPathIcon, ChartBarIcon, AcademicCapIcon, BanknotesIcon, ShieldCheckIcon } from '@heroicons/react/20/solid';
+import { SparklesIcon, ArrowPathIcon, ChartBarIcon, BanknotesIcon, ShieldCheckIcon } from '@heroicons/react/20/solid';
 
 const sectionHeader = {
   eyebrow: 'Everything you need',
@@ -24,18 +24,13 @@ const features = [
     icon: BanknotesIcon,
   },
   {
-    name: 'Stress-test with Monte Carlo.',
-    description: 'Run hundreds of simulations to understand your probability of success across market conditions.',
+    name: 'Test your resilience.',
+    description: 'Run Monte Carlo simulations and historical backtests to understand your probability of success.',
     icon: ArrowPathIcon,
   },
   {
-    name: 'Learn from history.',
-    description: "Test your plan against real data from history's worst market conditions to see how it holds up.",
-    icon: AcademicCapIcon,
-  },
-  {
-    name: 'Stay in control of your data.',
-    description: 'No account linking required. Enter what you want and delete it anytime.',
+    name: 'You control your data.',
+    description: 'No account linking required. Manually enter the data you want and delete it anytime.',
     icon: ShieldCheckIcon,
   },
 ];
