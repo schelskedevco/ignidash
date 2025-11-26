@@ -19,7 +19,7 @@ const features = [
   },
   {
     name: 'Stress-test with simulations.',
-    description: 'Run Monte Carlo analysis to understand your probability of success across thousands of market outcomes.',
+    description: 'Run Monte Carlo analysis to understand your probability of success across hundreds of market outcomes.',
     icon: ArrowPathIcon,
   },
   {
