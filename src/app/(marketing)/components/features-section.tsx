@@ -2,14 +2,14 @@ import { ArrowPathIcon, ChartBarIcon, BeakerIcon, BanknotesIcon, AcademicCapIcon
 
 const sectionHeader = {
   eyebrow: 'Plan with confidence',
-  headline: 'Tools to model. AI to guide.',
-  subhead: 'Model your financial future, stress-test your assumptions, and learn the concepts that matter—all in one place.',
+  headline: 'Tools to plan. AI to understand.',
+  subhead: 'Model your path to FIRE (and beyond), stress-test your assumptions, and learn about concepts that matter—all in one place.',
 };
 
 const features = [
   {
     name: 'Compare paths.',
-    description: 'Build multiple scenarios side by side to see how different choices shape your future.',
+    description: 'Create multiple plans and view key results side-by-side to see how different choices shape your future.',
     icon: ChartBarIcon,
   },
   {
@@ -34,7 +34,7 @@ const features = [
   },
   {
     name: 'Stay in control.',
-    description: 'No account linking required. Enter what you want, delete it anytime.',
+    description: 'No account linking required. Enter what you want and delete it anytime.',
     icon: ShieldCheckIcon,
   },
 ];
