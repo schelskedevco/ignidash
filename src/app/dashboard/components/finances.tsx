@@ -186,7 +186,7 @@ export default function Finances() {
                       leftAddOn={<Icon className="size-8" />}
                       onDropdownClickEdit={() => handleEditLiability(liability)}
                       onDropdownClickDelete={() => setLiabilityToDelete({ id: liability.id, name: liability.name })}
-                      colorClassName="bg-[var(--chart-2)] dark:bg-[var(--chart-3)]"
+                      colorClassName="bg-[var(--chart-4)] dark:bg-[var(--chart-3)]"
                     />
                   );
                 })}
