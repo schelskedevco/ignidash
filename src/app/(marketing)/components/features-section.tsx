@@ -30,7 +30,7 @@ const features = [
   },
   {
     name: 'Understand tax implications.',
-    description: 'Model how different investment strategies and income changes impact your estimated taxes.',
+    description: 'Model how different investment approaches and income changes impact your estimated taxes.',
     icon: BanknotesIcon,
   },
   {

@@ -7,7 +7,7 @@ export default function CTASection() {
         <div className="relative isolate overflow-hidden bg-zinc-900 px-6 py-24 text-center shadow-2xl sm:rounded-3xl sm:px-16 dark:shadow-none dark:after:pointer-events-none dark:after:absolute dark:after:inset-0 dark:after:inset-ring dark:after:inset-ring-white/10 dark:after:sm:rounded-3xl">
           <h2 className="text-4xl font-semibold tracking-tight text-balance text-white sm:text-5xl">Plan your future today</h2>
           <p className="mx-auto mt-6 max-w-xl text-lg/8 text-pretty text-zinc-300">
-            Stop guessing about retirement. Run the numbers, test different strategies, and discover what works best for you.
+            Stop guessing about retirement. Run the numbers, test different options, and discover what works best for you.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link
