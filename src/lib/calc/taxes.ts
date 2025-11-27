@@ -76,6 +76,7 @@ export class TaxProcessor {
 
     const adjustedIncomeTaxedAsIncome = Math.max(0, adjustedOrdinaryIncome + capitalLossDeduction);
     const adjustedIncomeTaxedAsCapGains = adjustedRealizedGains + annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
+    const adjustedGrossIncome = adjustedIncomeTaxedAsIncome + adjustedIncomeTaxedAsCapGains;
 
     const standardDeduction = this.getStandardDeduction();
     const deductionUsedForOrdinary = Math.min(standardDeduction, adjustedIncomeTaxedAsIncome);
@@ -113,7 +114,7 @@ export class TaxProcessor {
     const difference = totalTaxLiabilityExcludingFICA - annualIncomesData.totalAmountWithheld;
 
     return {
-      adjustedGrossIncome: adjustedIncomeTaxedAsIncome + adjustedIncomeTaxedAsCapGains,
+      adjustedGrossIncome,
       incomeTaxes,
       capitalGainsTaxes,
       earlyWithdrawalPenalties,
