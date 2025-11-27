@@ -29,7 +29,7 @@ const faqs = [
 export default function FAQSection() {
   return (
     <div id="faq">
-      <div className="mx-auto max-w-7xl px-6 py-24 sm:pt-32 lg:px-8 lg:py-40">
+      <div className="mx-auto max-w-2xl px-6 py-24 sm:pt-32 lg:max-w-7xl lg:px-8 lg:py-40">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-5">
             <h2 className="text-3xl font-semibold tracking-tight text-pretty text-zinc-900 sm:text-4xl dark:text-white">
