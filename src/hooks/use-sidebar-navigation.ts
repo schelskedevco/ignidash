@@ -32,9 +32,14 @@ export const useNavigationItems = () => {
   const pathname = usePathname();
 
   const simulatorItem = useMemo(() => {
-    const href = defaultPlanId !== undefined && defaultPlanId !== null ? `/dashboard/simulator/${defaultPlanId}` : '/dashboard/simulator';
+    const isSimulatorCurrentPath = isCurrentPath(pathname, `/dashboard/simulator`);
+    const href = isSimulatorCurrentPath
+      ? pathname
+      : defaultPlanId !== undefined && defaultPlanId !== null
+        ? `/dashboard/simulator/${defaultPlanId}`
+        : '/dashboard/simulator';
     const disabled = defaultPlanId === undefined || defaultPlanId === null;
-    return { name: 'Simulator', href, icon: ChartNoAxesCombinedIcon, current: isCurrentPath(pathname, `/dashboard/simulator`), disabled };
+    return { name: 'Simulator', href, icon: ChartNoAxesCombinedIcon, current: isSimulatorCurrentPath, disabled };
   }, [pathname, defaultPlanId]);
 
   return [
