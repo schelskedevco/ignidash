@@ -88,7 +88,7 @@ function PlanListItem({
       </div>
       <div className="flex flex-none items-center gap-x-4">
         <Button outline href={`/dashboard/simulator/${plan._id}`}>
-          View<span className="hidden sm:inline"> plan</span>
+          View
           <span className="sr-only">, {plan.name}</span>
         </Button>
         <div className="relative flex-none">
