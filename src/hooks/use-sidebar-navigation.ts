@@ -38,7 +38,7 @@ export const useNavigationItems = () => {
       : defaultPlanId !== undefined && defaultPlanId !== null
         ? `/dashboard/simulator/${defaultPlanId}`
         : '/dashboard/simulator';
-    const disabled = defaultPlanId === undefined || defaultPlanId === null;
+    const disabled = href === '/dashboard/simulator';
     return { name: 'Simulator', href, icon: ChartNoAxesCombinedIcon, current: isSimulatorCurrentPath, disabled };
   }, [pathname, defaultPlanId]);
 
