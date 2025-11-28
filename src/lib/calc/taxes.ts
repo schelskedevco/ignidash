@@ -318,4 +318,23 @@ export class TaxProcessor {
         return SOCIAL_SECURITY_TAX_BRACKETS_HEAD_OF_HOUSEHOLD;
     }
   }
+
+  private getTaxablePortionOfSocialSecurityIncome(combinedIncome: number, totalSocialSecurityBenefits: number): number {
+    const brackets = this.getSocialSecurityTaxBrackets();
+
+    if (combinedIncome <= brackets[0].max) return 0;
+
+    if (combinedIncome > brackets[1].min && combinedIncome <= brackets[1].max) {
+      const excessIncome = combinedIncome - brackets[1].min;
+      return Math.min(excessIncome * 0.5, totalSocialSecurityBenefits * 0.5);
+    }
+
+    const tier1Excess = brackets[1].max - brackets[1].min;
+    const tier1Amount = Math.min(tier1Excess * 0.5, totalSocialSecurityBenefits * 0.5);
+
+    const tier2Excess = combinedIncome - brackets[2].min;
+    const tier2Amount = tier2Excess * 0.85;
+
+    return Math.min(tier1Amount + tier2Amount, totalSocialSecurityBenefits * 0.85);
+  }
 }
