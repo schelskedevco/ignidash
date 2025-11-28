@@ -22,6 +22,12 @@ import {
   CAPITAL_GAINS_TAX_BRACKETS_MARRIED_FILING_JOINTLY,
   CAPITAL_GAINS_TAX_BRACKETS_HEAD_OF_HOUSEHOLD,
 } from './tax-data/capital-gains-tax-brackets';
+import {
+  type SocialSecurityTaxBracket,
+  SOCIAL_SECURITY_TAX_BRACKETS_SINGLE,
+  SOCIAL_SECURITY_TAX_BRACKETS_MARRIED_FILING_JOINTLY,
+  SOCIAL_SECURITY_TAX_BRACKETS_HEAD_OF_HOUSEHOLD,
+} from './tax-data/social-security-tax-brackets';
 
 export interface CapitalGainsTaxesData {
   taxableCapitalGains: number;
@@ -77,6 +83,7 @@ export class TaxProcessor {
     const adjustedIncomeTaxedAsIncome = Math.max(0, adjustedOrdinaryIncome + capitalLossDeduction);
     const adjustedIncomeTaxedAsCapGains = adjustedRealizedGains + annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
     const adjustedGrossIncome = adjustedIncomeTaxedAsIncome + adjustedIncomeTaxedAsCapGains;
+    const _combinedIncome = adjustedGrossIncome + annualIncomesData.totalSocialSecurityIncome * 0.5;
 
     const standardDeduction = this.getStandardDeduction();
     const deductionUsedForOrdinary = Math.min(standardDeduction, adjustedIncomeTaxedAsIncome);
@@ -279,7 +286,7 @@ export class TaxProcessor {
     }
   }
 
-  private getIncomeTaxBrackets(): { min: number; max: number; rate: number }[] {
+  private getIncomeTaxBrackets(): IncomeTaxBracket[] {
     switch (this.filingStatus) {
       case 'single':
         return INCOME_TAX_BRACKETS_SINGLE;
@@ -290,7 +297,7 @@ export class TaxProcessor {
     }
   }
 
-  private getCapitalGainsTaxBrackets(): { min: number; max: number; rate: number }[] {
+  private getCapitalGainsTaxBrackets(): CapitalGainsTaxBracket[] {
     switch (this.filingStatus) {
       case 'single':
         return CAPITAL_GAINS_TAX_BRACKETS_SINGLE;
@@ -298,6 +305,17 @@ export class TaxProcessor {
         return CAPITAL_GAINS_TAX_BRACKETS_MARRIED_FILING_JOINTLY;
       case 'headOfHousehold':
         return CAPITAL_GAINS_TAX_BRACKETS_HEAD_OF_HOUSEHOLD;
+    }
+  }
+
+  private getSocialSecurityTaxBrackets(): SocialSecurityTaxBracket[] {
+    switch (this.filingStatus) {
+      case 'single':
+        return SOCIAL_SECURITY_TAX_BRACKETS_SINGLE;
+      case 'marriedFilingJointly':
+        return SOCIAL_SECURITY_TAX_BRACKETS_MARRIED_FILING_JOINTLY;
+      case 'headOfHousehold':
+        return SOCIAL_SECURITY_TAX_BRACKETS_HEAD_OF_HOUSEHOLD;
     }
   }
 }
