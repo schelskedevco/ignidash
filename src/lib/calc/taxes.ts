@@ -23,10 +23,10 @@ import {
   CAPITAL_GAINS_TAX_BRACKETS_HEAD_OF_HOUSEHOLD,
 } from './tax-data/capital-gains-tax-brackets';
 import {
-  type SocialSecurityTaxBracket,
-  SOCIAL_SECURITY_TAX_BRACKETS_SINGLE,
-  SOCIAL_SECURITY_TAX_BRACKETS_MARRIED_FILING_JOINTLY,
-  SOCIAL_SECURITY_TAX_BRACKETS_HEAD_OF_HOUSEHOLD,
+  type SocialSecurityTaxThreshold,
+  SOCIAL_SECURITY_TAX_THRESHOLDS_SINGLE,
+  SOCIAL_SECURITY_TAX_THRESHOLDS_MARRIED_FILING_JOINTLY,
+  SOCIAL_SECURITY_TAX_THRESHOLDS_HEAD_OF_HOUSEHOLD,
 } from './tax-data/social-security-tax-brackets';
 
 export interface CapitalGainsTaxesData {
@@ -62,6 +62,11 @@ export interface EarlyWithdrawalPenaltyData {
   taxDeferredPenaltyAmount: number;
   taxFreePenaltyAmount: number;
   totalPenaltyAmount: number;
+}
+
+export interface SocialSecurityTaxData {
+  taxableSocialSecurityIncome: number;
+  maxTaxablePercentage: number;
 }
 
 export class TaxProcessor {
@@ -259,22 +264,22 @@ export class TaxProcessor {
   }
 
   private getTaxablePortionOfSocialSecurityIncome(combinedIncome: number, totalSocialSecurityIncome: number): number {
-    const brackets = this.getSocialSecurityTaxBrackets();
+    const thresholds = this.getSocialSecurityTaxThresholds();
 
     // 0% taxable
-    if (combinedIncome <= brackets[0].max) return 0;
+    if (combinedIncome <= thresholds[0].max) return 0;
 
     // Up to 50% taxable ($25,000 to $34,000 for single)
-    if (combinedIncome > brackets[1].min && combinedIncome <= brackets[1].max) {
-      const excessIncome = combinedIncome - brackets[1].min;
+    if (combinedIncome > thresholds[1].min && combinedIncome <= thresholds[1].max) {
+      const excessIncome = combinedIncome - thresholds[1].min;
       return Math.min(excessIncome * 0.5, totalSocialSecurityIncome * 0.5);
     }
 
     // Up to 85% taxable (over $34,000 for single)
-    const tier1Excess = brackets[1].max - brackets[1].min;
+    const tier1Excess = thresholds[1].max - thresholds[1].min;
     const tier1Amount = Math.min(tier1Excess * 0.5, totalSocialSecurityIncome * 0.5);
 
-    const tier2Excess = combinedIncome - brackets[2].min;
+    const tier2Excess = combinedIncome - thresholds[2].min;
     const tier2Amount = tier2Excess * 0.85;
 
     return Math.min(tier1Amount + tier2Amount, totalSocialSecurityIncome * 0.85);
@@ -336,14 +341,14 @@ export class TaxProcessor {
     }
   }
 
-  private getSocialSecurityTaxBrackets(): SocialSecurityTaxBracket[] {
+  private getSocialSecurityTaxThresholds(): SocialSecurityTaxThreshold[] {
     switch (this.filingStatus) {
       case 'single':
-        return SOCIAL_SECURITY_TAX_BRACKETS_SINGLE;
+        return SOCIAL_SECURITY_TAX_THRESHOLDS_SINGLE;
       case 'marriedFilingJointly':
-        return SOCIAL_SECURITY_TAX_BRACKETS_MARRIED_FILING_JOINTLY;
+        return SOCIAL_SECURITY_TAX_THRESHOLDS_MARRIED_FILING_JOINTLY;
       case 'headOfHousehold':
-        return SOCIAL_SECURITY_TAX_BRACKETS_HEAD_OF_HOUSEHOLD;
+        return SOCIAL_SECURITY_TAX_THRESHOLDS_HEAD_OF_HOUSEHOLD;
     }
   }
 }
