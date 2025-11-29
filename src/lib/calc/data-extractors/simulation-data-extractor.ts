@@ -20,6 +20,7 @@ export interface ReturnsStatsData {
 export interface CashFlowData {
   totalIncomeFromIncomes: number;
   earnedIncome: number;
+  socialSecurityIncome: number;
   taxExemptIncome: number;
   totalExpenses: number;
   totalTaxesAndPenalties: number;
@@ -207,14 +208,15 @@ export class SimulationDataExtractor {
     const { totalTaxesAndPenalties } = this.getTaxAmountsByType(dp);
 
     const totalIncomeFromIncomes = incomesData?.totalIncome ?? 0;
+    const socialSecurityIncome = incomesData?.totalSocialSecurityIncome ?? 0;
     const taxExemptIncome = incomesData?.totalTaxExemptIncome ?? 0;
-    const earnedIncome = totalIncomeFromIncomes - taxExemptIncome;
+    const earnedIncome = totalIncomeFromIncomes - socialSecurityIncome - taxExemptIncome;
 
     const totalExpenses = expensesData?.totalExpenses ?? 0;
 
     const cashFlow = totalIncomeFromIncomes - totalExpenses - totalTaxesAndPenalties;
 
-    return { totalIncomeFromIncomes, earnedIncome, taxExemptIncome, totalExpenses, totalTaxesAndPenalties, cashFlow };
+    return { totalIncomeFromIncomes, earnedIncome, socialSecurityIncome, taxExemptIncome, totalExpenses, totalTaxesAndPenalties, cashFlow };
   }
 
   static getContributionsByTaxCategory(dp: SimulationDataPoint): ContributionsByTaxCategory {
