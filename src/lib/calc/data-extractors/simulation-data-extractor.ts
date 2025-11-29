@@ -72,6 +72,7 @@ export interface TaxableIncomeSources {
   dividendIncome: number;
   interestIncome: number;
   earnedIncome: number;
+  socialSecurityIncome: number;
   taxExemptIncome: number;
   grossIncome: number;
   grossOrdinaryIncome: number;
@@ -381,10 +382,12 @@ export class SimulationDataExtractor {
       (returnsData?.yieldAmountsForPeriod.taxable.bonds ?? 0) + (returnsData?.yieldAmountsForPeriod.cashSavings.cash ?? 0);
 
     const incomesData = dp.incomes;
+    const totalIncomeFromIncomes = incomesData?.totalIncome ?? 0;
+    const socialSecurityIncome = incomesData?.totalSocialSecurityIncome ?? 0;
     const taxExemptIncome = incomesData?.totalTaxExemptIncome ?? 0;
-    const earnedIncome = (incomesData?.totalIncome ?? 0) - taxExemptIncome;
+    const earnedIncome = totalIncomeFromIncomes - socialSecurityIncome - taxExemptIncome;
 
-    const grossOrdinaryIncome = earnedIncome + retirementDistributions + interestIncome;
+    const grossOrdinaryIncome = earnedIncome + retirementDistributions + interestIncome + socialSecurityIncome;
     const grossCapGains = realizedGains + dividendIncome;
     const grossIncome = grossOrdinaryIncome + grossCapGains;
     const totalIncome = grossIncome + taxExemptIncome;
@@ -398,6 +401,7 @@ export class SimulationDataExtractor {
       dividendIncome,
       interestIncome,
       earnedIncome,
+      socialSecurityIncome,
       taxExemptIncome,
       grossIncome,
       grossOrdinaryIncome,
