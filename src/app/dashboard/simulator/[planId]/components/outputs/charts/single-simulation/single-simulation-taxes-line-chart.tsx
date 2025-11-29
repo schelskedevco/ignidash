@@ -269,7 +269,7 @@ export default function SingleSimulationTaxesLineChart({
       break;
     case 'ordinaryIncome':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('earnedIncome', 'interestIncome', 'retirementDistributions');
+      dataKeys.push('earnedIncome', 'socialSecurityIncome', 'interestIncome', 'retirementDistributions');
       break;
     case 'capGainsAndDividends':
       formatter = (value: number) => formatNumber(value, 1, '$');

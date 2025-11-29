@@ -290,8 +290,8 @@ export default function SingleSimulationTaxesBarChart({
       desktop: ['Tax-Deferred Withdrawals', 'Early Roth Earnings Withdrawals'],
     },
     ordinaryIncome: {
-      mobile: ['Earned Income', 'Interest Income', 'Retirement Dist.'],
-      desktop: ['Earned Income', 'Interest Income', 'Retirement Distributions'],
+      mobile: ['Earned Income', 'Soc. Sec.', 'Interest Income', 'Retirement Dist.'],
+      desktop: ['Earned Income', 'Social Security', 'Interest Income', 'Retirement Distributions'],
     },
     earlyWithdrawalPenalties: {
       mobile: ['Annual EW Penalty', 'Cumul. EW Penalty'],
@@ -439,9 +439,13 @@ export default function SingleSimulationTaxesBarChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'ordinaryIncome': {
-      const [earnedIncomeLabel, interestIncomeLabel, retirementDistributionsLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [earnedIncomeLabel, socialSecurityIncomeLabel, interestIncomeLabel, retirementDistributionsLabel] = getLabelsForScreenSize(
+        dataView,
+        isSmallScreen
+      );
       transformedChartData = chartData.flatMap((item) => [
         { name: earnedIncomeLabel, amount: item.earnedIncome },
+        { name: socialSecurityIncomeLabel, amount: item.socialSecurityIncome },
         { name: interestIncomeLabel, amount: item.interestIncome },
         { name: retirementDistributionsLabel, amount: item.retirementDistributions },
       ]);
