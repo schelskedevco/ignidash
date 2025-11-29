@@ -68,7 +68,7 @@ export interface EarlyWithdrawalPenaltyData {
 export interface SocialSecurityTaxesData {
   taxableSocialSecurity: number;
   maxTaxablePercentage: number;
-  actualTaxablePercentage: number;
+  taxablePercentage: number;
 }
 
 export class TaxProcessor {
@@ -101,7 +101,7 @@ export class TaxProcessor {
     const socialSecurityTaxes: SocialSecurityTaxesData = {
       taxableSocialSecurity,
       maxTaxablePercentage,
-      actualTaxablePercentage: socialSecurityIncome > 0 ? taxableSocialSecurity / socialSecurityIncome : 0,
+      taxablePercentage: socialSecurityIncome > 0 ? taxableSocialSecurity / socialSecurityIncome : 0,
     };
 
     const adjustedGrossIncome = adjustedIncomeTaxedAsIncome + adjustedIncomeTaxedAsCapGains;
@@ -280,16 +280,13 @@ export class TaxProcessor {
   ): { taxableSocialSecurity: number; maxTaxablePercentage: number } {
     const thresholds = this.getSocialSecurityTaxThresholds();
 
-    // 0% taxable
     if (combinedIncome <= thresholds[0].max) return { taxableSocialSecurity: 0, maxTaxablePercentage: 0 };
 
-    // Up to 50% taxable ($25,000 to $34,000 for single)
     if (combinedIncome > thresholds[1].min && combinedIncome <= thresholds[1].max) {
       const excessIncome = combinedIncome - thresholds[1].min;
       return { taxableSocialSecurity: Math.min(excessIncome * 0.5, totalSocialSecurityIncome * 0.5), maxTaxablePercentage: 0.5 };
     }
 
-    // Up to 85% taxable (over $34,000 for single)
     const tier1Excess = thresholds[1].max - thresholds[1].min;
     const tier1Amount = Math.min(tier1Excess * 0.5, totalSocialSecurityIncome * 0.5);
 

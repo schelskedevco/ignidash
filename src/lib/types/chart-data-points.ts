@@ -71,6 +71,12 @@ export interface SingleSimulationTaxesChartDataPoint {
   topMarginalIncomeTaxRate: number;
   incomeTaxBrackets: IncomeTaxBracket[];
 
+  /* Social Security */
+  socialSecurityIncome: number;
+  taxableSocialSecurityIncome: number;
+  maxTaxableSocialSecurityPercentage: number;
+  taxableSocialSecurityPercentage: number;
+
   /* Cap Gains */
   realizedGains: number;
   dividendIncome: number;
