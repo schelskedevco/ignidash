@@ -111,7 +111,7 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
                         </option>
                       ))}
                     </optgroup>
-                    <optgroup label="Templates">
+                    <optgroup label="Demo Plans">
                       <option value="template1">Standard Plan</option>
                       <option value="template2">Early Retirement Plan</option>
                     </optgroup>
