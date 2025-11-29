@@ -49,6 +49,31 @@ function getTaxBrackets(chartData: SingleSimulationTaxesChartDataPoint[]): {
   };
 }
 
+const renderTaxBracketReferenceLines = (
+  taxBrackets: IncomeTaxBracket[] | CapitalGainsTaxBracket[],
+  taxableIncome: number,
+  foregroundColor: string,
+  foregroundMutedColor: string
+) => {
+  const nextBracketIndex = taxBrackets.findIndex((bracket) => bracket.min > taxableIncome);
+  const visibleBrackets = nextBracketIndex === -1 ? taxBrackets : taxBrackets.slice(0, nextBracketIndex + 1);
+
+  return visibleBrackets.map((bracket, index) => (
+    <ReferenceLine
+      key={index}
+      y={bracket.min}
+      stroke={foregroundMutedColor}
+      ifOverflow="extendDomain"
+      label={{
+        value: `${(bracket.rate * 100).toFixed(0)}% (${formatNumber(bracket.min, 1, '$')})`,
+        position: index !== visibleBrackets.length - 1 ? 'insideBottomRight' : 'insideTopRight',
+        fill: foregroundColor,
+        fontWeight: '600',
+      }}
+    />
+  ));
+};
+
 const IncomeCalculationsTooltip = ({ active, payload, startAge, age, disabled, dataView }: IncomeCalculationsTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
@@ -314,6 +339,7 @@ export default function SingleSimulationTaxesBarChart({
 
   const chartData = rawChartData.filter((item) => item.age === age);
   const { incomeTaxBrackets, capitalGainsTaxBrackets } = getTaxBrackets(chartData);
+  const taxableIncome = Math.max(...chartData.map((item) => item.taxableIncome));
 
   let formatter = undefined;
   let transformedChartData: { name: string; [key: string]: number | string | Record<string, number> }[] = [];
@@ -561,34 +587,10 @@ export default function SingleSimulationTaxesBarChart({
           )}
           {referenceLineMode === 'marginalIncomeTaxRates' &&
             incomeTaxBrackets &&
-            incomeTaxBrackets.map((bracket, index) => (
-              <ReferenceLine
-                key={index}
-                y={bracket.min}
-                stroke={foregroundMutedColor}
-                label={{
-                  value: `${(bracket.rate * 100).toFixed(0)}% (${formatNumber(bracket.min, 1, '$')})`,
-                  position: 'insideBottomRight',
-                  fill: foregroundColor,
-                  fontWeight: '600',
-                }}
-              />
-            ))}
+            renderTaxBracketReferenceLines(incomeTaxBrackets, taxableIncome, foregroundColor, foregroundMutedColor)}
           {referenceLineMode === 'marginalCapGainsTaxRates' &&
             capitalGainsTaxBrackets &&
-            capitalGainsTaxBrackets.map((bracket, index) => (
-              <ReferenceLine
-                key={index}
-                y={bracket.min}
-                stroke={foregroundMutedColor}
-                label={{
-                  value: `${(bracket.rate * 100).toFixed(0)}% (${formatNumber(bracket.min, 1, '$')})`,
-                  position: 'insideBottomRight',
-                  fill: foregroundColor,
-                  fontWeight: '600',
-                }}
-              />
-            ))}
+            renderTaxBracketReferenceLines(capitalGainsTaxBrackets, taxableIncome, foregroundColor, foregroundMutedColor)}
         </BarChart>
       </ResponsiveContainer>
     </div>
