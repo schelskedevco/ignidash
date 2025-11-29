@@ -69,6 +69,7 @@ export interface SocialSecurityTaxesData {
   taxableSocialSecurity: number;
   maxTaxablePercentage: number;
   taxablePercentage: number;
+  provisionalIncome: number;
 }
 
 export class TaxProcessor {
@@ -91,10 +92,10 @@ export class TaxProcessor {
     const adjustedIncomeTaxedAsCapGains = adjustedRealizedGains + annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
 
     const socialSecurityIncome = annualIncomesData.totalSocialSecurityIncome;
-    const combinedIncome = adjustedIncomeTaxedAsIncome + adjustedIncomeTaxedAsCapGains + socialSecurityIncome * 0.5;
+    const provisionalIncome = adjustedIncomeTaxedAsIncome + adjustedIncomeTaxedAsCapGains + socialSecurityIncome * 0.5;
 
     const { taxableSocialSecurity, maxTaxablePercentage } = this.getTaxablePortionOfSocialSecurityIncome(
-      combinedIncome,
+      provisionalIncome,
       socialSecurityIncome
     );
     adjustedIncomeTaxedAsIncome += taxableSocialSecurity;
@@ -102,6 +103,7 @@ export class TaxProcessor {
       taxableSocialSecurity,
       maxTaxablePercentage,
       taxablePercentage: socialSecurityIncome > 0 ? taxableSocialSecurity / socialSecurityIncome : 0,
+      provisionalIncome,
     };
 
     const adjustedGrossIncome = adjustedIncomeTaxedAsIncome + adjustedIncomeTaxedAsCapGains;
@@ -275,22 +277,22 @@ export class TaxProcessor {
   }
 
   private getTaxablePortionOfSocialSecurityIncome(
-    combinedIncome: number,
+    provisionalIncome: number,
     totalSocialSecurityIncome: number
   ): { taxableSocialSecurity: number; maxTaxablePercentage: number } {
     const thresholds = this.getSocialSecurityTaxThresholds();
 
-    if (combinedIncome <= thresholds[0].max) return { taxableSocialSecurity: 0, maxTaxablePercentage: 0 };
+    if (provisionalIncome <= thresholds[0].max) return { taxableSocialSecurity: 0, maxTaxablePercentage: 0 };
 
-    if (combinedIncome > thresholds[1].min && combinedIncome <= thresholds[1].max) {
-      const excessIncome = combinedIncome - thresholds[1].min;
+    if (provisionalIncome > thresholds[1].min && provisionalIncome <= thresholds[1].max) {
+      const excessIncome = provisionalIncome - thresholds[1].min;
       return { taxableSocialSecurity: Math.min(excessIncome * 0.5, totalSocialSecurityIncome * 0.5), maxTaxablePercentage: 0.5 };
     }
 
     const tier1Excess = thresholds[1].max - thresholds[1].min;
     const tier1Amount = Math.min(tier1Excess * 0.5, totalSocialSecurityIncome * 0.5);
 
-    const tier2Excess = combinedIncome - thresholds[2].min;
+    const tier2Excess = provisionalIncome - thresholds[2].min;
     const tier2Amount = tier2Excess * 0.85;
 
     return { taxableSocialSecurity: Math.min(tier1Amount + tier2Amount, totalSocialSecurityIncome * 0.85), maxTaxablePercentage: 0.85 };
