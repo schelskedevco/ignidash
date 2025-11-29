@@ -267,11 +267,11 @@ export class TaxProcessor {
     if (adjustedRealizedGains >= 0) {
       this.capitalLossCarryover = 0;
       return { adjustedRealizedGains, capitalLossDeduction: 0 };
+    } else {
+      const capitalLossDeduction = -Math.max(-3000, adjustedRealizedGains);
+      this.capitalLossCarryover = adjustedRealizedGains + capitalLossDeduction;
+      return { adjustedRealizedGains: 0, capitalLossDeduction };
     }
-
-    const capitalLossDeduction = -Math.max(-3000, adjustedRealizedGains);
-    this.capitalLossCarryover = adjustedRealizedGains + capitalLossDeduction;
-    return { adjustedRealizedGains: 0, capitalLossDeduction };
   }
 
   private getTaxablePortionOfSocialSecurityIncome(
