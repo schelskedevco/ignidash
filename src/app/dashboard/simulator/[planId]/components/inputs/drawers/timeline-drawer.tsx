@@ -129,7 +129,14 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
                 {saveError && <ErrorMessageCard errorMessage={saveError} />}
                 <Field>
                   <Label htmlFor="currentAge">Current Age</Label>
-                  <NumberInput name="currentAge" control={control} id="currentAge" inputMode="numeric" placeholder="35" />
+                  <NumberInput
+                    name="currentAge"
+                    control={control}
+                    id="currentAge"
+                    inputMode="numeric"
+                    placeholder="35"
+                    autoFocus={timeline === null}
+                  />
                   {errors.currentAge && <ErrorMessage>{errors.currentAge?.message}</ErrorMessage>}
                 </Field>
                 <Field>
@@ -154,7 +161,7 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
                       id="retirementStrategy.retirementAge"
                       inputMode="numeric"
                       placeholder="62"
-                      autoFocus
+                      autoFocus={timeline !== null}
                     />
                     <ErrorMessage>{getRetirementStrategyError(errors, retirementStrategyType)}</ErrorMessage>
                     <Description>{getRetirementStrategyDesc(retirementStrategyType)}</Description>
@@ -170,7 +177,7 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
                       inputMode="decimal"
                       placeholder="4%"
                       suffix="%"
-                      autoFocus
+                      autoFocus={timeline !== null}
                     />
                     <ErrorMessage>{getRetirementStrategyError(errors, retirementStrategyType)}</ErrorMessage>
                     <Description>{getRetirementStrategyDesc(retirementStrategyType)}</Description>
