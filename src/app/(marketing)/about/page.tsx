@@ -59,8 +59,8 @@ export default function AboutPage() {
                 ways to fine-tune the plan according to my interests and values.
               </p>
               <p className="mt-8">
-                Enter Ignidash: the financial planning tool that gets the math right and helps you make sense of it all, so you can explore
-                your future with confidence. Ready to start planning?{' '}
+                Enter Ignidash: the personal finance app that gets the math right and helps you make sense of it all so you can plan your
+                future with confidence. Ready to get started?{' '}
                 <Link href="/signup" className="text-primary hover:underline">
                   Create your free account
                 </Link>{' '}
