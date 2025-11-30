@@ -48,8 +48,8 @@ export default function AboutPage() {
               </p>
               <p className="mt-8">
                 While AI was excellent at explaining retirement planning concepts and brainstorming career changes that fit my interests, I
-                hit a wall when it came to the math. LLMs struggle with complex financial calculations, giving me ballpark estimates when I
-                wanted more precision.
+                hit a wall when it came to the math. LLMs struggle with complex financial calculations, giving me high-level ballpark
+                estimates when I wanted more precision and detail.
               </p>
               <p className="mt-8">
                 That&apos;s when I realized the tool I needed didn&apos;t exist yet—one that combined rigorous financial modeling with
