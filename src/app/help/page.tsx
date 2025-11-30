@@ -23,7 +23,7 @@ const faqs = [
         <br />
         The <strong className="underline">Monte Carlo modes</strong> are particularly useful for understanding the range of possible
         outcomes. You can drill down into full individual simulations by clicking on rows in the table at the bottom of Results.{' '}
-        <strong>Tip:</strong> You can find relevant simulations to explore by sorting the table by metrics you care about!
+        <strong>Tip:</strong> To find relevant simulations to explore, sort the table by metrics you care about!
       </>
     ),
   },
@@ -59,7 +59,7 @@ const faqs = [
   {
     question: 'Can I choose not to automatically reinvest dividends and interest?',
     answer:
-      'No. For now, Ignidash always assumes that dividends and interest are automatically reinvested, which is a common practice. There are currently no plans to change this in the future.',
+      "No. For now, Ignidash always assumes that dividends and interest are automatically reinvested, which is a common practice. There are currently no plans to change this in the future, but let me know if it's something you'd like.",
   },
   {
     question: "Why doesn't investment income, such as dividends and interest, show up in the Cash Flow tab as income?",
