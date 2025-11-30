@@ -2,6 +2,8 @@ import { CircleQuestionMarkIcon } from 'lucide-react';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/react/24/outline';
 
+import { Divider } from '@/components/catalyst/divider';
+
 const faqs = [
   {
     question: "What's the best thing about Switzerland?",
@@ -47,6 +49,7 @@ export default function HelpPage() {
             </div>
           </div>
         </div>
+        <Divider className="my-8" />
         <dl className="divide-y divide-zinc-900/10 dark:divide-white/10">
           {faqs.map((faq) => (
             <Disclosure key={faq.question} as="div" className="py-6 first:pt-0 last:pb-0">
