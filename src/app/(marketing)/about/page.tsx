@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function AboutPage() {
   return (
     <main className="relative isolate min-h-dvh">
@@ -18,35 +20,46 @@ export default function AboutPage() {
             <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">FIRE.</span>
           </h1>
           <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8 dark:text-gray-400">
-            Ignidash lets you plan, track, and achieve financial independence with{' '}
-            <strong className="font-semibold">comprehensive simulations</strong> and{' '}
-            <strong className="font-semibold">AI-powered insights</strong>.
+            An introduction to Ignidash and how it came to be.
           </p>
         </div>
       </div>
       <div className="mx-auto mt-20 max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0 lg:max-w-none">
-          <div className="grid max-w-xl grid-cols-1 gap-8 text-base/7 text-gray-600 lg:max-w-none lg:grid-cols-2 dark:text-gray-300">
+          <div className="mx-auto grid max-w-xl grid-cols-1 gap-8 text-base/7 text-gray-600 lg:max-w-none lg:grid-cols-2 dark:text-gray-300">
             <div>
               <p>
-                Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.
-                Id dolor praesent donec est. Odio penatibus risus viverra tellus varius sit neque erat velit. Faucibus commodo massa
-                rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae sed turpis id.
+                My name is{' '}
+                <a
+                  href="https://www.linkedin.com/in/scheljos/"
+                  className="text-primary hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Joe Schelske
+                </a>
+                , I&apos;m 26 years old and the founder of{' '}
+                <Link href="/" className="text-primary hover:underline">
+                  Ignidash.com
+                </Link>
+                . After quitting my engineering job at Meta to pursue &quot;something else&quot; (not yet knowing what that something else
+                would be), I would talk to ChatGPT about my finances to explore different life, career, and financial plans that seemed
+                appealing.
               </p>
               <p className="mt-8">
-                Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim.
-                Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas.
+                While these AI conversations were great for explaining retirement planning concepts and brainstorming career path ideas, I
+                quickly realized that the mathematical side of financial planning was not something that LLMs were particularly well-suited
+                for on their own.
               </p>
             </div>
             <div>
               <p>
-                Erat pellentesque dictumst ligula porttitor risus eget et eget. Ultricies tellus felis id dignissim eget. Est augue maecenas
-                risus nulla ultrices congue nunc tortor. Enim et nesciunt doloremque nesciunt voluptate.
+                Then, I wanted a tool that could run accurate, comprehensive long-term financial simulations to make up for the
+                computational shortcomings of AI, with an integration that could bring AI&apos;s qualitative strengths to the table as well.
               </p>
               <p className="mt-8">
-                Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis odio id et. Id blandit molestie auctor fermentum dignissim.
-                Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et ultrices hac adipiscing egestas. Iaculis convallis ac
-                tempor et ut. Ac lorem vel integer orci.
+                Enter Ignidash: an AI-powered retirement planning tool that combines robust financial modeling with AI assistance features.
+                My goal with it is to make retirement planning more accessible, intuitive, and personalized for everyone.
               </p>
             </div>
           </div>
