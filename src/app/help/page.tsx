@@ -51,6 +51,26 @@ const faqs = [
     question: 'How can I work around the lack of debt modeling?',
     answer: 'Enter your monthly debt payment as a regular expense. You can make it a monthly expense using the Frequency input.',
   },
+  {
+    question: 'How can I try out different options for incomes or expenses within a single Simulator plan?',
+    answer:
+      'You can disable (and then re-enable) individual incomes, expenses, and contributions using the Disable button in the three dot menu next to each. This keeps the data in the plan, but excludes it from the simulation results.',
+  },
+  {
+    question: 'Can I choose not to automatically reinvest dividends and interest?',
+    answer:
+      'No. For now, Ignidash always assumes that dividends and interest are automatically reinvested, which is a common practice. There are currently no plans to change this in the future.',
+  },
+  {
+    question: "Why doesn't investment income, such as dividends and interest, show up in the Cash Flow tab as income?",
+    answer:
+      'The Cash Flow tab focuses on money available for spending or saving. Since investment income is automatically reinvested, it represents portfolio growth rather than available cash flow. This growth is already reflected in your account balances and Returns tab. For tax purposes, you can see all investment income in the Taxes tab.',
+  },
+  {
+    question: "Why don't retirement distributions, such as 401(k) withdrawals, show up in the Cash Flow tab as income?",
+    answer:
+      'The Cash Flow tab shows income flows from external sources like salary and business income. Retirement distributions are drawdowns from your accumulated savings, not new money coming in. You can see all income sources for tax purposes in the Taxes tab, and track retirement withdrawals in the Withdrawals tab.',
+  },
 ];
 
 export default function HelpPage() {
