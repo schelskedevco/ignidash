@@ -42,9 +42,9 @@ export default function AboutPage() {
                 <Link href="/" className="text-primary hover:underline">
                   Ignidash.com
                 </Link>
-                . After quitting my engineering job at Meta to pursue &quot;something else&quot; (not yet knowing what that something else
-                would be), I would talk to ChatGPT about my interests and finances to explore different life, career, and financial plans
-                that seemed appealing.
+                . After quitting my engineering job at Meta to pursue &quot;something else&quot; (not yet knowing what that would be), I
+                would talk to ChatGPT about my interests and finances to explore different life, career, and financial plans that seemed
+                appealing.
               </p>
               <p className="mt-8">
                 While these AI conversations were great for explaining retirement planning concepts and brainstorming career path ideas, I
@@ -54,12 +54,17 @@ export default function AboutPage() {
             </div>
             <div>
               <p>
-                Then, I wanted a tool that could run accurate, comprehensive long-term financial simulations to make up for the
-                computational shortcomings of AI, but also had AI-powered assistance features to help me understand and interpret the
-                results, as well as explore ways to fine-tune the plan according to my interests and values.
+                At this point, I wanted a tool that could run accurate, comprehensive long-term financial simulations to make up for the
+                computational shortcomings of AI, but also had AI-powered assistance features to help me understand the results and explore
+                ways to fine-tune the plan according to my interests and values.
               </p>
               <p className="mt-8">
-                Enter Ignidash: an AI-powered retirement planning tool that combines robust financial modeling with AI assistance features.
+                Enter Ignidash: the financial planning tool that gets the math right and helps you make sense of it all, so you can explore
+                your future with confidence. Ready to start planning?{' '}
+                <Link href="/signup" className="text-primary hover:underline">
+                  Create your free account
+                </Link>{' '}
+                today!
               </p>
             </div>
           </div>
