@@ -64,7 +64,7 @@ const faqs = [
   {
     question: "Why doesn't investment income, such as dividends and interest, show up in the Cash Flow tab as income?",
     answer:
-      'The Cash Flow tab focuses on money available for spending or saving. Since investment income is automatically reinvested, it represents portfolio growth rather than available cash flow. This growth is already reflected in your account balances and Returns tab. For tax purposes, you can see all investment income in the Taxes tab.',
+      'The Cash Flow tab focuses on money available for spending or saving. Since investment income is automatically reinvested, it represents portfolio growth rather than available cash flow. This growth is reflected in your account balances and Returns tab. For tax purposes, you can see all investment income in the Taxes tab.',
   },
   {
     question: "Why don't retirement distributions, such as 401(k) withdrawals, show up in the Cash Flow tab as income?",
