@@ -18,7 +18,9 @@ export default function AboutPage() {
             <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">FIRE.</span>
           </h1>
           <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8 dark:text-gray-400">
-            Plan, track, and achieve financial independence with comprehensive simulations and AI-powered insights.
+            Ignidash lets you plan, track, and achieve financial independence with{' '}
+            <strong className="font-semibold">comprehensive simulations</strong> and{' '}
+            <strong className="font-semibold">AI-powered insights</strong>.
           </p>
         </div>
       </div>
