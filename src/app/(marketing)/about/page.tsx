@@ -58,17 +58,13 @@ export default function AboutPage() {
             </div>
             <div>
               <p>
-                So I built Ignidash. With Ignidash, you get comprehensive, accurate long-term financial simulations powered by sophisticated
-                modeling, plus AI assistance that helps you interpret results, explore trade-offs, and adjust your plan based on what
+                That&apos;s when I started working on Ignidash. With Ignidash, you get comprehensive, accurate long-term financial
+                simulations, plus AI assistance that helps you interpret results, explore trade-offs, and adjust your plan based on what
                 matters most to you.
               </p>
               <p className="mt-8">
                 Whether you&apos;re planning for early retirement, a career pivot, starting a business, or just want confidence in your
-                financial future, Ignidash helps you see the path forward clearly. Because financial planning shouldn&apos;t feel like
-                guesswork—it should empower you to make decisions that align with your dreams.
-              </p>
-              <p className="mt-8">
-                Ready to take control of your financial future?{' '}
+                financial future, Ignidash helps you see the path forward clearly. Ready to take control of your financial future?{' '}
                 <Link href="/signup" className="text-primary font-semibold hover:underline">
                   Create your free account
                 </Link>{' '}
