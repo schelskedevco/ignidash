@@ -69,8 +69,12 @@ export default function Navbar() {
         <NavbarItem href="/terms" current={pathname === '/terms'}>
           Terms
         </NavbarItem>
+        <NavbarDivider />
         <NavbarItem href="/settings" current={pathname === '/settings'}>
           Settings
+        </NavbarItem>
+        <NavbarItem href="/help" current={pathname === '/help'}>
+          Help
         </NavbarItem>
       </NavbarSection>
       <NavbarSpacer />
