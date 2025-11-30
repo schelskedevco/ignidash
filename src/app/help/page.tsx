@@ -8,18 +8,17 @@ import { Divider } from '@/components/catalyst/divider';
 
 const faqs = [
   {
-    question: 'Can I model debts like a mortgage or student loans?',
-    answer:
-      "Not yet, but I'm planning to add support for this in the next couple months. For now, enter your monthly debt payment as a regular expense.",
+    question: 'How can I work around the lack of debt modeling?',
+    answer: 'Enter your monthly debt payment as a regular expense.',
   },
   {
-    question: 'Can I model physical assets like a house or car?',
-    answer: 'Not yet, but this is on my roadmap and coming in the next couple months.',
+    question: 'How can I check my vulnerability to sequence of returns risk?',
+    answer:
+      'You have two good options. First, you can use the Historical Returns Simulation Mode (in Simulation Settings) with Historical Retirement Start Year set to a historical year with a market crash, like 1929 for the Great Depression. This will make the market crash in your simulation at the same time as your retirement, which is the classic sequence of returns risk scenario. Second, you can use one of the two Monte Carlo Simulation Modes and check your Success %. You can drill down into failed simulations from the table at the bottom of Simulator Results by sorting by Success.',
   },
   {
-    question: 'What do you call someone with no body and no nose?',
-    answer:
-      'Nobody knows. Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa, voluptas ipsa quia excepturi, quibusdam natus exercitationem sapiente tempore labore voluptatem.',
+    question: 'What is the recommended workflow for Ignidash?',
+    answer: '...',
   },
   {
     question: 'Why do you never see elephants hiding in trees?',
