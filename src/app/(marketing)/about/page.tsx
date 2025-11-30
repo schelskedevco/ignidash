@@ -13,10 +13,12 @@ export default function AboutPage() {
 
       <div className="px-6 pt-14 lg:px-8">
         <div className="mx-auto max-w-2xl pt-24 text-center sm:pt-40">
-          <h1 className="text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl dark:text-white">We love creators</h1>
+          <h1 className="text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl dark:text-white">
+            The <span className="bg-gradient-to-r from-pink-500 to-rose-600 bg-clip-text text-transparent">Future</span> of{' '}
+            <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">FIRE.</span>
+          </h1>
           <p className="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8 dark:text-gray-400">
-            Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat
-            fugiat.
+            Plan, track, and achieve financial independence with comprehensive simulations and AI-powered insights.
           </p>
         </div>
       </div>
