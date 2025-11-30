@@ -43,28 +43,36 @@ export default function AboutPage() {
                   Ignidash.com
                 </Link>
                 . After quitting my engineering job at Meta to pursue &quot;something else&quot; (not yet knowing what that would be), I
-                would talk to ChatGPT about my interests and finances to explore different life, career, and financial plans that seemed
-                appealing.
+                found myself having frequent conversations with ChatGPT about career paths, life goals, and financial planning.
               </p>
               <p className="mt-8">
-                While these AI conversations were great for explaining retirement planning concepts and brainstorming career path ideas, I
-                quickly realized that the mathematical side of financial planning was not something that LLMs were particularly well-suited
-                for on their own.
+                While AI was excellent at explaining retirement planning concepts and brainstorming career changes that fit my interests, I
+                hit a wall when it came to the math. LLMs struggle with complex financial calculations, giving me ballpark estimates when I
+                wanted more precision.
+              </p>
+              <p className="mt-8">
+                That&apos;s when I realized the tool I needed didn&apos;t exist yet—one that combined rigorous financial modeling with
+                intelligent, conversational guidance to help me understand what the numbers actually meant for my life.
               </p>
             </div>
             <div>
               <p>
-                At this point, I wanted a tool that could run accurate, comprehensive long-term financial simulations to make up for the
-                computational shortcomings of AI, but also had AI-powered assistance features to help me understand the results and explore
-                ways to fine-tune the plan according to my interests and values.
+                So I built Ignidash. Unlike traditional financial calculators that spit out numbers without context, or AI assistants that
+                can&apos;t handle the math, Ignidash brings both together. You get comprehensive, accurate long-term financial simulations
+                powered by sophisticated modeling, plus AI assistance that helps you interpret results, explore trade-offs, and adjust your
+                plan based on what matters most to you.
               </p>
               <p className="mt-8">
-                Enter Ignidash: the personal finance app that gets the math right and helps you make sense of it all so you can plan a
-                future you&apos;re excited about with confidence. Ready to get started?{' '}
-                <Link href="/signup" className="text-primary hover:underline">
+                Whether you&apos;re planning for early retirement, a career pivot, starting a business, or just want confidence in your
+                financial future, Ignidash helps you see the path forward clearly. Because financial planning shouldn&apos;t feel like
+                guesswork—it should empower you to make decisions that align with your dreams.
+              </p>
+              <p className="mt-8">
+                Ready to take control of your financial future?{' '}
+                <Link href="/signup" className="text-primary font-semibold hover:underline">
                   Create your free account
                 </Link>{' '}
-                today!
+                and start planning the life you want to live.
               </p>
             </div>
           </div>
