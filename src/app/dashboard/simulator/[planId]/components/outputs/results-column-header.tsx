@@ -10,16 +10,24 @@ import { useRegenSimulation } from '@/hooks/use-regen-simulation';
 import { useSimulationSettingsData } from '@/hooks/use-convex-data';
 
 import SimulationSettingsDrawer from './drawers/simulation-settings-drawer';
+import AIChatDrawer from './drawers/ai-chat-drawer';
 import DrillDownBreadcrumb from './drill-down-breadcrumb';
 
 export default function ResultsColumnHeader() {
   const { icon, label, handleClick, isDisabled } = useRegenSimulation();
   const [simulationSettingsOpen, setSimulationSettingsOpen] = useState(false);
+  const [aiChatOpen, setAiChatOpen] = useState(false);
 
   const simulationSettingsTitleComponent = (
     <div className="flex items-center gap-2">
       <SlidersHorizontalIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
       <span>Simulation Settings</span>
+    </div>
+  );
+  const aiChatTitleComponent = (
+    <div className="flex items-center gap-2">
+      <WandSparklesIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+      <span>Ask AI Anything</span>
     </div>
   );
 
@@ -51,7 +59,12 @@ export default function ResultsColumnHeader() {
         icon={PresentationIcon}
         iconButton={
           <div className="flex items-center gap-x-1">
-            <IconButton icon={WandSparklesIcon} label="Ask AI (Coming soon!)" onClick={() => {}} surfaceColor="emphasized" />
+            <IconButton
+              icon={WandSparklesIcon}
+              label="Ask AI (Coming soon!)"
+              onClick={() => setAiChatOpen(true)}
+              surfaceColor="emphasized"
+            />
             <IconButton
               icon={SlidersHorizontalIcon}
               label="Simulation Settings"
@@ -68,6 +81,9 @@ export default function ResultsColumnHeader() {
 
       <Drawer open={simulationSettingsOpen} setOpen={setSimulationSettingsOpen} title={simulationSettingsTitleComponent}>
         <SimulationSettingsDrawer setOpen={setSimulationSettingsOpen} simulationSettings={simulationSettings} />
+      </Drawer>
+      <Drawer open={aiChatOpen} setOpen={setAiChatOpen} title={aiChatTitleComponent} size="large">
+        <AIChatDrawer setOpen={setAiChatOpen} />
       </Drawer>
     </>
   );
