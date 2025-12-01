@@ -3,14 +3,19 @@
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, TransitionChild } from '@headlessui/react';
 import { X } from 'lucide-react';
 
+import { cn } from '@/lib/utils';
+
 interface DrawerProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   title: string | React.ReactNode;
   children?: React.ReactNode;
+  size?: 'regular' | 'large';
 }
 
-export default function Drawer({ open, setOpen, title, children }: DrawerProps) {
+export default function Drawer({ open, setOpen, title, children, size = 'regular' }: DrawerProps) {
+  const sizeClasses = size === 'large' ? 'sm:max-w-xl' : 'sm:max-w-md';
+
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-50">
       <DialogBackdrop
@@ -23,7 +28,10 @@ export default function Drawer({ open, setOpen, title, children }: DrawerProps) 
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full sm:pl-16">
             <DialogPanel
               transition
-              className="pointer-events-auto relative w-screen max-w-full transform transition duration-300 ease-in-out data-closed:translate-x-full sm:max-w-md"
+              className={cn(
+                'pointer-events-auto relative w-screen max-w-full transform transition duration-300 ease-in-out data-closed:translate-x-full',
+                sizeClasses
+              )}
             >
               <TransitionChild>
                 <div className="absolute top-0 left-0 -ml-8 hidden pt-4 pr-2 duration-300 ease-in-out data-closed:opacity-0 sm:-ml-10 sm:flex sm:pr-4">
