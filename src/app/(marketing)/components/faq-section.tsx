@@ -5,17 +5,17 @@ const faqs = [
       "No. Ignidash is a tool for simulating your financial future and planning your retirement—we don't provide any personalized investment advice. For that, please consult with a licensed financial advisor.",
   },
   {
-    question: 'What countries and currencies does Ignidash support?',
+    question: 'Can I use Ignidash outside the US?',
     answer:
       'Right now, Ignidash only supports planning in USD ($), with US tax rules and retirement account types, and is made for US-based customers. International support is on our roadmap.',
   },
   {
     question: 'Is my financial data secure?',
     answer:
-      'Yes. Your data is encrypted and securely stored using Convex, a database platform with enterprise-grade security. We never sell your information. When you use AI features, only your financial numbers are shared with AI providers—no personally identifying information.',
+      'Yes. Your data is encrypted and stored securely using Convex, a database platform with enterprise-grade security. We never sell your information. When you use AI features, only your financial numbers are shared with AI providers—no personally identifying information.',
   },
   {
-    question: 'Do I need to connect my bank accounts?',
+    question: 'Do I need to connect my bank and investment accounts?',
     answer:
       "No. Ignidash works entirely with data you manually input. You're never required to link external accounts, giving you full control over what you share.",
   },
