@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
+import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Divider } from '@/components/catalyst/divider';
@@ -236,7 +237,7 @@ export default function SingleSimulationTaxesLineChart({
     () => setClickedOutsideChart(false)
   );
 
-  const chartData: SingleSimulationTaxesChartDataPoint[] = rawChartData;
+  const chartData: SingleSimulationTaxesChartDataPoint[] = useChartDataSlice(rawChartData);
 
   const dataKeys: (keyof SingleSimulationTaxesChartDataPoint)[] = [];
   let formatter = undefined;

@@ -10,6 +10,7 @@ import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-d
 import { Subheading } from '@/components/catalyst/heading';
 
 import SingleSimulationCashFlowLineChart from '../../charts/single-simulation/single-simulation-cash-flow-line-chart';
+import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 
 interface SingleSimulationCashFlowLineChartCardProps {
   onAgeSelect: (age: number) => void;
@@ -56,42 +57,48 @@ export default function SingleSimulationCashFlowLineChartCard({
           <span className="mr-2">Cash Flow</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
-        <Select
-          className="max-w-48 sm:max-w-64"
-          id="cash-flow-data-view"
-          name="cash-flow-data-view"
-          value={dataView === 'custom' ? customDataID : dataView}
-          onChange={(e) => {
-            const isCustomSelection =
-              e.target.value !== 'net' && e.target.value !== 'incomes' && e.target.value !== 'expenses' && e.target.value !== 'savingsRate';
-            if (isCustomSelection) {
-              setDataView('custom');
-              setCustomDataID(e.target.value);
-            } else {
-              setDataView(e.target.value as 'net' | 'incomes' | 'expenses' | 'savingsRate');
-              setCustomDataID('');
-            }
-          }}
-        >
-          <option value="net">Cash Flow</option>
-          <option value="incomes">Income</option>
-          <option value="expenses">Expenses</option>
-          <option value="savingsRate">Savings Rate</option>
-          <optgroup label="By Income">
-            {uniqueIncomes.map((income) => (
-              <option key={income.id} value={income.id}>
-                {income.name}
-              </option>
-            ))}
-          </optgroup>
-          <optgroup label="By Expense">
-            {uniqueExpenses.map((expense) => (
-              <option key={expense.id} value={expense.id}>
-                {expense.name}
-              </option>
-            ))}
-          </optgroup>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select
+            className="max-w-48 sm:max-w-64"
+            id="cash-flow-data-view"
+            name="cash-flow-data-view"
+            value={dataView === 'custom' ? customDataID : dataView}
+            onChange={(e) => {
+              const isCustomSelection =
+                e.target.value !== 'net' &&
+                e.target.value !== 'incomes' &&
+                e.target.value !== 'expenses' &&
+                e.target.value !== 'savingsRate';
+              if (isCustomSelection) {
+                setDataView('custom');
+                setCustomDataID(e.target.value);
+              } else {
+                setDataView(e.target.value as 'net' | 'incomes' | 'expenses' | 'savingsRate');
+                setCustomDataID('');
+              }
+            }}
+          >
+            <option value="net">Cash Flow</option>
+            <option value="incomes">Income</option>
+            <option value="expenses">Expenses</option>
+            <option value="savingsRate">Savings Rate</option>
+            <optgroup label="By Income">
+              {uniqueIncomes.map((income) => (
+                <option key={income.id} value={income.id}>
+                  {income.name}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="By Expense">
+              {uniqueExpenses.map((expense) => (
+                <option key={expense.id} value={expense.id}>
+                  {expense.name}
+                </option>
+              ))}
+            </optgroup>
+          </Select>
+          <ChartTimeFrameDropdown />
+        </div>
       </div>
       <SingleSimulationCashFlowLineChart
         onAgeSelect={onAgeSelect}

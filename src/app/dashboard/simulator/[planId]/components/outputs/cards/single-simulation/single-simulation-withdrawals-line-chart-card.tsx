@@ -10,6 +10,7 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Subheading } from '@/components/catalyst/heading';
 
 import SingleSimulationWithdrawalsLineChart from '../../charts/single-simulation/single-simulation-withdrawals-line-chart';
+import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 
 interface SingleSimulationWithdrawalsLineChartCardProps {
   onAgeSelect: (age: number) => void;
@@ -72,60 +73,63 @@ export default function SingleSimulationWithdrawalsLineChartCard({
           <span className="mr-2">Withdrawals</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
-        <Select
-          className="max-w-48 sm:max-w-64"
-          id="withdrawals-data-view"
-          name="withdrawals-data-view"
-          value={dataView === 'custom' ? customDataID : dataView}
-          onChange={(e) => {
-            const isCustomSelection =
-              e.target.value !== 'annualAmounts' &&
-              e.target.value !== 'cumulativeAmounts' &&
-              e.target.value !== 'taxCategory' &&
-              e.target.value !== 'realizedGains' &&
-              e.target.value !== 'requiredMinimumDistributions' &&
-              e.target.value !== 'earlyWithdrawalPenalties' &&
-              e.target.value !== 'earlyWithdrawals' &&
-              e.target.value !== 'withdrawalRate';
-            if (isCustomSelection) {
-              setDataView('custom');
-              setCustomDataID(e.target.value);
-            } else {
-              setDataView(
-                e.target.value as
-                  | 'annualAmounts'
-                  | 'cumulativeAmounts'
-                  | 'taxCategory'
-                  | 'realizedGains'
-                  | 'requiredMinimumDistributions'
-                  | 'earlyWithdrawalPenalties'
-                  | 'earlyWithdrawals'
-                  | 'withdrawalRate'
-              );
-              setCustomDataID('');
-            }
-          }}
-        >
-          <option value="taxCategory">Tax Category</option>
-          <option value="annualAmounts">Annual Withdrawals</option>
-          <option value="cumulativeAmounts">Cumulative Withdrawals</option>
-          <option value="requiredMinimumDistributions">Required Minimum Distributions</option>
-          <option value="withdrawalRate">Withdrawal Rate</option>
-          <optgroup label="Taxable Brokerage">
-            <option value="realizedGains">Realized Gains</option>
-          </optgroup>
-          <optgroup label="Issues & Penalties">
-            <option value="earlyWithdrawals">Early Withdrawals</option>
-            <option value="earlyWithdrawalPenalties">Early Withdrawal Penalties</option>
-          </optgroup>
-          <optgroup label="By Account">
-            {uniqueAccounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.name}
-              </option>
-            ))}
-          </optgroup>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select
+            className="max-w-48 sm:max-w-64"
+            id="withdrawals-data-view"
+            name="withdrawals-data-view"
+            value={dataView === 'custom' ? customDataID : dataView}
+            onChange={(e) => {
+              const isCustomSelection =
+                e.target.value !== 'annualAmounts' &&
+                e.target.value !== 'cumulativeAmounts' &&
+                e.target.value !== 'taxCategory' &&
+                e.target.value !== 'realizedGains' &&
+                e.target.value !== 'requiredMinimumDistributions' &&
+                e.target.value !== 'earlyWithdrawalPenalties' &&
+                e.target.value !== 'earlyWithdrawals' &&
+                e.target.value !== 'withdrawalRate';
+              if (isCustomSelection) {
+                setDataView('custom');
+                setCustomDataID(e.target.value);
+              } else {
+                setDataView(
+                  e.target.value as
+                    | 'annualAmounts'
+                    | 'cumulativeAmounts'
+                    | 'taxCategory'
+                    | 'realizedGains'
+                    | 'requiredMinimumDistributions'
+                    | 'earlyWithdrawalPenalties'
+                    | 'earlyWithdrawals'
+                    | 'withdrawalRate'
+                );
+                setCustomDataID('');
+              }
+            }}
+          >
+            <option value="taxCategory">Tax Category</option>
+            <option value="annualAmounts">Annual Withdrawals</option>
+            <option value="cumulativeAmounts">Cumulative Withdrawals</option>
+            <option value="requiredMinimumDistributions">Required Minimum Distributions</option>
+            <option value="withdrawalRate">Withdrawal Rate</option>
+            <optgroup label="Taxable Brokerage">
+              <option value="realizedGains">Realized Gains</option>
+            </optgroup>
+            <optgroup label="Issues & Penalties">
+              <option value="earlyWithdrawals">Early Withdrawals</option>
+              <option value="earlyWithdrawalPenalties">Early Withdrawal Penalties</option>
+            </optgroup>
+            <optgroup label="By Account">
+              {uniqueAccounts.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+            </optgroup>
+          </Select>
+          <ChartTimeFrameDropdown />
+        </div>
       </div>
       <SingleSimulationWithdrawalsLineChart
         onAgeSelect={onAgeSelect}

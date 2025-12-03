@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
+import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { AccountDataWithReturns } from '@/lib/calc/returns';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
@@ -134,7 +135,7 @@ export default function SingleSimulationReturnsLineChart({
   let chartData:
     | SingleSimulationReturnsChartDataPoint[]
     | Array<{ age: number; annualStockGrowth: number; annualBondGrowth: number; annualCashGrowth: number } & AccountDataWithReturns> =
-    rawChartData;
+    useChartDataSlice(rawChartData);
 
   const dataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
   let formatter = undefined;

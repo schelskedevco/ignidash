@@ -10,6 +10,7 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Subheading } from '@/components/catalyst/heading';
 
 import SingleSimulationReturnsLineChart from '../../charts/single-simulation/single-simulation-returns-line-chart';
+import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 
 interface SingleSimulationReturnsLineChartCardProps {
   onAgeSelect: (age: number) => void;
@@ -52,38 +53,41 @@ export default function SingleSimulationReturnsLineChartCard({
           <span className="mr-2">Returns</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
-        <Select
-          className="max-w-48 sm:max-w-64"
-          id="returns-data-view"
-          name="returns-data-view"
-          value={dataView === 'custom' ? customDataID : dataView}
-          onChange={(e) => {
-            const isCustomSelection =
-              e.target.value !== 'rates' && e.target.value !== 'annualAmounts' && e.target.value !== 'cumulativeAmounts';
-            if (isCustomSelection) {
-              setDataView('custom');
-              setCustomDataID(e.target.value);
-            } else {
-              setDataView(e.target.value as 'rates' | 'annualAmounts' | 'cumulativeAmounts');
-              setCustomDataID('');
-            }
-          }}
-        >
-          <optgroup label="Return Rates">
-            <option value="rates">Real Annual Returns</option>
-          </optgroup>
-          <optgroup label="Growth Amounts">
-            <option value="annualAmounts">Annual Growth</option>
-            <option value="cumulativeAmounts">Cumulative Growth</option>
-          </optgroup>
-          <optgroup label="By Account">
-            {uniqueAccounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.name}
-              </option>
-            ))}
-          </optgroup>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select
+            className="max-w-48 sm:max-w-64"
+            id="returns-data-view"
+            name="returns-data-view"
+            value={dataView === 'custom' ? customDataID : dataView}
+            onChange={(e) => {
+              const isCustomSelection =
+                e.target.value !== 'rates' && e.target.value !== 'annualAmounts' && e.target.value !== 'cumulativeAmounts';
+              if (isCustomSelection) {
+                setDataView('custom');
+                setCustomDataID(e.target.value);
+              } else {
+                setDataView(e.target.value as 'rates' | 'annualAmounts' | 'cumulativeAmounts');
+                setCustomDataID('');
+              }
+            }}
+          >
+            <optgroup label="Return Rates">
+              <option value="rates">Real Annual Returns</option>
+            </optgroup>
+            <optgroup label="Growth Amounts">
+              <option value="annualAmounts">Annual Growth</option>
+              <option value="cumulativeAmounts">Cumulative Growth</option>
+            </optgroup>
+            <optgroup label="By Account">
+              {uniqueAccounts.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+            </optgroup>
+          </Select>
+          <ChartTimeFrameDropdown />
+        </div>
       </div>
       <SingleSimulationReturnsLineChart
         onAgeSelect={onAgeSelect}

@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
+import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import type { SingleSimulationContributionsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { AccountDataWithTransactions } from '@/lib/calc/account';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
@@ -114,7 +115,8 @@ export default function SingleSimulationContributionsLineChart({
 
   let chartData:
     | SingleSimulationContributionsChartDataPoint[]
-    | Array<{ age: number; annualContributions: number; cumulativeContributions: number } & AccountDataWithTransactions> = rawChartData;
+    | Array<{ age: number; annualContributions: number; cumulativeContributions: number } & AccountDataWithTransactions> =
+    useChartDataSlice(rawChartData);
 
   const dataKeys: (keyof SingleSimulationContributionsChartDataPoint)[] = [];
   const formatter = (value: number) => formatNumber(value, 1, '$');

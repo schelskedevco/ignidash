@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
+import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 import type { IncomeData } from '@/lib/calc/incomes';
 import type { ExpenseData } from '@/lib/calc/expenses';
@@ -205,7 +206,7 @@ export default function SingleSimulationCashFlowLineChart({
   );
 
   let chartData: SingleSimulationCashFlowChartDataPoint[] | Array<{ age: number } & IncomeData> | Array<{ age: number } & ExpenseData> =
-    rawChartData;
+    useChartDataSlice(rawChartData);
 
   const dataKeys: (keyof SingleSimulationCashFlowChartDataPoint | keyof IncomeData | keyof ExpenseData)[] = [];
   const strokeColors: string[] = [];

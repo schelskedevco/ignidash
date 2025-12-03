@@ -10,6 +10,7 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Subheading } from '@/components/catalyst/heading';
 
 import SingleSimulationContributionsLineChart from '../../charts/single-simulation/single-simulation-contributions-line-chart';
+import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 
 interface SingleSimulationContributionsLineChartCardProps {
   onAgeSelect: (age: number) => void;
@@ -52,38 +53,41 @@ export default function SingleSimulationContributionsLineChartCard({
           <span className="mr-2">Contributions</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
-        <Select
-          className="max-w-48 sm:max-w-64"
-          id="contributions-data-view"
-          name="contributions-data-view"
-          value={dataView === 'custom' ? customDataID : dataView}
-          onChange={(e) => {
-            const isCustomSelection =
-              e.target.value !== 'annualAmounts' &&
-              e.target.value !== 'cumulativeAmounts' &&
-              e.target.value !== 'taxCategory' &&
-              e.target.value !== 'employerMatch';
-            if (isCustomSelection) {
-              setDataView('custom');
-              setCustomDataID(e.target.value);
-            } else {
-              setDataView(e.target.value as 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'employerMatch');
-              setCustomDataID('');
-            }
-          }}
-        >
-          <option value="taxCategory">Tax Category</option>
-          <option value="annualAmounts">Annual Contributions</option>
-          <option value="cumulativeAmounts">Cumulative Contributions</option>
-          <option value="employerMatch">Employer Match</option>
-          <optgroup label="By Account">
-            {uniqueAccounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.name}
-              </option>
-            ))}
-          </optgroup>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select
+            className="max-w-48 sm:max-w-64"
+            id="contributions-data-view"
+            name="contributions-data-view"
+            value={dataView === 'custom' ? customDataID : dataView}
+            onChange={(e) => {
+              const isCustomSelection =
+                e.target.value !== 'annualAmounts' &&
+                e.target.value !== 'cumulativeAmounts' &&
+                e.target.value !== 'taxCategory' &&
+                e.target.value !== 'employerMatch';
+              if (isCustomSelection) {
+                setDataView('custom');
+                setCustomDataID(e.target.value);
+              } else {
+                setDataView(e.target.value as 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'employerMatch');
+                setCustomDataID('');
+              }
+            }}
+          >
+            <option value="taxCategory">Tax Category</option>
+            <option value="annualAmounts">Annual Contributions</option>
+            <option value="cumulativeAmounts">Cumulative Contributions</option>
+            <option value="employerMatch">Employer Match</option>
+            <optgroup label="By Account">
+              {uniqueAccounts.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+            </optgroup>
+          </Select>
+          <ChartTimeFrameDropdown />
+        </div>
       </div>
       <SingleSimulationContributionsLineChart
         onAgeSelect={onAgeSelect}

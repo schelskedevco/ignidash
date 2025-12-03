@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tool
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
+import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { AccountDataWithTransactions } from '@/lib/calc/account';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
@@ -164,7 +165,8 @@ export default function SingleSimulationWithdrawalsLineChart({
 
   let chartData:
     | SingleSimulationWithdrawalsChartDataPoint[]
-    | Array<{ age: number; annualWithdrawals: number; cumulativeWithdrawals: number } & AccountDataWithTransactions> = rawChartData;
+    | Array<{ age: number; annualWithdrawals: number; cumulativeWithdrawals: number } & AccountDataWithTransactions> =
+    useChartDataSlice(rawChartData);
 
   const dataKeys: (keyof SingleSimulationWithdrawalsChartDataPoint)[] = [];
   let formatter = undefined;

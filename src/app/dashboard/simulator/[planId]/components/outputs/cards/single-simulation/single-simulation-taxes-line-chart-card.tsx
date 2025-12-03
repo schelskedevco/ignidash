@@ -8,6 +8,7 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Subheading } from '@/components/catalyst/heading';
 
 import SingleSimulationTaxesLineChart from '../../charts/single-simulation/single-simulation-taxes-line-chart';
+import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 
 interface SingleSimulationTaxesLineChartCardProps {
   onAgeSelect: (age: number) => void;
@@ -69,60 +70,63 @@ export default function SingleSimulationTaxesLineChartCard({
           <span className="mr-2">Taxes</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
-        <Select
-          className="max-w-48 sm:max-w-64"
-          id="taxes-data-view"
-          name="taxes-data-view"
-          value={dataView}
-          onChange={(e) =>
-            setDataView(
-              e.target.value as
-                | 'marginalRates'
-                | 'effectiveRates'
-                | 'annualAmounts'
-                | 'cumulativeAmounts'
-                | 'taxableIncome'
-                | 'adjustedGrossIncome'
-                | 'investmentIncome'
-                | 'retirementDistributions'
-                | 'taxExemptIncome'
-                | 'ordinaryIncome'
-                | 'capGainsAndDividends'
-                | 'earlyWithdrawalPenalties'
-                | 'adjustmentsAndDeductions'
-                | 'socialSecurityIncome'
-                | 'socialSecurityTaxablePercentage'
-            )
-          }
-        >
-          <optgroup label="Tax Amounts">
-            <option value="annualAmounts">Annual Taxes</option>
-            <option value="cumulativeAmounts">Cumulative Taxes</option>
-            <option value="adjustmentsAndDeductions">Adjustments &amp; Deductions</option>
-          </optgroup>
-          <optgroup label="Income Calculations">
-            <option value="taxableIncome">Taxable Income</option>
-            <option value="adjustedGrossIncome">Adjusted Gross Income</option>
-          </optgroup>
-          <optgroup label="Tax Rates">
-            <option value="marginalRates">Top Marginal Rates</option>
-            <option value="effectiveRates">Effective Rates</option>
-          </optgroup>
-          <optgroup label="Income Sources">
-            <option value="ordinaryIncome">Ordinary Income</option>
-            <option value="capGainsAndDividends">Capital Gains &amp; Dividends</option>
-            <option value="investmentIncome">Investment Income</option>
-            <option value="retirementDistributions">Retirement Distributions</option>
-            <option value="taxExemptIncome">Tax-Exempt Income</option>
-          </optgroup>
-          <optgroup label="Issues & Penalties">
-            <option value="earlyWithdrawalPenalties">Early Withdrawal Penalties</option>
-          </optgroup>
-          <optgroup label="Social Security">
-            <option value="socialSecurityIncome">Social Security Income</option>
-            <option value="socialSecurityTaxablePercentage">Taxable % of Social Security</option>
-          </optgroup>
-        </Select>
+        <div className="flex items-center gap-2">
+          <Select
+            className="max-w-48 sm:max-w-64"
+            id="taxes-data-view"
+            name="taxes-data-view"
+            value={dataView}
+            onChange={(e) =>
+              setDataView(
+                e.target.value as
+                  | 'marginalRates'
+                  | 'effectiveRates'
+                  | 'annualAmounts'
+                  | 'cumulativeAmounts'
+                  | 'taxableIncome'
+                  | 'adjustedGrossIncome'
+                  | 'investmentIncome'
+                  | 'retirementDistributions'
+                  | 'taxExemptIncome'
+                  | 'ordinaryIncome'
+                  | 'capGainsAndDividends'
+                  | 'earlyWithdrawalPenalties'
+                  | 'adjustmentsAndDeductions'
+                  | 'socialSecurityIncome'
+                  | 'socialSecurityTaxablePercentage'
+              )
+            }
+          >
+            <optgroup label="Tax Amounts">
+              <option value="annualAmounts">Annual Taxes</option>
+              <option value="cumulativeAmounts">Cumulative Taxes</option>
+              <option value="adjustmentsAndDeductions">Adjustments &amp; Deductions</option>
+            </optgroup>
+            <optgroup label="Income Calculations">
+              <option value="taxableIncome">Taxable Income</option>
+              <option value="adjustedGrossIncome">Adjusted Gross Income</option>
+            </optgroup>
+            <optgroup label="Tax Rates">
+              <option value="marginalRates">Top Marginal Rates</option>
+              <option value="effectiveRates">Effective Rates</option>
+            </optgroup>
+            <optgroup label="Income Sources">
+              <option value="ordinaryIncome">Ordinary Income</option>
+              <option value="capGainsAndDividends">Capital Gains &amp; Dividends</option>
+              <option value="investmentIncome">Investment Income</option>
+              <option value="retirementDistributions">Retirement Distributions</option>
+              <option value="taxExemptIncome">Tax-Exempt Income</option>
+            </optgroup>
+            <optgroup label="Issues & Penalties">
+              <option value="earlyWithdrawalPenalties">Early Withdrawal Penalties</option>
+            </optgroup>
+            <optgroup label="Social Security">
+              <option value="socialSecurityIncome">Social Security Income</option>
+              <option value="socialSecurityTaxablePercentage">Taxable % of Social Security</option>
+            </optgroup>
+          </Select>
+          <ChartTimeFrameDropdown />
+        </div>
       </div>
       <SingleSimulationTaxesLineChart
         onAgeSelect={onAgeSelect}
