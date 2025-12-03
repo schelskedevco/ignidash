@@ -10,6 +10,10 @@ const faqs = [
       'Not yet. Right now, Ignidash only supports planning in USD ($) using US tax laws and retirement accounts. International support is on our roadmap.',
   },
   {
+    question: 'Is Ignidash free to use?',
+    answer: 'All core planning tools are completely free while in beta, but access to AI features will require a paid subscription.',
+  },
+  {
     question: 'Is my financial data secure?',
     answer:
       'Yes. Your data is encrypted and stored securely using Convex, a database platform with enterprise-grade security. We never sell your information. When you use AI features, only your financial numbers are shared with AI providers—no personally identifying information.',
@@ -18,11 +22,6 @@ const faqs = [
     question: 'Do I need to connect my bank and investment accounts?',
     answer:
       "No. Ignidash works entirely with data you manually input. You're never required to link external accounts, giving you full control over what you share.",
-  },
-  {
-    question: 'Is Ignidash free to use?',
-    answer:
-      "Ignidash is currently free while in beta. At launch, we'll offer a 7-day free trial, then plans starting at $11/month for Pro and $15/month for Pro + AI with advanced features.",
   },
 ];
 
