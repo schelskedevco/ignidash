@@ -6,19 +6,20 @@ const sectionHeader = {
   eyebrow: 'Everything you need',
   headline: 'Not an expert? No problem.',
   subhead:
-    'With intuitive tools and AI assistance, creating a comprehensive retirement plan you can feel confident about has never been easier.',
+    'With intuitive tools and AI assistance, creating a comprehensive retirement plan you feel confident about has never been easier.',
 };
 
 const features = [
   {
     name: 'Chat with AI.',
-    description: 'Use AI to ask questions, clarify results, and learn about retirement planning concepts and strategies.',
+    description: 'Use AI to ask questions, clarify results, and learn about retirement planning concepts and principles.',
     icon: SparklesIcon,
     status: 'coming-soon',
   },
   {
     name: 'Automatic insights.',
-    description: "Get an assessment of your plan's health in areas like tax efficiency, spending sustainability, and more.",
+    description:
+      'Generate an extensive AI assessment of your plan in important areas like tax efficiency, spending sustainability, and more.',
     icon: LightBulbIcon,
     status: 'coming-soon',
   },
@@ -36,7 +37,7 @@ const features = [
   },
   {
     name: 'Understand tax implications.',
-    description: 'Model how different investment approaches and income changes impact your estimated taxes.',
+    description: 'Model how different investment strategies and income changes impact your estimated taxes.',
     icon: BanknotesIcon,
     status: 'ready',
   },
