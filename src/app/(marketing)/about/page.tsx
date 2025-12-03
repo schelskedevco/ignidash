@@ -50,10 +50,6 @@ export default function AboutPage() {
                 was a clear gap when it came to the math. LLMs struggle with complex financial calculations, giving me high-level ballpark
                 estimates when I wanted more precision and detail.
               </p>
-              <p className="mt-8">
-                That&apos;s when I realized the tool I needed didn&apos;t exist yet—one that combined rigorous financial modeling with
-                conversational guidance to help me understand what the numbers actually meant for my life.
-              </p>
             </div>
             <div>
               <p>
