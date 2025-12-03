@@ -46,18 +46,18 @@ export default function AboutPage() {
                 found myself having frequent conversations with ChatGPT about career paths, life goals, and financial planning.
               </p>
               <p className="mt-8">
-                While AI was great for explaining retirement planning concepts and brainstorming career changes that fit my interests, I hit
-                a wall when it came to the math. LLMs struggle with complex financial calculations, giving me high-level ballpark estimates
-                when I wanted more precision and detail.
+                While AI was great at explaining retirement planning concepts and brainstorming career changes that fit my interests, there
+                was a clear gap when it came to the math. LLMs struggle with complex financial calculations, giving me high-level ballpark
+                estimates when I wanted more precision and detail.
               </p>
               <p className="mt-8">
                 That&apos;s when I realized the tool I needed didn&apos;t exist yet—one that combined rigorous financial modeling with
-                intelligent, conversational guidance to help me understand what the numbers actually meant for my life.
+                conversational guidance to help me understand what the numbers actually meant for my life.
               </p>
             </div>
             <div>
               <p>
-                That&apos;s when I started working on Ignidash. With Ignidash, you get comprehensive, accurate long-term financial
+                That&apos;s when I started working on Ignidash. With Ignidash, you get comprehensive and accurate long-term financial
                 simulations, plus AI assistance that helps you interpret results, explore trade-offs, and adjust your plan based on what
                 matters most to you.
               </p>
