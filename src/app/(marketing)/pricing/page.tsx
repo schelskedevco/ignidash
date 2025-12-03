@@ -8,9 +8,9 @@ const tiers = [
     id: 'tier-starter',
     href: '/signup',
     priceMonthly: '$0',
-    description: 'All the basics for your path to financial independence.',
+    description: 'All the basics to see your path to financial independence.',
     features: [
-      'Create and evaluate up to 10 different plans',
+      'Create and save up to 10 different plans',
       'Estimate taxes and visualize your cash flow',
       'Stress-test with Monte Carlo and historical data',
     ],
@@ -18,15 +18,15 @@ const tiers = [
   },
   {
     name: 'Pro',
-    id: 'tier-pro-ai',
+    id: 'tier-pro',
     href: '#',
     priceMonthly: '$12',
-    description: 'Use advanced AI-powered planning tools to refine and accelerate your path.',
+    description: 'Use AI-powered features to refine and understand your path.',
     features: [
       'Everything in Starter',
-      'Ask questions about your plans with AI chat',
-      'Learn planning concepts and strategies with AI help',
-      'Get AI assessment of opportunities and vulnerabilities',
+      'Ask any question about your plan with AI chat',
+      "AI review of your plan's gaps and opportunities",
+      'Understand key financial concepts and strategies',
     ],
     featured: true,
   },
@@ -47,10 +47,13 @@ export default function PricingPage() {
       <div className="mx-auto max-w-4xl text-center">
         <h2 className="text-primary text-base/7 font-semibold">Pricing</h2>
         <p className="mt-2 text-5xl font-semibold tracking-tight text-balance text-zinc-900 sm:text-6xl dark:text-white">
-          Choose your plan
+          Select your tier
         </p>
       </div>
-      <p className="mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-zinc-600 sm:text-xl/8 dark:text-zinc-400"></p>
+      <p className="mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-zinc-600 sm:text-xl/8 dark:text-zinc-400">
+        The tools and insights to confidently plan your financial future. <br className="hidden sm:block" /> Get started today with no
+        credit card required.
+      </p>
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
         {tiers.map((tier, tierIdx) => (
           <div
