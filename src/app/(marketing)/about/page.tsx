@@ -37,8 +37,7 @@ export default function AboutPage() {
                   rel="noopener noreferrer"
                 >
                   Joe Schelske
-                </a>
-                {', '}
+                </a>{' '}
                 and I&apos;m the founder of{' '}
                 <Link href="/" className="text-primary hover:underline">
                   Ignidash.com
@@ -47,9 +46,9 @@ export default function AboutPage() {
                 found myself having frequent conversations with ChatGPT about career paths, life goals, and financial planning.
               </p>
               <p className="mt-8">
-                While AI was excellent at explaining retirement planning concepts and brainstorming career changes that fit my interests, I
-                hit a wall when it came to the math. LLMs struggle with complex financial calculations, giving me high-level ballpark
-                estimates when I wanted more precision and detail.
+                While AI was great for explaining retirement planning concepts and brainstorming career changes that fit my interests, I hit
+                a wall when it came to the math. LLMs struggle with complex financial calculations, giving me high-level ballpark estimates
+                when I wanted more precision and detail.
               </p>
               <p className="mt-8">
                 That&apos;s when I realized the tool I needed didn&apos;t exist yet—one that combined rigorous financial modeling with
