@@ -19,7 +19,7 @@ const features = [
   {
     name: 'Automatic insights.',
     description:
-      'Generate an extensive AI assessment of your plan in areas you care about: tax efficiency, spending sustainability, and more.',
+      'Generate an AI assessment to identify critical opportunities and vulnerabilities in your plan so nothing gets overlooked.',
     icon: LightBulbIcon,
     status: 'coming-soon',
   },
