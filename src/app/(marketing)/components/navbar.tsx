@@ -8,9 +8,6 @@ import { FireIcon } from '@heroicons/react/24/solid';
 import { Authenticated, Unauthenticated, AuthLoading } from 'convex/react';
 
 import { useThemeSwitcher } from '@/hooks/use-theme-switcher';
-import { useConvexAuth } from 'convex/react';
-
-import Banner from './banner';
 
 const navigation = [
   { name: 'Features', href: '/#features' },
@@ -48,13 +45,9 @@ function SidebarModeToggle() {
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showBanner, setShowBanner] = useState(true);
-
-  const { isLoading, isAuthenticated } = useConvexAuth();
 
   return (
     <header className="absolute inset-x-0 top-0 z-50">
-      {showBanner && !isAuthenticated && !isLoading && <Banner setShowBanner={setShowBanner} />}
       <nav aria-label="Global" className="flex items-center justify-between p-6 lg:px-8">
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
@@ -126,6 +119,7 @@ export default function Navbar() {
                   <Link
                     key={item.name}
                     href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
                     className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-zinc-900 hover:bg-zinc-50 dark:text-white dark:hover:bg-white/5"
                   >
                     {item.name}
