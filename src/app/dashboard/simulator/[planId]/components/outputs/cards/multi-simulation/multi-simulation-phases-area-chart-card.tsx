@@ -4,6 +4,7 @@ import { Subheading } from '@/components/catalyst/heading';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 
 import MultiSimulationPhasesAreaChart from '../../charts/multi-simulation/multi-simulation-phases-area-chart';
+import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 
 interface MultiSimulationPhasesAreaChartCardProps {
   rawChartData: MultiSimulationPhasesChartDataPoint[];
@@ -27,6 +28,7 @@ export default function MultiSimulationPhasesAreaChartCard({
           <span className="mr-2">Phases</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
+        <ChartTimeFrameDropdown />
       </div>
       <MultiSimulationPhasesAreaChart
         rawChartData={rawChartData}

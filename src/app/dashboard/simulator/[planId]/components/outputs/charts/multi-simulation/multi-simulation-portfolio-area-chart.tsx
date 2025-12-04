@@ -9,6 +9,7 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
+import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import TimeSeriesLegend from '@/components/time-series-legend';
 
 interface CustomTooltipProps {
@@ -84,7 +85,7 @@ export default function MultiSimulationPortfolioAreaChart({
     () => setClickedOutsideChart(false)
   );
 
-  const chartData: MultiSimulationPortfolioChartDataPoint[] = rawChartData;
+  const chartData: MultiSimulationPortfolioChartDataPoint[] = useChartDataSlice(rawChartData);
   const dataKeys: (keyof MultiSimulationPortfolioChartDataPoint)[] = ['p75PortfolioValue', 'p50PortfolioValue', 'p25PortfolioValue'];
   const formatter = (value: number) => formatNumber(value, 1, '$');
 

@@ -9,6 +9,7 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
+import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import TimeSeriesLegend from '@/components/time-series-legend';
 
 interface CustomTooltipProps {
@@ -84,7 +85,7 @@ export default function MultiSimulationPhasesAreaChart({
     () => setClickedOutsideChart(false)
   );
 
-  const chartData: MultiSimulationPhasesChartDataPoint[] = rawChartData;
+  const chartData: MultiSimulationPhasesChartDataPoint[] = useChartDataSlice(rawChartData);
   const dataKeys: (keyof MultiSimulationPhasesChartDataPoint)[] = ['percentAccumulation', 'percentRetirement', 'percentBankrupt'];
 
   const gridColor = resolvedTheme === 'dark' ? '#3f3f46' : '#d4d4d8'; // zinc-700 : zinc-300
