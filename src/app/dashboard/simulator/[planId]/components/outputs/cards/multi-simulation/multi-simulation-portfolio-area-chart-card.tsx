@@ -1,11 +1,13 @@
 import Card from '@/components/ui/card';
 import type { MultiSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
+import type { KeyMetrics } from '@/lib/types/key-metrics';
 
 import MultiSimulationPortfolioAreaChart from '../../charts/multi-simulation/multi-simulation-portfolio-area-chart';
 
 interface MultiSimulationPortfolioAreaChartCardProps {
   rawChartData: MultiSimulationPortfolioChartDataPoint[];
+  keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   startAge: number;
@@ -13,6 +15,7 @@ interface MultiSimulationPortfolioAreaChartCardProps {
 
 export default function MultiSimulationPortfolioAreaChartCard({
   rawChartData,
+  keyMetrics,
   onAgeSelect,
   selectedAge,
   startAge,
@@ -27,6 +30,7 @@ export default function MultiSimulationPortfolioAreaChartCard({
       </div>
       <MultiSimulationPortfolioAreaChart
         rawChartData={rawChartData}
+        keyMetrics={keyMetrics}
         startAge={startAge}
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}

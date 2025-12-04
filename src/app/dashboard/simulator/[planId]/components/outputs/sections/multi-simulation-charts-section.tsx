@@ -6,6 +6,7 @@ import { useResultsCategory } from '@/lib/stores/simulator-store';
 import SectionContainer from '@/components/ui/section-container';
 import { SimulationCategory } from '@/lib/types/simulation-category';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
+import type { KeyMetrics } from '@/lib/types/key-metrics';
 
 import MultiSimulationPortfolioAreaChartCard from '../cards/multi-simulation/multi-simulation-portfolio-area-chart-card';
 import MultiSimulationPortfolioBarChartCard from '../cards/multi-simulation/multi-simulation-portfolio-bar-chart-card';
@@ -16,15 +17,17 @@ import MultiSimulationDataListSection from './multi-simulation-data-list-section
 interface ChartsCategoryProps {
   startAge: number;
   chartData: MultiSimulationChartData;
+  keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
 
-function PortfolioCharts({ chartData, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
+function PortfolioCharts({ chartData, onAgeSelect, keyMetrics, selectedAge, startAge }: ChartsCategoryProps) {
   return (
     <>
       <MultiSimulationPortfolioAreaChartCard
         rawChartData={chartData.portfolioData}
+        keyMetrics={keyMetrics}
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
         startAge={startAge}
@@ -34,11 +37,12 @@ function PortfolioCharts({ chartData, onAgeSelect, selectedAge, startAge }: Char
   );
 }
 
-function PhasesCharts({ chartData, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
+function PhasesCharts({ chartData, onAgeSelect, keyMetrics, selectedAge, startAge }: ChartsCategoryProps) {
   return (
     <>
       <MultiSimulationPhasesAreaChartCard
         rawChartData={chartData.phasesData}
+        keyMetrics={keyMetrics}
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
         startAge={startAge}
@@ -51,14 +55,15 @@ function PhasesCharts({ chartData, onAgeSelect, selectedAge, startAge }: ChartsC
 interface MultiSimulationChartsSectionProps {
   startAge: number;
   chartData: MultiSimulationChartData;
+  keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
 }
 
-function MultiSimulationChartsSection({ startAge, chartData, onAgeSelect, selectedAge }: MultiSimulationChartsSectionProps) {
+function MultiSimulationChartsSection({ startAge, chartData, keyMetrics, onAgeSelect, selectedAge }: MultiSimulationChartsSectionProps) {
   const resultsCategory = useResultsCategory();
 
-  const props: ChartsCategoryProps = { chartData, onAgeSelect, selectedAge, startAge };
+  const props: ChartsCategoryProps = { chartData, keyMetrics, onAgeSelect, selectedAge, startAge };
 
   let chartsComponents = null;
   switch (resultsCategory) {

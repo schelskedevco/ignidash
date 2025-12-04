@@ -70,7 +70,8 @@ function MultiSimulationResultsForActiveSeed({
         <SimulationMetrics keyMetrics={keyMetrics} />
       </SectionContainer>
       <MultiSimulationMainResults
-        simulationAndKeyMetrics={{ simulation, keyMetrics }}
+        simulation={simulation}
+        keyMetrics={keyMetrics}
         activeSeed={activeSeed}
         activeSeedType={activeSeedType}
         {...sharedProps}
@@ -164,7 +165,7 @@ export default function MultiSimulationResults({ inputs, simulationMode }: Multi
       <SectionContainer showBottomBorder className="mb-0">
         <SimulationMetrics keyMetrics={keyMetrics} />
       </SectionContainer>
-      <MultiSimulationMainResults simulationAndKeyMetrics={null} {...sharedProps} />
+      <MultiSimulationMainResults simulation={null} keyMetrics={keyMetrics} {...sharedProps} />
       <FooterDisclaimer />
     </>
   );

@@ -13,7 +13,8 @@ import MultiSimulationChartsSection from '../sections/multi-simulation-charts-se
 import MultiSimulationDataTableSection from '../sections/multi-simulation-data-table-section';
 
 interface MultiSimulationMainResultsProps {
-  simulationAndKeyMetrics: { simulation: SimulationResult; keyMetrics: KeyMetrics } | null;
+  simulation: SimulationResult | null;
+  keyMetrics: KeyMetrics;
   startAge: number;
   tableData: MultiSimulationTableRow[];
   yearlyTableData: YearlyAggregateTableRow[];
@@ -28,7 +29,8 @@ interface MultiSimulationMainResultsProps {
 }
 
 export default function MultiSimulationMainResults({
-  simulationAndKeyMetrics,
+  simulation,
+  keyMetrics,
   startAge,
   tableData,
   yearlyTableData,
@@ -42,7 +44,7 @@ export default function MultiSimulationMainResults({
   handleSeedFromTableChange,
 }: MultiSimulationMainResultsProps) {
   const availableCategories =
-    simulationAndKeyMetrics !== null
+    simulation !== null
       ? Object.values(SimulationCategory).filter((category) => category !== 'Phases')
       : [SimulationCategory.Portfolio, SimulationCategory.Phases];
 
@@ -60,13 +62,24 @@ export default function MultiSimulationMainResults({
           activeSeedType={activeSeedType}
         />
       </SectionContainer>
-      {simulationAndKeyMetrics !== null ? (
-        <SingleSimulationChartsSection {...simulationAndKeyMetrics} onAgeSelect={onAgeSelect} selectedAge={selectedAge} />
+      {simulation !== null ? (
+        <SingleSimulationChartsSection
+          simulation={simulation}
+          keyMetrics={keyMetrics}
+          onAgeSelect={onAgeSelect}
+          selectedAge={selectedAge}
+        />
       ) : (
-        <MultiSimulationChartsSection startAge={startAge} chartData={chartData} onAgeSelect={onAgeSelect} selectedAge={selectedAge} />
+        <MultiSimulationChartsSection
+          startAge={startAge}
+          chartData={chartData}
+          keyMetrics={keyMetrics}
+          onAgeSelect={onAgeSelect}
+          selectedAge={selectedAge}
+        />
       )}
       <MultiSimulationDataTableSection
-        simulation={simulationAndKeyMetrics?.simulation}
+        simulation={simulation}
         tableData={tableData}
         yearlyTableData={yearlyTableData}
         activeSeed={activeSeed}

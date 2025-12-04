@@ -5,6 +5,7 @@ import { useState, useCallback } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 import type { MultiSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
+import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
@@ -60,6 +61,7 @@ const COLORS = ['var(--chart-3)', 'var(--chart-2)', 'var(--chart-1)', 'var(--cha
 
 interface MultiSimulationPortfolioAreaChartProps {
   rawChartData: MultiSimulationPortfolioChartDataPoint[];
+  keyMetrics: KeyMetrics;
   startAge: number;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
@@ -67,6 +69,7 @@ interface MultiSimulationPortfolioAreaChartProps {
 
 export default function MultiSimulationPortfolioAreaChart({
   rawChartData,
+  keyMetrics,
   startAge,
   onAgeSelect,
   selectedAge,
@@ -134,7 +137,13 @@ export default function MultiSimulationPortfolioAreaChart({
               content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
               cursor={{ stroke: foregroundColor }}
             />
+            {keyMetrics.retirementAge && (
+              <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+            )}
             {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1} />}
+            {keyMetrics.portfolioAtRetirement && (
+              <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+            )}
           </AreaChart>
         </ResponsiveContainer>
       </div>

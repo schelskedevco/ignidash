@@ -1,11 +1,13 @@
 import Card from '@/components/ui/card';
 import type { MultiSimulationPhasesChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
+import type { KeyMetrics } from '@/lib/types/key-metrics';
 
 import MultiSimulationPhasesAreaChart from '../../charts/multi-simulation/multi-simulation-phases-area-chart';
 
 interface MultiSimulationPhasesAreaChartCardProps {
   rawChartData: MultiSimulationPhasesChartDataPoint[];
+  keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
   startAge: number;
@@ -13,6 +15,7 @@ interface MultiSimulationPhasesAreaChartCardProps {
 
 export default function MultiSimulationPhasesAreaChartCard({
   rawChartData,
+  keyMetrics,
   onAgeSelect,
   selectedAge,
   startAge,
@@ -25,7 +28,13 @@ export default function MultiSimulationPhasesAreaChartCard({
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
       </div>
-      <MultiSimulationPhasesAreaChart rawChartData={rawChartData} startAge={startAge} onAgeSelect={onAgeSelect} selectedAge={selectedAge} />
+      <MultiSimulationPhasesAreaChart
+        rawChartData={rawChartData}
+        keyMetrics={keyMetrics}
+        startAge={startAge}
+        onAgeSelect={onAgeSelect}
+        selectedAge={selectedAge}
+      />
     </Card>
   );
 }
