@@ -4,6 +4,7 @@ import { authClient } from '@/lib/auth-client';
 
 export type CustomerStateData = {
   id: string;
+  activeSubscriptions: Array<{ id: string; status: string }>;
 };
 
 export function useCustomerState() {
