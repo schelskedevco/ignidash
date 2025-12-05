@@ -6,7 +6,7 @@ import type { Session } from '@/convex/auth';
 
 export async function middleware(request: NextRequest) {
   const { data: session } = await betterFetch<Session>('/api/auth/get-session', {
-    baseURL: request.nextUrl.origin,
+    baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : request.nextUrl.origin,
     headers: {
       cookie: request.headers.get('cookie') || '',
     },
