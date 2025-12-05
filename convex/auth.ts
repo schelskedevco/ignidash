@@ -7,6 +7,8 @@ import { betterAuth } from 'better-auth';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
 import { getJwtToken } from 'better-auth/plugins';
 import { fetchMutation } from 'convex/nextjs';
+import { polar, checkout, portal, usage, webhooks } from '@polar-sh/better-auth';
+import { Polar } from '@polar-sh/sdk';
 
 import { components, api } from './_generated/api';
 import { DataModel } from './_generated/dataModel';
@@ -22,6 +24,14 @@ const rateLimiter = new RateLimiter(components.rateLimiter, {
   emailChange: { kind: 'fixed window', rate: 3, period: 3 * HOUR },
   emailVerification: { kind: 'fixed window', rate: 3, period: 3 * HOUR },
   deleteAccount: { kind: 'fixed window', rate: 3, period: 3 * HOUR },
+});
+
+const polarClient = new Polar({
+  accessToken: process.env.POLAR_ACCESS_TOKEN,
+  // Use 'sandbox' if you're using the Polar Sandbox environment
+  // Remember that access tokens, products, etc. are completely separated between environments.
+  // Access tokens obtained in Production are for instance not usable in the Sandbox environment.
+  server: 'sandbox',
 });
 
 export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optionsOnly: false }) => {
@@ -145,7 +155,31 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
         },
       },
     },
-    plugins: [convex()],
+    plugins: [
+      convex(),
+      polar({
+        client: polarClient,
+        createCustomerOnSignUp: true,
+        use: [
+          checkout({
+            products: [{ productId: process.env.POLAR_PRODUCT_ID!, slug: 'Ignidash-Pro' }],
+            successUrl: `${siteUrl}/success?checkout_id={CHECKOUT_ID}`,
+            authenticatedUsersOnly: true,
+            returnUrl: `${siteUrl}/pricing`,
+          }),
+          portal({
+            returnUrl: `${siteUrl}/settings`,
+          }),
+          usage(),
+          webhooks({
+            secret: process.env.POLAR_WEBHOOK_SECRET!,
+            onCustomerStateChanged: async (payload) => {},
+            onOrderPaid: async (payload) => {},
+            onPayload: async (payload) => {},
+          }),
+        ],
+      }),
+    ],
     emailVerification: {
       sendVerificationEmail: async ({ user, url }) => {
         const { ok } = await rateLimiter.limit(requireActionCtx(ctx), 'emailVerification', { key: user.id });
