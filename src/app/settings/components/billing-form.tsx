@@ -1,14 +1,10 @@
-// import { authClient } from '@/lib/auth-client';
+import type { CustomerStateData, SubscriptionData } from '@/hooks/use-customer-state';
 
-export default function BillingForm() {
-  //   const { data: customerState } = await authClient.customer.state();
-  //   const { data: subscriptions } = await authClient.customer.subscriptions.list({
-  //     query: {
-  //       page: 1,
-  //       limit: 10,
-  //       active: true,
-  //     },
-  //   });
+interface BillingFormProps {
+  customerState: CustomerStateData | null;
+  subscription: SubscriptionData | null;
+}
 
+export default function BillingForm({ customerState, subscription }: BillingFormProps) {
   return <div>Billing Form Component</div>;
 }

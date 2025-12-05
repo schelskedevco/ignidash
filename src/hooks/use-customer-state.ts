@@ -2,17 +2,17 @@ import { useState, useEffect, useCallback } from 'react';
 
 import { authClient } from '@/lib/auth-client';
 
-type CustomerState = {
+export type CustomerStateData = {
   id: string;
 };
 
-type Subscription = {
+export type SubscriptionData = {
   id: string;
 };
 
 export function useCustomerState() {
-  const [customerState, setCustomerState] = useState<CustomerState | null>(null);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [customerState, setCustomerState] = useState<CustomerStateData | null>(null);
+  const [subscription, setSubscription] = useState<SubscriptionData | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
