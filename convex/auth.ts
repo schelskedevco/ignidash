@@ -13,10 +13,15 @@ import { Polar } from '@polar-sh/sdk';
 import { components, api } from './_generated/api';
 import { DataModel } from './_generated/dataModel';
 import { query } from './_generated/server';
+import authSchema from './betterAuth/schema';
 
 const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
 
-export const authComponent = createClient<DataModel>(components.betterAuth);
+export const authComponent = createClient<DataModel, typeof authSchema>(components.betterAuth, {
+  local: {
+    schema: authSchema,
+  },
+});
 export const resend = new Resend(components.resend, { testMode: false });
 
 const rateLimiter = new RateLimiter(components.rateLimiter, {
@@ -223,8 +228,6 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
     },
   });
 };
-
-export const auth = createAuth({} as GenericCtx<DataModel>, { optionsOnly: true });
 
 export const getCurrentUserSafe = query({
   args: {},
