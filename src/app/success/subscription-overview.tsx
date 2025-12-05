@@ -32,7 +32,7 @@ export default function SubscriptionOverview({ customer, subscription }: Subscri
             <Subheading>Subscription Details</Subheading>
             <DescriptionList>
               <DescriptionTerm>Your Plan</DescriptionTerm>
-              <DescriptionDetails>
+              <DescriptionDetails className="flex items-center">
                 {subscription.product.name}
                 {subscription.status === 'active' && (
                   <Badge color="green" className="ml-2">
