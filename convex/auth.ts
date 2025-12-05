@@ -152,6 +152,12 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
           } catch (error) {
             console.error('Error deleting user data from Convex:', error);
           }
+
+          try {
+            await polarClient.customers.deleteExternal({ externalId: user.id });
+          } catch (error) {
+            console.error('Error deleting Polar customer:', error);
+          }
         },
       },
     },
