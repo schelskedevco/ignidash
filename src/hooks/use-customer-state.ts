@@ -6,8 +6,14 @@ type CustomerState = {
   id: string;
 };
 
+type Subscription = {
+  id: string;
+};
+
 export function useCustomerState() {
   const [customerState, setCustomerState] = useState<CustomerState | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [refetchTrigger, setRefetchTrigger] = useState(0);
@@ -17,16 +23,22 @@ export function useCustomerState() {
     setIsLoading(true);
     setError(null);
 
-    authClient.customer
-      .state()
-      .then(({ data, error: apiError }) => {
+    Promise.all([authClient.customer.state(), authClient.customer.subscriptions.list({ query: { limit: 1 } })])
+      .then(([{ data: customerData, error: customerError }, { data: subscriptionsData, error: subscriptionsError }]) => {
         if (!mounted) return;
 
-        if (apiError) {
-          setError(new Error(apiError.message));
+        if (customerError) {
+          setError(new Error(customerError.message));
           setCustomerState(null);
         } else {
-          setCustomerState(data);
+          setCustomerState(customerData);
+        }
+
+        if (subscriptionsError) {
+          setError(new Error(subscriptionsError.message));
+          setSubscription(null);
+        } else {
+          setSubscription(subscriptionsData.result.items[0]);
         }
       })
       .catch((err) => mounted && setError(err))
@@ -41,5 +53,5 @@ export function useCustomerState() {
     setRefetchTrigger((prev) => prev + 1);
   }, []);
 
-  return { customerState, isLoading, error, refetch };
+  return { customerState, subscription, isLoading, error, refetch };
 }
