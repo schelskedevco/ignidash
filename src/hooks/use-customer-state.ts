@@ -8,6 +8,10 @@ export type CustomerStateData = {
 };
 
 export function useCustomerState() {
+  return { customerState: null, isLoading: false, error: null, refetch: () => {} };
+}
+
+export function useCustomerStateImpl() {
   const [customerState, setCustomerState] = useState<CustomerStateData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

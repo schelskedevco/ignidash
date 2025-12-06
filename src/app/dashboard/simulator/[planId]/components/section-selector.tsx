@@ -124,6 +124,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
           {activeSection === 'results' && (
             <div className="flex items-center gap-x-1">
               <IconButton
+                isDisabled={true}
                 icon={WandSparklesIcon}
                 label="Ask AI (Coming soon!)"
                 onClick={() => setAiChatOpen(true)}

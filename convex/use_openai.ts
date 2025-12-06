@@ -27,6 +27,8 @@ export const chat = action({
     ),
   },
   handler: async (ctx, { messages }) => {
+    throw new Error('Disabled for now');
+
     try {
       const response = await openai.chat.completions.create({
         model: 'gpt-5-mini',
@@ -51,6 +53,8 @@ export const streamChat = action({
     ),
   },
   handler: async (ctx, { messages }) => {
+    throw new Error('Disabled for now');
+
     try {
       const completion = await openai.chat.completions.create({
         model: 'gpt-5-mini',

@@ -30,7 +30,7 @@ const tiers = [
       'Everything in Starter',
       'Ask any question about your plan with AI chat',
       "AI educational overview of your plan's areas",
-      'Understand key financial concepts and strategies',
+      'Learn key financial concepts and strategies',
     ],
     featured: true,
   },
@@ -99,6 +99,7 @@ export default function PricingPage() {
             </ul>
             {tier.id === 'tier-pro' ? (
               <button
+                disabled
                 aria-describedby={tier.id}
                 onClick={async () => await authClient.checkout({ slug: 'Ignidash-Pro' })}
                 className={cn(
@@ -108,7 +109,7 @@ export default function PricingPage() {
                   'mt-8 block w-full rounded-md px-3.5 py-2.5 text-center text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed sm:mt-10'
                 )}
               >
-                Buy {tier.name}
+                Coming soon
               </button>
             ) : (
               <Link

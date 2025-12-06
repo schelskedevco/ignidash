@@ -60,6 +60,7 @@ export default function ResultsColumnHeader() {
         iconButton={
           <div className="flex items-center gap-x-1">
             <IconButton
+              isDisabled={true}
               icon={WandSparklesIcon}
               label="Ask AI (Coming soon!)"
               onClick={() => setAiChatOpen(true)}
