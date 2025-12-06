@@ -1,6 +1,5 @@
 import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import type { CustomerPortalCustomer } from '@polar-sh/sdk/models/components/customerportalcustomer.js';
 import type { CustomerSubscription } from '@polar-sh/sdk/models/components/customersubscription.js';
 
 import { Badge } from '@/components/catalyst/badge';
@@ -15,11 +14,10 @@ function formatCurrency(amount: number, currency: string, locale = 'en-US') {
 }
 
 interface SubscriptionOverviewProps {
-  customer: CustomerPortalCustomer;
   subscription: CustomerSubscription;
 }
 
-export default function SubscriptionOverview({ customer, subscription }: SubscriptionOverviewProps) {
+export default function SubscriptionOverview({ subscription }: SubscriptionOverviewProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">

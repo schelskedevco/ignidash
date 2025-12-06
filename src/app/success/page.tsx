@@ -14,14 +14,12 @@ export default async function SuccessPage({
 }) {
   const { customer_session_token } = await searchParams;
 
-  const customer = await polar.customerPortal.customers.get({ customerSession: customer_session_token ?? '' });
-
   const subscriptions = await polar.customerPortal.subscriptions.list({ customerSession: customer_session_token ?? '' }, { limit: 1 });
   const subscription = subscriptions.result.items[0];
 
   return (
     <Suspense fallback={<PageLoading ariaLabel="Loading subscription overview page" message="Loading" />}>
-      <SubscriptionOverview customer={customer} subscription={subscription} />
+      <SubscriptionOverview subscription={subscription} />
     </Suspense>
   );
 }
