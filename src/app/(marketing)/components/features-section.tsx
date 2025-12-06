@@ -36,7 +36,7 @@ const features = [
   },
   {
     name: 'Understand tax implications.',
-    description: 'Model how withdrawals, investment strategies, and income changes impact your estimated tax liability.',
+    description: 'Model how withdrawals, asset location, and income changes impact your estimated tax liability.',
     icon: BanknotesIcon,
     status: 'ready',
   },
