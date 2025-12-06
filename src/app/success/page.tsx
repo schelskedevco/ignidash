@@ -7,7 +7,11 @@ import SubscriptionOverview from './subscription-overview';
 
 const polar = new Polar({ accessToken: process.env.POLAR_ACCESS_TOKEN! });
 
-export default async function SuccessPage({ searchParams }: { searchParams: { checkout_id?: string; customer_session_token?: string } }) {
+export default async function SuccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ checkout_id?: string; customer_session_token?: string }>;
+}) {
   const { customer_session_token } = await searchParams;
 
   const customer = await polar.customerPortal.customers.get({ customerSession: customer_session_token ?? '' });
