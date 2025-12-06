@@ -53,8 +53,8 @@ export default function AboutPage() {
             </div>
             <div>
               <p>
-                That&apos;s when I started working on Ignidash. With Ignidash, you get comprehensive and accurate long-term financial
-                simulations, plus AI assistance that helps you interpret results, explore trade-offs, and adjust your plan based on what
+                That&apos;s when I started working on Ignidash. With Ignidash, you get comprehensive long-term financial simulations, plus
+                AI assistance that helps you interpret results, learn concepts, explore trade-offs, and adjust your plan based on what
                 matters most to you.
               </p>
               <p className="mt-8">
