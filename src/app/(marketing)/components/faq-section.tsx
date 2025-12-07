@@ -2,26 +2,25 @@ const faqs = [
   {
     question: 'Can Ignidash give me advice about what to invest in?',
     answer:
-      "No. Ignidash is a tool for simulating your financial future and planning your retirement—we don't provide personalized financial, investment, tax, or legal advice. For that, consult with a licensed financial advisor.",
+      "No. Ignidash is a tool for simulating your financial future and planning your retirement—we don't provide personalized financial, investment, tax, or legal advice. For that, consult with a qualified financial professional.",
   },
   {
     question: 'Can I use Ignidash outside the US?',
-    answer:
-      'Not yet. Right now, Ignidash only supports planning in USD ($) using US tax laws and retirement accounts. International support is on our roadmap.',
+    answer: 'Not yet. Right now, Ignidash only supports planning in USD ($) using US tax laws and retirement accounts.',
   },
   {
     question: 'Is Ignidash free to use?',
-    answer: 'All core planning tools are completely free while in beta, but access to AI features will require a paid subscription.',
+    answer: 'All core planning tools are completely free to use during beta, but access to AI features will require a paid subscription.',
   },
   {
     question: 'Is my financial data secure?',
     answer:
-      'Yes. Your data is encrypted and stored securely using Convex, a database platform with enterprise-grade security. We never sell your information. When you use AI features, only your financial numbers are shared with AI providers—no personally identifying information.',
+      'Yes. Your data is encrypted and stored securely using Convex, a database platform with enterprise-grade security. We never sell your information. When you use AI features, only your financial numbers may be shared with AI providers—no personally identifying information.',
   },
   {
     question: 'Do I need to connect my bank and investment accounts?',
     answer:
-      "No. Ignidash works entirely with data you manually input. You're never required to link external accounts, giving you full control over what you share.",
+      "No. Ignidash works entirely with data you manually input. You're never required to link external accounts. This gives you full control over what you share.",
   },
 ];
 
