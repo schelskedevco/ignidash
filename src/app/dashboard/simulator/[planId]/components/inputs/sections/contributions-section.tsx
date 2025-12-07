@@ -18,6 +18,7 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
+import * as Headless from '@headlessui/react';
 
 import { useContributionRulesData, useBaseContributionRuleData, useAccountsData } from '@/hooks/use-convex-data';
 import { contributionToConvex, baseContributionToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -28,7 +29,7 @@ import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { Divider } from '@/components/catalyst/divider';
 import { Select } from '@/components/catalyst/select';
-import { Field, Label, Description } from '@/components/catalyst/fieldset';
+import { Label, Description } from '@/components/catalyst/fieldset';
 import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
 import { accountTypeForDisplay, type AccountInputs, taxCategoryFromAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import type { TaxCategory } from '@/lib/calc/asset';
@@ -196,8 +197,8 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
     <>
       <DisclosureSection title="Contributions" icon={HandCoinsIcon} centerPanelContent hideBottomBorders {...props}>
         <div className="flex h-full flex-col">
-          <Field>
-            <Label className="sr-only">Base Rule</Label>
+          <Headless.Field className="flex items-baseline justify-center gap-4">
+            <Label className="flex-shrink-0">Base Rule:</Label>
             <Select
               name="status"
               value={baseContributionRule?.type ?? 'save'}
@@ -207,7 +208,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
               <option value="save">Save anything left</option>
             </Select>
             <Description className="sr-only">Allocate any leftover cash after your contribution rules are applied.</Description>
-          </Field>
+          </Headless.Field>
           <Divider className="my-4" soft />
           {hasContributionRules && (
             <>
