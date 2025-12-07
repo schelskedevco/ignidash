@@ -15,12 +15,12 @@ const faqs = [
   {
     question: 'Is my financial data secure?',
     answer:
-      'Yes. Your data is encrypted and stored securely using Convex, a database platform with enterprise-grade security. We never sell your information. When you use AI features, only your financial numbers may be shared with AI providers—no personally identifying information.',
+      'Yes! Your data is encrypted and stored securely using Convex, a database platform with enterprise-grade security. We never sell your information.',
   },
   {
     question: 'Do I need to connect my bank and investment accounts?',
     answer:
-      "No. Ignidash works entirely with data you manually input. You're never required to link external accounts. This gives you full control over what you share.",
+      'No. Ignidash works entirely with data you manually input, and never requires connecting external accounts. This gives you full control over what you share.',
   },
 ];
 
