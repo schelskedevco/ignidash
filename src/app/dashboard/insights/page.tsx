@@ -8,8 +8,7 @@ export default function InsightsPage() {
           <p className="text-base/7 font-semibold text-rose-600 dark:text-rose-400">Coming soon</p>
           <h2 className="mt-2 text-5xl font-semibold tracking-tight text-zinc-900 sm:text-7xl dark:text-white">Insights</h2>
           <p className="mt-8 text-lg font-medium text-pretty text-zinc-500 sm:text-xl/8 dark:text-zinc-400">
-            Automatic analysis of your simulation results. Learn about common optimization strategies and explore ways to strengthen your
-            plan.
+            Educational overview of your plan and simulation results.
           </p>
         </div>
       </div>
