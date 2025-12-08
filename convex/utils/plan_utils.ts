@@ -2,11 +2,13 @@ import { ConvexError } from 'convex/values';
 import type { QueryCtx, MutationCtx } from '../_generated/server';
 import type { Id, Doc } from '../_generated/dataModel';
 
-export async function getPlanForUserIdOrThrow(ctx: QueryCtx, planId: Id<'plans'>, userId: string): Promise<Doc<'plans'>> {
-  const plan = await ctx.db.get(planId);
+export async function getPlanForCurrentUserOrThrow(ctx: QueryCtx, planId: Id<'plans'>): Promise<Doc<'plans'>> {
+  const [identity, plan] = await Promise.all([ctx.auth.getUserIdentity(), ctx.db.get(planId)]);
+
+  const userId = identity?.subject;
 
   if (!plan) throw new ConvexError('Plan not found');
-  if (plan.userId !== userId) throw new ConvexError('Not authorized to update this plan');
+  if (plan.userId !== userId) throw new ConvexError('Not authorized to access this plan');
 
   return plan;
 }

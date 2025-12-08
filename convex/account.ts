@@ -4,14 +4,12 @@ import { v, ConvexError } from 'convex/values';
 import { query, mutation } from './_generated/server';
 
 import { accountValidator } from './validators/accounts_validator';
-import { getUserIdOrThrow } from './utils/auth_utils';
-import { getPlanForUserIdOrThrow } from './utils/plan_utils';
+import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
 
 export const getAccounts = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     return plan.accounts;
   },
@@ -20,8 +18,7 @@ export const getAccounts = query({
 export const getCountOfAccounts = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     return plan.accounts.length;
   },
@@ -30,8 +27,7 @@ export const getCountOfAccounts = query({
 export const getAccount = query({
   args: { planId: v.id('plans'), accountId: v.union(v.string(), v.null()) },
   handler: async (ctx, { planId, accountId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const account = plan.accounts.find((acc) => acc.id === accountId);
     return account || null;
@@ -41,8 +37,7 @@ export const getAccount = query({
 export const getSavingsAccount = query({
   args: { planId: v.id('plans'), accountId: v.union(v.string(), v.null()) },
   handler: async (ctx, { planId, accountId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const account = plan.accounts.find((acc) => acc.id === accountId && acc.type === 'savings');
     return account || null;
@@ -52,8 +47,7 @@ export const getSavingsAccount = query({
 export const getInvestmentAccount = query({
   args: { planId: v.id('plans'), accountId: v.union(v.string(), v.null()) },
   handler: async (ctx, { planId, accountId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const account = plan.accounts.find((acc) => acc.id === accountId && acc.type !== 'savings');
     return account || null;
@@ -66,8 +60,7 @@ export const upsertAccount = mutation({
     account: accountValidator,
   },
   handler: async (ctx, { planId, account }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const updatedContributionRules = plan.contributionRules;
 
@@ -98,8 +91,7 @@ export const deleteAccount = mutation({
     accountId: v.string(),
   },
   handler: async (ctx, { planId, accountId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const updatedContributionRules = plan.contributionRules
       .filter((rule) => rule.accountId !== accountId)

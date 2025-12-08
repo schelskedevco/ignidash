@@ -3,7 +3,7 @@ import { query, mutation } from './_generated/server';
 import type { Doc } from './_generated/dataModel';
 
 import { getUserIdOrThrow } from './utils/auth_utils';
-import { getPlanForUserIdOrThrow, getAllPlansForUser } from './utils/plan_utils';
+import { getPlanForCurrentUserOrThrow, getAllPlansForUser } from './utils/plan_utils';
 import { timelineValidator } from './validators/timeline_validator';
 import { incomeValidator } from './validators/incomes_validator';
 import { expenseValidator } from './validators/expenses_validator';
@@ -39,14 +39,7 @@ export const getCountOfPlans = query({
 export const getPlan = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-
-    const plan = await ctx.db.get(planId);
-
-    if (!plan) throw new ConvexError('Plan not found');
-    if (plan.userId !== userId) throw new ConvexError('Not authorized to access this plan');
-
-    return plan;
+    return await getPlanForCurrentUserOrThrow(ctx, planId);
   },
 });
 
@@ -183,7 +176,7 @@ export const clonePlan = mutation({
     } else if (planId === 'template2') {
       plan = earlyRetirementTemplate;
     } else {
-      plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+      plan = await getPlanForCurrentUserOrThrow(ctx, planId);
     }
 
     const {
@@ -219,7 +212,7 @@ export const deletePlan = mutation({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
     const { userId } = await getUserIdOrThrow(ctx);
-    await getPlanForUserIdOrThrow(ctx, planId, userId);
+    await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const plans = await getAllPlansForUser(ctx, userId);
     if (plans.length <= 1) throw new ConvexError('You cannot delete your only plan.');
@@ -234,8 +227,7 @@ export const deletePlan = mutation({
 export const updatePlanName = mutation({
   args: { planId: v.id('plans'), name: v.string() },
   handler: async (ctx, { planId, name }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    await getPlanForUserIdOrThrow(ctx, planId, userId);
+    await getPlanForCurrentUserOrThrow(ctx, planId);
 
     await ctx.db.patch(planId, { name });
   },
@@ -245,7 +237,7 @@ export const setPlanAsDefault = mutation({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
     const { userId } = await getUserIdOrThrow(ctx);
-    const planToSetAsDefault = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const planToSetAsDefault = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     if (planToSetAsDefault.isDefault) return;
 

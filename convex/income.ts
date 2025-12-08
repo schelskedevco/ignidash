@@ -2,14 +2,12 @@ import { v, ConvexError } from 'convex/values';
 import { query, mutation } from './_generated/server';
 
 import { incomeValidator } from './validators/incomes_validator';
-import { getUserIdOrThrow } from './utils/auth_utils';
-import { getPlanForUserIdOrThrow } from './utils/plan_utils';
+import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
 
 export const getIncomes = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     return plan.incomes;
   },
@@ -18,8 +16,7 @@ export const getIncomes = query({
 export const getCountOfIncomes = query({
   args: { planId: v.id('plans') },
   handler: async (ctx, { planId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     return plan.incomes.length;
   },
@@ -28,8 +25,7 @@ export const getCountOfIncomes = query({
 export const getIncome = query({
   args: { planId: v.id('plans'), incomeId: v.union(v.string(), v.null()) },
   handler: async (ctx, { planId, incomeId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const income = plan.incomes.find((inc) => inc.id === incomeId);
     return income || null;
@@ -42,8 +38,7 @@ export const upsertIncome = mutation({
     income: incomeValidator,
   },
   handler: async (ctx, { planId, income }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const existingIndex = plan.incomes.findIndex((inc) => inc.id === income.id);
     if (existingIndex === -1 && plan.incomes.length >= 10) throw new ConvexError('Maximum of 10 incomes reached.');
@@ -61,8 +56,7 @@ export const deleteIncome = mutation({
     incomeId: v.string(),
   },
   handler: async (ctx, { planId, incomeId }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-    const plan = await getPlanForUserIdOrThrow(ctx, planId, userId);
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const updatedContributionRules = plan.contributionRules.map((rule) => {
       if (rule.incomeIds?.includes(incomeId)) {
