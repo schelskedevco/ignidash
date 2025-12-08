@@ -2,6 +2,7 @@
 
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { Preloaded, usePreloadedQuery } from 'convex/react';
 import { useState } from 'react';
 import { WalletIcon as MicroWalletIcon, CreditCardIcon as MicroCreditCardIcon } from '@heroicons/react/16/solid';
 import { WalletIcon, CreditCardIcon } from '@heroicons/react/24/outline';
@@ -12,7 +13,6 @@ import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { formatNumber } from '@/lib/utils';
 import { Heading, Subheading } from '@/components/catalyst/heading';
-import { useAssetData, useLiabilityData } from '@/hooks/use-convex-data';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { Divider } from '@/components/catalyst/divider';
 import DataItem from '@/components/ui/data-item';
@@ -48,11 +48,16 @@ function getLiabilityDesc(liability: LiabilityInputs) {
   );
 }
 
-export default function Finances() {
+interface FinancesProps {
+  preloadedAssets: Preloaded<typeof api.finances.getAssets>;
+  preloadedLiabilities: Preloaded<typeof api.finances.getLiabilities>;
+}
+
+export default function Finances({ preloadedAssets, preloadedLiabilities }: FinancesProps) {
   const [assetDialogOpen, setAssetDialogOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<AssetInputs | null>(null);
 
-  const assets = useAssetData();
+  const assets = usePreloadedQuery(preloadedAssets);
   const numAssets = assets?.length ?? 0;
 
   const handleAssetDialogClose = () => {
@@ -63,7 +68,7 @@ export default function Finances() {
   const [liabilityDialogOpen, setLiabilityDialogOpen] = useState(false);
   const [selectedLiability, setSelectedLiability] = useState<LiabilityInputs | null>(null);
 
-  const liabilities = useLiabilityData();
+  const liabilities = usePreloadedQuery(preloadedLiabilities);
   const numLiabilities = liabilities?.length ?? 0;
 
   const handleLiabilityDialogClose = () => {

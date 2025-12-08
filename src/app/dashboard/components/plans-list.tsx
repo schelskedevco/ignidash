@@ -117,9 +117,11 @@ function PlanListItem({
 
 interface PlanListProps {
   preloadedPlans: Preloaded<typeof api.plans.listPlans>;
+  preloadedAssets: Preloaded<typeof api.finances.getAssets>;
+  preloadedLiabilities: Preloaded<typeof api.finances.getLiabilities>;
 }
 
-export default function PlanList({ preloadedPlans }: PlanListProps) {
+export default function PlanList({ preloadedPlans, preloadedAssets, preloadedLiabilities }: PlanListProps) {
   const plans = usePreloadedQuery(preloadedPlans);
   const allPlans = useMemo(() => plans.map((plan) => ({ id: plan._id, name: plan.name })), [plans]);
 
@@ -188,7 +190,7 @@ export default function PlanList({ preloadedPlans }: PlanListProps) {
           })}
         </ul>
       </div>
-      <Finances />
+      <Finances preloadedAssets={preloadedAssets} preloadedLiabilities={preloadedLiabilities} />
       <Dialog size="xl" open={planDialogOpen} onClose={handlePlanDialogClose}>
         <PlanDialog
           numPlans={plans.length}

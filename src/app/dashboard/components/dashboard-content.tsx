@@ -10,6 +10,11 @@ export default async function DashboardContent() {
   const token = await getToken();
   if (!token) redirect('/signin');
 
-  const preloadedPlans = await preloadQuery(api.plans.listPlans, {}, { token });
-  return <PlansList preloadedPlans={preloadedPlans} />;
+  const [preloadedPlans, preloadedAssets, preloadedLiabilities] = await Promise.all([
+    preloadQuery(api.plans.listPlans, {}, { token }),
+    preloadQuery(api.finances.getAssets, {}, { token }),
+    preloadQuery(api.finances.getLiabilities, {}, { token }),
+  ]);
+
+  return <PlansList preloadedPlans={preloadedPlans} preloadedAssets={preloadedAssets} preloadedLiabilities={preloadedLiabilities} />;
 }
