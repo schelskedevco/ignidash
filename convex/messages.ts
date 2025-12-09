@@ -1,9 +1,9 @@
 import { v } from 'convex/values';
-import { query, mutation } from './_generated/server';
+import { query, mutation, internalMutation } from './_generated/server';
+import type { Id } from './_generated/dataModel';
 
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
 import { getUserIdOrThrow } from './utils/auth_utils';
-import { Id } from './_generated/dataModel';
 
 export const list = query({
   args: { conversationId: v.id('conversations'), planId: v.id('plans') },
@@ -46,8 +46,18 @@ export const send = mutation({
       .query('messages')
       .withIndex('by_conversationId_updatedAt', (q) => q.eq('conversationId', conversationId))
       .order('asc')
-      .collect();
+      .take(21);
 
     return { messages, userMessageId, assistantMessageId, conversationId };
+  },
+});
+
+export const update = internalMutation({
+  args: {
+    messageId: v.id('messages'),
+    body: v.string(),
+  },
+  handler: async (ctx, { messageId, body }) => {
+    await ctx.db.patch(messageId, { body, updatedAt: Date.now() });
   },
 });
