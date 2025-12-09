@@ -1,7 +1,7 @@
 'use node';
 
 import { AzureOpenAI } from 'openai';
-import { action } from './_generated/server';
+import { internalAction } from './_generated/server';
 import type { Id, Doc } from './_generated/dataModel';
 import { internal } from './_generated/api';
 
@@ -23,7 +23,7 @@ type StreamChatParams = {
   assistantMessageId: Id<'messages'>;
 };
 
-export const streamChat = action({
+export const streamChat = internalAction({
   handler: async (ctx, { messages, assistantMessageId }: StreamChatParams) => {
     const hasBody = (msg: Doc<'messages'>): msg is Doc<'messages'> & { body: string } => msg.body !== undefined;
 

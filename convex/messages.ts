@@ -1,6 +1,7 @@
 import { v } from 'convex/values';
 import { query, mutation, internalMutation } from './_generated/server';
 import type { Id } from './_generated/dataModel';
+import { internal } from './_generated/api';
 
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
 import { getConversationForCurrentUserOrThrow } from './utils/conversation_utils';
@@ -51,6 +52,8 @@ export const send = mutation({
       .withIndex('by_conversationId_updatedAt', (q) => q.eq('conversationId', conversationId))
       .order('asc')
       .collect();
+
+    await ctx.scheduler.runAfter(0, internal.use_openai.streamChat, { messages, assistantMessageId });
 
     return { messages, userMessageId, assistantMessageId, conversationId };
   },
