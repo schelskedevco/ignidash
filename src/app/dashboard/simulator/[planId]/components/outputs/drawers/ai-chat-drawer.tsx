@@ -43,7 +43,19 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
             }}
             className="relative"
           >
-            <Textarea resizable={false} rows={4} name="ai-chat" value={chatMessage} onChange={(e) => setChatMessage(e.target.value)} />
+            <Textarea
+              resizable={false}
+              rows={4}
+              name="ai-chat"
+              value={chatMessage}
+              onChange={(e) => setChatMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  if (!disabled) e.currentTarget.form?.requestSubmit();
+                }
+              }}
+            />
             <Button disabled={disabled} type="submit" className="absolute right-2 bottom-2 disabled:cursor-not-allowed" color="rose">
               <PaperAirplaneIcon className="h-5 w-5 -rotate-90" />
             </Button>
