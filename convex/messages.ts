@@ -7,6 +7,8 @@ import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
 import { getConversationForCurrentUserOrThrow } from './utils/conversation_utils';
 import { getUserIdOrThrow } from './utils/auth_utils';
 
+const SYSTEM_PROMPT = ``;
+
 export const list = query({
   args: { conversationId: v.id('conversations') },
   handler: async (ctx, { conversationId }) => {
@@ -34,7 +36,7 @@ export const send = mutation({
       await getPlanForCurrentUserOrThrow(ctx, planId);
 
       const title = content.length > 25 ? content.slice(0, 25) + '...' : content;
-      newConvId = await ctx.db.insert('conversations', { userId, planId, title, updatedAt: Date.now(), systemPrompt: undefined });
+      newConvId = await ctx.db.insert('conversations', { userId, planId, title, updatedAt: Date.now(), systemPrompt: SYSTEM_PROMPT });
     } else {
       await getConversationForCurrentUserOrThrow(ctx, currConvId);
     }
@@ -53,7 +55,7 @@ export const send = mutation({
       .order('asc')
       .collect();
 
-    await ctx.scheduler.runAfter(0, internal.use_openai.streamChat, { messages, assistantMessageId });
+    await ctx.scheduler.runAfter(0, internal.use_openai.streamChat, { messages, assistantMessageId, systemPrompt: SYSTEM_PROMPT });
 
     return { messages, userMessageId, assistantMessageId, conversationId };
   },

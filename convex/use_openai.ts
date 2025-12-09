@@ -21,17 +21,18 @@ const openai = new AzureOpenAI({
 type StreamChatParams = {
   messages: Doc<'messages'>[];
   assistantMessageId: Id<'messages'>;
+  systemPrompt: string;
 };
 
 export const streamChat = internalAction({
-  handler: async (ctx, { messages, assistantMessageId }: StreamChatParams) => {
+  handler: async (ctx, { messages, assistantMessageId, systemPrompt }: StreamChatParams) => {
     const hasBody = (msg: Doc<'messages'>): msg is Doc<'messages'> & { body: string } => msg.body !== undefined;
 
     try {
       const stream = await openai.chat.completions.create({
         model: 'gpt-5-mini',
         messages: [
-          { role: 'system', content: "You are a terse bot in a group chat responding to q's." },
+          { role: 'system', content: systemPrompt },
           ...messages.filter(hasBody).map((msg) => ({ role: msg.author, content: msg.body })),
         ],
         stream: true,

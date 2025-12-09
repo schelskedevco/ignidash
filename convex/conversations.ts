@@ -18,8 +18,8 @@ export const list = query({
 });
 
 export const get = query({
-  args: { conversationId: v.id('conversations'), planId: v.id('plans') },
-  handler: async (ctx, { conversationId, planId }) => {
+  args: { conversationId: v.id('conversations') },
+  handler: async (ctx, { conversationId }) => {
     return getConversationForCurrentUserOrThrow(ctx, conversationId);
   },
 });
