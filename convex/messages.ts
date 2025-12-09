@@ -49,7 +49,7 @@ export const send = mutation({
       .query('messages')
       .withIndex('by_conversationId_updatedAt', (q) => q.eq('conversationId', conversationId))
       .order('asc')
-      .take(21);
+      .collect();
 
     return { messages, userMessageId, assistantMessageId, conversationId };
   },
