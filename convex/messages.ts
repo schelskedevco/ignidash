@@ -3,20 +3,19 @@ import { query, mutation, internalMutation } from './_generated/server';
 import type { Id } from './_generated/dataModel';
 
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
+import { getConversationForCurrentUserOrThrow } from './utils/conversation_utils';
 import { getUserIdOrThrow } from './utils/auth_utils';
 
 export const list = query({
-  args: { conversationId: v.id('conversations'), planId: v.id('plans') },
-  handler: async (ctx, { conversationId, planId }) => {
-    await getPlanForCurrentUserOrThrow(ctx, planId);
+  args: { conversationId: v.id('conversations') },
+  handler: async (ctx, { conversationId }) => {
+    await getConversationForCurrentUserOrThrow(ctx, conversationId);
 
-    const messages = await ctx.db
+    return await ctx.db
       .query('messages')
       .withIndex('by_conversationId_updatedAt', (q) => q.eq('conversationId', conversationId))
       .order('asc')
       .collect();
-
-    return messages;
   },
 });
 
