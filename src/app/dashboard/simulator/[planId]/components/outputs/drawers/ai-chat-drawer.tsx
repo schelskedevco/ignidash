@@ -111,6 +111,9 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
     setChatMessage('');
   };
 
+  const isAssistantResponseLoading =
+    messages.length > 0 && messages[messages.length - 1].author === 'assistant' && messages[messages.length - 1].body === undefined;
+
   return (
     <>
       <aside className="hidden md:fixed md:top-[4.8125rem] md:bottom-0 md:-mx-3 md:flex md:w-64 md:flex-col">
@@ -134,9 +137,18 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
       <main tabIndex={-1} className="flex h-full min-w-80 flex-col focus:outline-none md:pl-64">
         <div className="flex-1 overflow-y-auto">
           <div className="flex flex-col space-y-2 pt-4">
-            {messages.map((message) => (
-              <ChatMessage key={message._id} message={message} />
-            ))}
+            {messages
+              .filter((message) => message.body !== undefined)
+              .map((message) => (
+                <ChatMessage key={message._id} message={message} />
+              ))}
+            {isAssistantResponseLoading && (
+              <div className="flex gap-1">
+                <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
+                <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
+                <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full" />
+              </div>
+            )}
             <div ref={scrollRef} />
           </div>
         </div>

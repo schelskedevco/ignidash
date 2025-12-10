@@ -55,7 +55,6 @@ export const send = mutation({
       .query('messages')
       .withIndex('by_conversationId_updatedAt', (q) => q.eq('conversationId', conversationId))
       .order('desc')
-      .filter((q) => q.neq(q.field('body'), undefined))
       .take(21);
     messages.reverse();
 
