@@ -47,7 +47,6 @@ export const streamChat = internalAction({
         }
 
         if (part.usage) {
-          console.log('Usage so far:', part.usage);
           await ctx.runMutation(internal.messages.setUsage, {
             messageId: assistantMessageId,
             inputTokens: part.usage.prompt_tokens,
