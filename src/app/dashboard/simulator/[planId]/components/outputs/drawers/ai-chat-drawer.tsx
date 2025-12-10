@@ -121,7 +121,9 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
               e.preventDefault();
               if (disabled) return;
 
-              await m({ conversationId: undefined, planId, content: chatMessage });
+              const { conversationId } = await m({ conversationId: selectedConversationId, planId, content: chatMessage });
+              setSelectedConversationId(conversationId);
+
               setChatMessage('');
             }}
           >
