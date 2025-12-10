@@ -18,10 +18,7 @@ interface ConversationListItemProps {
 
 function ConversationListItem({ conversation }: ConversationListItemProps) {
   return (
-    <li
-      key={conversation._id}
-      className="relative flex items-center space-x-4 px-4 py-4 hover:bg-zinc-50 sm:px-6 lg:px-8 dark:hover:dark:bg-black/10"
-    >
+    <li key={conversation._id} className="relative flex items-center space-x-4 px-2 py-4 hover:bg-zinc-50 dark:hover:dark:bg-black/10">
       <div className="min-w-0 flex-auto">
         <div className="flex items-center gap-x-3">
           <p className="truncate text-sm/6 font-semibold text-zinc-900 dark:text-white">{conversation.title}</p>
@@ -82,7 +79,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
       </aside>
       <main tabIndex={-1} className="flex h-full min-w-80 flex-col focus:outline-none md:pl-64">
         <div className="flex-1 overflow-y-auto"></div>
-        <div className="border-border/25 flex-shrink-0 border-t py-4">
+        <div className="flex-shrink-0 py-4">
           <form
             className="relative"
             onSubmit={async (e) => {
