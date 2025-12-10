@@ -85,7 +85,6 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const [chatMessage, setChatMessage] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedConversationId, setSelectedConversationId] = useState<Id<'conversations'> | undefined>(undefined);
 
   const conversations = useQuery(api.conversations.list, { planId }) ?? [];
@@ -97,6 +96,9 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
     }
   }, [messages.length]);
 
+  const isLoading = messages.length > 0 && messages[messages.length - 1].isLoading === true;
+  const showMessageLoadingDots =
+    isLoading && messages[messages.length - 1].author === 'assistant' && messages[messages.length - 1].body === undefined;
   const disabled = chatMessage.trim().length === 0 || isLoading;
 
   const m = useMutation(api.messages.send);
@@ -104,15 +106,11 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
     e.preventDefault();
     if (disabled) return;
 
-    setIsLoading(true);
     const { conversationId } = await m({ conversationId: selectedConversationId, planId, content: chatMessage });
     setSelectedConversationId(conversationId);
 
     setChatMessage('');
   };
-
-  const isAssistantResponseLoading =
-    messages.length > 0 && messages[messages.length - 1].author === 'assistant' && messages[messages.length - 1].body === undefined;
 
   return (
     <>
@@ -142,11 +140,11 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
               .map((message) => (
                 <ChatMessage key={message._id} message={message} />
               ))}
-            {isAssistantResponseLoading && (
+            {showMessageLoadingDots && (
               <div className="flex gap-1">
-                <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
-                <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
-                <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full" />
+                <div className="bg-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
+                <div className="bg-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
+                <div className="bg-foreground h-2 w-2 animate-bounce rounded-full" />
               </div>
             )}
             <div ref={scrollRef} />

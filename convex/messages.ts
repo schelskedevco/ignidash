@@ -7,7 +7,7 @@ import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
 import { getConversationForCurrentUserOrThrow } from './utils/conversation_utils';
 import { getUserIdOrThrow } from './utils/auth_utils';
 
-const SYSTEM_PROMPT = ``;
+const SYSTEM_PROMPT = `Send short, succinct messages. Right now, I am just testing your capabilities and want to minimize the number of input and output tokens that I use. Never respond with more than a few sentences.`;
 
 export const list = query({
   args: { conversationId: v.optional(v.id('conversations')) },
