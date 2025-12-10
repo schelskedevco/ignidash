@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { api } from '@/convex/_generated/api';
 import { useQuery, useMutation } from 'convex/react';
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import type { Id, Doc } from '@/convex/_generated/dataModel';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 
@@ -12,6 +12,7 @@ import { Textarea } from '@/components/catalyst/textarea';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
 import { cn } from '@/lib/utils';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface ChatMessageProps {
   message: Doc<'messages'>;
@@ -23,14 +24,35 @@ function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.author === 'user';
 
   return (
-    <div className={cn('flex px-4 py-2', { 'justify-end': isUser })}>
+    <div className={cn('flex gap-4', { 'justify-end': isUser })}>
+      {message.author === 'assistant' && (
+        <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
+          <SparklesIcon className="text-background h-4 w-4" />
+        </div>
+      )}
       <div
-        className={cn('max-w-4/5 rounded-2xl rounded-br-none px-4 py-2', {
-          'bg-emphasized-background': isUser,
+        className={cn('max-w-[85%] rounded-2xl p-4', {
+          'bg-foreground text-background': isUser,
+          'bg-emphasized-background text-foreground': !isUser,
         })}
       >
-        <p className="text-sm whitespace-pre-wrap">{message.body}</p>
+        <div className="space-y-2">
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.body}</p>
+          <p className={cn('text-xs', { 'text-background/60': isUser }, { 'text-foreground/60': !isUser })}>
+            <time dateTime={new Date(message._creationTime).toISOString()}>
+              {new Date(message._creationTime).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </time>
+          </p>
+        </div>
       </div>
+      {message.author === 'user' && (
+        <div className="bg-muted-foreground flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
+          <span className="text-background text-sm font-medium">You</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -133,22 +155,24 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
         </div>
       </aside>
       <main tabIndex={-1} className="flex h-full min-w-80 flex-col focus:outline-none md:pl-64">
-        <div className="flex-1 overflow-y-auto">
-          <div className="flex flex-col space-y-2 pt-4">
-            {messages
-              .filter((message) => message.body !== undefined)
-              .map((message) => (
-                <ChatMessage key={message._id} message={message} />
-              ))}
-            {showMessageLoadingDots && (
-              <div className="flex gap-1">
-                <div className="bg-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
-                <div className="bg-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
-                <div className="bg-foreground h-2 w-2 animate-bounce rounded-full" />
-              </div>
-            )}
-            <div ref={scrollRef} />
-          </div>
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full py-6">
+            <div className="space-y-6 pb-32">
+              {messages
+                .filter((message) => message.body !== undefined)
+                .map((message) => (
+                  <ChatMessage key={message._id} message={message} />
+                ))}
+              {showMessageLoadingDots && (
+                <div className="flex gap-1">
+                  <div className="bg-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
+                  <div className="bg-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
+                  <div className="bg-foreground h-2 w-2 animate-bounce rounded-full" />
+                </div>
+              )}
+              <div ref={scrollRef} />
+            </div>
+          </ScrollArea>
         </div>
         <div className="flex-shrink-0 py-4">
           <form className="relative" onSubmit={handleSendMessage}>
