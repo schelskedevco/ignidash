@@ -21,9 +21,9 @@ function ConversationListItem({ conversation }: ConversationListItemProps) {
     <li key={conversation._id} className="relative flex items-center space-x-4 px-2 py-4 hover:bg-zinc-50 dark:hover:dark:bg-black/10">
       <div className="min-w-0 flex-auto">
         <div className="flex items-center gap-x-3">
-          <p className="truncate text-sm/6 font-semibold text-zinc-900 dark:text-white">{conversation.title}</p>
+          <p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">{conversation.title}</p>
         </div>
-        <div className="mt-1 flex items-center gap-x-2 text-xs/5 text-zinc-500 dark:text-zinc-400">
+        <div className="mt-1 flex items-center gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
           <p className="whitespace-nowrap">
             Created{' '}
             <time dateTime={new Date(conversation._creationTime).toISOString()}>
