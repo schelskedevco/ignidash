@@ -165,18 +165,25 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
       </aside>
       <main tabIndex={-1} className="flex h-full min-w-80 flex-col focus:outline-none md:pl-64">
         <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full py-6">
-            <div className="space-y-6 pb-32">
+          <ScrollArea className="h-full">
+            <div className="space-y-6 pt-6 pb-32">
               {messages
                 .filter((message) => message.body !== undefined)
                 .map((message) => (
                   <ChatMessage key={message._id} message={message} />
                 ))}
               {showMessageLoadingDots && (
-                <div className="flex gap-1">
-                  <div className="bg-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
-                  <div className="bg-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
-                  <div className="bg-foreground h-2 w-2 animate-bounce rounded-full" />
+                <div className="flex gap-4">
+                  <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
+                    <SparklesIcon className="text-background h-4 w-4" />
+                  </div>
+                  <div className="bg-emphasized-background text-foreground max-w-[85%] rounded-2xl p-4">
+                    <div className="flex gap-1">
+                      <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
+                      <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
+                      <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full" />
+                    </div>
+                  </div>
                 </div>
               )}
               <div ref={scrollRef} />
