@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { api } from '@/convex/_generated/api';
 import { useQuery, useMutation } from 'convex/react';
 import { PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { FireIcon } from '@heroicons/react/24/solid';
 import type { Id, Doc } from '@/convex/_generated/dataModel';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 import { CircleUserRoundIcon, CopyIcon, CheckIcon } from 'lucide-react';
@@ -199,34 +200,43 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
       <main tabIndex={-1} className="flex h-full min-w-80 flex-col focus:outline-none md:pl-64">
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
-            <div className="space-y-6 pt-6 pb-32">
-              {messages
-                .filter((message) => message.body !== undefined)
-                .map((message) => (
-                  <ChatMessage key={message._id} message={message} image={user?.image} />
-                ))}
-              {showMessageLoadingDots && (
-                <div className="flex gap-4">
-                  <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
-                    <SparklesIcon className="text-background h-4 w-4" />
-                  </div>
-                  <div className="bg-emphasized-background border-border/50 text-foreground max-w-[85%] rounded-2xl border p-4 shadow-md">
-                    <div className="flex gap-1">
-                      <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
-                      <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
-                      <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full" />
+            {messages.length === 0 ? (
+              <div className="absolute inset-0 flex h-full flex-col items-center justify-center py-12 sm:px-6 lg:px-8">
+                <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                  <FireIcon className="text-primary mx-auto h-10 w-auto" />
+                  <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-zinc-900 dark:text-white">Your AI Assistant</h2>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6 pt-6 pb-32">
+                {messages
+                  .filter((message) => message.body !== undefined)
+                  .map((message) => (
+                    <ChatMessage key={message._id} message={message} image={user?.image} />
+                  ))}
+                {showMessageLoadingDots && (
+                  <div className="flex gap-4">
+                    <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
+                      <SparklesIcon className="text-background h-4 w-4" />
+                    </div>
+                    <div className="bg-emphasized-background border-border/50 text-foreground max-w-[85%] rounded-2xl border p-4 shadow-md">
+                      <div className="flex gap-1">
+                        <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
+                        <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
+                        <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-              <div ref={scrollRef} />
-            </div>
+                )}
+                <div ref={scrollRef} />
+              </div>
+            )}
           </ScrollArea>
         </div>
         <div className="flex-shrink-0 pb-4">
           <form className="relative" onSubmit={handleSendMessage}>
             <Textarea
-              placeholder={!selectedConversationId ? 'Ask me anything about your plan...' : 'Reply...'}
+              placeholder={!selectedConversationId ? 'Ask me something about your plan...' : 'Reply...'}
               resizable={false}
               rows={4}
               name="ai-chat"
