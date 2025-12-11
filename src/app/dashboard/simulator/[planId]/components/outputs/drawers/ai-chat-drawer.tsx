@@ -115,9 +115,12 @@ function ConversationListItem({ conversation, selectedConversationId, setSelecte
       <button className="focus-outline min-w-0 flex-auto" onClick={() => setSelectedConversationId(conversation._id)}>
         <div className="flex items-center gap-x-3">
           <p
-            className={cn('truncate text-sm font-semibold text-zinc-900 dark:text-white', {
-              'underline underline-offset-2': conversation._id === selectedConversationId,
-            })}
+            className={cn(
+              'truncate text-sm font-semibold text-zinc-900 dark:text-white',
+              'relative after:absolute after:bottom-0 after:left-0 after:h-[1px] after:bg-current/80',
+              'after:w-0 after:transition-all after:duration-300 after:ease-in-out',
+              conversation._id === selectedConversationId && 'after:w-full'
+            )}
           >
             {conversation.title}
           </p>
