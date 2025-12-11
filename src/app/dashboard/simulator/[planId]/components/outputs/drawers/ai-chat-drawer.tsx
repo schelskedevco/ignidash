@@ -205,9 +205,9 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
       <main tabIndex={-1} className="flex h-full min-w-80 flex-col focus:outline-none md:pl-64">
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
-            {messages.length === 0 ? (
-              <div className="absolute inset-0 flex h-full flex-col items-center justify-center py-12 sm:px-6 lg:px-8">
-                <div className="sm:mx-auto sm:w-full sm:max-w-md">
+            {!selectedConversationId ? (
+              <div className="absolute inset-0 flex h-full flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+                <div className="mx-auto w-full max-w-md">
                   <FireIcon className="text-primary mx-auto h-10 w-auto" />
                   <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-zinc-900 dark:text-white">Your AI Assistant</h2>
                   <p className="text-muted-foreground mt-2 text-sm/6">
@@ -237,9 +237,9 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                     </div>
                     <div className="bg-emphasized-background border-border/50 text-foreground max-w-[85%] rounded-2xl border p-4 shadow-md">
                       <div className="flex gap-1">
-                        <div className="bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
-                        <div className="bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
-                        <div className="bg-primary h-2 w-2 animate-bounce rounded-full" />
+                        <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
+                        <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
+                        <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full" />
                       </div>
                     </div>
                   </div>
