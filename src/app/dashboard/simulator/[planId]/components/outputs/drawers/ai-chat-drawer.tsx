@@ -93,11 +93,16 @@ function ChatMessage({ message, image }: ChatMessageProps) {
 
 interface ConversationListItemProps {
   conversation: Doc<'conversations'>;
-  setSelectedConversationId: (id: Id<'conversations'>) => void;
+  setSelectedConversationId: (id: Id<'conversations'> | undefined) => void;
 }
 
 function ConversationListItem({ conversation, setSelectedConversationId }: ConversationListItemProps) {
   const deleteConversation = useMutation(api.conversations.deleteConversation);
+
+  const handleDelete = async () => {
+    setSelectedConversationId(undefined);
+    await deleteConversation({ conversationId: conversation._id });
+  };
 
   return (
     <li key={conversation._id} className="relative flex items-center space-x-4 px-2 py-4 hover:bg-zinc-100 dark:hover:bg-black/15">
@@ -121,7 +126,7 @@ function ConversationListItem({ conversation, setSelectedConversationId }: Conve
               <EllipsisVerticalIcon />
             </DropdownButton>
             <DropdownMenu portal={false}>
-              <DropdownItem disabled={false} onClick={async () => await deleteConversation({ conversationId: conversation._id })}>
+              <DropdownItem disabled={false} onClick={handleDelete}>
                 Delete
               </DropdownItem>
             </DropdownMenu>
