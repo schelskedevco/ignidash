@@ -124,12 +124,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
           )}
           {activeSection === 'results' && (
             <div className="flex items-center gap-x-1">
-              <IconButton
-                icon={WandSparklesIcon}
-                label="Ask AI (Coming soon!)"
-                onClick={() => setAiChatOpen(true)}
-                surfaceColor="emphasized"
-              />
+              <IconButton icon={WandSparklesIcon} label="Ask AI" onClick={() => setAiChatOpen(true)} surfaceColor="emphasized" />
               <IconButton
                 icon={SlidersHorizontalIcon}
                 label="Simulation Settings"

@@ -61,12 +61,7 @@ export default function ResultsColumnHeader() {
         icon={PresentationIcon}
         iconButton={
           <div className="flex items-center gap-x-1">
-            <IconButton
-              icon={WandSparklesIcon}
-              label="Ask AI (Coming soon!)"
-              onClick={() => setAiChatOpen(true)}
-              surfaceColor="emphasized"
-            />
+            <IconButton icon={WandSparklesIcon} label="Ask AI" onClick={() => setAiChatOpen(true)} surfaceColor="emphasized" />
             <IconButton
               icon={SlidersHorizontalIcon}
               label="Simulation Settings"

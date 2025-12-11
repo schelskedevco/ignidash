@@ -3,11 +3,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { api } from '@/convex/_generated/api';
 import { useQuery, useMutation } from 'convex/react';
-import { PaperAirplaneIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import { FireIcon } from '@heroicons/react/24/solid';
 import type { Id, Doc } from '@/convex/_generated/dataModel';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
-import { CircleUserRoundIcon, CopyIcon, CheckIcon } from 'lucide-react';
+import { CircleUserRoundIcon, CopyIcon, CheckIcon, WandSparklesIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -44,7 +44,7 @@ function ChatMessage({ message, image }: ChatMessageProps) {
     <div className={cn('flex gap-4', { 'justify-end': isUser })}>
       {message.author === 'assistant' && (
         <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
-          <SparklesIcon className="text-background h-4 w-4" />
+          <WandSparklesIcon className="text-background h-4 w-4" />
         </div>
       )}
       <div
@@ -233,7 +233,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                 {showMessageLoadingDots && (
                   <div className="flex gap-4">
                     <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
-                      <SparklesIcon className="text-background h-4 w-4" />
+                      <WandSparklesIcon className="text-background h-4 w-4" />
                     </div>
                     <div className="bg-emphasized-background border-border/50 text-foreground max-w-[85%] rounded-2xl border p-4 shadow-md">
                       <div className="flex gap-1">
