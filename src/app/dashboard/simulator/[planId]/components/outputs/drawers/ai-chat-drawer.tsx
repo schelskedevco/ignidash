@@ -233,15 +233,12 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                   <FireIcon className="text-primary mx-auto h-10 w-auto" />
                   <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-zinc-900 dark:text-white">Your AI Assistant</h2>
                   <p className="text-muted-foreground mt-2 text-sm/6">
-                    By using the AI assistant, you agree to our{' '}
-                    <Link href="/terms" className="text-primary hover:underline">
+                    The AI assistant is for educational purposes only and does not constitute professional financial advice. For more
+                    information, read our{' '}
+                    <Link href="/terms" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
                       Terms of Service
-                    </Link>{' '}
-                    and{' '}
-                    <Link href="/privacy" className="text-primary hover:underline">
-                      Privacy Policy
                     </Link>
-                    . The AI is for educational purposes only and does not constitute professional financial advice.
+                    .
                   </p>
                 </div>
               </div>
