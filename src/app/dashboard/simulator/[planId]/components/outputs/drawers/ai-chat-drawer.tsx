@@ -93,22 +93,34 @@ function ChatMessage({ message, image }: ChatMessageProps) {
 
 interface ConversationListItemProps {
   conversation: Doc<'conversations'>;
+  selectedConversationId: Id<'conversations'> | undefined;
   setSelectedConversationId: (id: Id<'conversations'> | undefined) => void;
 }
 
-function ConversationListItem({ conversation, setSelectedConversationId }: ConversationListItemProps) {
+function ConversationListItem({ conversation, selectedConversationId, setSelectedConversationId }: ConversationListItemProps) {
   const deleteConversation = useMutation(api.conversations.deleteConversation);
 
   const handleDelete = async () => {
-    setSelectedConversationId(undefined);
+    if (conversation._id === selectedConversationId) setSelectedConversationId(undefined);
     await deleteConversation({ conversationId: conversation._id });
   };
 
   return (
-    <li key={conversation._id} className="relative flex items-center space-x-4 px-2 py-4 hover:bg-zinc-100 dark:hover:bg-black/15">
+    <li
+      key={conversation._id}
+      className={cn('relative flex items-center space-x-4 px-2 py-4 hover:bg-zinc-100 dark:hover:bg-black/15', {
+        'bg-zinc-100 dark:bg-black/15': conversation._id === selectedConversationId,
+      })}
+    >
       <button className="focus-outline min-w-0 flex-auto" onClick={() => setSelectedConversationId(conversation._id)}>
         <div className="flex items-center gap-x-3">
-          <p className="truncate text-sm font-semibold text-zinc-900 dark:text-white">{conversation.title}</p>
+          <p
+            className={cn('truncate text-sm font-semibold text-zinc-900 dark:text-white', {
+              'underline underline-offset-2': conversation._id === selectedConversationId,
+            })}
+          >
+            {conversation.title}
+          </p>
         </div>
         <div className="mt-1 flex items-center gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
           <p className="whitespace-nowrap">
@@ -196,6 +208,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
               <ConversationListItem
                 key={conversation._id}
                 conversation={conversation}
+                selectedConversationId={selectedConversationId}
                 setSelectedConversationId={setSelectedConversationId}
               />
             ))}
