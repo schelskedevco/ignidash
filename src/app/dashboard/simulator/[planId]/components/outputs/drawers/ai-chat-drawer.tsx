@@ -31,7 +31,7 @@ function ChatMessage({ message }: ChatMessageProps) {
         </div>
       )}
       <div
-        className={cn('max-w-[85%] rounded-2xl p-4', {
+        className={cn('border-border/50 max-w-[85%] rounded-2xl border p-4 shadow-md', {
           'bg-foreground text-background': isUser,
           'bg-emphasized-background text-foreground': !isUser,
         })}
@@ -178,7 +178,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                   <div className="bg-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-lg">
                     <SparklesIcon className="text-background h-4 w-4" />
                   </div>
-                  <div className="bg-emphasized-background text-foreground max-w-[85%] rounded-2xl p-4">
+                  <div className="bg-emphasized-background border-border/50 text-foreground max-w-[85%] rounded-2xl border p-4 shadow-md">
                     <div className="flex gap-1">
                       <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
                       <div className="bg-foreground/60 h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]" />
@@ -194,6 +194,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
         <div className="flex-shrink-0 pb-4">
           <form className="relative" onSubmit={handleSendMessage}>
             <Textarea
+              placeholder={!selectedConversationId ? 'Ask me anything about your plan...' : 'Reply...'}
               resizable={false}
               rows={4}
               name="ai-chat"
