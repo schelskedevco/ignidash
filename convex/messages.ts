@@ -62,6 +62,13 @@ export const send = mutation({
     const { ok, retryAfter } = await checkUsageLimits(ctx, userId);
     if (!ok) throw new ConvexError(`AI usage limit exceeded. Try again after ${new Date(retryAfter).toLocaleString()}.`);
 
+    const loadingMessage = await ctx.db
+      .query('messages')
+      .withIndex('by_userId_updatedAt', (q) => q.eq('userId', userId))
+      .filter((q) => q.eq(q.field('isLoading'), true))
+      .first();
+    if (loadingMessage) throw new ConvexError('An AI chat is already in progress. Please wait for it to complete.');
+
     let newConvId: Id<'conversations'> | null = null;
     if (!currConvId) {
       await getPlanForCurrentUserOrThrow(ctx, planId);
