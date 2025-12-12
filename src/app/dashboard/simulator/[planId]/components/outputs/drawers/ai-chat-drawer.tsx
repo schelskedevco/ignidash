@@ -271,7 +271,10 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
         <div className="flex-shrink-0 pb-4">
           <div className="mb-2 grid grid-cols-2 place-items-center gap-2">
             <div>
-              <button className="border-border/25 text-muted-foreground overflow-hidden rounded-full border px-3 py-2 text-xs/6 shadow-md">
+              <button
+                onClick={() => setChatMessage('How can I access retirement funds early?')}
+                className="border-border/25 text-muted-foreground cursor-pointer overflow-hidden rounded-full border px-3 py-2 text-xs/6 shadow-md"
+              >
                 How can I access retirement funds early?
               </button>
             </div>
