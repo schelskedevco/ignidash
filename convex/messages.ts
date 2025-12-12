@@ -10,6 +10,7 @@ import { checkUsageLimits, recordUsage } from './utils/ai_utils';
 
 const MESSAGE_TIMEOUT_MS = 5 * 60 * 1000;
 const NUM_MESSAGES_AS_CONTEXT = 5;
+
 const SYSTEM_PROMPT = `
   You are an AI assistant for Ignidash, a FIRE (Financial Independence, Retire Early) planning app.
 
@@ -60,9 +61,11 @@ export const send = mutation({
   handler: async (ctx, { conversationId: currConvId, planId, content }) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
+    // Throw an error if the user has exceeded their usage limits
     const { ok, retryAfter } = await checkUsageLimits(ctx, userId);
     if (!ok) throw new ConvexError(`AI usage limit exceeded. Try again after ${new Date(retryAfter).toLocaleString()}.`);
 
+    // Throw an error if there is already a loading message
     const loadingMessage = await ctx.db
       .query('messages')
       .withIndex('by_userId_updatedAt', (q) => q.eq('userId', userId))
@@ -70,22 +73,24 @@ export const send = mutation({
       .first();
     if (loadingMessage) throw new ConvexError('An AI chat is already in progress. Please wait for it to complete.');
 
+    const updatedAt = Date.now();
+
     let newConvId: Id<'conversations'> | null = null;
     if (!currConvId) {
       await getPlanForCurrentUserOrThrow(ctx, planId);
 
       const title = content.length > 25 ? content.slice(0, 25) + '...' : content;
-      newConvId = await ctx.db.insert('conversations', { userId, planId, title, updatedAt: Date.now(), systemPrompt: SYSTEM_PROMPT });
+      newConvId = await ctx.db.insert('conversations', { userId, planId, title, updatedAt, systemPrompt: SYSTEM_PROMPT });
     } else {
       await getConversationForCurrentUserOrThrow(ctx, currConvId);
     }
 
     const conversationId = (currConvId ?? newConvId)!;
 
-    const userMessageId = await ctx.db.insert('messages', { userId, conversationId, author: 'user', body: content, updatedAt: Date.now() });
+    const userMessageId = await ctx.db.insert('messages', { userId, conversationId, author: 'user', body: content, updatedAt });
     const [assistantMessageId] = await Promise.all([
-      ctx.db.insert('messages', { userId, conversationId, author: 'assistant', updatedAt: Date.now(), isLoading: true }),
-      ctx.db.patch(conversationId, { updatedAt: Date.now() }),
+      ctx.db.insert('messages', { userId, conversationId, author: 'assistant', updatedAt, isLoading: true }),
+      ctx.db.patch(conversationId, { updatedAt }),
     ]);
 
     const messages = await ctx.db
@@ -101,14 +106,13 @@ export const send = mutation({
   },
 });
 
-export const update = internalMutation({
+export const setBody = internalMutation({
   args: {
     messageId: v.id('messages'),
     body: v.string(),
-    isLoading: v.optional(v.boolean()),
   },
-  handler: async (ctx, { messageId, body, isLoading }) => {
-    await ctx.db.patch(messageId, { body, updatedAt: Date.now(), isLoading });
+  handler: async (ctx, { messageId, body }) => {
+    await ctx.db.patch(messageId, { body, updatedAt: Date.now() });
   },
 });
 
@@ -127,9 +131,19 @@ export const setUsage = internalMutation({
     }
 
     await Promise.all([
-      ctx.db.patch(messageId, { usage: { inputTokens, outputTokens, totalTokens }, isLoading: false }),
+      ctx.db.patch(messageId, { usage: { inputTokens, outputTokens, totalTokens }, updatedAt: Date.now() }),
       recordUsage(ctx, userId, inputTokens, outputTokens),
     ]);
+  },
+});
+
+export const setIsLoading = internalMutation({
+  args: {
+    messageId: v.id('messages'),
+    isLoading: v.boolean(),
+  },
+  handler: async (ctx, { messageId, isLoading }) => {
+    await ctx.db.patch(messageId, { isLoading, updatedAt: Date.now() });
   },
 });
 

@@ -48,10 +48,7 @@ export const streamChat = internalAction({
 
           if (choice.delta.content) {
             body += choice.delta.content;
-            await ctx.runMutation(internal.messages.update, {
-              messageId: assistantMessageId,
-              body,
-            });
+            await ctx.runMutation(internal.messages.setBody, { messageId: assistantMessageId, body });
           }
         }
 
@@ -64,21 +61,27 @@ export const streamChat = internalAction({
           });
         }
       }
+
+      await ctx.runMutation(internal.messages.setIsLoading, { messageId: assistantMessageId, isLoading: false });
     } catch (error) {
       if (error instanceof AzureOpenAI.APIError) {
         console.error(error);
 
-        await ctx.runMutation(internal.messages.update, {
-          messageId: assistantMessageId,
-          body: `An unexpected error occurred: ${error.message}.`,
-          isLoading: false,
-        });
+        await Promise.all([
+          ctx.runMutation(internal.messages.setBody, {
+            messageId: assistantMessageId,
+            body: `An unexpected error occurred: ${error.message}.`,
+          }),
+          ctx.runMutation(internal.messages.setIsLoading, { messageId: assistantMessageId, isLoading: false }),
+        ]);
       } else {
-        await ctx.runMutation(internal.messages.update, {
-          messageId: assistantMessageId,
-          body: 'An unexpected error occurred. Please try again later.',
-          isLoading: false,
-        });
+        await Promise.all([
+          ctx.runMutation(internal.messages.setBody, {
+            messageId: assistantMessageId,
+            body: 'An unexpected error occurred. Please try again later.',
+          }),
+          ctx.runMutation(internal.messages.setIsLoading, { messageId: assistantMessageId, isLoading: false }),
+        ]);
 
         throw error;
       }
