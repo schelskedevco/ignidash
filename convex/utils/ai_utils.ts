@@ -19,6 +19,7 @@ const rateLimiter = new RateLimiter(components.rateLimiter, {
 function calculateTokenCost(inputTokens: number, outputTokens: number): number {
   const inputCost = (inputTokens * TOKEN_COSTS.input) / 1_000_000;
   const outputCost = (outputTokens * TOKEN_COSTS.output) / 1_000_000;
+
   return inputCost + outputCost;
 }
 
