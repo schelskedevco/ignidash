@@ -25,8 +25,7 @@ const SYSTEM_PROMPT = `
   ## App Context
   Users configure: timeline (age, retirement, life expectancy), income/expenses, accounts (savings, brokerage, 401(k), Roth, IRA, HSA), contribution rules, market assumptions, and tax settings.
 
-  Outputs: portfolio projections, cash flow, taxes, returns, contributions, withdrawals—single simulation or Monte Carlo (500 runs, P10-P90).
-
+  Outputs: portfolio projections, cash flow, taxes, returns, contributions, withdrawals. Two modes: single simulation (one projection) or Monte Carlo (500 randomized runs, results shown as P10-P90 percentiles representing pessimistic/median/optimistic outcomes).
   ## User's Current Plan
   {{USER_PLAN_DATA}}
 
