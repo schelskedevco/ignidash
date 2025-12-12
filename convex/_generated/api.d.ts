@@ -13,6 +13,7 @@ import type * as app_data from "../app_data.js";
 import type * as auth from "../auth.js";
 import type * as contribution_rule from "../contribution_rule.js";
 import type * as conversations from "../conversations.js";
+import type * as crons from "../crons.js";
 import type * as expense from "../expense.js";
 import type * as finances from "../finances.js";
 import type * as http from "../http.js";
@@ -56,6 +57,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   contribution_rule: typeof contribution_rule;
   conversations: typeof conversations;
+  crons: typeof crons;
   expense: typeof expense;
   finances: typeof finances;
   http: typeof http;

@@ -8,6 +8,7 @@ import { getConversationForCurrentUserOrThrow } from './utils/conversation_utils
 import { getUserIdOrThrow } from './utils/auth_utils';
 import { checkUsageLimits, recordUsage } from './utils/ai_utils';
 
+const MESSAGE_TIMEOUT_MS = 5 * 60 * 1000;
 const NUM_MESSAGES_AS_CONTEXT = 5;
 const SYSTEM_PROMPT = `
   You are an AI assistant for Ignidash, a FIRE (Financial Independence, Retire Early) planning app.
@@ -129,5 +130,25 @@ export const setUsage = internalMutation({
       ctx.db.patch(messageId, { usage: { inputTokens, outputTokens, totalTokens }, isLoading: false }),
       recordUsage(ctx, userId, inputTokens, outputTokens),
     ]);
+  },
+});
+
+export const cleanupLoadingMessages = internalMutation({
+  args: {},
+  handler: async (ctx) => {
+    const staleLoadingMessages = await ctx.db
+      .query('messages')
+      .filter((q) => q.and(q.eq(q.field('isLoading'), true), q.lt(q.field('updatedAt'), Date.now() - MESSAGE_TIMEOUT_MS)))
+      .collect();
+
+    await Promise.all(
+      staleLoadingMessages.map((msg) =>
+        ctx.db.patch(msg._id, { isLoading: false, body: msg.body || 'This message timed out. Please try again.', updatedAt: Date.now() })
+      )
+    );
+
+    if (staleLoadingMessages.length > 0) {
+      console.warn(`Cleaned up ${staleLoadingMessages.length} stale loading messages`);
+    }
   },
 });
