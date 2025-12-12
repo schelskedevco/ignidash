@@ -11,6 +11,7 @@ import { CircleUserRoundIcon, CopyIcon, CheckIcon, WandSparklesIcon } from 'luci
 import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
+import { useTheme } from 'next-themes';
 
 import { Button } from '@/components/catalyst/button';
 import { Textarea } from '@/components/catalyst/textarea';
@@ -19,7 +20,6 @@ import { Dropdown, DropdownButton, DropdownItem, DropdownMenu, DropdownLabel, Dr
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Subheading } from '@/components/catalyst/heading';
-import { useTheme } from 'next-themes';
 
 const DEMO_QUESTIONS = [
   {
