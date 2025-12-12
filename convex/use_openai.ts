@@ -19,13 +19,14 @@ const openai = new AzureOpenAI({
 });
 
 type StreamChatParams = {
+  userId: string;
   messages: Doc<'messages'>[];
   assistantMessageId: Id<'messages'>;
   systemPrompt: string;
 };
 
 export const streamChat = internalAction({
-  handler: async (ctx, { messages, assistantMessageId, systemPrompt }: StreamChatParams) => {
+  handler: async (ctx, { userId, messages, assistantMessageId, systemPrompt }: StreamChatParams) => {
     const hasBody = (msg: Doc<'messages'>): msg is Doc<'messages'> & { body: string } => msg.body !== undefined;
 
     try {
@@ -44,7 +45,6 @@ export const streamChat = internalAction({
       for await (const part of stream) {
         if (part.choices.length > 0) {
           const choice = part.choices[0];
-          if (choice.finish_reason !== null) break;
 
           if (choice.delta.content) {
             body += choice.delta.content;
@@ -55,6 +55,7 @@ export const streamChat = internalAction({
         if (part.usage) {
           await ctx.runMutation(internal.messages.setUsage, {
             messageId: assistantMessageId,
+            userId,
             inputTokens: part.usage.prompt_tokens,
             outputTokens: part.usage.completion_tokens,
             totalTokens: part.usage.total_tokens,

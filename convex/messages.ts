@@ -27,7 +27,7 @@ const SYSTEM_PROMPT = `
 
   Outputs: portfolio projections, cash flow, taxes, returns, contributions, withdrawals. Two modes: single simulation (one projection) or Monte Carlo (500 randomized runs, results shown as P10-P90 percentiles representing pessimistic/median/optimistic outcomes).
   ## User's Current Plan
-  
+
   {{USER_PLAN_DATA}}
 
   Reference this data to explain concepts or illustrate trade-offs. Frame all insights as educational, not advice.
@@ -64,11 +64,9 @@ export const send = mutation({
   handler: async (ctx, { conversationId: currConvId, planId, content }) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
-    // Throw an error if the user has exceeded their usage limits
     const { ok, retryAfter } = await checkUsageLimits(ctx, userId);
     if (!ok) throw new ConvexError(`AI usage limit exceeded. Try again after ${new Date(retryAfter).toLocaleString()}.`);
 
-    // Throw an error if there is already a loading message
     const loadingMessage = await ctx.db
       .query('messages')
       .withIndex('by_userId_updatedAt', (q) => q.eq('userId', userId))
@@ -103,7 +101,7 @@ export const send = mutation({
       .take(NUM_MESSAGES_AS_CONTEXT);
     messages.reverse();
 
-    await ctx.scheduler.runAfter(0, internal.use_openai.streamChat, { messages, assistantMessageId, systemPrompt: SYSTEM_PROMPT });
+    await ctx.scheduler.runAfter(0, internal.use_openai.streamChat, { userId, messages, assistantMessageId, systemPrompt: SYSTEM_PROMPT });
 
     return { messages, userMessageId, assistantMessageId, conversationId };
   },
@@ -126,13 +124,12 @@ export const setBody = internalMutation({
 export const setUsage = internalMutation({
   args: {
     messageId: v.id('messages'),
+    userId: v.string(),
     inputTokens: v.number(),
     outputTokens: v.number(),
     totalTokens: v.number(),
   },
-  handler: async (ctx, { messageId, inputTokens, outputTokens, totalTokens }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
-
+  handler: async (ctx, { messageId, userId, inputTokens, outputTokens, totalTokens }) => {
     if (inputTokens + outputTokens !== totalTokens) {
       console.warn(`Token mismatch for message ${messageId}: ${inputTokens} + ${outputTokens} !== ${totalTokens}`);
     }
