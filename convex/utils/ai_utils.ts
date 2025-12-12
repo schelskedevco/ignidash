@@ -30,10 +30,10 @@ export async function recordUsage(ctx: MutationCtx, userId: string, inputTokens:
   const cost = calculateTokenCost(inputTokens, outputTokens);
   const costAsMicroDollars = Math.ceil(cost * 1_000_000);
 
-  await Promise.all([
-    rateLimiter.limit(ctx, 'dailyLimit', { key: userId, count: costAsMicroDollars }),
-    rateLimiter.limit(ctx, 'monthlyLimit', { key: userId, count: costAsMicroDollars }),
-  ]);
+  const dailyLimit = rateLimiter.limit(ctx, 'dailyLimit', { key: userId, count: costAsMicroDollars });
+  const monthlyLimit = rateLimiter.limit(ctx, 'monthlyLimit', { key: userId, count: costAsMicroDollars });
+
+  await Promise.all([dailyLimit, monthlyLimit]);
 }
 
 export async function checkUsageLimits(ctx: MutationCtx, userId: string): Promise<{ ok: boolean; retryAfter: number }> {
