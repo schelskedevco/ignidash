@@ -269,15 +269,16 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
           </ScrollArea>
         </div>
         <div className="flex-shrink-0 pb-4">
-          <div className="mb-2 grid grid-cols-2 place-items-center gap-2">
-            <div>
-              <button
-                onClick={() => setChatMessage('How can I access retirement funds early?')}
-                className="border-border/25 text-muted-foreground cursor-pointer overflow-hidden rounded-full border px-3 py-2 text-xs/6 shadow-md"
-              >
-                How can I access retirement funds early?
-              </button>
-            </div>
+          <div className="isolate -ml-1 flex gap-x-2 overflow-x-auto px-1 py-2">
+            <button
+              onClick={() => setChatMessage('How can I access retirement funds early?')}
+              type="button"
+              className={cn(
+                'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border/25 relative inline-flex items-center rounded-full border px-3 py-2 text-sm focus:z-10'
+              )}
+            >
+              <span className="whitespace-nowrap">Accessing retirement funds early</span>
+            </button>
           </div>
           <form className="relative" onSubmit={handleSendMessage}>
             <Textarea
