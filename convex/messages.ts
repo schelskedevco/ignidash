@@ -110,9 +110,13 @@ export const setBody = internalMutation({
   args: {
     messageId: v.id('messages'),
     body: v.string(),
+    isLoading: v.optional(v.boolean()),
   },
-  handler: async (ctx, { messageId, body }) => {
-    await ctx.db.patch(messageId, { body, updatedAt: Date.now() });
+  handler: async (ctx, { messageId, body, isLoading }) => {
+    const updates: { body: string; updatedAt: number; isLoading?: boolean } = { body, updatedAt: Date.now() };
+    if (isLoading !== undefined) updates.isLoading = isLoading;
+
+    await ctx.db.patch(messageId, updates);
   },
 });
 
