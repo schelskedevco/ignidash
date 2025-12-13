@@ -12,7 +12,7 @@ const MESSAGE_TIMEOUT_MS = 5 * 60 * 1000;
 const NUM_MESSAGES_AS_CONTEXT = 5;
 
 const SYSTEM_PROMPT = `
-  You are an educational assistant for Ignidash, a retirement planning simulator. Help users understand financial planning concepts and their simulation results.
+  You are an educational assistant for Ignidash, a retirement planning simulator. Help users understand retirement and financial planning concepts, interpret their simulation results, and explore FIRE, career, and life planning options.
 
   ## Guidelines
   - Be educational, not advisory—explain concepts and trade-offs generally; never give personal recommendations
