@@ -70,9 +70,8 @@ export default function Footer() {
         <p className="text-muted-foreground border-border/50 mx-auto mt-10 max-w-4xl rounded-md border p-2 text-xs/6">
           <strong>Disclaimer:</strong> Ignidash is an educational financial planning tool with AI-powered features and does not provide
           financial, investment, tax, or legal advice. All projections, calculations, and AI-generated content are for informational
-          purposes only and should not be relied upon as predictions of actual performance. You are solely responsible for your financial
-          decisions and should consult with qualified professionals before making any investments. Market conditions, tax laws, and personal
-          circumstances can significantly impact actual outcomes.
+          purposes only, and accuracy or completeness is not guaranteed. Consult with qualified professionals before making significant
+          financial decisions. This tool is provided without warranties of any kind.
         </p>
       </div>
     </footer>
