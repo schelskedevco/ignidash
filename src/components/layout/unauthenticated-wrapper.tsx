@@ -1,10 +1,11 @@
 'use client';
 
-import { useAuthRedirect } from '@/hooks/use-auth-redirect';
+import { useConvexAuth } from 'convex/react';
+
 import PageLoading from '@/components/ui/page-loading';
 
 export default function UnauthenticatedWrapper({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuthRedirect();
-  if (!isAuthenticated && !isLoading) return <PageLoading message="Redirecting to sign-in" />;
+  const { isAuthenticated, isLoading } = useConvexAuth();
+  if (!isAuthenticated && !isLoading) return <PageLoading message="Not authenticated, please refresh the page" />;
   return <>{children}</>;
 }
