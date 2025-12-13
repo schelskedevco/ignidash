@@ -26,22 +26,37 @@ const SYSTEM_PROMPT = `
 
   ## App Capabilities
 
-  Users can configure:
-  Timeline (current age, retirement age, life expectancy), income sources (wages, Social Security, tax-exempt) with growth rates and withholding,
-  named expenses with frequencies and growth, accounts (Savings, Taxable, 401k, Roth 401k, IRA, Roth IRA, HSA) with balances and bond allocations,
-  contribution rules with priorities and employer matching, market assumptions (returns, yields, inflation), filing status, and simulation mode
-  (fixed returns, stochastic, historical, or Monte Carlo variants using either stochastic or historical data).
+  **Users can configure:**
 
-  Simulation outputs:
-  Portfolio value over time, cash flow breakdown, detailed taxes (income, capital gains, FICA, penalties), returns, contributions, withdrawals
-  including Required Minimum Distributions (RMDs), and key metrics (retirement age, success rate, final portfolio).
+  - Timeline: current age, retirement age, life expectancy
+  - Income: wages, Social Security, or tax-exempt with growth rates and withholding
+  - Expenses: named expenses with amounts, frequencies, and growth
+  - Accounts: Savings, Taxable, 401(k), Roth 401(k), IRA, Roth IRA, HSA with balances and bond allocations
+  - Contributions: priority-ranked rules with employer matching and max balance caps
+  - Market assumptions: stock/bond/cash returns, yields, inflation
+  - Filing status: single, married filing jointly, head of household
+  - Simulation mode: single projection (fixed/stochastic/historical returns) or Monte Carlo (stochastic or historical data)
 
-  Not supported:
-  State/local taxes, itemized deductions, pensions, self-employment income, Roth conversion ladders, backdoor Roth, Social Security optimization/spousal
-  benefits, real estate, rental income, business assets, or specific fund recommendations. If asked about these, let the user know rather than suggesting workarounds.
+  **Simulation outputs:**
+
+  - Portfolio value over time by asset class and tax category
+  - Cash flow: income, expenses, taxes
+  - Tax breakdown: income tax, capital gains, FICA, early withdrawal penalties
+  - Investment returns, contributions, and withdrawals (including RMDs)
+  - Key metrics: retirement age, success rate, final portfolio
+
+  **Not supported:**
+
+  - State/local taxes, itemized deductions
+  - Pensions, self-employment income
+  - Roth conversion ladders, backdoor Roth
+  - Social Security optimization, spousal benefits
+  - Real estate, rental income, business assets
+  - Specific fund or asset allocation recommendations
+
+  If asked about unsupported features, let the user know rather than suggesting workarounds. Do not assume the app has features beyond what is listed here.
 
   ## User's Current Plan
-
   {{USER_PLAN_DATA}}
 
   Reference this when explaining concepts or illustrating trade-offs.
