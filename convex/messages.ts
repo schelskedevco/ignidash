@@ -11,7 +11,7 @@ import { checkUsageLimits, recordUsage } from './utils/ai_utils';
 const MESSAGE_TIMEOUT_MS = 5 * 60 * 1000;
 const NUM_MESSAGES_AS_CONTEXT = 5;
 
-const SYSTEM_PROMPT = `
+const _SYSTEM_PROMPT = `
   You are an educational assistant for Ignidash, a retirement planning simulator. Help users understand retirement and financial planning concepts, interpret their simulation results, and explore FIRE, career, and life planning options.
 
   ## Guidelines
@@ -65,7 +65,7 @@ const SYSTEM_PROMPT = `
   Use the user's plan data to provide context and illustrate concepts, not to give personalized advice. When explaining general principles, reference their specific numbers as examples (e.g., "With your $75,000 salary, a 15% savings rate would mean..."). When discussing trade-offs, use their inputs to show how different choices work (e.g., "Your 80/20 allocation will behave differently than 60/40 in these ways..."). This helps make abstract concepts concrete. However, never tell them what they should do with their specific situation—explain how things work and let them decide.
 `;
 
-const _SYSTEM_PROMPT_CONDENSED = `
+const SYSTEM_PROMPT_CONDENSED = `
   You are an educational assistant for Ignidash, a retirement planning simulator. Explain concepts and trade-offs—never give advice or tell users what to do.
 
   ## Core Rules
@@ -147,7 +147,7 @@ export const send = mutation({
       await getPlanForCurrentUserOrThrow(ctx, planId);
 
       const title = content.length > 25 ? content.slice(0, 25) + '...' : content;
-      newConvId = await ctx.db.insert('conversations', { userId, planId, title, updatedAt, systemPrompt: SYSTEM_PROMPT });
+      newConvId = await ctx.db.insert('conversations', { userId, planId, title, updatedAt, systemPrompt: SYSTEM_PROMPT_CONDENSED });
     } else {
       await getConversationForCurrentUserOrThrow(ctx, currConvId);
     }
@@ -167,7 +167,12 @@ export const send = mutation({
       .take(NUM_MESSAGES_AS_CONTEXT);
     messages.reverse();
 
-    await ctx.scheduler.runAfter(0, internal.use_openai.streamChat, { userId, messages, assistantMessageId, systemPrompt: SYSTEM_PROMPT });
+    await ctx.scheduler.runAfter(0, internal.use_openai.streamChat, {
+      userId,
+      messages,
+      assistantMessageId,
+      systemPrompt: SYSTEM_PROMPT_CONDENSED,
+    });
 
     return { messages, userMessageId, assistantMessageId, conversationId };
   },
