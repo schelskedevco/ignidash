@@ -4,7 +4,7 @@ import { ConvexError } from 'convex/values';
 import { useState, useRef, useEffect } from 'react';
 import { api } from '@/convex/_generated/api';
 import { useQuery, useMutation } from 'convex/react';
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, PlusIcon } from '@heroicons/react/16/solid';
 import { FireIcon } from '@heroicons/react/24/solid';
 import type { Id, Doc } from '@/convex/_generated/dataModel';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
@@ -236,6 +236,8 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const conversations = useQuery(api.conversations.list, { planId }) ?? [];
+  const selectedConversation = conversations.find((c) => c._id === selectedConversationId);
+
   const messages = useQuery(api.messages.list, { conversationId: selectedConversationId }) ?? [];
   const user = useQuery(api.auth.getCurrentUserSafe);
 
@@ -298,6 +300,17 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
         </div>
       </aside>
       <main tabIndex={-1} className="flex h-full min-w-80 flex-col focus:outline-none md:pl-64">
+        {selectedConversationId && (
+          <div className="border-border/50 from-emphasized-background to-background -mx-2 block border-b bg-gradient-to-l sm:-mx-3 md:hidden">
+            <div className="flex items-center justify-between gap-2 px-3 py-2">
+              <h3 className="truncate text-sm font-semibold text-zinc-900 dark:text-white">{selectedConversation?.title || 'Chat'}</h3>
+              <Button outline onClick={() => setSelectedConversationId(undefined)}>
+                <PlusIcon />
+                New chat
+              </Button>
+            </div>
+          </div>
+        )}
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
             {!selectedConversationId ? (
@@ -316,7 +329,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                 </div>
               </div>
             ) : (
-              <div className="space-y-6 pt-6 pb-32">
+              <div className="space-y-6 py-6">
                 {messages
                   .filter((message) => message.body !== undefined)
                   .map((message) => (
@@ -366,7 +379,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
               }}
             />
             <Button disabled={disabled} type="submit" className="absolute right-2 bottom-2 disabled:cursor-not-allowed" color="rose">
-              <PaperAirplaneIcon className="h-5 w-5 -rotate-90" />
+              <PaperAirplaneIcon className="-rotate-90" />
               Send
             </Button>
           </form>
