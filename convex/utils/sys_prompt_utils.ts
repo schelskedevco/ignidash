@@ -181,6 +181,8 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
         )
         .join('; ')}`
     );
+  } else {
+    lines.push('Incomes: None');
   }
 
   if (plan.expenses.length > 0) {
@@ -192,6 +194,8 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
         )
         .join('; ')}`
     );
+  } else {
+    lines.push('Expenses: None');
   }
 
   if (plan.accounts.length > 0) {
@@ -200,11 +204,13 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
         .map((a) => `${a.name}: ${formatNumber(a.balance, 0, '$')} ${a.type}${a.percentBonds ? `, ${a.percentBonds}% bonds` : ''}`)
         .join('; ')}`
     );
+  } else {
+    lines.push('Accounts: None');
   }
 
   const m = plan.marketAssumptions;
   lines.push(
-    `Market: Stock ${m.stockReturn}%/${m.stockYield}% yield, Bond ${m.bondReturn}%/${m.bondYield}% yield, Cash ${m.cashReturn}%, Inflation ${m.inflationRate}%`
+    `Expected Returns: Stock ${m.stockReturn}%/${m.stockYield}% yield, Bond ${m.bondReturn}%/${m.bondYield}% yield, Cash ${m.cashReturn}%, Inflation ${m.inflationRate}%`
   );
 
   lines.push(`Settings: ${plan.taxSettings.filingStatus}, ${plan.simulationSettings.simulationMode}`);
