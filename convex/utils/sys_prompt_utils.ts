@@ -1,3 +1,5 @@
+import type { KeyMetrics } from '../validators/key_metrics_validator';
+
 const USE_CONDENSED_SYSTEM_PROMPT = true;
 
 const SYSTEM_PROMPT = `
@@ -96,7 +98,7 @@ const CONDENSED_SYSTEM_PROMPT = `
   Use their data to illustrate concepts (e.g., "With your $75,000 salary, 15% savings would mean..."), not to advise. Reference their numbers to make abstractions concrete, but let them decide what to do.
 `;
 
-export const getSystemPrompt = (): string => {
+export const getSystemPrompt = (keyMetrics: KeyMetrics | null): string => {
   if (USE_CONDENSED_SYSTEM_PROMPT) return CONDENSED_SYSTEM_PROMPT;
   return SYSTEM_PROMPT;
 };

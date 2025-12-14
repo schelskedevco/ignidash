@@ -1,4 +1,4 @@
-import { v } from 'convex/values';
+import { v, type Infer } from 'convex/values';
 
 export const keyMetricsValidator = v.object({
   success: v.number(),
@@ -13,3 +13,5 @@ export const keyMetricsValidator = v.object({
   progressToRetirement: v.nullable(v.number()),
   areValuesMeans: v.boolean(),
 });
+
+export type KeyMetrics = Infer<typeof keyMetricsValidator>;

@@ -49,7 +49,7 @@ export const send = mutation({
     if (loadingMessage) throw new ConvexError('An AI chat is already in progress. Please wait for it to complete.');
 
     const updatedAt = Date.now();
-    const systemPrompt = getSystemPrompt();
+    const systemPrompt = getSystemPrompt(keyMetrics);
 
     let newConvId: Id<'conversations'> | null = null;
     if (!currConvId) {
