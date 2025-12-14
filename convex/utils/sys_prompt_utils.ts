@@ -163,10 +163,12 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
 
   if (plan.timeline) {
     const { currentAge, lifeExpectancy, retirementStrategy } = plan.timeline;
+
     const retirementInfo =
       retirementStrategy.type === 'fixedAge'
         ? `Retirement Age: ${retirementStrategy.retirementAge}`
         : `SWR Target: ${retirementStrategy.safeWithdrawalRate}%`;
+
     lines.push(`**Timeline:** Age: ${currentAge}, Life Expectancy: ${lifeExpectancy}, ${retirementInfo}`);
   }
 
@@ -220,7 +222,6 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
   }
 
   const enabledRules = plan.contributionRules.filter((r) => !r.disabled).sort((a, b) => a.rank - b.rank);
-
   if (enabledRules.length > 0) {
     const accountNameById = Object.fromEntries(plan.accounts.map((a) => [a.id, a.name]));
 
@@ -243,8 +244,11 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
     `**Expected Returns:** Stock ${m.stockReturn}%/${m.stockYield}% yield, Bond ${m.bondReturn}%/${m.bondYield}% yield, Cash ${m.cashReturn}%, Inflation ${m.inflationRate}%`
   );
 
-  lines.push(`**Filing Status:** ${plan.taxSettings.filingStatus}`);
-  lines.push(`**Simulation Mode:** ${plan.simulationSettings.simulationMode}`);
+  const filingStatus = plan.taxSettings.filingStatus;
+  lines.push(`**Filing Status:** ${filingStatus}`);
+
+  const simulationMode = plan.simulationSettings.simulationMode;
+  lines.push(`**Simulation Mode:** ${simulationMode}`);
 
   return lines.join('\n\n');
 };
