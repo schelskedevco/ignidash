@@ -12,6 +12,7 @@ import { keyMetricsValidator } from './validators/key_metrics_validator';
 
 const MESSAGE_TIMEOUT_MS = 5 * 60 * 1000;
 const NUM_MESSAGES_AS_CONTEXT = 5;
+const CAN_USE_AI_CHAT = false;
 
 export const list = query({
   args: { conversationId: v.optional(v.id('conversations')) },
@@ -37,6 +38,8 @@ export const send = mutation({
   },
   handler: async (ctx, { conversationId: currConvId, planId, content, keyMetrics }) => {
     const { userId } = await getUserIdOrThrow(ctx);
+
+    if (!CAN_USE_AI_CHAT) throw new ConvexError('AI chat is not available. Please try again later.');
 
     const { ok, retryAfter } = await checkUsageLimits(ctx, userId);
     if (!ok) throw new ConvexError(`AI usage limit exceeded. Try again after ${new Date(retryAfter).toLocaleString()}.`);
