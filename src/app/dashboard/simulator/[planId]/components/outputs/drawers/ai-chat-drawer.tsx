@@ -234,9 +234,15 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
   const sendButtonRef = useRef<HTMLButtonElement>(null);
   const prevIsLoadingRef = useRef<boolean>(false);
 
-  const [chatMessage, setChatMessage] = useState<string>('');
   const [selectedConversationId, setSelectedConversationId] = useState<Id<'conversations'> | undefined>(undefined);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [chatState, setChatState] = useState<Record<string, { chatMessage: string; errorMessage: string }>>({});
+
+  const stateKey = selectedConversationId ?? 'new';
+  const { chatMessage, errorMessage } = chatState[stateKey] ?? { chatMessage: '', errorMessage: '' };
+
+  const updateChatState = (key: string, updates: Partial<{ chatMessage: string; errorMessage: string }>) => {
+    setChatState((prev) => ({ ...prev, [key]: { ...(prev[key] ?? { chatMessage: '', errorMessage: '' }), ...updates } }));
+  };
 
   const conversations = useQuery(api.conversations.list, { planId }) ?? [];
   const selectedConversation = conversations.find((c) => c._id === selectedConversationId);
@@ -269,12 +275,12 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
     if (disabled) return;
 
     try {
-      setErrorMessage('');
+      updateChatState(stateKey, { errorMessage: '' });
       const { conversationId } = await m({ conversationId: selectedConversationId, planId, content: chatMessage, keyMetrics });
+      updateChatState(stateKey, { chatMessage: '' });
       setSelectedConversationId(conversationId);
-      setChatMessage('');
     } catch (error) {
-      setErrorMessage(error instanceof ConvexError ? error.message : 'Failed to send message.');
+      updateChatState(stateKey, { errorMessage: error instanceof ConvexError ? error.message : 'Failed to send message.' });
     }
   };
 
@@ -366,7 +372,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                   label={label}
                   question={question}
                   setChatMessage={(message) => {
-                    setChatMessage(message);
+                    updateChatState(stateKey, { chatMessage: message });
                     if (sendButtonRef.current) sendButtonRef.current.focus();
                   }}
                 />
@@ -381,7 +387,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
               rows={4}
               name="ai-chat"
               value={chatMessage}
-              onChange={(e) => setChatMessage(e.target.value)}
+              onChange={(e) => updateChatState(stateKey, { chatMessage: e.target.value })}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
