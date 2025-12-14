@@ -33,7 +33,7 @@ export const send = mutation({
     conversationId: v.optional(v.id('conversations')),
     planId: v.id('plans'),
     content: v.string(),
-    keyMetrics: v.union(keyMetricsValidator, v.null()),
+    keyMetrics: v.nullable(keyMetricsValidator),
   },
   handler: async (ctx, { conversationId: currConvId, planId, content, keyMetrics }) => {
     const { userId } = await getUserIdOrThrow(ctx);
