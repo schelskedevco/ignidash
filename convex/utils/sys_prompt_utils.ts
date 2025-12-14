@@ -104,10 +104,12 @@ const systemPrompt = (planData: string, keyMetrics: string): string => `
 
   Do not assume features exist beyond what is explicitly listed in "Users can configure" and "Simulation outputs" above. Do not suggest complex workarounds or approximations for unsupported features—simply inform users these features are not currently supported. You may discuss unsupported topics conceptually (e.g., explaining how pensions work, discussing mortgage strategies), but never provide specific investment, fund, or security recommendations.
 
-  ## User's Current Plan
+  ## User Data
+
+  **User's Current Plan**
   ${planData}
 
-  ## User's Key Results
+  **User's Key Results**
   ${keyMetrics}
 
   Use the user's plan data to provide context and illustrate concepts, not to give personalized advice. When explaining general principles, reference their specific numbers as examples (e.g., "With your $75,000 salary, a 15% savings rate would mean..."). When discussing trade-offs, use their inputs to show how different choices work (e.g., "Your 80/20 allocation will behave differently than 60/40 in these ways..."). This helps make abstract concepts concrete. However, never tell them what they should do with their specific situation—explain how things work and let them decide.
@@ -149,10 +151,12 @@ const condensedSystemPrompt = (planData: string, keyMetrics: string): string => 
 
   Don't assume unlisted features exist. Don't suggest workarounds for unsupported features—just note they're unavailable. You may discuss unsupported topics conceptually, but never recommend specific investments or securities.
 
-  ## User's Current Plan
+  ## User Data
+
+  **User's Current Plan**
   ${planData}
 
-  ## User's Key Results
+  **User's Key Results**
   ${keyMetrics}
 
   Use their data to illustrate concepts (e.g., "With your $75,000 salary, 15% savings would mean..."), not to advise. Reference their numbers to make abstractions concrete, but let them decide what to do.
@@ -169,12 +173,12 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
         ? `Retirement Age: ${retirementStrategy.retirementAge}`
         : `SWR Target: ${retirementStrategy.safeWithdrawalRate}%`;
 
-    lines.push(`**Timeline:** Age: ${currentAge}, Life Expectancy: ${lifeExpectancy}, ${retirementInfo}`);
+    lines.push(`- Timeline: Age: ${currentAge}, Life Expectancy: ${lifeExpectancy}, ${retirementInfo}`);
   }
 
   if (plan.incomes.length > 0) {
     lines.push(
-      `**Incomes:** ${plan.incomes
+      `  - Incomes: ${plan.incomes
         .map(
           (i) =>
             `${i.name} (${formatNumber(i.amount, 0, '$')} ${i.frequency}, ${incomeTimeFrameForDisplay(i.timeframe.start, i.timeframe.end)})`
@@ -182,12 +186,12 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
         .join('; ')}`
     );
   } else {
-    lines.push('**Incomes:** None');
+    lines.push('  - Incomes: None');
   }
 
   if (plan.expenses.length > 0) {
     lines.push(
-      `**Expenses:** ${plan.expenses
+      `  - Expenses: ${plan.expenses
         .map(
           (e) =>
             `${e.name} (${formatNumber(e.amount, 0, '$')} ${e.frequency}, ${expenseTimeFrameForDisplay(e.timeframe.start, e.timeframe.end)})`
@@ -195,7 +199,7 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
         .join('; ')}`
     );
   } else {
-    lines.push('**Expenses:** None');
+    lines.push('  - Expenses: None');
   }
 
   if (plan.accounts.length > 0) {
@@ -210,7 +214,7 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
     };
 
     lines.push(
-      `**Accounts:** ${plan.accounts
+      `  - Accounts: ${plan.accounts
         .map(
           (a) =>
             `${a.name}: ${formatAccountType[a.type]} with ${formatNumber(a.balance, 0, '$')}${a.percentBonds ? `, ${a.percentBonds}% bonds` : ''}`
@@ -218,7 +222,7 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
         .join('; ')}`
     );
   } else {
-    lines.push('**Accounts:** None');
+    lines.push('  - Accounts: None');
   }
 
   const enabledRules = plan.contributionRules.filter((r) => !r.disabled).sort((a, b) => a.rank - b.rank);
@@ -226,7 +230,7 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
     const accountNameById = Object.fromEntries(plan.accounts.map((a) => [a.id, a.name]));
 
     lines.push(
-      `**Contributions (in priority order):** ${enabledRules
+      `  - Contributions (in priority order): ${enabledRules
         .map((r) => {
           const account = accountNameById[r.accountId] ?? r.accountId;
           const match = r.employerMatch ? ' (has employer match)' : '';
@@ -236,21 +240,21 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
         .join(' → ')}; then ${plan.baseContributionRule.type} remainder`
     );
   } else {
-    lines.push('**Contributions:** None');
+    lines.push('  - Contributions: None');
   }
 
   const m = plan.marketAssumptions;
   lines.push(
-    `**Expected Returns:** Stock ${m.stockReturn}%/${m.stockYield}% yield, Bond ${m.bondReturn}%/${m.bondYield}% yield, Cash ${m.cashReturn}%, Inflation ${m.inflationRate}%`
+    `  - Market Assumptions: Stock ${m.stockReturn}%/${m.stockYield}% yield, Bond ${m.bondReturn}%/${m.bondYield}% yield, Cash ${m.cashReturn}%, Inflation ${m.inflationRate}%`
   );
 
   const filingStatus = plan.taxSettings.filingStatus;
-  lines.push(`**Filing Status:** ${filingStatus}`);
+  lines.push(`  - Filing Status: ${filingStatus}`);
 
   const simulationMode = plan.simulationSettings.simulationMode;
-  lines.push(`**Simulation Mode:** ${simulationMode}`);
+  lines.push(`  - Simulation Mode: ${simulationMode}`);
 
-  return lines.join('\n\n');
+  return lines.join('\n');
 };
 
 const formatKeyMetrics = (keyMetrics: KeyMetrics | null): string => {
@@ -267,14 +271,14 @@ const formatKeyMetrics = (keyMetrics: KeyMetrics | null): string => {
   } = keyMetricsForDisplay(keyMetrics);
 
   return [
-    `Success: ${successForDisplay}`,
-    `Retirement Age: ${retirementAgeForDisplay}`,
-    `Bankruptcy Age: ${bankruptcyAgeForDisplay}`,
-    `Portfolio at Retirement: ${portfolioAtRetirementForDisplay}`,
-    `Lifetime Taxes/Penalties: ${lifetimeTaxesAndPenaltiesForDisplay}`,
-    `Final Portfolio: ${finalPortfolioForDisplay}`,
-    `Progress to Retirement: ${progressToRetirementForDisplay}`,
-  ].join(' | ');
+    `- Success: ${successForDisplay}`,
+    `  - Retirement Age: ${retirementAgeForDisplay}`,
+    `  - Bankruptcy Age: ${bankruptcyAgeForDisplay}`,
+    `  - Portfolio at Retirement: ${portfolioAtRetirementForDisplay}`,
+    `  - Lifetime Taxes/Penalties: ${lifetimeTaxesAndPenaltiesForDisplay}`,
+    `  - Final Portfolio: ${finalPortfolioForDisplay}`,
+    `  - Progress to Retirement: ${progressToRetirementForDisplay}`,
+  ].join('\n');
 };
 
 export const getSystemPrompt = (plan: Doc<'plans'>, keyMetrics: KeyMetrics | null): string => {
