@@ -264,6 +264,7 @@ export declare const components: {
                   emailVerified: boolean;
                   image?: null | string;
                   name: string;
+                  role?: null | string;
                   updatedAt: number;
                   userId?: null | string;
                 };
@@ -338,6 +339,7 @@ export declare const components: {
                     | "createdAt"
                     | "updatedAt"
                     | "userId"
+                    | "role"
                     | "_id";
                   operator?:
                     | "lt"
@@ -520,6 +522,7 @@ export declare const components: {
                     | "createdAt"
                     | "updatedAt"
                     | "userId"
+                    | "role"
                     | "_id";
                   operator?:
                     | "lt"
@@ -764,6 +767,7 @@ export declare const components: {
                   emailVerified?: boolean;
                   image?: null | string;
                   name?: string;
+                  role?: null | string;
                   updatedAt?: number;
                   userId?: null | string;
                 };
@@ -777,6 +781,7 @@ export declare const components: {
                     | "createdAt"
                     | "updatedAt"
                     | "userId"
+                    | "role"
                     | "_id";
                   operator?:
                     | "lt"
@@ -990,6 +995,7 @@ export declare const components: {
                   emailVerified?: boolean;
                   image?: null | string;
                   name?: string;
+                  role?: null | string;
                   updatedAt?: number;
                   userId?: null | string;
                 };
@@ -1003,6 +1009,7 @@ export declare const components: {
                     | "createdAt"
                     | "updatedAt"
                     | "userId"
+                    | "role"
                     | "_id";
                   operator?:
                     | "lt"
@@ -1209,10 +1216,12 @@ export declare const components: {
           emailVerified: boolean;
           image?: null | string;
           name: string;
+          role?: null | string;
           updatedAt: number;
           userId?: null | string;
         }
       >;
+      getIsAdmin: FunctionReference<"query", "internal", {}, boolean>;
     };
   };
   rateLimiter: {

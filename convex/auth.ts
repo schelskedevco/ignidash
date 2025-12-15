@@ -1,3 +1,4 @@
+import { v } from 'convex/values';
 import { RateLimiter, HOUR } from '@convex-dev/rate-limiter';
 import { createClient, type GenericCtx } from '@convex-dev/better-auth';
 import { convex } from '@convex-dev/better-auth/plugins';
@@ -88,6 +89,14 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
       },
     },
     user: {
+      additionalFields: {
+        role: {
+          type: 'string',
+          required: false,
+          defaultValue: 'user',
+          input: false,
+        },
+      },
       changeEmail: {
         enabled: true,
         sendChangeEmailVerification: async ({ user, newEmail, url, token }, request) => {
@@ -230,6 +239,14 @@ export const getCurrentUserSafe = query({
   args: {},
   handler: async (ctx) => {
     return await ctx.runQuery(components.betterAuth.auth.getCurrentUserSafe, {});
+  },
+});
+
+export const getIsAdmin = query({
+  args: {},
+  returns: v.boolean(),
+  handler: async (ctx): Promise<boolean> => {
+    return await ctx.runQuery(components.betterAuth.auth.getIsAdmin, {});
   },
 });
 

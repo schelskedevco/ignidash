@@ -6,13 +6,20 @@ import { internal } from './_generated/api';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
 import { getConversationForCurrentUserOrThrow } from './utils/conversation_utils';
 import { getUserIdOrThrow } from './utils/auth_utils';
-import { checkUsageLimits, recordUsage } from './utils/ai_utils';
+import { checkUsageLimits, recordUsage, getCanUseChat } from './utils/ai_utils';
 import { getSystemPrompt } from './utils/sys_prompt_utils';
 import { keyMetricsValidator } from './validators/key_metrics_validator';
 
 const MESSAGE_TIMEOUT_MS = 5 * 60 * 1000;
 const NUM_MESSAGES_AS_CONTEXT = 5;
-const CAN_USE_AI_CHAT = false;
+
+export const canUseChat = query({
+  args: {},
+  returns: v.boolean(),
+  handler: async (ctx): Promise<boolean> => {
+    return await getCanUseChat(ctx);
+  },
+});
 
 export const list = query({
   args: { conversationId: v.optional(v.id('conversations')) },
@@ -37,9 +44,9 @@ export const send = mutation({
     keyMetrics: v.nullable(keyMetricsValidator),
   },
   handler: async (ctx, { conversationId: currConvId, planId, content, keyMetrics }) => {
-    const { userId } = await getUserIdOrThrow(ctx);
+    const [{ userId }, canUseChat] = await Promise.all([getUserIdOrThrow(ctx), getCanUseChat(ctx)]);
 
-    if (!CAN_USE_AI_CHAT) throw new ConvexError('AI chat is not available. Please try again later.');
+    if (!canUseChat) throw new ConvexError('AI chat is not available. Please try again later.');
 
     const { ok, retryAfter } = await checkUsageLimits(ctx, userId);
     if (!ok) throw new ConvexError(`AI usage limit exceeded. Try again after ${new Date(retryAfter).toLocaleString()}.`);

@@ -1,7 +1,7 @@
 import { RateLimiter, HOUR } from '@convex-dev/rate-limiter';
 
-import type { MutationCtx } from '../_generated/server';
-import { components } from '../_generated/api';
+import type { QueryCtx, MutationCtx } from '../_generated/server';
+import { api, components } from '../_generated/api';
 
 const DAY = 24 * HOUR;
 const MONTH = 30 * DAY;
@@ -44,4 +44,8 @@ export async function checkUsageLimits(ctx: MutationCtx, userId: string): Promis
   if (!monthlyOk) return { ok: false, retryAfter: monthlyRetryAfter };
 
   return { ok: true, retryAfter: 0 };
+}
+
+export async function getCanUseChat(ctx: QueryCtx): Promise<boolean> {
+  return await ctx.runQuery(api.auth.getIsAdmin, {});
 }

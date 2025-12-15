@@ -20,3 +20,15 @@ export const getCurrentUserSafe = query({
     return ctx.db.get(userId);
   },
 });
+
+export const getIsAdmin = query({
+  args: {},
+  returns: v.boolean(),
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) return false;
+
+    const user = await ctx.db.get(identity.subject as Id<'user'>);
+    return user?.role === 'admin';
+  },
+});
