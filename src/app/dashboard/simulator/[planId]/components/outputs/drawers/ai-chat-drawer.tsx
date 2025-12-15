@@ -383,6 +383,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
           {selectedConversationId && errorMessage && <ErrorMessageCard errorMessage={errorMessage} className="mb-2" />}
           <form className="relative" onSubmit={handleSendMessage}>
             <Textarea
+              autoFocus
               placeholder={!selectedConversationId ? 'Ask me something about your plan...' : 'Reply...'}
               resizable={false}
               rows={4}
