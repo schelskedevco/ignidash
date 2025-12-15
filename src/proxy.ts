@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 
 import type { Session } from '@/convex/auth';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { data: session } = await betterFetch<Session>('/api/auth/get-session', {
     baseURL: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : request.nextUrl.origin,
     headers: {

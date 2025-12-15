@@ -1,3 +1,5 @@
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
+import nextTypescript from "eslint-config-next/typescript";
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { FlatCompat } from '@eslint/eslintrc';
@@ -11,7 +13,9 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   { ignores: ['convex/_generated/**', 'convex/betterAuth/_generated/**'] },
-  ...compat.extends('next/core-web-vitals', 'next/typescript', 'prettier'),
+  ...nextCoreWebVitals,
+  ...nextTypescript,
+  ...compat.extends("prettier"),
   {
     rules: {
       '@typescript-eslint/no-unused-vars': [
@@ -24,7 +28,7 @@ const eslintConfig = [
         },
       ],
     },
-  },
+  }
 ];
 
 export default eslintConfig;
