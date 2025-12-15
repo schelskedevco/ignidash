@@ -59,7 +59,7 @@ export default function UserFeedbackDrawer({ setOpen }: UserFeedbackDrawerProps)
               <FieldGroup>
                 {saveError && <ErrorMessageCard errorMessage={saveError} />}
                 <Field>
-                  <Textarea {...register('feedback')} id="feedback" name="feedback" aria-label="Feedback" resizable={false} rows={6} />
+                  <Textarea {...register('feedback')} id="feedback" name="feedback" aria-label="User feedback" resizable={false} rows={6} />
                   {errors.feedback && <ErrorMessage>{errors.feedback?.message}</ErrorMessage>}
                   <Description>We may contact you by email to follow up.</Description>
                 </Field>

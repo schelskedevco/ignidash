@@ -32,7 +32,7 @@ export const Textarea = forwardRef(function Textarea(
           // Typography
           'text-base/6 text-zinc-950 placeholder:text-zinc-500 sm:text-sm/6 dark:text-white',
           // Border
-          'border border-zinc-950/10 data-hover:border-zinc-950/20 dark:border-white/10 dark:data-hover:border-white/20',
+          'border border-zinc-950/25 data-hover:border-zinc-950/50 dark:border-white/25 dark:data-hover:border-white/50',
           // Background color
           'bg-transparent dark:bg-white/5',
           // Hide default focus styles
