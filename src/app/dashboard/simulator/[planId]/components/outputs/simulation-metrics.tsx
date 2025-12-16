@@ -69,7 +69,7 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
   const metricName = (name: string) => (keyMetrics.areValuesMeans ? `Mean ${name}` : name);
 
   return (
-    <dl className="grid grid-cols-2 gap-2 2xl:grid-cols-3">
+    <div className="grid grid-cols-2 gap-2 2xl:grid-cols-3">
       <MetricsCard
         name="Success"
         stat={successForDisplay}
@@ -110,6 +110,6 @@ export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps
         stat={finalPortfolioForDisplay}
         statWidget={<SunsetIcon className="text-primary h-10 w-10" />}
       />
-    </dl>
+    </div>
   );
 }

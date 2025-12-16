@@ -15,15 +15,15 @@ export default function MetricsCard({ name, stat, statContext, statWidget, class
     <Card className={cn('my-0 text-center sm:text-left', className)}>
       <div className="sm:flex sm:items-center sm:justify-between">
         <div className="flex-1">
-          <dt className="text-muted-foreground truncate text-sm font-medium">{name}</dt>
-          <dd className="text-foreground mt-1">
-            <div className="text-3xl font-semibold tracking-tight">
-              <span className={statClassName}>{stat}</span>
-              <span className="text-muted-foreground ml-1 text-sm">{statContext}</span>
-            </div>
-          </dd>
+          <span className="text-muted-foreground block truncate text-sm font-medium">{name}</span>
+          <div className="text-foreground mt-1 text-3xl font-semibold tracking-tight">
+            <span className={statClassName}>{stat}</span>
+            <span className="text-muted-foreground ml-1 text-sm">{statContext}</span>
+          </div>
         </div>
-        <div className="hidden sm:block">{statWidget}</div>
+        <div className="hidden sm:block" aria-hidden="true">
+          {statWidget}
+        </div>
       </div>
     </Card>
   );
