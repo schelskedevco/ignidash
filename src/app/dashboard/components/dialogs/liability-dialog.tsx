@@ -33,7 +33,7 @@ export default function LiabilityDialog({ onClose, selectedLiability: _selectedL
       ({
         name: 'Liability ' + (numLiabilities + 1),
         id: '',
-        updatedAt: undefined,
+        updatedAt: -1,
         type: 'creditCard' as LiabilityInputs['type'],
       }) as const satisfies Partial<LiabilityInputs>,
     [numLiabilities]

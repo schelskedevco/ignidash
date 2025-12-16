@@ -33,7 +33,7 @@ export default function AssetDialog({ onClose, selectedAsset: _selectedAsset, nu
       ({
         name: 'Asset ' + (numAssets + 1),
         id: '',
-        updatedAt: undefined,
+        updatedAt: -1,
         type: 'savings' as AssetInputs['type'],
       }) as const satisfies Partial<AssetInputs>,
     [numAssets]
