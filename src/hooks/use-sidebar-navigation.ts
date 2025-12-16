@@ -63,13 +63,7 @@ export const useCurrentPageTitle = (): string => {
   return item?.name || 'Dashboard';
 };
 
-export const useCurrentPageIcon = (): NavigationItem['icon'] => {
-  const currentPath = usePathname();
-  const item = useNavigationItems().find((item) => isCurrentPath(item.href, currentPath));
-  return item?.icon || LayoutDashboardIcon;
-};
-
-const isCurrentPath = (currentPath: string, itemHref: string): boolean => {
+export const isCurrentPath = (currentPath: string, itemHref: string): boolean => {
   if (itemHref === '/dashboard') return currentPath === '/dashboard';
   return currentPath === itemHref || currentPath.startsWith(`${itemHref}/`);
 };

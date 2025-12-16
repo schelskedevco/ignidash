@@ -1,16 +1,28 @@
 'use client';
 
 import Image from 'next/image';
-import { MenuIcon } from 'lucide-react';
+import { LayoutDashboardIcon, MenuIcon } from 'lucide-react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { CircleUserRoundIcon } from 'lucide-react';
 import * as Headless from '@headlessui/react';
+import { usePathname } from 'next/navigation';
 
 import { Dropdown } from '@/components/catalyst/dropdown';
+import { useNavigationItems, isCurrentPath } from '@/hooks/use-sidebar-navigation';
+import { useCurrentPageTitle } from '@/hooks/use-sidebar-navigation';
 
 import AccountDropdownMenu from './auth/account-dropdown-menu';
-import { useCurrentPageIcon, useCurrentPageTitle } from '@/hooks/use-sidebar-navigation';
+
+function CurrentPageIcon(props: React.ComponentProps<'svg'>) {
+  const currentPath = usePathname();
+  const item = useNavigationItems().find((item) => isCurrentPath(item.href, currentPath));
+
+  if (!item) return <LayoutDashboardIcon {...props} />;
+
+  const Icon = item.icon;
+  return <Icon {...props} />;
+}
 
 interface MobileHeaderProps {
   onMenuClick: () => void;
@@ -18,7 +30,6 @@ interface MobileHeaderProps {
 
 export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
   const currentPageTitle = useCurrentPageTitle();
-  const CurrentPageIcon = useCurrentPageIcon();
 
   const user = useQuery(api.auth.getCurrentUserSafe);
 
@@ -33,7 +44,6 @@ export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
         <MenuIcon aria-hidden="true" className="size-6" />
       </button>
       <div className="flex flex-1 items-center gap-2 text-base/6 font-semibold">
-        {/* eslint-disable-next-line react-hooks/static-components */}
         <CurrentPageIcon aria-hidden="true" className="text-primary size-5" />
         {currentPageTitle}
       </div>
