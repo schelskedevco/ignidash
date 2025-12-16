@@ -5,7 +5,7 @@ import { LayoutDashboardIcon, MenuIcon } from 'lucide-react';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { CircleUserRoundIcon } from 'lucide-react';
-import * as Headless from '@headlessui/react';
+import { MenuButton } from '@headlessui/react';
 import { usePathname } from 'next/navigation';
 
 import { Dropdown } from '@/components/catalyst/dropdown';
@@ -48,13 +48,13 @@ export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
         {currentPageTitle}
       </div>
       <Dropdown>
-        <Headless.MenuButton aria-label="Account options" className="focus-outline shrink-0" suppressHydrationWarning>
+        <MenuButton aria-label="Account options" className="focus-outline shrink-0" suppressHydrationWarning>
           {image ? (
             <Image alt="Profile pic" src={image} className="size-8 shrink-0 rounded-full" width={32} height={32} />
           ) : (
             <CircleUserRoundIcon className="size-8 shrink-0 rounded-full" />
           )}
-        </Headless.MenuButton>
+        </MenuButton>
         <AccountDropdownMenu fetchedName={name} fetchedEmail={email} />
       </Dropdown>
     </div>

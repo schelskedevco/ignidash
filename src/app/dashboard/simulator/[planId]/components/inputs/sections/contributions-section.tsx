@@ -18,7 +18,7 @@ import {
 } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
-import * as Headless from '@headlessui/react';
+import { Field as HeadlessField } from '@headlessui/react';
 
 import { useContributionRulesData, useBaseContributionRuleData, useAccountsData } from '@/hooks/use-convex-data';
 import { contributionToConvex, baseContributionToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -197,7 +197,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
     <>
       <DisclosureSection title="Contributions" icon={HandCoinsIcon} centerPanelContent hideBottomBorders {...props}>
         <div className="flex h-full flex-col">
-          <Headless.Field className="flex items-baseline justify-center gap-4">
+          <HeadlessField className="flex items-baseline justify-center gap-4">
             <Label className="flex-shrink-0">Base Rule:</Label>
             <Select
               name="status"
@@ -208,7 +208,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
               <option value="save">Save anything left</option>
             </Select>
             <Description className="sr-only">Allocate any leftover cash after your contribution rules are applied.</Description>
-          </Headless.Field>
+          </HeadlessField>
           <Divider className="my-4" soft />
           {hasContributionRules && (
             <>

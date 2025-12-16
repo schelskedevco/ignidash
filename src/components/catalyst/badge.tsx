@@ -1,4 +1,4 @@
-import * as Headless from '@headlessui/react';
+import { Button, type ButtonProps } from '@headlessui/react';
 import clsx from 'clsx';
 import React, { forwardRef } from 'react';
 import { TouchTarget } from './button';
@@ -53,7 +53,7 @@ export const BadgeButton = forwardRef(function BadgeButton(
     children,
     ...props
   }: BadgeProps & { className?: string; children: React.ReactNode } & (
-      | Omit<Headless.ButtonProps, 'as' | 'className'>
+      | Omit<ButtonProps, 'as' | 'className'>
       | Omit<React.ComponentPropsWithoutRef<typeof Link>, 'className'>
     ),
   ref: React.ForwardedRef<HTMLElement>
@@ -70,10 +70,10 @@ export const BadgeButton = forwardRef(function BadgeButton(
       </TouchTarget>
     </Link>
   ) : (
-    <Headless.Button {...props} className={classes} ref={ref}>
+    <Button {...props} className={classes} ref={ref}>
       <TouchTarget>
         <Badge color={color}>{children}</Badge>
       </TouchTarget>
-    </Headless.Button>
+    </Button>
   );
 });

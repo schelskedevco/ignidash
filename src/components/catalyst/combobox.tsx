@@ -1,6 +1,14 @@
 'use client';
 
-import * as Headless from '@headlessui/react';
+import {
+  Combobox as HeadlessCombobox,
+  type ComboboxProps,
+  ComboboxOption as HeadlessComboboxOption,
+  type ComboboxOptionProps,
+  ComboboxInput,
+  ComboboxButton,
+  ComboboxOptions,
+} from '@headlessui/react';
 import clsx from 'clsx';
 import { useState } from 'react';
 
@@ -24,7 +32,7 @@ export function Combobox<T>({
   autoFocus?: boolean;
   'aria-label'?: string;
   children: (value: NonNullable<T>) => React.ReactElement;
-} & Omit<Headless.ComboboxProps<T, false>, 'as' | 'multiple' | 'children'> & { anchor?: 'top' | 'bottom' }) {
+} & Omit<ComboboxProps<T, false>, 'as' | 'multiple' | 'children'> & { anchor?: 'top' | 'bottom' }) {
   const [query, setQuery] = useState('');
 
   const filteredOptions =
@@ -33,7 +41,7 @@ export function Combobox<T>({
       : options.filter((option) => (filter ? filter(option, query) : displayValue(option)?.toLowerCase().includes(query.toLowerCase())));
 
   return (
-    <Headless.Combobox {...props} multiple={false} virtual={{ options: filteredOptions }} onClose={() => setQuery('')}>
+    <HeadlessCombobox {...props} multiple={false} virtual={{ options: filteredOptions }} onClose={() => setQuery('')}>
       <span
         data-slot="control"
         className={clsx([
@@ -52,7 +60,7 @@ export function Combobox<T>({
           'has-data-invalid:before:shadow-red-500/10',
         ])}
       >
-        <Headless.ComboboxInput
+        <ComboboxInput
           autoFocus={autoFocus}
           data-slot="control"
           aria-label={ariaLabel}
@@ -81,7 +89,7 @@ export function Combobox<T>({
             'dark:scheme-dark',
           ])}
         />
-        <Headless.ComboboxButton className="group absolute inset-y-0 right-0 flex items-center px-2">
+        <ComboboxButton className="group absolute inset-y-0 right-0 flex items-center px-2">
           <svg
             className="size-5 stroke-zinc-500 group-data-disabled:stroke-zinc-600 group-data-hover:stroke-zinc-700 sm:size-4 dark:stroke-zinc-400 dark:group-data-hover:stroke-zinc-300 forced-colors:stroke-[CanvasText]"
             viewBox="0 0 16 16"
@@ -91,9 +99,9 @@ export function Combobox<T>({
             <path d="M5.75 10.75L8 13L10.25 10.75" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
             <path d="M10.25 5.25L8 3L5.75 5.25" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
           </svg>
-        </Headless.ComboboxButton>
+        </ComboboxButton>
       </span>
-      <Headless.ComboboxOptions
+      <ComboboxOptions
         transition
         anchor={anchor}
         className={clsx(
@@ -114,8 +122,8 @@ export function Combobox<T>({
         )}
       >
         {({ option }) => children(option)}
-      </Headless.ComboboxOptions>
-    </Headless.Combobox>
+      </ComboboxOptions>
+    </HeadlessCombobox>
   );
 }
 
@@ -123,7 +131,7 @@ export function ComboboxOption<T>({
   children,
   className,
   ...props
-}: { className?: string; children?: React.ReactNode } & Omit<Headless.ComboboxOptionProps<'div', T>, 'as' | 'className'>) {
+}: { className?: string; children?: React.ReactNode } & Omit<ComboboxOptionProps<'div', T>, 'as' | 'className'>) {
   const sharedClasses = clsx(
     // Base
     'flex min-w-0 items-center',
@@ -136,7 +144,7 @@ export function ComboboxOption<T>({
   );
 
   return (
-    <Headless.ComboboxOption
+    <HeadlessComboboxOption
       {...props}
       className={clsx(
         // Basic layout
@@ -160,7 +168,7 @@ export function ComboboxOption<T>({
       >
         <path d="M4 8.5l3 3L12 4" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-    </Headless.ComboboxOption>
+    </HeadlessComboboxOption>
   );
 }
 

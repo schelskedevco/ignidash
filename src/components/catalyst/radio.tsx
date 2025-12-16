@@ -1,9 +1,16 @@
-import * as Headless from '@headlessui/react';
+import {
+  RadioGroup as HeadlessRadioGroup,
+  type RadioGroupProps,
+  Field,
+  type FieldProps,
+  Radio as HeadlessRadio,
+  type RadioProps,
+} from '@headlessui/react';
 import clsx from 'clsx';
 
-export function RadioGroup({ className, ...props }: { className?: string } & Omit<Headless.RadioGroupProps, 'as' | 'className'>) {
+export function RadioGroup({ className, ...props }: { className?: string } & Omit<RadioGroupProps, 'as' | 'className'>) {
   return (
-    <Headless.RadioGroup
+    <HeadlessRadioGroup
       data-slot="control"
       {...props}
       className={clsx(
@@ -17,9 +24,9 @@ export function RadioGroup({ className, ...props }: { className?: string } & Omi
   );
 }
 
-export function RadioField({ className, ...props }: { className?: string } & Omit<Headless.FieldProps, 'as' | 'className'>) {
+export function RadioField({ className, ...props }: { className?: string } & Omit<FieldProps, 'as' | 'className'>) {
   return (
-    <Headless.Field
+    <Field
       data-slot="field"
       {...props}
       className={clsx(
@@ -115,9 +122,9 @@ export function Radio({
   color = 'dark/zinc',
   className,
   ...props
-}: { color?: Color; className?: string } & Omit<Headless.RadioProps, 'as' | 'className' | 'children'>) {
+}: { color?: Color; className?: string } & Omit<RadioProps, 'as' | 'className' | 'children'>) {
   return (
-    <Headless.Radio data-slot="control" {...props} className={clsx(className, 'group inline-flex focus:outline-hidden')}>
+    <HeadlessRadio data-slot="control" {...props} className={clsx(className, 'group inline-flex focus:outline-hidden')}>
       <span className={clsx([base, colors[color]])}>
         <span
           className={clsx(
@@ -127,6 +134,6 @@ export function Radio({
           )}
         />
       </span>
-    </Headless.Radio>
+    </HeadlessRadio>
   );
 }

@@ -1,4 +1,13 @@
-import * as Headless from '@headlessui/react';
+import {
+  DialogBackdrop,
+  DialogPanel,
+  Dialog as HeadlessDialog,
+  type DialogProps,
+  DialogTitle as HeadlessDialogTitle,
+  type DialogTitleProps,
+  Description,
+  type DescriptionProps,
+} from '@headlessui/react';
 import type React from 'react';
 import { Text } from './text';
 import { X } from 'lucide-react';
@@ -22,17 +31,17 @@ export function Dialog({
   className,
   children,
   ...props
-}: { size?: keyof typeof sizes; className?: string; children: React.ReactNode } & Omit<Headless.DialogProps, 'as' | 'className'>) {
+}: { size?: keyof typeof sizes; className?: string; children: React.ReactNode } & Omit<DialogProps, 'as' | 'className'>) {
   return (
-    <Headless.Dialog {...props} className="relative z-50">
-      <Headless.DialogBackdrop
+    <HeadlessDialog {...props} className="relative z-50">
+      <DialogBackdrop
         transition
         className="fixed inset-0 flex w-screen justify-center overflow-y-auto bg-zinc-100/75 px-2 py-2 transition duration-100 focus:outline-0 data-closed:opacity-0 data-enter:ease-out data-leave:ease-in sm:px-6 sm:py-8 lg:px-8 lg:py-16 dark:bg-zinc-900/75"
       />
 
       <div className="fixed inset-0 w-screen overflow-y-auto pt-6 sm:pt-0">
         <div className="grid min-h-full grid-rows-[1fr_auto] justify-items-center sm:grid-rows-[1fr_auto_3fr] sm:p-4">
-          <Headless.DialogPanel
+          <DialogPanel
             transition
             className={cn(
               className,
@@ -42,10 +51,10 @@ export function Dialog({
             )}
           >
             {children}
-          </Headless.DialogPanel>
+          </DialogPanel>
         </div>
       </div>
-    </Headless.Dialog>
+    </HeadlessDialog>
   );
 }
 
@@ -54,9 +63,9 @@ export function DialogTitle({
   children,
   onClose,
   ...props
-}: { className?: string; children?: React.ReactNode; onClose: () => void } & Omit<Headless.DialogTitleProps, 'as' | 'className'>) {
+}: { className?: string; children?: React.ReactNode; onClose: () => void } & Omit<DialogTitleProps, 'as' | 'className'>) {
   return (
-    <Headless.DialogTitle {...props} className={cn(className, 'text-foreground text-2xl/6 font-semibold text-balance')}>
+    <HeadlessDialogTitle {...props} className={cn(className, 'text-foreground text-2xl/6 font-semibold text-balance')}>
       <div className="flex items-center justify-between">
         {children}
         <button type="button" onClick={onClose} className="focus-outline hover:text-muted-foreground rounded-md">
@@ -64,15 +73,15 @@ export function DialogTitle({
           <X aria-hidden="true" className="size-6" />
         </button>
       </div>
-    </Headless.DialogTitle>
+    </HeadlessDialogTitle>
   );
 }
 
 export function DialogDescription({
   className,
   ...props
-}: { className?: string } & Omit<Headless.DescriptionProps<typeof Text>, 'as' | 'className'>) {
-  return <Headless.Description as={Text} {...props} className={cn(className, 'mt-2 text-pretty')} />;
+}: { className?: string } & Omit<DescriptionProps<typeof Text>, 'as' | 'className'>) {
+  return <Description as={Text} {...props} className={cn(className, 'mt-2 text-pretty')} />;
 }
 
 export function DialogBody({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {

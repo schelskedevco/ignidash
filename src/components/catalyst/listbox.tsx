@@ -1,6 +1,14 @@
 'use client';
 
-import * as Headless from '@headlessui/react';
+import {
+  Listbox as HeadlessListbox,
+  type ListboxProps,
+  ListboxOption as HeadlessListboxOption,
+  type ListboxOptionProps,
+  ListboxButton,
+  ListboxSelectedOption,
+  ListboxOptions,
+} from '@headlessui/react';
 import { cn } from '@/lib/utils';
 import { Fragment } from 'react';
 
@@ -17,10 +25,10 @@ export function Listbox<T>({
   autoFocus?: boolean;
   'aria-label'?: string;
   children?: React.ReactNode;
-} & Omit<Headless.ListboxProps<typeof Fragment, T>, 'as' | 'multiple'>) {
+} & Omit<ListboxProps<typeof Fragment, T>, 'as' | 'multiple'>) {
   return (
-    <Headless.Listbox {...props} multiple={false}>
-      <Headless.ListboxButton
+    <HeadlessListbox {...props} multiple={false}>
+      <ListboxButton
         autoFocus={autoFocus}
         data-slot="control"
         aria-label={ariaLabel}
@@ -40,7 +48,7 @@ export function Listbox<T>({
           className,
         ])}
       >
-        <Headless.ListboxSelectedOption
+        <ListboxSelectedOption
           as="span"
           options={options}
           placeholder={placeholder && <span className="block truncate text-zinc-500">{placeholder}</span>}
@@ -74,8 +82,8 @@ export function Listbox<T>({
             <path d="M10.25 5.25L8 3L5.75 5.25" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
-      </Headless.ListboxButton>
-      <Headless.ListboxOptions
+      </ListboxButton>
+      <ListboxOptions
         transition
         anchor="selection start"
         className={cn(
@@ -96,8 +104,8 @@ export function Listbox<T>({
         )}
       >
         {options}
-      </Headless.ListboxOptions>
-    </Headless.Listbox>
+      </ListboxOptions>
+    </HeadlessListbox>
   );
 }
 
@@ -105,7 +113,7 @@ export function ListboxOption<T>({
   children,
   className,
   ...props
-}: { className?: string; children?: React.ReactNode } & Omit<Headless.ListboxOptionProps<'div', T>, 'as' | 'className'>) {
+}: { className?: string; children?: React.ReactNode } & Omit<ListboxOptionProps<'div', T>, 'as' | 'className'>) {
   const sharedClasses = cn(
     // Base
     'flex min-w-0 items-center',
@@ -118,7 +126,7 @@ export function ListboxOption<T>({
   );
 
   return (
-    <Headless.ListboxOption as={Fragment} {...props}>
+    <HeadlessListboxOption as={Fragment} {...props}>
       {({ selectedOption }) => {
         if (selectedOption) {
           return <div className={cn(sharedClasses, className)}>{children}</div>;
@@ -151,7 +159,7 @@ export function ListboxOption<T>({
           </div>
         );
       }}
-    </Headless.ListboxOption>
+    </HeadlessListboxOption>
   );
 }
 

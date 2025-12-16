@@ -1,4 +1,4 @@
-import * as Headless from '@headlessui/react';
+import { Field, type FieldProps, Checkbox as HeadlessCheckbox, type CheckboxProps } from '@headlessui/react';
 import clsx from 'clsx';
 import type React from 'react';
 
@@ -18,9 +18,9 @@ export function CheckboxGroup({ className, ...props }: React.ComponentPropsWitho
   );
 }
 
-export function CheckboxField({ className, ...props }: { className?: string } & Omit<Headless.FieldProps, 'as' | 'className'>) {
+export function CheckboxField({ className, ...props }: { className?: string } & Omit<FieldProps, 'as' | 'className'>) {
   return (
-    <Headless.Field
+    <Field
       data-slot="field"
       {...props}
       className={clsx(
@@ -118,9 +118,9 @@ export function Checkbox({
 }: {
   color?: Color;
   className?: string;
-} & Omit<Headless.CheckboxProps, 'as' | 'className'>) {
+} & Omit<CheckboxProps, 'as' | 'className'>) {
   return (
-    <Headless.Checkbox data-slot="control" {...props} className={clsx(className, 'group inline-flex focus:outline-hidden')}>
+    <HeadlessCheckbox data-slot="control" {...props} className={clsx(className, 'group inline-flex focus:outline-hidden')}>
       <span className={clsx([base, colors[color]])}>
         <svg
           className="size-4 stroke-(--checkbox-check) opacity-0 group-data-checked:opacity-100 sm:h-3.5 sm:w-3.5"
@@ -145,6 +145,6 @@ export function Checkbox({
           />
         </svg>
       </span>
-    </Headless.Checkbox>
+    </HeadlessCheckbox>
   );
 }

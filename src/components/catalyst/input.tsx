@@ -1,4 +1,4 @@
-import * as Headless from '@headlessui/react';
+import { Input as HeadlessInput, type InputProps } from '@headlessui/react';
 import clsx from 'clsx';
 import React, { forwardRef } from 'react';
 
@@ -29,7 +29,7 @@ export const Input = forwardRef(function Input(
   }: {
     className?: string;
     type?: 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url' | DateType;
-  } & Omit<Headless.InputProps, 'as' | 'className'>,
+  } & Omit<InputProps, 'as' | 'className'>,
   ref: React.ForwardedRef<HTMLInputElement>
 ) {
   return (
@@ -51,7 +51,7 @@ export const Input = forwardRef(function Input(
         'has-data-invalid:before:shadow-red-500/10',
       ])}
     >
-      <Headless.Input
+      <HeadlessInput
         ref={ref}
         {...props}
         className={clsx([
