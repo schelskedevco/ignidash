@@ -59,6 +59,7 @@ export default function SingleSimulationCashFlowLineChartCard({
         </Subheading>
         <div className="flex items-center gap-2">
           <Select
+            aria-label="Cash flow data view options"
             className="max-w-48 sm:max-w-64"
             id="cash-flow-data-view"
             name="cash-flow-data-view"

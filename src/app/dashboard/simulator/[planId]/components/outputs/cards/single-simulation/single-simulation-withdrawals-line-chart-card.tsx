@@ -75,6 +75,7 @@ export default function SingleSimulationWithdrawalsLineChartCard({
         </Subheading>
         <div className="flex items-center gap-2">
           <Select
+            aria-label="Withdrawals data view options"
             className="max-w-48 sm:max-w-64"
             id="withdrawals-data-view"
             name="withdrawals-data-view"

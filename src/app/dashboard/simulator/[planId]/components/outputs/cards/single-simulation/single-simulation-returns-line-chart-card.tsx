@@ -55,6 +55,7 @@ export default function SingleSimulationReturnsLineChartCard({
         </Subheading>
         <div className="flex items-center gap-2">
           <Select
+            aria-label="Returns data view options"
             className="max-w-48 sm:max-w-64"
             id="returns-data-view"
             name="returns-data-view"

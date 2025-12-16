@@ -55,6 +55,7 @@ export default function SingleSimulationPortfolioAreaChartCard({
         </Subheading>
         <div className="flex items-center gap-2">
           <Select
+            aria-label="Portfolio data view options"
             className="max-w-48 sm:max-w-64"
             id="portfolio-data-view"
             name="portfolio-data-view"

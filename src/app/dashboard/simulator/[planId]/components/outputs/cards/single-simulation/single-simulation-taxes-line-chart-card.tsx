@@ -72,6 +72,7 @@ export default function SingleSimulationTaxesLineChartCard({
         </Subheading>
         <div className="flex items-center gap-2">
           <Select
+            aria-label="Taxes data view options"
             className="max-w-48 sm:max-w-64"
             id="taxes-data-view"
             name="taxes-data-view"

@@ -55,6 +55,7 @@ export default function SingleSimulationContributionsLineChartCard({
         </Subheading>
         <div className="flex items-center gap-2">
           <Select
+            aria-label="Contributions data view options"
             className="max-w-48 sm:max-w-64"
             id="contributions-data-view"
             name="contributions-data-view"
