@@ -34,7 +34,7 @@ function PulseButton({ onClick, disabled = false }: PulseButtonProps) {
               whileTap={disabled ? undefined : { scale: 0.95 }}
             >
               <SparklesIcon className="text-primary h-10 w-10" />
-              <span className="text-sm">Generate</span>
+              <span className="text-foreground text-sm/6 font-medium">Generate</span>
             </motion.button>
           );
         }
