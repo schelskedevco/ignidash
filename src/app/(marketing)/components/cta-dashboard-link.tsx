@@ -15,7 +15,7 @@ export default function CTADashboardLink() {
 
   if (isLoading) {
     return (
-      <button disabled className={cn(className, 'cursor-not-allowed opacity-50')}>
+      <button disabled className={cn(className, 'cursor-not-allowed opacity-75')}>
         Loading...
       </button>
     );
