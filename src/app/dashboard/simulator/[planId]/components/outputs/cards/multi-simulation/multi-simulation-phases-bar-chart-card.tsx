@@ -13,7 +13,7 @@ export default function MultiSimulationPhasesBarChartCard({ selectedAge, rawChar
   return (
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
-        <Subheading level={4}>
+        <Subheading level={3}>
           <span className="mr-2">Simulations in Phase</span>
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>

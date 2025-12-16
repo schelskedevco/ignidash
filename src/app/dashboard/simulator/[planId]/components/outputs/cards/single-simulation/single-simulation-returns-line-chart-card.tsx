@@ -49,7 +49,7 @@ export default function SingleSimulationReturnsLineChartCard({
   return (
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
-        <Subheading level={4}>
+        <Subheading level={3}>
           <span className="mr-2">Returns</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
