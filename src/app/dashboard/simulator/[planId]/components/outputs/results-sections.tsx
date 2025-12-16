@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 
 import { usePlanData, useCountOfIncomes, useCountOfExpenses, useCountOfAccounts, useTimelineData } from '@/hooks/use-convex-data';
 import { useIsCalculationReady } from '@/lib/stores/simulator-store';
@@ -55,9 +55,9 @@ export default function ResultsSections() {
   const [expenseDialogOpen, setExpenseDialogOpen] = useState(false);
   const [savingsDialogOpen, setSavingsDialogOpen] = useState(false);
 
-  const handleIncomeDialogClose = useCallback(() => setIncomeDialogOpen(false), []);
-  const handleExpenseDialogClose = useCallback(() => setExpenseDialogOpen(false), []);
-  const handleSavingsDialogClose = useCallback(() => setSavingsDialogOpen(false), []);
+  const handleIncomeDialogClose = () => setIncomeDialogOpen(false);
+  const handleExpenseDialogClose = () => setExpenseDialogOpen(false);
+  const handleSavingsDialogClose = () => setSavingsDialogOpen(false);
 
   const numIncomes = useCountOfIncomes();
   const numExpenses = useCountOfExpenses();
