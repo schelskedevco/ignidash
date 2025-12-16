@@ -17,7 +17,7 @@ import { useTheme } from 'next-themes';
 import { Button } from '@/components/catalyst/button';
 import { Textarea } from '@/components/catalyst/textarea';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
-import { useCachedKeyMetrics } from '@/lib/stores/simulator-store';
+import { useCachedKeyMetrics, useSelectedConversationId, useUpdateSelectedConversationId } from '@/lib/stores/simulator-store';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu, DropdownLabel, DropdownDescription } from '@/components/catalyst/dropdown';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -234,7 +234,9 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
   const sendButtonRef = useRef<HTMLButtonElement>(null);
   const prevIsLoadingRef = useRef<boolean>(false);
 
-  const [selectedConversationId, setSelectedConversationId] = useState<Id<'conversations'> | undefined>(undefined);
+  const selectedConversationId = useSelectedConversationId();
+  const updateSelectedConversationId = useUpdateSelectedConversationId();
+
   const [chatState, setChatState] = useState<Record<string, { chatMessage: string; errorMessage: string }>>({});
 
   const stateKey = selectedConversationId ?? 'new';
@@ -279,7 +281,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
       updateChatState({ errorMessage: '' });
       const { conversationId } = await m({ conversationId: selectedConversationId, planId, content: chatMessage, keyMetrics });
       updateChatState({ chatMessage: '' });
-      setSelectedConversationId(conversationId);
+      updateSelectedConversationId(conversationId);
     } catch (error) {
       updateChatState({ errorMessage: error instanceof ConvexError ? error.message : 'Failed to send message.' });
     }
@@ -298,12 +300,12 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                 key={conversation._id}
                 conversation={conversation}
                 selectedConversationId={selectedConversationId}
-                setSelectedConversationId={setSelectedConversationId}
+                setSelectedConversationId={updateSelectedConversationId}
               />
             ))}
           </ul>
           <div className="border-border/50 border-t p-4">
-            <Button color="dark/white" className="w-full" onClick={() => setSelectedConversationId(undefined)}>
+            <Button color="dark/white" className="w-full" onClick={() => updateSelectedConversationId(undefined)}>
               New chat
             </Button>
           </div>
@@ -314,7 +316,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
           <div className="border-border/50 from-emphasized-background to-background -mx-2 block border-b bg-gradient-to-l sm:-mx-3 md:hidden">
             <div className="flex items-center justify-between gap-2 px-3 py-2">
               <h3 className="truncate text-sm font-semibold text-zinc-900 dark:text-white">{selectedConversation?.title || 'Chat'}</h3>
-              <Button outline onClick={() => setSelectedConversationId(undefined)}>
+              <Button outline onClick={() => updateSelectedConversationId(undefined)}>
                 <PlusIcon />
                 New chat
               </Button>

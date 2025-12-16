@@ -6,6 +6,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import useSWR, { mutate } from 'swr';
+import type { Id } from '@/convex/_generated/dataModel';
 
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 import { FinancialSimulationEngine, type SimulationResult } from '@/lib/calc/simulation-engine';
@@ -82,6 +83,10 @@ interface SimulatorState {
     sidebarCollapsed: boolean;
   };
 
+  chat: {
+    selectedConversationId: Id<'conversations'> | undefined;
+  };
+
   actions: {
     /* Results */
     updateQuickSelectPercentile: (percentile: QuickSelectPercentile) => void;
@@ -96,6 +101,9 @@ interface SimulatorState {
     /* Preferences */
     updateShowReferenceLines: (value: boolean) => void;
     updateSidebarCollapsed: (value: boolean) => void;
+
+    /* Chat */
+    updateSelectedConversationId: (id: Id<'conversations'> | undefined) => void;
   };
 }
 
@@ -113,6 +121,9 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
   preferences: {
     showReferenceLines: true,
     sidebarCollapsed: false,
+  },
+  chat: {
+    selectedConversationId: undefined,
   },
 };
 
@@ -166,6 +177,10 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               state.preferences.sidebarCollapsed = value;
             }),
+          updateSelectedConversationId: (id) =>
+            set((state) => {
+              state.chat.selectedConversationId = id;
+            }),
         },
       })),
       {
@@ -202,6 +217,7 @@ export const useResultsCategory = () => useSimulatorStore((state) => state.resul
 export const useMonteCarloSortMode = () => useSimulatorStore((state) => state.results.monteCarloSortMode);
 export const useChartTimeFrameToShow = () => useSimulatorStore((state) => state.results.chartTimeFrameToShow);
 export const useCachedKeyMetrics = () => useSimulatorStore((state) => state.results.cachedKeyMetrics);
+export const useSelectedConversationId = () => useSimulatorStore((state) => state.chat.selectedConversationId);
 
 /**
  * Action selectors
@@ -218,6 +234,7 @@ export const useUpdateSidebarCollapsed = () => useSimulatorStore((state) => stat
 export const useUpdateMonteCarloSortMode = () => useSimulatorStore((state) => state.actions.updateMonteCarloSortMode);
 export const useUpdateChartTimeFrameToShow = () => useSimulatorStore((state) => state.actions.updateChartTimeFrameToShow);
 export const useUpdateCachedKeyMetrics = () => useSimulatorStore((state) => state.actions.updateCachedKeyMetrics);
+export const useUpdateSelectedConversationId = () => useSimulatorStore((state) => state.actions.updateSelectedConversationId);
 
 /**
  * Preferences selectors
