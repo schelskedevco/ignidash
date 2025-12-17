@@ -2,7 +2,7 @@ import { v, ConvexError } from 'convex/values';
 import { query, mutation, internalMutation } from './_generated/server';
 
 import { getUserIdOrThrow } from './utils/auth_utils';
-import { recordUsage, getCanUseChat } from './utils/ai_utils';
+import { checkUsageLimits, recordUsage, getCanUseChat } from './utils/ai_utils';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
 
 export const get = query({
@@ -15,7 +15,6 @@ export const get = query({
     return await ctx.db
       .query('insights')
       .withIndex('by_planId_updatedAt', (q) => q.eq('planId', planId))
-      .order('desc')
       .first();
   },
 });
@@ -25,9 +24,27 @@ export const generate = mutation({
     planId: v.id('plans'),
   },
   handler: async (ctx, { planId }) => {
-    const [{ userId: _userId }, canUseChat] = await Promise.all([getUserIdOrThrow(ctx), getCanUseChat(ctx)]);
+    const [{ userId }, canUseInsights] = await Promise.all([getUserIdOrThrow(ctx), getCanUseChat(ctx)]);
 
-    if (!canUseChat) throw new ConvexError('AI insights are not available. Upgrade to start generating insights.');
+    if (!canUseInsights) throw new ConvexError('AI insights are not available. Upgrade to start generating insights.');
+
+    const { ok, retryAfter } = await checkUsageLimits(ctx, userId);
+    if (!ok) throw new ConvexError(`AI usage limit exceeded. Try again after ${new Date(retryAfter).toLocaleString()}.`);
+
+    const [loadingInsight, _plan] = await Promise.all([
+      ctx.db
+        .query('insights')
+        .withIndex('by_userId_updatedAt', (q) => q.eq('userId', userId))
+        .filter((q) => q.eq(q.field('isLoading'), true))
+        .first(),
+      getPlanForCurrentUserOrThrow(ctx, planId),
+    ]);
+    if (loadingInsight) throw new ConvexError('An AI insight is already in progress. Please wait for it to complete.');
+
+    const updatedAt = Date.now();
+    const systemPrompt = '';
+
+    const _newInsightId = await ctx.db.insert('insights', { userId, planId, systemPrompt, content: '', updatedAt, isLoading: true });
 
     throw new ConvexError('Not implemented');
   },

@@ -76,5 +76,7 @@ export default defineSchema({
     updatedAt: v.optional(v.number()),
     ms: v.optional(v.number()),
     isLoading: v.optional(v.boolean()),
-  }).index('by_planId_updatedAt', ['planId', 'updatedAt']),
+  })
+    .index('by_planId_updatedAt', ['planId', 'updatedAt'])
+    .index('by_userId_updatedAt', ['userId', 'updatedAt']),
 });
