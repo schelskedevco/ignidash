@@ -16,7 +16,7 @@ export default async function DesktopMainArea() {
   return (
     <div className="hidden h-full lg:block">
       <InsightsColumnHeader preloadedUser={preloadedUser} />
-      <div className="flex h-[calc(100vh-5.05rem)] flex-col pt-[4.3125rem]">
+      <div className="flex h-[calc(100vh-5.0625rem)] flex-col pt-[4.3125rem]">
         <InsightsContent />
       </div>
     </div>

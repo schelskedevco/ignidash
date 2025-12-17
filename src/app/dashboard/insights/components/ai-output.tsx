@@ -31,7 +31,7 @@ export default function AIOutput() {
           </Heading>
         )}
       </header>
-      <div className="flex h-[calc(100%-4.05rem)] w-full flex-col items-center justify-center px-4 py-5 sm:h-[calc(100%-5.05rem)] sm:py-6 lg:size-full">
+      <div className="flex h-[calc(100%-4.0625rem)] w-full flex-col items-center justify-center px-4 py-5 sm:h-[calc(100%-5.0625rem)] sm:py-6 lg:size-full">
         <DataListEmptyStateButton
           onClick={() => {}}
           icon={SparklesIcon}
