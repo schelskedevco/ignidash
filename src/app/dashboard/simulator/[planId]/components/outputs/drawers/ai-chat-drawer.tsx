@@ -3,7 +3,7 @@
 import { ConvexError } from 'convex/values';
 import { useState, useRef, useEffect } from 'react';
 import { api } from '@/convex/_generated/api';
-import { useQuery, useMutation } from 'convex/react';
+import { useQuery, useMutation, usePaginatedQuery } from 'convex/react';
 import { PaperAirplaneIcon, PlusIcon } from '@heroicons/react/16/solid';
 import { FireIcon } from '@heroicons/react/24/solid';
 import type { Id, Doc } from '@/convex/_generated/dataModel';
@@ -249,7 +249,11 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
   const conversations = useQuery(api.conversations.list, { planId }) ?? [];
   const selectedConversation = conversations.find((c) => c._id === selectedConversationId);
 
-  const messages = useQuery(api.messages.list, { conversationId: selectedConversationId }) ?? [];
+  const { results: messages } = usePaginatedQuery(
+    api.messages.list,
+    selectedConversationId ? { conversationId: selectedConversationId } : 'skip',
+    { initialNumItems: 8 }
+  );
   const user = useQuery(api.auth.getCurrentUserSafe);
   const canUseChat = useQuery(api.messages.canUseChat);
 

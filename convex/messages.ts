@@ -1,4 +1,5 @@
 import { v, ConvexError } from 'convex/values';
+import { paginationOptsValidator } from 'convex/server';
 import { query, mutation, internalMutation } from './_generated/server';
 import type { Id } from './_generated/dataModel';
 import { internal } from './_generated/api';
@@ -22,17 +23,15 @@ export const canUseChat = query({
 });
 
 export const list = query({
-  args: { conversationId: v.optional(v.id('conversations')) },
-  handler: async (ctx, { conversationId }) => {
-    if (!conversationId) return [];
-
+  args: { conversationId: v.id('conversations'), paginationOpts: paginationOptsValidator },
+  handler: async (ctx, { conversationId, paginationOpts }) => {
     await getConversationForCurrentUserOrThrow(ctx, conversationId);
 
     return await ctx.db
       .query('messages')
       .withIndex('by_conversationId_updatedAt', (q) => q.eq('conversationId', conversationId))
       .order('asc')
-      .collect();
+      .paginate(paginationOpts);
   },
 });
 
