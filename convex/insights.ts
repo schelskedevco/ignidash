@@ -1,5 +1,6 @@
 import { v, ConvexError } from 'convex/values';
 import { query, mutation, internalMutation } from './_generated/server';
+import { internal } from './_generated/api';
 
 import { getUserIdOrThrow } from './utils/auth_utils';
 import { checkUsageLimits, recordUsage, getCanUseChat } from './utils/ai_utils';
@@ -31,7 +32,7 @@ export const generate = mutation({
     const { ok, retryAfter } = await checkUsageLimits(ctx, userId);
     if (!ok) throw new ConvexError(`AI usage limit exceeded. Try again after ${new Date(retryAfter).toLocaleString()}.`);
 
-    const [loadingInsight, _plan] = await Promise.all([
+    const [loadingInsight] = await Promise.all([
       ctx.db
         .query('insights')
         .withIndex('by_userId_updatedAt', (q) => q.eq('userId', userId))
@@ -44,9 +45,10 @@ export const generate = mutation({
     const updatedAt = Date.now();
     const systemPrompt = '';
 
-    const _newInsightId = await ctx.db.insert('insights', { userId, planId, systemPrompt, content: '', updatedAt, isLoading: true });
+    const insightId = await ctx.db.insert('insights', { userId, planId, systemPrompt, content: '', updatedAt, isLoading: true });
+    await ctx.scheduler.runAfter(0, internal.use_openai.streamInsights, { userId, insightId, systemPrompt });
 
-    throw new ConvexError('Not implemented');
+    return { insightId };
   },
 });
 
