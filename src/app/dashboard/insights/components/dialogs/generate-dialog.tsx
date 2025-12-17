@@ -59,18 +59,24 @@ export default function GenerateDialog({ onClose, planId }: GenerateDialogProps)
             <FieldGroup>
               {saveError && <ErrorMessageCard errorMessage={saveError} />}
               <Field>
-                <Label htmlFor="userPrompt">User Prompt</Label>
+                <Label htmlFor="userPrompt" className="flex w-full items-center justify-between">
+                  <span className="whitespace-nowrap">Supplemental prompt</span>
+                  <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                </Label>
                 <Textarea
                   autoFocus
                   {...register('userPrompt')}
                   id="userPrompt"
                   name="userPrompt"
-                  aria-label="User prompt"
+                  aria-label="Supplemental prompt"
+                  placeholder="What should I know about taxes on my withdrawals?"
                   resizable={false}
                   rows={4}
                 />
                 {errors.userPrompt && <ErrorMessage>{errors.userPrompt?.message}</ErrorMessage>}
-                <Description>Enter a prompt to generate insights.</Description>
+                <Description>
+                  Enter a supplemental prompt for generating insights. If left blank, the system will generate insights based on the plan.
+                </Description>
               </Field>
             </FieldGroup>
           </DialogBody>
