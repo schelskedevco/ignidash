@@ -251,13 +251,13 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
   const conversations = useQuery(api.conversations.list, { planId }) ?? [];
   const selectedConversation = conversations.find((c) => c._id === selectedConversationId);
 
-  const {
-    results: messages,
-    status,
-    loadMore,
-  } = usePaginatedQuery(api.messages.list, selectedConversationId ? { conversationId: selectedConversationId } : 'skip', {
-    initialNumItems: PAGE_SIZE,
-  });
+  const { results, status, loadMore } = usePaginatedQuery(
+    api.messages.list,
+    selectedConversationId ? { conversationId: selectedConversationId } : 'skip',
+    { initialNumItems: PAGE_SIZE }
+  );
+  const messages = results.sort((a, b) => a.updatedAt - b.updatedAt);
+
   const user = useQuery(api.auth.getCurrentUserSafe);
   const canUseChat = useQuery(api.messages.canUseChat);
 

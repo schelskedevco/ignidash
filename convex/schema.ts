@@ -54,7 +54,7 @@ export default defineSchema({
         totalTokens: v.number(),
       })
     ),
-    updatedAt: v.optional(v.number()),
+    updatedAt: v.number(),
     ms: v.optional(v.number()),
     isLoading: v.optional(v.boolean()),
   })
@@ -73,7 +73,7 @@ export default defineSchema({
         totalTokens: v.number(),
       })
     ),
-    updatedAt: v.optional(v.number()),
+    updatedAt: v.number(),
     ms: v.optional(v.number()),
     isLoading: v.optional(v.boolean()),
   })
