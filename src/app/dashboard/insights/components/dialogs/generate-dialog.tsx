@@ -15,14 +15,17 @@ import { Fieldset, FieldGroup, Field, Label, Description, ErrorMessage } from '@
 import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Button } from '@/components/catalyst/button';
 import { Textarea } from '@/components/catalyst/textarea';
+import type { KeyMetrics } from '@/lib/types/key-metrics';
 
 interface GenerateDialogProps {
   onClose: () => void;
   planId: Id<'plans'>;
+  keyMetrics: KeyMetrics;
 }
 
-export default function GenerateDialog({ onClose, planId: _planId }: GenerateDialogProps) {
+export default function GenerateDialog({ onClose, planId: _planId, keyMetrics: _keyMetrics }: GenerateDialogProps) {
   const [planId] = useState(_planId);
+  const [keyMetrics] = useState(_keyMetrics);
 
   const {
     register,
@@ -39,7 +42,7 @@ export default function GenerateDialog({ onClose, planId: _planId }: GenerateDia
   const onSubmit = async (data: GenerateInsightsInputs) => {
     try {
       setSaveError(null);
-      await m({ planId, userPrompt: data.userPrompt });
+      await m({ planId, keyMetrics, userPrompt: data.userPrompt });
       onClose();
     } catch (error) {
       setSaveError(error instanceof ConvexError ? error.message : 'Failed to generate insights.');

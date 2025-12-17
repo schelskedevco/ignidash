@@ -288,3 +288,7 @@ export const getSystemPrompt = (plan: Doc<'plans'>, keyMetrics: KeyMetrics | nul
 
   return systemPrompt(formatPlanData(plan), formatKeyMetrics(keyMetrics));
 };
+
+export const getInsightsSystemPrompt = (plan: Doc<'plans'>, keyMetrics: KeyMetrics, userPrompt: string | undefined): string => {
+  return ``;
+};
