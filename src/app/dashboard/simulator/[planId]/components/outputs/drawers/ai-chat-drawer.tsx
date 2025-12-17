@@ -24,7 +24,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Subheading } from '@/components/catalyst/heading';
 import ErrorMessageCard from '@/components/ui/error-message-card';
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 12;
 
 const DEMO_QUESTIONS = [
   {
