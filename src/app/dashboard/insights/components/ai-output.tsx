@@ -1,8 +1,11 @@
 'use client';
 
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 import { useState } from 'react';
 import Link from 'next/link';
 import { SparklesIcon } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 import { Heading } from '@/components/catalyst/heading';
 import { useInsightsSelectedPlan } from '@/lib/stores/simulator-store';
@@ -16,6 +19,8 @@ export default function AIOutput() {
 
   const [generateDialogOpen, setGenerateDialogOpen] = useState(false);
   const handleGenerateDialogClose = () => setGenerateDialogOpen(false);
+
+  const insights = useQuery(api.insights.get, selectedPlan ? { planId: selectedPlan.id } : 'skip');
 
   return (
     <>
@@ -40,12 +45,18 @@ export default function AIOutput() {
           )}
         </header>
         <div className="flex h-[calc(100%-4.0625rem)] w-full flex-col items-center justify-center px-4 py-5 sm:h-[calc(100%-5.0625rem)] sm:py-6 lg:size-full">
-          <DataListEmptyStateButton
-            onClick={() => setGenerateDialogOpen(true)}
-            icon={SparklesIcon}
-            buttonText="Generate insights"
-            disabled={selectedPlan === undefined}
-          />
+          {insights ? (
+            <div className="prose prose-sm prose-zinc max-w-none">
+              <ReactMarkdown>{insights.content}</ReactMarkdown>
+            </div>
+          ) : (
+            <DataListEmptyStateButton
+              onClick={() => setGenerateDialogOpen(true)}
+              icon={SparklesIcon}
+              buttonText="Generate insights"
+              disabled={selectedPlan === undefined}
+            />
+          )}
         </div>
       </div>
       {selectedPlan && selectedPlan.keyMetrics && (

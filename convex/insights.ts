@@ -26,6 +26,7 @@ export const get = query({
     return await ctx.db
       .query('insights')
       .withIndex('by_planId_updatedAt', (q) => q.eq('planId', planId))
+      .order('desc')
       .first();
   },
 });
