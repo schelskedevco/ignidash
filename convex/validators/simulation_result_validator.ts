@@ -76,9 +76,7 @@ export const simulationDataPointValidator = v.object({
   monteCarlo: v.nullable(
     v.object({
       p10PortfolioValue: v.number(),
-      p25PortfolioValue: v.number(),
       p50PortfolioValue: v.number(),
-      p75PortfolioValue: v.number(),
       p90PortfolioValue: v.number(),
 
       percentAccumulation: v.number(),
@@ -87,22 +85,6 @@ export const simulationDataPointValidator = v.object({
 
       chanceOfRetirement: v.number(),
       chanceOfBankruptcy: v.number(),
-
-      meanYearsToRetirement: v.number(),
-      minYearsToRetirement: v.number(),
-      maxYearsToRetirement: v.number(),
-
-      meanRetirementAge: v.number(),
-      minRetirementAge: v.number(),
-      maxRetirementAge: v.number(),
-
-      meanYearsToBankruptcy: v.number(),
-      minYearsToBankruptcy: v.number(),
-      maxYearsToBankruptcy: v.number(),
-
-      meanBankruptcyAge: v.number(),
-      minBankruptcyAge: v.number(),
-      maxBankruptcyAge: v.number(),
     })
   ),
 });
