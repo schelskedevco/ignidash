@@ -3,6 +3,7 @@ import type { Doc } from '../_generated/dataModel';
 import { incomeTimeFrameForDisplay } from '../validators/incomes_validator';
 import { expenseTimeFrameForDisplay } from '../validators/expenses_validator';
 import type { KeyMetrics } from '../validators/key_metrics_validator';
+import type { SimulationResults } from '../validators/simulation_results_validator';
 
 const USE_CONDENSED_SYSTEM_PROMPT = true;
 
@@ -162,7 +163,7 @@ ${keyMetrics}
   Use their data to illustrate concepts (e.g., "With your $75,000 salary, 15% savings would mean..."), not to advise. Reference their numbers to make abstractions concrete, but let them decide what to do.
 `;
 
-const insightsSystemPrompt = (planData: string, keyMetrics: string, userPrompt: string | undefined): string => `
+const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationResults: string, userPrompt: string | undefined): string => `
   You are an educational assistant for Ignidash, a retirement planning simulator. Explain concepts and trade-offs—never give advice or tell users what to do.
 
   ## Core Rules
@@ -248,7 +249,7 @@ ${planData}
 ${keyMetrics}
 
   **User's Simulation Results**
-${`Placeholder for simulation results`}
+${simulationResults}
 
   **User's Supplemental Prompt**
   ${userPrompt ?? 'No supplemental prompt provided.'}
@@ -375,6 +376,10 @@ const formatKeyMetrics = (keyMetrics: KeyMetrics | null): string => {
   ].join('\n');
 };
 
+const formatSimulationResults = (simulationResults: SimulationResults): string => {
+  return `Placeholder for simulation results`;
+};
+
 export const getSystemPrompt = (plan: Doc<'plans'>, keyMetrics: KeyMetrics | null): string => {
   if (USE_CONDENSED_SYSTEM_PROMPT) {
     return condensedSystemPrompt(formatPlanData(plan), formatKeyMetrics(keyMetrics));
@@ -384,5 +389,10 @@ export const getSystemPrompt = (plan: Doc<'plans'>, keyMetrics: KeyMetrics | nul
 };
 
 export const getInsightsSystemPrompt = (plan: Doc<'plans'>, keyMetrics: KeyMetrics, userPrompt: string | undefined): string => {
-  return insightsSystemPrompt(formatPlanData(plan), formatKeyMetrics(keyMetrics), userPrompt);
+  return insightsSystemPrompt(
+    formatPlanData(plan),
+    formatKeyMetrics(keyMetrics),
+    formatSimulationResults({ simulationResults: [] }),
+    userPrompt
+  );
 };
