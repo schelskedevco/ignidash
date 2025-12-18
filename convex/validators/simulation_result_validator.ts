@@ -32,15 +32,6 @@ export const simulationDataPointValidator = v.object({
   netCashFlow: v.number(),
   savingsRate: v.nullable(v.number()),
 
-  // Returns
-  realStockReturn: v.number(),
-  realBondReturn: v.number(),
-  realCashReturn: v.number(),
-  inflationRate: v.number(),
-  stockGrowth: v.number(),
-  bondGrowth: v.number(),
-  cashGrowth: v.number(),
-
   // Taxes
   grossIncome: v.number(),
   adjustedGrossIncome: v.number(),
@@ -53,23 +44,17 @@ export const simulationDataPointValidator = v.object({
 
   taxableOrdinaryIncome: v.number(),
   taxableCapitalGains: v.number(),
-  taxableSocialSecurityIncome: v.number(),
 
   effectiveIncomeTaxRate: v.number(),
   topMarginalIncomeTaxRate: v.number(),
   effectiveCapitalGainsTaxRate: v.number(),
   topMarginalCapitalGainsTaxRate: v.number(),
 
-  maxTaxablePercentage: v.number(),
-  actualTaxablePercentage: v.number(),
-
   taxDeferredContributionsDeduction: v.number(),
-  standardDeduction: v.number(),
   capitalLossDeduction: v.number(),
 
   // Contributions
-  annualContributions: v.number(),
-  cumulativeContributions: v.number(),
+  totalContributions: v.number(),
   taxableContributions: v.number(),
   taxDeferredContributions: v.number(),
   taxFreeContributions: v.number(),
@@ -77,8 +62,7 @@ export const simulationDataPointValidator = v.object({
   employerMatch: v.number(),
 
   // Withdrawals
-  annualWithdrawals: v.number(),
-  cumulativeWithdrawals: v.number(),
+  totalWithdrawals: v.number(),
   taxableWithdrawals: v.number(),
   taxDeferredWithdrawals: v.number(),
   taxFreeWithdrawals: v.number(),
@@ -127,6 +111,7 @@ export const simulationResultValidator = v.object({
   simulationResult: v.array(simulationDataPointValidator),
   incomeTaxBrackets: v.array(taxBracketValidator),
   capitalGainsTaxBrackets: v.array(taxBracketValidator),
+  standardDeduction: v.number(),
 });
 
 export type SimulationResult = Infer<typeof simulationResultValidator>;

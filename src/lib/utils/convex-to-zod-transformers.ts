@@ -361,7 +361,6 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
   const portfolioData = ChartDataExtractor.extractSingleSimulationPortfolioChartData(simulation).slice(1);
   const cashFlowData = ChartDataExtractor.extractSingleSimulationCashFlowChartData(simulation);
   const taxesData = ChartDataExtractor.extractSingleSimulationTaxesChartData(simulation);
-  const returnsData = ChartDataExtractor.extractSingleSimulationReturnsChartData(simulation);
   const contributionsData = ChartDataExtractor.extractSingleSimulationContributionsChartData(simulation);
   const withdrawalsData = ChartDataExtractor.extractSingleSimulationWithdrawalsChartData(simulation);
 
@@ -393,15 +392,6 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       netCashFlow: cashFlowData[i].cashFlow,
       savingsRate: cashFlowData[i].savingsRate,
 
-      // Returns
-      realStockReturn: returnsData[i].realStockReturn,
-      realBondReturn: returnsData[i].realBondReturn,
-      realCashReturn: returnsData[i].realCashReturn,
-      inflationRate: returnsData[i].inflationRate,
-      stockGrowth: returnsData[i].annualStockGrowth,
-      bondGrowth: returnsData[i].annualBondGrowth,
-      cashGrowth: returnsData[i].annualCashGrowth,
-
       // Taxes
       grossIncome: taxesData[i].grossIncome,
       adjustedGrossIncome: taxesData[i].adjustedGrossIncome,
@@ -412,20 +402,15 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       earlyWithdrawalPenalties: taxesData[i].annualEarlyWithdrawalPenalties,
       taxableOrdinaryIncome: taxesData[i].taxableOrdinaryIncome,
       taxableCapitalGains: taxesData[i].taxableCapGains,
-      taxableSocialSecurityIncome: taxesData[i].taxableSocialSecurityIncome,
       effectiveIncomeTaxRate: taxesData[i].effectiveIncomeTaxRate,
       topMarginalIncomeTaxRate: taxesData[i].topMarginalIncomeTaxRate,
       effectiveCapitalGainsTaxRate: taxesData[i].effectiveCapGainsTaxRate,
       topMarginalCapitalGainsTaxRate: taxesData[i].topMarginalCapGainsTaxRate,
-      maxTaxablePercentage: taxesData[i].maxTaxablePercentage,
-      actualTaxablePercentage: taxesData[i].actualTaxablePercentage,
       taxDeferredContributionsDeduction: taxesData[i].taxDeferredContributions,
-      standardDeduction: taxesData[i].standardDeduction,
       capitalLossDeduction: taxesData[i].capitalLossDeduction,
 
       // Contributions
-      annualContributions: contributionsData[i].annualContributions,
-      cumulativeContributions: contributionsData[i].cumulativeContributions,
+      totalContributions: contributionsData[i].annualContributions,
       taxableContributions: contributionsData[i].taxableContributions,
       taxDeferredContributions: contributionsData[i].taxDeferredContributions,
       taxFreeContributions: contributionsData[i].taxFreeContributions,
@@ -433,8 +418,7 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       employerMatch: contributionsData[i].annualEmployerMatch,
 
       // Withdrawals
-      annualWithdrawals: withdrawalsData[i].annualWithdrawals,
-      cumulativeWithdrawals: withdrawalsData[i].cumulativeWithdrawals,
+      totalWithdrawals: withdrawalsData[i].annualWithdrawals,
       taxableWithdrawals: withdrawalsData[i].taxableWithdrawals,
       taxDeferredWithdrawals: withdrawalsData[i].taxDeferredWithdrawals,
       taxFreeWithdrawals: withdrawalsData[i].taxFreeWithdrawals,
@@ -451,8 +435,9 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
 
   const incomeTaxBrackets: ConvexSimulationResult['incomeTaxBrackets'] = taxesData[0].incomeTaxBrackets;
   const capitalGainsTaxBrackets: ConvexSimulationResult['capitalGainsTaxBrackets'] = taxesData[0].capitalGainsTaxBrackets;
+  const standardDeduction: ConvexSimulationResult['standardDeduction'] = taxesData[0].standardDeduction;
 
-  return { simulationResult, incomeTaxBrackets, capitalGainsTaxBrackets };
+  return { simulationResult, incomeTaxBrackets, capitalGainsTaxBrackets, standardDeduction };
 }
 
 // ============================================================================

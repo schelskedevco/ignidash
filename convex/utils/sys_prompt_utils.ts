@@ -377,7 +377,129 @@ const formatKeyMetrics = (keyMetrics: KeyMetrics | null): string => {
 };
 
 const formatSimulationResult = (simulationResult: SimulationResult): string => {
-  return `Placeholder for simulation result`;
+  const { simulationResult: data, incomeTaxBrackets, capitalGainsTaxBrackets, standardDeduction } = simulationResult;
+
+  if (!data.length) return 'No simulation data available';
+
+  const lines: string[] = [];
+
+  // Tax brackets (condensed)
+  const formatBracket = (b: { min: number; max: number | null; rate: number }) =>
+    `${b.rate * 100}%: ${formatNumber(b.min, 0, '$')}${b.max !== null ? `-${formatNumber(b.max, 0, '$')}` : '+'}`;
+
+  lines.push(`  Tax Brackets:`);
+  lines.push(`    Income: ${incomeTaxBrackets.map(formatBracket).join(', ')}`);
+  lines.push(`    Cap Gains: ${capitalGainsTaxBrackets.map(formatBracket).join(', ')}`);
+  lines.push(`    Standard Deduction: ${formatNumber(standardDeduction, 0, '$')}`);
+
+  lines.push(`\n  Year-by-Year Data:`);
+
+  for (const d of data) {
+    const yearLines: string[] = [];
+
+    // Portfolio
+    const portfolioItems = [
+      d.stockHoldings && `stocks:${formatNumber(d.stockHoldings, 0, '$')}`,
+      d.bondHoldings && `bonds:${formatNumber(d.bondHoldings, 0, '$')}`,
+      d.cashHoldings && `cash:${formatNumber(d.cashHoldings, 0, '$')}`,
+    ].filter(Boolean);
+    if (portfolioItems.length) yearLines.push(`portfolio: ${portfolioItems.join(', ')} = ${formatNumber(d.totalValue, 0, '$')}`);
+
+    const accountItems = [
+      d.taxableValue && `taxable:${formatNumber(d.taxableValue, 0, '$')}`,
+      d.taxDeferredValue && `tax-deferred:${formatNumber(d.taxDeferredValue, 0, '$')}`,
+      d.taxFreeValue && `tax-free:${formatNumber(d.taxFreeValue, 0, '$')}`,
+      d.cashSavings && `savings:${formatNumber(d.cashSavings, 0, '$')}`,
+    ].filter(Boolean);
+    if (accountItems.length) yearLines.push(`accounts: ${accountItems.join(', ')}`);
+
+    // Income
+    const incomeItems = [
+      d.earnedIncome && `earned:${formatNumber(d.earnedIncome, 0, '$')}`,
+      d.socialSecurityIncome && `SS:${formatNumber(d.socialSecurityIncome, 0, '$')}`,
+      d.taxExemptIncome && `tax-exempt:${formatNumber(d.taxExemptIncome, 0, '$')}`,
+      d.retirementDistributions && `distributions:${formatNumber(d.retirementDistributions, 0, '$')}`,
+      d.interestIncome && `interest:${formatNumber(d.interestIncome, 0, '$')}`,
+      d.dividendIncome && `dividends:${formatNumber(d.dividendIncome, 0, '$')}`,
+      d.realizedGains && `gains:${formatNumber(d.realizedGains, 0, '$')}`,
+    ].filter(Boolean);
+    if (incomeItems.length) yearLines.push(`income: ${incomeItems.join(', ')}`);
+
+    // Cash flow
+    const cashFlowItems = [
+      d.expenses && `expenses:${formatNumber(d.expenses, 0, '$')}`,
+      d.totalTaxesAndPenalties && `taxes:${formatNumber(d.totalTaxesAndPenalties, 0, '$')}`,
+      d.netCashFlow && `net:${formatNumber(d.netCashFlow, 0, '$')}`,
+      d.savingsRate !== null && `savings-rate:${(d.savingsRate * 100).toFixed(0)}%`,
+    ].filter(Boolean);
+    if (cashFlowItems.length) yearLines.push(`cashflow: ${cashFlowItems.join(', ')}`);
+
+    // Tax details
+    const taxDetailItems = [
+      d.grossIncome && `gross:${formatNumber(d.grossIncome, 0, '$')}`,
+      d.adjustedGrossIncome && `AGI:${formatNumber(d.adjustedGrossIncome, 0, '$')}`,
+      d.taxableIncome && `taxable:${formatNumber(d.taxableIncome, 0, '$')}`,
+    ].filter(Boolean);
+    if (taxDetailItems.length) yearLines.push(`tax-basis: ${taxDetailItems.join(', ')}`);
+
+    const taxBreakdownItems = [
+      d.federalIncomeTax && `income:${formatNumber(d.federalIncomeTax, 0, '$')}`,
+      d.capitalGainsTax && `capgains:${formatNumber(d.capitalGainsTax, 0, '$')}`,
+      d.ficaTax && `FICA:${formatNumber(d.ficaTax, 0, '$')}`,
+      d.earlyWithdrawalPenalties && `penalties:${formatNumber(d.earlyWithdrawalPenalties, 0, '$')}`,
+    ].filter(Boolean);
+    if (taxBreakdownItems.length) yearLines.push(`taxes: ${taxBreakdownItems.join(', ')}`);
+
+    const rateItems = [
+      d.effectiveIncomeTaxRate && `eff-income:${(d.effectiveIncomeTaxRate * 100).toFixed(1)}%`,
+      d.topMarginalIncomeTaxRate && `marg-income:${(d.topMarginalIncomeTaxRate * 100).toFixed(0)}%`,
+      d.effectiveCapitalGainsTaxRate && `eff-capgains:${(d.effectiveCapitalGainsTaxRate * 100).toFixed(1)}%`,
+      d.topMarginalCapitalGainsTaxRate && `marg-capgains:${(d.topMarginalCapitalGainsTaxRate * 100).toFixed(0)}%`,
+    ].filter(Boolean);
+    if (rateItems.length) yearLines.push(`rates: ${rateItems.join(', ')}`);
+
+    const taxableIncomeItems = [
+      d.taxableOrdinaryIncome && `ordinary:${formatNumber(d.taxableOrdinaryIncome, 0, '$')}`,
+      d.taxableCapitalGains && `capgains:${formatNumber(d.taxableCapitalGains, 0, '$')}`,
+    ].filter(Boolean);
+    if (taxableIncomeItems.length) yearLines.push(`taxable-income: ${taxableIncomeItems.join(', ')}`);
+
+    const deductionItems = [
+      d.taxDeferredContributionsDeduction && `401k:${formatNumber(d.taxDeferredContributionsDeduction, 0, '$')}`,
+      d.capitalLossDeduction && `cap-loss:${formatNumber(d.capitalLossDeduction, 0, '$')}`,
+    ].filter(Boolean);
+    if (deductionItems.length) yearLines.push(`deductions: ${deductionItems.join(', ')}`);
+
+    // Contributions
+    const contribItems = [
+      d.totalContributions && `total:${formatNumber(d.totalContributions, 0, '$')}`,
+      d.taxableContributions && `taxable:${formatNumber(d.taxableContributions, 0, '$')}`,
+      d.taxDeferredContributions && `tax-deferred:${formatNumber(d.taxDeferredContributions, 0, '$')}`,
+      d.taxFreeContributions && `tax-free:${formatNumber(d.taxFreeContributions, 0, '$')}`,
+      d.cashContributions && `cash:${formatNumber(d.cashContributions, 0, '$')}`,
+      d.employerMatch && `match:${formatNumber(d.employerMatch, 0, '$')}`,
+    ].filter(Boolean);
+    if (contribItems.length) yearLines.push(`contributions: ${contribItems.join(', ')}`);
+
+    // Withdrawals
+    const withdrawalItems = [
+      d.totalWithdrawals && `total:${formatNumber(d.totalWithdrawals, 0, '$')}`,
+      d.taxableWithdrawals && `taxable:${formatNumber(d.taxableWithdrawals, 0, '$')}`,
+      d.taxDeferredWithdrawals && `tax-deferred:${formatNumber(d.taxDeferredWithdrawals, 0, '$')}`,
+      d.taxFreeWithdrawals && `tax-free:${formatNumber(d.taxFreeWithdrawals, 0, '$')}`,
+      d.cashWithdrawals && `cash:${formatNumber(d.cashWithdrawals, 0, '$')}`,
+      d.requiredMinimumDistributions && `RMDs:${formatNumber(d.requiredMinimumDistributions, 0, '$')}`,
+      d.earlyWithdrawals && `early:${formatNumber(d.earlyWithdrawals, 0, '$')}`,
+      d.rothEarningsWithdrawals && `roth-earnings:${formatNumber(d.rothEarningsWithdrawals, 0, '$')}`,
+      d.withdrawalRate !== null && d.withdrawalRate && `rate:${(d.withdrawalRate * 100).toFixed(1)}%`,
+    ].filter(Boolean);
+    if (withdrawalItems.length) yearLines.push(`withdrawals: ${withdrawalItems.join(', ')}`);
+
+    lines.push(`\n    Age ${d.age}:`);
+    yearLines.forEach((line) => lines.push(`      ${line}`));
+  }
+
+  return lines.join('\n');
 };
 
 export const getSystemPrompt = (plan: Doc<'plans'>, keyMetrics: KeyMetrics | null): string => {
