@@ -2,6 +2,8 @@ import { v, type Infer } from 'convex/values';
 
 export const simulationDataPointValidator = v.object({
   age: v.number(),
+
+  // Portfolio
   stockHoldings: v.number(),
   bondHoldings: v.number(),
   cashHoldings: v.number(),
@@ -9,6 +11,55 @@ export const simulationDataPointValidator = v.object({
   taxDeferredValue: v.number(),
   taxFreeValue: v.number(),
   cashSavings: v.number(),
+  totalValue: v.number(),
+
+  // Cash Flow
+  earnedIncome: v.number(),
+  socialSecurityIncome: v.number(),
+  taxExemptIncome: v.number(),
+  totalTaxesAndPenalties: v.number(),
+  expenses: v.number(),
+  netCashFlow: v.number(),
+  savingsRate: v.nullable(v.number()),
+
+  // Returns
+  realStockReturn: v.number(),
+  realBondReturn: v.number(),
+  realCashReturn: v.number(),
+  inflationRate: v.number(),
+  cumulativeStockGrowth: v.number(),
+  cumulativeBondGrowth: v.number(),
+  cumulativeCashGrowth: v.number(),
+  annualStockGrowth: v.number(),
+  annualBondGrowth: v.number(),
+  annualCashGrowth: v.number(),
+
+  // Taxes
+  grossIncome: v.number(),
+  adjustedGrossIncome: v.number(),
+  taxableIncome: v.number(),
+  // ...
+
+  // Contributions
+  annualContributions: v.number(),
+  cumulativeContributions: v.number(),
+  taxableContributions: v.number(),
+  taxDeferredContributions: v.number(),
+  taxFreeContributions: v.number(),
+  cashContributions: v.number(),
+  employerMatch: v.number(),
+
+  // Withdrawals
+  totalWithdrawals: v.number(),
+  taxableWithdrawals: v.number(),
+  taxDeferredWithdrawals: v.number(),
+  taxFreeWithdrawals: v.number(),
+  cashWithdrawals: v.number(),
+  withdrawalRate: v.nullable(v.number()),
+  // ...
+
+  // Monte Carlo
+  // ...
 });
 
 export const simulationResultValidator = v.object({
