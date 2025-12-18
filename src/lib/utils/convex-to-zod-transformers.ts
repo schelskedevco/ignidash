@@ -350,6 +350,17 @@ export function liabilityToConvex(liability: LiabilityInputs): Doc<'finances'>['
 }
 
 // ============================================================================
+// SIMULATION RESULT TRANSFORMERS
+// ============================================================================
+
+/**
+ * Transforms TypeScript SimulationResult to Convex SimulationResult format
+ */
+export function simulationResultToConvex(simulationResult: SimulationResult): ConvexSimulationResult {
+  return { simulationResult: [], incomeTaxBrackets: [], capitalGainsTaxBrackets: [] };
+}
+
+// ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
 
@@ -365,15 +376,4 @@ export function arrayToRecord<T extends { id: string }>(items: T[]): Record<stri
  */
 export function recordToArray<T>(record: Record<string, T>): T[] {
   return Object.values(record);
-}
-
-// ============================================================================
-// SIMULATION RESULT TRANSFORMERS
-// ============================================================================
-
-/**
- * Transforms TypeScript SimulationResult to Convex SimulationResult format
- */
-export function simulationResultToConvex(simulationResult: SimulationResult): ConvexSimulationResult {
-  return { simulationResult: [], incomeTaxBrackets: [], capitalGainsTaxBrackets: [] };
 }
