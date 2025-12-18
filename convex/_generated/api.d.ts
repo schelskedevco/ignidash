@@ -45,7 +45,7 @@ import type * as validators_key_metrics_validator from "../validators/key_metric
 import type * as validators_liability_validator from "../validators/liability_validator.js";
 import type * as validators_market_assumptions_validator from "../validators/market_assumptions_validator.js";
 import type * as validators_privacy_settings_validator from "../validators/privacy_settings_validator.js";
-import type * as validators_simulation_results_validator from "../validators/simulation_results_validator.js";
+import type * as validators_simulation_result_validator from "../validators/simulation_result_validator.js";
 import type * as validators_simulation_settings_validator from "../validators/simulation_settings_validator.js";
 import type * as validators_tax_settings_validator from "../validators/tax_settings_validator.js";
 import type * as validators_timeline_validator from "../validators/timeline_validator.js";
@@ -95,7 +95,7 @@ declare const fullApi: ApiFromModules<{
   "validators/liability_validator": typeof validators_liability_validator;
   "validators/market_assumptions_validator": typeof validators_market_assumptions_validator;
   "validators/privacy_settings_validator": typeof validators_privacy_settings_validator;
-  "validators/simulation_results_validator": typeof validators_simulation_results_validator;
+  "validators/simulation_result_validator": typeof validators_simulation_result_validator;
   "validators/simulation_settings_validator": typeof validators_simulation_settings_validator;
   "validators/tax_settings_validator": typeof validators_tax_settings_validator;
   "validators/timeline_validator": typeof validators_timeline_validator;
