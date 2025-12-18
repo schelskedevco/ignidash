@@ -383,7 +383,6 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
 
   const lines: string[] = [];
 
-  // Tax brackets (condensed)
   const formatBracket = (b: { min: number; max: number | null; rate: number }) =>
     `${b.rate * 100}%: ${formatNumber(b.min, 0, '$')}${b.max !== null ? `-${formatNumber(b.max, 0, '$')}` : '+'}`;
 
@@ -397,7 +396,6 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
   for (const d of data) {
     const yearLines: string[] = [];
 
-    // Portfolio
     const portfolioItems = [
       d.stockHoldings && `stocks:${formatNumber(d.stockHoldings, 0, '$')}`,
       d.bondHoldings && `bonds:${formatNumber(d.bondHoldings, 0, '$')}`,
@@ -413,7 +411,6 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
     ].filter(Boolean);
     if (accountItems.length) yearLines.push(`accounts: ${accountItems.join(', ')}`);
 
-    // Income
     const incomeItems = [
       d.earnedIncome && `earned:${formatNumber(d.earnedIncome, 0, '$')}`,
       d.socialSecurityIncome && `SS:${formatNumber(d.socialSecurityIncome, 0, '$')}`,
@@ -425,7 +422,6 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
     ].filter(Boolean);
     if (incomeItems.length) yearLines.push(`income: ${incomeItems.join(', ')}`);
 
-    // Cash flow
     const cashFlowItems = [
       d.expenses && `expenses:${formatNumber(d.expenses, 0, '$')}`,
       d.totalTaxesAndPenalties && `taxes:${formatNumber(d.totalTaxesAndPenalties, 0, '$')}`,
@@ -434,7 +430,6 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
     ].filter(Boolean);
     if (cashFlowItems.length) yearLines.push(`cashflow: ${cashFlowItems.join(', ')}`);
 
-    // Tax details
     const taxDetailItems = [
       d.grossIncome && `gross:${formatNumber(d.grossIncome, 0, '$')}`,
       d.adjustedGrossIncome && `AGI:${formatNumber(d.adjustedGrossIncome, 0, '$')}`,
@@ -470,7 +465,6 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
     ].filter(Boolean);
     if (deductionItems.length) yearLines.push(`deductions: ${deductionItems.join(', ')}`);
 
-    // Contributions
     const contribItems = [
       d.totalContributions && `total:${formatNumber(d.totalContributions, 0, '$')}`,
       d.taxableContributions && `taxable:${formatNumber(d.taxableContributions, 0, '$')}`,
@@ -481,7 +475,6 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
     ].filter(Boolean);
     if (contribItems.length) yearLines.push(`contributions: ${contribItems.join(', ')}`);
 
-    // Withdrawals
     const withdrawalItems = [
       d.totalWithdrawals && `total:${formatNumber(d.totalWithdrawals, 0, '$')}`,
       d.taxableWithdrawals && `taxable:${formatNumber(d.taxableWithdrawals, 0, '$')}`,
