@@ -114,7 +114,7 @@ export default function AIOutput() {
       </div>
       {selectedPlan && (
         <Dialog size="xl" open={generateDialogOpen} onClose={handleGenerateDialogClose}>
-          <GenerateDialog onClose={handleGenerateDialogClose} planId={selectedPlan.id} {...selectedPlan} />
+          <GenerateDialog onClose={handleGenerateDialogClose} planId={selectedPlan.id} hasExistingInsight={!!insights} {...selectedPlan} />
         </Dialog>
       )}
     </>
