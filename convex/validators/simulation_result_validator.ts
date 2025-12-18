@@ -78,13 +78,8 @@ export const simulationDataPointValidator = v.object({
       p10PortfolioValue: v.number(),
       p50PortfolioValue: v.number(),
       p90PortfolioValue: v.number(),
-
-      percentAccumulation: v.number(),
       percentRetirement: v.number(),
       percentBankrupt: v.number(),
-
-      chanceOfRetirement: v.number(),
-      chanceOfBankruptcy: v.number(),
     })
   ),
 });
