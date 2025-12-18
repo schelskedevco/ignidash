@@ -1,6 +1,7 @@
 import type { Doc } from '@/convex/_generated/dataModel';
 import type { SimulationResult as ConvexSimulationResult } from '@/convex/validators/simulation_result_validator';
 
+import { ChartDataExtractor } from '@/lib/calc/data-extractors/chart-data-extractor';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
 import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
@@ -356,8 +357,123 @@ export function liabilityToConvex(liability: LiabilityInputs): Doc<'finances'>['
 /**
  * Transforms TypeScript SimulationResult to Convex SimulationResult format
  */
-export function simulationResultToConvex(simulationResult: SimulationResult): ConvexSimulationResult {
-  return { simulationResult: [], incomeTaxBrackets: [], capitalGainsTaxBrackets: [] };
+export function simulationResultToConvex(simulation: SimulationResult): ConvexSimulationResult {
+  const portfolioData = ChartDataExtractor.extractSingleSimulationPortfolioChartData(simulation);
+  const cashFlowData = ChartDataExtractor.extractSingleSimulationCashFlowChartData(simulation);
+  const taxesData = ChartDataExtractor.extractSingleSimulationTaxesChartData(simulation);
+  const returnsData = ChartDataExtractor.extractSingleSimulationReturnsChartData(simulation);
+  const contributionsData = ChartDataExtractor.extractSingleSimulationContributionsChartData(simulation);
+  const withdrawalsData = ChartDataExtractor.extractSingleSimulationWithdrawalsChartData(simulation);
+
+  const simulationResult: ConvexSimulationResult['simulationResult'] = [];
+  for (let i = 0; i < portfolioData.length; i++) {
+    simulationResult.push({
+      age: portfolioData[i].age,
+
+      // Portfolio
+      stockHoldings: portfolioData[i].stockHoldings,
+      bondHoldings: portfolioData[i].bondHoldings,
+      cashHoldings: portfolioData[i].cashHoldings,
+      taxableValue: portfolioData[i].taxableValue,
+      taxDeferredValue: portfolioData[i].taxDeferredValue,
+      taxFreeValue: portfolioData[i].taxFreeValue,
+      cashSavings: portfolioData[i].cashSavings,
+      totalValue: portfolioData[i].stockHoldings + portfolioData[i].bondHoldings + portfolioData[i].cashHoldings,
+
+      // Cash Flow
+      earnedIncome: cashFlowData[i].earnedIncome,
+      socialSecurityIncome: cashFlowData[i].socialSecurityIncome,
+      taxExemptIncome: cashFlowData[i].taxExemptIncome,
+      retirementDistributions: taxesData[i].retirementDistributions,
+      interestIncome: taxesData[i].interestIncome,
+      realizedGains: taxesData[i].realizedGains,
+      dividendIncome: taxesData[i].dividendIncome,
+      totalTaxesAndPenalties: cashFlowData[i].totalTaxesAndPenalties,
+      expenses: cashFlowData[i].expenses,
+      netCashFlow: cashFlowData[i].cashFlow,
+      savingsRate: cashFlowData[i].savingsRate,
+
+      // Returns
+      realStockReturn: returnsData[i].realStockReturn,
+      realBondReturn: returnsData[i].realBondReturn,
+      realCashReturn: returnsData[i].realCashReturn,
+      inflationRate: returnsData[i].inflationRate,
+      stockGrowth: returnsData[i].annualStockGrowth,
+      bondGrowth: returnsData[i].annualBondGrowth,
+      cashGrowth: returnsData[i].annualCashGrowth,
+
+      // Taxes
+      grossIncome: taxesData[i].grossIncome,
+      adjustedGrossIncome: taxesData[i].adjustedGrossIncome,
+      taxableIncome: taxesData[i].taxableIncome,
+      ficaTax: taxesData[i].annualFicaTax,
+      federalIncomeTax: taxesData[i].annualIncomeTax,
+      capitalGainsTax: taxesData[i].annualCapGainsTax,
+      earlyWithdrawalPenalties: taxesData[i].annualEarlyWithdrawalPenalties,
+      taxableOrdinaryIncome: taxesData[i].taxableOrdinaryIncome,
+      taxableCapitalGains: taxesData[i].taxableCapGains,
+      taxableSocialSecurityIncome: taxesData[i].taxableSocialSecurityIncome,
+      effectiveIncomeTaxRate: taxesData[i].effectiveIncomeTaxRate,
+      topMarginalIncomeTaxRate: taxesData[i].topMarginalIncomeTaxRate,
+      effectiveCapitalGainsTaxRate: taxesData[i].effectiveCapGainsTaxRate,
+      topMarginalCapitalGainsTaxRate: taxesData[i].topMarginalCapGainsTaxRate,
+      maxTaxablePercentage: taxesData[i].maxTaxablePercentage,
+      actualTaxablePercentage: taxesData[i].actualTaxablePercentage,
+      taxDeferredContributionsDeduction: taxesData[i].taxDeferredContributions,
+      standardDeduction: taxesData[i].standardDeduction,
+      capitalLossDeduction: taxesData[i].capitalLossDeduction,
+
+      // Contributions
+      annualContributions: contributionsData[i].annualContributions,
+      cumulativeContributions: contributionsData[i].cumulativeContributions,
+      taxableContributions: contributionsData[i].taxableContributions,
+      taxDeferredContributions: contributionsData[i].taxDeferredContributions,
+      taxFreeContributions: contributionsData[i].taxFreeContributions,
+      cashContributions: contributionsData[i].cashContributions,
+      employerMatch: contributionsData[i].annualEmployerMatch,
+
+      // Withdrawals
+      annualWithdrawals: withdrawalsData[i].annualWithdrawals,
+      cumulativeWithdrawals: withdrawalsData[i].cumulativeWithdrawals,
+      taxableWithdrawals: withdrawalsData[i].taxableWithdrawals,
+      taxDeferredWithdrawals: withdrawalsData[i].taxDeferredWithdrawals,
+      taxFreeWithdrawals: withdrawalsData[i].taxFreeWithdrawals,
+      cashWithdrawals: withdrawalsData[i].cashWithdrawals,
+      requiredMinimumDistributions: withdrawalsData[i].annualRequiredMinimumDistributions,
+      earlyWithdrawals: withdrawalsData[i].annualEarlyWithdrawals,
+      rothEarningsWithdrawals: withdrawalsData[i].annualRothEarningsWithdrawals,
+      withdrawalRate: withdrawalsData[i].withdrawalRate,
+
+      // Monte Carlo
+      p10PortfolioValue: -1,
+      p25PortfolioValue: -1,
+      p50PortfolioValue: -1,
+      p75PortfolioValue: -1,
+      p90PortfolioValue: -1,
+      percentAccumulation: -1,
+      percentRetirement: -1,
+      percentBankrupt: -1,
+      chanceOfRetirement: -1,
+      chanceOfBankruptcy: -1,
+      meanYearsToRetirement: -1,
+      minYearsToRetirement: -1,
+      maxYearsToRetirement: -1,
+      meanRetirementAge: -1,
+      minRetirementAge: -1,
+      maxRetirementAge: -1,
+      meanYearsToBankruptcy: -1,
+      minYearsToBankruptcy: -1,
+      maxYearsToBankruptcy: -1,
+      meanBankruptcyAge: -1,
+      minBankruptcyAge: -1,
+      maxBankruptcyAge: -1,
+    });
+  }
+
+  const incomeTaxBrackets: ConvexSimulationResult['incomeTaxBrackets'] = taxesData[0].incomeTaxBrackets;
+  const capitalGainsTaxBrackets: ConvexSimulationResult['capitalGainsTaxBrackets'] = taxesData[0].capitalGainsTaxBrackets;
+
+  return { simulationResult, incomeTaxBrackets, capitalGainsTaxBrackets };
 }
 
 // ============================================================================
