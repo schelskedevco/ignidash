@@ -211,8 +211,8 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, userPrompt: 
   **12. Monte Carlo Results** (only for Monte Carlo simulations)
   Success rate, outcome ranges across percentiles, sequence of returns risk.
 
-  **13. Limitations & Next Steps**
-  1-2 relevant simulation limitations, what a financial professional could help explore.
+  **13. Next Steps**
+  1-2 relevant next steps or follow-up questions for the user to consider.
 
   ## Ignidash's App Features for Financial Modeling
 
