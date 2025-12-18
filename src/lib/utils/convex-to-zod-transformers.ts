@@ -358,7 +358,7 @@ export function liabilityToConvex(liability: LiabilityInputs): Doc<'finances'>['
  * Transforms TypeScript SimulationResult to Convex SimulationResult format
  */
 export function simulationResultToConvex(simulation: SimulationResult): ConvexSimulationResult {
-  const portfolioData = ChartDataExtractor.extractSingleSimulationPortfolioChartData(simulation);
+  const portfolioData = ChartDataExtractor.extractSingleSimulationPortfolioChartData(simulation).slice(1);
   const cashFlowData = ChartDataExtractor.extractSingleSimulationCashFlowChartData(simulation);
   const taxesData = ChartDataExtractor.extractSingleSimulationTaxesChartData(simulation);
   const returnsData = ChartDataExtractor.extractSingleSimulationReturnsChartData(simulation);
