@@ -392,7 +392,7 @@ export const getInsightsSystemPrompt = (plan: Doc<'plans'>, keyMetrics: KeyMetri
   return insightsSystemPrompt(
     formatPlanData(plan),
     formatKeyMetrics(keyMetrics),
-    formatSimulationResult({ simulationResult: [] }),
+    formatSimulationResult({ simulationResult: [], incomeTaxBrackets: [], capitalGainsTaxBrackets: [] }),
     userPrompt
   );
 };
