@@ -93,7 +93,7 @@ export default function AIOutput() {
                     {copied ? <CheckIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
                   </button>
                   <button
-                    onClick={() => {}}
+                    onClick={() => setGenerateDialogOpen(true)}
                     aria-label="Regenerate insights"
                     className="text-sm opacity-60 transition-all duration-300 hover:rotate-180 hover:opacity-100"
                   >
