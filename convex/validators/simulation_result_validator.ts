@@ -37,12 +37,9 @@ export const simulationDataPointValidator = v.object({
   realBondReturn: v.number(),
   realCashReturn: v.number(),
   inflationRate: v.number(),
-  cumulativeStockGrowth: v.number(),
-  cumulativeBondGrowth: v.number(),
-  cumulativeCashGrowth: v.number(),
-  annualStockGrowth: v.number(),
-  annualBondGrowth: v.number(),
-  annualCashGrowth: v.number(),
+  stockGrowth: v.number(),
+  bondGrowth: v.number(),
+  cashGrowth: v.number(),
 
   // Taxes
   grossIncome: v.number(),
@@ -60,10 +57,8 @@ export const simulationDataPointValidator = v.object({
 
   effectiveIncomeTaxRate: v.number(),
   topMarginalIncomeTaxRate: v.number(),
-  incomeTaxBrackets: v.array(taxBracketValidator),
   effectiveCapitalGainsTaxRate: v.number(),
   topMarginalCapitalGainsTaxRate: v.number(),
-  capitalGainsTaxBrackets: v.array(taxBracketValidator),
 
   maxTaxablePercentage: v.number(),
   actualTaxablePercentage: v.number(),
@@ -126,6 +121,8 @@ export const simulationDataPointValidator = v.object({
 
 export const simulationResultValidator = v.object({
   simulationResult: v.array(simulationDataPointValidator),
+  incomeTaxBrackets: v.array(taxBracketValidator),
+  capitalGainsTaxBrackets: v.array(taxBracketValidator),
 });
 
 export type SimulationResult = Infer<typeof simulationResultValidator>;
