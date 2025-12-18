@@ -226,11 +226,11 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   Which accounts are tapped when, tax implications, and alternative sequencing approaches.
 
   **11. Asset Allocation & Location**
-  Review the user's asset allocation (stocks/bonds/cash) over time and placement across account types. Educate on common principles:
-  - Tax-efficient placement: bonds/REITs typically held in tax-deferred accounts vs. tax-efficient stock index funds in taxable
-  - Sequence risk: high stock allocation at/near retirement without adequate bond buffer
-  - Return drag: excessive cash holdings or bonds held too early in accumulation phase
-  - Roth optimization: highest-growth assets often prioritized for Roth accounts (tax-free growth)
+  Review asset allocation over time and placement across account types. Educate on principles:
+  - Tax placement: bonds in tax-deferred (defer income tax on interest); stocks in taxable (already tax-efficient)
+  - Sequence risk: high stock % at retirement increases vulnerability to early market crashes
+  - Return drag: excessive cash or bonds early in accumulation reduces long-term growth
+  - Roth priority: highest-growth assets maximize tax-free compounding
 
   ## Ignidash's App Features for Financial Modeling
 
