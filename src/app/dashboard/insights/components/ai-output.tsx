@@ -68,8 +68,19 @@ export default function AIOutput() {
                 <ReactMarkdown>{insights.content}</ReactMarkdown>
                 <div className="border-border/50 flex items-center gap-2 border-t pt-4">
                   <p className="text-foreground/60 text-xs">
-                    <time dateTime={new Date(insights._creationTime).toISOString()}>
-                      {new Date(insights._creationTime).toLocaleTimeString([], {
+                    <time
+                      dateTime={new Date(insights._creationTime).toLocaleString([], {
+                        month: 'numeric',
+                        day: 'numeric',
+                        year: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    >
+                      {new Date(insights._creationTime).toLocaleString([], {
+                        month: 'numeric',
+                        day: 'numeric',
+                        year: '2-digit',
                         hour: '2-digit',
                         minute: '2-digit',
                       })}
