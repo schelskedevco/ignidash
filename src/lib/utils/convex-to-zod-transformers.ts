@@ -445,28 +445,7 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       withdrawalRate: withdrawalsData[i].withdrawalRate,
 
       // Monte Carlo
-      p10PortfolioValue: -1,
-      p25PortfolioValue: -1,
-      p50PortfolioValue: -1,
-      p75PortfolioValue: -1,
-      p90PortfolioValue: -1,
-      percentAccumulation: -1,
-      percentRetirement: -1,
-      percentBankrupt: -1,
-      chanceOfRetirement: -1,
-      chanceOfBankruptcy: -1,
-      meanYearsToRetirement: -1,
-      minYearsToRetirement: -1,
-      maxYearsToRetirement: -1,
-      meanRetirementAge: -1,
-      minRetirementAge: -1,
-      maxRetirementAge: -1,
-      meanYearsToBankruptcy: -1,
-      minYearsToBankruptcy: -1,
-      maxYearsToBankruptcy: -1,
-      meanBankruptcyAge: -1,
-      minBankruptcyAge: -1,
-      maxBankruptcyAge: -1,
+      monteCarlo: null,
     });
   }
 
