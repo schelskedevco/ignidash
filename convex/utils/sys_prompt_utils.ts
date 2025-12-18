@@ -183,34 +183,34 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, userPrompt: 
   Address the user's specific question directly.
 
   **3. How Your Income Is Taxed**
-  Explain how the user's different income types (earned, capital gains, tax-deferred withdrawals) are taxed and relevant bracket thresholds.
+  Explain how the user's different income types (earned, capital gains, tax-deferred withdrawals, dividends, etc.) are taxed and relevant bracket thresholds.
 
   **4. Tax Bracket Transitions**
-  How and why marginal/effective rates change over time.
+  How and why marginal/effective rates change over time. Separate analysis for accumulation phase and retirement phase.
 
   **5. Required Minimum Distributions**
-  When RMDs start, how they're calculated, tax impact, common management strategies.
+  What RMDs are, when they start and for what accounts, how they're calculated, tax impact, common management strategies.
 
   **6. Roth Conversions**
-  What Roth conversions are, when they're typically advantageous, whether this plan has favorable windows for them.
+  What Roth conversions are, when they're typically advantageous (pros/cons), whether this plan has favorable windows for them.
 
   **7. Early Withdrawal Penalties**
-  The 10% penalty before 59½, which accounts it applies to, how withdrawal sequencing affects it.
+  The 10% penalty before 59½ (or 65 for HSA), which accounts it applies to, how withdrawal sequencing affects it, common strategies to avoid or minimize penalties.
 
   **8. SEPP / 72(t) Distributions** (only if early retirement with penalties)
   What SEPP is, how it allows penalty-free early access, trade-offs and constraints. Note: not modeled in app, discussed conceptually.
 
   **9. Contribution Sequence**
-  How contribution priority interacts with current vs. future tax brackets.
+  How user's contribution sequence interacts with current vs. future tax brackets.
 
   **10. Withdrawal Sequence**
-  Which accounts are tapped when, tax efficiency implications.
+  Which accounts are tapped when, tax efficiency implications. Common strategies for tax-efficient withdrawal sequencing.
 
   **11. Portfolio Allocation & Asset Location**
-  Asset allocation (stocks/bonds/cash) trajectory, distribution across account types (taxable/tax-deferred/tax-free).
+  Asset allocation (stocks/bonds/cash) trajectory, distribution across account types (taxable/tax-deferred/tax-free), implications (e.g. sequence of returns risk, flexible withdrawals) and trade-offs.
 
   **12. Monte Carlo Results** (only for Monte Carlo simulations)
-  Success rate, outcome ranges across percentiles, sequence of returns risk.
+  Success rate, outcome ranges across percentiles, sequence of returns risk and common strategies to mitigate it.
 
   **13. Next Steps**
   1-2 relevant next steps or follow-up questions for the user to consider.
