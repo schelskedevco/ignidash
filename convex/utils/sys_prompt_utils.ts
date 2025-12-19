@@ -423,8 +423,8 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
   const fmt = (n: number) => formatNumber(n, 0, '$');
   const pct = (n: number) => `${(n * 100).toFixed(n && Math.abs(n) < 0.1 ? 1 : 0)}%`;
 
-  const fmtBracket = (b: { min: number; max: number | null; rate: number }) =>
-    `${pct(b.rate)}:${fmt(b.min)}${b.max !== null ? `-${fmt(b.max)}` : '+'}`;
+  const fmtBracket = (b: { min: number; max: number; rate: number }) =>
+    `${pct(b.rate)}:${fmt(b.min)}${Number.isFinite(b.max) ? `-${fmt(b.max)}` : '+'}`;
 
   lines.push(`Tax Brackets:`);
   lines.push(`  Income: ${incomeTaxBrackets.map(fmtBracket).join(', ')}`);
@@ -466,7 +466,7 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
       d.expenses && `expenses:${fmt(d.expenses)}`,
       d.totalTaxesAndPenalties && `taxes:${fmt(d.totalTaxesAndPenalties)}`,
       d.netCashFlow && `net:${fmt(d.netCashFlow)}`,
-      d.savingsRate != null && `saveRate:${pct(d.savingsRate)}`,
+      d.savingsRate && `saveRate:${pct(d.savingsRate)}`,
     ].filter(Boolean);
     if (cashFlow.length) sections.push(`cashflow: ${cashFlow.join(', ')}`);
 
@@ -518,7 +518,7 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
       d.requiredMinimumDistributions && `RMD:${fmt(d.requiredMinimumDistributions)}`,
       d.earlyWithdrawals && `early:${fmt(d.earlyWithdrawals)}`,
       d.rothEarningsWithdrawals && `rothEarn:${fmt(d.rothEarningsWithdrawals)}`,
-      d.withdrawalRate != null && `rate:${pct(d.withdrawalRate)}`,
+      d.withdrawalRate && `rate:${pct(d.withdrawalRate)}`,
     ].filter(Boolean);
     if (withdrawals.length) sections.push(`withdrawals: ${withdrawals.join(', ')}`);
 
