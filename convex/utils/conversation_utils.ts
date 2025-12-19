@@ -18,14 +18,14 @@ export async function getConversationForCurrentUserOrThrow(
   return conversation;
 }
 
-export async function getAllConversationsForPlan(ctx: QueryCtx, planId: Id<'plans'>): Promise<Doc<'conversations'>[]> {
+async function getAllConversationsForPlan(ctx: QueryCtx, planId: Id<'plans'>): Promise<Doc<'conversations'>[]> {
   return await ctx.db
     .query('conversations')
     .withIndex('by_planId_updatedAt', (q) => q.eq('planId', planId))
     .collect();
 }
 
-export async function deleteAllConversationsForPlan(ctx: MutationCtx, planId: Id<'plans'>): Promise<void> {
+async function deleteAllConversationsForPlan(ctx: MutationCtx, planId: Id<'plans'>): Promise<void> {
   const conversations = await getAllConversationsForPlan(ctx, planId);
 
   const messagesByConversation = await Promise.all(

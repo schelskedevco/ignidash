@@ -15,14 +15,14 @@ export async function getInsightForCurrentUserOrThrow(ctx: QueryCtx, insightId: 
   return insight;
 }
 
-export async function getAllInsightsForPlan(ctx: QueryCtx, planId: Id<'plans'>): Promise<Doc<'insights'>[]> {
+async function getAllInsightsForPlan(ctx: QueryCtx, planId: Id<'plans'>): Promise<Doc<'insights'>[]> {
   return await ctx.db
     .query('insights')
     .withIndex('by_planId_updatedAt', (q) => q.eq('planId', planId))
     .collect();
 }
 
-export async function deleteAllInsightsForPlan(ctx: MutationCtx, planId: Id<'plans'>): Promise<void> {
+async function deleteAllInsightsForPlan(ctx: MutationCtx, planId: Id<'plans'>): Promise<void> {
   const insights = await getAllInsightsForPlan(ctx, planId);
   await Promise.all([...insights.map((insight) => ctx.db.delete(insight._id))]);
 }
