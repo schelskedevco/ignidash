@@ -11,9 +11,10 @@ interface DeleteDataItemAlertProps {
   dataToDelete: { id: string; name: string } | null;
   setDataToDelete: (data: { id: string; name: string } | null) => void;
   deleteData: (id: string) => Promise<void>;
+  desc?: string;
 }
 
-export default function DeleteDataItemAlert({ dataToDelete, setDataToDelete, deleteData }: DeleteDataItemAlertProps) {
+export default function DeleteDataItemAlert({ dataToDelete, setDataToDelete, deleteData, desc }: DeleteDataItemAlertProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
@@ -25,7 +26,7 @@ export default function DeleteDataItemAlert({ dataToDelete, setDataToDelete, del
       }}
     >
       <AlertTitle>Are you sure you want to delete {dataToDelete ? `"${dataToDelete.name}"` : 'this'}?</AlertTitle>
-      <AlertDescription>This action cannot be undone.</AlertDescription>
+      <AlertDescription>{desc ?? 'This action cannot be undone.'}</AlertDescription>
       <AlertBody>{deleteError && <ErrorMessageCard errorMessage={deleteError} />}</AlertBody>
       <AlertActions>
         <Button plain onClick={() => setDataToDelete(null)} disabled={isDeleting}>

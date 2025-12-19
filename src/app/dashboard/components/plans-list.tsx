@@ -160,6 +160,8 @@ export default function PlanList({ preloadedPlans, preloadedAssets, preloadedLia
     [setAsDefaultMutation]
   );
 
+  const deletePlanDesc = 'This will also delete any AI chats and insights associated with this plan, and cannot be undone.';
+
   return (
     <>
       <div className="-mx-2 sm:-mx-3 lg:-mx-4 lg:pr-96">
@@ -197,7 +199,7 @@ export default function PlanList({ preloadedPlans, preloadedAssets, preloadedLia
           onClose={handlePlanDialogClose}
         />
       </Dialog>
-      <DeleteDataItemAlert dataToDelete={planToDelete} setDataToDelete={setPlanToDelete} deleteData={deletePlan} />
+      <DeleteDataItemAlert dataToDelete={planToDelete} setDataToDelete={setPlanToDelete} deleteData={deletePlan} desc={deletePlanDesc} />
     </>
   );
 }

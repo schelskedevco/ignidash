@@ -3,6 +3,8 @@ import { query, mutation } from './_generated/server';
 import type { Doc } from './_generated/dataModel';
 
 import { getUserIdOrThrow } from './utils/auth_utils';
+import { deleteAllConversationsForPlan } from './utils/conversation_utils';
+import { deleteAllInsightsForPlan } from './utils/insights_utils';
 import { getPlanForCurrentUserOrThrow, getAllPlansForUser } from './utils/plan_utils';
 import { timelineValidator } from './validators/timeline_validator';
 import { incomeValidator } from './validators/incomes_validator';
@@ -219,6 +221,8 @@ export const deletePlan = mutation({
 
     const planToDelete = plans.find((plan) => plan._id === planId);
     if (planToDelete?.isDefault) throw new ConvexError('You cannot delete your default plan.');
+
+    await Promise.all([deleteAllConversationsForPlan(ctx, planId), deleteAllInsightsForPlan(ctx, planId)]);
 
     await ctx.db.delete(planId);
   },

@@ -22,7 +22,7 @@ async function getAllInsightsForPlan(ctx: QueryCtx, planId: Id<'plans'>): Promis
     .collect();
 }
 
-async function deleteAllInsightsForPlan(ctx: MutationCtx, planId: Id<'plans'>): Promise<void> {
+export async function deleteAllInsightsForPlan(ctx: MutationCtx, planId: Id<'plans'>): Promise<void> {
   const insights = await getAllInsightsForPlan(ctx, planId);
   await Promise.all([...insights.map((insight) => ctx.db.delete(insight._id))]);
 }

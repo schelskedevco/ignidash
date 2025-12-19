@@ -25,7 +25,7 @@ async function getAllConversationsForPlan(ctx: QueryCtx, planId: Id<'plans'>): P
     .collect();
 }
 
-async function deleteAllConversationsForPlan(ctx: MutationCtx, planId: Id<'plans'>): Promise<void> {
+export async function deleteAllConversationsForPlan(ctx: MutationCtx, planId: Id<'plans'>): Promise<void> {
   const conversations = await getAllConversationsForPlan(ctx, planId);
 
   const messagesByConversation = await Promise.all(
