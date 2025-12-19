@@ -1,4 +1,5 @@
 import { v, ConvexError } from 'convex/values';
+import { paginationOptsValidator } from 'convex/server';
 import { query, mutation, internalMutation } from './_generated/server';
 import { internal } from './_generated/api';
 
@@ -17,18 +18,33 @@ export const canUseInsights = query({
   },
 });
 
-export const get = query({
+export const list = query({
   args: {
     planId: v.id('plans'),
+    paginationOpts: paginationOptsValidator,
   },
-  handler: async (ctx, { planId }) => {
+  handler: async (ctx, { planId, paginationOpts }) => {
     await getPlanForCurrentUserOrThrow(ctx, planId);
 
     return await ctx.db
       .query('insights')
       .withIndex('by_planId_updatedAt', (q) => q.eq('planId', planId))
       .order('desc')
-      .first();
+      .paginate(paginationOpts);
+  },
+});
+
+export const getCountOfInsights = query({
+  args: { planId: v.id('plans') },
+  handler: async (ctx, { planId }) => {
+    await getPlanForCurrentUserOrThrow(ctx, planId);
+
+    return (
+      await ctx.db
+        .query('insights')
+        .withIndex('by_planId_updatedAt', (q) => q.eq('planId', planId))
+        .collect()
+    ).length;
   },
 });
 

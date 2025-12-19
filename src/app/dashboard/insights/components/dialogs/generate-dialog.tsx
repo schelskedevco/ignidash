@@ -22,6 +22,7 @@ import type { SimulationResult } from '@/lib/calc/simulation-engine';
 
 interface GenerateDialogProps {
   onClose: () => void;
+  onGenerate: () => void;
   planId: Id<'plans'>;
   keyMetrics: KeyMetrics;
   simulationResult: SimulationResult;
@@ -30,6 +31,7 @@ interface GenerateDialogProps {
 
 export default function GenerateDialog({
   onClose,
+  onGenerate,
   planId: _planId,
   keyMetrics: _keyMetrics,
   simulationResult: _simulationResult,
@@ -56,6 +58,7 @@ export default function GenerateDialog({
     try {
       setSaveError(null);
       await m({ planId, keyMetrics, simulationResult: simulationResultToConvex(simulationResult), userPrompt: data.userPrompt });
+      onGenerate();
       onClose();
     } catch (error) {
       setSaveError(error instanceof ConvexError ? error.message : 'Failed to generate insights.');
