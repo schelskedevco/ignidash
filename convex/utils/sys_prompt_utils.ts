@@ -256,6 +256,9 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - Roth priority: highest-growth assets maximize tax-free compounding
   - Tax diversification: balance across Roth, tax-deferred, and taxable provides flexibility to manage retirement brackets
 
+  **10. Conclusion**
+  In 2-3 sentences, synthesize the most important themes—where this plan is well-positioned and where the biggest trade-offs or opportunities lie.
+
   ## Ignidash's App Features for Financial Modeling
 
   **Configurable:**
