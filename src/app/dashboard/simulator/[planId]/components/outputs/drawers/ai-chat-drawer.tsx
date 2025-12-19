@@ -452,12 +452,12 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
             {canUseChat ? (
               'AI can make mistakes. Verify important info.'
             ) : (
-              <>
+              <strong>
                 Upgrade to start chatting.{' '}
                 <Link href="/pricing" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
                   View pricing →
                 </Link>
-              </>
+              </strong>
             )}
           </p>
         </div>

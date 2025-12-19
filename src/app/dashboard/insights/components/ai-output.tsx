@@ -80,7 +80,7 @@ export default function AIOutput() {
                   {selectedPlan?.name}
                 </Link>
               </Heading>
-              {numInsights && (
+              {numInsights && numInsights > 0 ? (
                 <nav className="flex shrink-0 items-center">
                   <button
                     onClick={handlePrevious}
@@ -106,7 +106,7 @@ export default function AIOutput() {
                     />
                   </button>
                 </nav>
-              )}
+              ) : null}
             </div>
           ) : (
             <Heading level={3} className="truncate whitespace-nowrap">
@@ -186,7 +186,6 @@ export default function AIOutput() {
             onClose={handleGenerateDialogClose}
             onGenerate={() => setSelectedInsightIndex(0)}
             planId={selectedPlan.id}
-            hasExistingInsight={!!selectedInsight}
             {...selectedPlan}
           />
         </Dialog>

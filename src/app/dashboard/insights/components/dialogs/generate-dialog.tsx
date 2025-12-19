@@ -5,7 +5,6 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useState } from 'react';
 import { SparklesIcon } from '@heroicons/react/24/outline';
-import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import type { Id } from '@/convex/_generated/dataModel';
@@ -26,7 +25,6 @@ interface GenerateDialogProps {
   planId: Id<'plans'>;
   keyMetrics: KeyMetrics;
   simulationResult: SimulationResult;
-  hasExistingInsight: boolean;
 }
 
 export default function GenerateDialog({
@@ -35,12 +33,10 @@ export default function GenerateDialog({
   planId: _planId,
   keyMetrics: _keyMetrics,
   simulationResult: _simulationResult,
-  hasExistingInsight: _hasExistingInsight,
 }: GenerateDialogProps) {
   const [planId] = useState(_planId);
   const [keyMetrics] = useState(_keyMetrics);
   const [simulationResult] = useState(_simulationResult);
-  const [hasExistingInsight] = useState(_hasExistingInsight);
 
   const {
     register,
@@ -100,21 +96,6 @@ export default function GenerateDialog({
                   the selected plan.
                 </Description>
               </Field>
-              {hasExistingInsight && (
-                <div role="alert" className="rounded-md bg-yellow-50 p-4 dark:bg-yellow-500/10 dark:outline dark:outline-yellow-500/25">
-                  <div className="flex">
-                    <div className="shrink-0">
-                      <ExclamationTriangleIcon aria-hidden="true" className="size-5 text-yellow-400 dark:text-yellow-500" />
-                    </div>
-                    <div className="ml-3">
-                      <p className="line-clamp-3 text-sm text-yellow-700 dark:text-yellow-300">
-                        An existing <span className="font-semibold">Insights</span> already exists for this plan. Regenerating will make it
-                        no longer visible to you.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
             </FieldGroup>
           </DialogBody>
         </Fieldset>
