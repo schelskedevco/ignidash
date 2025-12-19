@@ -15,8 +15,8 @@ export default async function InsightsContent() {
 
   return (
     <>
-      <AIOutput />
       <PlanSelector preloadedPlans={preloadedPlans} />
+      <AIOutput />
     </>
   );
 }
