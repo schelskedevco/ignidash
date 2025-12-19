@@ -1,7 +1,7 @@
 'use client';
 
 import { ConvexError } from 'convex/values';
-import { useMutation, useQuery } from 'convex/react';
+import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useState } from 'react';
 import { SparklesIcon } from '@heroicons/react/24/outline';
@@ -23,6 +23,7 @@ import type { SimulationResult } from '@/lib/calc/simulation-engine';
 interface GenerateDialogProps {
   onClose: () => void;
   onGenerate: () => void;
+  canUseInsights: boolean;
   planId: Id<'plans'>;
   keyMetrics: KeyMetrics;
   simulationResult: SimulationResult;
@@ -31,12 +32,11 @@ interface GenerateDialogProps {
 export default function GenerateDialog({
   onClose,
   onGenerate,
+  canUseInsights,
   planId: _planId,
   keyMetrics: _keyMetrics,
   simulationResult: _simulationResult,
 }: GenerateDialogProps) {
-  const canUseInsights = useQuery(api.insights.canUseInsights) ?? false;
-
   const [planId] = useState(_planId);
   const [keyMetrics] = useState(_keyMetrics);
   const [simulationResult] = useState(_simulationResult);

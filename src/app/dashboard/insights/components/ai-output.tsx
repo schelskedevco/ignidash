@@ -25,6 +25,7 @@ export default function AIOutput() {
   const handleGenerateDialogClose = () => setGenerateDialogOpen(false);
 
   const numInsights = useQuery(api.insights.getCountOfInsights, selectedPlan ? { planId: selectedPlan.id } : 'skip');
+  const canUseInsights = useQuery(api.insights.canUseInsights) ?? false;
 
   const { results, status, loadMore } = usePaginatedQuery(api.insights.list, selectedPlan ? { planId: selectedPlan.id } : 'skip', {
     initialNumItems: 1,
@@ -185,6 +186,7 @@ export default function AIOutput() {
           <GenerateDialog
             onClose={handleGenerateDialogClose}
             onGenerate={() => setSelectedInsightIndex(0)}
+            canUseInsights={canUseInsights}
             planId={selectedPlan.id}
             {...selectedPlan}
           />
