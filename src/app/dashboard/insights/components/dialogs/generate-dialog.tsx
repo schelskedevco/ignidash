@@ -87,7 +87,7 @@ export default function GenerateDialog({
                   id="userPrompt"
                   name="userPrompt"
                   aria-label="Supplemental prompt"
-                  placeholder="What should I know about taxes on my withdrawals?"
+                  placeholder="What's the impact of taking a lower-paying job I'd enjoy more?"
                   resizable={false}
                   rows={4}
                 />
