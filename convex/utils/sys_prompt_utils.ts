@@ -171,6 +171,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - Not a back and forth conversation, don't prompt the user for more information
   - Beginner-friendly, no unnecessary jargon or deep technical complexity
   - Keep sections concise (~4 sentences for simpler topics, ~2-3 paragraphs for complex ones)
+  - Cross reference sections with related concepts where appropriate
   - Format responses using Markdown for readability (bold, headers, lists)
   - Use bold text to highlight important concepts and key points
   - For personalized financial/tax/legal advice, suggest a professional
@@ -225,21 +226,28 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - Highlight years where user is in unusually low/high brackets (planning opportunities/risks)
 
   **5. Required Minimum Distributions**
-  What RMDs are, when they start, how they affect this plan (e.g. whether they spike tax liability), and common approaches to minimize their tax impact.
+  What RMDs are: forced withdrawals from tax-deferred accounts starting at age 73 (75 starting 2033), calculated as account balance ÷ IRS life expectancy factor. Large tax-deferred balances can force substantial taxable income regardless of actual spending needs, often pushing retirees into higher brackets when combined with Social Security. The "RMD problem" is best addressed years before RMDs begin through Roth conversions. Evaluate whether this plan's tax-deferred trajectory creates future bracket risk.
 
   **6. Roth Conversions**
-  What Roth conversions are, when they're typically advantageous, and whether this plan has windows worth considering.
+  What Roth conversions are: moving funds from tax-deferred to Roth, paying ordinary income tax now for tax-free growth and withdrawals later. Typically advantageous during low-income years (gap between retirement and RMDs/Social Security), when current marginal rate is lower than expected future rate, or to reduce future RMD burden. "Bracket filling" means converting up to the top of current bracket without pushing into the next.
 
-  **7. Early Withdrawal Penalties**
-  The 10% penalty before 59½ (20% for HSA non-medical), which accounts it applies to, and how this plan's withdrawal timing interacts with it.
+  Trade-offs: paying taxes now vs. later, losing funds to taxes that could otherwise compound, and large conversions can trigger Medicare IRMAA surcharges (not modeled). Converted amounts have a 5-year holding period before tax-free withdrawal. Evaluate whether this plan has a low-tax window worth highlighting.
 
-  **8. SEPP / 72(t) Distributions** (only if early retirement with potential penalty exposure)
-  What SEPP is and how it allows penalty-free early access. Note: not modeled in app.
+  **7. Early Withdrawal Penalties & SEPP**
+  The 10% early withdrawal penalty applies to tax-deferred distributions (401k, IRA) before age 59½; 20% for HSA non-medical withdrawals. Roth contributions (not earnings) can be withdrawn penalty-free anytime.
 
-  **9. Withdrawal Sequence**
-  Which accounts are tapped when, tax implications, and alternative sequencing approaches.
+  Key exceptions: Rule of 55 allows penalty-free 401(k) access if separating from employer at 55+. SEPP/72(t) allows penalty-free IRA access at any age through substantially equal periodic payments, but requires commitment for 5 years or until 59½ (whichever is longer)—inflexible if circumstances change, worth exploring with a professional if early retirement creates penalty exposure (not modeled).
 
-  **10. Asset Allocation & Location**
+  For early retirees, evaluate whether withdrawal timing triggers penalties and whether Roth contributions or taxable accounts can bridge to 59½.
+
+  **8. Withdrawal Sequence**
+  The order accounts are tapped affects lifetime tax liability. Conventional sequence: taxable first (uses cost basis, benefits from lower capital gains rates), tax-deferred second (defer taxes), Roth last (maximizes tax-free compounding).
+
+  Why conventional isn't always optimal: depleting taxable early may miss 0% capital gains opportunities, draining tax-deferred last builds RMD problems, and strategic tax-deferred withdrawals in low-income years can smooth brackets. Maintaining balance across account types preserves flexibility.
+
+  Evaluate which accounts are tapped when, whether timing aligns with tax-efficient principles, and whether the sequence preserves optionality or depletes one bucket entirely.
+
+  **9. Asset Allocation & Location**
   Review user's asset allocation over time and placement across account types. Educate on principles:
   - Tax placement: bonds in tax-deferred (to defer income tax on interest); stocks in taxable (already tax-efficient)
   - Sequence risk: high stock % at retirement increases vulnerability to early market crashes
