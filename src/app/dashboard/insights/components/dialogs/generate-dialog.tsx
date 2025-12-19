@@ -14,6 +14,7 @@ import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/di
 import { simulationResultToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { generateInsightsSchema, type GenerateInsightsInputs } from '@/lib/schemas/generate-insights-schema';
 import { Fieldset, FieldGroup, Field, Label, Description, ErrorMessage } from '@/components/catalyst/fieldset';
+import { Divider } from '@/components/catalyst/divider';
 import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Button } from '@/components/catalyst/button';
 import { Textarea } from '@/components/catalyst/textarea';
@@ -99,11 +100,12 @@ export default function GenerateDialog({
                   the selected plan.
                 </Description>
               </Field>
-              <p className="text-muted-foreground border-border/50 bg-emphasized-background mt-2 rounded-md border p-2 text-center text-base/6 sm:text-sm/6">
+              <Divider />
+              <Description>
                 {canUseInsights ? (
                   <>
-                    AI insights are for educational purposes only and do not provide professional financial advice. For more information,
-                    read our{' '}
+                    <strong>Disclaimer:</strong> AI insights are for educational purposes only and do not provide professional financial
+                    advice. For more information, read our{' '}
                     <Link href="/terms" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
                       Terms of Service
                     </Link>
@@ -117,7 +119,7 @@ export default function GenerateDialog({
                     </Link>
                   </strong>
                 )}
-              </p>
+              </Description>
             </FieldGroup>
           </DialogBody>
         </Fieldset>
