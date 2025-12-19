@@ -523,7 +523,7 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
     if (withdrawals.length) sections.push(`withdrawals: ${withdrawals.join(', ')}`);
 
     lines.push(`\n  Age ${d.age}:`);
-    sections.forEach((section) => lines.push(`    ${section}`));
+    sections.forEach((section) => lines.push(`    ${section};`));
   }
 
   return lines.join('\n');
