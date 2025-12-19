@@ -5,6 +5,7 @@ import { getUserIdOrThrow } from './utils/auth_utils';
 import { deleteAllPlansForUser } from './utils/plan_utils';
 import { deleteFinancesForUser } from './utils/finances_utils';
 import { deleteAllConversationsForUser } from './utils/conversation_utils';
+import { deleteAllInsightsForUser } from './utils/insights_utils';
 
 export const deleteAppData = mutation({
   args: {
@@ -13,7 +14,7 @@ export const deleteAppData = mutation({
   handler: async (ctx, { shouldCreateBlankPlan }) => {
     const { userId, userName } = await getUserIdOrThrow(ctx);
 
-    await deleteAllConversationsForUser(ctx, userId);
+    await Promise.all([deleteAllConversationsForUser(ctx, userId), deleteAllInsightsForUser(ctx, userId)]);
     await Promise.all([deleteAllPlansForUser(ctx, userId), deleteFinancesForUser(ctx, userId)]);
 
     if (shouldCreateBlankPlan) {
@@ -41,7 +42,7 @@ export const deleteAppDataForUser = internalMutation({
     userId: v.string(),
   },
   handler: async (ctx, { userId }) => {
-    await deleteAllConversationsForUser(ctx, userId);
+    await Promise.all([deleteAllConversationsForUser(ctx, userId), deleteAllInsightsForUser(ctx, userId)]);
     await Promise.all([deleteAllPlansForUser(ctx, userId), deleteFinancesForUser(ctx, userId)]);
   },
 });
