@@ -45,14 +45,15 @@ export default function AIOutput() {
     }
   };
 
+  const disablePrevious = selectedInsightIndex === 0;
   const handlePrevious = () => {
-    if (selectedInsightIndex === 0) return;
+    if (disablePrevious) return;
     setSelectedInsightIndex((prev) => prev - 1);
   };
 
+  const disableNext = !numInsights || selectedInsightIndex >= numInsights - 1 || status === 'LoadingMore';
   const handleNext = () => {
-    if (!numInsights) return;
-    if (selectedInsightIndex >= numInsights - 1) return;
+    if (disableNext) return;
 
     if (status === 'CanLoadMore') loadMore(1);
     setSelectedInsightIndex((prev) => prev + 1);
@@ -85,7 +86,7 @@ export default function AIOutput() {
                 <nav className="flex shrink-0 items-center">
                   <button
                     onClick={handlePrevious}
-                    disabled={selectedInsightIndex === 0}
+                    disabled={disablePrevious}
                     className="group inline-flex items-center text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <ArrowLongLeftIcon
@@ -98,7 +99,7 @@ export default function AIOutput() {
                   </span>
                   <button
                     onClick={handleNext}
-                    disabled={!numInsights || selectedInsightIndex >= numInsights - 1}
+                    disabled={disableNext}
                     className="group inline-flex items-center text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     <ArrowLongRightIcon
