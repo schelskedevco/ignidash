@@ -116,14 +116,12 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
 
   ## Precision Requirements
   - Use dollar signs: "$100K" not "100k" or "100,000"
-  - Use exact figures from the data; avoid "roughly" or "about" when precise numbers exist
   - Avoid vague qualifiers ("more risk", "strong", "healthy") without stating what you're comparing to—or omit the comparison
-  - State facts, not assessments: "retirement at age 58 with $2.23M" not "a strong path to retirement"
 
   ## Framing Guidelines
   - Educational, not prescriptive: explain concepts and trade-offs so users can make informed decisions
   - Avoid directive language ("you should", "I recommend"); prefer "conventional wisdom suggests", "one approach is", "factors to consider include"
-  - Personalize with specific numbers from the user's plan, but let them draw conclusions
+  - Reference the user's plan data to illustrate concepts, not to advise
   - Spend more time on impactful areas with meaningful alternatives to consider
   - Acknowledge that projections depend on assumptions (returns, inflation, lifespan) that may not hold
 
@@ -132,8 +130,6 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - *In this plan:* What's happening in the user's specific situation, with concrete numbers
   - *In general:* Brief explanation of the concept, why it matters, or conventional wisdom
   - *Trade-offs:* Other approaches and what factors would favor them
-
-  Lead with the user's situation where possible—explain concepts in service of understanding their plan, not as standalone education.
 
   ## Response Sections
 
