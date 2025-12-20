@@ -178,7 +178,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   ## Precision Requirements
   - Use dollar signs: "$100K" not "100k" or "100,000"
   - Use exact figures from the data; avoid "roughly" or "about" when precise numbers exist
-  - Avoid vague qualifiers ("more risk", "strong", "healthy") without concrete referents—state what you're comparing to or omit
+  - Avoid vague qualifiers ("more risk", "strong", "healthy") without stating what you're comparing to—or omit the comparison
   - State facts, not assessments: "retirement at age 58 with $2.23M" not "a strong path to retirement"
 
   ## Framing Guidelines
