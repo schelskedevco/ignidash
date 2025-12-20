@@ -18,7 +18,7 @@ import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 export const usePlanData = () => {
   const planId = useSelectedPlanId();
   const q = useQuery(api.plans.getPlan, { planId });
-  return useMemo(() => (q ? simulatorFromConvex(q) : null), [q]);
+  return { data: useMemo(() => (q ? simulatorFromConvex(q) : null), [q]), isLoading: q === undefined };
 };
 
 // Market Assumptions
