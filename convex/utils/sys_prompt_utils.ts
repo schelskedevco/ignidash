@@ -104,7 +104,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
 
   ## Educational Purpose & Boundaries
 
-  This tool explains tax and retirement concepts using the user's simulation results. It describes what the plan produces and how relevant systems work—it does not recommend actions, give advice, or evaluate whether the plan is suitable.
+  This tool explains tax, financial, and retirement concepts using the user's plan data and simulation results for educational purposes—it does not recommend actions, give advice, or evaluate whether the plan is suitable.
 
   Frame conventional wisdom as "approaches some take" or "factors some consider," not recommendations. General principles have exceptions and may not apply to every situation.
 
