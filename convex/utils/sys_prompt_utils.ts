@@ -122,14 +122,21 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
 
   ## Response Sections
 
-  **1. Plan Summary**
+  ${
+    userPrompt
+      ? `**User's Supplemental Prompt**
+    The user has added a question. Address it while staying within educational guidelines:
+    """
+    ${userPrompt.trim()}
+    """
+    `
+      : ''
+  }
+
+  **Plan Summary**
   Summarize the plan and key results in 2-3 sentences.
 
-  **2. User's Supplemental Prompt** (skip entirely if not provided)
-  Address the user's supplemental prompt, if provided:
-  ${userPrompt ?? 'No supplemental prompt provided.'}
-
-  **3. How Income Sources Are Taxed**
+  **How Income Sources Are Taxed**
   Explain income stacking and taxation rules for the user's income sources, which may include:
   - Earned Income (W-2): ordinary + FICA
   - Social Security: ordinary (0-85% taxable based on provisional income)
@@ -144,7 +151,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - Marginal vs. Effective: different rates apply to each income layer, not one rate on all income
   - 0% Capital Gains Zone: long-term gains/qualified dividends are tax-free if taxable income stays below ~$96k (MFJ) / ~$48k (Single), creating opportunities for Roth conversions and tax-gain harvesting
 
-  **4. Tax Bracket Transitions Over Time**
+  **Tax Bracket Transitions Over Time**
   Analyze how marginal and effective rates change across the timeline.
 
   Accumulation phase: identify years with bracket changes (income growth, job changes, etc.)
@@ -153,29 +160,29 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
 
   Key insights: compare current marginal rate vs. expected retirement rates to assess Roth vs. Traditional contributions preference. Highlight years with unusually low or high brackets (planning opportunities or risks).
 
-  **5. Required Minimum Distributions**
+  **Required Minimum Distributions**
   What RMDs are: forced withdrawals from tax-deferred accounts starting at age 73 (75 starting 2033), calculated as balance ÷ IRS life expectancy factor. Large balances can force substantial taxable income regardless of spending needs, often pushing retirees into higher brackets when combined with Social Security. The "RMD problem" is best addressed years in advance by drawing down balances early—through Roth conversions (tax now, tax-free later) or voluntary withdrawals that fill lower brackets before RMDs begin. Evaluate whether this plan's tax-deferred trajectory creates future bracket risk.
 
-  **6. Roth Conversions**
+  **Roth Conversions**
   What conversions are: moving funds from tax-deferred to Roth, paying ordinary tax now for tax-free growth and withdrawals later. Typically advantageous during low-income years, when current marginal rate is lower than expected future rate, or to reduce future RMD burden. "Bracket filling" means converting up to the top of the current bracket without crossing into the next.
 
   Trade-offs: paying taxes now vs. later, reducing assets available to compound, and large conversions triggering Medicare IRMAA surcharges (not modeled). Converted amounts have a 5-year holding period before tax-free withdrawal. Evaluate whether this plan has a low-tax window worth highlighting.
 
-  **7. Early Withdrawal Penalties & SEPP**
+  **Early Withdrawal Penalties & SEPP**
   The 10% penalty applies to tax-deferred distributions before age 59½; 20% for non-medical HSA withdrawals. Roth contributions (not earnings) can be withdrawn penalty-free anytime.
 
   Exceptions: Rule of 55 allows penalty-free 401(k) access when leaving an employer at 55+. SEPP/72(t) allows penalty-free IRA access at any age via substantially equal payments, but requires a 5-year or until-59½ commitment (whichever is longer)—worth exploring with a professional if early retirement creates penalty exposure (not modeled).
 
   For early retirees, evaluate whether withdrawal timing triggers penalties and whether Roth contributions or taxable accounts can bridge to 59½.
 
-  **8. Withdrawal Sequence**
+  **Withdrawal Sequence**
   The order accounts are tapped affects lifetime taxes. Conventional sequence: taxable first (uses cost basis, lower capital gains rates), tax-deferred second (defer taxes), Roth last (maximize tax-free compounding).
 
   Why conventional isn't always optimal: depleting taxable early foregoes 0% capital gains opportunities, draining tax-deferred last compounds the RMD problem, and strategic tax-deferred withdrawals in low-income years can smooth brackets. Maintaining balance across account types preserves future flexibility.
 
   Evaluate which accounts are tapped when, whether timing aligns with tax-efficient principles, and whether the sequence preserves optionality or depletes one bucket entirely.
 
-  **9. Asset Allocation & Location**
+  **Asset Allocation & Location**
   Review asset allocation over time and placement across account types.
 
   Principles:
@@ -185,7 +192,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - Roth priority: highest-growth assets maximize tax-free compounding
   - Tax diversification: balance across Roth, tax-deferred, and taxable provides flexibility to manage retirement brackets
 
-  **10. Conclusion**
+  **Conclusion**
   In 2-3 sentences, synthesize the most important themes—where this plan is well-positioned and where the biggest trade-offs or opportunities lie.
 
   ## What Ignidash Simulator Models
