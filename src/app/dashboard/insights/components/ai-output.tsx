@@ -12,6 +12,7 @@ import ReactMarkdown from 'react-markdown';
 import { Heading } from '@/components/catalyst/heading';
 import { useInsightsSelectedPlan } from '@/lib/stores/simulator-store';
 import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog } from '@/components/catalyst/dialog';
 
 import GenerateDialog from './dialogs/generate-dialog';
@@ -30,7 +31,7 @@ export default function AIOutput() {
     initialNumItems: 1,
   });
   const insights = useMemo(() => results.sort((a, b) => b.updatedAt - a.updatedAt), [results]);
-  const _isLoadingPage = status === 'LoadingFirstPage' || status === 'LoadingMore';
+  const isLoadingPage = status === 'LoadingFirstPage' || status === 'LoadingMore';
 
   const [selectedInsightIndex, setSelectedInsightIndex] = useState<number>(0);
   const selectedInsight = insights.length > 0 && selectedInsightIndex <= insights.length - 1 ? insights[selectedInsightIndex] : null;
@@ -169,14 +170,22 @@ export default function AIOutput() {
             </div>
           )}
           {!selectedInsight && (
-            <div className="flex h-full w-full flex-col px-4 py-5 sm:py-6">
-              <DataListEmptyStateButton
-                onClick={() => setGenerateDialogOpen(true)}
-                icon={SparklesIcon}
-                buttonText="Generate insights"
-                className="flex-1"
-                disabled={selectedPlan === undefined}
-              />
+            <div className="flex size-full flex-col px-4 py-5 sm:py-6">
+              {!isLoadingPage && numInsights === 0 ? (
+                <DataListEmptyStateButton
+                  onClick={() => setGenerateDialogOpen(true)}
+                  icon={SparklesIcon}
+                  buttonText="Generate insights"
+                  className="flex-1"
+                  disabled={selectedPlan === undefined}
+                />
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <Skeleton className="h-[200px] w-full rounded-xl" />
+                  <Skeleton className="h-[75px] w-full rounded-xl" />
+                  <Skeleton className="h-[350px] w-full rounded-xl" />
+                </div>
+              )}
             </div>
           )}
         </div>
