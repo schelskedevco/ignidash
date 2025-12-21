@@ -179,10 +179,32 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         onEvent: async (event) => {
           switch (event.type) {
             case 'checkout.session.completed':
-              console.log('checkout.session.completed', event.data.object);
-              break;
-            case 'customer.subscription.updated':
-              console.log('customer.subscription.updated', event.data.object);
+              const checkoutSession = event.data.object;
+              const customerEmail = checkoutSession.customer_details?.email;
+
+              if (checkoutSession.mode !== 'subscription' || !customerEmail) {
+                console.error('Skipping email: not a subscription or no email found');
+                return;
+              }
+
+              await resend.sendEmail(requireActionCtx(ctx), {
+                from: 'Ignidash <noreply@mail.ignidash.com>',
+                to: customerEmail,
+                subject: 'Welcome to Ignidash Pro!',
+                html: `
+                  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                      Hi there,
+                    </p>
+                    <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                      Thanks for subscribing to Ignidash Pro! You now have access to all Pro features.
+                    </p>
+                    <p style="margin: 30px 0; text-align: center;">
+                      <a href="${baseURL}/dashboard" style="display: inline-block; padding: 14px 28px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Go to Dashboard</a>
+                    </p>
+                  </div>
+                `,
+              });
               break;
             case 'customer.subscription.deleted':
               const subscription = event.data.object;
