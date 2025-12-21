@@ -1,7 +1,8 @@
 'use client';
 
 import { ZapIcon } from 'lucide-react';
-import { Preloaded, usePreloadedQuery } from 'convex/react';
+import { Preloaded } from 'convex/react';
+import { usePreloadedAuthQuery } from '@convex-dev/better-auth/nextjs/client';
 import { api } from '@/convex/_generated/api';
 
 import ColumnHeader from '@/components/ui/column-header';
@@ -11,7 +12,7 @@ interface InsightsColumnHeaderProps {
 }
 
 export default function InsightsColumnHeader({ preloadedUser }: InsightsColumnHeaderProps) {
-  const user = usePreloadedQuery(preloadedUser);
+  const user = usePreloadedAuthQuery(preloadedUser);
 
   const name = user?.name ?? 'Anonymous';
 

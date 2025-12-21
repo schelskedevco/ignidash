@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Preloaded, usePreloadedQuery, useConvexAuth, Authenticated } from 'convex/react';
+import { Preloaded, useConvexAuth, Authenticated } from 'convex/react';
+import { usePreloadedAuthQuery } from '@convex-dev/better-auth/nextjs/client';
 import { api } from '@/convex/_generated/api';
 
 import SuccessNotification from '@/components/ui/success-notification';
@@ -22,7 +23,7 @@ export default function SettingsForms({ preloadedUser }: SettingsFormsProps) {
   const isAuthenticated = auth.isAuthenticated;
   const isAuthLoading = auth.isLoading;
 
-  const authData = usePreloadedQuery(preloadedUser);
+  const authData = usePreloadedAuthQuery(preloadedUser);
   const { accounts: accountsData, isLoading: isAccountsDataLoading } = useAccountsList();
 
   const settingsCapabilities = useMemo(() => {
