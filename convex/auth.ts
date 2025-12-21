@@ -197,7 +197,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                       Hi there,
                     </p>
                     <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
-                      Thanks for subscribing to Ignidash Pro! You now have access to all Pro features.
+                      Thanks for subscribing to Ignidash Pro! You now have full access to AI chat and insights.
                     </p>
                     <p style="margin: 30px 0; text-align: center;">
                       <a href="${baseURL}/dashboard" style="display: inline-block; padding: 14px 28px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Go to Dashboard</a>
