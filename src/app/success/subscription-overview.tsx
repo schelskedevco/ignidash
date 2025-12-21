@@ -1,5 +1,6 @@
 import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import type { Stripe } from 'stripe';
 
 import { Badge } from '@/components/catalyst/badge';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
@@ -12,23 +13,14 @@ function formatCurrency(amount: number, currency: string, locale = 'en-US') {
   }).format(amount / 100);
 }
 
-export type CustomerSubscription = {
-  product: {
-    name: string;
-  };
-  status: string;
-  amount: number;
-  currency: string;
-  recurringInterval: string;
-  currentPeriodStart: number;
-  currentPeriodEnd: number;
-};
-
 interface SubscriptionOverviewProps {
-  subscription: CustomerSubscription;
+  subscription: Stripe.Subscription;
 }
 
 export default function SubscriptionOverview({ subscription }: SubscriptionOverviewProps) {
+  const itemData = subscription.items.data[0];
+  const plan = itemData.plan;
+
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -42,7 +34,7 @@ export default function SubscriptionOverview({ subscription }: SubscriptionOverv
             <DescriptionList>
               <DescriptionTerm>Your Plan</DescriptionTerm>
               <DescriptionDetails className="flex items-center">
-                {subscription.product.name}
+                Ignidash Pro
                 {subscription.status === 'active' && (
                   <Badge color="green" className="ml-2">
                     Active
@@ -50,18 +42,22 @@ export default function SubscriptionOverview({ subscription }: SubscriptionOverv
                 )}
               </DescriptionDetails>
 
-              <DescriptionTerm>Amount</DescriptionTerm>
-              <DescriptionDetails>
-                {formatCurrency(subscription.amount, subscription.currency)} / {subscription.recurringInterval}
-              </DescriptionDetails>
+              {plan.amount && (
+                <>
+                  <DescriptionTerm>Amount</DescriptionTerm>
+                  <DescriptionDetails>
+                    {formatCurrency(plan.amount, plan.currency)} / {plan.interval}
+                  </DescriptionDetails>
+                </>
+              )}
 
               <DescriptionTerm>Billing Start Date</DescriptionTerm>
-              <DescriptionDetails>{new Date(subscription.currentPeriodStart).toLocaleDateString()}</DescriptionDetails>
+              <DescriptionDetails>{new Date(itemData.current_period_start * 1000).toLocaleDateString()}</DescriptionDetails>
 
-              {subscription.currentPeriodEnd && (
+              {itemData.current_period_end && (
                 <>
                   <DescriptionTerm>Next Billing Date</DescriptionTerm>
-                  <DescriptionDetails>{new Date(subscription.currentPeriodEnd).toLocaleDateString()}</DescriptionDetails>
+                  <DescriptionDetails>{new Date(itemData.current_period_end * 1000).toLocaleDateString()}</DescriptionDetails>
                 </>
               )}
             </DescriptionList>

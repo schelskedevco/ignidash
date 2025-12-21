@@ -276,5 +276,19 @@ export const getStripeSubscription = action({
   },
 });
 
+export const getActiveStripeSubscription = action({
+  args: {},
+  handler: async (ctx): Promise<Stripe.Subscription | null> => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) return null;
+
+    const subscriptions = await ctx.runQuery(api.auth.listSubscriptions, {});
+    const activeSubscriptionId = subscriptions?.find((subscription) => subscription.status === 'active')?.stripeSubscriptionId;
+    if (!activeSubscriptionId) return null;
+
+    return await stripeClient.subscriptions.retrieve(activeSubscriptionId);
+  },
+});
+
 export type Auth = ReturnType<typeof createAuth>;
 export type Session = Auth['$Infer']['Session'];
