@@ -16,15 +16,20 @@ import BillingForm from './billing-form';
 
 interface SettingsFormsProps {
   preloadedUser: Preloaded<typeof api.auth.getCurrentUserSafe>;
+  preloadedSubscriptions: Preloaded<typeof api.auth.listSubscriptions>;
 }
 
-export default function SettingsForms({ preloadedUser }: SettingsFormsProps) {
+export default function SettingsForms({ preloadedUser, preloadedSubscriptions }: SettingsFormsProps) {
   const auth = useConvexAuth();
   const isAuthenticated = auth.isAuthenticated;
   const isAuthLoading = auth.isLoading;
 
   const authData = usePreloadedAuthQuery(preloadedUser);
   const { accounts: accountsData, isLoading: isAccountsDataLoading } = useAccountsList();
+
+  const subscriptionsData =
+    usePreloadedAuthQuery(preloadedSubscriptions)?.map((subscription) => ({ plan: subscription.plan, status: subscription.status })) ?? [];
+  const isProUser = subscriptionsData.some((subscription) => subscription.plan === 'pro' && subscription.status === 'active');
 
   const settingsCapabilities = useMemo(() => {
     const isSignedInWithSocialProvider = accountsData?.some((account) => account.providerId !== 'credential') ?? false;
@@ -58,7 +63,7 @@ export default function SettingsForms({ preloadedUser }: SettingsFormsProps) {
             userData={{ fetchedName, fetchedEmail, isEmailVerified, ...settingsCapabilities }}
             showSuccessNotification={showSuccessNotification}
           />
-          {false && <BillingForm customerState={{ activeSubscriptions: [] }} />}
+          {isProUser && <BillingForm subscriptions={subscriptionsData} />}
           <DataSettingsForm showSuccessNotification={showSuccessNotification} />
         </Authenticated>
       </main>
