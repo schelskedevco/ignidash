@@ -241,5 +241,12 @@ export const getIsAdmin = query({
   },
 });
 
+export const listSubscriptions = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.runQuery(components.betterAuth.auth_data.listSubscriptions, {});
+  },
+});
+
 export type Auth = ReturnType<typeof createAuth>;
 export type Session = Auth['$Infer']['Session'];

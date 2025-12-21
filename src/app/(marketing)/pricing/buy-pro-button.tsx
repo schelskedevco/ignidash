@@ -1,5 +1,9 @@
 'use client';
 
+import type { Preloaded } from 'convex/react';
+import { usePreloadedAuthQuery } from '@convex-dev/better-auth/nextjs/client';
+import { api } from '@/convex/_generated/api';
+
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 
@@ -7,11 +11,15 @@ import type { ProductTier } from './page';
 
 interface BuyProButtonProps {
   tier: ProductTier;
+  preloadedSubscriptions: Preloaded<typeof api.auth.listSubscriptions>;
 }
 
-export default function BuyProButton({ tier }: BuyProButtonProps) {
+export default function BuyProButton({ tier, preloadedSubscriptions }: BuyProButtonProps) {
+  const subscriptions = usePreloadedAuthQuery(preloadedSubscriptions);
+
   return (
     <button
+      disabled={subscriptions?.some((subscription) => subscription.plan === 'pro')}
       aria-describedby={tier.id}
       onClick={async () => {
         await authClient.subscription.upgrade({

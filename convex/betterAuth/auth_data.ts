@@ -28,3 +28,17 @@ export const getIsAdmin = query({
     return user?.role === 'admin';
   },
 });
+
+export const listSubscriptions = query({
+  args: {},
+  returns: v.union(v.null(), v.array(doc(schema, 'subscription'))),
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) return null;
+
+    return await ctx.db
+      .query('subscription')
+      .filter((q) => q.eq(q.field('referenceId'), identity.subject as Id<'user'>))
+      .collect();
+  },
+});

@@ -1239,5 +1239,26 @@ export type ComponentApi<Name extends string | undefined = string | undefined> =
         Name
       >;
       getIsAdmin: FunctionReference<"query", "internal", {}, boolean, Name>;
+      listSubscriptions: FunctionReference<
+        "query",
+        "internal",
+        {},
+        null | Array<{
+          _creationTime: number;
+          _id: string;
+          cancelAtPeriodEnd?: null | boolean;
+          periodEnd?: null | number;
+          periodStart?: null | number;
+          plan: string;
+          referenceId: string;
+          seats?: null | number;
+          status?: null | string;
+          stripeCustomerId?: null | string;
+          stripeSubscriptionId?: null | string;
+          trialEnd?: null | number;
+          trialStart?: null | number;
+        }>,
+        Name
+      >;
     };
   };

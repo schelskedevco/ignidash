@@ -1469,6 +1469,26 @@ export declare const components: {
         }
       >;
       getIsAdmin: FunctionReference<"query", "internal", {}, boolean>;
+      listSubscriptions: FunctionReference<
+        "query",
+        "internal",
+        {},
+        null | Array<{
+          _creationTime: number;
+          _id: string;
+          cancelAtPeriodEnd?: null | boolean;
+          periodEnd?: null | number;
+          periodStart?: null | number;
+          plan: string;
+          referenceId: string;
+          seats?: null | number;
+          status?: null | string;
+          stripeCustomerId?: null | string;
+          stripeSubscriptionId?: null | string;
+          trialEnd?: null | number;
+          trialStart?: null | number;
+        }>
+      >;
     };
   };
   rateLimiter: {
