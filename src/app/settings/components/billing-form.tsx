@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useAction } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { useState, useEffect } from 'react';
 import { CreditCardIcon } from 'lucide-react';
 
 import { Fieldset, FieldGroup, Legend, Field, Description, ErrorMessage } from '@/components/catalyst/fieldset';
@@ -10,7 +12,7 @@ import { Badge } from '@/components/catalyst/badge';
 import { authClient } from '@/lib/auth-client';
 
 interface BillingFormProps {
-  subscriptions: { plan: string; status: string | null | undefined }[];
+  subscriptions: { plan: string; status: string | null | undefined; id: string | null | undefined }[];
 }
 
 export default function BillingForm({ subscriptions }: BillingFormProps) {
@@ -28,6 +30,14 @@ export default function BillingForm({ subscriptions }: BillingFormProps) {
   };
 
   const activeSubscriptions = subscriptions.filter((subscription) => subscription.status === 'active');
+
+  const a = useAction(api.auth.getStripeSubscription);
+  useEffect(() => {
+    const subscriptionId = activeSubscriptions[0]?.id;
+    if (!subscriptionId) return;
+
+    a({ subscriptionId });
+  }, [activeSubscriptions, a]);
 
   return (
     <Card className="my-6">

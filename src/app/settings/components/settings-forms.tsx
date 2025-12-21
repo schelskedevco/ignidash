@@ -28,7 +28,7 @@ export default function SettingsForms({ preloadedUser, preloadedSubscriptions }:
   const { accounts: accountsData, isLoading: isAccountsDataLoading } = useAccountsList();
 
   const subscriptions = usePreloadedAuthQuery(preloadedSubscriptions) ?? [];
-  const subscriptionsData = subscriptions.map((subscription) => ({ plan: subscription.plan, status: subscription.status }));
+  const subscriptionsData = subscriptions.map(({ plan, status, stripeSubscriptionId: id }) => ({ plan, status, id }));
   const isProUser = subscriptionsData.some((subscription) => subscription.plan === 'pro' && subscription.status === 'active');
 
   const settingsCapabilities = useMemo(() => {

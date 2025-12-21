@@ -13,7 +13,7 @@ import { fetchMutation } from 'convex/nextjs';
 
 import { components, api } from './_generated/api';
 import { DataModel } from './_generated/dataModel';
-import { query } from './_generated/server';
+import { action, query } from './_generated/server';
 import authSchema from './betterAuth/schema';
 import authConfig from './auth.config';
 
@@ -33,7 +33,7 @@ const rateLimiter = new RateLimiter(components.rateLimiter, {
   deleteAccount: { kind: 'fixed window', rate: 3, period: 3 * HOUR },
 });
 
-const stripeClient = process.env.STRIPE_SECRET_KEY
+export const stripeClient = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: '2025-12-15.clover',
     })
@@ -258,6 +258,21 @@ export const listSubscriptions = query({
   args: {},
   handler: async (ctx) => {
     return await ctx.runQuery(components.betterAuth.auth_data.listSubscriptions, {});
+  },
+});
+
+export const getStripeSubscription = action({
+  args: {
+    subscriptionId: v.string(),
+  },
+  handler: async (ctx, { subscriptionId }) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) return null;
+
+    const subscriptions = await ctx.runQuery(api.auth.listSubscriptions, {});
+    if (!subscriptions?.some((subscription) => subscription.stripeSubscriptionId === subscriptionId)) return null;
+
+    return await stripeClient.subscriptions.retrieve(subscriptionId);
   },
 });
 
