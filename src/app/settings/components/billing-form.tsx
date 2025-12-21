@@ -18,6 +18,7 @@ interface BillingFormProps {
 export default function BillingForm({ subscriptions }: BillingFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cancelAtTime, setCancelAtTime] = useState<number | null>(null);
 
   const openBillingPortal = async () => {
     setIsLoading(true);
@@ -36,7 +37,9 @@ export default function BillingForm({ subscriptions }: BillingFormProps) {
     const subscriptionId = activeSubscriptions[0]?.id;
     if (!subscriptionId) return;
 
-    a({ subscriptionId });
+    a({ subscriptionId }).then((subscription) => {
+      if (subscription?.cancel_at) setCancelAtTime(subscription.cancel_at);
+    });
   }, [activeSubscriptions, a]);
 
   return (
@@ -47,6 +50,7 @@ export default function BillingForm({ subscriptions }: BillingFormProps) {
             <CreditCardIcon className="text-primary h-6 w-6" aria-hidden="true" />
             Billing status
             {activeSubscriptions.length > 0 ? <Badge color="green">Active</Badge> : <Badge color="zinc">Inactive</Badge>}
+            {cancelAtTime && <Badge color="red">Cancels at {new Date(cancelAtTime * 1000).toLocaleDateString()}</Badge>}
           </Legend>
           <FieldGroup>
             <Field>
