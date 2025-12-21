@@ -2,7 +2,7 @@ import { CheckIcon } from '@heroicons/react/20/solid';
 import Link from 'next/link';
 import { api } from '@/convex/_generated/api';
 
-import { preloadAuthQuery } from '@/lib/auth-server';
+import { preloadAuthQuery, isAuthenticated as getIsAuthenticated } from '@/lib/auth-server';
 import { cn } from '@/lib/utils';
 
 import BuyProButton from './buy-pro-button';
@@ -40,7 +40,10 @@ const tiers = [
 export type ProductTier = (typeof tiers)[number];
 
 export default async function PricingPage() {
-  const preloadedSubscriptions = await preloadAuthQuery(api.auth.listSubscriptions, {});
+  const [preloadedSubscriptions, isAuthenticated] = await Promise.all([
+    preloadAuthQuery(api.auth.listSubscriptions, {}),
+    getIsAuthenticated(),
+  ]);
 
   return (
     <div className="relative isolate min-h-dvh px-6 py-24 sm:py-32 lg:px-8">
@@ -102,7 +105,7 @@ export default async function PricingPage() {
               ))}
             </ul>
             {tier.id === 'tier-pro' ? (
-              <BuyProButton tier={tier} preloadedSubscriptions={preloadedSubscriptions} />
+              <BuyProButton tier={tier} preloadedSubscriptions={preloadedSubscriptions} isAuthenticated={isAuthenticated} />
             ) : (
               <Link
                 href={tier.href}
