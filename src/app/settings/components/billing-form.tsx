@@ -46,7 +46,7 @@ export default function BillingForm({ subscriptions }: BillingFormProps) {
     <Card className="my-6">
       <form onSubmit={(e) => e.preventDefault()}>
         <Fieldset>
-          <Legend className="flex items-center gap-2">
+          <Legend className="flex flex-wrap items-center gap-2">
             <CreditCardIcon className="text-primary h-6 w-6" aria-hidden="true" />
             Billing status
             {activeSubscriptions.length > 0 ? <Badge color="green">Active</Badge> : <Badge color="zinc">Inactive</Badge>}
