@@ -1,4 +1,3 @@
-import { getStaticAuth } from '@convex-dev/better-auth';
 import { doc } from 'convex-helpers/validators';
 import { v } from 'convex/values';
 
@@ -7,7 +6,8 @@ import { query } from './_generated/server';
 import type { Id } from './_generated/dataModel';
 import { createAuth } from '../auth';
 
-export const auth = getStaticAuth(createAuth);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const auth = createAuth({} as any);
 
 export const getCurrentUserSafe = query({
   args: {},

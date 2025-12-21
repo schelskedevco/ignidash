@@ -4,7 +4,7 @@ import { createClient, type GenericCtx } from '@convex-dev/better-auth';
 import { convex } from '@convex-dev/better-auth/plugins';
 import { requireActionCtx } from '@convex-dev/better-auth/utils';
 import { Resend } from '@convex-dev/resend';
-import { betterAuth } from 'better-auth';
+import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
 import { getJwtToken } from 'better-auth/plugins';
 import { fetchMutation } from 'convex/nextjs';
@@ -13,6 +13,7 @@ import { components, api } from './_generated/api';
 import { DataModel } from './_generated/dataModel';
 import { query } from './_generated/server';
 import authSchema from './betterAuth/schema';
+import authConfig from './auth.config';
 
 const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
 
@@ -30,8 +31,8 @@ const rateLimiter = new RateLimiter(components.rateLimiter, {
   deleteAccount: { kind: 'fixed window', rate: 3, period: 3 * HOUR },
 });
 
-export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optionsOnly: false }) => {
-  return betterAuth({
+export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
+  return {
     session: {
       expiresIn: 60 * 60 * 24 * 7,
       updateAge: 60 * 60 * 24,
@@ -41,9 +42,6 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
         strategy: 'jwt',
         refreshCache: true,
       },
-    },
-    logger: {
-      disabled: optionsOnly,
     },
     baseURL: siteUrl,
     database: authComponent.adapter(ctx),
@@ -160,7 +158,7 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
         },
       },
     },
-    plugins: [convex()],
+    plugins: [convex({ authConfig })],
     emailVerification: {
       sendVerificationEmail: async ({ user, url }) => {
         const { ok } = await rateLimiter.limit(requireActionCtx(ctx), 'emailVerification', { key: user.id });
@@ -202,7 +200,11 @@ export const createAuth = (ctx: GenericCtx<DataModel>, { optionsOnly } = { optio
         }
       }),
     },
-  });
+  } satisfies BetterAuthOptions;
+};
+
+export const createAuth = (ctx: GenericCtx<DataModel>) => {
+  return betterAuth(createAuthOptions(ctx));
 };
 
 export const getCurrentUserSafe = query({
