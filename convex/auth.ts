@@ -173,15 +173,6 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         subscription: {
           enabled: true,
           plans: [{ name: 'pro', priceId: 'price_1Sgfcc7NMzXUg1QmxQlAasFe' }],
-          getCheckoutSessionParams: async ({ user, session, plan, subscription }, ctx) => {
-            return {
-              params: {
-                automatic_tax: {
-                  enabled: true,
-                },
-              },
-            };
-          },
         },
       }),
     ],
