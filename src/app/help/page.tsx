@@ -139,9 +139,9 @@ export default function HelpPage() {
           <div>
             <h2 className="text-xl font-semibold tracking-tight text-gray-900 sm:text-2xl dark:text-white">Known limitations</h2>
             <Text className="mt-2">
-              Ignidash is in early beta and actively under development. While the core simulation engine is reliable, there are some
-              features and scenarios not yet supported. I&apos;m working to add these over the coming months. If something critical is
-              missing for your planning needs, please let me know!
+              Ignidash is in beta and actively under development. While the core simulation engine is reliable, there are some features and
+              scenarios not yet supported. I&apos;m working to add these over the coming months. If something critical is missing for your
+              planning needs, please let me know!
             </Text>
           </div>
           <DescriptionList>
