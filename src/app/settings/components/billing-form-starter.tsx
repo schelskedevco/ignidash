@@ -15,14 +15,14 @@ export default function BillingFormStarter() {
           <Legend className="flex flex-wrap items-center gap-2">
             <CreditCardIcon className="text-primary h-6 w-6" aria-hidden="true" />
             Billing status
-            <Badge color="zinc">Inactive</Badge>
+            <Badge color="red">Not active</Badge>
           </Legend>
           <FieldGroup>
             <Field>
               <Button color="rose" type="button" className="w-full" data-slot="control" href="/pricing">
                 Upgrade to Pro
               </Button>
-              <Description>Upgrade to Pro to access all features.</Description>
+              <Description>Upgrade to Pro to access AI chat and insights.</Description>
             </Field>
           </FieldGroup>
         </Fieldset>
