@@ -79,7 +79,7 @@ export const send = mutation({
 
     const userMessageId = await ctx.db.insert('messages', { userId, conversationId, author: 'user', body: content, updatedAt });
     const [assistantMessageId] = await Promise.all([
-      ctx.db.insert('messages', { userId, conversationId, author: 'assistant', updatedAt, isLoading: true }),
+      ctx.db.insert('messages', { userId, conversationId, author: 'assistant', updatedAt: updatedAt + 1, isLoading: true }),
       ctx.db.patch(conversationId, { updatedAt }),
     ]);
 
