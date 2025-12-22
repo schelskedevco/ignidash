@@ -656,6 +656,24 @@ export default function PrivacyPage() {
             <li>AI insights</li>
           </ul>
 
+          <h3 className="my-6 text-xl font-semibold">What Data Is Shared With AI</h3>
+          <p className="mb-4">When you use our AI Products, we only share the data necessary to provide the AI feature. This includes:</p>
+          <ul className="mb-4 ml-4 list-outside list-disc">
+            <li>
+              <strong>Retirement plan inputs:</strong> ages, income, expenses, account balances, contribution rules, and market assumptions
+            </li>
+            <li>
+              <strong>Tax settings:</strong> filing status and related preferences
+            </li>
+            <li>
+              <strong>Simulation outputs:</strong> your results and calculated metrics
+            </li>
+          </ul>
+          <p className="mb-4">
+            <strong>We do NOT share your personal account information with the AI Service Provider.</strong> This includes your name, email
+            address, payment information, and authentication data.
+          </p>
+
           <h3 className="my-6 text-xl font-semibold">How We Process Your Data Using AI</h3>
           <p className="mb-4">
             All personal information processed using our AI Products is handled in line with our Privacy Notice and our agreement with
