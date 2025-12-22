@@ -39,6 +39,7 @@ export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const user = useQuery(api.auth.getCurrentUserSafe);
+  const hasActiveSubscription = useQuery(api.auth.getHasActiveSubscription) ?? false;
 
   const signInUrlWithRedirect = `/signin?redirect=${encodeURIComponent(pathname)}`;
 
@@ -92,15 +93,17 @@ export default function Navbar() {
               </DropdownItem>
             </AuthLoading>
             <Unauthenticated>
-              <DropdownItem href="/pricing">
-                <GemIcon data-slot="icon" />
-                <DropdownLabel>Buy Pro</DropdownLabel>
-              </DropdownItem>
+              {!hasActiveSubscription && (
+                <DropdownItem href="/pricing">
+                  <GemIcon data-slot="icon" />
+                  <DropdownLabel>Buy Pro</DropdownLabel>
+                </DropdownItem>
+              )}
               <DropdownItem href="/dashboard">
                 <LayoutDashboardIcon data-slot="icon" />
                 <DropdownLabel>Dashboard</DropdownLabel>
               </DropdownItem>
-              <DropdownDivider />
+              {!hasActiveSubscription && <DropdownDivider />}
               <DropdownItem href={signInUrlWithRedirect}>
                 <LogInIcon data-slot="icon" />
                 <DropdownLabel>Sign in</DropdownLabel>
@@ -114,15 +117,17 @@ export default function Navbar() {
                 </div>
               </DropdownHeader>
               <DropdownDivider />
-              <DropdownItem href="/pricing">
-                <GemIcon data-slot="icon" />
-                <DropdownLabel>Buy Pro</DropdownLabel>
-              </DropdownItem>
+              {!hasActiveSubscription && (
+                <DropdownItem href="/pricing">
+                  <GemIcon data-slot="icon" />
+                  <DropdownLabel>Buy Pro</DropdownLabel>
+                </DropdownItem>
+              )}
               <DropdownItem href="/dashboard">
                 <LayoutDashboardIcon data-slot="icon" />
                 <DropdownLabel>Dashboard</DropdownLabel>
               </DropdownItem>
-              <DropdownDivider />
+              {!hasActiveSubscription && <DropdownDivider />}
               <DropdownItem onClick={() => signOut()}>
                 <LogOutIcon data-slot="icon" />
                 <DropdownLabel>Sign out</DropdownLabel>

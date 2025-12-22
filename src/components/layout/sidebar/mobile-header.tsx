@@ -32,6 +32,7 @@ export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
   const currentPageTitle = useCurrentPageTitle();
 
   const user = useQuery(api.auth.getCurrentUserSafe);
+  const hasActiveSubscription = useQuery(api.auth.getHasActiveSubscription) ?? false;
 
   const name = user?.name ?? 'Anonymous';
   const email = user?.email;
@@ -55,7 +56,7 @@ export default function MobileHeader({ onMenuClick }: MobileHeaderProps) {
             <CircleUserRoundIcon className="size-8 shrink-0 rounded-full" />
           )}
         </MenuButton>
-        <AccountDropdownMenu fetchedName={name} fetchedEmail={email} />
+        <AccountDropdownMenu fetchedName={name} fetchedEmail={email} hasActiveSubscription={hasActiveSubscription} />
       </Dropdown>
     </div>
   );

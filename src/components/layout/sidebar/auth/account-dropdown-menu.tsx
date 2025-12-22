@@ -9,9 +9,10 @@ import SignOutDropdownItem from './sign-out-dropdown-item';
 interface AccountDropdownMenuProps {
   fetchedName: string | undefined;
   fetchedEmail: string | undefined;
+  hasActiveSubscription: boolean;
 }
 
-export default function AccountDropdownMenu({ fetchedName, fetchedEmail }: AccountDropdownMenuProps) {
+export default function AccountDropdownMenu({ fetchedName, fetchedEmail, hasActiveSubscription }: AccountDropdownMenuProps) {
   const name = fetchedName ?? 'Anonymous';
   const email = fetchedEmail;
 
@@ -24,15 +25,17 @@ export default function AccountDropdownMenu({ fetchedName, fetchedEmail }: Accou
         </DropdownItem>
       </AuthLoading>
       <Unauthenticated>
-        <DropdownItem href="/pricing">
-          <GemIcon data-slot="icon" />
-          <DropdownLabel>Buy Pro</DropdownLabel>
-        </DropdownItem>
+        {!hasActiveSubscription && (
+          <DropdownItem href="/pricing">
+            <GemIcon data-slot="icon" />
+            <DropdownLabel>Buy Pro</DropdownLabel>
+          </DropdownItem>
+        )}
         <DropdownItem href="/settings">
           <SettingsIcon data-slot="icon" />
           <DropdownLabel>Settings</DropdownLabel>
         </DropdownItem>
-        <DropdownDivider />
+        {!hasActiveSubscription && <DropdownDivider />}
         <DropdownItem href="/privacy">
           <GlobeLockIcon data-slot="icon" />
           <DropdownLabel>Privacy</DropdownLabel>
@@ -52,15 +55,17 @@ export default function AccountDropdownMenu({ fetchedName, fetchedEmail }: Accou
           </div>
         </DropdownHeader>
         <DropdownDivider />
-        <DropdownItem href="/pricing">
-          <GemIcon data-slot="icon" />
-          <DropdownLabel>Buy Pro</DropdownLabel>
-        </DropdownItem>
+        {!hasActiveSubscription && (
+          <DropdownItem href="/pricing">
+            <GemIcon data-slot="icon" />
+            <DropdownLabel>Buy Pro</DropdownLabel>
+          </DropdownItem>
+        )}
         <DropdownItem href="/settings">
           <SettingsIcon data-slot="icon" />
           <DropdownLabel>Settings</DropdownLabel>
         </DropdownItem>
-        <DropdownDivider />
+        {!hasActiveSubscription && <DropdownDivider />}
         <DropdownItem href="/privacy">
           <GlobeLockIcon data-slot="icon" />
           <DropdownLabel>Privacy</DropdownLabel>

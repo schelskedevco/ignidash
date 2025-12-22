@@ -12,6 +12,7 @@ import AccountDropdownMenu from './account-dropdown-menu';
 
 export default function SidebarAuth() {
   const user = useQuery(api.auth.getCurrentUserSafe);
+  const hasActiveSubscription = useQuery(api.auth.getHasActiveSubscription) ?? false;
 
   const name = user?.name ?? 'Anonymous';
   const email = user?.email;
@@ -33,7 +34,7 @@ export default function SidebarAuth() {
           {name}
         </span>
       </MenuButton>
-      <AccountDropdownMenu fetchedName={name} fetchedEmail={email} />
+      <AccountDropdownMenu fetchedName={name} fetchedEmail={email} hasActiveSubscription={hasActiveSubscription} />
     </Dropdown>
   );
 }

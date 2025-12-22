@@ -381,5 +381,16 @@ export const getActiveStripeSubscription = action({
   },
 });
 
+export const getHasActiveSubscription = query({
+  args: {},
+  handler: async (ctx): Promise<boolean> => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) return false;
+
+    const subscriptions = await ctx.runQuery(api.auth.listSubscriptions, {});
+    return subscriptions?.some((subscription) => subscription.status === 'active') ?? false;
+  },
+});
+
 export type Auth = ReturnType<typeof createAuth>;
 export type Session = Auth['$Infer']['Session'];
