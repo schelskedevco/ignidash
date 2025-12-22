@@ -1,4 +1,17 @@
-const ALLOWED_REDIRECTS = ['/', '/settings', '/dashboard', '/dashboard/simulator', '/dashboard/compare', '/dashboard/insights', '/pricing'];
+const ALLOWED_REDIRECTS = [
+  '/',
+  '/settings',
+  '/dashboard',
+  '/dashboard/simulator',
+  '/dashboard/compare',
+  '/dashboard/insights',
+  '/pricing',
+  '/success',
+  '/help',
+  '/terms',
+  '/privacy',
+  '/about',
+];
 const ALLOWED_REDIRECT_PREFIXES = ['/dashboard/simulator/'];
 const DEFAULT_REDIRECT = '/dashboard';
 
