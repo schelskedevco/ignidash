@@ -174,7 +174,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         createCustomerOnSignUp: true,
         subscription: {
           enabled: true,
-          plans: [{ name: 'pro', priceId: 'price_1Sgfcc7NMzXUg1QmxQlAasFe' }],
+          plans: [{ name: 'pro', priceId: process.env.STRIPE_PRICE_ID! }],
         },
         onEvent: async (event) => {
           switch (event.type) {
