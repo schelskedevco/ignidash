@@ -4,7 +4,7 @@ import { query, mutation, internalMutation } from './_generated/server';
 import { internal } from './_generated/api';
 
 import { getUserIdOrThrow } from './utils/auth_utils';
-import { checkUsageLimits, recordUsage, getCanUseChat } from './utils/ai_utils';
+import { checkUsageLimits, recordUsage, getCanUseAIFeatures } from './utils/ai_utils';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
 import { getInsightsSystemPrompt } from './utils/sys_prompt_utils';
 import { keyMetricsValidator } from './validators/key_metrics_validator';
@@ -14,7 +14,7 @@ export const canUseInsights = query({
   args: {},
   returns: v.boolean(),
   handler: async (ctx): Promise<boolean> => {
-    return await getCanUseChat(ctx);
+    return await getCanUseAIFeatures(ctx);
   },
 });
 
@@ -58,7 +58,7 @@ export const generate = mutation({
   handler: async (ctx, { planId, keyMetrics, simulationResult, userPrompt }) => {
     if (userPrompt && userPrompt.length > 250) throw new ConvexError('Supplemental prompt cannot be longer than 250 characters.');
 
-    const [{ userId }, canUseInsights] = await Promise.all([getUserIdOrThrow(ctx), getCanUseChat(ctx)]);
+    const [{ userId }, canUseInsights] = await Promise.all([getUserIdOrThrow(ctx), getCanUseAIFeatures(ctx)]);
 
     if (!canUseInsights) throw new ConvexError('AI insights are not available. Upgrade to start generating insights.');
 

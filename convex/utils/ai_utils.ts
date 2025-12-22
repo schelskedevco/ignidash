@@ -60,6 +60,6 @@ export async function checkUsageLimits(ctx: MutationCtx, userId: string, mode: U
   return { ok: true, retryAfter: 0 };
 }
 
-export async function getCanUseChat(ctx: QueryCtx): Promise<boolean> {
+export async function getCanUseAIFeatures(ctx: QueryCtx): Promise<boolean> {
   return await ctx.runQuery(api.auth.getCanUseAIFeatures, {});
 }

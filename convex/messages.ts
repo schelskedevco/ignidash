@@ -7,7 +7,7 @@ import { internal } from './_generated/api';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
 import { getConversationForCurrentUserOrThrow } from './utils/conversation_utils';
 import { getUserIdOrThrow } from './utils/auth_utils';
-import { checkUsageLimits, recordUsage, getCanUseChat } from './utils/ai_utils';
+import { checkUsageLimits, recordUsage, getCanUseAIFeatures } from './utils/ai_utils';
 import { getSystemPrompt } from './utils/sys_prompt_utils';
 import { keyMetricsValidator } from './validators/key_metrics_validator';
 
@@ -18,7 +18,7 @@ export const canUseChat = query({
   args: {},
   returns: v.boolean(),
   handler: async (ctx): Promise<boolean> => {
-    return await getCanUseChat(ctx);
+    return await getCanUseAIFeatures(ctx);
   },
 });
 
@@ -45,7 +45,7 @@ export const send = mutation({
   handler: async (ctx, { conversationId: currConvId, planId, content, keyMetrics }) => {
     if (content.length > 2000) throw new ConvexError('Message cannot be longer than 2,000 characters.');
 
-    const [{ userId }, canUseChat] = await Promise.all([getUserIdOrThrow(ctx), getCanUseChat(ctx)]);
+    const [{ userId }, canUseChat] = await Promise.all([getUserIdOrThrow(ctx), getCanUseAIFeatures(ctx)]);
 
     if (!canUseChat) throw new ConvexError('AI chat is not available. Upgrade to start chatting.');
 
