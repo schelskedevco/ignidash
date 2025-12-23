@@ -8,6 +8,7 @@ import { FileTextIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import { track } from '@vercel/analytics';
 
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { planMetadataSchema, type PlanMetadata } from '@/lib/schemas/plan-metadata-schema';
@@ -58,10 +59,13 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
     try {
       setSaveError(null);
       if (selectedPlan) {
+        track('Save plan', { saveMode: 'edit' });
         await updateNameMutation({ planId: selectedPlan._id, name: data.name });
       } else if (data.clonedPlanId) {
+        track('Save plan', { saveMode: 'clone' });
         await clonePlanMutation({ planId: data.clonedPlanId as Id<'plans'> | 'template1' | 'template2', newPlanName: data.name });
       } else {
+        track('Save plan', { saveMode: 'create' });
         await createPlanMutation({ newPlanName: data.name });
       }
 
