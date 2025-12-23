@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { track } from '@vercel/analytics';
 
 import { cn } from '@/lib/utils';
 
@@ -11,6 +14,7 @@ interface StarterLinkProps {
 export default function StarterLink({ tier }: StarterLinkProps) {
   return (
     <Link
+      onClick={() => track('Starter plan clicked')}
       href={tier.href}
       aria-describedby={tier.id}
       className={cn(

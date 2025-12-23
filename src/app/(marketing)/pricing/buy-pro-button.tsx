@@ -45,7 +45,7 @@ export default function BuyProButton({ tier, preloadedSubscriptions, isAuthentic
       disabled={isProUser}
       aria-describedby={tier.id}
       onClick={async () => {
-        track('Upgrade to Pro');
+        track('Upgrade to Pro clicked');
 
         await authClient.subscription.upgrade({
           plan: 'pro',
