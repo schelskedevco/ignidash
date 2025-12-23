@@ -55,7 +55,7 @@ export default function HeroSection() {
             />
             <Image
               alt="App screenshot"
-              src="/most-zoomed-sim-dark.webp"
+              src="/screenshots/simulator-dark.webp"
               width={2362}
               height={1328}
               className="ring-border/50 rounded-md bg-white/5 shadow-2xl ring-1 not-dark:hidden"
