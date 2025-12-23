@@ -8,6 +8,7 @@ import { PiggyBankIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { track } from '@vercel/analytics';
 
 import { accountToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -58,6 +59,7 @@ export default function SavingsDialog({ onClose, selectedAccount: _selectedAccou
     const accountId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
+      track('Save account', { saveMode: selectedAccount ? 'edit' : 'create' });
       await m({ account: accountToConvex({ ...data, id: accountId }), planId });
       onClose();
     } catch (error) {

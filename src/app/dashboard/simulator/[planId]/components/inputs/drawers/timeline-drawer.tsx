@@ -6,6 +6,7 @@ import { api } from '@/convex/_generated/api';
 import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, type FieldErrors } from 'react-hook-form';
+import { track } from '@vercel/analytics';
 
 import { timelineToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { timelineFormSchema, type TimelineInputs, type RetirementStrategyInputs } from '@/lib/schemas/inputs/timeline-form-schema';
@@ -95,6 +96,7 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
   const onSubmit = async (data: TimelineInputs) => {
     try {
       setSaveError(null);
+      track('Save timeline');
       await m({ timeline: timelineToConvex(data)!, planId });
       setOpen(false);
     } catch (error) {

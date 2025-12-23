@@ -10,6 +10,7 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { CalendarIcon, BanknoteArrowDownIcon, TrendingUpIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
+import { track } from '@vercel/analytics';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
 import { expenseToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -68,6 +69,7 @@ export default function ExpenseDialog({ onClose, selectedExpense: _selectedExpen
     const expenseId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
+      track('Save expense', { saveMode: selectedExpense ? 'edit' : 'create' });
       await m({ expense: expenseToConvex({ ...data, id: expenseId }), planId });
       onClose();
     } catch (error) {

@@ -6,6 +6,7 @@ import { api } from '@/convex/_generated/api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useEffect, useMemo, useState } from 'react';
+import { track } from '@vercel/analytics';
 
 import { taxSettingsToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { type TaxSettingsInputs, taxSettingsSchema } from '@/lib/schemas/inputs/tax-settings-schema';
@@ -51,6 +52,7 @@ export default function TaxSettingsDrawer({ setOpen, taxSettings }: TaxSettingsD
   const onSubmit = async (data: TaxSettingsInputs) => {
     try {
       setSaveError(null);
+      track('Save tax settings');
       await m({ taxSettings: taxSettingsToConvex(data), planId });
       setOpen(false);
     } catch (error) {
