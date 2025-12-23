@@ -19,7 +19,7 @@ export function useRegenSimulation() {
   const m = useMutation(api.simulation_settings.update);
   const handleClick = async () => {
     if (!isDisabled) {
-      track('Regenerate simulation');
+      track('Regenerate simulation', { simulationMode: simulationSettings.simulationMode });
       await m({ simulationSettings: { ...simulationSettings, simulationSeed: Math.floor(Math.random() * 1000) }, planId });
     }
   };
