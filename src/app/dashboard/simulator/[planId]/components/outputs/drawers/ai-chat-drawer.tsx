@@ -13,6 +13,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import { useTheme } from 'next-themes';
+import { track } from '@vercel/analytics';
 
 import { Button } from '@/components/catalyst/button';
 import { Textarea } from '@/components/catalyst/textarea';
@@ -73,7 +74,10 @@ interface DemoQuestionButtonProps {
 function DemoQuestionButton({ label, question, setChatMessage }: DemoQuestionButtonProps) {
   return (
     <button
-      onClick={() => setChatMessage(question)}
+      onClick={() => {
+        track('Select demo question', { label });
+        setChatMessage(question);
+      }}
       type="button"
       className={cn(
         'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border/25 relative inline-flex items-center rounded-full border px-3 py-2 text-sm shadow-md focus:z-10'
@@ -174,6 +178,7 @@ function ConversationListItem({ conversation, selectedConversationId, setSelecte
 
   const handleDelete = async () => {
     if (conversation._id === selectedConversationId) setSelectedConversationId(undefined);
+    track('Delete conversation');
     await deleteConversation({ conversationId: conversation._id });
   };
 
@@ -184,7 +189,13 @@ function ConversationListItem({ conversation, selectedConversationId, setSelecte
         'bg-zinc-100 dark:bg-black/15': conversation._id === selectedConversationId,
       })}
     >
-      <button className="focus-outline min-w-0 flex-auto" onClick={() => setSelectedConversationId(conversation._id)}>
+      <button
+        className="focus-outline min-w-0 flex-auto"
+        onClick={() => {
+          track('Select conversation');
+          setSelectedConversationId(conversation._id);
+        }}
+      >
         <div className="flex items-center gap-x-3">
           <p
             className={cn(
@@ -291,6 +302,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
 
     try {
       updateChatState({ errorMessage: '' });
+      track('Send message to AI assistant');
       const { conversationId } = await m({ conversationId: selectedConversationId, planId, content: chatMessage, keyMetrics });
       updateChatState({ chatMessage: '' });
       updateSelectedConversationId(conversationId);
@@ -301,6 +313,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
 
   const handleLoadMore = () => {
     prevScrollHeightRef.current = scrollAreaRef.current?.scrollHeight ?? 0;
+    track('Load more AI messages');
     loadMore(PAGE_SIZE);
   };
 
@@ -338,7 +351,14 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
             )}
           </ul>
           <div className="border-border/50 border-t p-4">
-            <Button color="dark/white" className="w-full" onClick={() => updateSelectedConversationId(undefined)}>
+            <Button
+              color="dark/white"
+              className="w-full"
+              onClick={() => {
+                track('Create new chat', { location: 'drawer' });
+                updateSelectedConversationId(undefined);
+              }}
+            >
               New chat
             </Button>
           </div>
@@ -349,7 +369,13 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
           <div className="border-border/50 from-emphasized-background to-background -mx-2 block border-b bg-gradient-to-l sm:-mx-3 md:hidden">
             <div className="flex items-center justify-between gap-2 px-3 py-2">
               <h3 className="truncate text-sm font-semibold text-zinc-900 dark:text-white">{selectedConversation?.title || 'Chat'}</h3>
-              <Button outline onClick={() => updateSelectedConversationId(undefined)}>
+              <Button
+                outline
+                onClick={() => {
+                  track('Create new chat', { location: 'header' });
+                  updateSelectedConversationId(undefined);
+                }}
+              >
                 <PlusIcon />
                 New chat
               </Button>
