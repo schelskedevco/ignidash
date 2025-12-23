@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { CircleQuestionMarkIcon } from 'lucide-react';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/react/24/outline';
@@ -5,6 +6,15 @@ import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/react/24/outline';
 import { Text, TextLink } from '@/components/catalyst/text';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { Divider } from '@/components/catalyst/divider';
+
+export const metadata: Metadata = {
+  title: 'Help Center',
+  description: 'Get answers to common questions about Ignidash, learn how to use the simulator, and see what features are coming soon.',
+  openGraph: {
+    title: 'Help Center - Ignidash',
+    description: 'Get answers to common questions about Ignidash, learn how to use the simulator, and see what features are coming soon.',
+  },
+};
 
 const faqs = [
   {
