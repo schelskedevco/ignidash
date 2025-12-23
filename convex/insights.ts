@@ -14,7 +14,8 @@ export const canUseInsights = query({
   args: {},
   returns: v.boolean(),
   handler: async (ctx): Promise<boolean> => {
-    return await getCanUseAIFeatures(ctx);
+    const { canUseAIFeatures } = await getCanUseAIFeatures(ctx);
+    return canUseAIFeatures;
   },
 });
 
@@ -58,11 +59,14 @@ export const generate = mutation({
   handler: async (ctx, { planId, keyMetrics, simulationResult, userPrompt }) => {
     if (userPrompt && userPrompt.length > 250) throw new ConvexError('Supplemental prompt cannot be longer than 250 characters.');
 
-    const [{ userId }, canUseInsights] = await Promise.all([getUserIdOrThrow(ctx), getCanUseAIFeatures(ctx)]);
+    const [{ userId }, { canUseAIFeatures: canUseInsights, isAdmin }] = await Promise.all([
+      getUserIdOrThrow(ctx),
+      getCanUseAIFeatures(ctx),
+    ]);
 
     if (!canUseInsights) throw new ConvexError('AI insights are not available. Upgrade to start generating insights.');
 
-    const subscriptionStartTime = await getSubscriptionStartTime(ctx);
+    const subscriptionStartTime = await getSubscriptionStartTime(ctx, isAdmin);
 
     const { ok, retryAfter } = await checkUsageLimits(ctx, userId, 'insights', subscriptionStartTime);
     if (!ok) throw new ConvexError(`AI usage limit exceeded. Try again after ${new Date(Date.now() + retryAfter).toLocaleString()}.`);

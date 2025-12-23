@@ -33,10 +33,14 @@ export const listSubscriptions = query({
 
 export const getCanUseAIFeatures = query({
   args: {},
-  returns: v.boolean(),
+  returns: v.object({
+    canUseAIFeatures: v.boolean(),
+    isAdmin: v.boolean(),
+    isActiveSubscription: v.boolean(),
+  }),
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
-    if (identity === null) return false;
+    if (identity === null) return { canUseAIFeatures: false, isAdmin: false, isActiveSubscription: false };
 
     const [user, subscriptions] = await Promise.all([
       ctx.db.get(identity.subject as Id<'user'>),
@@ -46,6 +50,9 @@ export const getCanUseAIFeatures = query({
         .collect(),
     ]);
 
-    return user?.role === 'admin' || subscriptions?.some((subscription) => subscription.status === 'active');
+    const isAdmin = user?.role === 'admin';
+    const isActiveSubscription = subscriptions?.some((subscription) => subscription.status === 'active');
+
+    return { canUseAIFeatures: isAdmin || isActiveSubscription, isAdmin, isActiveSubscription };
   },
 });

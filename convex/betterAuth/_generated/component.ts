@@ -1223,7 +1223,11 @@ export type ComponentApi<Name extends string | undefined = string | undefined> =
         "query",
         "internal",
         {},
-        boolean,
+        {
+          canUseAIFeatures: boolean;
+          isActiveSubscription: boolean;
+          isAdmin: boolean;
+        },
         Name
       >;
       getCurrentUserSafe: FunctionReference<

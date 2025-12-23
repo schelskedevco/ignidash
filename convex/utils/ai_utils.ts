@@ -92,11 +92,18 @@ export async function checkUsageLimits(
   return { ok: true, retryAfter: 0 };
 }
 
-export async function getCanUseAIFeatures(ctx: QueryCtx): Promise<boolean> {
+export async function getCanUseAIFeatures(
+  ctx: QueryCtx
+): Promise<{ canUseAIFeatures: boolean; isAdmin: boolean; isActiveSubscription: boolean }> {
   return await ctx.runQuery(api.auth.getCanUseAIFeatures, {});
 }
 
-export async function getSubscriptionStartTime(ctx: QueryCtx): Promise<number> {
+export async function getSubscriptionStartTime(ctx: QueryCtx, isAdmin: boolean): Promise<number> {
+  if (isAdmin) {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+  }
+
   const subscriptions = await ctx.runQuery(api.auth.listSubscriptions, {});
   const activeSubscription = subscriptions?.find((subscription) => subscription.status === 'active');
 

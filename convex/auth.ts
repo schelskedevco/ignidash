@@ -346,8 +346,12 @@ export const listSubscriptions = query({
 
 export const getCanUseAIFeatures = query({
   args: {},
-  returns: v.boolean(),
-  handler: async (ctx): Promise<boolean> => {
+  returns: v.object({
+    canUseAIFeatures: v.boolean(),
+    isAdmin: v.boolean(),
+    isActiveSubscription: v.boolean(),
+  }),
+  handler: async (ctx): Promise<{ canUseAIFeatures: boolean; isAdmin: boolean; isActiveSubscription: boolean }> => {
     return await ctx.runQuery(components.betterAuth.auth_data.getCanUseAIFeatures, {});
   },
 });

@@ -18,7 +18,8 @@ export const canUseChat = query({
   args: {},
   returns: v.boolean(),
   handler: async (ctx): Promise<boolean> => {
-    return await getCanUseAIFeatures(ctx);
+    const { canUseAIFeatures } = await getCanUseAIFeatures(ctx);
+    return canUseAIFeatures;
   },
 });
 
@@ -45,11 +46,11 @@ export const send = mutation({
   handler: async (ctx, { conversationId: currConvId, planId, content, keyMetrics }) => {
     if (content.length > 2000) throw new ConvexError('Message cannot be longer than 2,000 characters.');
 
-    const [{ userId }, canUseChat] = await Promise.all([getUserIdOrThrow(ctx), getCanUseAIFeatures(ctx)]);
+    const [{ userId }, { canUseAIFeatures: canUseChat, isAdmin }] = await Promise.all([getUserIdOrThrow(ctx), getCanUseAIFeatures(ctx)]);
 
     if (!canUseChat) throw new ConvexError('AI chat is not available. Upgrade to start chatting.');
 
-    const subscriptionStartTime = await getSubscriptionStartTime(ctx);
+    const subscriptionStartTime = await getSubscriptionStartTime(ctx, isAdmin);
 
     const { ok, retryAfter } = await checkUsageLimits(ctx, userId, 'chat', subscriptionStartTime);
     if (!ok) throw new ConvexError(`AI usage limit exceeded. Try again after ${new Date(Date.now() + retryAfter).toLocaleString()}.`);
