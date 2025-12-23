@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'About',
+  description: 'Learn how Ignidash was built to combine AI assistance with precise financial simulations for smarter FIRE planning.',
+  openGraph: {
+    title: 'About Ignidash',
+    description: 'Learn how Ignidash was built to combine AI assistance with precise financial simulations for smarter FIRE planning.',
+  },
+};
 
 export default function AboutPage() {
   return (
