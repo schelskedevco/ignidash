@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Analytics } from '@vercel/analytics/next';
 import { Figtree, Geist_Mono, Geist } from 'next/font/google';
 
@@ -22,10 +22,89 @@ const geist = Geist({
   subsets: ['latin'],
 });
 
+const siteConfig = {
+  name: 'Ignidash',
+  description: 'Plan your path to Financial Independence and Early Retirement with AI-powered insights and comprehensive simulations.',
+  url: 'https://www.ignidash.com',
+  ogImage: 'https://www.ignidash.com/og-image.png',
+  author: {
+    name: 'Joe Schelske',
+    url: 'https://www.linkedin.com/in/scheljos/',
+  },
+};
+
 export const metadata: Metadata = {
-  title: 'Ignidash - AI-Powered FIRE Calculator',
-  description: 'Plan your path to Financial Independence and Early Retirement with AI-powered insights.',
-  icons: '/flame.svg',
+  title: {
+    default: `${siteConfig.name} - AI-Powered FIRE Calculator`,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
+  authors: [{ name: siteConfig.author.name, url: siteConfig.author.url }],
+  creator: siteConfig.author.name,
+  publisher: siteConfig.name,
+  icons: {
+    icon: '/flame.svg',
+    shortcut: '/flame.svg',
+    apple: '/apple-touch-icon.png',
+  },
+  metadataBase: new URL(siteConfig.url),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    title: `${siteConfig.name} - AI-Powered FIRE Calculator`,
+    description: siteConfig.description,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: `${siteConfig.name} - FIRE Planning Made Smarter`,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${siteConfig.name} - AI-Powered FIRE Calculator`,
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
+    creator: '@schelskedevco',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  applicationName: siteConfig.name,
+  category: 'personal finance',
+  verification: {
+    google: 'XGNdzog5t00jFc67gLOj-3wxBzTUXPos2gRlAj7rFgI',
+  },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#27272a' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({
