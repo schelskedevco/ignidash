@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
 import { GlobeLockIcon } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  description: 'How Ignidash collects, uses, and protects your data. Your financial information is encrypted and never sold.',
+  openGraph: {
+    title: 'Privacy Policy - Ignidash',
+    description: 'How Ignidash collects, uses, and protects your data. Your financial information is encrypted and never sold.',
+  },
+};
 
 export default function PrivacyPage() {
   return (

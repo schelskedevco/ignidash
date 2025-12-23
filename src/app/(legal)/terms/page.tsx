@@ -1,4 +1,14 @@
+import type { Metadata } from 'next';
 import { HandshakeIcon } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service',
+  description: 'Terms and conditions for using Ignidash. Read our guidelines on acceptable use, limitations, and user responsibilities.',
+  openGraph: {
+    title: 'Terms of Service - Ignidash',
+    description: 'Terms and conditions for using Ignidash. Read our guidelines on acceptable use, limitations, and user responsibilities.',
+  },
+};
 
 export default function TermsPage() {
   return (
