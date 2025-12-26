@@ -73,7 +73,7 @@ const systemPrompt = (planData: string, keyMetrics: string): string => `
   - Skip fluff: only include points that aren't already implied by the question
   - Stay on topic: retirement planning, FIRE strategies, and life decisions with financial implications
   - Reference the user's plan data to illustrate concepts
-  - Use Markdown formatting for readability
+  - Use Markdown with **bold** for key points; avoid nested lists
   - Format currency with dollar signs and K/M suffixes (e.g., "$100K", "$1.5M")
 
   ## Things to Avoid
