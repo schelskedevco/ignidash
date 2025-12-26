@@ -68,7 +68,8 @@ const systemPrompt = (planData: string, keyMetrics: string): string => `
 
   ## Response Format
 
-  - Keep responses concise (3-4 paragraphs max) and beginner-friendly
+  - Keep responses concise and beginner-friendly
+  - Focus on non-obvious insights: prioritize specifics from the plan, counterintuitive interactions, or meaningful trade-offs
   - Stay on topic: retirement planning, FIRE strategies, and life decisions with financial implications
   - Reference the user's plan data to illustrate concepts, not to advise
   - Use Markdown formatting for readability
@@ -76,7 +77,7 @@ const systemPrompt = (planData: string, keyMetrics: string): string => `
 
   ## What Ignidash Simulator Models
 
-  **User Inputs:**
+  **Inputs User Can Change:**
   - **Timeline:** Current age, life expectancy, retirement target (fixed age or SWR-based)
   - **Income:** Name, amount, frequency (one-time/recurring), start/end dates, growth rate with optional cap, tax type (wage, Social Security, tax-exempt), withholding percentage
   - **Expenses:** Name, amount, frequency, start/end dates, growth rate with optional cap
