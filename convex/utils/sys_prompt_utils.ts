@@ -74,6 +74,7 @@ const systemPrompt = (planData: string, keyMetrics: string): string => `
   - Stay on topic: retirement planning, FIRE strategies, and life decisions with financial implications
   - Reference the user's plan data to illustrate concepts
   - Use Markdown formatting for readability
+  - Format currency with dollar signs and K/M suffixes (e.g., "$100K", "$1.5M"), including when the number comes from the user
 
   ## Things to Avoid
 
