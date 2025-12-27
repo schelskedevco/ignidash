@@ -1,0 +1,42 @@
+import { z } from 'zod';
+
+import { percentageField } from '@/lib/utils/zod-schema-utils';
+
+const glidePathTimePointSchema = z
+  .object({
+    type: z.enum(['customDate', 'customAge']),
+    month: z.number().int().min(1).max(12).optional(),
+    year: z.number().int().min(1900).max(2100).optional(),
+    age: z.number().int().min(0).max(120).optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.type === 'customDate') {
+        return data.month !== undefined && data.year !== undefined && data.age === undefined;
+      }
+      if (data.type === 'customAge') {
+        return data.age !== undefined && data.month === undefined && data.year === undefined;
+      }
+      return true;
+    },
+    {
+      message: 'Custom fields are required when custom option is selected',
+    }
+  );
+
+export type GlidePathTimePoint = z.infer<typeof glidePathTimePointSchema>;
+
+export const glidePathSchema = z
+  .object({
+    id: z.string(),
+    endTimePoint: glidePathTimePointSchema,
+    targetStockAllocation: percentageField(0, 100, 'Target stock allocation'),
+    targetBondAllocation: percentageField(0, 100, 'Target bond allocation'),
+    targetCashAllocation: percentageField(0, 100, 'Target cash allocation'),
+  })
+  .refine((data) => data.targetStockAllocation + data.targetBondAllocation + data.targetCashAllocation === 100, {
+    message: 'Target allocations must sum to 100%',
+    path: ['targetStockAllocation', 'targetBondAllocation', 'targetCashAllocation'],
+  });
+
+export type GlidePathInputs = z.infer<typeof glidePathSchema>;

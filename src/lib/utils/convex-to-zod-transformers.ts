@@ -14,6 +14,7 @@ import type { SimulationSettingsInputs } from '@/lib/schemas/simulation-settings
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 import type { AssetInputs } from '@/lib/schemas/finances/asset-schema';
 import type { LiabilityInputs } from '@/lib/schemas/finances/liability-schema';
+import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-schema';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 
 // ============================================================================
@@ -182,6 +183,13 @@ export function liabilityFromConvex(liability: Doc<'finances'>['liabilities'][nu
   return { ...liability };
 }
 
+/**
+ * Transforms a Convex glide path to Zod GlidePathInputs format
+ */
+export function glidePathFromConvex(glidePath: Doc<'plans'>['glidePath']): GlidePathInputs | undefined {
+  return glidePath ? structuredClone(glidePath) : undefined;
+}
+
 // ============================================================================
 // ZOD TO CONVEX TRANSFORMERS
 // ============================================================================
@@ -348,6 +356,13 @@ export function assetToConvex(asset: AssetInputs): Doc<'finances'>['assets'][num
  */
 export function liabilityToConvex(liability: LiabilityInputs): Doc<'finances'>['liabilities'][number] {
   return { ...liability };
+}
+
+/**
+ * Transforms Zod GlidePathInputs to Convex glide path format
+ */
+export function glidePathToConvex(glidePath: GlidePathInputs): NonNullable<Doc<'plans'>['glidePath']> {
+  return structuredClone(glidePath);
 }
 
 // ============================================================================
