@@ -81,6 +81,26 @@ export abstract class TableDataExtractor {
       const phaseName = data.phase?.name ?? null;
       const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
 
+      if (idx === 0) {
+        return {
+          year: idx,
+          age,
+          phaseName: formattedPhaseName,
+          earnedIncome: null,
+          socialSecurityIncome: null,
+          taxExemptIncome: null,
+          incomeTax: null,
+          ficaTax: null,
+          capGainsTax: null,
+          earlyWithdrawalPenalties: null,
+          totalTaxesAndPenalties: null,
+          expenses: null,
+          cashFlow: null,
+          savingsRate: null,
+          historicalYear,
+        };
+      }
+
       const { incomeTax, ficaTax, capGainsTax, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
         SimulationDataExtractor.getTaxAmountsByType(data);
       const {
@@ -130,6 +150,46 @@ export abstract class TableDataExtractor {
 
       const phaseName = data.phase?.name ?? null;
       const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
+
+      if (idx === 0) {
+        return {
+          year: idx,
+          age,
+          phaseName: formattedPhaseName,
+          grossIncome: null,
+          adjustedGrossIncome: null,
+          taxableIncome: null,
+          earnedIncome: null,
+          retirementDistributions: null,
+          interestIncome: null,
+          annualIncomeTax: null,
+          cumulativeIncomeTax: null,
+          annualFicaTax: null,
+          cumulativeFicaTax: null,
+          effectiveIncomeTaxRate: null,
+          topMarginalIncomeTaxRate: null,
+          socialSecurityIncome: null,
+          taxableSocialSecurityIncome: null,
+          provisionalIncome: null,
+          maxTaxableSocialSecurityPercentage: null,
+          actualTaxableSocialSecurityPercentage: null,
+          realizedGains: null,
+          dividendIncome: null,
+          annualCapGainsTax: null,
+          cumulativeCapGainsTax: null,
+          effectiveCapGainsTaxRate: null,
+          topMarginalCapGainsTaxRate: null,
+          annualEarlyWithdrawalPenalties: null,
+          cumulativeEarlyWithdrawalPenalties: null,
+          taxExemptIncome: null,
+          annualTotalTaxesAndPenalties: null,
+          cumulativeTotalTaxesAndPenalties: null,
+          taxDeferredContributions: null,
+          standardDeduction: null,
+          capitalLossDeduction: null,
+          historicalYear,
+        };
+      }
 
       const {
         incomeTax: annualIncomeTax,
@@ -211,6 +271,28 @@ export abstract class TableDataExtractor {
       const phaseName = data.phase?.name ?? null;
       const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
 
+      if (idx === 0) {
+        return {
+          year: idx,
+          age,
+          phaseName: formattedPhaseName,
+          stockRate: null,
+          cumulativeStockAmount: null,
+          annualStockAmount: null,
+          stockHoldings: null,
+          bondRate: null,
+          cumulativeBondAmount: null,
+          annualBondAmount: null,
+          bondHoldings: null,
+          cashRate: null,
+          cumulativeCashAmount: null,
+          annualCashAmount: null,
+          cashHoldings: null,
+          inflationRate: null,
+          historicalYear,
+        };
+      }
+
       const { stockHoldings, bondHoldings, cashHoldings } = SimulationDataExtractor.getHoldingsByAssetClass(data);
 
       const returnsData = data.returns;
@@ -249,6 +331,25 @@ export abstract class TableDataExtractor {
 
       const phaseName = data.phase?.name ?? null;
       const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
+
+      if (idx === 0) {
+        return {
+          year: idx,
+          age,
+          phaseName: formattedPhaseName,
+          annualContributions: null,
+          cumulativeContributions: null,
+          taxableBrokerage: null,
+          taxDeferred: null,
+          taxFree: null,
+          cashSavings: null,
+          annualEmployerMatch: null,
+          cumulativeEmployerMatch: null,
+          totalPortfolioValue: null,
+          cashFlow: null,
+          historicalYear,
+        };
+      }
 
       const portfolioData = data.portfolio;
       const totalPortfolioValue = portfolioData.totalValue;
@@ -297,6 +398,34 @@ export abstract class TableDataExtractor {
 
       const phaseName = data.phase?.name ?? null;
       const formattedPhaseName = phaseName !== null ? phaseName.charAt(0).toUpperCase() + phaseName.slice(1) : null;
+
+      if (idx === 0) {
+        return {
+          year: idx,
+          age,
+          phaseName: formattedPhaseName,
+          annualWithdrawals: null,
+          cumulativeWithdrawals: null,
+          taxableBrokerage: null,
+          taxDeferred: null,
+          taxFree: null,
+          cashSavings: null,
+          annualRealizedGains: null,
+          cumulativeRealizedGains: null,
+          annualRequiredMinimumDistributions: null,
+          cumulativeRequiredMinimumDistributions: null,
+          annualEarlyWithdrawals: null,
+          cumulativeEarlyWithdrawals: null,
+          annualEarlyWithdrawalPenalties: null,
+          cumulativeEarlyWithdrawalPenalties: null,
+          annualRothEarningsWithdrawals: null,
+          cumulativeRothEarningsWithdrawals: null,
+          totalPortfolioValue: null,
+          cashFlow: null,
+          withdrawalRate: null,
+          historicalYear,
+        };
+      }
 
       const portfolioData = data.portfolio;
       const totalPortfolioValue = portfolioData.totalValue;
