@@ -64,8 +64,8 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
       await m({ glidePath: glidePathToConvex({ ...data, id: glidePathId }), planId });
       onClose();
     } catch (error) {
-      setSaveError(error instanceof ConvexError ? error.message : 'Failed to save account.');
-      console.error('Error saving account: ', error);
+      setSaveError(error instanceof ConvexError ? error.message : 'Failed to save glide path.');
+      console.error('Error saving glide path: ', error);
     }
   };
 
