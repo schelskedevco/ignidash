@@ -23,6 +23,7 @@ import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { Divider } from '@/components/catalyst/divider';
+import type { AssetAllocation } from '@/lib/calc/asset';
 
 interface GlidePathDialogProps {
   onClose: () => void;
@@ -34,16 +35,47 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
   const planId = useSelectedPlanId();
   const [glidePath] = useState(_glidePath);
 
+  const {
+    stocks: currStockAllocation,
+    bonds: currBondAllocation,
+    cash: currCashAllocation,
+  } = useMemo(() => {
+    const totalBalance = accounts.reduce((acc, account) => acc + account.balance, 0);
+
+    return accounts.reduce(
+      (acc, account) => {
+        const weight = account.balance / totalBalance;
+
+        if (account.type === 'savings') {
+          return {
+            stocks: acc.stocks,
+            bonds: acc.bonds,
+            cash: acc.cash + weight,
+          };
+        }
+
+        const percentBonds = (account.percentBonds ?? 0) / 100;
+
+        return {
+          stocks: acc.stocks + (1 - percentBonds) * weight,
+          bonds: acc.bonds + percentBonds * weight,
+          cash: acc.cash,
+        };
+      },
+      { stocks: 0, bonds: 0, cash: 0 } as AssetAllocation
+    );
+  }, [accounts]);
+
   const glidePathDefaultValues = useMemo(
     () =>
       ({
         id: '',
         endTimePoint: { type: 'customAge' as const, age: 65 },
-        targetStockAllocation: 50,
-        targetBondAllocation: 30,
-        targetCashAllocation: 20,
+        targetStockAllocation: currStockAllocation * 100,
+        targetBondAllocation: currBondAllocation * 100,
+        targetCashAllocation: currCashAllocation * 100,
       }) as const satisfies Partial<GlidePathInputs>,
-    []
+    [currStockAllocation, currBondAllocation, currCashAllocation]
   );
 
   const defaultValues = glidePath || glidePathDefaultValues;
