@@ -3,13 +3,14 @@
 import { ConvexError } from 'convex/values';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { PiggyBankIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch, Controller } from 'react-hook-form';
 import { track } from '@vercel/analytics';
 
+import { useTimelineData } from '@/hooks/use-convex-data';
 import { glidePathToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
@@ -17,8 +18,11 @@ import { glidePathSchema, type GlidePathInputs } from '@/lib/schemas/inputs/glid
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';
+import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/combobox';
+import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import { Divider } from '@/components/catalyst/divider';
 
 interface GlidePathDialogProps {
   onClose: () => void;
@@ -46,6 +50,8 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
 
   const {
     control,
+    register,
+    unregister,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -69,6 +75,51 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
     }
   };
 
+  const endTimePoint = useWatch({ control, name: 'endTimePoint' });
+  const endType = endTimePoint.type;
+
+  useEffect(() => {
+    if (endType !== 'customDate') {
+      unregister('endTimePoint.month');
+      unregister('endTimePoint.year');
+    }
+
+    if (endType !== 'customAge') {
+      unregister('endTimePoint.age');
+    }
+  }, [endType, unregister]);
+
+  const getEndColSpan = () => {
+    if (endType === 'customDate') return 'col-span-2';
+    if (endType === 'customAge') return 'col-span-1';
+    return 'col-span-2';
+  };
+
+  const months = [
+    { value: 1, name: 'January' },
+    { value: 2, name: 'February' },
+    { value: 3, name: 'March' },
+    { value: 4, name: 'April' },
+    { value: 5, name: 'May' },
+    { value: 6, name: 'June' },
+    { value: 7, name: 'July' },
+    { value: 8, name: 'August' },
+    { value: 9, name: 'September' },
+    { value: 10, name: 'October' },
+    { value: 11, name: 'November' },
+    { value: 12, name: 'December' },
+  ];
+
+  const currentMonth = months[new Date().getMonth()];
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 2100 - currentYear + 1 }, (_, i) => currentYear + i);
+
+  const timeline = useTimelineData();
+  const currentAge = timeline?.currentAge ?? 18;
+  const lifeExpectancy = timeline?.lifeExpectancy ?? 110;
+
+  const ages = Array.from({ length: lifeExpectancy - currentAge + 1 }, (_, i) => currentAge + i);
+
   return (
     <>
       <DialogTitle onClose={onClose}>
@@ -82,6 +133,94 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
           <DialogBody>
             <FieldGroup>
               {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              <div className="mt-4 grid grid-cols-2 items-end gap-x-4 gap-y-2">
+                <Field className={getEndColSpan()}>
+                  <Label htmlFor="endTimePoint.type">Glide Path End</Label>
+                  <Select {...register('endTimePoint.type')} id="endTimePoint.type" name="endTimePoint.type">
+                    <option value="customDate">Custom Date</option>
+                    <option value="customAge">Custom Age</option>
+                  </Select>
+                </Field>
+                {endType === 'customDate' && (
+                  <>
+                    <Field>
+                      <Label className="sr-only">Month</Label>
+                      <Controller
+                        name="endTimePoint.month"
+                        defaultValue={currentMonth.value}
+                        control={control}
+                        render={({ field: { onChange, value, name } }) => (
+                          <Combobox
+                            name={name}
+                            options={months}
+                            displayValue={(month) => month?.name || currentMonth.name}
+                            value={months.find((m) => m.value === value) || currentMonth}
+                            onChange={(month) => onChange(month?.value || currentMonth.value)}
+                            filter={(month, query) =>
+                              month.name.toLowerCase().includes(query.toLowerCase()) || String(month.value).includes(query)
+                            }
+                          >
+                            {(month) => (
+                              <ComboboxOption value={month}>
+                                <ComboboxLabel>{month.name}</ComboboxLabel>
+                              </ComboboxOption>
+                            )}
+                          </Combobox>
+                        )}
+                      />
+                    </Field>
+                    <Field>
+                      <Label className="sr-only">Year</Label>
+                      <Controller
+                        name="endTimePoint.year"
+                        defaultValue={currentYear}
+                        control={control}
+                        render={({ field: { onChange, value, name } }) => (
+                          <Combobox
+                            name={name}
+                            options={years}
+                            displayValue={(year) => String(year || currentYear)}
+                            value={value || currentYear}
+                            onChange={(year) => onChange(year || currentYear)}
+                          >
+                            {(year) => (
+                              <ComboboxOption value={year}>
+                                <ComboboxLabel>{year}</ComboboxLabel>
+                              </ComboboxOption>
+                            )}
+                          </Combobox>
+                        )}
+                      />
+                    </Field>
+                  </>
+                )}
+                {endType === 'customAge' && (
+                  <Field>
+                    <Label className="sr-only">Age</Label>
+                    <Controller
+                      name="endTimePoint.age"
+                      defaultValue={currentAge}
+                      control={control}
+                      render={({ field: { onChange, value, name } }) => (
+                        <Combobox
+                          name={name}
+                          options={ages}
+                          displayValue={(age) => String(age || currentAge) + ' y/o'}
+                          value={value || currentAge}
+                          onChange={(age) => onChange(age || currentAge)}
+                        >
+                          {(age) => (
+                            <ComboboxOption value={age}>
+                              <ComboboxLabel>{age}</ComboboxLabel>
+                            </ComboboxOption>
+                          )}
+                        </Combobox>
+                      )}
+                    />
+                  </Field>
+                )}
+              </div>
+              <Divider />
               <Field>
                 <Label htmlFor="targetStockAllocation">Target Stock Allocation</Label>
                 <NumberInput
