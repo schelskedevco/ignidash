@@ -157,7 +157,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
       <DialogTitle onClose={onClose}>
         <div className="flex items-center gap-4">
           <PiggyBankIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
-          <span>{glidePath ? 'Edit Glide Path' : 'Set Glide Path'}</span>
+          <span>Set Glide Path</span>
         </div>
       </DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -290,6 +290,10 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                 />
                 {errors.targetCashAllocation && <ErrorMessage>{errors.targetCashAllocation?.message}</ErrorMessage>}
               </Field>
+              <Divider />
+              <p className="text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400">
+                Automatically rebalances toward your target allocation, prioritizing tax-advantaged accounts where possible.
+              </p>
             </FieldGroup>
           </DialogBody>
         </Fieldset>
