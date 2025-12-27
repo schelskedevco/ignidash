@@ -16,6 +16,7 @@ import type * as conversations from "../conversations.js";
 import type * as crons from "../crons.js";
 import type * as expense from "../expense.js";
 import type * as finances from "../finances.js";
+import type * as glide_path from "../glide_path.js";
 import type * as http from "../http.js";
 import type * as income from "../income.js";
 import type * as insights from "../insights.js";
@@ -41,6 +42,7 @@ import type * as validators_accounts_validator from "../validators/accounts_vali
 import type * as validators_asset_validator from "../validators/asset_validator.js";
 import type * as validators_contribution_rules_validator from "../validators/contribution_rules_validator.js";
 import type * as validators_expenses_validator from "../validators/expenses_validator.js";
+import type * as validators_glide_path_validator from "../validators/glide_path_validator.js";
 import type * as validators_incomes_validator from "../validators/incomes_validator.js";
 import type * as validators_key_metrics_validator from "../validators/key_metrics_validator.js";
 import type * as validators_liability_validator from "../validators/liability_validator.js";
@@ -67,6 +69,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   expense: typeof expense;
   finances: typeof finances;
+  glide_path: typeof glide_path;
   http: typeof http;
   income: typeof income;
   insights: typeof insights;
@@ -92,6 +95,7 @@ declare const fullApi: ApiFromModules<{
   "validators/asset_validator": typeof validators_asset_validator;
   "validators/contribution_rules_validator": typeof validators_contribution_rules_validator;
   "validators/expenses_validator": typeof validators_expenses_validator;
+  "validators/glide_path_validator": typeof validators_glide_path_validator;
   "validators/incomes_validator": typeof validators_incomes_validator;
   "validators/key_metrics_validator": typeof validators_key_metrics_validator;
   "validators/liability_validator": typeof validators_liability_validator;
