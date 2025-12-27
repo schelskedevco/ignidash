@@ -3,7 +3,7 @@
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useState, RefObject } from 'react';
-import { LandmarkIcon, PiggyBankIcon, TrendingUpIcon, SettingsIcon } from 'lucide-react';
+import { LandmarkIcon, PiggyBankIcon, TrendingUpIcon, RouteIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
 import { useAccountsData, useGlidePathData } from '@/hooks/use-convex-data';
@@ -118,7 +118,7 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
               </ul>
               <div className="mt-auto flex items-center justify-end gap-x-2">
                 <Button outline onClick={() => setGlidePathDialogOpen(true)}>
-                  <SettingsIcon data-slot="icon" />
+                  <RouteIcon data-slot="icon" />
                 </Button>
                 <Button outline onClick={() => setSavingsDialogOpen(true)} disabled={!!selectedSavings}>
                   <PlusIcon />
