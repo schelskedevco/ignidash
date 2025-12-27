@@ -7,3 +7,5 @@ export enum SimulationCategory {
   Withdrawals = 'Withdrawals',
   Phases = 'Phases',
 }
+
+export type MultiSimulationCategory = Exclude<SimulationCategory, SimulationCategory.Phases>;
