@@ -9,7 +9,6 @@ import {
   useSimulationResult,
   useUpdateQuickSelectPercentile,
   useUpdateSelectedSeedFromTable,
-  useUpdateResultsCategory,
   type QuickSelectPercentile,
 } from '@/lib/stores/simulator-store';
 import SectionContainer from '@/components/ui/section-container';
@@ -19,7 +18,6 @@ import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 import { useResultsState } from '@/hooks/use-results-state';
 import { useActiveSeed, useRemoveActiveSeed } from '@/hooks/use-active-seed';
 import ProgressBar from '@/components/ui/progress-bar';
-import { SimulationCategory } from '@/lib/types/simulation-category';
 
 import SimulationMetrics from '../simulation-metrics';
 import MultiSimulationMainResults from './multi-simulation-main-results';
@@ -95,24 +93,21 @@ export default function MultiSimulationResults({ inputs, simulationMode }: Multi
 
   const updateQuickSelectPercentile = useUpdateQuickSelectPercentile();
   const updateSelectedSeedFromTable = useUpdateSelectedSeedFromTable();
-  const updateResultsCategory = useUpdateResultsCategory();
 
   const removeActiveSeed = useRemoveActiveSeed();
 
   const handlePercentileChange = useCallback(
     (percentile: QuickSelectPercentile) => {
       updateQuickSelectPercentile(percentile);
-      updateResultsCategory(SimulationCategory.Portfolio);
     },
-    [updateResultsCategory, updateQuickSelectPercentile]
+    [updateQuickSelectPercentile]
   );
 
   const handleSeedFromTableChange = useCallback(
     (seed: number | null) => {
       updateSelectedSeedFromTable(seed);
-      updateResultsCategory(SimulationCategory.Portfolio);
     },
-    [updateResultsCategory, updateSelectedSeedFromTable]
+    [updateSelectedSeedFromTable]
   );
 
   const { activeSeed, activeSeedType } = useActiveSeed();

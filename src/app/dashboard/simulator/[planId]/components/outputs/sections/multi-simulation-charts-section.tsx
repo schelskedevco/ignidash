@@ -2,9 +2,9 @@
 
 import { memo } from 'react';
 
-import { useResultsCategory } from '@/lib/stores/simulator-store';
+import { useMultiSimulationCategory } from '@/lib/stores/simulator-store';
 import SectionContainer from '@/components/ui/section-container';
-import { SimulationCategory } from '@/lib/types/simulation-category';
+import { MultiSimulationCategory } from '@/lib/types/simulation-category';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 
@@ -61,16 +61,16 @@ interface MultiSimulationChartsSectionProps {
 }
 
 function MultiSimulationChartsSection({ startAge, chartData, keyMetrics, onAgeSelect, selectedAge }: MultiSimulationChartsSectionProps) {
-  const resultsCategory = useResultsCategory();
+  const resultsCategory = useMultiSimulationCategory();
 
   const props: ChartsCategoryProps = { chartData, keyMetrics, onAgeSelect, selectedAge, startAge };
 
   let chartsComponents = null;
   switch (resultsCategory) {
-    case SimulationCategory.Portfolio:
+    case MultiSimulationCategory.Portfolio:
       chartsComponents = <PortfolioCharts {...props} />;
       break;
-    case SimulationCategory.Phases:
+    case MultiSimulationCategory.Phases:
       chartsComponents = <PhasesCharts {...props} />;
       break;
     default:

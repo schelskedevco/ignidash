@@ -5,10 +5,10 @@ import { memo } from 'react';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { formatNumber } from '@/lib/utils';
 import Card from '@/components/ui/card';
-import { SimulationCategory } from '@/lib/types/simulation-category';
+import { MultiSimulationCategory } from '@/lib/types/simulation-category';
 import { Subheading } from '@/components/catalyst/heading';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
-import { useResultsCategory } from '@/lib/stores/simulator-store';
+import { useMultiSimulationCategory } from '@/lib/stores/simulator-store';
 
 interface DataListCardProps {
   chartData: MultiSimulationChartData;
@@ -85,17 +85,17 @@ interface MultiSimulationDataListSectionProps {
 }
 
 function MultiSimulationDataListSection({ chartData, selectedAge }: MultiSimulationDataListSectionProps) {
-  const resultsCategory = useResultsCategory();
+  const resultsCategory = useMultiSimulationCategory();
 
   const props: DataListCardProps = { chartData, selectedAge };
   switch (resultsCategory) {
-    case SimulationCategory.Portfolio:
+    case MultiSimulationCategory.Portfolio:
       return (
         <div className="grid grid-cols-1 gap-2">
           <PortfolioDataListCardV2 {...props} />
         </div>
       );
-    case SimulationCategory.Phases:
+    case MultiSimulationCategory.Phases:
       return (
         <div className="grid grid-cols-1 gap-2">
           <PhasesDataListCardV2 {...props} />

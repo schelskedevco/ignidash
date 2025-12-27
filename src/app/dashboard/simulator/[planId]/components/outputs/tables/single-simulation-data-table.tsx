@@ -9,7 +9,7 @@ import type {
   SingleSimulationContributionsTableRow,
   SingleSimulationWithdrawalsTableRow,
 } from '@/lib/schemas/tables/single-simulation-table-schema';
-import { SimulationCategory } from '@/lib/types/simulation-category';
+import { SingleSimulationCategory } from '@/lib/types/simulation-category';
 import {
   useSingleSimulationPortfolioTableData,
   useSingleSimulationCashFlowTableData,
@@ -17,7 +17,7 @@ import {
   useSingleSimulationTaxesTableData,
   useSingleSimulationContributionsTableData,
   useSingleSimulationWithdrawalsTableData,
-  useResultsCategory,
+  useSingleSimulationCategory,
 } from '@/lib/stores/simulator-store';
 import {
   generatePortfolioTableColumns,
@@ -75,22 +75,22 @@ interface SingleSimulationDataTableProps {
 }
 
 export default function SingleSimulationDataTable({ simulation }: SingleSimulationDataTableProps) {
-  const resultsCategory = useResultsCategory();
+  const resultsCategory = useSingleSimulationCategory();
 
   const props: TableCategoryProps = { simulation };
 
   switch (resultsCategory) {
-    case SimulationCategory.Portfolio:
+    case SingleSimulationCategory.Portfolio:
       return <PortfolioTable {...props} />;
-    case SimulationCategory.CashFlow:
+    case SingleSimulationCategory.CashFlow:
       return <CashFlowTable {...props} />;
-    case SimulationCategory.Returns:
+    case SingleSimulationCategory.Returns:
       return <ReturnsTable {...props} />;
-    case SimulationCategory.Taxes:
+    case SingleSimulationCategory.Taxes:
       return <TaxesTable {...props} />;
-    case SimulationCategory.Contributions:
+    case SingleSimulationCategory.Contributions:
       return <ContributionsTable {...props} />;
-    case SimulationCategory.Withdrawals:
+    case SingleSimulationCategory.Withdrawals:
       return <WithdrawalsTable {...props} />;
   }
 }

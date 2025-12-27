@@ -1,11 +1,13 @@
-export enum SimulationCategory {
+export enum SingleSimulationCategory {
   Portfolio = 'Portfolio',
   CashFlow = 'Cash Flow',
   Taxes = 'Taxes',
   Returns = 'Returns',
   Contributions = 'Contributions',
   Withdrawals = 'Withdrawals',
-  Phases = 'Phases',
 }
 
-export type MultiSimulationCategory = Exclude<SimulationCategory, SimulationCategory.Phases>;
+export enum MultiSimulationCategory {
+  Portfolio = 'Portfolio',
+  Phases = 'Phases',
+}

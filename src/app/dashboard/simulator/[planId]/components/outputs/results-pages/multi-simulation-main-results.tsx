@@ -4,7 +4,7 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import SectionContainer from '@/components/ui/section-container';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/tables/multi-simulation-table-schema';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
-import { SimulationCategory } from '@/lib/types/simulation-category';
+import { SingleSimulationCategory, MultiSimulationCategory } from '@/lib/types/simulation-category';
 import { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 
 import SimulationCategorySelector from '../simulation-category-selector';
@@ -45,8 +45,8 @@ export default function MultiSimulationMainResults({
 }: MultiSimulationMainResultsProps) {
   const availableCategories =
     simulation !== null
-      ? Object.values(SimulationCategory).filter((category) => category !== 'Phases')
-      : [SimulationCategory.Portfolio, SimulationCategory.Phases];
+      ? { mode: 'single' as const, categories: Object.values(SingleSimulationCategory) }
+      : { mode: 'multi' as const, categories: Object.values(MultiSimulationCategory) };
 
   return (
     <>

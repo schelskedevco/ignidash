@@ -1,4 +1,3 @@
-import { SimulationCategory } from '@/lib/types/simulation-category';
 import type {
   SingleSimulationPortfolioTableRow,
   SingleSimulationCashFlowTableRow,
@@ -478,7 +477,7 @@ export abstract class TableDataExtractor {
   // MULTI SIMULATION DATA EXTRACTION
   // ================================
 
-  static extractMultiSimulationData(simulations: MultiSimulationResult, category: SimulationCategory): MultiSimulationTableRow[] {
+  static extractMultiSimulationData(simulations: MultiSimulationResult): MultiSimulationTableRow[] {
     return simulations.simulations.map(([seed, result]) => {
       const { data, context } = result;
 

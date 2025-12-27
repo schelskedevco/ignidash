@@ -1,4 +1,3 @@
-import { SimulationCategory } from '@/lib/types/simulation-category';
 import { SimulationDataExtractor } from '@/lib/calc/data-extractors/simulation-data-extractor';
 import { type Percentiles, StatsUtils } from '@/lib/utils/stats-utils';
 import type { MonteCarloSortMode } from '@/lib/stores/simulator-store';
@@ -43,7 +42,7 @@ export abstract class MultiSimulationAnalyzer {
     const numDataPoints = simulations[0][1]?.data.length;
     if (!numDataPoints) throw new Error('No data points in simulations');
 
-    const tableData = TableDataExtractor.extractMultiSimulationData(multiSimulationResult, SimulationCategory.Portfolio);
+    const tableData = TableDataExtractor.extractMultiSimulationData(multiSimulationResult);
 
     const { min: minFinalPortfolioValue, range: finalPortfolioValueRange } = StatsUtils.getRange(
       tableData,

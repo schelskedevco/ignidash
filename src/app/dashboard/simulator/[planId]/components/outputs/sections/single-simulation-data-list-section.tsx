@@ -8,10 +8,10 @@ import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/componen
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { formatNumber } from '@/lib/utils';
 import Card from '@/components/ui/card';
-import { SimulationCategory } from '@/lib/types/simulation-category';
+import { SingleSimulationCategory } from '@/lib/types/simulation-category';
 import { Subheading } from '@/components/catalyst/heading';
 import { SimulationDataExtractor } from '@/lib/calc/data-extractors/simulation-data-extractor';
-import { useResultsCategory } from '@/lib/stores/simulator-store';
+import { useSingleSimulationCategory } from '@/lib/stores/simulator-store';
 
 function CashFlowTooltip({ taxExemptIncome }: { taxExemptIncome: number }) {
   return (
@@ -348,7 +348,7 @@ interface SingleSimulationDataListSectionProps {
 }
 
 function SingleSimulationDataListSection({ simulation, selectedAge }: SingleSimulationDataListSectionProps) {
-  const resultsCategory = useResultsCategory();
+  const resultsCategory = useSingleSimulationCategory();
 
   const dp = useMemo(() => {
     return simulation.data.find((dp) => {
@@ -364,37 +364,37 @@ function SingleSimulationDataListSection({ simulation, selectedAge }: SingleSimu
 
   const props: DataListCardProps = { dp, selectedAge };
   switch (resultsCategory) {
-    case SimulationCategory.Portfolio:
+    case SingleSimulationCategory.Portfolio:
       return (
         <div className="grid grid-cols-1 gap-2">
           <PortfolioDataListCardV2 {...props} />
         </div>
       );
-    case SimulationCategory.CashFlow:
+    case SingleSimulationCategory.CashFlow:
       return (
         <div className="grid grid-cols-1 gap-2">
           <CashFlowDataListCardV2 {...props} />
         </div>
       );
-    case SimulationCategory.Taxes:
+    case SingleSimulationCategory.Taxes:
       return (
         <div className="grid grid-cols-1 gap-2">
           <TaxesDataListCardV2 {...props} />
         </div>
       );
-    case SimulationCategory.Returns:
+    case SingleSimulationCategory.Returns:
       return (
         <div className="grid grid-cols-1 gap-2">
           <ReturnsDataListCardV2 {...props} />
         </div>
       );
-    case SimulationCategory.Contributions:
+    case SingleSimulationCategory.Contributions:
       return (
         <div className="grid grid-cols-1 gap-2">
           <ContributionsDataListCardV2 {...props} />
         </div>
       );
-    case SimulationCategory.Withdrawals:
+    case SingleSimulationCategory.Withdrawals:
       return (
         <div className="grid grid-cols-1 gap-2">
           <WithdrawalsDataListCardV2 {...props} />

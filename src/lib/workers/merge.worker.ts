@@ -8,7 +8,6 @@ import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 import { ChartDataExtractor } from '@/lib/calc/data-extractors/chart-data-extractor';
 import { TableDataExtractor } from '@/lib/calc/data-extractors/table-data-extractor';
 import { KeyMetricsExtractor } from '@/lib/calc/data-extractors/key-metrics-extractor';
-import { SimulationCategory } from '@/lib/types/simulation-category';
 import type { MultiSimulationResult } from '@/lib/calc/simulation-engine';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 
@@ -39,11 +38,7 @@ const mergeAPI = {
     return { handle };
   },
 
-  async getDerivedMultiSimulationData(
-    handle: string,
-    sortMode: MonteCarloSortMode,
-    category: SimulationCategory
-  ): Promise<DerivedMultiSimulationData> {
+  async getDerivedMultiSimulationData(handle: string, sortMode: MonteCarloSortMode): Promise<DerivedMultiSimulationData> {
     if (!cache || cache.handle !== handle) {
       console.error('Cache miss or invalid handle in getDerivedMultiSimulationData');
       throw new Error('Simulation not found');
@@ -54,7 +49,7 @@ const mergeAPI = {
     const analysis = MultiSimulationAnalyzer.analyze(res, sortMode);
     const keyMetrics = KeyMetricsExtractor.extractMultiSimulationMetrics(res);
 
-    const tableData = TableDataExtractor.extractMultiSimulationData(res, category);
+    const tableData = TableDataExtractor.extractMultiSimulationData(res);
     const yearlyTableData = TableDataExtractor.extractMultiSimulationYearlyAggregateData(res);
 
     const portfolioData = ChartDataExtractor.extractMultiSimulationPortfolioChartData(res);

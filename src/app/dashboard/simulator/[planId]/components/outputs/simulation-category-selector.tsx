@@ -5,7 +5,7 @@ import { ChevronRightIcon } from '@heroicons/react/20/solid';
 import { track } from '@vercel/analytics';
 
 import { cn } from '@/lib/utils';
-import { SimulationCategory } from '@/lib/types/simulation-category';
+import { SingleSimulationCategory, MultiSimulationCategory } from '@/lib/types/simulation-category';
 import {
   Dropdown,
   DropdownButton,
@@ -19,8 +19,10 @@ import {
   useMonteCarloSortMode,
   useUpdateMonteCarloSortMode,
   useQuickSelectPercentile,
-  useResultsCategory,
-  useUpdateResultsCategory,
+  useSingleSimulationCategory,
+  useMultiSimulationCategory,
+  useUpdateSingleSimulationCategory,
+  useUpdateMultiSimulationCategory,
 } from '@/lib/stores/simulator-store';
 import { formatChartString } from '@/lib/utils';
 import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
@@ -58,9 +60,13 @@ function DrillDownBreadcrumb({ removeActiveSeed, activeSeed }: DrillDownBreadcru
   );
 }
 
+type AvailableCategories =
+  | { mode: 'single'; categories: SingleSimulationCategory[] }
+  | { mode: 'multi'; categories: MultiSimulationCategory[] };
+
 interface SimulationCategorySelectorProps {
   className?: string;
-  availableCategories: SimulationCategory[];
+  availableCategories: AvailableCategories;
   handlePercentileChange?: (percentile: 'p10' | 'p25' | 'p50' | 'p75' | 'p90' | null) => void;
   removeActiveSeed?: () => void;
   activeSeed?: number | undefined;
@@ -89,8 +95,19 @@ export default function SimulationCategorySelector({
   const monteCarloSortMode = useMonteCarloSortMode();
   const updateMonteCarloSortMode = useUpdateMonteCarloSortMode();
 
-  const updateResultsCategory = useUpdateResultsCategory();
-  const resultsCategory = useResultsCategory();
+  const updateSingleSimulationCategory = useUpdateSingleSimulationCategory();
+  const updateMultiSimulationCategory = useUpdateMultiSimulationCategory();
+  const updateResultsCategory = (category: SingleSimulationCategory | MultiSimulationCategory) => {
+    if (availableCategories.mode === 'single') {
+      updateSingleSimulationCategory(category as SingleSimulationCategory);
+    } else {
+      updateMultiSimulationCategory(category as MultiSimulationCategory);
+    }
+  };
+
+  const singleSimulationCategory = useSingleSimulationCategory();
+  const multiSimulationCategory = useMultiSimulationCategory();
+  const resultsCategory = availableCategories.mode === 'single' ? singleSimulationCategory : multiSimulationCategory;
 
   const withScrollPreservation = useScrollPreservation();
 
@@ -98,7 +115,7 @@ export default function SimulationCategorySelector({
     <div className="flex flex-col">
       <div className="flex items-center justify-between">
         <div className={cn('isolate -ml-1 flex gap-x-2 overflow-x-auto px-1 py-2', className)}>
-          {availableCategories.map((category) => (
+          {availableCategories.categories.map((category) => (
             <button
               key={category}
               onClick={withScrollPreservation(() => {

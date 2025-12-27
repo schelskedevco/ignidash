@@ -38,7 +38,7 @@ import type {
   SingleSimulationWithdrawalsChartDataPoint,
   MultiSimulationChartData,
 } from '@/lib/types/chart-data-points';
-import { SimulationCategory } from '@/lib/types/simulation-category';
+import { SingleSimulationCategory, MultiSimulationCategory } from '@/lib/types/simulation-category';
 import { usePrevious } from '@/hooks/use-previous';
 
 // ================================
@@ -72,7 +72,8 @@ interface SimulatorState {
     selectedSeedFromTable: number | null;
     selectedSeedFromQuickPercentile: number | null;
     simulationStatus: SimulationStatus;
-    category: SimulationCategory;
+    singleSimulationCategory: SingleSimulationCategory;
+    multiSimulationCategory: MultiSimulationCategory;
     monteCarloSortMode: MonteCarloSortMode;
     chartTimeFrameToShow: ChartTimeFrame;
     cachedKeyMetrics: KeyMetrics | null;
@@ -97,7 +98,8 @@ interface SimulatorState {
     updateSelectedSeedFromTable: (seed: number | null) => void;
     updateSelectedSeedFromQuickPercentile: (seed: number | null) => void;
     updateSimulationStatus: (status: SimulationStatus) => void;
-    updateCategory: (category: SimulationCategory) => void;
+    updateSingleSimulationCategory: (category: SingleSimulationCategory) => void;
+    updateMultiSimulationCategory: (category: MultiSimulationCategory) => void;
     updateMonteCarloSortMode: (value: MonteCarloSortMode) => void;
     updateChartTimeFrameToShow: (value: ChartTimeFrame) => void;
     updateCachedKeyMetrics: (metrics: KeyMetrics | null) => void;
@@ -122,7 +124,8 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
     selectedSeedFromTable: null,
     selectedSeedFromQuickPercentile: null,
     simulationStatus: 'none',
-    category: SimulationCategory.Portfolio,
+    singleSimulationCategory: SingleSimulationCategory.Portfolio,
+    multiSimulationCategory: MultiSimulationCategory.Portfolio,
     monteCarloSortMode: 'finalPortfolioValue',
     chartTimeFrameToShow: 'twentyYears',
     cachedKeyMetrics: null,
@@ -165,9 +168,13 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               state.results.simulationStatus = status;
             }),
-          updateCategory: (category) =>
+          updateSingleSimulationCategory: (category) =>
             set((state) => {
-              state.results.category = category;
+              state.results.singleSimulationCategory = category;
+            }),
+          updateMultiSimulationCategory: (category) =>
+            set((state) => {
+              state.results.multiSimulationCategory = category;
             }),
           updateMonteCarloSortMode: (value) =>
             set((state) => {
@@ -201,7 +208,7 @@ export const useSimulatorStore = create<SimulatorState>()(
       })),
       {
         name: 'quick-plan-storage',
-        version: 10,
+        version: 11,
         migrate: () => ({ ...defaultState }),
         partialize: (state) => {
           const baseResult = { preferences: state.preferences };
@@ -229,7 +236,8 @@ export const useQuickSelectPercentile = () => useSimulatorStore((state) => state
 export const useSelectedSeedFromTable = () => useSimulatorStore((state) => state.results.selectedSeedFromTable);
 export const useSelectedSeedFromQuickPercentile = () => useSimulatorStore((state) => state.results.selectedSeedFromQuickPercentile);
 export const useSimulationStatus = () => useSimulatorStore((state) => state.results.simulationStatus);
-export const useResultsCategory = () => useSimulatorStore((state) => state.results.category);
+export const useSingleSimulationCategory = () => useSimulatorStore((state) => state.results.singleSimulationCategory);
+export const useMultiSimulationCategory = () => useSimulatorStore((state) => state.results.multiSimulationCategory);
 export const useMonteCarloSortMode = () => useSimulatorStore((state) => state.results.monteCarloSortMode);
 export const useChartTimeFrameToShow = () => useSimulatorStore((state) => state.results.chartTimeFrameToShow);
 export const useCachedKeyMetrics = () => useSimulatorStore((state) => state.results.cachedKeyMetrics);
@@ -245,7 +253,8 @@ export const useUpdateSelectedSeedFromTable = () => useSimulatorStore((state) =>
 export const useUpdateSelectedSeedFromQuickPercentile = () =>
   useSimulatorStore((state) => state.actions.updateSelectedSeedFromQuickPercentile);
 export const useUpdateSimulationStatus = () => useSimulatorStore((state) => state.actions.updateSimulationStatus);
-export const useUpdateResultsCategory = () => useSimulatorStore((state) => state.actions.updateCategory);
+export const useUpdateSingleSimulationCategory = () => useSimulatorStore((state) => state.actions.updateSingleSimulationCategory);
+export const useUpdateMultiSimulationCategory = () => useSimulatorStore((state) => state.actions.updateMultiSimulationCategory);
 export const useUpdateShowReferenceLines = () => useSimulatorStore((state) => state.actions.updateShowReferenceLines);
 export const useUpdateSidebarCollapsed = () => useSimulatorStore((state) => state.actions.updateSidebarCollapsed);
 export const useUpdateMonteCarloSortMode = () => useSimulatorStore((state) => state.actions.updateMonteCarloSortMode);
@@ -377,10 +386,9 @@ export const useMultiSimulationResult = (
   const prevHandle = usePrevious(handle);
 
   const sortMode = useMonteCarloSortMode();
-  const category = useResultsCategory();
   const { data: { analysis, tableData, yearlyTableData, chartData, keyMetrics } = {} } = useSWR(
-    handle ? ['derived', handle, sortMode, category] : null,
-    () => mergeWorker.getDerivedMultiSimulationData(handle!, sortMode, category),
+    handle ? ['derived', handle, sortMode] : null,
+    () => mergeWorker.getDerivedMultiSimulationData(handle!, sortMode),
     { ...swrOptions, keepPreviousData: prevHandle.current === handle }
   );
 

@@ -5,9 +5,7 @@ import {
   useSelectedSeedFromQuickPercentile,
   useUpdateQuickSelectPercentile,
   useUpdateSelectedSeedFromTable,
-  useUpdateResultsCategory,
 } from '@/lib/stores/simulator-store';
-import { SimulationCategory } from '@/lib/types/simulation-category';
 
 export function useActiveSeed() {
   const selectedSeedFromTable = useSelectedSeedFromTable();
@@ -27,11 +25,9 @@ export function useActiveSeed() {
 export function useRemoveActiveSeed() {
   const updateQuickSelectPercentile = useUpdateQuickSelectPercentile();
   const updateSelectedSeedFromTable = useUpdateSelectedSeedFromTable();
-  const updateResultsCategory = useUpdateResultsCategory();
 
   return useCallback(() => {
     updateQuickSelectPercentile(null);
     updateSelectedSeedFromTable(null);
-    updateResultsCategory(SimulationCategory.Portfolio);
-  }, [updateResultsCategory, updateQuickSelectPercentile, updateSelectedSeedFromTable]);
+  }, [updateQuickSelectPercentile, updateSelectedSeedFromTable]);
 }

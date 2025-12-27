@@ -10,10 +10,10 @@ import {
   useSingleSimulationTaxesChartData,
   useSingleSimulationContributionsChartData,
   useSingleSimulationWithdrawalsChartData,
-  useResultsCategory,
+  useSingleSimulationCategory,
 } from '@/lib/stores/simulator-store';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
-import { SimulationCategory } from '@/lib/types/simulation-category';
+import { SingleSimulationCategory } from '@/lib/types/simulation-category';
 
 import SingleSimulationPortfolioAreaChartCard from './single-simulation-portfolio-area-chart-card';
 import SingleSimulationPortfolioPieChartCard from './single-simulation-portfolio-pie-chart-card';
@@ -249,23 +249,23 @@ interface SingleSimulationChartProps {
 }
 
 export default function SingleSimulationChartCard({ simulation, keyMetrics, onAgeSelect, selectedAge }: SingleSimulationChartProps) {
-  const resultsCategory = useResultsCategory();
+  const resultsCategory = useSingleSimulationCategory();
 
   const startAge = simulation.context.startAge;
   const props: ChartsCategoryProps = { simulation, keyMetrics, onAgeSelect, selectedAge, startAge };
 
   switch (resultsCategory) {
-    case SimulationCategory.Portfolio:
+    case SingleSimulationCategory.Portfolio:
       return <PortfolioCharts {...props} />;
-    case SimulationCategory.CashFlow:
+    case SingleSimulationCategory.CashFlow:
       return <CashFlowCharts {...props} />;
-    case SimulationCategory.Taxes:
+    case SingleSimulationCategory.Taxes:
       return <TaxesCharts {...props} />;
-    case SimulationCategory.Returns:
+    case SingleSimulationCategory.Returns:
       return <ReturnsCharts {...props} />;
-    case SimulationCategory.Contributions:
+    case SingleSimulationCategory.Contributions:
       return <ContributionsCharts {...props} />;
-    case SimulationCategory.Withdrawals:
+    case SingleSimulationCategory.Withdrawals:
       return <WithdrawalsCharts {...props} />;
     default:
       return (
