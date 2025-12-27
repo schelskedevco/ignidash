@@ -11,6 +11,7 @@ import {
   accountFromConvex,
   contributionFromConvex,
   baseContributionFromConvex,
+  glidePathFromConvex,
 } from '@/lib/utils/convex-to-zod-transformers';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
@@ -111,6 +112,16 @@ export const useInvestmentData = (accountId: string | null) => {
   const planId = useSelectedPlanId();
   const q = useQuery(api.account.getInvestmentAccount, { planId, accountId });
   return useMemo(() => (q ? accountFromConvex(q) : null), [q]);
+};
+
+// Glide Path
+export const useGlidePathData = () => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.glide_path.get, { planId });
+  return {
+    data: useMemo(() => (q ? glidePathFromConvex(q) : undefined), [q]),
+    isLoading: q === undefined,
+  };
 };
 
 // Contribution Rules
