@@ -6,7 +6,7 @@ import { useState, RefObject } from 'react';
 import { LandmarkIcon, PiggyBankIcon, TrendingUpIcon, SettingsIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
-import { useAccountsData } from '@/hooks/use-convex-data';
+import { useAccountsData, useGlidePathData } from '@/hooks/use-convex-data';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
@@ -23,6 +23,7 @@ import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-butt
 
 import AccountDialog from '../dialogs/account-dialog';
 import SavingsDialog from '../dialogs/savings-dialog';
+import GlidePathDialog from '../dialogs/glide-path-dialog';
 
 function getAccountDesc(account: AccountInputs) {
   return (
@@ -55,11 +56,15 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
   const [savingsDialogOpen, setSavingsDialogOpen] = useState(false);
   const [selectedSavings, setSelectedSavings] = useState<AccountInputs | null>(null);
 
+  const [glidePathDialogOpen, setGlidePathDialogOpen] = useState(false);
+
   const [accountToDelete, setAccountToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const { data: accounts, isLoading } = useAccountsData();
   const numAccounts = Object.keys(accounts).length;
   const hasAccounts = numAccounts > 0;
+
+  const { data: glidePath } = useGlidePathData();
 
   const m = useMutation(api.account.deleteAccount);
   const deleteAccount = async (accountId: string) => {
@@ -74,6 +79,10 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
   const handleSavingsDialogClose = () => {
     setSelectedSavings(null);
     setSavingsDialogOpen(false);
+  };
+
+  const handleGlidePathDialogClose = () => {
+    setGlidePathDialogOpen(false);
   };
 
   const handleDropdownClickEdit = (account: AccountInputs) => {
@@ -108,7 +117,7 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
                 ))}
               </ul>
               <div className="mt-auto flex items-center justify-end gap-x-2">
-                <Button outline onClick={() => {}}>
+                <Button outline onClick={() => setGlidePathDialogOpen(true)}>
                   <SettingsIcon data-slot="icon" />
                 </Button>
                 <Button outline onClick={() => setSavingsDialogOpen(true)} disabled={!!selectedSavings}>
@@ -148,6 +157,9 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
       </Dialog>
       <Dialog size="xl" open={savingsDialogOpen} onClose={handleSavingsDialogClose}>
         <SavingsDialog selectedAccount={selectedSavings} numAccounts={numAccounts} onClose={handleSavingsDialogClose} />
+      </Dialog>
+      <Dialog size="xl" open={glidePathDialogOpen} onClose={handleGlidePathDialogClose}>
+        <GlidePathDialog glidePath={glidePath} accounts={Object.values(accounts)} onClose={handleGlidePathDialogClose} />
       </Dialog>
       <DeleteDataItemAlert dataToDelete={accountToDelete} setDataToDelete={setAccountToDelete} deleteData={deleteAccount} />
     </>
