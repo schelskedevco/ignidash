@@ -575,9 +575,9 @@ export class PortfolioProcessor {
 
     const startAllocation = this.initialAssetAllocation ?? DEFAULT_ASSET_ALLOCATION;
     const targetAllocation: AssetAllocation = {
-      stocks: this.glidePath.targetStockAllocation,
-      bonds: this.glidePath.targetBondAllocation,
-      cash: this.glidePath.targetCashAllocation,
+      stocks: this.glidePath.targetStockAllocation / 100,
+      bonds: this.glidePath.targetBondAllocation / 100,
+      cash: this.glidePath.targetCashAllocation / 100,
     };
 
     let progress: number;
