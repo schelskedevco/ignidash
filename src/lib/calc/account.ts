@@ -186,7 +186,6 @@ export class SavingsAccount extends Account {
 }
 
 export abstract class InvestmentAccount extends Account {
-  private initialPercentBonds: number;
   private currPercentBonds: number;
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
@@ -195,7 +194,6 @@ export abstract class InvestmentAccount extends Account {
       bonds: 0,
       cash: 0,
     });
-    this.initialPercentBonds = data.percentBonds / 100;
     this.currPercentBonds = data.percentBonds / 100;
   }
 
@@ -241,7 +239,7 @@ export abstract class InvestmentAccount extends Account {
     const newStocksValue = currentStocksValue + stockReturnsAmount;
 
     this.balance = newBondsValue + newStocksValue;
-    this.currPercentBonds = this.balance ? newBondsValue / this.balance : this.initialPercentBonds;
+    this.currPercentBonds = this.balance ? newBondsValue / this.balance : this.currPercentBonds;
 
     return { returnsForPeriod: { cash: 0, bonds: bondReturnsAmount, stocks: stockReturnsAmount }, totalReturns: { ...this.totalReturns } };
   }
