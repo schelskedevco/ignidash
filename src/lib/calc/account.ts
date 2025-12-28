@@ -1,6 +1,14 @@
 import type { AccountInputs, InvestmentAccountType } from '@/lib/schemas/inputs/account-form-schema';
 
-import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation, AssetYieldRates, AssetYieldAmounts, TaxCategory } from './asset';
+import type {
+  AssetReturnRates,
+  AssetReturnAmounts,
+  AssetAllocation,
+  AssetValues,
+  AssetYieldRates,
+  AssetYieldAmounts,
+  TaxCategory,
+} from './asset';
 
 type WithdrawalType = 'rmd' | 'regular';
 type ContributionType = 'self' | 'employer';
@@ -98,12 +106,12 @@ export abstract class Account {
   abstract getAccountData(): AccountData;
   abstract applyReturns(returns: AssetReturnRates): { returnsForPeriod: AssetReturnAmounts; totalReturns: AssetReturnAmounts };
   abstract applyYields(yields: AssetYieldRates): { yieldsForPeriod: AssetYieldAmounts; totalYields: AssetYieldAmounts };
-  abstract applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): void;
+  abstract applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): AssetValues;
   abstract applyWithdrawal(
     amount: number,
     type: WithdrawalType,
     withdrawalAllocation: AssetAllocation
-  ): { realizedGains: number; earningsWithdrawn: number };
+  ): AssetValues & { realizedGains: number; earningsWithdrawn: number };
 }
 
 export class SavingsAccount extends Account {
@@ -164,24 +172,26 @@ export class SavingsAccount extends Account {
     };
   }
 
-  applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): void {
+  applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): AssetValues {
     this.balance += amount;
     this.totalContributions += amount;
     if (type === 'employer') this.totalEmployerMatch += amount;
+
+    return { stocks: 0, bonds: 0, cash: amount };
   }
 
   applyWithdrawal(
     amount: number,
     type: WithdrawalType,
     withdrawalAllocation: AssetAllocation
-  ): { realizedGains: number; earningsWithdrawn: number } {
+  ): AssetValues & { realizedGains: number; earningsWithdrawn: number } {
     if (amount > this.balance) throw new Error('Insufficient funds for withdrawal');
     if (type === 'rmd') throw new Error('Savings account should not have RMDs');
 
     this.balance -= amount;
     this.totalWithdrawals += amount;
 
-    return { realizedGains: 0, earningsWithdrawn: 0 };
+    return { stocks: 0, bonds: 0, cash: amount, realizedGains: 0, earningsWithdrawn: 0 };
   }
 }
 
@@ -265,9 +275,9 @@ export abstract class InvestmentAccount extends Account {
     };
   }
 
-  protected applyContributionShared(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): void {
+  protected applyContributionShared(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): AssetValues {
     if (amount < 0) throw new Error('Contribution amount must be non-negative');
-    if (amount === 0) return;
+    if (amount === 0) return { stocks: 0, bonds: 0, cash: 0 };
 
     const currentBondsValue = this.balance * this.currPercentBonds;
     const currentStocksValue = this.balance * (1 - this.currPercentBonds);
@@ -288,11 +298,13 @@ export abstract class InvestmentAccount extends Account {
 
     this.totalContributions += amount;
     if (type === 'employer') this.totalEmployerMatch += amount;
+
+    return { stocks: stockContribution, bonds: bondContribution, cash: 0 };
   }
 
-  protected applyWithdrawalShared(amount: number, type: WithdrawalType, withdrawalAllocation: AssetAllocation): void {
+  protected applyWithdrawalShared(amount: number, type: WithdrawalType, withdrawalAllocation: AssetAllocation): AssetValues {
     if (amount < 0) throw new Error('Withdrawal amount must be non-negative');
-    if (amount === 0) return;
+    if (amount === 0) return { stocks: 0, bonds: 0, cash: 0 };
     if (amount > this.balance) throw new Error('Insufficient funds for withdrawal');
 
     const currentBondsValue = this.balance * this.currPercentBonds;
@@ -315,6 +327,8 @@ export abstract class InvestmentAccount extends Account {
 
     this.totalWithdrawals += amount;
     if (type === 'rmd') this.totalRmds += amount;
+
+    return { stocks: stockWithdrawal, bonds: bondWithdrawal, cash: 0 };
   }
 }
 
@@ -332,16 +346,17 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
     return this.costBasis;
   }
 
-  applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): void {
-    super.applyContributionShared(amount, type, contributionAllocation);
+  applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): AssetValues {
+    const { stocks, bonds, cash } = super.applyContributionShared(amount, type, contributionAllocation);
     this.costBasis += amount;
+    return { stocks, bonds, cash };
   }
 
   applyWithdrawal(
     amount: number,
     type: WithdrawalType,
     withdrawalAllocation: AssetAllocation
-  ): { realizedGains: number; earningsWithdrawn: number } {
+  ): AssetValues & { realizedGains: number; earningsWithdrawn: number } {
     const basisProportion = this.costBasis / this.balance;
     const basisWithdrawn = Math.min(amount * basisProportion, this.costBasis);
     this.costBasis -= basisWithdrawn;
@@ -349,9 +364,9 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
     const realizedGains = amount - basisWithdrawn;
     this.totalRealizedGains += realizedGains;
 
-    super.applyWithdrawalShared(amount, type, withdrawalAllocation);
+    const { stocks, bonds, cash } = super.applyWithdrawalShared(amount, type, withdrawalAllocation);
 
-    return { realizedGains, earningsWithdrawn: 0 };
+    return { stocks, bonds, cash, realizedGains, earningsWithdrawn: 0 };
   }
 }
 
@@ -362,17 +377,17 @@ export class TaxDeferredAccount extends InvestmentAccount {
     super(data);
   }
 
-  applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): void {
-    super.applyContributionShared(amount, type, contributionAllocation);
+  applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): AssetValues {
+    return super.applyContributionShared(amount, type, contributionAllocation);
   }
 
   applyWithdrawal(
     amount: number,
     type: WithdrawalType,
     withdrawalAllocation: AssetAllocation
-  ): { realizedGains: number; earningsWithdrawn: number } {
-    super.applyWithdrawalShared(amount, type, withdrawalAllocation);
-    return { realizedGains: 0, earningsWithdrawn: 0 };
+  ): AssetValues & { realizedGains: number; earningsWithdrawn: number } {
+    const { stocks, bonds, cash } = super.applyWithdrawalShared(amount, type, withdrawalAllocation);
+    return { stocks, bonds, cash, realizedGains: 0, earningsWithdrawn: 0 };
   }
 }
 
@@ -390,24 +405,25 @@ export class TaxFreeAccount extends InvestmentAccount {
     return this.contributionBasis;
   }
 
-  applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): void {
-    super.applyContributionShared(amount, type, contributionAllocation);
+  applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): AssetValues {
+    const { stocks, bonds, cash } = super.applyContributionShared(amount, type, contributionAllocation);
     this.contributionBasis += amount;
+    return { stocks, bonds, cash };
   }
 
   applyWithdrawal(
     amount: number,
     type: WithdrawalType,
     withdrawalAllocation: AssetAllocation
-  ): { realizedGains: number; earningsWithdrawn: number } {
+  ): AssetValues & { realizedGains: number; earningsWithdrawn: number } {
     const contributionWithdrawn = Math.min(amount, this.contributionBasis);
     this.contributionBasis -= contributionWithdrawn;
 
     const earningsWithdrawn = amount - contributionWithdrawn;
     this.totalEarningsWithdrawn += earningsWithdrawn;
 
-    super.applyWithdrawalShared(amount, type, withdrawalAllocation);
+    const { stocks, bonds, cash } = super.applyWithdrawalShared(amount, type, withdrawalAllocation);
 
-    return { earningsWithdrawn, realizedGains: 0 };
+    return { stocks, bonds, cash, earningsWithdrawn, realizedGains: 0 };
   }
 }
