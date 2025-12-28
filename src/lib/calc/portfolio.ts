@@ -1,4 +1,5 @@
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
+import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-schema';
 
 import {
   type Account,
@@ -8,8 +9,16 @@ import {
   TaxFreeAccount,
   type AccountDataWithTransactions,
 } from './account';
-import type { SimulationState } from './simulation-engine';
-import type { AssetReturnRates, AssetReturnAmounts, AssetAllocation, AssetYieldRates, AssetYieldAmounts, TaxCategory } from './asset';
+import type { SimulationState, SimulationContext } from './simulation-engine';
+import type {
+  AssetReturnRates,
+  AssetReturnAmounts,
+  AssetAllocation,
+  AssetValues,
+  AssetYieldRates,
+  AssetYieldAmounts,
+  TaxCategory,
+} from './asset';
 import { ContributionRules } from './contribution-rules';
 import type { IncomesData } from './incomes';
 import type { ExpensesData } from './expenses';
@@ -27,8 +36,10 @@ interface WithdrawalOrderItem {
 
 const EXTRA_SAVINGS_ACCOUNT_ID = '54593a0d-7b4f-489d-a5bd-42500afba532';
 const RMD_SAVINGS_ACCOUNT_ID = 'd7288042-1f83-4e50-9a6a-b1ef7a6191cc';
+const DEFAULT_ASSET_ALLOCATION = { stocks: 0.6, bonds: 0.4, cash: 0 };
 
 export class PortfolioProcessor {
+  private initialAssetAllocation: AssetAllocation | null;
   private extraSavingsAccount: SavingsAccount;
   private rmdSavingsAccount: SavingsAccount;
   private monthlyData: PortfolioData[] = [];
@@ -36,8 +47,11 @@ export class PortfolioProcessor {
 
   constructor(
     private simulationState: SimulationState,
-    private contributionRules: ContributionRules
+    private simulationContext: SimulationContext,
+    private contributionRules: ContributionRules,
+    private glidePath?: GlidePathInputs
   ) {
+    this.initialAssetAllocation = this.simulationState.portfolio.getWeightedAssetAllocation();
     this.extraSavingsAccount = new SavingsAccount({
       type: 'savings' as const,
       id: EXTRA_SAVINGS_ACCOUNT_ID,
@@ -215,10 +229,11 @@ export class PortfolioProcessor {
         continue;
       }
 
-      contributeToAccount.applyContribution(contributionAmount, 'self');
+      const contributionAllocation = this.getAllocationForContribution(contributionAmount + employerMatchAmount);
+      contributeToAccount.applyContribution(contributionAmount, 'self', contributionAllocation);
       byAccount[contributeToAccountID] = contributionAmount + employerMatchAmount;
 
-      if (employerMatchAmount > 0) contributeToAccount.applyContribution(employerMatchAmount, 'employer');
+      if (employerMatchAmount > 0) contributeToAccount.applyContribution(employerMatchAmount, 'employer', contributionAllocation);
       employerMatchByAccount[contributeToAccountID] = employerMatchAmount;
       employerMatchForPeriod += employerMatchAmount;
 
@@ -241,7 +256,8 @@ export class PortfolioProcessor {
             this.simulationState.portfolio.addExtraSavingsAccount(this.extraSavingsAccount);
           }
 
-          this.extraSavingsAccount.applyContribution(remainingToContribute, 'self');
+          const contributionAllocation = this.getAllocationForContribution(remainingToContribute);
+          this.extraSavingsAccount.applyContribution(remainingToContribute, 'self', contributionAllocation);
           byAccount[this.extraSavingsAccount.getAccountID()] =
             (byAccount[this.extraSavingsAccount.getAccountID()] || 0) + remainingToContribute;
 
@@ -300,7 +316,8 @@ export class PortfolioProcessor {
 
         const withdrawFromThisAccount = Math.min(remainingToWithdraw, maxWithdrawable);
 
-        const { realizedGains, earningsWithdrawn } = account.applyWithdrawal(withdrawFromThisAccount, 'regular');
+        const withdrawalAllocation = this.getAllocationForWithdrawal(withdrawFromThisAccount);
+        const { realizedGains, earningsWithdrawn } = account.applyWithdrawal(withdrawFromThisAccount, 'regular', withdrawalAllocation);
         realizedGainsByAccount[account.getAccountID()] = realizedGains;
         realizedGainsForPeriod += realizedGains;
         earningsWithdrawnByAccount[account.getAccountID()] = earningsWithdrawn;
@@ -348,7 +365,8 @@ export class PortfolioProcessor {
       const lookupAge = Math.min(Math.floor(age), 120);
       const rmdAmount = account.getBalance() / uniformLifetimeMap[lookupAge];
 
-      const { realizedGains, earningsWithdrawn } = account.applyWithdrawal(rmdAmount, 'rmd');
+      const withdrawalAllocation = this.getAllocationForWithdrawal(rmdAmount);
+      const { realizedGains, earningsWithdrawn } = account.applyWithdrawal(rmdAmount, 'rmd', withdrawalAllocation);
       realizedGainsByAccount[account.getAccountID()] = realizedGains;
       realizedGainsForPeriod += realizedGains;
       earningsWithdrawnByAccount[account.getAccountID()] = earningsWithdrawn;
@@ -368,7 +386,8 @@ export class PortfolioProcessor {
       this.simulationState.portfolio.addRmdSavingsAccount(this.rmdSavingsAccount);
     }
 
-    this.rmdSavingsAccount.applyContribution(totalForPeriod, 'self');
+    const contributionAllocation = this.getAllocationForContribution(totalForPeriod);
+    this.rmdSavingsAccount.applyContribution(totalForPeriod, 'self', contributionAllocation);
     contributionsByAccount[this.rmdSavingsAccount.getAccountID()] =
       (contributionsByAccount[this.rmdSavingsAccount.getAccountID()] || 0) + totalForPeriod;
 
@@ -536,6 +555,118 @@ export class PortfolioProcessor {
       ),
     };
   }
+
+  processRebalance(): void {
+    // TODO: Implement rebalance processing
+  }
+
+  private getTargetAssetAllocation(): AssetAllocation {
+    if (!this.glidePath) {
+      if (!this.initialAssetAllocation) {
+        console.warn('No initial asset allocation available; using default 60/40');
+        return DEFAULT_ASSET_ALLOCATION;
+      }
+      return this.initialAssetAllocation;
+    }
+
+    if (!this.initialAssetAllocation) {
+      console.warn('No initial asset allocation available; using default 60/40 as glide path start');
+    }
+
+    const startAllocation = this.initialAssetAllocation ?? DEFAULT_ASSET_ALLOCATION;
+    const targetAllocation: AssetAllocation = {
+      stocks: this.glidePath.targetStockAllocation,
+      bonds: this.glidePath.targetBondAllocation,
+      cash: this.glidePath.targetCashAllocation,
+    };
+
+    let progress: number;
+
+    switch (this.glidePath.endTimePoint.type) {
+      case 'customAge': {
+        const startAge = this.simulationContext.startAge;
+        const endAge = this.glidePath.endTimePoint.age!;
+        const currentAge = this.simulationState.time.age;
+
+        const totalSpan = endAge - startAge;
+        if (totalSpan <= 0) return targetAllocation;
+
+        progress = (currentAge - startAge) / totalSpan;
+        break;
+      }
+      case 'customDate': {
+        const startDate = this.simulationContext.startDate;
+        const endDate = new Date(this.glidePath.endTimePoint.year!, this.glidePath.endTimePoint.month! - 1, 1);
+        const currentDate = this.simulationState.time.date;
+
+        const totalSpan = endDate.getTime() - startDate.getTime();
+        if (totalSpan <= 0) return targetAllocation;
+
+        progress = (currentDate.getTime() - startDate.getTime()) / totalSpan;
+        break;
+      }
+    }
+
+    progress = Math.max(0, Math.min(1, progress));
+
+    return {
+      stocks: startAllocation.stocks + (targetAllocation.stocks - startAllocation.stocks) * progress,
+      bonds: startAllocation.bonds + (targetAllocation.bonds - startAllocation.bonds) * progress,
+      cash: startAllocation.cash + (targetAllocation.cash - startAllocation.cash) * progress,
+    };
+  }
+
+  private getAllocationForContribution(contributionAmount: number): AssetAllocation {
+    const targetAllocation = this.getTargetAssetAllocation();
+    const { stocks: currStocksValue, bonds: currBondsValue, cash: currCashValue } = this.simulationState.portfolio.getCurrentAssetValues();
+    const currTotalValue = this.simulationState.portfolio.getTotalValue();
+    const newTotalValue = currTotalValue + contributionAmount;
+
+    const targetStocksValue = newTotalValue * targetAllocation.stocks;
+    const targetBondsValue = newTotalValue * targetAllocation.bonds;
+    const targetCashValue = newTotalValue * targetAllocation.cash;
+
+    const stocksNeeded = Math.max(0, targetStocksValue - currStocksValue);
+    const bondsNeeded = Math.max(0, targetBondsValue - currBondsValue);
+    const cashNeeded = Math.max(0, targetCashValue - currCashValue);
+    const totalNeeded = stocksNeeded + bondsNeeded + cashNeeded;
+
+    if (totalNeeded <= 0) {
+      return targetAllocation;
+    }
+
+    return {
+      stocks: stocksNeeded / totalNeeded,
+      bonds: bondsNeeded / totalNeeded,
+      cash: cashNeeded / totalNeeded,
+    };
+  }
+
+  private getAllocationForWithdrawal(withdrawalAmount: number): AssetAllocation {
+    const targetAllocation = this.getTargetAssetAllocation();
+    const { stocks: currStocksValue, bonds: currBondsValue, cash: currCashValue } = this.simulationState.portfolio.getCurrentAssetValues();
+    const currTotalValue = this.simulationState.portfolio.getTotalValue();
+    const newTotalValue = Math.max(0, currTotalValue - withdrawalAmount);
+
+    const targetStocksValue = newTotalValue * targetAllocation.stocks;
+    const targetBondsValue = newTotalValue * targetAllocation.bonds;
+    const targetCashValue = newTotalValue * targetAllocation.cash;
+
+    const stocksExcess = Math.max(0, currStocksValue - targetStocksValue);
+    const bondsExcess = Math.max(0, currBondsValue - targetBondsValue);
+    const cashExcess = Math.max(0, currCashValue - targetCashValue);
+    const totalExcess = stocksExcess + bondsExcess + cashExcess;
+
+    if (totalExcess <= 0) {
+      return targetAllocation;
+    }
+
+    return {
+      stocks: stocksExcess / totalExcess,
+      bonds: bondsExcess / totalExcess,
+      cash: cashExcess / totalExcess,
+    };
+  }
 }
 
 export interface PortfolioData {
@@ -605,6 +736,17 @@ export class Portfolio {
     );
 
     return weightedAllocation;
+  }
+
+  getCurrentAssetValues(): AssetValues {
+    return this.accounts.reduce(
+      (acc, account) => ({
+        stocks: acc.stocks + account.getBalance() * account.getAccountData().assetAllocation.stocks,
+        bonds: acc.bonds + account.getBalance() * account.getAccountData().assetAllocation.bonds,
+        cash: acc.cash + account.getBalance() * account.getAccountData().assetAllocation.cash,
+      }),
+      { stocks: 0, bonds: 0, cash: 0 }
+    );
   }
 
   getAccounts(): Account[] {

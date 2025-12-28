@@ -8,3 +8,4 @@ export type AssetYieldRates = Record<AssetClass, number>;
 export type AssetYieldAmounts = Record<AssetClass, number>;
 
 export type AssetAllocation = Record<AssetClass, number>;
+export type AssetValues = Record<AssetClass, number>;

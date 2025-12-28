@@ -4,7 +4,7 @@ import { ConvexError } from 'convex/values';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useMemo, useState, useEffect } from 'react';
-import { PiggyBankIcon } from 'lucide-react';
+import { RouteIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
@@ -156,7 +156,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
     <>
       <DialogTitle onClose={onClose}>
         <div className="flex items-center gap-4">
-          <PiggyBankIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
+          <RouteIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
           <span>Set Glide Path</span>
         </div>
       </DialogTitle>

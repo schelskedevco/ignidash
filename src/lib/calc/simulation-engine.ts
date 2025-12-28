@@ -73,7 +73,7 @@ export class FinancialSimulationEngine {
     const returnsProcessor = new ReturnsProcessor(simulationState, returnsProvider);
     const incomesProcessor = new IncomesProcessor(simulationState, incomes);
     const expensesProcessor = new ExpensesProcessor(simulationState, expenses);
-    const portfolioProcessor = new PortfolioProcessor(simulationState, contributionRules);
+    const portfolioProcessor = new PortfolioProcessor(simulationState, simulationContext, contributionRules, this.inputs.glidePath);
     const taxProcessor = new TaxProcessor(simulationState, this.inputs.taxSettings.filingStatus);
 
     // Init phase identifier
@@ -95,6 +95,9 @@ export class FinancialSimulationEngine {
       if (monthlyDiscretionaryExpense) expensesProcessor.processDiscretionaryExpense(monthlyDiscretionaryExpense);
 
       if (simulationState.time.month % 12 === 0) {
+        // Process rebalance
+        portfolioProcessor.processRebalance();
+
         // Get annual data from processors
         const annualPortfolioDataBeforeTaxes = portfolioProcessor.getAnnualData();
         const annualIncomesData = incomesProcessor.getAnnualData();
