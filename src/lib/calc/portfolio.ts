@@ -556,9 +556,7 @@ export class PortfolioProcessor {
     };
   }
 
-  processRebalance(): void {
-    // TODO: Implement rebalance processing
-  }
+  processRebalance(): void {}
 
   private getTargetAssetAllocation(): AssetAllocation {
     if (!this.initialAssetAllocation) console.warn('No initial asset allocation available; using default 60/40');
