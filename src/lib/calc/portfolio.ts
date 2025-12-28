@@ -562,7 +562,6 @@ export class PortfolioProcessor {
 
   private getTargetAssetAllocation(): AssetAllocation {
     if (!this.initialAssetAllocation) console.warn('No initial asset allocation available; using default 60/40');
-
     if (!this.glidePath) return this.initialAssetAllocation ?? DEFAULT_ASSET_ALLOCATION;
 
     const startAllocation = this.initialAssetAllocation ?? DEFAULT_ASSET_ALLOCATION;
