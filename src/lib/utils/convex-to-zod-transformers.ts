@@ -152,6 +152,7 @@ export function timelineFromConvex(timeline: Doc<'plans'>['timeline']): Timeline
 export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
   const incomes = Object.fromEntries(plan.incomes.map((income) => [income.id, incomeFromConvex(income)]));
   const accounts = Object.fromEntries(plan.accounts.map((account) => [account.id, accountFromConvex(account)]));
+  const glidePath = glidePathFromConvex(plan.glidePath);
   const expenses = Object.fromEntries(plan.expenses.map((expense) => [expense.id, expenseFromConvex(expense)]));
   const contributionRules = Object.fromEntries(plan.contributionRules.map((rule) => [rule.id, contributionFromConvex(rule)]));
 
@@ -159,6 +160,7 @@ export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
     timeline: timelineFromConvex(plan.timeline),
     incomes,
     accounts,
+    glidePath,
     expenses,
     contributionRules,
     baseContributionRule: baseContributionFromConvex(plan.baseContributionRule),
@@ -327,6 +329,7 @@ export function simulatorToConvex(
 ): Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId' | 'name' | 'isDefault'> {
   const incomes = Object.values(simulator.incomes).map(incomeToConvex);
   const accounts = Object.values(simulator.accounts).map(accountToConvex);
+  const glidePath = simulator.glidePath ? glidePathToConvex(simulator.glidePath) : undefined;
   const expenses = Object.values(simulator.expenses).map(expenseToConvex);
   const contributionRules = Object.values(simulator.contributionRules).map(contributionToConvex);
 
@@ -334,6 +337,7 @@ export function simulatorToConvex(
     timeline: timelineToConvex(simulator.timeline),
     incomes,
     accounts,
+    glidePath,
     expenses,
     contributionRules,
     baseContributionRule: baseContributionToConvex(simulator.baseContributionRule),
