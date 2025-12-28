@@ -631,9 +631,7 @@ export class PortfolioProcessor {
     const cashNeeded = Math.max(0, targetCashValue - currCashValue);
     const totalNeeded = stocksNeeded + bondsNeeded + cashNeeded;
 
-    if (totalNeeded <= 0) {
-      return targetAllocation;
-    }
+    if (totalNeeded <= 0) return targetAllocation;
 
     return {
       stocks: stocksNeeded / totalNeeded,
@@ -657,9 +655,7 @@ export class PortfolioProcessor {
     const cashExcess = Math.max(0, currCashValue - targetCashValue);
     const totalExcess = stocksExcess + bondsExcess + cashExcess;
 
-    if (totalExcess <= 0) {
-      return targetAllocation;
-    }
+    if (totalExcess <= 0) return targetAllocation;
 
     return {
       stocks: stocksExcess / totalExcess,
