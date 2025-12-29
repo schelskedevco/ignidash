@@ -14,7 +14,7 @@ import { accountToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs, isRothAccount, type RothAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import NumberInput from '@/components/ui/number-input';
-import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
+import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
@@ -206,6 +206,7 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
                     max={100}
                   />
                   {percentBondsError && <ErrorMessage>{percentBondsError.message}</ErrorMessage>}
+                  <Description>Modeled as US Treasury bonds, which earn interest taxed as ordinary income.</Description>
                 </Field>
               </div>
             </FieldGroup>
