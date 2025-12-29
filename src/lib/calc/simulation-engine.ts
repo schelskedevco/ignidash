@@ -100,9 +100,6 @@ export class FinancialSimulationEngine {
         const annualIncomesData = incomesProcessor.getAnnualData();
         const annualReturnsData = returnsProcessor.getAnnualData();
 
-        // Process rebalance
-        portfolioProcessor.processRebalance(annualPortfolioDataBeforeTaxes);
-
         // Process taxes
         let annualTaxesData = taxProcessor.process(annualPortfolioDataBeforeTaxes, annualIncomesData, annualReturnsData);
         const { totalTaxesDue, totalTaxesRefund } = annualTaxesData;

@@ -88,6 +88,8 @@ export class PortfolioProcessor {
       shortfallForPeriod,
     } = this.processWithdrawals(grossCashFlow);
 
+    const { realizedGainsFromRebalance } = this.processRebalance();
+
     const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
       {}, // baseAccountData
       contributionsByAccount,
@@ -103,7 +105,7 @@ export class PortfolioProcessor {
         withdrawalsForPeriod,
         contributionsForPeriod,
         employerMatchForPeriod,
-        realizedGainsForPeriod,
+        realizedGainsForPeriod: realizedGainsForPeriod + realizedGainsFromRebalance,
         earningsWithdrawnForPeriod,
         rmdsForPeriod: 0,
         shortfallForPeriod,
@@ -557,7 +559,10 @@ export class PortfolioProcessor {
     };
   }
 
-  processRebalance(annualPortfolioDataBeforeTaxes: PortfolioData): { rebalanceOccurred: boolean; realizedGainsFromRebalance: number } {
+  private processRebalance(): { rebalanceOccurred: boolean; realizedGainsFromRebalance: number } {
+    const skipRebalance = !this.glidePath?.enabled;
+    if (skipRebalance) return { rebalanceOccurred: false, realizedGainsFromRebalance: 0 };
+
     const totalValue = this.simulationState.portfolio.getTotalValue();
     if (totalValue <= 0) return { rebalanceOccurred: false, realizedGainsFromRebalance: 0 };
 
@@ -567,15 +572,11 @@ export class PortfolioProcessor {
     const stocksExcess = currentStocksValue - totalValue * targetAllocation.stocks;
     const bondsExcess = currentBondsValue - totalValue * targetAllocation.bonds;
 
-    const tolerance = 0.1;
-    const withinTolerance = Math.abs(stocksExcess) / totalValue < tolerance && Math.abs(bondsExcess) / totalValue < tolerance;
-    if (withinTolerance) return { rebalanceOccurred: false, realizedGainsFromRebalance: 0 };
-
     const rebalanceOrder: Array<AccountInputs['type']> = ['401k', 'ira', 'hsa', 'roth401k', 'rothIra', 'taxableBrokerage'];
 
     let remainingStocksExcess = stocksExcess;
     let remainingBondsExcess = bondsExcess;
-    let totalRealizedGains = 0;
+    let realizedGainsFromRebalance = 0;
 
     for (const accountType of rebalanceOrder) {
       if (Math.abs(remainingStocksExcess) < 1 && Math.abs(remainingBondsExcess) < 1) break;
@@ -590,13 +591,13 @@ export class PortfolioProcessor {
 
         const rebalance = account.applyRebalance(remainingStocksExcess, remainingBondsExcess);
 
-        remainingStocksExcess -= rebalance.stocksTraded;
-        remainingBondsExcess -= rebalance.bondsTraded;
-        totalRealizedGains += rebalance.realizedGains;
+        remainingStocksExcess -= rebalance.stocksSold;
+        remainingBondsExcess -= rebalance.bondsSold;
+        realizedGainsFromRebalance += rebalance.realizedGains;
       }
     }
 
-    return { rebalanceOccurred: true, realizedGainsFromRebalance: totalRealizedGains };
+    return { rebalanceOccurred: true, realizedGainsFromRebalance };
   }
 
   private getTargetAssetAllocation(): AssetAllocation {
