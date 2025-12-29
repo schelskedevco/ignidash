@@ -26,17 +26,10 @@ const glidePathTimePointSchema = z
 
 export type GlidePathTimePoint = z.infer<typeof glidePathTimePointSchema>;
 
-export const glidePathSchema = z
-  .object({
-    id: z.string(),
-    endTimePoint: glidePathTimePointSchema,
-    targetStockAllocation: percentageField(0, 100, 'Target stock allocation'),
-    targetBondAllocation: percentageField(0, 100, 'Target bond allocation'),
-    targetCashAllocation: percentageField(0, 100, 'Target cash allocation'),
-  })
-  .refine((data) => data.targetStockAllocation + data.targetBondAllocation + data.targetCashAllocation === 100, {
-    message: 'Target allocations must sum to 100%',
-    path: ['targetStockAllocation', 'targetBondAllocation', 'targetCashAllocation'],
-  });
+export const glidePathSchema = z.object({
+  id: z.string(),
+  endTimePoint: glidePathTimePointSchema,
+  targetBondAllocation: percentageField(0, 100, 'Target bond allocation'),
+});
 
 export type GlidePathInputs = z.infer<typeof glidePathSchema>;
