@@ -323,22 +323,22 @@ export abstract class InvestmentAccount extends Account {
     return { stocks: stockWithdrawal, bonds: bondWithdrawal, cash: 0 };
   }
 
-  applyRebalance(stocksExcess: number, bondsExcess: number): { stocksTraded: number; bondsTraded: number; realizedGains: number } {
+  applyRebalance(stocksExcess: number, bondsExcess: number): { stocksSold: number; bondsSold: number; realizedGains: number } {
     const currentBondsValue = this.balance * this.currPercentBonds;
     const currentStocksValue = this.balance * (1 - this.currPercentBonds);
 
-    let stocksToSell = 0;
-    if (stocksExcess > 0) stocksToSell = Math.min(stocksExcess, currentStocksValue);
+    let stocksSold = 0;
+    if (stocksExcess > 0) stocksSold = Math.min(stocksExcess, currentStocksValue);
 
-    let bondsToSell = 0;
-    if (bondsExcess > 0) bondsToSell = Math.min(bondsExcess, currentBondsValue);
+    let bondsSold = 0;
+    if (bondsExcess > 0) bondsSold = Math.min(bondsExcess, currentBondsValue);
 
-    const newBondsValue = currentBondsValue - bondsToSell + stocksToSell;
+    const newBondsValue = currentBondsValue - bondsSold + stocksSold;
     this.currPercentBonds = this.balance > 0 ? newBondsValue / this.balance : this.currPercentBonds;
 
-    const realizedGains = this.calculateRebalanceGains(stocksToSell, bondsToSell);
+    const realizedGains = this.calculateRebalanceGains(stocksSold, bondsSold);
 
-    return { stocksTraded: stocksToSell, bondsTraded: bondsToSell, realizedGains };
+    return { stocksSold, bondsSold, realizedGains };
   }
 
   protected calculateRebalanceGains(stocksSold: number, bondsSold: number): number {
