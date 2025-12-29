@@ -30,6 +30,7 @@ export const glidePathSchema = z.object({
   id: z.string(),
   endTimePoint: glidePathTimePointSchema,
   targetBondAllocation: percentageField(0, 100, 'Target bond allocation'),
+  enabled: z.boolean().default(false),
 });
 
 export type GlidePathInputs = z.infer<typeof glidePathSchema>;
