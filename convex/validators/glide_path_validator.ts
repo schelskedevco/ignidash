@@ -11,6 +11,7 @@ export const glidePathValidator = v.object({
   id: v.string(),
   endTimePoint: glidePathTimePointValidator,
   targetBondAllocation: v.number(),
+  enabled: v.boolean(),
 });
 
 export type GlidePathTimePoint = Infer<typeof glidePathTimePointValidator>;

@@ -21,6 +21,8 @@ import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/combobox';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
+import { Switch, SwitchField } from '@/components/catalyst/switch';
+import { Divider } from '@/components/catalyst/divider';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
 interface GlidePathDialogProps {
@@ -93,6 +95,8 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
   const endTimePoint = useWatch({ control, name: 'endTimePoint' });
   const endType = endTimePoint.type;
 
+  const disabled = !useWatch({ control, name: 'enabled' });
+
   useEffect(() => {
     if (endType !== 'customDate') {
       unregister('endTimePoint.month');
@@ -148,8 +152,21 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
           <DialogBody>
             <FieldGroup>
               {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              <SwitchField>
+                <Label>Enable glide path</Label>
+                <Description>
+                  Automatically rebalances toward your target allocation, prioritizing tax-advantaged accounts where possible.
+                </Description>
+                <Controller
+                  name="enabled"
+                  defaultValue={false}
+                  control={control}
+                  render={({ field: { onChange, value, name } }) => <Switch name={name} checked={value} onChange={onChange} />}
+                />
+              </SwitchField>
+              <Divider />
               <div className="mt-4 grid grid-cols-2 items-end gap-x-4 gap-y-2">
-                <Field className={getEndColSpan()}>
+                <Field className={getEndColSpan()} disabled={disabled}>
                   <Label htmlFor="endTimePoint.type">Glide Path End</Label>
                   <Select {...register('endTimePoint.type')} id="endTimePoint.type" name="endTimePoint.type">
                     <option value="customDate">Custom Date</option>
@@ -158,7 +175,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                 </Field>
                 {endType === 'customDate' && (
                   <>
-                    <Field>
+                    <Field disabled={disabled}>
                       <Label className="sr-only">Month</Label>
                       <Controller
                         name="endTimePoint.month"
@@ -184,7 +201,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                         )}
                       />
                     </Field>
-                    <Field>
+                    <Field disabled={disabled}>
                       <Label className="sr-only">Year</Label>
                       <Controller
                         name="endTimePoint.year"
@@ -210,7 +227,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                   </>
                 )}
                 {endType === 'customAge' && (
-                  <Field>
+                  <Field disabled={disabled}>
                     <Label className="sr-only">Age</Label>
                     <Controller
                       name="endTimePoint.age"
@@ -235,7 +252,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                   </Field>
                 )}
               </div>
-              <Field>
+              <Field disabled={disabled}>
                 <Label htmlFor="targetBondAllocation">Target Bond Allocation</Label>
                 <NumberInput
                   name="targetBondAllocation"
@@ -246,9 +263,6 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                   suffix="%"
                 />
                 {errors.targetBondAllocation && <ErrorMessage>{errors.targetBondAllocation?.message}</ErrorMessage>}
-                <Description>
-                  Automatically rebalances toward your target allocation, prioritizing tax-advantaged accounts where possible.
-                </Description>
               </Field>
             </FieldGroup>
           </DialogBody>
