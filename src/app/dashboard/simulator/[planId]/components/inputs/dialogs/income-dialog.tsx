@@ -233,7 +233,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
                   {errors.name && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
                 </Field>
                 <Field>
-                  <Label htmlFor="amount">Amount</Label>
+                  <Label htmlFor="amount">Pre-tax Amount</Label>
                   <NumberInput name="amount" control={control} id="amount" inputMode="decimal" placeholder="$85,000" prefix="$" autoFocus />
                   {errors.amount && <ErrorMessage>{errors.amount?.message}</ErrorMessage>}
                 </Field>
