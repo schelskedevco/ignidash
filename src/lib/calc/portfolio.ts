@@ -92,8 +92,8 @@ export class PortfolioProcessor {
 
     const realizedGainsForPeriod = realizedGainsForPeriodBeforeRebalance + realizedGainsFromRebalance;
     const realizedGainsByAccount = { ...realizedGainsByAccountBeforeRebalance };
-    for (const [key, value] of Object.entries(realizedGainsByAccountFromRebalance)) {
-      realizedGainsByAccount[key] = (realizedGainsByAccount[key] ?? 0) + value;
+    for (const [k, v] of Object.entries(realizedGainsByAccountFromRebalance)) {
+      realizedGainsByAccount[k] = (realizedGainsByAccount[k] ?? 0) + v;
     }
 
     const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
