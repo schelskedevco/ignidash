@@ -11,6 +11,7 @@ import { useForm, useWatch, Controller } from 'react-hook-form';
 import { track } from '@vercel/analytics';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
+import { formatNumber } from '@/lib/utils';
 import { glidePathToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
@@ -155,7 +156,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
               <SwitchField>
                 <Label>Enable glide path</Label>
                 <Description>
-                  Automatically rebalances toward your target allocation, prioritizing tax-advantaged accounts where possible.
+                  Automatically rebalances toward your target bond allocation, prioritizing tax-advantaged accounts when possible.
                 </Description>
                 <Controller
                   name="enabled"
@@ -263,6 +264,9 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                   suffix="%"
                 />
                 {errors.targetBondAllocation && <ErrorMessage>{errors.targetBondAllocation?.message}</ErrorMessage>}
+                <Description>
+                  Your starting portfolio-wide bond allocation is <strong>{formatNumber(currBondAllocation * 100, 1)}%</strong>.
+                </Description>
               </Field>
             </FieldGroup>
           </DialogBody>
