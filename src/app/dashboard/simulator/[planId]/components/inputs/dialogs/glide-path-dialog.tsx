@@ -16,14 +16,12 @@ import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/di
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import { glidePathSchema, type GlidePathInputs } from '@/lib/schemas/inputs/glide-path-schema';
 import NumberInput from '@/components/ui/number-input';
-import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
+import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/combobox';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
-import { Divider } from '@/components/catalyst/divider';
-import type { AssetAllocation } from '@/lib/calc/asset';
 
 interface GlidePathDialogProps {
   onClose: () => void;
@@ -35,34 +33,21 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
   const planId = useSelectedPlanId();
   const [glidePath] = useState(_glidePath);
 
-  const {
-    stocks: currStockAllocation,
-    bonds: currBondAllocation,
-    cash: currCashAllocation,
-  } = useMemo(() => {
-    const totalBalance = accounts.reduce((acc, account) => acc + account.balance, 0);
+  const { bonds: currBondAllocation } = useMemo(() => {
+    const investmentAccounts = accounts.filter((account) => account.type !== 'savings');
+    const totalBalance = investmentAccounts.reduce((acc, account) => acc + account.balance, 0);
 
-    return accounts.reduce(
+    return investmentAccounts.reduce(
       (acc, account) => {
         const weight = account.balance / totalBalance;
-
-        if (account.type === 'savings') {
-          return {
-            stocks: acc.stocks,
-            bonds: acc.bonds,
-            cash: acc.cash + weight,
-          };
-        }
-
         const percentBonds = (account.percentBonds ?? 0) / 100;
 
         return {
           stocks: acc.stocks + (1 - percentBonds) * weight,
           bonds: acc.bonds + percentBonds * weight,
-          cash: acc.cash,
         };
       },
-      { stocks: 0, bonds: 0, cash: 0 } as AssetAllocation
+      { stocks: 0, bonds: 0 }
     );
   }, [accounts]);
 
@@ -71,11 +56,9 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
       ({
         id: '',
         endTimePoint: { type: 'customAge' as const, age: 65 },
-        targetStockAllocation: currStockAllocation * 100,
         targetBondAllocation: currBondAllocation * 100,
-        targetCashAllocation: currCashAllocation * 100,
       }) as const satisfies Partial<GlidePathInputs>,
-    [currStockAllocation, currBondAllocation, currCashAllocation]
+    [currBondAllocation]
   );
 
   const defaultValues = glidePath || glidePathDefaultValues;
@@ -252,20 +235,6 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                   </Field>
                 )}
               </div>
-              <Divider />
-              <Field>
-                <Label htmlFor="targetStockAllocation">Target Stock Allocation</Label>
-                <NumberInput
-                  name="targetStockAllocation"
-                  control={control}
-                  id="targetStockAllocation"
-                  inputMode="decimal"
-                  placeholder="50%"
-                  suffix="%"
-                  autoFocus
-                />
-                {errors.targetStockAllocation && <ErrorMessage>{errors.targetStockAllocation?.message}</ErrorMessage>}
-              </Field>
               <Field>
                 <Label htmlFor="targetBondAllocation">Target Bond Allocation</Label>
                 <NumberInput
@@ -277,23 +246,10 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                   suffix="%"
                 />
                 {errors.targetBondAllocation && <ErrorMessage>{errors.targetBondAllocation?.message}</ErrorMessage>}
+                <Description>
+                  Automatically rebalances toward your target allocation, prioritizing tax-advantaged accounts where possible.
+                </Description>
               </Field>
-              <Field>
-                <Label htmlFor="targetCashAllocation">Target Cash Allocation</Label>
-                <NumberInput
-                  name="targetCashAllocation"
-                  control={control}
-                  id="targetCashAllocation"
-                  inputMode="decimal"
-                  placeholder="20%"
-                  suffix="%"
-                />
-                {errors.targetCashAllocation && <ErrorMessage>{errors.targetCashAllocation?.message}</ErrorMessage>}
-              </Field>
-              <Divider />
-              <p className="text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400">
-                Automatically rebalances toward your target allocation, prioritizing tax-advantaged accounts where possible.
-              </p>
             </FieldGroup>
           </DialogBody>
         </Fieldset>

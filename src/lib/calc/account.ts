@@ -282,12 +282,8 @@ export abstract class InvestmentAccount extends Account {
     const currentBondsValue = this.balance * this.currPercentBonds;
     const currentStocksValue = this.balance * (1 - this.currPercentBonds);
 
-    const stockBondAllocationTotal = contributionAllocation.stocks + contributionAllocation.bonds;
-    const bondAllocationPercent =
-      stockBondAllocationTotal > 0 ? contributionAllocation.bonds / stockBondAllocationTotal : this.currPercentBonds;
-
-    const bondContribution = amount * bondAllocationPercent;
-    const stockContribution = amount * (1 - bondAllocationPercent);
+    const bondContribution = amount * contributionAllocation.bonds;
+    const stockContribution = amount * (1 - contributionAllocation.bonds);
 
     const newBondsValue = currentBondsValue + bondContribution;
     const newStocksValue = currentStocksValue + stockContribution;
@@ -310,11 +306,7 @@ export abstract class InvestmentAccount extends Account {
     const currentBondsValue = this.balance * this.currPercentBonds;
     const currentStocksValue = this.balance * (1 - this.currPercentBonds);
 
-    const stockBondAllocationTotal = withdrawalAllocation.stocks + withdrawalAllocation.bonds;
-    const bondAllocationPercent =
-      stockBondAllocationTotal > 0 ? withdrawalAllocation.bonds / stockBondAllocationTotal : this.currPercentBonds;
-
-    const targetBondWithdrawal = Math.min(amount * bondAllocationPercent, currentBondsValue);
+    const targetBondWithdrawal = Math.min(amount * withdrawalAllocation.bonds, currentBondsValue);
     const bondWithdrawal = Math.max(targetBondWithdrawal, amount - currentStocksValue);
     const stockWithdrawal = amount - bondWithdrawal;
 
