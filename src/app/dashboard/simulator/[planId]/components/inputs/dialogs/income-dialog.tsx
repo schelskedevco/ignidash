@@ -499,7 +499,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
                       <DisclosurePanel className="pt-4">
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                           <Field>
-                            <Label htmlFor="growth.growthRate">Annual Growth (real)</Label>
+                            <Label htmlFor="growth.growthRate">Real Annual Growth</Label>
                             <NumberInput
                               name="growth.growthRate"
                               control={control}
