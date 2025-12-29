@@ -164,7 +164,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                   render={({ field: { onChange, value, name } }) => <Switch name={name} checked={value} onChange={onChange} />}
                 />
               </SwitchField>
-              <Divider />
+              <Divider soft />
               <div className="mt-4 grid grid-cols-2 items-end gap-x-4 gap-y-2">
                 <Field className={getEndColSpan()} disabled={disabled}>
                   <Label htmlFor="endTimePoint.type">Glide Path End</Label>

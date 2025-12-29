@@ -102,7 +102,7 @@ export default function GenerateDialog({
                   the selected plan.
                 </Description>
               </Field>
-              <Divider />
+              <Divider soft />
               <Description>
                 {canUseInsights ? (
                   <>
