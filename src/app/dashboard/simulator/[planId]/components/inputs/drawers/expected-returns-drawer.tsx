@@ -111,7 +111,7 @@ export default function ExpectedReturnsDrawer({ setOpen, marketAssumptions }: Ex
                     autoFocus
                   />
                   {errors.stockReturn && <ErrorMessage>{errors.stockReturn?.message}</ErrorMessage>}
-                  <Description>Expected annual return for stocks and other volatile investments.</Description>
+                  <Description>Expected total annual return for stocks including reinvested dividends.</Description>
                 </Field>
                 <Field>
                   <Label htmlFor="stockYield" className="flex w-full items-center justify-between">
@@ -130,7 +130,7 @@ export default function ExpectedReturnsDrawer({ setOpen, marketAssumptions }: Ex
                   </Label>
                   <NumberInput id="bondReturn" control={control} name="bondReturn" inputMode="decimal" placeholder="5%" suffix="%" />
                   {errors.bondReturn && <ErrorMessage>{errors.bondReturn?.message}</ErrorMessage>}
-                  <Description>Expected annual return for bonds.</Description>
+                  <Description>Expected total annual return for bonds including reinvested interest.</Description>
                 </Field>
                 <Field>
                   <Label htmlFor="bondYield" className="flex w-full items-center justify-between">
