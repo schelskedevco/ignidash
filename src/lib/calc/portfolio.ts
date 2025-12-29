@@ -559,12 +559,16 @@ export class PortfolioProcessor {
     };
   }
 
-  private processRebalance(): { rebalanceOccurred: boolean; realizedGainsFromRebalance: number } {
-    const skipRebalance = !this.glidePath?.enabled;
-    if (skipRebalance) return { rebalanceOccurred: false, realizedGainsFromRebalance: 0 };
+  private processRebalance(): {
+    rebalanceOccurred: boolean;
+    realizedGainsFromRebalance: number;
+    realizedGainsFromRebalanceByAccount: Record<string, number>;
+  } {
+    const realizedGainsFromRebalanceByAccount: Record<string, number> = {};
+    if (!this.glidePath?.enabled) return { rebalanceOccurred: false, realizedGainsFromRebalance: 0, realizedGainsFromRebalanceByAccount };
 
     const totalValue = this.simulationState.portfolio.getTotalValue();
-    if (totalValue <= 0) return { rebalanceOccurred: false, realizedGainsFromRebalance: 0 };
+    if (totalValue <= 0) return { rebalanceOccurred: false, realizedGainsFromRebalance: 0, realizedGainsFromRebalanceByAccount };
 
     const { stocks: currentStocksValue, bonds: currentBondsValue } = this.simulationState.portfolio.getCurrentAssetValues();
     const targetAllocation = this.getTargetAssetAllocation();
@@ -593,11 +597,13 @@ export class PortfolioProcessor {
 
         remainingStocksExcess -= rebalance.stocksSold;
         remainingBondsExcess -= rebalance.bondsSold;
+
+        realizedGainsFromRebalanceByAccount[account.getAccountID()] = rebalance.realizedGains;
         realizedGainsFromRebalance += rebalance.realizedGains;
       }
     }
 
-    return { rebalanceOccurred: true, realizedGainsFromRebalance };
+    return { rebalanceOccurred: true, realizedGainsFromRebalance, realizedGainsFromRebalanceByAccount };
   }
 
   private getTargetAssetAllocation(): AssetAllocation {
