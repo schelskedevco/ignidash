@@ -330,6 +330,28 @@ export abstract class InvestmentAccount extends Account {
 
     return { stocks: stockWithdrawal, bonds: bondWithdrawal, cash: 0 };
   }
+
+  applyRebalance(stocksExcess: number, bondsExcess: number): { stocksTraded: number; bondsTraded: number; realizedGains: number } {
+    const currentBondsValue = this.balance * this.currPercentBonds;
+    const currentStocksValue = this.balance * (1 - this.currPercentBonds);
+
+    let stocksToSell = 0;
+    if (stocksExcess > 0) stocksToSell = Math.min(stocksExcess, currentStocksValue);
+
+    let bondsToSell = 0;
+    if (bondsExcess > 0) bondsToSell = Math.min(bondsExcess, currentBondsValue);
+
+    const newBondsValue = currentBondsValue - bondsToSell + stocksToSell;
+    this.currPercentBonds = this.balance > 0 ? newBondsValue / this.balance : this.currPercentBonds;
+
+    const realizedGains = this.calculateRebalanceGains(stocksToSell, bondsToSell);
+
+    return { stocksTraded: stocksToSell, bondsTraded: bondsToSell, realizedGains };
+  }
+
+  protected calculateRebalanceGains(stocksSold: number, bondsSold: number): number {
+    return 0;
+  }
 }
 
 export class TaxableBrokerageAccount extends InvestmentAccount {
@@ -367,6 +389,21 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
     const { stocks, bonds, cash } = super.applyWithdrawalShared(amount, type, withdrawalAllocation);
 
     return { stocks, bonds, cash, realizedGains, earningsWithdrawn: 0 };
+  }
+
+  protected calculateRebalanceGains(stocksSold: number, bondsSold: number): number {
+    const totalSold = stocksSold + bondsSold;
+    if (totalSold <= 0) return 0;
+
+    const basisProportion = this.costBasis / this.balance;
+    const basisSold = Math.min(totalSold * basisProportion, this.costBasis);
+
+    const realizedGains = totalSold - basisSold;
+    this.totalRealizedGains += realizedGains;
+
+    this.costBasis += realizedGains;
+
+    return realizedGains;
   }
 }
 

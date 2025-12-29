@@ -95,13 +95,13 @@ export class FinancialSimulationEngine {
       if (monthlyDiscretionaryExpense) expensesProcessor.processDiscretionaryExpense(monthlyDiscretionaryExpense);
 
       if (simulationState.time.month % 12 === 0) {
-        // Process rebalance
-        portfolioProcessor.processRebalance();
-
         // Get annual data from processors
         const annualPortfolioDataBeforeTaxes = portfolioProcessor.getAnnualData();
         const annualIncomesData = incomesProcessor.getAnnualData();
         const annualReturnsData = returnsProcessor.getAnnualData();
+
+        // Process rebalance
+        portfolioProcessor.processRebalance(annualPortfolioDataBeforeTaxes);
 
         // Process taxes
         let annualTaxesData = taxProcessor.process(annualPortfolioDataBeforeTaxes, annualIncomesData, annualReturnsData);

@@ -7,6 +7,7 @@ import {
   TaxableBrokerageAccount,
   TaxDeferredAccount,
   TaxFreeAccount,
+  InvestmentAccount,
   type AccountDataWithTransactions,
 } from './account';
 import type { SimulationState, SimulationContext } from './simulation-engine';
@@ -556,7 +557,47 @@ export class PortfolioProcessor {
     };
   }
 
-  processRebalance(): void {}
+  processRebalance(annualPortfolioDataBeforeTaxes: PortfolioData): { rebalanceOccurred: boolean; realizedGainsFromRebalance: number } {
+    const totalValue = this.simulationState.portfolio.getTotalValue();
+    if (totalValue <= 0) return { rebalanceOccurred: false, realizedGainsFromRebalance: 0 };
+
+    const { stocks: currentStocksValue, bonds: currentBondsValue } = this.simulationState.portfolio.getCurrentAssetValues();
+    const targetAllocation = this.getTargetAssetAllocation();
+
+    const stocksExcess = currentStocksValue - totalValue * targetAllocation.stocks;
+    const bondsExcess = currentBondsValue - totalValue * targetAllocation.bonds;
+
+    const tolerance = 0.1;
+    const withinTolerance = Math.abs(stocksExcess) / totalValue < tolerance && Math.abs(bondsExcess) / totalValue < tolerance;
+    if (withinTolerance) return { rebalanceOccurred: false, realizedGainsFromRebalance: 0 };
+
+    const rebalanceOrder: Array<AccountInputs['type']> = ['401k', 'ira', 'hsa', 'roth401k', 'rothIra', 'taxableBrokerage'];
+
+    let remainingStocksExcess = stocksExcess;
+    let remainingBondsExcess = bondsExcess;
+    let totalRealizedGains = 0;
+
+    for (const accountType of rebalanceOrder) {
+      if (Math.abs(remainingStocksExcess) < 1 && Math.abs(remainingBondsExcess) < 1) break;
+
+      const accountsOfType = this.simulationState.portfolio.getAccounts().filter((account) => account.getAccountType() === accountType);
+      if (accountsOfType.length === 0) continue;
+
+      for (const account of accountsOfType) {
+        if (Math.abs(remainingStocksExcess) < 1 && Math.abs(remainingBondsExcess) < 1) break;
+        if (account.getBalance() <= 0) continue;
+        if (!(account instanceof InvestmentAccount)) continue;
+
+        const rebalance = account.applyRebalance(remainingStocksExcess, remainingBondsExcess);
+
+        remainingStocksExcess -= rebalance.stocksTraded;
+        remainingBondsExcess -= rebalance.bondsTraded;
+        totalRealizedGains += rebalance.realizedGains;
+      }
+    }
+
+    return { rebalanceOccurred: true, realizedGainsFromRebalance: totalRealizedGains };
+  }
 
   private getTargetAssetAllocation(): AssetAllocation {
     if (!this.initialAssetAllocation) console.warn('No initial asset allocation available; using default 60/40');
