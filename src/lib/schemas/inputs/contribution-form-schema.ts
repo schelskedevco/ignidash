@@ -45,6 +45,8 @@ export const contributionFormSchema = z
 
 export type ContributionInputs = z.infer<typeof contributionFormSchema>;
 
+// Maps each account type to all types sharing its contribution limit
+// (e.g., 401k contributions count against the 403b limit and vice versa)
 export const sharedLimitAccounts: Record<string, AccountInputs['type'][]> = {
   '401k': ['401k', 'roth401k', '403b', 'roth403b'],
   '403b': ['401k', 'roth401k', '403b', 'roth403b'],
