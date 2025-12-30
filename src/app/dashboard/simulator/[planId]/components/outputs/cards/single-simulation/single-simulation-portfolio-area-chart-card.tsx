@@ -49,11 +49,11 @@ export default function SingleSimulationPortfolioAreaChartCard({
   return (
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3}>
+        <Subheading level={3} className="truncate">
           <span className="mr-2">Portfolio</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Select
             aria-label="Portfolio data view options"
             className="max-w-48 sm:max-w-64"
