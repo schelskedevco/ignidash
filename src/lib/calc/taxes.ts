@@ -73,7 +73,7 @@ export interface SocialSecurityTaxesData {
   provisionalIncome: number;
 }
 
-// TODO: Add more income sources data
+// TODO: Add more income source data
 export interface IncomeSourcesData {
   adjustedRealizedGains: number;
 }
