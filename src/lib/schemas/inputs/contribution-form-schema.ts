@@ -46,8 +46,10 @@ export const contributionFormSchema = z
 export type ContributionInputs = z.infer<typeof contributionFormSchema>;
 
 export const sharedLimitAccounts: Record<string, AccountInputs['type'][]> = {
-  '401k': ['401k', 'roth401k'],
-  roth401k: ['401k', 'roth401k'],
+  '401k': ['401k', 'roth401k', '403b', 'roth403b'],
+  '403b': ['401k', 'roth401k', '403b', 'roth403b'],
+  roth401k: ['401k', 'roth401k', '403b', 'roth403b'],
+  roth403b: ['401k', 'roth401k', '403b', 'roth403b'],
   ira: ['ira', 'rothIra'],
   rothIra: ['ira', 'rothIra'],
   hsa: ['hsa'],
@@ -56,7 +58,9 @@ export const sharedLimitAccounts: Record<string, AccountInputs['type'][]> = {
 export const getAccountTypeLimitKey = (accountType: AccountInputs['type']): string => {
   switch (accountType) {
     case '401k':
+    case '403b':
     case 'roth401k':
+    case 'roth403b':
       return '401kCombined';
     case 'ira':
     case 'rothIra':
@@ -84,8 +88,10 @@ export const supportsMaxBalance = (type: AccountInputs['type']): boolean => {
     case 'savings':
       return true;
     case 'roth401k':
+    case 'roth403b':
     case 'rothIra':
     case '401k':
+    case '403b':
     case 'ira':
     case 'taxableBrokerage':
     case 'hsa':
@@ -98,8 +104,10 @@ export const supportsIncomeAllocation = (type: AccountInputs['type']): boolean =
     case 'savings':
       return false;
     case 'roth401k':
+    case 'roth403b':
     case 'rothIra':
     case '401k':
+    case '403b':
     case 'ira':
     case 'taxableBrokerage':
     case 'hsa':
@@ -110,7 +118,9 @@ export const supportsIncomeAllocation = (type: AccountInputs['type']): boolean =
 export const supportsEmployerMatch = (type: AccountInputs['type']): boolean => {
   switch (type) {
     case 'roth401k':
+    case 'roth403b':
     case '401k':
+    case '403b':
     case 'hsa':
       return true;
     case 'savings':

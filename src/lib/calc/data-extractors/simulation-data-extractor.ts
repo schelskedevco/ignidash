@@ -237,11 +237,13 @@ export class SimulationDataExtractor {
           taxableBrokerageContributions += account.contributionsForPeriod;
           break;
         case '401k':
+        case '403b':
         case 'ira':
         case 'hsa':
           taxDeferredContributions += account.contributionsForPeriod;
           break;
         case 'roth401k':
+        case 'roth403b':
         case 'rothIra':
           taxFreeContributions += account.contributionsForPeriod;
           break;
@@ -269,6 +271,7 @@ export class SimulationDataExtractor {
           taxableBrokerageWithdrawals += account.withdrawalsForPeriod;
           break;
         case '401k':
+        case '403b':
         case 'ira':
           taxDeferredWithdrawals += account.withdrawalsForPeriod;
           if (age < 59.5) earlyWithdrawals += account.withdrawalsForPeriod;
@@ -278,6 +281,7 @@ export class SimulationDataExtractor {
           if (age < 65) earlyWithdrawals += account.withdrawalsForPeriod;
           break;
         case 'roth401k':
+        case 'roth403b':
         case 'rothIra':
           taxFreeWithdrawals += account.withdrawalsForPeriod;
           if (age < 59.5) earlyWithdrawals += account.earningsWithdrawnForPeriod;
@@ -305,11 +309,13 @@ export class SimulationDataExtractor {
           taxableBrokerageValue += account.balance;
           break;
         case '401k':
+        case '403b':
         case 'ira':
         case 'hsa':
           taxDeferredValue += account.balance;
           break;
         case 'roth401k':
+        case 'roth403b':
         case 'rothIra':
           taxFreeValue += account.balance;
           break;
@@ -344,6 +350,7 @@ export class SimulationDataExtractor {
     for (const account of Object.values(portfolioData.perAccountData)) {
       switch (account.type) {
         case 'roth401k':
+        case 'roth403b':
         case 'rothIra': {
           if (age < 59.5) {
             const annualEarningsWithdrawn = account.earningsWithdrawnForPeriod;
@@ -354,6 +361,7 @@ export class SimulationDataExtractor {
           break;
         }
         case '401k':
+        case '403b':
         case 'ira': {
           const annualWithdrawals = account.withdrawalsForPeriod;
 

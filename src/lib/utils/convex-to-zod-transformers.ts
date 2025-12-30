@@ -33,9 +33,11 @@ export function accountFromConvex(account: Doc<'plans'>['accounts'][number]): Ac
     case 'taxableBrokerage':
       return { ...base, type: 'taxableBrokerage', percentBonds: account.percentBonds!, costBasis: account.costBasis };
     case 'roth401k':
+    case 'roth403b':
     case 'rothIra':
       return { ...base, type: account.type, percentBonds: account.percentBonds!, contributionBasis: account.contributionBasis };
     case '401k':
+    case '403b':
     case 'ira':
     case 'hsa':
       return { ...base, type: account.type, percentBonds: account.percentBonds! };
@@ -208,9 +210,11 @@ export function accountToConvex(account: AccountInputs): Doc<'plans'>['accounts'
     case 'taxableBrokerage':
       return { ...base, type: 'taxableBrokerage', percentBonds: account.percentBonds, costBasis: account.costBasis };
     case 'roth401k':
+    case 'roth403b':
     case 'rothIra':
       return { ...base, type: account.type, percentBonds: account.percentBonds, contributionBasis: account.contributionBasis };
     case '401k':
+    case '403b':
     case 'ira':
     case 'hsa':
       return { ...base, type: account.type, percentBonds: account.percentBonds };

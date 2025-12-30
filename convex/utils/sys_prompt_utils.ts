@@ -337,7 +337,9 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
   if (plan.accounts.length > 0) {
     const formatAccountType: Record<string, string> = {
       '401k': '401(k)',
+      '403b': '403(b)',
       roth401k: 'Roth 401(k)',
+      roth403b: 'Roth 403(b)',
       ira: 'IRA',
       rothIra: 'Roth IRA',
       hsa: 'HSA',

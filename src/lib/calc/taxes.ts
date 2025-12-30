@@ -221,7 +221,11 @@ export class TaxProcessor {
     const regularQualifiedWithdrawalAge = 59.5;
 
     if (age < regularQualifiedWithdrawalAge) {
-      const taxDeferredWithdrawalsFrom401kAndIra = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira']);
+      const taxDeferredWithdrawalsFrom401kAndIra = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, [
+        '401k',
+        '403b',
+        'ira',
+      ]);
       taxDeferredPenaltyAmount += taxDeferredWithdrawalsFrom401kAndIra * 0.1;
 
       const earningsWithdrawnFromRoth = this.getEarningsWithdrawnFromRothAccountTypes(annualPortfolioDataBeforeTaxes);
@@ -249,12 +253,22 @@ export class TaxProcessor {
     const age = this.simulationState.time.age;
     const rothEarningsQualifiedWithdrawalAge = 59.5;
 
-    let grossIncomeFromTaxDeferredWithdrawals = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira', 'hsa']);
+    let grossIncomeFromTaxDeferredWithdrawals = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, [
+      '401k',
+      '403b',
+      'ira',
+      'hsa',
+    ]);
     if (age < rothEarningsQualifiedWithdrawalAge) {
       grossIncomeFromTaxDeferredWithdrawals += this.getEarningsWithdrawnFromRothAccountTypes(annualPortfolioDataBeforeTaxes);
     }
 
-    const taxDeferredContributions = this.getEmployeeContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', 'ira', 'hsa']);
+    const taxDeferredContributions = this.getEmployeeContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, [
+      '401k',
+      '403b',
+      'ira',
+      'hsa',
+    ]);
     const socialSecurityIncome = annualIncomesData.totalSocialSecurityIncome;
     const taxExemptIncome = annualIncomesData.totalTaxExemptIncome;
 
@@ -323,7 +337,7 @@ export class TaxProcessor {
   }
 
   private getEarningsWithdrawnFromRothAccountTypes(annualPortfolioDataBeforeTaxes: PortfolioData): number {
-    const rothAccountTypes = ['roth401k', 'rothIra'] as AccountInputs['type'][];
+    const rothAccountTypes = ['roth401k', 'roth403b', 'rothIra'] as AccountInputs['type'][];
 
     return Object.values(annualPortfolioDataBeforeTaxes.perAccountData)
       .filter((account) => rothAccountTypes.includes(account.type))
