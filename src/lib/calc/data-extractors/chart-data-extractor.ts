@@ -232,6 +232,8 @@ export abstract class ChartDataExtractor {
         taxDeferredContributions,
         taxFreeContributions,
         cashContributions,
+        annualShortfallRepaid: portfolioData.shortfallRepaidForPeriod,
+        outstandingShortfall: portfolioData.outstandingShortfall,
       };
     });
   }

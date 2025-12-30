@@ -117,6 +117,8 @@ export interface SingleSimulationContributionsChartDataPoint {
   taxDeferredContributions: number;
   taxFreeContributions: number;
   cashContributions: number;
+  annualShortfallRepaid: number;
+  outstandingShortfall: number;
 }
 
 export interface SingleSimulationWithdrawalsChartDataPoint {

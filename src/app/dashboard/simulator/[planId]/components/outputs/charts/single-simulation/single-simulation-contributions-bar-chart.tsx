@@ -47,7 +47,7 @@ const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--cha
 
 interface SingleSimulationContributionsBarChartProps {
   age: number;
-  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch';
+  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch' | 'shortfall';
   rawChartData: SingleSimulationContributionsChartDataPoint[];
   customDataID: string;
 }
@@ -69,6 +69,10 @@ export default function SingleSimulationContributionsBarChart({
     employerMatch: {
       mobile: ['Annual Match', 'Cumul. Match'],
       desktop: ['Annual Employer Match', 'Cumul. Employer Match'],
+    },
+    shortfall: {
+      mobile: ['Shortfall Repaid', 'Outstanding Shortfall'],
+      desktop: ['Annual Shortfall Repaid', 'Outstanding Shortfall'],
     },
   };
 
@@ -102,6 +106,14 @@ export default function SingleSimulationContributionsBarChart({
       transformedChartData = chartData.flatMap((item) => [
         { name: annualMatchLabel, amount: item.annualEmployerMatch },
         { name: cumulativeMatchLabel, amount: item.cumulativeEmployerMatch },
+      ]);
+      break;
+    }
+    case 'shortfall': {
+      const [shortfallRepaidLabel, outstandingShortfallLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      transformedChartData = chartData.flatMap((item) => [
+        { name: shortfallRepaidLabel, amount: item.annualShortfallRepaid },
+        { name: outstandingShortfallLabel, amount: item.outstandingShortfall },
       ]);
       break;
     }

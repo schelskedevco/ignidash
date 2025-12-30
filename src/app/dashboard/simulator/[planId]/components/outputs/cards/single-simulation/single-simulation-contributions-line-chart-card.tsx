@@ -15,8 +15,8 @@ import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 interface SingleSimulationContributionsLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch') => void;
-  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch';
+  setDataView: (view: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch' | 'shortfall') => void;
+  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch' | 'shortfall';
   setCustomDataID: (name: string) => void;
   customDataID: string;
   rawChartData: SingleSimulationContributionsChartDataPoint[];
@@ -65,12 +65,13 @@ export default function SingleSimulationContributionsLineChartCard({
                 e.target.value !== 'annualAmounts' &&
                 e.target.value !== 'cumulativeAmounts' &&
                 e.target.value !== 'taxCategory' &&
-                e.target.value !== 'employerMatch';
+                e.target.value !== 'employerMatch' &&
+                e.target.value !== 'shortfall';
               if (isCustomSelection) {
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'employerMatch');
+                setDataView(e.target.value as 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'employerMatch' | 'shortfall');
                 setCustomDataID('');
               }
             }}
@@ -79,6 +80,7 @@ export default function SingleSimulationContributionsLineChartCard({
             <option value="annualAmounts">Annual Contributions</option>
             <option value="cumulativeAmounts">Cumulative Contributions</option>
             <option value="employerMatch">Employer Match</option>
+            <option value="shortfall">Shortfall Repaid</option>
             <optgroup label="By Account">
               {uniqueAccounts.map((account) => (
                 <option key={account.id} value={account.id}>
