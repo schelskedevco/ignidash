@@ -7,7 +7,7 @@ import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/i
 import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assumptions-schema';
-import { type TimelineInputs, calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
+import type { TimelineInputs } from '@/lib/schemas/inputs/timeline-form-schema';
 import type { TaxSettingsInputs } from '@/lib/schemas/inputs/tax-settings-schema';
 import type { PrivacySettingsInputs } from '@/lib/schemas/inputs/privacy-settings-schema';
 import type { SimulationSettingsInputs } from '@/lib/schemas/simulation-settings-schema';
@@ -147,16 +147,8 @@ export function marketAssumptionsFromConvex(marketAssumptions: Doc<'plans'>['mar
 export function timelineFromConvex(timeline: Doc<'plans'>['timeline']): TimelineInputs | null {
   if (!timeline) return null;
 
-  const { birthMonth, birthYear, lifeExpectancy, retirementStrategy } = timeline;
-
-  if (birthMonth !== undefined && birthYear !== undefined) {
-    return { birthMonth, birthYear, lifeExpectancy, retirementStrategy };
-  }
-
-  const currentMonth = new Date().getMonth() + 1;
-  const currentYear = new Date().getFullYear();
-
-  return { birthMonth: currentMonth, birthYear: currentYear - timeline.currentAge, lifeExpectancy, retirementStrategy };
+  const { currentAge: _currentAge, ...rest } = timeline;
+  return rest;
 }
 
 /**
@@ -333,15 +325,7 @@ export function marketAssumptionsToConvex(marketAssumptions: MarketAssumptionsIn
  * Transforms Zod TimelineInputs to Convex timeline format
  */
 export function timelineToConvex(timeline: TimelineInputs | null): Doc<'plans'>['timeline'] {
-  if (!timeline) return null;
-
-  return {
-    birthMonth: timeline.birthMonth,
-    birthYear: timeline.birthYear,
-    lifeExpectancy: timeline.lifeExpectancy,
-    retirementStrategy: timeline.retirementStrategy,
-    currentAge: calculateAge(timeline.birthMonth, timeline.birthYear),
-  };
+  return timeline ? structuredClone(timeline) : null;
 }
 
 /**

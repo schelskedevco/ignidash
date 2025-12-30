@@ -1,9 +1,9 @@
 import { v } from 'convex/values';
 
 export const timelineValidator = v.object({
-  currentAge: v.number(), // deprecated
-  birthMonth: v.optional(v.number()),
-  birthYear: v.optional(v.number()),
+  currentAge: v.optional(v.number()), // deprecated
+  birthMonth: v.number(),
+  birthYear: v.number(),
   lifeExpectancy: v.number(),
   retirementStrategy: v.union(
     v.object({ type: v.literal('fixedAge'), retirementAge: v.number() }),

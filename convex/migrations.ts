@@ -4,24 +4,18 @@ import { DataModel } from './_generated/dataModel';
 
 export const migrations = new Migrations<DataModel>(components.migrations);
 
-export const migrateTimelineToBirthday = migrations.define({
+export const cleanupCurrentAge = migrations.define({
   table: 'plans',
   migrateOne: async (ctx, plan) => {
     const timeline = plan.timeline;
     if (!timeline) return;
 
-    if (timeline.birthMonth !== undefined && timeline.birthYear !== undefined) {
-      return;
-    }
-
-    const currentMonth = new Date().getMonth() + 1;
-    const currentYear = new Date().getFullYear();
+    const { currentAge: _currentAge, ...rest } = timeline;
 
     return {
       timeline: {
-        ...timeline,
-        birthMonth: currentMonth,
-        birthYear: currentYear - timeline.currentAge,
+        ...rest,
+        birthMonth: 1,
       },
     };
   },

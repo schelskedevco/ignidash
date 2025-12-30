@@ -4,7 +4,8 @@ export const basicTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId
   isDefault: false,
   timeline: {
     lifeExpectancy: 82,
-    currentAge: 31,
+    birthMonth: 1,
+    birthYear: 1994,
     retirementStrategy: {
       safeWithdrawalRate: 4,
       type: 'swrTarget',
