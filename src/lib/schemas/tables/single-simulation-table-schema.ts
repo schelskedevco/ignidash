@@ -260,6 +260,8 @@ export const singleSimulationContributionsTableRowSchema = z.object({
   cumulativeEmployerMatch: z.number().nullable(),
   totalPortfolioValue: z.number().nullable(),
   cashFlow: z.number().nullable(),
+  annualShortfallRepaid: z.number().nullable(),
+  outstandingShortfall: z.number().nullable(),
   historicalYear: z.number().nullable(),
 });
 
@@ -279,6 +281,8 @@ const SINGLE_SIMULATION_CONTRIBUTIONS_COLUMNS = {
   cumulativeEmployerMatch: { title: 'Cumulative Employer Match', format: 'currency' },
   totalPortfolioValue: { title: 'Total Portfolio Value', format: 'currency' },
   cashFlow: { title: 'Cash Flow', format: 'currency' },
+  annualShortfallRepaid: { title: 'Annual Shortfall Repaid', format: 'currency' },
+  outstandingShortfall: { title: 'Outstanding Shortfall', format: 'currency' },
   historicalYear: { title: 'Historical Year', format: 'number' },
 } as const;
 
@@ -314,6 +318,8 @@ export const singleSimulationWithdrawalsTableRowSchema = z.object({
   totalPortfolioValue: z.number().nullable(),
   cashFlow: z.number().nullable(),
   withdrawalRate: z.number().nullable(),
+  annualShortfall: z.number().nullable(),
+  outstandingShortfall: z.number().nullable(),
   historicalYear: z.number().nullable(),
 });
 
@@ -342,6 +348,8 @@ const SINGLE_SIMULATION_WITHDRAWALS_COLUMNS = {
   totalPortfolioValue: { title: 'Total Portfolio Value', format: 'currency' },
   cashFlow: { title: 'Cash Flow', format: 'currency' },
   withdrawalRate: { title: 'Withdrawal Rate', format: 'percentage' },
+  annualShortfall: { title: 'Annual Shortfall', format: 'currency' },
+  outstandingShortfall: { title: 'Outstanding Shortfall', format: 'currency' },
   historicalYear: { title: 'Historical Year', format: 'number' },
 } as const;
 

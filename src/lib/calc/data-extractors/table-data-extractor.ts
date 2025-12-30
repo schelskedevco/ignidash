@@ -346,6 +346,8 @@ export abstract class TableDataExtractor {
           cumulativeEmployerMatch: null,
           totalPortfolioValue: null,
           cashFlow: null,
+          annualShortfallRepaid: null,
+          outstandingShortfall: null,
           historicalYear,
         };
       }
@@ -377,6 +379,8 @@ export abstract class TableDataExtractor {
         cumulativeEmployerMatch: portfolioData.totalEmployerMatch,
         totalPortfolioValue,
         cashFlow,
+        annualShortfallRepaid: portfolioData.shortfallRepaidForPeriod,
+        outstandingShortfall: portfolioData.outstandingShortfall,
         historicalYear,
       };
     });
@@ -422,6 +426,8 @@ export abstract class TableDataExtractor {
           totalPortfolioValue: null,
           cashFlow: null,
           withdrawalRate: null,
+          annualShortfall: null,
+          outstandingShortfall: null,
           historicalYear,
         };
       }
@@ -468,6 +474,8 @@ export abstract class TableDataExtractor {
         totalPortfolioValue,
         cashFlow,
         withdrawalRate,
+        annualShortfall: portfolioData.shortfallForPeriod,
+        outstandingShortfall: portfolioData.outstandingShortfall,
         historicalYear,
       };
     });
