@@ -337,7 +337,6 @@ export class SimulationDataExtractor {
 
   static getTaxableIncomeSources(dp: SimulationDataPoint, age: number): TaxableIncomeSources {
     const portfolioData = dp.portfolio;
-    const realizedGains = portfolioData.realizedGainsForPeriod;
 
     let taxDeferredWithdrawals = 0;
     let earlyRothEarningsWithdrawals = 0;
@@ -375,6 +374,9 @@ export class SimulationDataExtractor {
     }
 
     const retirementDistributions = taxDeferredWithdrawals + earlyRothEarningsWithdrawals;
+
+    const taxesData = dp.taxes;
+    const realizedGains = taxesData?.incomeSources.adjustedRealizedGains ?? 0;
 
     const returnsData = dp.returns;
     const dividendIncome = returnsData?.yieldAmountsForPeriod.taxable.stocks ?? 0;
