@@ -52,6 +52,7 @@ export interface TaxesData {
   capitalGainsTaxes: CapitalGainsTaxesData;
   earlyWithdrawalPenalties: EarlyWithdrawalPenaltyData;
   socialSecurityTaxes: SocialSecurityTaxesData;
+  incomeSources: IncomeSourcesData;
   totalTaxesDue: number;
   totalTaxesRefund: number;
   totalTaxableIncome: number;
@@ -70,6 +71,11 @@ export interface SocialSecurityTaxesData {
   maxTaxablePercentage: number;
   actualTaxablePercentage: number;
   provisionalIncome: number;
+}
+
+// TODO: Add more income sources data
+export interface IncomeSourcesData {
+  adjustedRealizedGains: number;
 }
 
 export class TaxProcessor {
@@ -149,6 +155,7 @@ export class TaxProcessor {
       capitalGainsTaxes,
       earlyWithdrawalPenalties,
       socialSecurityTaxes,
+      incomeSources: { adjustedRealizedGains },
       totalTaxesDue: difference > 0 ? difference : 0,
       totalTaxesRefund: difference < 0 ? Math.abs(difference) : 0,
       totalTaxableIncome: taxableOrdinaryIncome + taxableCapitalGains,
