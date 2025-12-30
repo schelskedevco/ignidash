@@ -16,6 +16,7 @@ import { useTimelineData } from '@/hooks/use-convex-data';
 import { incomeToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { incomeFormSchema, type IncomeInputs, supportsWithholding } from '@/lib/schemas/inputs/income-form-schema';
+import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import { timeFrameForDisplay, growthForDisplay, incomeTaxTreatmentForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
@@ -167,7 +168,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
   const years = Array.from({ length: 2100 - currentYear + 1 }, (_, i) => currentYear + i);
 
   const timeline = useTimelineData();
-  const currentAge = timeline?.currentAge ?? 18;
+  const currentAge = timeline ? calculateAge(timeline.birthMonth, timeline.birthYear) : 18;
   const lifeExpectancy = timeline?.lifeExpectancy ?? 110;
 
   const ages = Array.from({ length: lifeExpectancy - currentAge + 1 }, (_, i) => currentAge + i);

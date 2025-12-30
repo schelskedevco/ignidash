@@ -4,7 +4,8 @@ import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 export const demoInputs1: SimulatorInputs = {
   timeline: {
     lifeExpectancy: 82,
-    currentAge: 31,
+    birthMonth: 1,
+    birthYear: 1994,
     retirementStrategy: {
       safeWithdrawalRate: 4,
       type: 'swrTarget',
@@ -184,7 +185,8 @@ export const demoInputs1: SimulatorInputs = {
 export const demoInputs2: SimulatorInputs = {
   timeline: {
     lifeExpectancy: 87,
-    currentAge: 28,
+    birthMonth: 1,
+    birthYear: 1997,
     retirementStrategy: {
       safeWithdrawalRate: 3.5,
       type: 'swrTarget',

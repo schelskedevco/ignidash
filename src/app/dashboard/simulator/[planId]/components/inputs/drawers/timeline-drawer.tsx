@@ -5,7 +5,7 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useWatch, type FieldErrors } from 'react-hook-form';
+import { useForm, useWatch, type FieldErrors, Controller } from 'react-hook-form';
 import { track } from '@vercel/analytics';
 
 import { timelineToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -16,6 +16,7 @@ import SectionContainer from '@/components/ui/section-container';
 import Card from '@/components/ui/card';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';
+import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/combobox';
 import { Select } from '@/components/catalyst/select';
 import { Divider } from '@/components/catalyst/divider';
 import { Button } from '@/components/catalyst/button';
@@ -117,6 +118,25 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
     }
   }, [retirementStrategyType, unregister]);
 
+  const months = [
+    { value: 1, name: 'January' },
+    { value: 2, name: 'February' },
+    { value: 3, name: 'March' },
+    { value: 4, name: 'April' },
+    { value: 5, name: 'May' },
+    { value: 6, name: 'June' },
+    { value: 7, name: 'July' },
+    { value: 8, name: 'August' },
+    { value: 9, name: 'September' },
+    { value: 10, name: 'October' },
+    { value: 11, name: 'November' },
+    { value: 12, name: 'December' },
+  ];
+
+  const currentMonth = months[new Date().getMonth()];
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 2025 - 1925 + 1 }, (_, i) => 1925 + i);
+
   return (
     <>
       <SectionContainer showBottomBorder={false} location="drawer">
@@ -129,18 +149,57 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
             <Fieldset aria-label="Timeline details">
               <FieldGroup>
                 {saveError && <ErrorMessageCard errorMessage={saveError} />}
-                <Field>
-                  <Label htmlFor="currentAge">Current Age</Label>
-                  <NumberInput
-                    name="currentAge"
-                    control={control}
-                    id="currentAge"
-                    inputMode="numeric"
-                    placeholder="35"
-                    autoFocus={timeline === null}
-                  />
-                  {errors.currentAge && <ErrorMessage>{errors.currentAge?.message}</ErrorMessage>}
-                </Field>
+                <div className="grid grid-cols-2 items-end gap-x-4">
+                  <Field>
+                    <Label>Birth Month</Label>
+                    <Controller
+                      name="birthMonth"
+                      defaultValue={currentMonth.value}
+                      control={control}
+                      render={({ field: { onChange, value, name } }) => (
+                        <Combobox
+                          name={name}
+                          options={months}
+                          displayValue={(month) => month?.name || currentMonth.name}
+                          value={months.find((m) => m.value === value) || currentMonth}
+                          onChange={(month) => onChange(month?.value || currentMonth.value)}
+                          filter={(month, query) =>
+                            month.name.toLowerCase().includes(query.toLowerCase()) || String(month.value).includes(query)
+                          }
+                        >
+                          {(month) => (
+                            <ComboboxOption value={month}>
+                              <ComboboxLabel>{month.name}</ComboboxLabel>
+                            </ComboboxOption>
+                          )}
+                        </Combobox>
+                      )}
+                    />
+                  </Field>
+                  <Field>
+                    <Label>Birth Year</Label>
+                    <Controller
+                      name="birthYear"
+                      defaultValue={currentYear}
+                      control={control}
+                      render={({ field: { onChange, value, name } }) => (
+                        <Combobox
+                          name={name}
+                          options={years}
+                          displayValue={(year) => String(year || currentYear)}
+                          value={value || currentYear}
+                          onChange={(year) => onChange(year || currentYear)}
+                        >
+                          {(year) => (
+                            <ComboboxOption value={year}>
+                              <ComboboxLabel>{year}</ComboboxLabel>
+                            </ComboboxOption>
+                          )}
+                        </Combobox>
+                      )}
+                    />
+                  </Field>
+                </div>
                 <Field>
                   <Label htmlFor="lifeExpectancy">Life Expectancy</Label>
                   <NumberInput name="lifeExpectancy" control={control} id="lifeExpectancy" inputMode="numeric" placeholder="78" />

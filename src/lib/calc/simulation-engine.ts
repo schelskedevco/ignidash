@@ -1,5 +1,5 @@
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
-import type { TimelineInputs, RetirementStrategyInputs } from '@/lib/schemas/inputs/timeline-form-schema';
+import { type TimelineInputs, type RetirementStrategyInputs, calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 
 import type { ReturnsProvider } from './returns-providers/returns-provider';
 import { StochasticReturnsProvider } from './returns-providers/stochastic-returns-provider';
@@ -179,7 +179,7 @@ export class FinancialSimulationEngine {
   }
 
   private initSimulationContext(timeline: TimelineInputs): SimulationContext {
-    const startAge = timeline.currentAge;
+    const startAge = calculateAge(timeline.birthMonth, timeline.birthYear);
     const endAge = timeline.lifeExpectancy;
 
     const yearsToSimulate = Math.ceil(endAge - startAge);
@@ -194,7 +194,7 @@ export class FinancialSimulationEngine {
 
   private initSimulationState(timeline: TimelineInputs): SimulationState {
     return {
-      time: { date: new Date(), age: timeline.currentAge, year: 0, month: 0 },
+      time: { date: new Date(), age: calculateAge(timeline.birthMonth, timeline.birthYear), year: 0, month: 0 },
       portfolio: new Portfolio(Object.values(this.inputs.accounts)),
       phase: null,
       annualData: { expenses: [] },
