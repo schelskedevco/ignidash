@@ -133,7 +133,7 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
     { value: 12, name: 'December' },
   ];
 
-  const currentMonth = months[new Date().getMonth()];
+  const currentMonth = months[0];
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 2025 - 1925 + 1 }, (_, i) => 1925 + i);
 
