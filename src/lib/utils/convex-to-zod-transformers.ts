@@ -145,10 +145,7 @@ export function marketAssumptionsFromConvex(marketAssumptions: Doc<'plans'>['mar
  * Transforms a Convex timeline to Zod TimelineInputs format
  */
 export function timelineFromConvex(timeline: Doc<'plans'>['timeline']): TimelineInputs | null {
-  if (!timeline) return null;
-
-  const { currentAge: _currentAge, ...rest } = timeline;
-  return rest;
+  return timeline ? structuredClone(timeline) : null;
 }
 
 /**

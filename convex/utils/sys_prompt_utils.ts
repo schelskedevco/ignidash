@@ -15,6 +15,18 @@ const formatNumber = (num: number, fractionDigits: number = 2, prefix: string = 
   return sign + prefix + absNum.toFixed(fractionDigits);
 };
 
+const calculateAge = (birthMonth: number, birthYear: number): number => {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1;
+
+  let age = currentYear - birthYear;
+  if (currentMonth < birthMonth) {
+    age--;
+  }
+  return age;
+};
+
 const keyMetricsForDisplay = (keyMetrics: KeyMetrics) => {
   const {
     success,
@@ -298,14 +310,14 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
   const lines: string[] = [];
 
   if (plan.timeline) {
-    const { currentAge, lifeExpectancy, retirementStrategy } = plan.timeline;
+    const { birthMonth, birthYear, lifeExpectancy, retirementStrategy } = plan.timeline;
 
     const retirementInfo =
       retirementStrategy.type === 'fixedAge'
         ? `Retirement Age: ${retirementStrategy.retirementAge}`
         : `SWR Target: ${retirementStrategy.safeWithdrawalRate}%`;
 
-    lines.push(`  - Timeline: Age: ${currentAge}, Life Expectancy: ${lifeExpectancy}, ${retirementInfo}`);
+    lines.push(`  - Timeline: Age: ${calculateAge(birthMonth, birthYear)}, Life Expectancy: ${lifeExpectancy}, ${retirementInfo}`);
   }
 
   if (plan.incomes.length > 0) {
