@@ -140,10 +140,7 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
   return (
     <>
       <SectionContainer showBottomBorder={false} location="drawer">
-        <SectionHeader
-          title="Timeline"
-          desc="Configure when your simulation should start, when it should end, and when you want to retire."
-        />
+        <SectionHeader title="Timeline" desc="Configure your age, life expectancy, and when you want to retire." />
         <Card>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Fieldset aria-label="Timeline details">
