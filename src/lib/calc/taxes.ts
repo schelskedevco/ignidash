@@ -74,6 +74,7 @@ export interface SocialSecurityTaxesData {
 }
 
 // TODO: Add more income source data
+// Reduces code duplication from getTaxableIncomeSources
 export interface IncomeSourcesData {
   adjustedRealizedGains: number;
 }
