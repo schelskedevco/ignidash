@@ -8,8 +8,10 @@ export const accountValidator = v.object({
     v.literal('savings'),
     v.literal('taxableBrokerage'),
     v.literal('roth401k'),
+    v.literal('roth403b'),
     v.literal('rothIra'),
     v.literal('401k'),
+    v.literal('403b'),
     v.literal('ira'),
     v.literal('hsa')
   ),

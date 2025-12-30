@@ -497,10 +497,13 @@ export class PortfolioProcessor {
         { accountType: 'savings' },
         { accountType: 'taxableBrokerage' },
         { accountType: 'roth401k', modifier: 'contributionsOnly' },
+        { accountType: 'roth403b', modifier: 'contributionsOnly' },
         { accountType: 'rothIra', modifier: 'contributionsOnly' },
         { accountType: '401k' },
+        { accountType: '403b' },
         { accountType: 'ira' },
         { accountType: 'roth401k' },
+        { accountType: 'roth403b' },
         { accountType: 'rothIra' },
         { accountType: 'hsa' },
       ];
@@ -508,9 +511,11 @@ export class PortfolioProcessor {
       return [
         { accountType: 'savings' },
         { accountType: '401k' },
+        { accountType: '403b' },
         { accountType: 'ira' },
         { accountType: 'taxableBrokerage' },
         { accountType: 'roth401k' },
+        { accountType: 'roth403b' },
         { accountType: 'rothIra' },
         { accountType: 'hsa' },
       ];
@@ -582,7 +587,16 @@ export class PortfolioProcessor {
     const stocksExcess = currentStocksValue - totalValue * targetAllocation.stocks;
     const bondsExcess = currentBondsValue - totalValue * targetAllocation.bonds;
 
-    const rebalanceOrder: Array<AccountInputs['type']> = ['401k', 'ira', 'hsa', 'roth401k', 'rothIra', 'taxableBrokerage'];
+    const rebalanceOrder: Array<AccountInputs['type']> = [
+      '401k',
+      '403b',
+      'ira',
+      'hsa',
+      'roth401k',
+      'roth403b',
+      'rothIra',
+      'taxableBrokerage',
+    ];
 
     let remainingStocksExcess = stocksExcess;
     let remainingBondsExcess = bondsExcess;
@@ -740,9 +754,11 @@ export class Portfolio {
         case 'taxableBrokerage':
           return new TaxableBrokerageAccount(accountData);
         case 'roth401k':
+        case 'roth403b':
         case 'rothIra':
           return new TaxFreeAccount(accountData);
         case '401k':
+        case '403b':
         case 'ira':
         case 'hsa':
           return new TaxDeferredAccount(accountData);

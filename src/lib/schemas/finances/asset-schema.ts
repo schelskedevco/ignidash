@@ -13,8 +13,10 @@ export const assetFormSchema = z.object({
     'checking',
     'taxableBrokerage',
     'roth401k',
+    'roth403b',
     'rothIra',
     '401k',
+    '403b',
     'ira',
     'hsa',
     'realEstate',
@@ -36,10 +38,14 @@ export const assetTypeForDisplay = (type: AssetInputs['type']): string => {
       return 'Taxable';
     case 'roth401k':
       return 'Roth 401(k)';
+    case 'roth403b':
+      return 'Roth 403(b)';
     case 'rothIra':
       return 'Roth IRA';
     case '401k':
       return '401(k)';
+    case '403b':
+      return '403(b)';
     case 'ira':
       return 'IRA';
     case 'hsa':
@@ -66,8 +72,10 @@ export const assetIconForDisplay = (
       return PiggyBankIcon;
     case 'taxableBrokerage':
     case 'roth401k':
+    case 'roth403b':
     case 'rothIra':
     case '401k':
+    case '403b':
     case 'ira':
     case 'hsa':
       return TrendingUpIcon;

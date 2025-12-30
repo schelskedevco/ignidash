@@ -97,7 +97,7 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
   }, [type, unregister]);
 
   const getBalanceColSpan = () => {
-    if (type === 'taxableBrokerage' || type === 'roth401k' || type === 'rothIra') return 'col-span-1';
+    if (type === 'taxableBrokerage' || isRothAccount(type)) return 'col-span-1';
     return 'col-span-2';
   };
 
@@ -141,11 +141,13 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
                     </optgroup>
                     <optgroup label="Tax-Deferred Accounts">
                       <option value="401k">401(k)</option>
+                      <option value="403b">403(b)</option>
                       <option value="ira">IRA</option>
                       <option value="hsa">HSA</option>
                     </optgroup>
                     <optgroup label="Tax-Free Accounts">
                       <option value="roth401k">Roth 401(k)</option>
+                      <option value="roth403b">Roth 403(b)</option>
                       <option value="rothIra">Roth IRA</option>
                     </optgroup>
                   </Select>

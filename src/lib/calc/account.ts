@@ -208,7 +208,7 @@ export abstract class InvestmentAccount extends Account {
   }
 
   getHasRMDs(): boolean {
-    return this.type === 'ira' || this.type === '401k';
+    return this.type === 'ira' || this.type === '401k' || this.type === '403b';
   }
 
   getAccountData(): AccountData {
@@ -402,7 +402,7 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
 export class TaxDeferredAccount extends InvestmentAccount {
   readonly taxCategory: TaxCategory = 'taxDeferred';
 
-  constructor(data: AccountInputs & { type: 'ira' | '401k' | 'hsa' }) {
+  constructor(data: AccountInputs & { type: 'ira' | '401k' | '403b' | 'hsa' }) {
     super(data);
   }
 
@@ -425,7 +425,7 @@ export class TaxFreeAccount extends InvestmentAccount {
 
   private contributionBasis: number;
 
-  constructor(data: AccountInputs & { type: 'rothIra' | 'roth401k' }) {
+  constructor(data: AccountInputs & { type: 'rothIra' | 'roth401k' | 'roth403b' }) {
     super(data);
     this.contributionBasis = data.contributionBasis!;
   }
