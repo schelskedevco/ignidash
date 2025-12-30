@@ -44,7 +44,7 @@ export class PortfolioProcessor {
   private extraSavingsAccount: SavingsAccount;
   private rmdSavingsAccount: SavingsAccount;
   private monthlyData: PortfolioData[] = [];
-  private totalShortfall: number = 0;
+  private outstandingShortfall: number = 0;
 
   constructor(
     private simulationState: SimulationState,
@@ -217,8 +217,8 @@ export class PortfolioProcessor {
       };
     }
 
-    const shortfallRepaidForPeriod = Math.min(grossCashFlow, this.totalShortfall);
-    this.totalShortfall -= shortfallRepaidForPeriod;
+    const shortfallRepaidForPeriod = Math.min(grossCashFlow, this.outstandingShortfall);
+    this.outstandingShortfall -= shortfallRepaidForPeriod;
 
     const age = this.simulationState.time.age;
     const contributionRules = this.contributionRules.getRules().sort((a, b) => a.getRank() - b.getRank());
@@ -353,7 +353,7 @@ export class PortfolioProcessor {
     const totalForPeriod = Math.abs(grossCashFlow) - remainingToWithdraw;
 
     const shortfallForPeriod = remainingToWithdraw;
-    this.totalShortfall += shortfallForPeriod;
+    this.outstandingShortfall += shortfallForPeriod;
 
     return {
       totalForPeriod,
@@ -496,7 +496,7 @@ export class PortfolioProcessor {
       totalRealizedGains: this.simulationState.portfolio.getTotalRealizedGains(),
       totalEarningsWithdrawn: this.simulationState.portfolio.getTotalEarningsWithdrawn(),
       totalRmds: this.simulationState.portfolio.getTotalRmds(),
-      totalShortfall: this.totalShortfall,
+      outstandingShortfall: this.outstandingShortfall,
       ...forPeriodData,
       perAccountData,
       assetAllocation: this.simulationState.portfolio.getWeightedAssetAllocation(),
@@ -748,7 +748,7 @@ export interface PortfolioData {
   totalRealizedGains: number;
   totalEarningsWithdrawn: number;
   totalRmds: number;
-  totalShortfall: number;
+  outstandingShortfall: number;
   withdrawalsForPeriod: number;
   contributionsForPeriod: number;
   employerMatchForPeriod: number;

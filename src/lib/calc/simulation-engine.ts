@@ -230,7 +230,7 @@ export class FinancialSimulationEngine {
         totalRealizedGains: 0,
         totalEarningsWithdrawn: 0,
         totalRmds: 0,
-        totalShortfall: 0,
+        outstandingShortfall: 0,
         contributionsForPeriod: 0,
         employerMatchForPeriod: 0,
         withdrawalsForPeriod: 0,
