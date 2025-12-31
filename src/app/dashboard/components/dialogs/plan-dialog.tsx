@@ -8,7 +8,6 @@ import { FileTextIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { track } from '@vercel/analytics';
 import posthog from 'posthog-js';
 
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -60,15 +59,12 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
     try {
       setSaveError(null);
       if (selectedPlan) {
-        track('Save plan', { saveMode: 'edit' });
         posthog.capture('save_plan', { saveMode: 'edit' });
         await updateNameMutation({ planId: selectedPlan._id, name: data.name });
       } else if (data.clonedPlanId) {
-        track('Save plan', { saveMode: 'clone' });
         posthog.capture('save_plan', { saveMode: 'clone' });
         await clonePlanMutation({ planId: data.clonedPlanId as Id<'plans'> | 'template1' | 'template2', newPlanName: data.name });
       } else {
-        track('Save plan', { saveMode: 'create' });
         posthog.capture('save_plan', { saveMode: 'create' });
         await createPlanMutation({ newPlanName: data.name });
       }
