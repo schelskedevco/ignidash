@@ -8,8 +8,6 @@ import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal';
 import { stripe } from '@better-auth/stripe';
 import Stripe from 'stripe';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
-import { getJwtToken } from 'better-auth/plugins';
-import { fetchMutation } from 'convex/nextjs';
 
 import { components, api } from './_generated/api';
 import { DataModel } from './_generated/dataModel';
@@ -323,8 +321,17 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         ctx.context.session = newSession;
 
         try {
-          const token = await getJwtToken(ctx, { jwt: { issuer: process.env.CONVEX_SITE_URL!, audience: 'convex' } });
-          await fetchMutation(api.plans.getOrCreateDefaultPlan, {}, { token });
+          await fetch(`${process.env.CONVEX_SITE_URL}/createDefaultPlan`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${process.env.CONVEX_API_SECRET}`,
+            },
+            body: JSON.stringify({
+              userId: newSession.user.id,
+              userName: newSession.user.name,
+            }),
+          });
         } catch (error) {
           console.error('Error creating default plan for new user:', error);
         }

@@ -1,5 +1,5 @@
 import { v, ConvexError } from 'convex/values';
-import { query, mutation } from './_generated/server';
+import { query, mutation, internalMutation } from './_generated/server';
 import type { Doc } from './_generated/dataModel';
 
 import { getUserIdOrThrow } from './utils/auth_utils';
@@ -61,6 +61,34 @@ export const getOrCreateDefaultPlan = mutation({
   handler: async (ctx) => {
     const { userId, userName } = await getUserIdOrThrow(ctx);
 
+    const plans = await getAllPlansForUser(ctx, userId);
+    const defaultPlan = plans.find((plan) => plan.isDefault);
+    if (defaultPlan) return defaultPlan._id;
+
+    return await ctx.db.insert('plans', {
+      userId,
+      name: `${userName}'s Plan`,
+      isDefault: true,
+      timeline: null,
+      incomes: [],
+      expenses: [],
+      accounts: [],
+      contributionRules: [],
+      baseContributionRule: { type: 'save' },
+      marketAssumptions: { stockReturn: 10, stockYield: 3.5, bondReturn: 5, bondYield: 4.5, cashReturn: 3, inflationRate: 3 },
+      taxSettings: { filingStatus: 'single' },
+      privacySettings: { isPrivate: true },
+      simulationSettings: { simulationSeed: 9521, simulationMode: 'fixedReturns' },
+    });
+  },
+});
+
+export const internalGetOrCreateDefaultPlan = internalMutation({
+  args: {
+    userId: v.string(),
+    userName: v.string(),
+  },
+  handler: async (ctx, { userId, userName }) => {
     const plans = await getAllPlansForUser(ctx, userId);
     const defaultPlan = plans.find((plan) => plan.isDefault);
     if (defaultPlan) return defaultPlan._id;
