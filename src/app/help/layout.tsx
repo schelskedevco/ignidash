@@ -1,5 +1,6 @@
 import Navbar from '@/components/layout/navbar';
 import Footer from '@/components/layout/footer';
+import CookieBanner from '@/components/cookie-banner';
 
 export default function HelpLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,6 +8,7 @@ export default function HelpLayout({ children }: { children: React.ReactNode }) 
       <Navbar />
       {children}
       <Footer />
+      <CookieBanner />
     </>
   );
 }
