@@ -24,6 +24,7 @@ import type * as market_assumptions from "../market_assumptions.js";
 import type * as messages from "../messages.js";
 import type * as migrations from "../migrations.js";
 import type * as plans from "../plans.js";
+import type * as posthog from "../posthog.js";
 import type * as privacy_settings from "../privacy_settings.js";
 import type * as simulation_settings from "../simulation_settings.js";
 import type * as tax_settings from "../tax_settings.js";
@@ -78,6 +79,7 @@ declare const fullApi: ApiFromModules<{
   messages: typeof messages;
   migrations: typeof migrations;
   plans: typeof plans;
+  posthog: typeof posthog;
   privacy_settings: typeof privacy_settings;
   simulation_settings: typeof simulation_settings;
   tax_settings: typeof tax_settings;

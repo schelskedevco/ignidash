@@ -318,6 +318,37 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         const newSession = ctx.context.newSession;
         if (!newSession) return;
 
+        const userId = newSession.user.id;
+        const method = ctx.path.includes('email') ? 'email' : 'google';
+        const email = newSession.user.email;
+        const name = newSession.user.name;
+
+        try {
+          if (ctx.path.startsWith('/sign-up')) {
+            await fetch(`${process.env.CONVEX_SITE_URL}/captureSignUp`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${process.env.CONVEX_API_SECRET}`,
+              },
+              body: JSON.stringify({ userId, method, email, name }),
+            });
+          }
+
+          if (ctx.path.startsWith('/sign-in')) {
+            await fetch(`${process.env.CONVEX_SITE_URL}/captureSignIn`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${process.env.CONVEX_API_SECRET}`,
+              },
+              body: JSON.stringify({ userId, method }),
+            });
+          }
+        } catch (error) {
+          console.error('Error capturing sign up or sign in event:', error);
+        }
+
         ctx.context.session = newSession;
 
         try {
