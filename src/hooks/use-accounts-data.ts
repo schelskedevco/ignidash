@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect, useCallback } from 'react';
 
 import { authClient } from '@/lib/auth-client';
@@ -20,6 +19,7 @@ export function useAccountsList() {
 
   useEffect(() => {
     let mounted = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true);
     setError(null);
 

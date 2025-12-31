@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -28,6 +27,7 @@ function useNameFieldHook(fetchedName: string, showSuccessNotification: (title: 
     );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (fetchedName) setName(fetchedName);
   }, [fetchedName]);
 
@@ -45,6 +45,7 @@ function useEmailFieldHook(fetchedEmail: string, showSuccessNotification: (title
     );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (fetchedEmail) setEmail(fetchedEmail);
   }, [fetchedEmail]);
 
