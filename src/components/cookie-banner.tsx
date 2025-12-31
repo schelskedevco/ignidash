@@ -26,7 +26,7 @@ export default function CookieBanner() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-6 pb-6">
-      <div className="pointer-events-auto max-w-xl rounded-xl bg-white p-6 shadow-lg outline-1 outline-zinc-900/10 dark:bg-zinc-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+      <div className="bg-emphasized-background outline-border/50 pointer-events-auto max-w-xl rounded-xl p-6 shadow-lg outline-1 dark:shadow-none dark:-outline-offset-1">
         <p className="text-sm/6 text-zinc-900 dark:text-white">
           We use cookies for product analytics to understand how you use the app. For more information, see our{' '}
           <Link
