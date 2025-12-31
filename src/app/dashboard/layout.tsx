@@ -11,12 +11,12 @@ import { usePostHogIdentify } from '@/hooks/use-posthog-identify';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const desktopSidebarCollapsed = useSidebarCollapsed();
+  const sidebarCollapsed = useSidebarCollapsed();
 
   usePostHogIdentify();
 
   return (
-    <div className="group/sidebar h-full" data-state={desktopSidebarCollapsed ? 'collapsed' : 'expanded'}>
+    <div className="group/sidebar h-full" data-state={sidebarCollapsed ? 'collapsed' : 'expanded'}>
       <MobileSidebar open={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
       <DesktopSidebar />
       <div className="flex h-full flex-col">
