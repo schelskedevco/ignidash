@@ -2,6 +2,7 @@
 
 import { useState, lazy, Suspense } from 'react';
 import { MessageCircleMoreIcon, PresentationIcon, SlidersHorizontalIcon, WandSparklesIcon } from 'lucide-react';
+import posthog from 'posthog-js';
 
 import IconButton from '@/components/ui/icon-button';
 import PageLoading from '@/components/ui/page-loading';
@@ -69,7 +70,15 @@ export default function ResultsColumnHeader() {
         icon={PresentationIcon}
         iconButton={
           <div className="flex items-center gap-x-1">
-            <IconButton icon={WandSparklesIcon} label="Ask AI" onClick={() => setAiChatOpen(true)} surfaceColor="emphasized" />
+            <IconButton
+              icon={WandSparklesIcon}
+              label="Ask AI"
+              onClick={() => {
+                posthog.capture('open_ai_chat');
+                setAiChatOpen(true);
+              }}
+              surfaceColor="emphasized"
+            />
             <IconButton
               icon={MessageCircleMoreIcon}
               label="Share Feedback"

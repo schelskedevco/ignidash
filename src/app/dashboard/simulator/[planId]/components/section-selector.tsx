@@ -11,6 +11,7 @@ import {
   MessageCircleMoreIcon,
 } from 'lucide-react';
 import { useState, lazy, Suspense } from 'react';
+import posthog from 'posthog-js';
 
 import { cn } from '@/lib/utils';
 import IconButton from '@/components/ui/icon-button';
@@ -135,7 +136,15 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
           )}
           {activeSection === 'results' && (
             <div className="flex items-center gap-x-1">
-              <IconButton icon={WandSparklesIcon} label="Ask AI" onClick={() => setAiChatOpen(true)} surfaceColor="emphasized" />
+              <IconButton
+                icon={WandSparklesIcon}
+                label="Ask AI"
+                onClick={() => {
+                  posthog.capture('open_ai_chat');
+                  setAiChatOpen(true);
+                }}
+                surfaceColor="emphasized"
+              />
               <IconButton
                 icon={MessageCircleMoreIcon}
                 label="Share Feedback"
