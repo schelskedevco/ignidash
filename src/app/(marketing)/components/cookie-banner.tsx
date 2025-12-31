@@ -28,9 +28,8 @@ export default function CookieBanner() {
     <div className="pointer-events-none fixed inset-x-0 bottom-0 px-6 pb-6">
       <div className="pointer-events-auto max-w-xl rounded-xl bg-white p-6 shadow-lg outline-1 outline-zinc-900/10 dark:bg-zinc-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
         <p className="text-sm/6 text-zinc-900 dark:text-white">
-          This website uses cookies to supplement a balanced diet and provide a much deserved reward to the senses after consuming bland but
-          nutritious meals. Accepting our cookies is optional but recommended, as they are delicious. See our{' '}
-          <Link href="/privacy" className="font-semibold text-rose-600 hover:text-rose-500 dark:text-rose-400 dark:hover:text-rose-300">
+          We use cookies for product analytics to understand how you use the app. For more information, see our{' '}
+          <Link href="/cookies" className="font-semibold text-rose-600 hover:text-rose-500 dark:text-rose-400 dark:hover:text-rose-300">
             cookie policy
           </Link>
           .
