@@ -70,7 +70,7 @@ export default function ExpenseDialog({ onClose, selectedExpense: _selectedExpen
     const expenseId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
-      posthog.capture('save_expense', { saveMode: selectedExpense ? 'edit' : 'create' });
+      posthog.capture('save_expense', { save_mode: selectedExpense ? 'edit' : 'create' });
       await m({ expense: expenseToConvex({ ...data, id: expenseId }), planId });
       onClose();
     } catch (error) {

@@ -59,7 +59,7 @@ export default function LiabilityDialog({ onClose, selectedLiability: _selectedL
     const liabilityId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
-      posthog.capture('save_liability', { saveMode: selectedLiability ? 'edit' : 'create' });
+      posthog.capture('save_liability', { save_mode: selectedLiability ? 'edit' : 'create' });
       await m({ liability: liabilityToConvex({ ...data, id: liabilityId }) });
       onClose();
     } catch (error) {

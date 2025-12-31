@@ -78,7 +78,7 @@ export default function ContributionRuleDialog({
     const contributionRuleId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
-      posthog.capture('save_contribution_rule', { saveMode: selectedContributionRule ? 'edit' : 'create' });
+      posthog.capture('save_contribution_rule', { save_mode: selectedContributionRule ? 'edit' : 'create' });
       await m({ contributionRule: contributionToConvex({ ...data, id: contributionRuleId }), planId });
       onClose();
     } catch (error) {

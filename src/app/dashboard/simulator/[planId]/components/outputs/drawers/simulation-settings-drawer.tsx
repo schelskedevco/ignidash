@@ -61,7 +61,7 @@ export default function SimulationSettingsDrawer({ setOpen, simulationSettings }
   const onSubmit = async (data: SimulationSettingsInputs) => {
     try {
       setSaveError(null);
-      posthog.capture('save_simulation_settings', { simulationMode: data.simulationMode });
+      posthog.capture('save_simulation_settings', { simulation_mode: data.simulationMode });
       await m({ simulationSettings: simulationSettingsToConvex(data), planId });
       setOpen(false);
     } catch (error) {

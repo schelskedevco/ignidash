@@ -71,7 +71,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
     const incomeId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
-      posthog.capture('save_income', { saveMode: selectedIncome ? 'edit' : 'create' });
+      posthog.capture('save_income', { save_mode: selectedIncome ? 'edit' : 'create' });
       await m({ income: incomeToConvex({ ...data, id: incomeId }), planId });
       onClose();
     } catch (error) {

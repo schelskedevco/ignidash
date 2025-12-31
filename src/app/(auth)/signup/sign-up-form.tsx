@@ -33,7 +33,7 @@ export default function SignUpForm() {
     const fullName = formData.get('full-name') as string;
     const password = formData.get('password') as string;
 
-    posthog.capture('sign_up', { email, fullName });
+    posthog.capture('sign_up', { email, full_name: fullName });
 
     await authClient.signUp.email(
       { email, password, name: fullName, callbackURL: safeRedirect },

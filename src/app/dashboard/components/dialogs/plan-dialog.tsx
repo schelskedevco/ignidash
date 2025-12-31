@@ -59,13 +59,13 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
     try {
       setSaveError(null);
       if (selectedPlan) {
-        posthog.capture('save_plan', { saveMode: 'edit' });
+        posthog.capture('save_plan', { save_mode: 'edit' });
         await updateNameMutation({ planId: selectedPlan._id, name: data.name });
       } else if (data.clonedPlanId) {
-        posthog.capture('save_plan', { saveMode: 'clone' });
+        posthog.capture('save_plan', { save_mode: 'clone' });
         await clonePlanMutation({ planId: data.clonedPlanId as Id<'plans'> | 'template1' | 'template2', newPlanName: data.name });
       } else {
-        posthog.capture('save_plan', { saveMode: 'create' });
+        posthog.capture('save_plan', { save_mode: 'create' });
         await createPlanMutation({ newPlanName: data.name });
       }
 

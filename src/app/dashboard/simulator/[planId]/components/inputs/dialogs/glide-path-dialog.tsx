@@ -87,7 +87,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
     const glidePathId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
-      posthog.capture('save_glide_path', { saveMode: glidePath ? 'edit' : 'create' });
+      posthog.capture('save_glide_path', { save_mode: glidePath ? 'edit' : 'create' });
       await m({ glidePath: glidePathToConvex({ ...data, id: glidePathId }), planId });
       onClose();
     } catch (error) {

@@ -20,7 +20,7 @@ export function useRegenSimulation() {
   const m = useMutation(api.simulation_settings.update);
   const handleClick = async () => {
     if (!isDisabled) {
-      posthog.capture('regenerate_simulation', { planId, simulationMode });
+      posthog.capture('regenerate_simulation', { plan_id: planId, simulation_mode: simulationMode });
       await m({ simulationSettings: { ...simulationSettings, simulationSeed: Math.floor(Math.random() * 1000) }, planId });
     }
   };

@@ -59,7 +59,7 @@ export default function AssetDialog({ onClose, selectedAsset: _selectedAsset, nu
     const assetId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
-      posthog.capture('save_asset', { saveMode: selectedAsset ? 'edit' : 'create' });
+      posthog.capture('save_asset', { save_mode: selectedAsset ? 'edit' : 'create' });
       await m({ asset: assetToConvex({ ...data, id: assetId }) });
       onClose();
     } catch (error) {

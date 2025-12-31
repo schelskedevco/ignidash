@@ -75,7 +75,7 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
     const accountId = processedData.id === '' ? uuidv4() : processedData.id;
     try {
       setSaveError(null);
-      posthog.capture('save_account', { saveMode: selectedAccount ? 'edit' : 'create' });
+      posthog.capture('save_account', { save_mode: selectedAccount ? 'edit' : 'create' });
       await m({ account: accountToConvex({ ...processedData, id: accountId }), planId });
       onClose();
     } catch (error) {

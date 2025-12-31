@@ -43,7 +43,7 @@ export default function UserFeedbackDrawer({ setOpen }: UserFeedbackDrawerProps)
   const onSubmit = async (data: UserFeedbackInputs) => {
     try {
       setSaveError(null);
-      posthog.capture('submit_user_feedback', { planId, feedbackLength: data.feedback.length });
+      posthog.capture('submit_user_feedback', { plan_id: planId, feedback_length: data.feedback.length });
       await m({ feedback: { planId, feedback: data.feedback } });
       setOpen(false);
     } catch (error) {

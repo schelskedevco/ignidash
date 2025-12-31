@@ -58,7 +58,7 @@ export default function GenerateDialog({
   const onSubmit = async (data: GenerateInsightsInputs) => {
     try {
       setSaveError(null);
-      posthog.capture('generate_insights', { hasUserPrompt: !!data.userPrompt });
+      posthog.capture('generate_insights', { plan_id: planId, has_user_prompt: !!data.userPrompt });
       await m({ planId, keyMetrics, simulationResult: simulationResultToConvex(simulationResult), userPrompt: data.userPrompt });
       onGenerate();
       onClose();
