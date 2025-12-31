@@ -4,6 +4,7 @@ import { FireIcon } from '@heroicons/react/24/solid';
 import { useState } from 'react';
 import Link from 'next/link';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { authClient } from '@/lib/auth-client';
 import { useRedirectUrl } from '@/hooks/use-redirect-url';
@@ -42,6 +43,16 @@ export default function SignUpForm() {
         onSuccess() {
           setErrorMessage(null);
           setIsLoading(false);
+
+          // PostHog: Identify user and capture signup event
+          posthog.identify(email, {
+            email: email,
+            name: fullName,
+          });
+          posthog.capture('user_signed_up', {
+            signup_method: 'email',
+          });
+
           router.push(safeRedirect);
         },
         onError: (ctx) => {

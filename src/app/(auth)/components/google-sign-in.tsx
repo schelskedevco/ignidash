@@ -1,5 +1,7 @@
 'use client';
 
+import posthog from 'posthog-js';
+
 import { authClient } from '@/lib/auth-client';
 
 interface GoogleSignInProps {
@@ -7,7 +9,14 @@ interface GoogleSignInProps {
 }
 
 export default function GoogleSignIn({ safeRedirect }: GoogleSignInProps) {
-  const handleGoogleSignIn = async () => await authClient.signIn.social({ provider: 'google', callbackURL: safeRedirect });
+  const handleGoogleSignIn = async () => {
+    // PostHog: Track Google sign-in attempt (identification happens via server callback)
+    posthog.capture('user_signed_in', {
+      signin_method: 'google',
+    });
+
+    await authClient.signIn.social({ provider: 'google', callbackURL: safeRedirect });
+  };
 
   return (
     <div>

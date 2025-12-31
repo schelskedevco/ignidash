@@ -14,6 +14,7 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import { useTheme } from 'next-themes';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { Button } from '@/components/catalyst/button';
 import { Textarea } from '@/components/catalyst/textarea';
@@ -303,6 +304,14 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
     try {
       updateChatState({ errorMessage: '' });
       track('Send message to AI assistant');
+
+      // PostHog: Track AI chat message
+      posthog.capture('ai_message_sent', {
+        plan_id: planId,
+        is_new_conversation: !selectedConversationId,
+        message_length: chatMessage.length,
+      });
+
       const { conversationId } = await m({ conversationId: selectedConversationId, planId, content: chatMessage, keyMetrics });
       updateChatState({ chatMessage: '' });
       updateSelectedConversationId(conversationId);
