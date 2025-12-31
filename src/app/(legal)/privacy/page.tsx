@@ -316,14 +316,6 @@ export default function PrivacyPage() {
             location, information about how and when you use our Services, and other technical information. This information is primarily
             needed to maintain the security and operation of our Services, and for our internal analytics and reporting purposes.
           </p>
-          <p className="mb-4">
-            Like many businesses, we also collect information through cookies and similar technologies. You can find out more about this in
-            our Cookie Notice:{' '}
-            <a href="https://www.ignidash.com/cookies" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
-              https://www.ignidash.com/cookies
-            </a>
-            .
-          </p>
           <p className="mb-4">The information we collect includes:</p>
           <ul className="mb-4 ml-4 list-outside list-disc space-y-2">
             <li>
@@ -607,13 +599,6 @@ export default function PrivacyPage() {
               DO UNITED STATES RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?
             </a>
             &quot;
-          </p>
-          <p>
-            Specific information about how we use such technologies and how you can refuse certain cookies is set out in our Cookie Notice:{' '}
-            <a href="https://www.ignidash.com/cookies" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
-              https://www.ignidash.com/cookies
-            </a>
-            .
           </p>
         </section>
 
@@ -902,12 +887,7 @@ export default function PrivacyPage() {
           <p className="mb-4">
             <strong className="underline">Cookies and similar technologies:</strong> Most Web browsers are set to accept cookies by default.
             If you prefer, you can usually choose to set your browser to remove cookies and to reject cookies. If you choose to remove
-            cookies or reject cookies, this could affect certain features or services of our Services. For further information, please see
-            our Cookie Notice:{' '}
-            <a href="https://www.ignidash.com/cookies" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
-              https://www.ignidash.com/cookies
-            </a>
-            .
+            cookies or reject cookies, this could affect certain features or services of our Services.
           </p>
           <p>
             If you have questions or comments about your privacy rights, you may email us at{' '}
