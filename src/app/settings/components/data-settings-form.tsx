@@ -5,6 +5,7 @@ import { api } from '@/convex/_generated/api';
 import { ConvexError } from 'convex/values';
 import { useState } from 'react';
 import { Trash2Icon } from 'lucide-react';
+import posthog from 'posthog-js';
 
 import Card from '@/components/ui/card';
 import { Fieldset, FieldGroup, Field, Legend, Description, ErrorMessage } from '@/components/catalyst/fieldset';
@@ -29,10 +30,14 @@ export default function DataSettingsForm({ showSuccessNotification }: DataSettin
 
   const { fieldState: deleteApplicationDataState } = useAccountSettingsFieldState();
   const deleteAppDataMutation = useMutation(api.app_data.deleteAppData);
-  const handleDeleteApplicationData = async () => deleteAppDataMutation({ shouldCreateBlankPlan: true });
+  const handleDeleteApplicationData = async () => {
+    posthog.capture('delete_app_data');
+    await deleteAppDataMutation({ shouldCreateBlankPlan: true });
+  };
 
   const { fieldState: deleteAccountState, createCallbacks: deleteAccountCallbacks } = useAccountSettingsFieldState();
   const handleDeleteAccount = async () => {
+    posthog.capture('delete_account');
     await authClient.deleteUser(
       { callbackURL: '/signin?deleted=success' },
       deleteAccountCallbacks(() => showSuccessNotification('Account deletion initiated. Check your email for further instructions.'))

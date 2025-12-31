@@ -4,6 +4,7 @@ import { useAction } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useState, useEffect } from 'react';
 import { CreditCardIcon } from 'lucide-react';
+import posthog from 'posthog-js';
 
 import { Fieldset, FieldGroup, Legend, Field, Description, ErrorMessage } from '@/components/catalyst/fieldset';
 import { Button } from '@/components/catalyst/button';
@@ -23,6 +24,8 @@ export default function BillingFormPro({ subscriptions }: BillingFormProProps) {
   const openBillingPortal = async () => {
     setIsLoading(true);
     setError(null);
+
+    posthog.capture('open_billing_portal');
 
     const { error } = await authClient.subscription.billingPortal({ returnUrl: '/settings' });
 
