@@ -3,7 +3,6 @@ import FeaturesSection from './components/features-section';
 import AIFeatureSection from './components/ai-feature-section';
 import CTASection from './components/cta-section';
 import FAQSection from './components/faq-section';
-import CookieBanner from './components/cookie-banner';
 
 export default function LandingPage() {
   return (
@@ -13,7 +12,6 @@ export default function LandingPage() {
       <AIFeatureSection />
       <FAQSection />
       <CTASection />
-      <CookieBanner />
     </>
   );
 }

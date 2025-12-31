@@ -1,4 +1,5 @@
 import Footer from '@/components/layout/footer';
+import CookieBanner from '@/components/cookie-banner';
 
 import Navbar from './components/navbar';
 
@@ -8,6 +9,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       <Navbar />
       {children}
       <Footer />
+      <CookieBanner />
     </>
   );
 }
