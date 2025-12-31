@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
@@ -98,6 +97,7 @@ export default function Table<T extends Record<string, unknown>>({
   }, [sortedData, currentPage, itemsPerPage, showPagination]);
 
   const handlePageChange = withScrollPreservation((page: number) => setCurrentPage(page));
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setCurrentPage(1), [data]);
 
   return (

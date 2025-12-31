@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from 'react';
 
 const MOBILE_BREAKPOINT = 768;
@@ -13,6 +12,7 @@ export function useIsMobile() {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };
     mql.addEventListener('change', onChange);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     return () => mql.removeEventListener('change', onChange);
   }, []);
@@ -29,6 +29,7 @@ export function useIsXSmallMobile() {
       setIsXSmallMobile(window.innerWidth < XSMALL_MOBILE_BREAKPOINT);
     };
     mql.addEventListener('change', onChange);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsXSmallMobile(window.innerWidth < XSMALL_MOBILE_BREAKPOINT);
     return () => mql.removeEventListener('change', onChange);
   }, []);

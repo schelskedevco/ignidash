@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import { useQuery, usePaginatedQuery } from 'convex/react';
@@ -63,6 +62,7 @@ export default function AIOutput() {
 
   useEffect(() => {
     if (selectedPlanId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedInsightIndex(0);
     }
   }, [selectedPlanId]);
