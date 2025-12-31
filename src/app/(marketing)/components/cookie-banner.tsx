@@ -29,8 +29,13 @@ export default function CookieBanner() {
       <div className="pointer-events-auto max-w-xl rounded-xl bg-white p-6 shadow-lg outline-1 outline-zinc-900/10 dark:bg-zinc-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
         <p className="text-sm/6 text-zinc-900 dark:text-white">
           We use cookies for product analytics to understand how you use the app. For more information, see our{' '}
-          <Link href="/cookies" className="font-semibold text-rose-600 hover:text-rose-500 dark:text-rose-400 dark:hover:text-rose-300">
-            cookie policy
+          <Link
+            href="/privacy#cookies"
+            className="font-semibold text-rose-600 hover:text-rose-500 dark:text-rose-400 dark:hover:text-rose-300"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            privacy policy
           </Link>
           .
         </p>
