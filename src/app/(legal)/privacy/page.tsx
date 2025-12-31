@@ -577,28 +577,22 @@ export default function PrivacyPage() {
         <section id="cookies" className="mb-8">
           <h2 className="mb-4 text-2xl font-semibold uppercase">5. Do We Use Cookies And Other Tracking Technologies?</h2>
           <p className="mb-4 italic">
-            <strong>In Short:</strong> We may use cookies and other tracking technologies to collect and store your information.
+            <strong>In Short:</strong> We use cookies for product analytics only when you give us consent.
           </p>
           <p className="mb-4">
-            We may use cookies and similar tracking technologies (like web beacons and pixels) to gather information when you interact with
-            our Services. Some online tracking technologies help us maintain the security of our Services and your account, prevent crashes,
-            fix bugs, save your preferences, and assist with basic site functions.
+            We use PostHog, a product analytics platform, to understand how visitors interact with our Services. PostHog helps us analyze
+            usage patterns, identify bugs, and improve your experience. We do not use cookies for advertising, retargeting, or tracking you
+            across other websites.
           </p>
           <p className="mb-4">
-            We also permit third parties and service providers to use online tracking technologies on our Services for analytics and
-            advertising, including to help manage and display advertisements, to tailor advertisements to your interests, or to send
-            abandoned shopping cart reminders (depending on your communication preferences). The third parties and service providers use
-            their technology to provide advertising about products and services tailored to your interests which may appear either on our
-            Services or on other websites.
+            When you first visit our Services, you will see a cookie banner asking for your consent. No analytics cookies are set until you
+            make a choice. If you accept cookies, PostHog will store a first-party cookie in your browser to recognize you across sessions
+            and page loads. If you decline cookies, PostHog uses a privacy-preserving method that counts visitors without storing any data
+            in your browser—your visit is still recorded for aggregate analytics, but you cannot be identified or tracked across sessions.
           </p>
           <p className="mb-4">
-            To the extent these online tracking technologies are deemed to be a &quot;sale&quot;/&quot;sharing&quot; (which includes
-            targeted advertising, as defined under the applicable laws) under applicable US state laws, you can opt out of these online
-            tracking technologies by submitting a request as described below under section &quot;
-            <a href="#uslaws" className="text-primary hover:underline">
-              DO UNITED STATES RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?
-            </a>
-            &quot;
+            You can change your cookie preferences at any time by clearing your browser&apos;s cookies and local storage for this site,
+            which will cause the consent banner to reappear on your next visit.
           </p>
         </section>
 
