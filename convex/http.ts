@@ -8,6 +8,21 @@ const http = httpRouter();
 authComponent.registerRoutes(http, createAuth);
 
 http.route({
+  path: '/createDefaultPlan',
+  method: 'POST',
+  handler: httpAction(async (ctx, request) => {
+    const authHeader = request.headers.get('Authorization');
+    if (authHeader !== `Bearer ${process.env.CONVEX_API_SECRET}`) return new Response('Unauthorized', { status: 401 });
+
+    const { userId, userName } = await request.json();
+    if (!userId) return new Response('Missing userId', { status: 400 });
+
+    await ctx.runMutation(internal.plans.internalGetOrCreateDefaultPlan, { userId, userName });
+    return new Response('OK', { status: 200 });
+  }),
+});
+
+http.route({
   path: '/deleteUserData',
   method: 'POST',
   handler: httpAction(async (ctx, request) => {
