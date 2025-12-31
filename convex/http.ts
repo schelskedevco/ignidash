@@ -37,4 +37,34 @@ http.route({
   }),
 });
 
+http.route({
+  path: '/captureSignUp',
+  method: 'POST',
+  handler: httpAction(async (ctx, request) => {
+    const authHeader = request.headers.get('Authorization');
+    if (authHeader !== `Bearer ${process.env.CONVEX_API_SECRET}`) return new Response('Unauthorized', { status: 401 });
+
+    const { userId, method, email, name } = await request.json();
+    if (!userId || !method || !email) return new Response('Missing required fields', { status: 400 });
+
+    await ctx.runAction(internal.posthog.captureSignUp, { userId, method, email, name });
+    return new Response('OK', { status: 200 });
+  }),
+});
+
+http.route({
+  path: '/captureSignIn',
+  method: 'POST',
+  handler: httpAction(async (ctx, request) => {
+    const authHeader = request.headers.get('Authorization');
+    if (authHeader !== `Bearer ${process.env.CONVEX_API_SECRET}`) return new Response('Unauthorized', { status: 401 });
+
+    const { userId, method } = await request.json();
+    if (!userId || !method) return new Response('Missing required fields', { status: 400 });
+
+    await ctx.runAction(internal.posthog.captureSignIn, { userId, method });
+    return new Response('OK', { status: 200 });
+  }),
+});
+
 export default http;
