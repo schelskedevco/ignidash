@@ -23,7 +23,7 @@ const jsonLd = {
       name: 'Is Ignidash free to use?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'All core planning tools are completely free to use during beta, but access to AI features will require a paid subscription.',
+        text: 'All core planning tools are completely free to use during beta, but access to AI features requires a paid subscription.',
       },
     },
     {
@@ -65,7 +65,7 @@ const faqs = [
   },
   {
     question: 'Is Ignidash free to use?',
-    answer: 'All core planning tools are completely free to use during beta, but access to AI features will require a paid subscription.',
+    answer: 'All core planning tools are completely free to use during beta, but access to AI features requires a paid subscription.',
   },
   {
     question: 'Is my financial data secure?',
