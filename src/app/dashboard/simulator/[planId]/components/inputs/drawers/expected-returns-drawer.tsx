@@ -69,7 +69,7 @@ export default function ExpectedReturnsDrawer({ setOpen, marketAssumptions }: Ex
   const onSubmit = async (data: MarketAssumptionsInputs) => {
     try {
       setSaveError(null);
-      posthog.capture('save_expected_returns');
+      posthog.capture('save_expected_returns', { plan_id: planId });
       await m({ marketAssumptions: marketAssumptionsToConvex(data), planId });
       setOpen(false);
     } catch (error) {

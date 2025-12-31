@@ -52,7 +52,7 @@ export default function TaxSettingsDrawer({ setOpen, taxSettings }: TaxSettingsD
   const onSubmit = async (data: TaxSettingsInputs) => {
     try {
       setSaveError(null);
-      posthog.capture('save_tax_settings');
+      posthog.capture('save_tax_settings', { plan_id: planId });
       await m({ taxSettings: taxSettingsToConvex(data), planId });
       setOpen(false);
     } catch (error) {
