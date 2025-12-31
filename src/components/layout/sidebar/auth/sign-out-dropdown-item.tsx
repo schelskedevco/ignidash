@@ -2,6 +2,7 @@
 
 import { LogOutIcon } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
+import posthog from 'posthog-js';
 
 import { authClient } from '@/lib/auth-client';
 import { DropdownItem, DropdownLabel } from '@/components/catalyst/dropdown';
@@ -16,6 +17,7 @@ export default function SignOutDropdownItem() {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
+          posthog.reset();
           router.push(signInUrlWithRedirect);
         },
       },

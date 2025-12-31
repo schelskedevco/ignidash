@@ -7,6 +7,7 @@ import { api } from '@/convex/_generated/api';
 import { CircleUserRoundIcon, LogInIcon, LogOutIcon, LoaderIcon, LayoutDashboardIcon, GemIcon } from 'lucide-react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Unauthenticated, Authenticated, AuthLoading } from 'convex/react';
+import posthog from 'posthog-js';
 
 import { authClient } from '@/lib/auth-client';
 import {
@@ -51,6 +52,7 @@ export default function Navbar() {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
+          posthog.reset();
           router.push(signInUrlWithRedirect);
         },
       },
