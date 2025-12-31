@@ -6,7 +6,6 @@ import { api } from '@/convex/_generated/api';
 import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
-import { track } from '@vercel/analytics';
 import posthog from 'posthog-js';
 
 import { simulationSettingsToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -62,7 +61,6 @@ export default function SimulationSettingsDrawer({ setOpen, simulationSettings }
   const onSubmit = async (data: SimulationSettingsInputs) => {
     try {
       setSaveError(null);
-      track('Save simulation settings', { simulationMode: data.simulationMode });
       posthog.capture('save_simulation_settings', { simulationMode: data.simulationMode });
       await m({ simulationSettings: simulationSettingsToConvex(data), planId });
       setOpen(false);
