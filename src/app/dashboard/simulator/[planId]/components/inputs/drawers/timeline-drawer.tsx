@@ -97,7 +97,7 @@ export default function TimelineDrawer({ setOpen, timeline }: TimelineDrawerProp
   const onSubmit = async (data: TimelineInputs) => {
     try {
       setSaveError(null);
-      posthog.capture('save_timeline');
+      posthog.capture('save_timeline', { plan_id: planId });
       await m({ timeline: timelineToConvex(data)!, planId });
       setOpen(false);
     } catch (error) {

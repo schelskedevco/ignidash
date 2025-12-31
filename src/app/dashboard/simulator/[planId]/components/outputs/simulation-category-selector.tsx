@@ -27,6 +27,7 @@ import {
 } from '@/lib/stores/simulator-store';
 import { formatChartString } from '@/lib/utils';
 import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
+import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
 interface DrillDownBreadcrumbProps {
   removeActiveSeed: () => void;
@@ -82,6 +83,7 @@ export default function SimulationCategorySelector({
   activeSeed,
   activeSeedType,
 }: SimulationCategorySelectorProps) {
+  const planId = useSelectedPlanId();
   const quickSelectPercentile = useQuickSelectPercentile();
   const percentiles = ['p10', 'p25', 'p50', 'p75', 'p90'] as const;
 
@@ -121,7 +123,7 @@ export default function SimulationCategorySelector({
               key={category}
               onClick={withScrollPreservation(() => {
                 track('Select simulation category', { category });
-                posthog.capture('select_simulation_category', { category });
+                posthog.capture('select_simulation_category', { plan_id: planId, category });
                 updateResultsCategory(category);
               })}
               type="button"
