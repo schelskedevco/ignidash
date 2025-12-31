@@ -3,6 +3,7 @@ import { Analytics } from '@vercel/analytics/next';
 import { Figtree, Geist_Mono, Geist } from 'next/font/google';
 
 import { ThemeProvider } from '@/components/providers/theme-provider';
+import CookieBanner from '@/components/cookie-banner';
 
 import { ConvexClientProvider } from './convex-client-provider';
 import './globals.css';
@@ -150,6 +151,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <ConvexClientProvider>
             {children}
+            <CookieBanner />
             <Analytics />
           </ConvexClientProvider>
         </ThemeProvider>
