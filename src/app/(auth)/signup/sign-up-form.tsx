@@ -44,11 +44,6 @@ export default function SignUpForm() {
           setErrorMessage(null);
           setIsLoading(false);
 
-          // PostHog: Identify user and capture signup event
-          posthog.identify(email, {
-            email: email,
-            name: fullName,
-          });
           posthog.capture('user_signed_up', {
             signup_method: 'email',
           });

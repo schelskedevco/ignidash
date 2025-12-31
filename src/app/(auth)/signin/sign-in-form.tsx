@@ -46,10 +46,6 @@ export default function SignInForm() {
           setErrorMessage(null);
           setIsLoading(false);
 
-          // PostHog: Identify user and capture signin event
-          posthog.identify(email, {
-            email: email,
-          });
           posthog.capture('user_signed_in', {
             signin_method: 'email',
             remember_me: rememberMe,
