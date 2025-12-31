@@ -11,6 +11,7 @@ import { CalendarIcon, BanknoteArrowUpIcon, TrendingUpIcon, BanknoteXIcon } from
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
 import { incomeToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -72,6 +73,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
     try {
       setSaveError(null);
       track('Save income', { saveMode: selectedIncome ? 'edit' : 'create' });
+      posthog.capture('save_income', { saveMode: selectedIncome ? 'edit' : 'create' });
       await m({ income: incomeToConvex({ ...data, id: incomeId }), planId });
       onClose();
     } catch (error) {

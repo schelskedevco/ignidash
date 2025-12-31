@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import ErrorMessageCard from '@/components/ui/error-message-card';
 import { authClient } from '@/lib/auth-client';
@@ -25,6 +26,7 @@ export default function ResetPasswordForm() {
     event.preventDefault();
 
     track('Reset password');
+    posthog.capture('reset_password');
 
     const token = searchParams.get('token');
     if (!token) {

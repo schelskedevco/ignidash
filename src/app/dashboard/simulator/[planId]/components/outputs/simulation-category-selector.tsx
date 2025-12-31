@@ -3,6 +3,7 @@
 import { ListFilterIcon, CheckIcon, ArrowUpDownIcon } from 'lucide-react';
 import { ChevronRightIcon } from '@heroicons/react/20/solid';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { cn } from '@/lib/utils';
 import { SingleSimulationCategory, MultiSimulationCategory } from '@/lib/types/simulation-category';
@@ -120,6 +121,7 @@ export default function SimulationCategorySelector({
               key={category}
               onClick={withScrollPreservation(() => {
                 track('Select simulation category', { category });
+                posthog.capture('select_simulation_category', { category });
                 updateResultsCategory(category);
               })}
               type="button"

@@ -60,14 +60,7 @@ export default function GenerateDialog({
     try {
       setSaveError(null);
       track('Generate insights', { hasUserPrompt: !!data.userPrompt });
-
-      // PostHog: Track AI insights generation
-      posthog.capture('ai_insights_generated', {
-        plan_id: planId,
-        has_custom_prompt: !!data.userPrompt,
-        prompt_length: data.userPrompt?.length ?? 0,
-      });
-
+      posthog.capture('generate_insights', { hasUserPrompt: !!data.userPrompt });
       await m({ planId, keyMetrics, simulationResult: simulationResultToConvex(simulationResult), userPrompt: data.userPrompt });
       onGenerate();
       onClose();

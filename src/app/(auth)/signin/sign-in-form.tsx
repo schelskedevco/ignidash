@@ -35,6 +35,11 @@ export default function SignInForm() {
     const password = formData.get('password') as string;
     const rememberMe = formData.get('remember-me') === 'on';
 
+    posthog.capture('sign_in', {
+      signin_method: 'email',
+      remember_me: rememberMe,
+    });
+
     await authClient.signIn.email(
       { email, password, callbackURL: safeRedirect, rememberMe },
       {
@@ -45,11 +50,6 @@ export default function SignInForm() {
         onSuccess() {
           setErrorMessage(null);
           setIsLoading(false);
-
-          posthog.capture('user_signed_in', {
-            signin_method: 'email',
-            remember_me: rememberMe,
-          });
         },
         onError: (ctx) => {
           setErrorMessage(ctx.error.message);

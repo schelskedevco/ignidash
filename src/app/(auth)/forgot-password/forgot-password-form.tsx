@@ -5,6 +5,7 @@ import { CheckCircleIcon } from '@heroicons/react/20/solid';
 import { useState } from 'react';
 import Link from 'next/link';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { authClient } from '@/lib/auth-client';
 import { useRedirectUrl } from '@/hooks/use-redirect-url';
@@ -25,6 +26,8 @@ export default function ForgotPasswordForm() {
 
     const formData = new FormData(event.currentTarget);
     const email = formData.get('email') as string;
+
+    posthog.capture('request_password_reset', { email });
 
     await authClient.requestPasswordReset(
       {

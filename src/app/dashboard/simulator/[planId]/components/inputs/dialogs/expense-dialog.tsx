@@ -11,6 +11,7 @@ import { CalendarIcon, BanknoteArrowDownIcon, TrendingUpIcon } from 'lucide-reac
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
 import { expenseToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -71,6 +72,7 @@ export default function ExpenseDialog({ onClose, selectedExpense: _selectedExpen
     try {
       setSaveError(null);
       track('Save expense', { saveMode: selectedExpense ? 'edit' : 'create' });
+      posthog.capture('save_expense', { saveMode: selectedExpense ? 'edit' : 'create' });
       await m({ expense: expenseToConvex({ ...data, id: expenseId }), planId });
       onClose();
     } catch (error) {

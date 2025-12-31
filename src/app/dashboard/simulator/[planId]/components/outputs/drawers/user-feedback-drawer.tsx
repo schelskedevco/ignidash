@@ -43,14 +43,8 @@ export default function UserFeedbackDrawer({ setOpen }: UserFeedbackDrawerProps)
   const onSubmit = async (data: UserFeedbackInputs) => {
     try {
       setSaveError(null);
+      posthog.capture('submit_user_feedback');
       await m({ feedback: { planId, feedback: data.feedback } });
-
-      // PostHog: Track user feedback submission
-      posthog.capture('user_feedback_submitted', {
-        plan_id: planId,
-        feedback_length: data.feedback.length,
-      });
-
       setOpen(false);
     } catch (error) {
       setSaveError(error instanceof ConvexError ? error.message : 'Failed to send user feedback.');

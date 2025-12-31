@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { LockIcon } from 'lucide-react';
-import posthog from 'posthog-js';
 
 import Card from '@/components/ui/card';
 import { Input } from '@/components/catalyst/input';
@@ -29,10 +28,6 @@ export default function ChangePasswordForm({ showSuccessNotification }: ChangePa
       createPasswordCallbacks(() => {
         setCurrentPassword('');
         setNewPassword('');
-
-        // PostHog: Track password change
-        posthog.capture('password_changed');
-
         showSuccessNotification('Password changed successfully!');
       })
     );

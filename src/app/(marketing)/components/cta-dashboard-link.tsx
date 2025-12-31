@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useConvexAuth } from 'convex/react';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { cn } from '@/lib/utils';
 
@@ -26,6 +27,7 @@ export default function CTADashboardLink() {
     <Link
       onClick={() => {
         track('Marketing CTA clicked', { location: 'footer', signedIn: isAuthenticated });
+        posthog.capture('marketing_cta_clicked', { location: 'footer' });
         setIsLoading(true);
       }}
       href="/dashboard"

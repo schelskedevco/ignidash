@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { cn } from '@/lib/utils';
 
@@ -14,7 +15,10 @@ interface StarterLinkProps {
 export default function StarterLink({ tier }: StarterLinkProps) {
   return (
     <Link
-      onClick={() => track('Starter plan clicked')}
+      onClick={() => {
+        track('Starter plan clicked');
+        posthog.capture('starter_plan_clicked');
+      }}
       href={tier.href}
       aria-describedby={tier.id}
       className={cn(

@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
 import { formatNumber } from '@/lib/utils';
@@ -88,6 +89,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
     try {
       setSaveError(null);
       track('Save glide path', { saveMode: glidePath ? 'edit' : 'create' });
+      posthog.capture('save_glide_path', { saveMode: glidePath ? 'edit' : 'create' });
       await m({ glidePath: glidePathToConvex({ ...data, id: glidePathId }), planId });
       onClose();
     } catch (error) {

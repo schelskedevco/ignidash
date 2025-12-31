@@ -48,11 +48,7 @@ export default function BuyProButton({ tier, preloadedSubscriptions, isAuthentic
       onClick={async () => {
         track('Upgrade to Pro clicked');
 
-        // PostHog: Track upgrade conversion intent
-        posthog.capture('upgrade_to_pro_clicked', {
-          tier_name: tier.name,
-          tier_price: tier.priceMonthly,
-        });
+        posthog.capture('upgrade_to_pro_clicked');
 
         await authClient.subscription.upgrade({
           plan: 'pro',

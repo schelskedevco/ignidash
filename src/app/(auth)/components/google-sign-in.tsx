@@ -10,11 +10,9 @@ interface GoogleSignInProps {
 
 export default function GoogleSignIn({ safeRedirect }: GoogleSignInProps) {
   const handleGoogleSignIn = async () => {
-    // PostHog: Track Google sign-in attempt (identification happens via server callback)
-    posthog.capture('user_signed_in', {
+    posthog.capture('sign_in', {
       signin_method: 'google',
     });
-
     await authClient.signIn.social({ provider: 'google', callbackURL: safeRedirect });
   };
 

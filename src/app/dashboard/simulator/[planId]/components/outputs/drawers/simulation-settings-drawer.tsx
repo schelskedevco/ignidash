@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { simulationSettingsToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import NumberInput from '@/components/ui/number-input';
@@ -62,6 +63,7 @@ export default function SimulationSettingsDrawer({ setOpen, simulationSettings }
     try {
       setSaveError(null);
       track('Save simulation settings', { simulationMode: data.simulationMode });
+      posthog.capture('save_simulation_settings', { simulationMode: data.simulationMode });
       await m({ simulationSettings: simulationSettingsToConvex(data), planId });
       setOpen(false);
     } catch (error) {

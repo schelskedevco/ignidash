@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useEffect, useMemo, useState } from 'react';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { taxSettingsToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { type TaxSettingsInputs, taxSettingsSchema } from '@/lib/schemas/inputs/tax-settings-schema';
@@ -53,6 +54,7 @@ export default function TaxSettingsDrawer({ setOpen, taxSettings }: TaxSettingsD
     try {
       setSaveError(null);
       track('Save tax settings');
+      posthog.capture('save_tax_settings');
       await m({ taxSettings: taxSettingsToConvex(data), planId });
       setOpen(false);
     } catch (error) {

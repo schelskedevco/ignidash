@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { useAccountsData, useIncomesData, useTimelineData } from '@/hooks/use-convex-data';
 import { contributionToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -79,6 +80,7 @@ export default function ContributionRuleDialog({
     try {
       setSaveError(null);
       track('Save contribution rule', { saveMode: selectedContributionRule ? 'edit' : 'create' });
+      posthog.capture('save_contribution_rule', { saveMode: selectedContributionRule ? 'edit' : 'create' });
       await m({ contributionRule: contributionToConvex({ ...data, id: contributionRuleId }), planId });
       onClose();
     } catch (error) {

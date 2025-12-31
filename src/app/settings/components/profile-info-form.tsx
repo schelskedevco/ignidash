@@ -4,7 +4,6 @@
 import { useState, useEffect } from 'react';
 import { CircleUserRoundIcon, MailQuestionMarkIcon } from 'lucide-react';
 import { CheckCircleIcon } from '@heroicons/react/20/solid';
-import posthog from 'posthog-js';
 
 import Card from '@/components/ui/card';
 import { Input } from '@/components/catalyst/input';
@@ -24,9 +23,6 @@ function useNameFieldHook(fetchedName: string, showSuccessNotification: (title: 
     await authClient.updateUser(
       { name },
       nameCallbacks(() => {
-        // PostHog: Track profile name update
-        posthog.capture('profile_name_updated');
-
         showSuccessNotification('Name changed successfully!');
       })
     );
@@ -64,10 +60,6 @@ function useSendVerificationEmailFieldHook(fetchedEmail: string, showSuccessNoti
       { email: fetchedEmail, callbackURL: '/settings' },
       sendVerificationEmailCallbacks(() => {
         setIsVerificationEmailSent(true);
-
-        // PostHog: Track verification email request
-        posthog.capture('verification_email_sent');
-
         showSuccessNotification('Verification email sent!');
       })
     );
