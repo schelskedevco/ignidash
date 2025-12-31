@@ -12,14 +12,15 @@ export function useRegenSimulation() {
   const planId = useSelectedPlanId();
 
   const simulationSettings = useSimulationSettingsData();
+  const simulationMode = simulationSettings?.simulationMode;
   const simulationStatus = useSimulationStatus();
 
-  const isDisabled = !simulationSettings || simulationStatus === 'loading' || simulationSettings.simulationMode === 'fixedReturns';
+  const isDisabled = !simulationSettings || simulationStatus === 'loading' || simulationMode === 'fixedReturns';
 
   const m = useMutation(api.simulation_settings.update);
   const handleClick = async () => {
     if (!isDisabled) {
-      posthog.capture('regenerate_simulation', { simulationMode: simulationSettings.simulationMode });
+      posthog.capture('regenerate_simulation', { simulationMode });
       await m({ simulationSettings: { ...simulationSettings, simulationSeed: Math.floor(Math.random() * 1000) }, planId });
     }
   };
