@@ -13,7 +13,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import { useTheme } from 'next-themes';
-import { track } from '@vercel/analytics';
 import posthog from 'posthog-js';
 
 import { Button } from '@/components/catalyst/button';
@@ -76,7 +75,6 @@ function DemoQuestionButton({ label, question, setChatMessage }: DemoQuestionBut
   return (
     <button
       onClick={() => {
-        track('Select demo question', { label });
         posthog.capture('select_demo_question', { label });
         setChatMessage(question);
       }}
@@ -180,7 +178,6 @@ function ConversationListItem({ conversation, selectedConversationId, setSelecte
 
   const handleDelete = async () => {
     if (conversation._id === selectedConversationId) setSelectedConversationId(undefined);
-    track('Delete conversation');
     posthog.capture('delete_conversation');
     await deleteConversation({ conversationId: conversation._id });
   };
@@ -195,7 +192,6 @@ function ConversationListItem({ conversation, selectedConversationId, setSelecte
       <button
         className="focus-outline min-w-0 flex-auto"
         onClick={() => {
-          track('Select conversation');
           posthog.capture('select_conversation');
           setSelectedConversationId(conversation._id);
         }}
@@ -306,7 +302,6 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
 
     try {
       updateChatState({ errorMessage: '' });
-      track('Send message to AI assistant');
       posthog.capture('send_ai_message');
       const { conversationId } = await m({ conversationId: selectedConversationId, planId, content: chatMessage, keyMetrics });
       updateChatState({ chatMessage: '' });
@@ -318,7 +313,6 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
 
   const handleLoadMore = () => {
     prevScrollHeightRef.current = scrollAreaRef.current?.scrollHeight ?? 0;
-    track('Load more AI messages');
     posthog.capture('load_more_ai_messages');
     loadMore(PAGE_SIZE);
   };
@@ -361,7 +355,6 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
               color="dark/white"
               className="w-full"
               onClick={() => {
-                track('Create new chat', { location: 'drawer' });
                 posthog.capture('create_new_chat', { location: 'drawer' });
                 updateSelectedConversationId(undefined);
               }}
@@ -379,7 +372,6 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
               <Button
                 outline
                 onClick={() => {
-                  track('Create new chat', { location: 'header' });
                   posthog.capture('create_new_chat', { location: 'header' });
                   updateSelectedConversationId(undefined);
                 }}
