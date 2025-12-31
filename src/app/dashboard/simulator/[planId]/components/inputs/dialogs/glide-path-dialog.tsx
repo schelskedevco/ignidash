@@ -8,7 +8,6 @@ import { RouteIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { track } from '@vercel/analytics';
 import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
@@ -88,7 +87,6 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
     const glidePathId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
-      track('Save glide path', { saveMode: glidePath ? 'edit' : 'create' });
       posthog.capture('save_glide_path', { saveMode: glidePath ? 'edit' : 'create' });
       await m({ glidePath: glidePathToConvex({ ...data, id: glidePathId }), planId });
       onClose();

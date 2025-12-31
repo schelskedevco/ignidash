@@ -8,7 +8,6 @@ import { WalletIcon } from '@heroicons/react/24/outline';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { track } from '@vercel/analytics';
 import posthog from 'posthog-js';
 
 import { assetToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -60,7 +59,6 @@ export default function AssetDialog({ onClose, selectedAsset: _selectedAsset, nu
     const assetId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
-      track('Save asset', { saveMode: selectedAsset ? 'edit' : 'create' });
       posthog.capture('save_asset', { saveMode: selectedAsset ? 'edit' : 'create' });
       await m({ asset: assetToConvex({ ...data, id: assetId }) });
       onClose();

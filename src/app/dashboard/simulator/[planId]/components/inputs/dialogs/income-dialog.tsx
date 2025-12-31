@@ -10,7 +10,6 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { CalendarIcon, BanknoteArrowUpIcon, TrendingUpIcon, BanknoteXIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import { track } from '@vercel/analytics';
 import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
@@ -72,7 +71,6 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
     const incomeId = data.id === '' ? uuidv4() : data.id;
     try {
       setSaveError(null);
-      track('Save income', { saveMode: selectedIncome ? 'edit' : 'create' });
       posthog.capture('save_income', { saveMode: selectedIncome ? 'edit' : 'create' });
       await m({ income: incomeToConvex({ ...data, id: incomeId }), planId });
       onClose();
