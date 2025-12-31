@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import type { Id } from '@/convex/_generated/dataModel';
 import Link from 'next/link';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { simulationResultToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -59,6 +60,14 @@ export default function GenerateDialog({
     try {
       setSaveError(null);
       track('Generate insights', { hasUserPrompt: !!data.userPrompt });
+
+      // PostHog: Track AI insights generation
+      posthog.capture('ai_insights_generated', {
+        plan_id: planId,
+        has_custom_prompt: !!data.userPrompt,
+        prompt_length: data.userPrompt?.length ?? 0,
+      });
+
       await m({ planId, keyMetrics, simulationResult: simulationResultToConvex(simulationResult), userPrompt: data.userPrompt });
       onGenerate();
       onClose();

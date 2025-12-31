@@ -1,10 +1,18 @@
 'use client';
 
 import { useEffect } from 'react';
+import posthog from 'posthog-js';
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
     console.error(error);
+
+    // PostHog: Track error page viewed and capture exception
+    posthog.capture('error_page_viewed', {
+      error_message: error.message,
+      error_digest: error.digest,
+    });
+    posthog.captureException(error);
   }, [error]);
 
   return (

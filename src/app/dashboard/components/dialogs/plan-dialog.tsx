@@ -9,6 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { planMetadataSchema, type PlanMetadata } from '@/lib/schemas/plan-metadata-schema';
@@ -64,9 +65,22 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
       } else if (data.clonedPlanId) {
         track('Save plan', { saveMode: 'clone' });
         await clonePlanMutation({ planId: data.clonedPlanId as Id<'plans'> | 'template1' | 'template2', newPlanName: data.name });
+
+        // PostHog: Track plan cloning
+        posthog.capture('plan_cloned', {
+          plan_name: data.name,
+          source_plan_id: data.clonedPlanId,
+          is_template: data.clonedPlanId === 'template1' || data.clonedPlanId === 'template2',
+        });
       } else {
         track('Save plan', { saveMode: 'create' });
         await createPlanMutation({ newPlanName: data.name });
+
+        // PostHog: Track new plan creation
+        posthog.capture('plan_created', {
+          plan_name: data.name,
+          total_plans_count: numPlans + 1,
+        });
       }
 
       onClose();

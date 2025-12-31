@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { authClient } from '@/lib/auth-client';
 import SuccessNotification from '@/components/ui/success-notification';
@@ -44,6 +45,15 @@ export default function SignInForm() {
         onSuccess() {
           setErrorMessage(null);
           setIsLoading(false);
+
+          // PostHog: Identify user and capture signin event
+          posthog.identify(email, {
+            email: email,
+          });
+          posthog.capture('user_signed_in', {
+            signin_method: 'email',
+            remember_me: rememberMe,
+          });
         },
         onError: (ctx) => {
           setErrorMessage(ctx.error.message);

@@ -6,6 +6,7 @@ import { api } from '@/convex/_generated/api';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { track } from '@vercel/analytics';
+import posthog from 'posthog-js';
 
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
@@ -46,6 +47,12 @@ export default function BuyProButton({ tier, preloadedSubscriptions, isAuthentic
       aria-describedby={tier.id}
       onClick={async () => {
         track('Upgrade to Pro clicked');
+
+        // PostHog: Track upgrade conversion intent
+        posthog.capture('upgrade_to_pro_clicked', {
+          tier_name: tier.name,
+          tier_price: tier.priceMonthly,
+        });
 
         await authClient.subscription.upgrade({
           plan: 'pro',

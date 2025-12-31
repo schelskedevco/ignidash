@@ -6,6 +6,7 @@ import { api } from '@/convex/_generated/api';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import posthog from 'posthog-js';
 
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
@@ -43,6 +44,13 @@ export default function UserFeedbackDrawer({ setOpen }: UserFeedbackDrawerProps)
     try {
       setSaveError(null);
       await m({ feedback: { planId, feedback: data.feedback } });
+
+      // PostHog: Track user feedback submission
+      posthog.capture('user_feedback_submitted', {
+        plan_id: planId,
+        feedback_length: data.feedback.length,
+      });
+
       setOpen(false);
     } catch (error) {
       setSaveError(error instanceof ConvexError ? error.message : 'Failed to send user feedback.');
