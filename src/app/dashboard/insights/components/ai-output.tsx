@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { SparklesIcon, CopyIcon, CheckIcon, RefreshCwIcon, Loader2Icon } from 'lucide-react';
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/react/20/solid';
 import ReactMarkdown from 'react-markdown';
+import posthog from 'posthog-js';
 
 import { Heading } from '@/components/catalyst/heading';
 import { useInsightsSelectedPlan } from '@/lib/stores/simulator-store';
@@ -159,7 +160,10 @@ export default function AIOutput() {
                   </button>
                   <button
                     disabled={selectedInsight.isLoading}
-                    onClick={() => setGenerateDialogOpen(true)}
+                    onClick={() => {
+                      posthog.capture('open_generate_insights', { plan_id: selectedPlanId, is_regenerate: true });
+                      setGenerateDialogOpen(true);
+                    }}
                     aria-label="Regenerate insights"
                     className="focus-outline text-sm opacity-60 transition-all duration-300 hover:rotate-180 hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-50"
                   >
@@ -173,7 +177,10 @@ export default function AIOutput() {
             <div className="flex size-full flex-col items-center px-4 py-5 sm:py-6">
               {!isLoadingPage || numInsights === 0 ? (
                 <DataListEmptyStateButton
-                  onClick={() => setGenerateDialogOpen(true)}
+                  onClick={() => {
+                    posthog.capture('open_generate_insights', { plan_id: selectedPlanId, is_regenerate: false });
+                    setGenerateDialogOpen(true);
+                  }}
                   icon={SparklesIcon}
                   buttonText="Generate insights"
                   className="flex-1"
