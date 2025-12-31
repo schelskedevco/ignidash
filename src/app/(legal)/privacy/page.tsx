@@ -18,7 +18,7 @@ export default function PrivacyPage() {
           <GlobeLockIcon className="text-primary h-12 w-12" />
           <div>
             <h1 className="mb-2 text-3xl font-bold">Privacy Policy</h1>
-            <p className="text-muted-foreground text-sm">Last updated: December 14, 2025</p>
+            <p className="text-muted-foreground text-sm">Last updated: December 31, 2025</p>
           </div>
         </div>
       </header>
@@ -280,13 +280,9 @@ export default function PrivacyPage() {
           <p className="mb-4">
             <strong>Payment Data.</strong> We may collect data necessary to process your payment if you choose to make purchases, such as
             your payment instrument number, and the security code associated with your payment instrument. All payment data is handled and
-            stored by Stripe and Polar. You may find their privacy notice link(s) here:{' '}
+            stored by Stripe. You may find their privacy notice here:{' '}
             <a href="https://stripe.com/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
               https://stripe.com/privacy
-            </a>{' '}
-            and{' '}
-            <a href="https://polar.sh/legal/privacy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
-              https://polar.sh/legal/privacy
             </a>
             .
           </p>
