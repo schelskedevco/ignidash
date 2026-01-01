@@ -49,13 +49,22 @@ export const streamChat = internalAction({
       });
 
       let body = '';
+      let lastWriteTime = Date.now();
       for await (const part of stream) {
         if (part.choices.length > 0) {
           const choice = part.choices[0];
 
+          if (choice.finish_reason === 'content_filter') {
+            body += '\n\n**[Response was cut short by content filter]**';
+          }
+
           if (choice.delta.content) {
             body += choice.delta.content;
-            await ctx.runMutation(internal.messages.setBody, { messageId: assistantMessageId, body });
+            const now = Date.now();
+            if (now - lastWriteTime > 1000) {
+              await ctx.runMutation(internal.messages.setBody, { messageId: assistantMessageId, body });
+              lastWriteTime = now;
+            }
           }
         }
 
@@ -72,7 +81,7 @@ export const streamChat = internalAction({
         }
       }
 
-      await ctx.runMutation(internal.messages.setIsLoading, { messageId: assistantMessageId, isLoading: false });
+      await ctx.runMutation(internal.messages.setBody, { messageId: assistantMessageId, body, isLoading: false });
     } catch (error) {
       if (error instanceof AzureOpenAI.APIError) {
         console.error(error);
@@ -109,13 +118,22 @@ export const streamInsights = internalAction({
       });
 
       let content = '';
+      let lastWriteTime = Date.now();
       for await (const part of stream) {
         if (part.choices.length > 0) {
           const choice = part.choices[0];
 
+          if (choice.finish_reason === 'content_filter') {
+            content += '\n\n**[Response was cut short by content filter]**';
+          }
+
           if (choice.delta.content) {
             content += choice.delta.content;
-            await ctx.runMutation(internal.insights.setContent, { insightId, content });
+            const now = Date.now();
+            if (now - lastWriteTime > 2500) {
+              await ctx.runMutation(internal.insights.setContent, { insightId, content });
+              lastWriteTime = now;
+            }
           }
         }
 
@@ -132,7 +150,7 @@ export const streamInsights = internalAction({
         }
       }
 
-      await ctx.runMutation(internal.insights.setIsLoading, { insightId, isLoading: false });
+      await ctx.runMutation(internal.insights.setContent, { insightId, content, isLoading: false });
     } catch (error) {
       if (error instanceof AzureOpenAI.APIError) {
         console.error(error);
