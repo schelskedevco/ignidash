@@ -54,7 +54,15 @@ export default function BillingFormPro({ subscriptions }: BillingFormProProps) {
           <Legend className="flex flex-wrap items-center gap-2">
             <CreditCardIcon className="text-primary h-6 w-6" aria-hidden="true" />
             Billing status
-            {activeSubscriptions.length > 0 ? <Badge color="green">Active</Badge> : <Badge color="zinc">Inactive</Badge>}
+            {activeSubscriptions.length > 0 ? (
+              activeSubscriptions[0].status === 'active' ? (
+                <Badge color="green">Active</Badge>
+              ) : (
+                <Badge color="yellow">Free trial</Badge>
+              )
+            ) : (
+              <Badge color="zinc">Inactive</Badge>
+            )}
             {cancelAtTime && <Badge color="red">Cancels at {new Date(cancelAtTime * 1000).toLocaleDateString()}</Badge>}
           </Legend>
           <FieldGroup>
