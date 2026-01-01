@@ -119,7 +119,7 @@ export default async function PricingPage() {
             {tier.id === 'tier-pro' ? (
               <BuyProButton tier={tier} preloadedSubscriptions={preloadedSubscriptions} isAuthenticated={isAuthenticated} />
             ) : (
-              <StarterLink tier={tier} />
+              <StarterLink tier={tier} isAuthenticated={isAuthenticated} />
             )}
           </div>
         ))}
