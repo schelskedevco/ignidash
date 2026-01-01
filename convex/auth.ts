@@ -180,12 +180,117 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                 days: 7,
                 onTrialStart: async (subscription) => {
                   console.log('Trial started');
+
+                  try {
+                    const customerId = subscription.stripeCustomerId;
+                    if (!customerId) return;
+
+                    const customer = await stripeClient.customers.retrieve(customerId);
+                    if (customer.deleted || !customer.email) {
+                      console.error('Customer deleted or email not found');
+                      return;
+                    }
+
+                    await resend.sendEmail(requireActionCtx(ctx), {
+                      from: 'Ignidash <noreply@mail.ignidash.com>',
+                      to: customer.email,
+                      subject: 'Your 7-day Pro trial has started!',
+                      html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                          <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                            Hi there,
+                          </p>
+                          <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                            Welcome to Ignidash Pro! Your 7-day free trial has begun. You now have full access to AI chat and insights.
+                          </p>
+                          <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                            Make the most of your trial by exploring all the Pro features. Your trial will automatically convert to a paid subscription after 7 days unless you cancel.
+                          </p>
+                          <p style="margin: 30px 0; text-align: center;">
+                            <a href="${baseURL}/dashboard" style="display: inline-block; padding: 14px 28px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Start Exploring</a>
+                          </p>
+                        </div>
+                      `,
+                    });
+                  } catch (error) {
+                    console.error('Error sending trial start email:', error);
+                  }
                 },
-                onTrialEnd: async ({ subscription }, ctx) => {
+                onTrialEnd: async ({ subscription }, request) => {
                   console.log('Trial ended');
+
+                  try {
+                    const customerId = subscription.stripeCustomerId;
+                    if (!customerId) return;
+
+                    const customer = await stripeClient.customers.retrieve(customerId);
+                    if (customer.deleted || !customer.email) {
+                      console.error('Customer deleted or email not found');
+                      return;
+                    }
+
+                    await resend.sendEmail(requireActionCtx(ctx), {
+                      from: 'Ignidash <noreply@mail.ignidash.com>',
+                      to: customer.email,
+                      subject: 'Your Pro subscription is now active!',
+                      html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                          <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                            Hi there,
+                          </p>
+                          <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                            Your free trial has ended and your Ignidash Pro subscription is now active. Thank you for choosing to continue with us!
+                          </p>
+                          <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                            You'll continue to enjoy full access to AI chat and insights. If you have any questions, we're here to help.
+                          </p>
+                          <p style="margin: 30px 0; text-align: center;">
+                            <a href="${baseURL}/dashboard" style="display: inline-block; padding: 14px 28px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Go to Dashboard</a>
+                          </p>
+                        </div>
+                      `,
+                    });
+                  } catch (error) {
+                    console.error('Error sending trial end email:', error);
+                  }
                 },
-                onTrialExpired: async (subscription, ctx) => {
+                onTrialExpired: async (subscription, request) => {
                   console.log('Trial expired');
+
+                  try {
+                    const customerId = subscription.stripeCustomerId;
+                    if (!customerId) return;
+
+                    const customer = await stripeClient.customers.retrieve(customerId);
+                    if (customer.deleted || !customer.email) {
+                      console.error('Customer deleted or email not found');
+                      return;
+                    }
+
+                    await resend.sendEmail(requireActionCtx(ctx), {
+                      from: 'Ignidash <noreply@mail.ignidash.com>',
+                      to: customer.email,
+                      subject: 'Your Pro trial has expired',
+                      html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                          <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
+                            Hi there,
+                          </p>
+                          <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                            Your 7-day Ignidash Pro trial has expired. You've been moved to the free plan and no longer have access to AI chat and insights.
+                          </p>
+                          <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 20px;">
+                            Ready to unlock Pro features again? Subscribe now to regain full access.
+                          </p>
+                          <p style="margin: 30px 0; text-align: center;">
+                            <a href="${baseURL}/settings" style="display: inline-block; padding: 14px 28px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Subscribe to Pro</a>
+                          </p>
+                        </div>
+                      `,
+                    });
+                  } catch (error) {
+                    console.error('Error sending trial expired email:', error);
+                  }
                 },
               },
             },
