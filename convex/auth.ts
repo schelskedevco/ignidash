@@ -283,7 +283,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                             Ready to unlock Pro features again? Subscribe now to regain full access.
                           </p>
                           <p style="margin: 30px 0; text-align: center;">
-                            <a href="${baseURL}/settings" style="display: inline-block; padding: 14px 28px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Subscribe to Pro</a>
+                            <a href="${baseURL}/pricing" style="display: inline-block; padding: 14px 28px; background-color: #f43f5e; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px;">Subscribe to Pro</a>
                           </p>
                         </div>
                       `,
