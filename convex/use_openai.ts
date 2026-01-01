@@ -5,6 +5,8 @@ import { internalAction } from './_generated/server';
 import type { Id, Doc } from './_generated/dataModel';
 import { internal } from './_generated/api';
 
+import type { SubscriptionType } from './utils/ai_utils';
+
 const apiKey = process.env.OPENAI_API_KEY;
 if (!apiKey) throw new Error('OPENAI_API_KEY environment variable is not set.');
 
@@ -24,10 +26,14 @@ type StreamChatParams = {
   assistantMessageId: Id<'messages'>;
   systemPrompt: string;
   subscriptionStartTime: number;
+  subscriptionType: SubscriptionType;
 };
 
 export const streamChat = internalAction({
-  handler: async (ctx, { userId, messages, assistantMessageId, systemPrompt, subscriptionStartTime }: StreamChatParams) => {
+  handler: async (
+    ctx,
+    { userId, messages, assistantMessageId, systemPrompt, subscriptionStartTime, subscriptionType }: StreamChatParams
+  ) => {
     const hasBody = (msg: Doc<'messages'>): msg is Doc<'messages'> & { body: string } => msg.body !== undefined;
 
     try {
@@ -61,6 +67,7 @@ export const streamChat = internalAction({
             outputTokens: part.usage.completion_tokens,
             totalTokens: part.usage.total_tokens,
             subscriptionStartTime,
+            subscriptionType,
           });
         }
       }
@@ -87,10 +94,11 @@ type StreamInsightsParams = {
   insightId: Id<'insights'>;
   systemPrompt: string;
   subscriptionStartTime: number;
+  subscriptionType: SubscriptionType;
 };
 
 export const streamInsights = internalAction({
-  handler: async (ctx, { userId, insightId, systemPrompt, subscriptionStartTime }: StreamInsightsParams) => {
+  handler: async (ctx, { userId, insightId, systemPrompt, subscriptionStartTime, subscriptionType }: StreamInsightsParams) => {
     try {
       const stream = await openai.chat.completions.create({
         model: 'gpt-5.1-chat',
@@ -119,6 +127,7 @@ export const streamInsights = internalAction({
             outputTokens: part.usage.completion_tokens,
             totalTokens: part.usage.total_tokens,
             subscriptionStartTime,
+            subscriptionType,
           });
         }
       }
