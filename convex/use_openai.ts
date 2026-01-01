@@ -24,7 +24,7 @@ const openaiInsights = new AzureOpenAI({
   endpoint,
   apiKey,
   deployment: 'gpt-5.2',
-  apiVersion: '2024-04-01-preview',
+  apiVersion: '2024-12-01-preview',
 });
 
 type StreamChatParams = {
@@ -126,6 +126,7 @@ export const streamInsights = internalAction({
 
       let content = '';
       let lastWriteTime = Date.now();
+
       for await (const part of stream) {
         if (part.choices.length > 0) {
           const choice = part.choices[0];
@@ -137,7 +138,7 @@ export const streamInsights = internalAction({
           if (choice.delta.content) {
             content += choice.delta.content;
             const now = Date.now();
-            if (now - lastWriteTime > 1000) {
+            if (now - lastWriteTime > 5000) {
               await ctx.runMutation(internal.insights.setContent, { insightId, content });
               lastWriteTime = now;
             }
