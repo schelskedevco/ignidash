@@ -33,7 +33,9 @@ export default function BillingFormPro({ subscriptions }: BillingFormProProps) {
     setIsLoading(false);
   };
 
-  const activeSubscriptions = subscriptions.filter((subscription) => subscription.status === 'active');
+  const activeSubscriptions = subscriptions.filter(
+    (subscription) => subscription.status === 'active' || subscription.status === 'trialing'
+  );
 
   const a = useAction(api.auth.getStripeSubscription);
   useEffect(() => {

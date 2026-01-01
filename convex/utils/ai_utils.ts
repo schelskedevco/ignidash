@@ -105,7 +105,7 @@ export async function getSubscriptionStartTime(ctx: QueryCtx, isAdmin: boolean):
   }
 
   const subscriptions = await ctx.runQuery(api.auth.listSubscriptions, {});
-  const activeSubscription = subscriptions?.find((subscription) => subscription.status === 'active');
+  const activeSubscription = subscriptions?.find((subscription) => subscription.status === 'active' || subscription.status === 'trialing');
 
   if (!activeSubscription) throw new ConvexError('No active subscription found');
   if (!activeSubscription.periodStart) throw new ConvexError('Subscription has no start time');

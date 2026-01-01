@@ -545,7 +545,9 @@ export const getActiveStripeSubscription = action({
     if (identity === null) return null;
 
     const subscriptions = await ctx.runQuery(api.auth.listSubscriptions, {});
-    const activeSubscriptionId = subscriptions?.find((subscription) => subscription.status === 'active')?.stripeSubscriptionId;
+    const activeSubscriptionId = subscriptions?.find(
+      (subscription) => subscription.status === 'active' || subscription.status === 'trialing'
+    )?.stripeSubscriptionId;
     if (!activeSubscriptionId) return null;
 
     return await stripeClient.subscriptions.retrieve(activeSubscriptionId);
@@ -559,7 +561,7 @@ export const getHasActiveSubscription = query({
     if (identity === null) return false;
 
     const subscriptions = await ctx.runQuery(api.auth.listSubscriptions, {});
-    return subscriptions?.some((subscription) => subscription.status === 'active') ?? false;
+    return subscriptions?.some((subscription) => subscription.status === 'active' || subscription.status === 'trialing') ?? false;
   },
 });
 

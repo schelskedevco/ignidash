@@ -21,7 +21,9 @@ interface BuyProButtonProps {
 
 export default function BuyProButton({ tier, preloadedSubscriptions, isAuthenticated }: BuyProButtonProps) {
   const subscriptions = usePreloadedAuthQuery(preloadedSubscriptions);
-  const isProUser = subscriptions?.some((subscription) => subscription.plan === 'pro' && subscription.status === 'active');
+  const isProUser = subscriptions?.some(
+    (subscription) => subscription.plan === 'pro' && (subscription.status === 'active' || subscription.status === 'trialing')
+  );
 
   const className = cn(
     tier.featured

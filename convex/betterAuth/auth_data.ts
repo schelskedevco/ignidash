@@ -51,7 +51,9 @@ export const getCanUseAIFeatures = query({
     ]);
 
     const isAdmin = user?.role === 'admin';
-    const isActiveSubscription = subscriptions?.some((subscription) => subscription.status === 'active');
+    const isActiveSubscription = subscriptions?.some(
+      (subscription) => subscription.status === 'active' || subscription.status === 'trialing'
+    );
 
     return { canUseAIFeatures: isAdmin || isActiveSubscription, isAdmin, isActiveSubscription };
   },

@@ -40,6 +40,11 @@ export default function SubscriptionOverview({ subscription }: SubscriptionOverv
                     Active
                   </Badge>
                 )}
+                {subscription.status === 'trialing' && (
+                  <Badge color="yellow" className="ml-2">
+                    Free trial
+                  </Badge>
+                )}
               </DescriptionDetails>
 
               {plan.amount && (
