@@ -28,7 +28,7 @@ const tiers = [
     description: 'Run simulations, explore scenarios, and test your financial resilience.',
     features: [
       'Create and save up to 10 different plans',
-      'Estimate taxes and forecast your cash flow',
+      'Estimate taxes and project your cash flow',
       'Stress-test with Monte Carlo and historical data',
     ],
     featured: false,
