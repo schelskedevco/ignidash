@@ -130,7 +130,7 @@ export const streamInsights = internalAction({
           if (choice.delta.content) {
             content += choice.delta.content;
             const now = Date.now();
-            if (now - lastWriteTime > 2500) {
+            if (now - lastWriteTime > 1000) {
               await ctx.runMutation(internal.insights.setContent, { insightId, content });
               lastWriteTime = now;
             }

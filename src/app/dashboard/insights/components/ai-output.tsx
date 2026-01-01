@@ -18,6 +18,11 @@ import { Dialog } from '@/components/catalyst/dialog';
 
 import GenerateDialog from './dialogs/generate-dialog';
 
+function InsightsTextWhileLoading({ content }: { content: string }) {
+  const [visibleText] = useSmoothText(content, { startStreaming: true, charsPerSec: 256 });
+  return <ReactMarkdown>{visibleText}</ReactMarkdown>;
+}
+
 export default function AIOutput() {
   const selectedPlan = useInsightsSelectedPlan();
   const selectedPlanId = selectedPlan?.id;
@@ -67,10 +72,6 @@ export default function AIOutput() {
       setSelectedInsightIndex(0);
     }
   }, [selectedPlanId]);
-
-  const [visibleText] = useSmoothText(selectedInsight?.content ?? '', {
-    startStreaming: selectedInsight?.isLoading === true,
-  });
 
   return (
     <>
@@ -128,7 +129,11 @@ export default function AIOutput() {
             <div className="w-full flex-1 overflow-y-auto">
               <div className="prose prose-sm prose-zinc dark:prose-invert mx-auto px-4 py-5 sm:py-6">
                 {selectedInsight.content ? (
-                  <ReactMarkdown>{visibleText}</ReactMarkdown>
+                  !selectedInsight.isLoading ? (
+                    <ReactMarkdown>{selectedInsight.content}</ReactMarkdown>
+                  ) : (
+                    <InsightsTextWhileLoading content={selectedInsight.content} />
+                  )
                 ) : (
                   <div className="flex gap-1 pt-4 pb-8">
                     <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
