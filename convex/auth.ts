@@ -172,7 +172,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         createCustomerOnSignUp: true,
         subscription: {
           enabled: true,
-          plans: [{ name: 'pro', priceId: process.env.STRIPE_PRICE_ID! }],
+          plans: [{ name: 'pro', priceId: process.env.STRIPE_PRICE_ID!, freeTrial: { days: 7 } }],
           getCheckoutSessionParams: async ({ user, session, plan, subscription }, ctx) => {
             return {
               params: {
