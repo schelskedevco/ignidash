@@ -20,13 +20,16 @@ interface SubscriptionOverviewProps {
 export default function SubscriptionOverview({ subscription }: SubscriptionOverviewProps) {
   const itemData = subscription.items.data[0];
   const plan = itemData.plan;
+  const isFreeTrial = subscription.status === 'trialing';
 
   return (
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <FireIcon className="text-primary mx-auto h-10 w-auto" />
-          <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-zinc-900 dark:text-white">Welcome to Ignidash Pro!</h2>
+          <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-zinc-900 dark:text-white">
+            {isFreeTrial ? 'Your Ignidash Pro trial has started!' : 'Welcome to Ignidash Pro!'}
+          </h2>
         </div>
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
           <div className="border-border/25 from-emphasized-background to-background border-y bg-gradient-to-bl px-6 py-12 shadow-sm sm:rounded-lg sm:border sm:px-12 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
@@ -44,22 +47,18 @@ export default function SubscriptionOverview({ subscription }: SubscriptionOverv
 
               {plan.amount && (
                 <>
-                  <DescriptionTerm>Amount</DescriptionTerm>
+                  <DescriptionTerm>{isFreeTrial ? 'Price After Trial' : 'Amount'}</DescriptionTerm>
                   <DescriptionDetails>
                     {formatCurrency(plan.amount, plan.currency)} / {plan.interval}
                   </DescriptionDetails>
                 </>
               )}
 
-              <DescriptionTerm>Billing Start Date</DescriptionTerm>
+              <DescriptionTerm>{isFreeTrial ? 'Trial Start Date' : 'Billing Start Date'}</DescriptionTerm>
               <DescriptionDetails>{new Date(itemData.current_period_start * 1000).toLocaleDateString()}</DescriptionDetails>
 
-              {itemData.current_period_end && (
-                <>
-                  <DescriptionTerm>Next Billing Date</DescriptionTerm>
-                  <DescriptionDetails>{new Date(itemData.current_period_end * 1000).toLocaleDateString()}</DescriptionDetails>
-                </>
-              )}
+              <DescriptionTerm>Next Billing Date</DescriptionTerm>
+              <DescriptionDetails>{new Date(itemData.current_period_end * 1000).toLocaleDateString()}</DescriptionDetails>
             </DescriptionList>
           </div>
           <Link
