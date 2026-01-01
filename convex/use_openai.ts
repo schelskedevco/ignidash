@@ -13,10 +13,17 @@ if (!apiKey) throw new Error('OPENAI_API_KEY environment variable is not set.');
 const endpoint = process.env.OPENAI_ENDPOINT;
 if (!endpoint) throw new Error('OPENAI_ENDPOINT environment variable is not set.');
 
-const openai = new AzureOpenAI({
+const openaiChat = new AzureOpenAI({
   endpoint,
   apiKey,
   deployment: 'gpt-5.1-chat',
+  apiVersion: '2024-04-01-preview',
+});
+
+const openaiInsights = new AzureOpenAI({
+  endpoint,
+  apiKey,
+  deployment: 'gpt-5.2',
   apiVersion: '2024-04-01-preview',
 });
 
@@ -37,7 +44,7 @@ export const streamChat = internalAction({
     const hasBody = (msg: Doc<'messages'>): msg is Doc<'messages'> & { body: string } => msg.body !== undefined;
 
     try {
-      const stream = await openai.chat.completions.create({
+      const stream = await openaiChat.chat.completions.create({
         model: 'gpt-5.1-chat',
         messages: [
           { role: 'system', content: systemPrompt },
@@ -109,8 +116,8 @@ type StreamInsightsParams = {
 export const streamInsights = internalAction({
   handler: async (ctx, { userId, insightId, systemPrompt, subscriptionStartTime, subscriptionType }: StreamInsightsParams) => {
     try {
-      const stream = await openai.chat.completions.create({
-        model: 'gpt-5.1-chat',
+      const stream = await openaiInsights.chat.completions.create({
+        model: 'gpt-5.2',
         messages: [{ role: 'system', content: systemPrompt }],
         stream: true,
         stream_options: { include_usage: true },
