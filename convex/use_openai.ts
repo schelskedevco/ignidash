@@ -57,6 +57,7 @@ export const streamChat = internalAction({
 
       let body = '';
       let lastWriteTime = Date.now();
+
       for await (const part of stream) {
         if (part.choices.length > 0) {
           const choice = part.choices[0];
