@@ -19,7 +19,7 @@ import { Dialog } from '@/components/catalyst/dialog';
 import GenerateDialog from './dialogs/generate-dialog';
 
 function InsightsTextWhileLoading({ content }: { content: string }) {
-  const [visibleText] = useSmoothText(content, { startStreaming: true, charsPerSec: 256 });
+  const [visibleText] = useSmoothText(content, { startStreaming: true, charsPerSec: 64 });
   return <ReactMarkdown>{visibleText}</ReactMarkdown>;
 }
 
