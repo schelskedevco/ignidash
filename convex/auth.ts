@@ -179,8 +179,6 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
               freeTrial: {
                 days: 7,
                 onTrialStart: async (subscription) => {
-                  console.log('Trial started');
-
                   try {
                     const customerId = subscription.stripeCustomerId;
                     if (!customerId) return;
@@ -217,8 +215,6 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                   }
                 },
                 onTrialEnd: async ({ subscription }, request) => {
-                  console.log('Trial ended');
-
                   try {
                     const customerId = subscription.stripeCustomerId;
                     if (!customerId) return;
@@ -255,8 +251,6 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                   }
                 },
                 onTrialExpired: async (subscription, request) => {
-                  console.log('Trial expired');
-
                   try {
                     const customerId = subscription.stripeCustomerId;
                     if (!customerId) return;
