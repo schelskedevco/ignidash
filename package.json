@@ -18,6 +18,7 @@
   "dependencies": {
     "@azure/openai": "^2.0.0",
     "@better-auth/stripe": "^1.4.7",
+    "@convex-dev/agent": "^0.3.2",
     "@convex-dev/better-auth": "^0.10.6",
     "@convex-dev/migrations": "^0.3.1",
     "@convex-dev/rate-limiter": "^0.2.14",

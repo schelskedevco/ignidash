@@ -4,6 +4,7 @@ import { ConvexError } from 'convex/values';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import { api } from '@/convex/_generated/api';
 import { useQuery, useMutation, usePaginatedQuery } from 'convex/react';
+import { useSmoothText } from '@convex-dev/agent/react';
 import { PaperAirplaneIcon, PlusIcon } from '@heroicons/react/16/solid';
 import { FireIcon } from '@heroicons/react/24/solid';
 import type { Id, Doc } from '@/convex/_generated/dataModel';
@@ -97,6 +98,10 @@ function ChatMessage({ message, image }: ChatMessageProps) {
   const [copied, setCopied] = useState<boolean>(false);
   const { resolvedTheme } = useTheme();
 
+  const [visibleText] = useSmoothText(message.body ?? '', {
+    startStreaming: message.author === 'assistant' && message.isLoading === true,
+  });
+
   if (message.author === 'system') return null;
 
   const handleCopy = () => {
@@ -129,7 +134,7 @@ function ChatMessage({ message, image }: ChatMessageProps) {
               'prose-invert': (resolvedTheme === 'dark' && !isUser) || (resolvedTheme === 'light' && isUser),
             })}
           >
-            <ReactMarkdown>{message.body}</ReactMarkdown>
+            <ReactMarkdown>{visibleText}</ReactMarkdown>
           </div>
           <div className="flex items-center gap-2">
             <p className={cn('text-xs', { 'text-background/60': isUser }, { 'text-foreground/60': !isUser })}>

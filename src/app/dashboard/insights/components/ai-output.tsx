@@ -1,6 +1,7 @@
 'use client';
 
 import { useQuery, usePaginatedQuery } from 'convex/react';
+import { useSmoothText } from '@convex-dev/agent/react';
 import { api } from '@/convex/_generated/api';
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
@@ -67,6 +68,10 @@ export default function AIOutput() {
     }
   }, [selectedPlanId]);
 
+  const [visibleText] = useSmoothText(selectedInsight?.content ?? '', {
+    startStreaming: selectedInsight?.isLoading === true,
+  });
+
   return (
     <>
       <div className="-mx-2 h-full sm:-mx-3 lg:-mx-4 lg:pr-96">
@@ -123,7 +128,7 @@ export default function AIOutput() {
             <div className="w-full flex-1 overflow-y-auto">
               <div className="prose prose-sm prose-zinc dark:prose-invert mx-auto px-4 py-5 sm:py-6">
                 {selectedInsight.content ? (
-                  <ReactMarkdown>{selectedInsight.content}</ReactMarkdown>
+                  <ReactMarkdown>{visibleText}</ReactMarkdown>
                 ) : (
                   <div className="flex gap-1 pt-4 pb-8">
                     <div className="bg-muted-foreground h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]" />
