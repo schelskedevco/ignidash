@@ -25,7 +25,7 @@ const tiers = [
     id: 'tier-starter',
     href: '/signup',
     priceMonthly: '$0',
-    description: 'Create simulations, explore different scenarios, and visualize your path to financial independence.',
+    description: 'Create simulations, explore different scenarios, and visualize your financial future.',
     features: [
       'Create and save up to 10 different plans',
       'Estimate taxes and visualize your cash flow',
@@ -75,7 +75,7 @@ export default async function PricingPage() {
         </p>
       </div>
       <p className="mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-zinc-600 sm:text-xl/8 dark:text-zinc-400">
-        Model your financial future with confidence. <br className="hidden sm:block" /> No credit card required.
+        Visualize, understand, and refine your financial plan. <br className="hidden sm:block" /> No credit card required.
       </p>
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
         {tiers.map((tier, tierIdx) => (
