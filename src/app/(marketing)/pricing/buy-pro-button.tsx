@@ -45,23 +45,26 @@ export default function BuyProButton({ tier, preloadedSubscriptions, isAuthentic
 
   return (
     <button
-      disabled={isProUser}
       aria-describedby={tier.id}
       onClick={async () => {
         track('Upgrade to Pro clicked');
 
         posthog.capture('upgrade_to_pro_clicked');
 
-        await authClient.subscription.upgrade({
-          plan: 'pro',
-          successUrl: `/success`,
-          cancelUrl: `/pricing`,
-          returnUrl: `/`,
-        });
+        if (!isProUser) {
+          await authClient.subscription.upgrade({
+            plan: 'pro',
+            successUrl: `/success`,
+            cancelUrl: `/pricing`,
+            returnUrl: `/`,
+          });
+        } else {
+          await authClient.subscription.billingPortal({ returnUrl: '/pricing' });
+        }
       }}
       className={className}
     >
-      {isProUser ? 'Your current plan' : `Start free trial`}
+      {isProUser ? 'Manage current plan' : `Start free trial`}
     </button>
   );
 }
