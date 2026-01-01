@@ -38,7 +38,7 @@ const tiers = [
     id: 'tier-pro',
     href: '#',
     priceMonthly: '$12',
-    description: 'Use AI to ask questions, surface insights, and better understand your financial plan.',
+    description: 'Ask questions, surface insights, and deepen your understanding with AI.',
     features: [
       'Everything in Starter',
       'Ask questions about your plan with AI chat',
