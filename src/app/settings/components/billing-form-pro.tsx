@@ -55,11 +55,7 @@ export default function BillingFormPro({ subscriptions }: BillingFormProProps) {
             <CreditCardIcon className="text-primary h-6 w-6" aria-hidden="true" />
             Billing status
             {activeSubscriptions.length > 0 ? (
-              activeSubscriptions[0].status === 'active' ? (
-                <Badge color="green">Active</Badge>
-              ) : (
-                <Badge color="yellow">Free trial</Badge>
-              )
+              <Badge color="green">{activeSubscriptions[0].status === 'active' ? 'Active' : 'Free trial'}</Badge>
             ) : (
               <Badge color="zinc">Inactive</Badge>
             )}

@@ -35,14 +35,9 @@ export default function SubscriptionOverview({ subscription }: SubscriptionOverv
               <DescriptionTerm>Your Plan</DescriptionTerm>
               <DescriptionDetails className="flex items-center">
                 Ignidash Pro
-                {subscription.status === 'active' && (
+                {(subscription.status === 'active' || subscription.status === 'trialing') && (
                   <Badge color="green" className="ml-2">
-                    Active
-                  </Badge>
-                )}
-                {subscription.status === 'trialing' && (
-                  <Badge color="yellow" className="ml-2">
-                    Free trial
+                    {subscription.status === 'active' ? 'Active' : 'Free trial'}
                   </Badge>
                 )}
               </DescriptionDetails>
