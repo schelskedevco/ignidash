@@ -36,7 +36,7 @@ export default function BuyProButton({ tier, preloadedSubscriptions, isAuthentic
   if (!isAuthenticated) {
     return (
       <Link href={signInUrlWithRedirect} className={className}>
-        Sign in to upgrade
+        Start free trial
       </Link>
     );
   }
@@ -59,7 +59,7 @@ export default function BuyProButton({ tier, preloadedSubscriptions, isAuthentic
       }}
       className={className}
     >
-      {isProUser ? 'Your current plan' : `Upgrade to ${tier.name}`}
+      {isProUser ? 'Your current plan' : `Start free trial`}
     </button>
   );
 }
