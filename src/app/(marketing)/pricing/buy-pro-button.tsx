@@ -24,6 +24,7 @@ export default function BuyProButton({ tier, preloadedSubscriptions, isAuthentic
   const isProUser = subscriptions?.some(
     (subscription) => subscription.plan === 'pro' && (subscription.status === 'active' || subscription.status === 'trialing')
   );
+  const hasPreviousFreeTrial = subscriptions?.some((subscription) => subscription.trialStart && subscription.trialEnd);
 
   const className = cn(
     tier.featured
@@ -64,7 +65,7 @@ export default function BuyProButton({ tier, preloadedSubscriptions, isAuthentic
       }}
       className={className}
     >
-      {isProUser ? 'Manage current plan' : `Start 7-day free trial`}
+      {isProUser ? 'Manage current plan' : hasPreviousFreeTrial ? 'Upgrade to Pro' : 'Start 7-day free trial'}
     </button>
   );
 }
