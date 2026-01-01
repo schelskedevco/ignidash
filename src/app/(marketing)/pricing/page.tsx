@@ -25,7 +25,7 @@ const tiers = [
     id: 'tier-starter',
     href: '/signup',
     priceMonthly: '$0',
-    description: 'Create simulations, explore different scenarios, and see your financial future.',
+    description: 'Create simulations, explore different scenarios, and project your finances.',
     features: [
       'Create and save up to 10 different plans',
       'Estimate taxes and forecast your cash flow',
