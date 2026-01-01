@@ -47,7 +47,7 @@ const jsonLd = {
       name: 'What AI does Ignidash use, and is my data used to train it?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Ignidash uses GPT-5.1 from Microsoft Azure OpenAI, which has stricter privacy protections than consumer OpenAI. Your data is never used for training or shared with third parties.',
+        text: 'Ignidash uses GPT-5.2 from Microsoft Azure OpenAI, which has stricter privacy protections than consumer OpenAI. Your data is never used for training or shared with third parties.',
       },
     },
   ],

@@ -12,8 +12,8 @@ const WEEK = 7 * DAY;
 const MONTH = 30 * DAY;
 
 const TOKEN_COSTS = {
-  input: 1.25,
-  output: 10.0,
+  input: 1.75,
+  output: 14.0,
 } as const;
 
 // Allows $1.00 of usage per day and $5.00 of usage per month
