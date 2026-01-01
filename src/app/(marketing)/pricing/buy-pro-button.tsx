@@ -38,7 +38,7 @@ export default function BuyProButton({ tier, preloadedSubscriptions, isAuthentic
   if (!isAuthenticated) {
     return (
       <Link href={signInUrlWithRedirect} className={className}>
-        Start free trial
+        Start 7-day free trial
       </Link>
     );
   }
@@ -64,7 +64,7 @@ export default function BuyProButton({ tier, preloadedSubscriptions, isAuthentic
       }}
       className={className}
     >
-      {isProUser ? 'Manage current plan' : `Start free trial`}
+      {isProUser ? 'Manage current plan' : `Start 7-day free trial`}
     </button>
   );
 }
