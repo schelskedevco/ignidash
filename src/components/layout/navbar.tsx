@@ -98,7 +98,7 @@ export default function Navbar() {
               {!hasActiveSubscription && (
                 <DropdownItem href="/pricing">
                   <GemIcon data-slot="icon" />
-                  <DropdownLabel>Buy Pro</DropdownLabel>
+                  <DropdownLabel>Upgrade to Pro</DropdownLabel>
                 </DropdownItem>
               )}
               <DropdownItem href="/dashboard">
@@ -122,7 +122,7 @@ export default function Navbar() {
               {!hasActiveSubscription && (
                 <DropdownItem href="/pricing">
                   <GemIcon data-slot="icon" />
-                  <DropdownLabel>Buy Pro</DropdownLabel>
+                  <DropdownLabel>Upgrade to Pro</DropdownLabel>
                 </DropdownItem>
               )}
               <DropdownItem href="/dashboard">

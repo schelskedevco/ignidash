@@ -28,7 +28,7 @@ export default function AccountDropdownMenu({ fetchedName, fetchedEmail, hasActi
         {!hasActiveSubscription && (
           <DropdownItem href="/pricing">
             <GemIcon data-slot="icon" />
-            <DropdownLabel>Buy Pro</DropdownLabel>
+            <DropdownLabel>Upgrade to Pro</DropdownLabel>
           </DropdownItem>
         )}
         <DropdownItem href="/settings">
@@ -58,7 +58,7 @@ export default function AccountDropdownMenu({ fetchedName, fetchedEmail, hasActi
         {!hasActiveSubscription && (
           <DropdownItem href="/pricing">
             <GemIcon data-slot="icon" />
-            <DropdownLabel>Buy Pro</DropdownLabel>
+            <DropdownLabel>Upgrade to Pro</DropdownLabel>
           </DropdownItem>
         )}
         <DropdownItem href="/settings">

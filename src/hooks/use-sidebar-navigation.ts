@@ -56,7 +56,7 @@ export const useSecondaryNavigationItems = () => {
 
   return [
     { name: 'Help', href: '/help', icon: CircleQuestionMarkIcon, current: false },
-    { name: 'Buy Pro', href: '/pricing', icon: GemIcon, current: false, hidden: hasActiveSubscription },
+    { name: 'Upgrade to Pro', href: '/pricing', icon: GemIcon, current: false, hidden: hasActiveSubscription },
   ];
 };
 
