@@ -1,4 +1,0 @@
-- Growth should be applied from when the income / expense starts, NOT the years we are into the simulation.
-- Progress to retirement should be aged base when retirement strategy is fixed age.
-- Contributions, cost basis not being set to defaults for applicable types.
-- Withdrawals to pay taxes with are not currently being taxed.
