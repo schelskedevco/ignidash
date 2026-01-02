@@ -8,6 +8,9 @@ export default function InsightsFeatureSection() {
           A <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">full breakdown</span> of what
           matters.
         </p>
+        <p className="mt-4 max-w-2xl text-lg font-medium text-pretty text-zinc-500 sm:text-xl/8 dark:text-zinc-300">
+          AI-generated insights explain how taxes, RMDs, Roth conversions, withdrawal strategies, and more affect <em>your</em> plan.
+        </p>
         <div className="relative mt-16 aspect-2362/1328 sm:h-auto sm:w-[calc(var(--container-7xl)-calc(var(--spacing)*16))]">
           <div className="absolute -inset-2 rounded-[calc(var(--radius-xl)+calc(var(--spacing)*2))] shadow-xs ring-1 ring-black/5 dark:bg-white/2.5 dark:ring-white/10" />
           <Image
