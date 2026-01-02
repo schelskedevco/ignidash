@@ -82,7 +82,7 @@ const faqs = [
     question: 'What AI does Ignidash use, and is my data used to train it?',
     answer: (
       <>
-        Ignidash uses GPT-5.1 from{' '}
+        Ignidash uses GPT-5.2 from{' '}
         <a
           href="https://learn.microsoft.com/en-us/azure/ai-foundry/responsible-ai/openai/data-privacy"
           className="text-primary hover:underline"

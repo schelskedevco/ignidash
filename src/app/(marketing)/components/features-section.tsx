@@ -9,8 +9,15 @@ const sectionHeader = {
       Not an expert? <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">No problem</span>.
     </>
   ),
-  subhead:
-    'With intuitive tools and AI assistance, creating a comprehensive retirement plan you feel confident about has never been easier.',
+  subhead: (
+    <>
+      With intuitive tools and AI assistance, creating a comprehensive retirement plan you{' '}
+      <span className="text-zinc-700 underline decoration-zinc-300 underline-offset-4 dark:text-zinc-100 dark:decoration-zinc-600">
+        feel confident about
+      </span>{' '}
+      has never been easier.
+    </>
+  ),
 };
 
 const features = [

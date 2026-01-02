@@ -9,7 +9,11 @@ export default function AIChatFeatureSection() {
           <span className="bg-gradient-to-r from-pink-500 to-rose-600 bg-clip-text text-transparent">GPT-5.2</span>.
         </p>
         <p className="mt-4 ml-auto max-w-2xl text-right text-lg font-medium text-pretty text-zinc-500 sm:text-xl/8 dark:text-zinc-300">
-          The AI chatbot that knows your plan inside out, and only occasionally invents new tax brackets.
+          The AI chatbot that{' '}
+          <span className="text-zinc-700 underline decoration-zinc-300 underline-offset-4 dark:text-zinc-100 dark:decoration-zinc-600">
+            knows your plan inside out
+          </span>
+          , and only occasionally invents new tax brackets.
         </p>
         <div className="relative mt-16 aspect-2362/1328 sm:h-auto sm:w-[calc(var(--container-7xl)-calc(var(--spacing)*16))]">
           <div className="absolute -inset-2 rounded-[calc(var(--radius-xl)+calc(var(--spacing)*2))] shadow-xs ring-1 ring-black/5 dark:bg-white/2.5 dark:ring-white/10" />
