@@ -2,7 +2,6 @@ import { v, type Infer } from 'convex/values';
 
 export const keyMetricsValidator = v.object({
   success: v.number(),
-  startAge: v.number(),
   retirementAge: v.nullable(v.number()),
   yearsToRetirement: v.nullable(v.number()),
   bankruptcyAge: v.nullable(v.number()),

@@ -62,7 +62,6 @@ export abstract class KeyMetricsExtractor {
 
     return {
       success,
-      startAge,
       retirementAge,
       yearsToRetirement,
       bankruptcyAge,
@@ -86,7 +85,6 @@ export abstract class KeyMetricsExtractor {
 
     return {
       success: keyMetricsList.reduce((sum, km) => sum + km.success, 0) / keyMetricsList.length,
-      startAge: keyMetricsList[0].startAge,
       retirementAge: meanOrNull((km) => km.retirementAge),
       yearsToRetirement: meanOrNull((km) => km.yearsToRetirement),
       bankruptcyAge: meanOrNull((km) => km.bankruptcyAge),

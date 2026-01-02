@@ -1,6 +1,5 @@
 export interface KeyMetrics {
   success: number;
-  startAge: number;
   retirementAge: number | null;
   yearsToRetirement: number | null;
   bankruptcyAge: number | null;
