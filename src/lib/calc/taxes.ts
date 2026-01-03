@@ -47,10 +47,10 @@ export interface IncomeTaxesData {
   capitalLossDeduction?: number;
 }
 
-export interface NIITTaxesData {
+export interface NIITData {
   netInvestmentIncome: number;
-  incomeSubjectToNIIT: number;
-  niitTaxAmount: number;
+  incomeSubjectToNiit: number;
+  niitAmount: number;
   threshold: number;
 }
 
@@ -58,7 +58,7 @@ export interface TaxesData {
   adjustedGrossIncome: number;
   incomeTaxes: IncomeTaxesData;
   capitalGainsTaxes: CapitalGainsTaxesData;
-  niitTaxes: NIITTaxesData;
+  niit: NIITData;
   earlyWithdrawalPenalties: EarlyWithdrawalPenaltyData;
   socialSecurityTaxes: SocialSecurityTaxesData;
   incomeSources: IncomeSourcesData;
@@ -153,22 +153,19 @@ export class TaxProcessor {
       capitalGainsTaxBrackets,
     };
 
-    const niitTaxes = this.processNIIT(annualReturnsData, adjustedGrossIncome, adjustedRealizedGains, capitalLossDeduction);
+    const niit = this.processNIIT(annualReturnsData, adjustedGrossIncome, adjustedRealizedGains, capitalLossDeduction);
 
     const earlyWithdrawalPenalties = this.processEarlyWithdrawalPenalties(annualPortfolioDataBeforeTaxes);
 
     const totalTaxLiabilityExcludingFICA =
-      incomeTaxes.incomeTaxAmount +
-      capitalGainsTaxes.capitalGainsTaxAmount +
-      niitTaxes.niitTaxAmount +
-      earlyWithdrawalPenalties.totalPenaltyAmount;
+      incomeTaxes.incomeTaxAmount + capitalGainsTaxes.capitalGainsTaxAmount + niit.niitAmount + earlyWithdrawalPenalties.totalPenaltyAmount;
     const difference = totalTaxLiabilityExcludingFICA - annualIncomesData.totalAmountWithheld;
 
     return {
       adjustedGrossIncome,
       incomeTaxes,
       capitalGainsTaxes,
-      niitTaxes,
+      niit,
       earlyWithdrawalPenalties,
       socialSecurityTaxes,
       incomeSources: { adjustedRealizedGains },
@@ -233,7 +230,7 @@ export class TaxProcessor {
     adjustedGrossIncome: number,
     adjustedRealizedGains: number,
     capitalLossDeduction: number
-  ): NIITTaxesData {
+  ): NIITData {
     const threshold = NIIT_THRESHOLDS[this.filingStatus];
 
     const taxableDividends = annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
@@ -246,10 +243,10 @@ export class TaxProcessor {
     const netInvestmentIncome = adjustedRealizedGains + otherInvestmentIncome;
 
     const magiOverThreshold = Math.max(0, adjustedGrossIncome - threshold);
-    const incomeSubjectToNIIT = Math.min(netInvestmentIncome, magiOverThreshold);
-    const niitTaxAmount = incomeSubjectToNIIT * NIIT_RATE;
+    const incomeSubjectToNiit = Math.min(netInvestmentIncome, magiOverThreshold);
+    const niitAmount = incomeSubjectToNiit * NIIT_RATE;
 
-    return { netInvestmentIncome, incomeSubjectToNIIT, niitTaxAmount, threshold };
+    return { netInvestmentIncome, incomeSubjectToNiit, niitAmount, threshold };
   }
 
   private processEarlyWithdrawalPenalties(annualPortfolioDataBeforeTaxes: PortfolioData): EarlyWithdrawalPenaltyData {

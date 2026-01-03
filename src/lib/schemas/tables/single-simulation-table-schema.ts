@@ -63,7 +63,7 @@ export const singleSimulationCashFlowTableRowSchema = z.object({
   incomeTax: z.number().nullable(),
   ficaTax: z.number().nullable(),
   capGainsTax: z.number().nullable(),
-  niitTax: z.number().nullable(),
+  niit: z.number().nullable(),
   earlyWithdrawalPenalties: z.number().nullable(),
   totalTaxesAndPenalties: z.number().nullable(),
   expenses: z.number().nullable(),
@@ -84,7 +84,7 @@ const SINGLE_SIMULATION_CASHFLOW_COLUMNS = {
   incomeTax: { title: 'Income Tax', format: 'currency' },
   ficaTax: { title: 'FICA Tax', format: 'currency' },
   capGainsTax: { title: 'Capital Gains Tax', format: 'currency' },
-  niitTax: { title: 'NIIT Tax', format: 'currency' },
+  niit: { title: 'NIIT', format: 'currency' },
   earlyWithdrawalPenalties: { title: 'Early Withdrawal Penalties', format: 'currency' },
   totalTaxesAndPenalties: { title: 'Total Taxes & Penalties', format: 'currency' },
   expenses: { title: 'Expenses', format: 'currency' },
@@ -185,9 +185,9 @@ export const singleSimulationTaxesTableRowSchema = z.object({
 
   /* NIIT */
   netInvestmentIncome: z.number().nullable(),
-  incomeSubjectToNIIT: z.number().nullable(),
-  annualNIITTax: z.number().nullable(),
-  cumulativeNIITTax: z.number().nullable(),
+  incomeSubjectToNiit: z.number().nullable(),
+  annualNiit: z.number().nullable(),
+  cumulativeNiit: z.number().nullable(),
 
   /* Early Withdrawal Penalties */
   annualEarlyWithdrawalPenalties: z.number().nullable(),
@@ -237,9 +237,9 @@ const SINGLE_SIMULATION_TAXES_COLUMNS = {
   effectiveCapGainsTaxRate: { title: 'Effective Capital Gains Tax Rate', format: 'percentage' },
   topMarginalCapGainsTaxRate: { title: 'Top Marginal Capital Gains Tax Rate', format: 'percentage' },
   netInvestmentIncome: { title: 'Net Investment Income', format: 'currency' },
-  incomeSubjectToNIIT: { title: 'Income Subject to NIIT', format: 'currency' },
-  annualNIITTax: { title: 'Annual NIIT Tax', format: 'currency' },
-  cumulativeNIITTax: { title: 'Cumulative NIIT Tax', format: 'currency' },
+  incomeSubjectToNiit: { title: 'Income Subject to NIIT', format: 'currency' },
+  annualNiit: { title: 'Annual NIIT', format: 'currency' },
+  cumulativeNiit: { title: 'Cumulative NIIT', format: 'currency' },
   annualEarlyWithdrawalPenalties: { title: 'Annual Early Withdrawal Penalties', format: 'currency' },
   cumulativeEarlyWithdrawalPenalties: { title: 'Cumulative Early Withdrawal Penalties', format: 'currency' },
   taxExemptIncome: { title: 'Tax-Exempt Income', format: 'currency' },

@@ -85,7 +85,7 @@ export abstract class TableDataExtractor {
           incomeTax: null,
           ficaTax: null,
           capGainsTax: null,
-          niitTax: null,
+          niit: null,
           earlyWithdrawalPenalties: null,
           totalTaxesAndPenalties: null,
           expenses: null,
@@ -95,7 +95,7 @@ export abstract class TableDataExtractor {
         };
       }
 
-      const { incomeTax, ficaTax, capGainsTax, niitTax, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
+      const { incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
         SimulationDataExtractor.getTaxAmountsByType(data);
       const {
         earnedIncome,
@@ -116,7 +116,7 @@ export abstract class TableDataExtractor {
         incomeTax,
         ficaTax,
         capGainsTax,
-        niitTax,
+        niit,
         earlyWithdrawalPenalties,
         totalTaxesAndPenalties,
         expenses,
@@ -133,7 +133,7 @@ export abstract class TableDataExtractor {
     let cumulativeIncomeTax = 0;
     let cumulativeFicaTax = 0;
     let cumulativeCapGainsTax = 0;
-    let cumulativeNIITTax = 0;
+    let cumulativeNiit = 0;
     let cumulativeEarlyWithdrawalPenalties = 0;
     let cumulativeTotalTaxesAndPenalties = 0;
 
@@ -173,9 +173,9 @@ export abstract class TableDataExtractor {
           effectiveCapGainsTaxRate: null,
           topMarginalCapGainsTaxRate: null,
           netInvestmentIncome: null,
-          incomeSubjectToNIIT: null,
-          annualNIITTax: null,
-          cumulativeNIITTax: null,
+          incomeSubjectToNiit: null,
+          annualNiit: null,
+          cumulativeNiit: null,
           annualEarlyWithdrawalPenalties: null,
           cumulativeEarlyWithdrawalPenalties: null,
           taxExemptIncome: null,
@@ -192,7 +192,7 @@ export abstract class TableDataExtractor {
         incomeTax: annualIncomeTax,
         ficaTax: annualFicaTax,
         capGainsTax: annualCapGainsTax,
-        niitTax: annualNIITTax,
+        niit: annualNiit,
         earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties,
         totalTaxesAndPenalties: annualTotalTaxesAndPenalties,
       } = SimulationDataExtractor.getTaxAmountsByType(data);
@@ -200,7 +200,7 @@ export abstract class TableDataExtractor {
       cumulativeIncomeTax += annualIncomeTax;
       cumulativeFicaTax += annualFicaTax;
       cumulativeCapGainsTax += annualCapGainsTax;
-      cumulativeNIITTax += annualNIITTax;
+      cumulativeNiit += annualNiit;
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeTotalTaxesAndPenalties += annualTotalTaxesAndPenalties;
 
@@ -244,10 +244,10 @@ export abstract class TableDataExtractor {
         cumulativeCapGainsTax,
         effectiveCapGainsTaxRate: taxesData?.capitalGainsTaxes.effectiveCapitalGainsTaxRate ?? 0,
         topMarginalCapGainsTaxRate: taxesData?.capitalGainsTaxes.topMarginalCapitalGainsTaxRate ?? 0,
-        netInvestmentIncome: taxesData?.niitTaxes.netInvestmentIncome ?? 0,
-        incomeSubjectToNIIT: taxesData?.niitTaxes.incomeSubjectToNIIT ?? 0,
-        annualNIITTax,
-        cumulativeNIITTax,
+        netInvestmentIncome: taxesData?.niit.netInvestmentIncome ?? 0,
+        incomeSubjectToNiit: taxesData?.niit.incomeSubjectToNiit ?? 0,
+        annualNiit,
+        cumulativeNiit,
         annualEarlyWithdrawalPenalties,
         cumulativeEarlyWithdrawalPenalties,
         taxExemptIncome,
@@ -508,7 +508,7 @@ export abstract class TableDataExtractor {
         lifetimeIncomeTaxes,
         lifetimeFicaTaxes,
         lifetimeCapGainsTaxes,
-        lifetimeNIITTaxes,
+        lifetimeNiit,
         lifetimeEarlyWithdrawalPenalties,
         lifetimeTaxesAndPenalties,
       } = SimulationDataExtractor.getLifetimeTaxesAndPenalties(data);
@@ -530,7 +530,7 @@ export abstract class TableDataExtractor {
         lifetimeIncomeTaxes,
         lifetimeFicaTaxes,
         lifetimeCapGainsTaxes,
-        lifetimeNIITTaxes,
+        lifetimeNiit,
         lifetimeEarlyWithdrawalPenalties,
         lifetimeTaxesAndPenalties,
         lifetimeContributions: lastDp.portfolio.totalContributions,

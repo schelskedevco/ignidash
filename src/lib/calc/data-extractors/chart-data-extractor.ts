@@ -49,7 +49,7 @@ export abstract class ChartDataExtractor {
     return simulation.data.slice(1).map((data) => {
       const age = Math.floor(data.age);
 
-      const { incomeTax, ficaTax, capGainsTax, niitTax, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
+      const { incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
         SimulationDataExtractor.getTaxAmountsByType(data);
       const {
         earnedIncome,
@@ -70,9 +70,9 @@ export abstract class ChartDataExtractor {
         incomeTax,
         ficaTax,
         capGainsTax,
-        niitTax,
+        niit,
         earlyWithdrawalPenalties,
-        otherTaxes: ficaTax + niitTax + earlyWithdrawalPenalties,
+        otherTaxes: ficaTax + niit + earlyWithdrawalPenalties,
         totalTaxesAndPenalties,
         expenses,
         cashFlow,
@@ -85,7 +85,7 @@ export abstract class ChartDataExtractor {
     let cumulativeIncomeTax = 0;
     let cumulativeFicaTax = 0;
     let cumulativeCapGainsTax = 0;
-    let cumulativeNIITTax = 0;
+    let cumulativeNiit = 0;
     let cumulativeEarlyWithdrawalPenalties = 0;
     let cumulativeTotalTaxesAndPenalties = 0;
 
@@ -96,7 +96,7 @@ export abstract class ChartDataExtractor {
         incomeTax: annualIncomeTax,
         ficaTax: annualFicaTax,
         capGainsTax: annualCapGainsTax,
-        niitTax: annualNIITTax,
+        niit: annualNiit,
         earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties,
         totalTaxesAndPenalties: annualTotalTaxesAndPenalties,
       } = SimulationDataExtractor.getTaxAmountsByType(data);
@@ -104,7 +104,7 @@ export abstract class ChartDataExtractor {
       cumulativeIncomeTax += annualIncomeTax;
       cumulativeFicaTax += annualFicaTax;
       cumulativeCapGainsTax += annualCapGainsTax;
-      cumulativeNIITTax += annualNIITTax;
+      cumulativeNiit += annualNiit;
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeTotalTaxesAndPenalties += annualTotalTaxesAndPenalties;
 
@@ -153,10 +153,10 @@ export abstract class ChartDataExtractor {
         effectiveCapGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
         topMarginalCapGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
         capitalGainsTaxBrackets: taxesData.capitalGainsTaxes.capitalGainsTaxBrackets,
-        netInvestmentIncome: taxesData.niitTaxes.netInvestmentIncome,
-        incomeSubjectToNIIT: taxesData.niitTaxes.incomeSubjectToNIIT,
-        annualNIITTax,
-        cumulativeNIITTax,
+        netInvestmentIncome: taxesData.niit.netInvestmentIncome,
+        incomeSubjectToNiit: taxesData.niit.incomeSubjectToNiit,
+        annualNiit,
+        cumulativeNiit,
         annualEarlyWithdrawalPenalties,
         cumulativeEarlyWithdrawalPenalties,
         taxExemptIncome,
