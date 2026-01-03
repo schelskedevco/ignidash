@@ -50,7 +50,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - Math.floor(startAge));
 
-  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)'];
+  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--foreground)'];
 
   const formatValue = (
     value: number,
@@ -191,7 +191,7 @@ const CustomTooltip = ({ active, payload, label, startAge, disabled, dataView }:
   );
 };
 
-const COLORS = ['var(--chart-2)', 'var(--chart-4)', 'var(--chart-3)', 'var(--chart-1)'];
+const COLORS = ['var(--chart-2)', 'var(--chart-4)', 'var(--chart-3)', 'var(--chart-1)', 'var(--foreground)'];
 
 interface SingleSimulationTaxesLineChartProps {
   rawChartData: SingleSimulationTaxesChartDataPoint[];
@@ -252,11 +252,17 @@ export default function SingleSimulationTaxesLineChart({
       break;
     case 'annualAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('annualIncomeTax', 'annualFicaTax', 'annualCapGainsTax', 'annualEarlyWithdrawalPenalties');
+      dataKeys.push('annualIncomeTax', 'annualFicaTax', 'annualCapGainsTax', 'annualNiit', 'annualEarlyWithdrawalPenalties');
       break;
     case 'cumulativeAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
-      dataKeys.push('cumulativeIncomeTax', 'cumulativeFicaTax', 'cumulativeCapGainsTax', 'cumulativeEarlyWithdrawalPenalties');
+      dataKeys.push(
+        'cumulativeIncomeTax',
+        'cumulativeFicaTax',
+        'cumulativeCapGainsTax',
+        'cumulativeNiit',
+        'cumulativeEarlyWithdrawalPenalties'
+      );
       break;
     case 'taxableIncome':
       formatter = (value: number) => formatNumber(value, 1, '$');

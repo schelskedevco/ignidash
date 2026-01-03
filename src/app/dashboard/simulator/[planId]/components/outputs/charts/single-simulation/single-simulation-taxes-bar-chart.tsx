@@ -262,7 +262,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
   );
 };
 
-const COLORS = ['var(--chart-2)', 'var(--chart-4)', 'var(--chart-3)', 'var(--chart-1)'];
+const COLORS = ['var(--chart-2)', 'var(--chart-4)', 'var(--chart-3)', 'var(--chart-1)', 'var(--foreground)'];
 
 interface SingleSimulationTaxesBarChartProps {
   age: number;
@@ -309,12 +309,12 @@ export default function SingleSimulationTaxesBarChart({
       desktop: ['Effective Income Tax Rate', 'Effective Cap Gains Tax Rate'],
     },
     annualAmounts: {
-      mobile: ['Income Tax', 'FICA Tax', 'Cap Gains Tax', 'EW Penalty'],
-      desktop: ['Annual Income Tax', 'Annual FICA Tax', 'Annual Cap Gains Tax', 'Annual EW Penalties'],
+      mobile: ['Income Tax', 'FICA Tax', 'Cap Gains Tax', 'NIIT', 'EW Penalty'],
+      desktop: ['Annual Income Tax', 'Annual FICA Tax', 'Annual Cap Gains Tax', 'Annual NIIT', 'Annual EW Penalties'],
     },
     cumulativeAmounts: {
-      mobile: ['Cumul. Income Tax', 'Cumul. FICA Tax', 'Cumul. CG Tax', 'Cumul. EW Penalty'],
-      desktop: ['Cumul. Income Tax', 'Cumul. FICA Tax', 'Cumul. Cap Gains Tax', 'Cumul. EW Penalties'],
+      mobile: ['Cumul. Income Tax', 'Cumul. FICA Tax', 'Cumul. CG Tax', 'Cumul. NIIT', 'Cumul. EW Penalty'],
+      desktop: ['Cumul. Income Tax', 'Cumul. FICA Tax', 'Cumul. Cap Gains Tax', 'Cumul. NIIT', 'Cumul. EW Penalties'],
     },
     retirementDistributions: {
       mobile: ['Tax-Deferred', 'Early Roth'],
@@ -378,7 +378,7 @@ export default function SingleSimulationTaxesBarChart({
       break;
     }
     case 'annualAmounts': {
-      const [incomeTaxLabel, ficaTaxLabel, capGainsTaxLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(
+      const [incomeTaxLabel, ficaTaxLabel, capGainsTaxLabel, niitLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(
         dataView,
         isSmallScreen
       );
@@ -386,13 +386,14 @@ export default function SingleSimulationTaxesBarChart({
         { name: incomeTaxLabel, amount: item.annualIncomeTax },
         { name: ficaTaxLabel, amount: item.annualFicaTax },
         { name: capGainsTaxLabel, amount: item.annualCapGainsTax },
+        { name: niitLabel, amount: item.annualNiit },
         { name: earlyWithdrawalPenaltiesLabel, amount: item.annualEarlyWithdrawalPenalties },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     }
     case 'cumulativeAmounts': {
-      const [incomeTaxLabel, ficaTaxLabel, capGainsTaxLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(
+      const [incomeTaxLabel, ficaTaxLabel, capGainsTaxLabel, niitLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(
         dataView,
         isSmallScreen
       );
@@ -400,6 +401,7 @@ export default function SingleSimulationTaxesBarChart({
         { name: incomeTaxLabel, amount: item.cumulativeIncomeTax },
         { name: ficaTaxLabel, amount: item.cumulativeFicaTax },
         { name: capGainsTaxLabel, amount: item.cumulativeCapGainsTax },
+        { name: niitLabel, amount: item.cumulativeNiit },
         { name: earlyWithdrawalPenaltiesLabel, amount: item.cumulativeEarlyWithdrawalPenalties },
       ]);
       formatter = (value: number) => formatNumber(value, 1, '$');
