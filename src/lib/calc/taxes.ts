@@ -85,7 +85,7 @@ export interface SocialSecurityTaxesData {
 // TODO: Add more income source data
 // Reduces code duplication from getTaxableIncomeSources
 export interface IncomeSourcesData {
-  adjustedRealizedGains: number;
+  taxableRealizedGains: number;
 }
 
 export class TaxProcessor {
@@ -102,10 +102,10 @@ export class TaxProcessor {
       annualIncomesData,
       annualReturnsData
     );
-    const { adjustedRealizedGains, capitalLossDeduction } = this.getRealizedGainsAndCapLossDeductionData(annualPortfolioDataBeforeTaxes);
+    const { taxableRealizedGains, capitalLossDeduction } = this.getRealizedGainsAndCapLossDeductionData(annualPortfolioDataBeforeTaxes);
 
     let adjustedIncomeTaxedAsIncome = Math.max(0, adjustedOrdinaryIncome - capitalLossDeduction);
-    const adjustedIncomeTaxedAsCapGains = adjustedRealizedGains + annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
+    const adjustedIncomeTaxedAsCapGains = taxableRealizedGains + annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
 
     const socialSecurityIncome = annualIncomesData.totalSocialSecurityIncome;
     const provisionalIncome = adjustedIncomeTaxedAsIncome + adjustedIncomeTaxedAsCapGains + socialSecurityIncome * 0.5;
@@ -153,7 +153,7 @@ export class TaxProcessor {
       capitalGainsTaxBrackets,
     };
 
-    const niit = this.processNIIT(annualReturnsData, adjustedGrossIncome, adjustedRealizedGains, capitalLossDeduction);
+    const niit = this.processNIIT(annualReturnsData, adjustedGrossIncome, taxableRealizedGains, capitalLossDeduction);
 
     const earlyWithdrawalPenalties = this.processEarlyWithdrawalPenalties(annualPortfolioDataBeforeTaxes);
 
@@ -168,7 +168,7 @@ export class TaxProcessor {
       niit,
       earlyWithdrawalPenalties,
       socialSecurityTaxes,
-      incomeSources: { adjustedRealizedGains },
+      incomeSources: { taxableRealizedGains },
       totalTaxesDue: difference > 0 ? difference : 0,
       totalTaxesRefund: difference < 0 ? Math.abs(difference) : 0,
       totalTaxableIncome: taxableOrdinaryIncome + taxableCapitalGains,
@@ -228,7 +228,7 @@ export class TaxProcessor {
   private processNIIT(
     annualReturnsData: ReturnsData,
     adjustedGrossIncome: number,
-    adjustedRealizedGains: number,
+    taxableRealizedGains: number,
     capitalLossDeduction: number
   ): NIITData {
     const threshold = NIIT_THRESHOLDS[this.filingStatus];
@@ -237,10 +237,10 @@ export class TaxProcessor {
     const taxableInterest =
       annualReturnsData.yieldAmountsForPeriod.taxable.bonds + annualReturnsData.yieldAmountsForPeriod.cashSavings.cash;
 
-    // Capital gains are already reduced by losses (adjustedRealizedGains >= 0).
+    // Capital gains are already reduced by losses (taxableRealizedGains >= 0).
     // Excess losses (up to $3K) can offset other investment income.
     const otherInvestmentIncome = Math.max(0, taxableDividends + taxableInterest - capitalLossDeduction);
-    const netInvestmentIncome = adjustedRealizedGains + otherInvestmentIncome;
+    const netInvestmentIncome = taxableRealizedGains + otherInvestmentIncome;
 
     const magiOverThreshold = Math.max(0, adjustedGrossIncome - threshold);
     const incomeSubjectToNiit = Math.min(netInvestmentIncome, magiOverThreshold);
@@ -282,21 +282,16 @@ export class TaxProcessor {
     annualIncomesData: IncomesData,
     annualReturnsData: ReturnsData
   ): { totalIncome: number; grossOrdinaryIncome: number; adjustedOrdinaryIncome: number; taxDeferredContributions: number } {
-    const grossIncomeFromIncomes = annualIncomesData.totalIncome;
-    const grossIncomeFromInterest =
+    const totalIncomeFromIncomes = annualIncomesData.totalIncome;
+    const taxableInterest =
       annualReturnsData.yieldAmountsForPeriod.taxable.bonds + annualReturnsData.yieldAmountsForPeriod.cashSavings.cash;
 
     const age = this.simulationState.time.age;
     const rothEarningsQualifiedWithdrawalAge = 59.5;
 
-    let grossIncomeFromTaxDeferredWithdrawals = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, [
-      '401k',
-      '403b',
-      'ira',
-      'hsa',
-    ]);
+    let taxDeferredWithdrawals = this.getWithdrawalsForAccountTypes(annualPortfolioDataBeforeTaxes, ['401k', '403b', 'ira', 'hsa']);
     if (age < rothEarningsQualifiedWithdrawalAge) {
-      grossIncomeFromTaxDeferredWithdrawals += this.getEarningsWithdrawnFromRothAccountTypes(annualPortfolioDataBeforeTaxes);
+      taxDeferredWithdrawals += this.getEarningsWithdrawnFromRothAccountTypes(annualPortfolioDataBeforeTaxes);
     }
 
     const taxDeferredContributions = this.getEmployeeContributionsForAccountTypes(annualPortfolioDataBeforeTaxes, [
@@ -308,7 +303,7 @@ export class TaxProcessor {
     const socialSecurityIncome = annualIncomesData.totalSocialSecurityIncome;
     const taxExemptIncome = annualIncomesData.totalTaxExemptIncome;
 
-    const totalIncome = grossIncomeFromIncomes + grossIncomeFromInterest + grossIncomeFromTaxDeferredWithdrawals;
+    const totalIncome = totalIncomeFromIncomes + taxableInterest + taxDeferredWithdrawals;
     const grossOrdinaryIncome = Math.max(0, totalIncome - socialSecurityIncome - taxExemptIncome);
     const adjustedOrdinaryIncome = Math.max(0, grossOrdinaryIncome - taxDeferredContributions);
 
@@ -321,17 +316,17 @@ export class TaxProcessor {
   }
 
   private getRealizedGainsAndCapLossDeductionData(annualPortfolioDataBeforeTaxes: PortfolioData): {
-    adjustedRealizedGains: number;
+    taxableRealizedGains: number;
     capitalLossDeduction: number;
   } {
-    const adjustedRealizedGains = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod + this.capitalLossCarryover;
-    if (adjustedRealizedGains >= 0) {
+    const realizedGainsAfterCarryover = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod + this.capitalLossCarryover;
+    if (realizedGainsAfterCarryover >= 0) {
       this.capitalLossCarryover = 0;
-      return { adjustedRealizedGains, capitalLossDeduction: 0 };
+      return { taxableRealizedGains: realizedGainsAfterCarryover, capitalLossDeduction: 0 };
     } else {
-      const capitalLossDeduction = -Math.max(-3000, adjustedRealizedGains);
-      this.capitalLossCarryover = adjustedRealizedGains + capitalLossDeduction;
-      return { adjustedRealizedGains: 0, capitalLossDeduction };
+      const capitalLossDeduction = -Math.max(-3000, realizedGainsAfterCarryover);
+      this.capitalLossCarryover = realizedGainsAfterCarryover + capitalLossDeduction;
+      return { taxableRealizedGains: 0, capitalLossDeduction };
     }
   }
 

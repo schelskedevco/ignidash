@@ -378,7 +378,7 @@ export class SimulationDataExtractor {
     const retirementDistributions = taxDeferredWithdrawals + earlyRothEarningsWithdrawals;
 
     const taxesData = dp.taxes;
-    const realizedGains = taxesData?.incomeSources.adjustedRealizedGains ?? 0;
+    const realizedGains = taxesData?.incomeSources.taxableRealizedGains ?? 0;
 
     const returnsData = dp.returns;
     const dividendIncome = returnsData?.yieldAmountsForPeriod.taxable.stocks ?? 0;
