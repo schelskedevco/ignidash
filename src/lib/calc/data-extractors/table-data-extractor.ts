@@ -85,6 +85,7 @@ export abstract class TableDataExtractor {
           incomeTax: null,
           ficaTax: null,
           capGainsTax: null,
+          niitTax: null,
           earlyWithdrawalPenalties: null,
           totalTaxesAndPenalties: null,
           expenses: null,
@@ -94,7 +95,7 @@ export abstract class TableDataExtractor {
         };
       }
 
-      const { incomeTax, ficaTax, capGainsTax, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
+      const { incomeTax, ficaTax, capGainsTax, niitTax, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
         SimulationDataExtractor.getTaxAmountsByType(data);
       const {
         earnedIncome,
@@ -115,6 +116,7 @@ export abstract class TableDataExtractor {
         incomeTax,
         ficaTax,
         capGainsTax,
+        niitTax,
         earlyWithdrawalPenalties,
         totalTaxesAndPenalties,
         expenses,
@@ -491,8 +493,14 @@ export abstract class TableDataExtractor {
       const finalPhaseName = lastDp.phase?.name ?? null;
       const formattedFinalPhaseName = finalPhaseName !== null ? finalPhaseName.charAt(0).toUpperCase() + finalPhaseName.slice(1) : null;
 
-      const { lifetimeIncomeTaxes, lifetimeFicaTaxes, lifetimeCapGainsTaxes, lifetimeEarlyWithdrawalPenalties, lifetimeTaxesAndPenalties } =
-        SimulationDataExtractor.getLifetimeTaxesAndPenalties(data);
+      const {
+        lifetimeIncomeTaxes,
+        lifetimeFicaTaxes,
+        lifetimeCapGainsTaxes,
+        lifetimeNIITTaxes,
+        lifetimeEarlyWithdrawalPenalties,
+        lifetimeTaxesAndPenalties,
+      } = SimulationDataExtractor.getLifetimeTaxesAndPenalties(data);
 
       return {
         seed,
@@ -511,6 +519,7 @@ export abstract class TableDataExtractor {
         lifetimeIncomeTaxes,
         lifetimeFicaTaxes,
         lifetimeCapGainsTaxes,
+        lifetimeNIITTaxes,
         lifetimeEarlyWithdrawalPenalties,
         lifetimeTaxesAndPenalties,
         lifetimeContributions: lastDp.portfolio.totalContributions,
