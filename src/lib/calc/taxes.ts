@@ -237,8 +237,6 @@ export class TaxProcessor {
     const taxableInterest =
       annualReturnsData.yieldAmountsForPeriod.taxable.bonds + annualReturnsData.yieldAmountsForPeriod.cashSavings.cash;
 
-    // Capital gains are already reduced by losses (taxableRealizedGains >= 0).
-    // Excess losses (up to $3K) can offset other investment income.
     const otherInvestmentIncome = Math.max(0, taxableDividends + taxableInterest - capitalLossDeduction);
     const netInvestmentIncome = taxableRealizedGains + otherInvestmentIncome;
 
@@ -323,11 +321,11 @@ export class TaxProcessor {
     if (realizedGainsAfterCarryover >= 0) {
       this.capitalLossCarryover = 0;
       return { taxableRealizedGains: realizedGainsAfterCarryover, capitalLossDeduction: 0 };
-    } else {
-      const capitalLossDeduction = -Math.max(-3000, realizedGainsAfterCarryover);
-      this.capitalLossCarryover = realizedGainsAfterCarryover + capitalLossDeduction;
-      return { taxableRealizedGains: 0, capitalLossDeduction };
     }
+
+    const capitalLossDeduction = -Math.max(-3000, realizedGainsAfterCarryover);
+    this.capitalLossCarryover = realizedGainsAfterCarryover + capitalLossDeduction;
+    return { taxableRealizedGains: 0, capitalLossDeduction };
   }
 
   private getTaxablePortionOfSocialSecurityIncome(
