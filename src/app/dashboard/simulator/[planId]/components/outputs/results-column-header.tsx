@@ -19,9 +19,10 @@ const SimulationSettingsDrawer = lazy(() => import('./drawers/simulation-setting
 
 export default function ResultsColumnHeader() {
   const { icon, label, handleClick, isDisabled } = useRegenSimulation();
-  const [userFeedbackOpen, setUserFeedbackOpen] = useState(false);
+
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [simulationSettingsOpen, setSimulationSettingsOpen] = useState(false);
+  const [userFeedbackOpen, setUserFeedbackOpen] = useState(false);
 
   const aiChatTitleComponent = (
     <div className="flex items-center gap-2">
@@ -29,16 +30,16 @@ export default function ResultsColumnHeader() {
       <span>Ask AI Anything</span>
     </div>
   );
-  const userFeedbackTitleComponent = (
-    <div className="flex items-center gap-2">
-      <MessageCircleMoreIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
-      <span>Share Feedback</span>
-    </div>
-  );
   const simulationSettingsTitleComponent = (
     <div className="flex items-center gap-2">
       <SettingsIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
       <span>Simulation Settings</span>
+    </div>
+  );
+  const userFeedbackTitleComponent = (
+    <div className="flex items-center gap-2">
+      <MessageCircleMoreIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+      <span>Share Feedback</span>
     </div>
   );
 
@@ -70,6 +71,9 @@ export default function ResultsColumnHeader() {
         icon={PresentationIcon}
         iconButton={
           <div className="flex items-center gap-x-1">
+            {!isDisabled && (
+              <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
+            )}
             <IconButton
               icon={WandSparklesIcon}
               label="Ask AI"
@@ -80,20 +84,17 @@ export default function ResultsColumnHeader() {
               surfaceColor="emphasized"
             />
             <IconButton
-              icon={MessageCircleMoreIcon}
-              label="Share Feedback"
-              onClick={() => setUserFeedbackOpen(true)}
-              surfaceColor="emphasized"
-            />
-            <IconButton
               icon={SettingsIcon}
               label="Simulation Settings"
               onClick={() => setSimulationSettingsOpen(true)}
               surfaceColor="emphasized"
             />
-            {!isDisabled && (
-              <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
-            )}
+            <IconButton
+              icon={MessageCircleMoreIcon}
+              label="Share Feedback"
+              onClick={() => setUserFeedbackOpen(true)}
+              surfaceColor="emphasized"
+            />
           </div>
         }
         className="w-[calc(100%-42rem)] group-data-[state=collapsed]/sidebar:w-[calc(100%-28rem)]"
@@ -104,14 +105,14 @@ export default function ResultsColumnHeader() {
           <AIChatDrawer setOpen={setAiChatOpen} />
         </Suspense>
       </Drawer>
-      <Drawer open={userFeedbackOpen} setOpen={setUserFeedbackOpen} title={userFeedbackTitleComponent}>
-        <Suspense fallback={<PageLoading message="Loading User Feedback" />}>
-          <UserFeedbackDrawer setOpen={setUserFeedbackOpen} />
-        </Suspense>
-      </Drawer>
       <Drawer open={simulationSettingsOpen} setOpen={setSimulationSettingsOpen} title={simulationSettingsTitleComponent}>
         <Suspense fallback={<PageLoading message="Loading Simulation Settings" />}>
           <SimulationSettingsDrawer setOpen={setSimulationSettingsOpen} simulationSettings={simulationSettings} />
+        </Suspense>
+      </Drawer>
+      <Drawer open={userFeedbackOpen} setOpen={setUserFeedbackOpen} title={userFeedbackTitleComponent}>
+        <Suspense fallback={<PageLoading message="Loading User Feedback" />}>
+          <UserFeedbackDrawer setOpen={setUserFeedbackOpen} />
         </Suspense>
       </Drawer>
     </>

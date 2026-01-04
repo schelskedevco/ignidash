@@ -30,16 +30,8 @@ const SimulationSettingsDrawer = lazy(() => import('./outputs/drawers/simulation
 type ActiveSection = 'results' | 'your-numbers';
 
 const tabs = [
-  {
-    name: 'Numbers',
-    icon: CalculatorIcon,
-    value: 'your-numbers' as ActiveSection,
-  },
-  {
-    name: 'Results',
-    icon: PresentationIcon,
-    value: 'results' as ActiveSection,
-  },
+  { name: 'Numbers', icon: CalculatorIcon, value: 'your-numbers' as ActiveSection },
+  { name: 'Results', icon: PresentationIcon, value: 'results' as ActiveSection },
 ];
 
 interface SectionSelectorProps {
@@ -52,9 +44,9 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
   const [taxSettingsOpen, setTaxSettingsOpen] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
 
-  const [userFeedbackOpen, setUserFeedbackOpen] = useState(false);
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [simulationSettingsOpen, setSimulationSettingsOpen] = useState(false);
+  const [userFeedbackOpen, setUserFeedbackOpen] = useState(false);
 
   const marketAssumptions = useMarketAssumptionsData();
   const taxSettings = useTaxSettingsData();
@@ -88,16 +80,16 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
       <span>Ask AI Anything</span>
     </div>
   );
-  const userFeedbackTitleComponent = (
-    <div className="flex items-center gap-2">
-      <MessageCircleMoreIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
-      <span>Share Feedback</span>
-    </div>
-  );
   const simulationSettingsTitleComponent = (
     <div className="flex items-center gap-2">
       <SettingsIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
       <span>Simulation Settings</span>
+    </div>
+  );
+  const userFeedbackTitleComponent = (
+    <div className="flex items-center gap-2">
+      <MessageCircleMoreIcon className="text-primary size-6 shrink-0" aria-hidden="true" />
+      <span>Share Feedback</span>
     </div>
   );
 
@@ -136,6 +128,9 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
           )}
           {activeSection === 'results' && (
             <div className="flex items-center gap-x-1">
+              {!isDisabled && (
+                <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
+              )}
               <IconButton
                 icon={WandSparklesIcon}
                 label="Ask AI"
@@ -146,20 +141,17 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
                 surfaceColor="emphasized"
               />
               <IconButton
-                icon={MessageCircleMoreIcon}
-                label="Share Feedback"
-                onClick={() => setUserFeedbackOpen(true)}
-                surfaceColor="emphasized"
-              />
-              <IconButton
                 icon={SettingsIcon}
                 label="Simulation Settings"
                 onClick={() => setSimulationSettingsOpen(true)}
                 surfaceColor="emphasized"
               />
-              {!isDisabled && (
-                <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
-              )}
+              <IconButton
+                icon={MessageCircleMoreIcon}
+                label="Share Feedback"
+                onClick={() => setUserFeedbackOpen(true)}
+                surfaceColor="emphasized"
+              />
             </div>
           )}
         </div>
@@ -185,14 +177,14 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
           <AIChatDrawer setOpen={setAiChatOpen} />
         </Suspense>
       </Drawer>
-      <Drawer open={userFeedbackOpen} setOpen={setUserFeedbackOpen} title={userFeedbackTitleComponent}>
-        <Suspense fallback={<PageLoading message="Loading User Feedback" />}>
-          <UserFeedbackDrawer setOpen={setUserFeedbackOpen} />
-        </Suspense>
-      </Drawer>
       <Drawer open={simulationSettingsOpen} setOpen={setSimulationSettingsOpen} title={simulationSettingsTitleComponent}>
         <Suspense fallback={<PageLoading message="Loading Simulation Settings" />}>
           <SimulationSettingsDrawer setOpen={setSimulationSettingsOpen} simulationSettings={simulationSettings} />
+        </Suspense>
+      </Drawer>
+      <Drawer open={userFeedbackOpen} setOpen={setUserFeedbackOpen} title={userFeedbackTitleComponent}>
+        <Suspense fallback={<PageLoading message="Loading User Feedback" />}>
+          <UserFeedbackDrawer setOpen={setUserFeedbackOpen} />
         </Suspense>
       </Drawer>
     </>
