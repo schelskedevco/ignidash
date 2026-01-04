@@ -48,8 +48,8 @@ function GrossIncomeTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>Total income before taxes.</p>
-        <p>Includes earned income, Social Security, retirement distributions, interest income, realized capital gains, and dividends.</p>
+        <p>Total taxable income before adjustments and deductions.</p>
+        <p>Includes earned income, taxable Social Security, retirement distributions, interest, dividends, and realized capital gains.</p>
       </TooltipContent>
     </Tooltip>
   );
