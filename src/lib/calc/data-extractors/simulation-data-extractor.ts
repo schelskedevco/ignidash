@@ -32,6 +32,7 @@ export interface TaxAmountsByType {
   ficaTax: number;
   capGainsTax: number;
   niit: number;
+  totalTaxes: number;
   earlyWithdrawalPenalties: number;
   totalTaxesAndPenalties: number;
 }
@@ -173,10 +174,11 @@ export class SimulationDataExtractor {
     const ficaTax = incomesData?.totalFicaTax ?? 0;
     const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
     const niit = taxesData?.niit.niitAmount ?? 0;
+    const totalTaxes = incomeTax + ficaTax + capGainsTax + niit;
     const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
-    const totalTaxesAndPenalties = incomeTax + ficaTax + capGainsTax + niit + earlyWithdrawalPenalties;
+    const totalTaxesAndPenalties = totalTaxes + earlyWithdrawalPenalties;
 
-    return { incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties, totalTaxesAndPenalties };
+    return { incomeTax, ficaTax, capGainsTax, niit, totalTaxes, earlyWithdrawalPenalties, totalTaxesAndPenalties };
   }
 
   static getCashFlowData(dp: SimulationDataPoint): CashFlowData {
