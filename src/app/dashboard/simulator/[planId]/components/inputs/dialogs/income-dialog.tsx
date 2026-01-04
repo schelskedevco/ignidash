@@ -251,7 +251,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
                   {errors.frequency && <ErrorMessage>{errors.frequency?.message}</ErrorMessage>}
                 </Field>
               </div>
-              <Disclosure as="div" className="border-border/50 border-t pt-4">
+              <Disclosure as="div" className="border-border/25 border-t pt-4">
                 {({ open, close }) => (
                   <>
                     <DisclosureButton
@@ -467,7 +467,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
                 )}
               </Disclosure>
               {frequency !== 'oneTime' && (
-                <Disclosure as="div" className="border-border/50 border-t pt-4">
+                <Disclosure as="div" className="border-border/25 border-t pt-4">
                   {({ open, close }) => (
                     <>
                       <DisclosureButton
@@ -532,7 +532,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
                   )}
                 </Disclosure>
               )}
-              <Disclosure as="div" className="border-border/50 border-t pt-4">
+              <Disclosure as="div" className="border-border/25 border-t pt-4">
                 {({ open, close }) => (
                   <>
                     <DisclosureButton

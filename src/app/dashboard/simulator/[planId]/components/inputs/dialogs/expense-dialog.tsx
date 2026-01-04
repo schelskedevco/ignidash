@@ -233,7 +233,7 @@ export default function ExpenseDialog({ onClose, selectedExpense: _selectedExpen
                   {errors.frequency && <ErrorMessage>{errors.frequency?.message}</ErrorMessage>}
                 </Field>
               </div>
-              <Disclosure as="div" className="border-border/50 border-t pt-4">
+              <Disclosure as="div" className="border-border/25 border-t pt-4">
                 {({ open, close }) => (
                   <>
                     <DisclosureButton
@@ -449,7 +449,7 @@ export default function ExpenseDialog({ onClose, selectedExpense: _selectedExpen
                 )}
               </Disclosure>
               {frequency !== 'oneTime' && (
-                <Disclosure as="div" className="border-border/50 border-t pt-4">
+                <Disclosure as="div" className="border-border/25 border-t pt-4">
                   {({ open, close }) => (
                     <>
                       <DisclosureButton
