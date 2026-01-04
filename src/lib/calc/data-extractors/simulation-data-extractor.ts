@@ -323,18 +323,14 @@ export class SimulationDataExtractor {
   static getLifetimeTaxesAndPenalties(data: SimulationDataPoint[]): LifetimeTaxAmounts {
     const { lifetimeIncomeTaxes, lifetimeFicaTaxes, lifetimeCapGainsTaxes, lifetimeNiit, lifetimeEarlyWithdrawalPenalties } = data.reduce(
       (acc, dp) => {
-        const incomeTax = dp.taxes?.incomeTaxes.incomeTaxAmount ?? 0;
-        const ficaTax = dp.incomes?.totalFicaTax ?? 0;
-        const capGainsTax = dp.taxes?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
-        const niit = dp.taxes?.niit.niitAmount ?? 0;
-        const earlyWithdrawalPenalty = dp.taxes?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
+        const { incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties } = this.getTaxAmountsByType(dp);
 
         return {
           lifetimeIncomeTaxes: acc.lifetimeIncomeTaxes + incomeTax,
           lifetimeFicaTaxes: acc.lifetimeFicaTaxes + ficaTax,
           lifetimeCapGainsTaxes: acc.lifetimeCapGainsTaxes + capGainsTax,
           lifetimeNiit: acc.lifetimeNiit + niit,
-          lifetimeEarlyWithdrawalPenalties: acc.lifetimeEarlyWithdrawalPenalties + earlyWithdrawalPenalty,
+          lifetimeEarlyWithdrawalPenalties: acc.lifetimeEarlyWithdrawalPenalties + earlyWithdrawalPenalties,
         };
       },
       {
