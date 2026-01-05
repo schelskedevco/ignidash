@@ -49,9 +49,16 @@ export abstract class ChartDataExtractor {
     return simulation.data.slice(1).map((data) => {
       const age = Math.floor(data.age);
 
-      const { incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
-        SimulationDataExtractor.getTaxAmountsByType(data);
       const {
+        incomeTax,
+        ficaTax,
+        capGainsTax,
+        niit,
+        earlyWithdrawalPenalties,
+        totalTaxesAndPenalties: taxesAndPenalties,
+      } = SimulationDataExtractor.getTaxAmountsByType(data);
+      const {
+        totalIncomeFromIncomes: income,
         earnedIncome,
         socialSecurityIncome,
         taxExemptIncome,
@@ -67,13 +74,14 @@ export abstract class ChartDataExtractor {
         earnedIncome,
         socialSecurityIncome,
         taxExemptIncome,
+        income,
         incomeTax,
         ficaTax,
         capGainsTax,
         niit,
         earlyWithdrawalPenalties,
         otherTaxes: ficaTax + niit + earlyWithdrawalPenalties,
-        totalTaxesAndPenalties,
+        taxesAndPenalties,
         expenses,
         cashFlow,
         savingsRate,

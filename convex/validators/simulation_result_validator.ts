@@ -27,7 +27,7 @@ export const simulationDataPointValidator = v.object({
   interestIncome: v.number(),
   realizedGains: v.number(),
   dividendIncome: v.number(),
-  totalTaxesAndPenalties: v.number(),
+  taxesAndPenalties: v.number(),
   expenses: v.number(),
   netCashFlow: v.number(),
   savingsRate: v.nullable(v.number()),

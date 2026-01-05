@@ -24,13 +24,14 @@ export interface SingleSimulationCashFlowChartDataPoint {
   earnedIncome: number;
   socialSecurityIncome: number;
   taxExemptIncome: number;
+  income: number;
   incomeTax: number;
   ficaTax: number;
   capGainsTax: number;
   niit: number;
   earlyWithdrawalPenalties: number;
   otherTaxes: number; // ficaTax + niit + earlyWithdrawalPenalties
-  totalTaxesAndPenalties: number;
+  taxesAndPenalties: number;
   expenses: number;
   cashFlow: number;
   savingsRate: number | null;

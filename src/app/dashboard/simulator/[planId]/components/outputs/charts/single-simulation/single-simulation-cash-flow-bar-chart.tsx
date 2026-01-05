@@ -82,15 +82,13 @@ export default function SingleSimulationCashFlowBarChart({
     case 'net': {
       const [earnedIncomeLabel, socialSecurityIncomeLabel, taxExemptIncomeLabel, taxesAndPenaltiesLabel, expensesLabel] =
         getLabelsForScreenSize(dataView, isSmallScreen);
-      transformedChartData = chartData.flatMap(
-        ({ earnedIncome, socialSecurityIncome, taxExemptIncome, totalTaxesAndPenalties, expenses }) => [
-          { name: earnedIncomeLabel, amount: earnedIncome, type: 'income' },
-          ...(socialSecurityIncome > 0 ? [{ name: socialSecurityIncomeLabel, amount: socialSecurityIncome, type: 'income' }] : []),
-          ...(taxExemptIncome > 0 ? [{ name: taxExemptIncomeLabel, amount: taxExemptIncome, type: 'income' }] : []),
-          { name: taxesAndPenaltiesLabel, amount: -totalTaxesAndPenalties, type: 'expense' },
-          { name: expensesLabel, amount: -expenses, type: 'expense' },
-        ]
-      );
+      transformedChartData = chartData.flatMap(({ earnedIncome, socialSecurityIncome, taxExemptIncome, taxesAndPenalties, expenses }) => [
+        { name: earnedIncomeLabel, amount: earnedIncome, type: 'income' },
+        ...(socialSecurityIncome > 0 ? [{ name: socialSecurityIncomeLabel, amount: socialSecurityIncome, type: 'income' }] : []),
+        ...(taxExemptIncome > 0 ? [{ name: taxExemptIncomeLabel, amount: taxExemptIncome, type: 'income' }] : []),
+        { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, type: 'expense' },
+        { name: expensesLabel, amount: -expenses, type: 'expense' },
+      ]);
       break;
     }
     case 'incomes':
@@ -100,10 +98,10 @@ export default function SingleSimulationCashFlowBarChart({
       break;
     case 'expenses': {
       const [taxesAndPenaltiesLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
-      transformedChartData = chartData.flatMap(({ perExpenseData, totalTaxesAndPenalties }) =>
+      transformedChartData = chartData.flatMap(({ perExpenseData, taxesAndPenalties }) =>
         perExpenseData
           .map(({ name, expense }) => ({ name, amount: expense, type: 'expense' }))
-          .concat({ name: taxesAndPenaltiesLabel, amount: totalTaxesAndPenalties, type: 'expense' })
+          .concat({ name: taxesAndPenaltiesLabel, amount: taxesAndPenalties, type: 'expense' })
       );
       break;
     }

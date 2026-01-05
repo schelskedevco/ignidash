@@ -2,7 +2,8 @@
 
 import { useTheme } from 'next-themes';
 import { useState, useCallback, memo } from 'react';
-import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine, Cell } from 'recharts';
+import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, ReferenceLine } from 'recharts';
+import { ChartLineIcon } from 'lucide-react';
 
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -36,7 +37,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - Math.floor(startAge));
 
-  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)'];
+  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--foreground)'];
 
   const formatValue = (value: number, mode: 'net' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => {
     switch (mode) {
@@ -47,89 +48,44 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
     }
   };
 
-  let tooltipBodyComponent = null;
+  const transformedPayload = payload.filter((entry) => entry.dataKey !== 'cashFlow');
+
+  const tooltipBodyComponent = (
+    <div className="flex flex-col gap-1">
+      {transformedPayload.map((entry) => (
+        <p
+          key={entry.dataKey}
+          style={{ backgroundColor: entry.color }}
+          className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-xs', {
+            'text-background': needsBgTextColor.includes(entry.color),
+          })}
+        >
+          <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
+          <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
+        </p>
+      ))}
+    </div>
+  );
+
   let tooltipFooterComponent = null;
   switch (dataView) {
     case 'net':
-      const entry: SingleSimulationCashFlowChartDataPoint = payload[0].payload as SingleSimulationCashFlowChartDataPoint;
+      const cashFlow = payload.find((entry) => entry.dataKey === 'cashFlow')!;
 
-      const earnedIncome = entry.earnedIncome;
-      const socialSecurityIncome = entry.socialSecurityIncome;
-      const taxExemptIncome = entry.taxExemptIncome;
-      const taxesAndPenalties = entry.totalTaxesAndPenalties;
-      const expenses = entry.expenses;
-      const cashFlow = entry.cashFlow;
-
-      tooltipBodyComponent = (
-        <div className="flex flex-col gap-2">
-          <p
-            style={{ backgroundColor: 'var(--chart-2)' }}
-            className="border-foreground/50 text-foreground flex justify-between rounded-lg border px-2 text-sm"
-          >
-            <span className="mr-2">{`${formatChartString('earnedIncome')}:`}</span>
-            <span className="ml-1 font-semibold">{formatNumber(earnedIncome, 1, '$')}</span>
-          </p>
-          {socialSecurityIncome !== 0 && (
-            <p
-              style={{ backgroundColor: 'var(--chart-2)' }}
-              className="border-foreground/50 text-foreground flex justify-between rounded-lg border px-2 text-sm"
-            >
-              <span className="mr-2">{`${formatChartString('socialSecurityIncome')}:`}</span>
-              <span className="ml-1 font-semibold">{formatNumber(socialSecurityIncome, 1, '$')}</span>
-            </p>
-          )}
-          {taxExemptIncome !== 0 && (
-            <p
-              style={{ backgroundColor: 'var(--chart-2)' }}
-              className="border-foreground/50 text-foreground flex justify-between rounded-lg border px-2 text-sm"
-            >
-              <span className="mr-2">{`${formatChartString('taxExemptIncome')}:`}</span>
-              <span className="ml-1 font-semibold">{formatNumber(taxExemptIncome, 1, '$')}</span>
-            </p>
-          )}
-          <p
-            style={{ backgroundColor: 'var(--chart-4)' }}
-            className="border-foreground/50 text-background flex justify-between rounded-lg border px-2 text-sm"
-          >
-            <span className="mr-2">{`${formatChartString('taxesAndPenalties')}:`}</span>
-            <span className="ml-1 font-semibold">{formatNumber(taxesAndPenalties, 1, '$')}</span>
-          </p>
-          <p
-            style={{ backgroundColor: 'var(--chart-4)' }}
-            className="border-foreground/50 text-background flex justify-between rounded-lg border px-2 text-sm"
-          >
-            <span className="mr-2">{`${formatChartString('expenses')}:`}</span>
-            <span className="ml-1 font-semibold">{formatNumber(expenses, 1, '$')}</span>
-          </p>
-        </div>
-      );
       tooltipFooterComponent = (
-        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
-          <span className="mr-2">Cash Flow:</span>
-          <span className="ml-1 font-semibold">{formatNumber(cashFlow, 3, '$')}</span>
+        <p className="mx-1 mt-2 flex justify-between text-xs font-semibold">
+          <span className="flex items-center gap-1">
+            <ChartLineIcon className="h-3 w-3" />
+            <span className="mr-2">Net Cash Flow:</span>
+          </span>
+          <span className="ml-1 font-semibold">{formatNumber(cashFlow.value, 3, '$')}</span>
         </p>
       );
       break;
     case 'incomes':
     case 'expenses':
-      tooltipBodyComponent = (
-        <div className="flex flex-col gap-2">
-          {payload.map((entry) => (
-            <p
-              key={entry.dataKey}
-              style={{ backgroundColor: entry.color }}
-              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                'text-background': needsBgTextColor.includes(entry.color),
-              })}
-            >
-              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-              <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
-            </p>
-          ))}
-        </div>
-      );
       tooltipFooterComponent = (
-        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+        <p className="mx-1 mt-2 flex justify-between text-xs font-semibold">
           <span className="mr-2">Total:</span>
           <span className="ml-1 font-semibold">
             {formatNumber(
@@ -143,28 +99,12 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       break;
     case 'custom':
     case 'savingsRate':
-      tooltipBodyComponent = (
-        <div className="flex flex-col gap-2">
-          {payload.map((entry) => (
-            <p
-              key={entry.dataKey}
-              style={{ backgroundColor: entry.color }}
-              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                'text-background': needsBgTextColor.includes(entry.color),
-              })}
-            >
-              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-              <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
-            </p>
-          ))}
-        </div>
-      );
       break;
   }
 
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
-      <p className="mx-1 mb-2 flex justify-between text-sm font-semibold">
+      <p className="mx-1 mb-2 flex justify-between text-xs font-semibold">
         <span>Age {label}</span>
         <span className="text-muted-foreground">{yearForAge}</span>
       </p>
@@ -210,37 +150,38 @@ export default function SingleSimulationCashFlowLineChart({
   let chartData: SingleSimulationCashFlowChartDataPoint[] | Array<{ age: number } & IncomeData> | Array<{ age: number } & ExpenseData> =
     useChartDataSlice(rawChartData);
 
-  const dataKeys: (keyof SingleSimulationCashFlowChartDataPoint | keyof IncomeData | keyof ExpenseData)[] = [];
+  const lineDataKeys: (keyof SingleSimulationCashFlowChartDataPoint | keyof IncomeData | keyof ExpenseData)[] = [];
   const strokeColors: string[] = [];
   let formatter = undefined;
   let bar = null;
+  let stackOffset: 'sign' | undefined = undefined;
   switch (dataView) {
     case 'net':
-      dataKeys.push('cashFlow');
-      strokeColors.push('url(#colorGradient)');
+      lineDataKeys.push('cashFlow');
+      strokeColors.push('var(--foreground)');
       formatter = (value: number) => formatNumber(value, 1, '$');
-      bar = (
-        <Bar dataKey="cashFlow" maxBarSize={20}>
-          {chartData.map((entry, index) => (
-            <Cell
-              key={`cell-${index}`}
-              fill={entry.cashFlow >= 0 ? 'var(--chart-2)' : 'var(--chart-4)'}
-              fillOpacity={0.5}
-              stroke={entry.cashFlow >= 0 ? 'var(--chart-2)' : 'var(--chart-4)'}
-              strokeWidth={1}
-              strokeOpacity={0.75}
-            />
-          ))}
-        </Bar>
-      );
+
+      const barDataKeys: (keyof SingleSimulationCashFlowChartDataPoint)[] = ['income', 'expenses', 'taxesAndPenalties'];
+      const barColors = ['var(--chart-2)', 'var(--chart-1)', 'var(--chart-3)'];
+
+      chartData = chartData.map((entry) => ({
+        ...entry,
+        expenses: -entry.expenses,
+        taxesAndPenalties: -entry.taxesAndPenalties,
+      }));
+
+      bar = barDataKeys.map((dataKey, index) => (
+        <Bar key={`bar-${dataKey}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[index]} isAnimationActive={false} />
+      ));
+      stackOffset = 'sign';
       break;
     case 'incomes':
-      dataKeys.push('earnedIncome', 'socialSecurityIncome', 'taxExemptIncome');
+      lineDataKeys.push('earnedIncome', 'socialSecurityIncome', 'taxExemptIncome');
       strokeColors.push('var(--chart-2)', 'var(--chart-1)', 'var(--chart-3)');
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
     case 'expenses':
-      dataKeys.push('expenses', 'incomeTax', 'capGainsTax', 'otherTaxes');
+      lineDataKeys.push('expenses', 'incomeTax', 'capGainsTax', 'otherTaxes');
       strokeColors.push('var(--chart-4)', 'var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
       formatter = (value: number) => formatNumber(value, 1, '$');
       break;
@@ -258,7 +199,7 @@ export default function SingleSimulationCashFlowLineChart({
 
       if (perIncomeData.length > 0) {
         chartData = perIncomeData;
-        dataKeys.push('income');
+        lineDataKeys.push('income');
         strokeColors.push('var(--chart-2)');
         formatter = (value: number) => formatNumber(value, 1, '$');
         break;
@@ -272,7 +213,7 @@ export default function SingleSimulationCashFlowLineChart({
 
       if (perExpenseData.length > 0) {
         chartData = perExpenseData;
-        dataKeys.push('expense');
+        lineDataKeys.push('expense');
         strokeColors.push('var(--chart-4)');
         formatter = (value: number) => formatNumber(value, 1, '$');
         break;
@@ -280,7 +221,7 @@ export default function SingleSimulationCashFlowLineChart({
 
       break;
     case 'savingsRate':
-      dataKeys.push('savingsRate');
+      lineDataKeys.push('savingsRate');
       strokeColors.push('var(--chart-3)');
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       break;
@@ -315,7 +256,7 @@ export default function SingleSimulationCashFlowLineChart({
           <ComposedChart
             data={chartData}
             className="text-xs"
-            stackOffset="sign"
+            stackOffset={stackOffset}
             margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
             tabIndex={-1}
             onClick={onClick}
@@ -331,14 +272,14 @@ export default function SingleSimulationCashFlowLineChart({
             <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
             <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
             <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-            {dataKeys.map((dataKey, index) => (
+            {lineDataKeys.map((dataKey, index) => (
               <Line
                 key={dataKey}
                 type="monotone"
                 dataKey={dataKey}
                 stroke={strokeColors[index]}
                 dot={false}
-                activeDot={false}
+                activeDot={true}
                 strokeWidth={3}
                 strokeOpacity={getOpacity(dataKey)}
               />
@@ -358,7 +299,7 @@ export default function SingleSimulationCashFlowLineChart({
       <TimeSeriesLegend
         colors={strokeColors}
         legendStrokeColor={legendStrokeColor}
-        dataKeys={dataKeys}
+        dataKeys={lineDataKeys}
         isSmallScreen={isSmallScreen}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}

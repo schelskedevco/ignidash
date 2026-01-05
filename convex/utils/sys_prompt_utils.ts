@@ -478,7 +478,7 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
 
     const cashFlow = [
       d.expenses && `expenses:${fmt(d.expenses)}`,
-      d.totalTaxesAndPenalties && `taxes:${fmt(d.totalTaxesAndPenalties)}`,
+      d.taxesAndPenalties && `taxes:${fmt(d.taxesAndPenalties)}`,
       d.netCashFlow && `net:${fmt(d.netCashFlow)}`,
       d.savingsRate && `saveRate:${pct(d.savingsRate)}`,
     ].filter(Boolean);
