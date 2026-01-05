@@ -29,12 +29,34 @@ export abstract class TableDataExtractor {
 
       const portfolioData = data.portfolio;
       const totalPortfolioValue = portfolioData.totalValue;
-      const annualWithdrawals = portfolioData.withdrawalsForPeriod;
-      const annualContributions = portfolioData.contributionsForPeriod;
 
       const { taxableBrokerageValue, taxDeferredValue, taxFreeValue, cashSavings } =
         SimulationDataExtractor.getPortfolioValueByTaxCategory(data);
       const { stockHoldings, bondHoldings, cashHoldings } = SimulationDataExtractor.getHoldingsByAssetClass(data);
+
+      if (idx === 0) {
+        return {
+          year: idx,
+          age,
+          phaseName: formattedPhaseName,
+          totalPortfolioValue,
+          annualReturns: null,
+          annualContributions: null,
+          annualWithdrawals: null,
+          netPortfolioChange: null,
+          stockHoldings,
+          bondHoldings,
+          cashHoldings,
+          taxableBrokerageValue,
+          taxDeferredValue,
+          taxFreeValue,
+          cashSavings,
+          historicalYear,
+        };
+      }
+
+      const annualWithdrawals = portfolioData.withdrawalsForPeriod;
+      const annualContributions = portfolioData.contributionsForPeriod;
 
       const returnsData = data.returns;
       const {
