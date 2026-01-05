@@ -113,7 +113,9 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
           <div className="flex w-full items-center gap-3">
             <Tooltip>
               <TooltipTrigger>
-                <Heading level={4}>Net Worth</Heading>
+                <Heading level={4} className="underline decoration-zinc-300 underline-offset-4 dark:decoration-zinc-600">
+                  NW Tracker
+                </Heading>
               </TooltipTrigger>
               <TooltipContent>
                 <p>Add assets and liabilities to track your net worth.</p>

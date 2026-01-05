@@ -313,6 +313,7 @@ export default function SingleSimulationCashFlowLineChart({
           <ComposedChart
             data={chartData}
             className="text-xs"
+            stackOffset="sign"
             margin={{ top: 0, right: 10, left: 10, bottom: 0 }}
             tabIndex={-1}
             onClick={onClick}
