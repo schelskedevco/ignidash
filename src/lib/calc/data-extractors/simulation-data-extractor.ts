@@ -376,8 +376,11 @@ export class SimulationDataExtractor {
 
   static getSavingsRate(dp: SimulationDataPoint): number | null {
     const { totalIncome, totalTaxesAndPenalties, cashFlow } = this.getCashFlowData(dp);
+
     const totalIncomeMinusTaxes = totalIncome - totalTaxesAndPenalties;
-    return totalIncomeMinusTaxes > 0 ? cashFlow / totalIncomeMinusTaxes : null;
+    if (totalIncomeMinusTaxes <= 0) return null;
+
+    return Math.max(0, cashFlow / totalIncomeMinusTaxes);
   }
 
   static getWithdrawalRate(dp: SimulationDataPoint): number | null {
