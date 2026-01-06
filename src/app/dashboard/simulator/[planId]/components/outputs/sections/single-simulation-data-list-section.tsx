@@ -135,8 +135,14 @@ function PortfolioDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 }
 
 function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
-  const { totalTaxesAndPenalties } = SimulationDataExtractor.getTaxAmountsByType(dp);
-  const { earnedIncome, socialSecurityIncome, taxExemptIncome, totalExpenses, cashFlow } = SimulationDataExtractor.getCashFlowData(dp);
+  const taxesData = dp.taxes;
+
+  const retirementDistributions = taxesData?.incomeSources.taxableRetirementDistributions ?? 0;
+  const interestIncome = taxesData?.incomeSources.taxableInterestIncome ?? 0;
+  const incomeTaxedAsCapGains =
+    (taxesData?.incomeSources.taxableRealizedGains ?? 0) + (taxesData?.incomeSources.taxableDividendIncome ?? 0);
+
+  const { socialSecurityIncome, taxExemptIncome, cashFlow } = SimulationDataExtractor.getCashFlowData(dp);
   const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
 
   return (
@@ -147,28 +153,14 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>
         <DescriptionList>
-          <DescriptionTerm>Earned Income</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(earnedIncome, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm>Retirement Distributions</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(retirementDistributions, 2, '$')}</DescriptionDetails>
 
-          {socialSecurityIncome !== 0 && (
-            <>
-              <DescriptionTerm>Social Security Income</DescriptionTerm>
-              <DescriptionDetails>{formatNumber(socialSecurityIncome, 2, '$')}</DescriptionDetails>
-            </>
-          )}
+          <DescriptionTerm>Interest Income</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(interestIncome, 2, '$')}</DescriptionDetails>
 
-          {taxExemptIncome !== 0 && (
-            <>
-              <DescriptionTerm>Tax-Exempt Income</DescriptionTerm>
-              <DescriptionDetails>{formatNumber(taxExemptIncome, 2, '$')}</DescriptionDetails>
-            </>
-          )}
-
-          <DescriptionTerm>Taxes & Penalties</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(totalTaxesAndPenalties, 2, '$')}</DescriptionDetails>
-
-          <DescriptionTerm>Expenses</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(totalExpenses, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm>Realized Capital Gains & Dividends</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(incomeTaxedAsCapGains, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="flex items-center gap-3 font-bold">
             Cash Flow
