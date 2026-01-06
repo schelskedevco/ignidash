@@ -135,15 +135,13 @@ function PortfolioDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 }
 
 function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
-  const taxesData = dp.taxes;
-
-  const retirementDistributions = taxesData?.incomeSources.taxableRetirementDistributions ?? 0;
-  const interestIncome = taxesData?.incomeSources.taxableInterestIncome ?? 0;
-  const incomeTaxedAsCapGains =
-    (taxesData?.incomeSources.taxableRealizedGains ?? 0) + (taxesData?.incomeSources.taxableDividendIncome ?? 0);
-
   const { socialSecurityIncome, taxExemptIncome, cashFlow } = SimulationDataExtractor.getCashFlowData(dp);
   const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
+
+  const portfolioData = dp.portfolio;
+
+  const annualWithdrawals = portfolioData.withdrawalsForPeriod;
+  const annualContributions = portfolioData.contributionsForPeriod;
 
   return (
     <div>
@@ -153,14 +151,11 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>
         <DescriptionList>
-          <DescriptionTerm>Retirement Distributions</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(retirementDistributions, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm>Annual Contributions</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(annualContributions, 2, '$')}</DescriptionDetails>
 
-          <DescriptionTerm>Interest Income</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(interestIncome, 2, '$')}</DescriptionDetails>
-
-          <DescriptionTerm>Realized Capital Gains & Dividends</DescriptionTerm>
-          <DescriptionDetails>{formatNumber(incomeTaxedAsCapGains, 2, '$')}</DescriptionDetails>
+          <DescriptionTerm>Annual Withdrawals</DescriptionTerm>
+          <DescriptionDetails>{formatNumber(annualWithdrawals, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="flex items-center gap-3 font-bold">
             Cash Flow
