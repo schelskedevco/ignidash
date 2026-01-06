@@ -554,7 +554,7 @@ export default function SingleSimulationTaxesBarChart({
           tabIndex={-1}
         >
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-          <XAxis tick={tick} axisLine={false} tickLine={false} dataKey="name" interval={0} />
+          <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
           {!isStacked &&
             dataKeys.map((dataKey, idx) => (
