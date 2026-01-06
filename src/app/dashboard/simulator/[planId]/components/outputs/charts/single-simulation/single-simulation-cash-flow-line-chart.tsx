@@ -249,6 +249,7 @@ export default function SingleSimulationCashFlowLineChart({
 
   const gridColor = resolvedTheme === 'dark' ? '#3f3f46' : '#d4d4d8'; // zinc-700 : zinc-300
   const foregroundColor = resolvedTheme === 'dark' ? '#f4f4f5' : '#18181b'; // zinc-100 : zinc-900
+  const backgroundColor = resolvedTheme === 'dark' ? '#27272a' : '#ffffff'; // zinc-800 : white
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d4d4d8' : '#52525b'; // zinc-300 : zinc-600
 
   const calculateInterval = useCallback((dataLength: number, desiredTicks = 12) => {
@@ -297,13 +298,21 @@ export default function SingleSimulationCashFlowLineChart({
                 type="monotone"
                 dataKey={dataKey}
                 stroke={strokeColors[index]}
-                activeDot={true}
+                activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
+                dot={{ fill: backgroundColor, strokeWidth: 2 }}
                 strokeWidth={2}
                 strokeOpacity={getOpacity(dataKey)}
               />
             ))}
             {barDataKeys.map((dataKey, index) => (
-              <Bar key={`bar-${dataKey}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[index]} />
+              <Bar
+                key={`bar-${dataKey}`}
+                dataKey={dataKey}
+                maxBarSize={20}
+                stackId="stack"
+                fill={barColors[index]}
+                isAnimationActive={false}
+              />
             ))}
             <Tooltip
               content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
