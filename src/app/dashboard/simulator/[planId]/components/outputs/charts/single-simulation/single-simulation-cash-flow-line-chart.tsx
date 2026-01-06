@@ -165,6 +165,7 @@ export default function SingleSimulationCashFlowLineChart({
 
   let formatter = undefined;
   let stackOffset: 'sign' | undefined = undefined;
+
   switch (dataView) {
     case 'net': {
       lineDataKeys.push('cashFlow');

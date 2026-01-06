@@ -80,9 +80,9 @@ export default function SingleSimulationCashFlowBarChart({
   };
 
   const chartData = rawChartData.filter((item) => item.age === age);
-
   let transformedChartData: { name: string; amount: number; color: string }[] = [];
   const formatter = (value: number) => formatNumber(value, 1, '$');
+
   switch (dataView) {
     case 'net': {
       const [
@@ -95,17 +95,14 @@ export default function SingleSimulationCashFlowBarChart({
       ] = getLabelsForScreenSize(dataView, isSmallScreen);
 
       transformedChartData = chartData.flatMap(
-        ({ earnedIncome, socialSecurityIncome, taxExemptIncome, employerMatch, taxesAndPenalties, expenses }) =>
-          [
-            { name: earnedIncomeLabel, amount: earnedIncome, color: 'var(--chart-1)' },
-            { name: socialSecurityIncomeLabel, amount: socialSecurityIncome, color: 'var(--chart-1)' },
-            { name: taxExemptIncomeLabel, amount: taxExemptIncome, color: 'var(--chart-1)' },
-            { name: employerMatchLabel, amount: employerMatch, color: 'var(--chart-1)' },
-            { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-3)' },
-            { name: expensesLabel, amount: -expenses, color: 'var(--chart-2)' },
-          ]
-            .filter((item) => item.amount !== 0)
-            .sort((a, b) => b.amount - a.amount)
+        ({ earnedIncome, socialSecurityIncome, taxExemptIncome, employerMatch, taxesAndPenalties, expenses }) => [
+          { name: earnedIncomeLabel, amount: earnedIncome, color: 'var(--chart-1)' },
+          { name: socialSecurityIncomeLabel, amount: socialSecurityIncome, color: 'var(--chart-1)' },
+          { name: taxExemptIncomeLabel, amount: taxExemptIncome, color: 'var(--chart-1)' },
+          { name: employerMatchLabel, amount: employerMatch, color: 'var(--chart-1)' },
+          { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-3)' },
+          { name: expensesLabel, amount: -expenses, color: 'var(--chart-2)' },
+        ]
       );
       break;
     }
@@ -117,13 +114,10 @@ export default function SingleSimulationCashFlowBarChart({
       };
 
       const [employerMatchLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
-      transformedChartData = chartData
-        .flatMap(({ perIncomeData, employerMatch }) => [
-          ...perIncomeData.map((income) => ({ name: income.name, amount: income.income, color: getIncomeColor(income) })),
-          { name: employerMatchLabel, amount: employerMatch, color: 'var(--chart-4)' },
-        ])
-        .filter((item) => item.amount !== 0)
-        .sort((a, b) => b.amount - a.amount);
+      transformedChartData = chartData.flatMap(({ perIncomeData, employerMatch }) => [
+        ...perIncomeData.map((income) => ({ name: income.name, amount: income.income, color: getIncomeColor(income) })),
+        { name: employerMatchLabel, amount: employerMatch, color: 'var(--chart-4)' },
+      ]);
       break;
     }
     case 'expenses': {
@@ -132,22 +126,18 @@ export default function SingleSimulationCashFlowBarChart({
         isSmallScreen
       );
 
-      transformedChartData = chartData.flatMap(({ perExpenseData, incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties }) =>
-        [
-          ...perExpenseData.map(({ name, expense }) => ({
-            name,
-            amount: expense,
-            color: 'var(--chart-1)',
-          })),
-          { name: incomeTaxLabel, amount: incomeTax, color: 'var(--chart-2)' },
-          { name: ficaTaxLabel, amount: ficaTax, color: 'var(--chart-3)' },
-          { name: capGainsTaxLabel, amount: capGainsTax, color: 'var(--chart-4)' },
-          { name: niitLabel, amount: niit, color: 'var(--chart-5)' },
-          { name: earlyWithdrawalPenaltiesLabel, amount: earlyWithdrawalPenalties, color: 'var(--chart-6)' },
-        ]
-          .filter((item) => item.amount !== 0)
-          .sort((a, b) => b.amount - a.amount)
-      );
+      transformedChartData = chartData.flatMap(({ perExpenseData, incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties }) => [
+        ...perExpenseData.map(({ name, expense }) => ({
+          name,
+          amount: expense,
+          color: 'var(--chart-1)',
+        })),
+        { name: incomeTaxLabel, amount: incomeTax, color: 'var(--chart-2)' },
+        { name: ficaTaxLabel, amount: ficaTax, color: 'var(--chart-3)' },
+        { name: capGainsTaxLabel, amount: capGainsTax, color: 'var(--chart-4)' },
+        { name: niitLabel, amount: niit, color: 'var(--chart-5)' },
+        { name: earlyWithdrawalPenaltiesLabel, amount: earlyWithdrawalPenalties, color: 'var(--chart-6)' },
+      ]);
       break;
     }
     case 'custom': {
@@ -173,6 +163,7 @@ export default function SingleSimulationCashFlowBarChart({
     }
   }
 
+  transformedChartData = transformedChartData.filter((item) => item.amount !== 0).sort((a, b) => b.amount - a.amount);
   if (transformedChartData.length === 0) {
     return <div className="flex h-64 w-full items-center justify-center sm:h-72 lg:h-80">No data available for the selected view.</div>;
   }
