@@ -80,7 +80,7 @@ const IncomeCalculationsTooltip = ({ active, payload, startAge, age, disabled, d
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (age - startAge);
 
-  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)'];
+  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
 
   const entry = payload[0].payload;
 

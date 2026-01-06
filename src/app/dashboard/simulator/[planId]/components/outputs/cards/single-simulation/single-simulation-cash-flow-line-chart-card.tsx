@@ -80,7 +80,7 @@ export default function SingleSimulationCashFlowLineChartCard({
             }}
           >
             <option value="net">Cash Flow</option>
-            <option value="incomes">Income</option>
+            <option value="incomes">Incomes</option>
             <option value="expenses">Expenses</option>
             <option value="savingsRate">Savings Rate</option>
             <optgroup label="By Income">
