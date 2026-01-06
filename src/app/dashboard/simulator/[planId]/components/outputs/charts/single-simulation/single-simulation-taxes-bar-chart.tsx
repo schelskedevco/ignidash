@@ -562,7 +562,7 @@ export default function SingleSimulationTaxesBarChart({
             dataKeys.map((dataKey, idx) => (
               <Bar key={`${dataKey}-${idx}`} dataKey={dataKey} maxBarSize={100} minPointSize={20}>
                 {transformedChartData.map((entry, idx) => (
-                  <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} stroke={foregroundColor} strokeWidth={1} />
+                  <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} stroke={foregroundColor} strokeWidth={0.5} />
                 ))}
                 <LabelList
                   dataKey={dataKey}
@@ -581,7 +581,7 @@ export default function SingleSimulationTaxesBarChart({
                 minPointSize={20}
                 fill={stackedColors[idx]}
                 stroke={foregroundColor}
-                strokeWidth={1}
+                strokeWidth={0.5}
               >
                 <LabelList
                   dataKey={dataKey}

@@ -91,7 +91,7 @@ export default function MultiSimulationPhasesBarChart({ age, rawChartData }: Mul
           />
           <Bar dataKey="amount" maxBarSize={100} minPointSize={20}>
             {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke={foregroundColor} strokeWidth={1} />
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke={foregroundColor} strokeWidth={0.5} />
             ))}
             <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
           </Bar>

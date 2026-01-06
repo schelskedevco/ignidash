@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList, Cell /* Tooltip */ } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList, Cell, ReferenceLine /* Tooltip */ } from 'recharts';
 
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -199,9 +199,10 @@ export default function SingleSimulationCashFlowBarChart({
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
+          {dataView === 'net' && <ReferenceLine y={0} stroke={foregroundColor} ifOverflow="extendDomain" />}
           <Bar dataKey="amount" maxBarSize={100} minPointSize={20}>
             {transformedChartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} stroke={foregroundColor} strokeWidth={1} />
+              <Cell key={`cell-${index}`} fill={entry.color} stroke={foregroundColor} strokeWidth={0.5} />
             ))}
             <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
           </Bar>

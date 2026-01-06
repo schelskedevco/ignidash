@@ -199,7 +199,7 @@ export default function SingleSimulationWithdrawalsBarChart({
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
           <Bar dataKey="amount" maxBarSize={100} minPointSize={20}>
             {transformedChartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke={foregroundColor} strokeWidth={1} />
+              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke={foregroundColor} strokeWidth={0.5} />
             ))}
             <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
           </Bar>
