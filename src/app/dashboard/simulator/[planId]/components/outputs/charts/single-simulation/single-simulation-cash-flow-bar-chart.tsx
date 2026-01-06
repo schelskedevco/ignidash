@@ -122,6 +122,7 @@ export default function SingleSimulationCashFlowBarChart({
           ...perIncomeData.map((income) => ({ name: income.name, amount: income.income, color: getIncomeColor(income) })),
           { name: employerMatchLabel, amount: employerMatch, color: 'var(--chart-4)' },
         ])
+        .filter((item) => item.amount !== 0)
         .sort((a, b) => b.amount - a.amount);
       break;
     }
