@@ -310,6 +310,8 @@ export default function SingleSimulationCashFlowLineChart({
                 maxBarSize={20}
                 stackId="stack"
                 fill={barColors[index]}
+                stroke={foregroundColor}
+                strokeWidth={0.5}
                 isAnimationActive={chartData.length <= 30}
               />
             ))}

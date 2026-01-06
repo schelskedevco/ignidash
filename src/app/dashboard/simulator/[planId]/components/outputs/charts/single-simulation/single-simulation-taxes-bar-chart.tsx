@@ -186,7 +186,7 @@ const IncomeCalculationsTooltip = ({ active, payload, startAge, age, disabled, d
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomLabelListContent = (props: any) => {
-  const { x, y, width, height, offset, value, isSmallScreen, dataView } = props;
+  const { x, y, width, height, offset, value, fill, isSmallScreen, dataView } = props;
   if (!value || value === 0) {
     return null;
   }
@@ -233,11 +233,13 @@ const CustomLabelListContent = (props: any) => {
     }
   };
 
+  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
+
   return (
     <text
       x={x + width / 2}
       y={y + height / 2 + (isSmallScreen ? offset : 0)}
-      fill="currentColor"
+      fill={needsBgTextColor.includes(fill) ? 'var(--background)' : 'var(--foreground)'}
       textAnchor="middle"
       dominantBaseline="middle"
       className="text-xs sm:text-sm"
@@ -558,15 +560,9 @@ export default function SingleSimulationTaxesBarChart({
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
           {!isStacked &&
             dataKeys.map((dataKey, idx) => (
-              <Bar key={`${dataKey}-${idx}`} dataKey={dataKey} maxBarSize={250} minPointSize={20}>
+              <Bar key={`${dataKey}-${idx}`} dataKey={dataKey} maxBarSize={100} minPointSize={20}>
                 {transformedChartData.map((entry, idx) => (
-                  <Cell
-                    key={`cell-${idx}`}
-                    fill={COLORS[idx % COLORS.length]}
-                    stroke={COLORS[idx % COLORS.length]}
-                    strokeWidth={3}
-                    fillOpacity={0.5}
-                  />
+                  <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} stroke={foregroundColor} strokeWidth={1} />
                 ))}
                 <LabelList
                   dataKey={dataKey}
@@ -581,12 +577,11 @@ export default function SingleSimulationTaxesBarChart({
                 key={`${dataKey}-${idx}`}
                 dataKey={dataKey}
                 stackId="stack"
-                maxBarSize={250}
+                maxBarSize={100}
                 minPointSize={20}
                 fill={stackedColors[idx]}
-                stroke={stackedColors[idx]}
-                strokeWidth={3}
-                fillOpacity={0.5}
+                stroke={foregroundColor}
+                strokeWidth={1}
               >
                 <LabelList
                   dataKey={dataKey}
