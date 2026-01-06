@@ -270,7 +270,7 @@ export default function SingleSimulationCashFlowLineChart({
 
   return (
     <div>
-      <div ref={chartRef} className="h-64 w-full sm:h-72 lg:h-80 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+      <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}

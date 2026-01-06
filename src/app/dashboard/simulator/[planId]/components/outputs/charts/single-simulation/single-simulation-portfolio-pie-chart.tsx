@@ -76,7 +76,7 @@ export default function SingleSimulationPortfolioPieChart({ chartData }: SingleS
 
   return (
     <div className="flex items-center">
-      <div className="h-64 w-full sm:h-72 lg:h-80 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+      <div className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart className="text-xs">
             <Pie activeShape={renderActiveShape} data={chartData} cx="50%" cy="50%" innerRadius={80} outerRadius={100} dataKey="value">
