@@ -34,7 +34,7 @@ function CashFlowTooltip() {
       </TooltipTrigger>
       <TooltipContent>
         <p>Earned income, employer match, tax-exempt income, and Social Security, minus taxes and expenses.</p>
-        <p>Investment income is automatically reinvested; withdrawals are tracked separately.</p>
+        <p>Dividends and interest (automatically reinvested) are tracked separately, as are withdrawals.</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -47,8 +47,8 @@ function SavingsRateTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>The percentage of your after-tax income that you save rather than spend.</p>
-        <p>Investment income and portfolio withdrawals are excluded.</p>
+        <p>The percentage of after-tax income that you save rather than spend.</p>
+        <p>Calculated from the same income sources as Cash Flow.</p>
       </TooltipContent>
     </Tooltip>
   );
