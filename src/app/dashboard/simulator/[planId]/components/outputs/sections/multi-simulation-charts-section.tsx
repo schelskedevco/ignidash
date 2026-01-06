@@ -84,9 +84,9 @@ function MultiSimulationChartsSection({ startAge, chartData, keyMetrics, onAgeSe
 
   return (
     <SectionContainer showBottomBorder>
-      <div className="grid grid-cols-1 gap-2 @[96rem]:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 @[120rem]:grid-cols-2">
         {chartsComponents}
-        <div className="@[96rem]:col-span-2">
+        <div className="@[120rem]:col-span-2">
           <MultiSimulationDataListSection chartData={chartData} selectedAge={selectedAge} />
         </div>
       </div>

@@ -22,9 +22,9 @@ function SingleSimulationChartsSection({ simulation, keyMetrics, onAgeSelect, se
 
   return (
     <SectionContainer showBottomBorder>
-      <div className="grid grid-cols-1 gap-2 @[96rem]:grid-cols-2">
+      <div className="grid grid-cols-1 gap-2 @[120rem]:grid-cols-2">
         <SingleSimulationChartCard {...props} />
-        <div className="@[96rem]:col-span-2">
+        <div className="@[120rem]:col-span-2">
           <SingleSimulationDataListSection simulation={simulation} selectedAge={selectedAge} />
         </div>
       </div>
