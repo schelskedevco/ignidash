@@ -196,7 +196,7 @@ export default function SingleSimulationCashFlowBarChart({
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          <Bar dataKey="amount" maxBarSize={100} minPointSize={20} label={<CustomLabelListContent isSmallScreen={isSmallScreen} />}>
+          <Bar dataKey="amount" maxBarSize={60} minPointSize={20} label={<CustomLabelListContent isSmallScreen={isSmallScreen} />}>
             {transformedChartData.map((entry, i) => (
               <Cell key={i} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />
             ))}
