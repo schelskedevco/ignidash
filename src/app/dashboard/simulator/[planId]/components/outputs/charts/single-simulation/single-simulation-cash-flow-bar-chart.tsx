@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -169,6 +169,7 @@ export default function SingleSimulationCashFlowBarChart({
   }
 
   const gridColor = resolvedTheme === 'dark' ? '#3f3f46' : '#d4d4d8'; // zinc-700 : zinc-300
+  const foregroundColor = resolvedTheme === 'dark' ? '#f4f4f5' : '#18181b'; // zinc-100 : zinc-900
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d4d4d8' : '#52525b'; // zinc-300 : zinc-600
 
   const shouldUseCustomTick = transformedChartData.length > 3 || (isSmallScreen && transformedChartData.length > 1);
@@ -187,6 +188,7 @@ export default function SingleSimulationCashFlowBarChart({
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
+          {dataView === 'net' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="visible" />}
           <Bar dataKey="amount" maxBarSize={60} minPointSize={20} label={<CustomLabelListContent isSmallScreen={isSmallScreen} />}>
             {transformedChartData.map((entry, i) => (
               <Cell key={i} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />
