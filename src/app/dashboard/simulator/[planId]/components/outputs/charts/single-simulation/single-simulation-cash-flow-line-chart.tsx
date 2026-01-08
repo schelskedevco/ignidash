@@ -208,9 +208,7 @@ export default function SingleSimulationCashFlowLineChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
 
       const perIncomeData = chartData.flatMap(({ age, perIncomeData }) =>
-        Object.values(perIncomeData)
-          .map((income) => ({ age, ...income }))
-          .filter((income) => income.id === customDataID && income.income !== 0)
+        perIncomeData.filter((income) => income.id === customDataID && income.income !== 0).map((income) => ({ age, ...income }))
       );
 
       if (perIncomeData.length > 0) {
@@ -222,9 +220,7 @@ export default function SingleSimulationCashFlowLineChart({
       }
 
       const perExpenseData = chartData.flatMap(({ age, perExpenseData }) =>
-        Object.values(perExpenseData)
-          .map((expense) => ({ age, ...expense }))
-          .filter((expense) => expense.id === customDataID && expense.expense !== 0)
+        perExpenseData.filter((expense) => expense.id === customDataID && expense.expense !== 0).map((expense) => ({ age, ...expense }))
       );
 
       if (perExpenseData.length > 0) {
