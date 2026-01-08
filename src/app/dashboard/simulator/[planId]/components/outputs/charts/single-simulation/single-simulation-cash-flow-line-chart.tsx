@@ -271,48 +271,46 @@ export default function SingleSimulationCashFlowLineChart({
   const { getOpacity } = useLineChartLegendEffectOpacity();
 
   return (
-    <div>
-      <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
-        <ComposedChart
-          responsive
-          width="100%"
-          height="100%"
-          data={chartData}
-          className="text-xs"
-          stackOffset={stackOffset}
-          margin={{ top: 5, right: 10, left: 10, bottom: 0 }}
-          tabIndex={-1}
-          onClick={onClick}
-        >
-          <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-          <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-          <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          {dataView === 'net' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
-          {lineDataKeys.map((dataKey, i) => (
-            <Line
-              key={`line-${dataKey}-${i}`}
-              type="monotone"
-              dataKey={dataKey}
-              stroke={strokeColors[i]}
-              activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
-              dot={{ fill: backgroundColor, strokeWidth: 2 }}
-              strokeWidth={2}
-              strokeOpacity={getOpacity(dataKey)}
-            />
-          ))}
-          {barDataKeys.map((dataKey, i) => (
-            <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[i]} />
-          ))}
-          <Tooltip
-            content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
-            cursor={{ stroke: foregroundColor }}
+    <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+      <ComposedChart
+        responsive
+        width="100%"
+        height="100%"
+        data={chartData}
+        className="text-xs"
+        stackOffset={stackOffset}
+        margin={{ top: 5, right: 10, left: 10, bottom: 0 }}
+        tabIndex={-1}
+        onClick={onClick}
+      >
+        <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
+        <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
+        <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
+        {dataView === 'net' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
+        {lineDataKeys.map((dataKey, i) => (
+          <Line
+            key={`line-${dataKey}-${i}`}
+            type="monotone"
+            dataKey={dataKey}
+            stroke={strokeColors[i]}
+            activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
+            dot={{ fill: backgroundColor, strokeWidth: 2 }}
+            strokeWidth={2}
+            strokeOpacity={getOpacity(dataKey)}
           />
-          {keyMetrics.retirementAge && showReferenceLines && (
-            <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
-          )}
-          {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
-        </ComposedChart>
-      </div>
+        ))}
+        {barDataKeys.map((dataKey, i) => (
+          <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[i]} />
+        ))}
+        <Tooltip
+          content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
+          cursor={{ stroke: foregroundColor }}
+        />
+        {keyMetrics.retirementAge && showReferenceLines && (
+          <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+        )}
+        {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
+      </ComposedChart>
     </div>
   );
 }
