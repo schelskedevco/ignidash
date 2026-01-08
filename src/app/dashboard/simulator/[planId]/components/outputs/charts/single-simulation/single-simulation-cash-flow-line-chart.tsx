@@ -71,8 +71,8 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   let footer = null;
   switch (dataView) {
     case 'net':
-      const cashFlow = payload.find((entry) => entry.dataKey === 'cashFlow');
-      if (!cashFlow) {
+      const netCashFlow = payload.find((entry) => entry.dataKey === 'netCashFlow');
+      if (!netCashFlow) {
         console.error('Cash flow data not found');
         break;
       }
@@ -83,7 +83,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
             <ChartLineIcon className="h-3 w-3" />
             <span className="mr-2">Cash Flow:</span>
           </span>
-          <span className="ml-1 font-semibold">{formatNumber(cashFlow.value, 3, '$')}</span>
+          <span className="ml-1 font-semibold">{formatNumber(netCashFlow.value, 3, '$')}</span>
         </p>
       );
       break;
@@ -168,7 +168,7 @@ export default function SingleSimulationCashFlowLineChart({
 
   switch (dataView) {
     case 'net': {
-      lineDataKeys.push('cashFlow');
+      lineDataKeys.push('netCashFlow');
       strokeColors.push(LINE_COLOR);
 
       formatter = (value: number) => formatNumber(value, 1, '$');

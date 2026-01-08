@@ -26,7 +26,7 @@ function NetPortfolioChangeTooltip() {
   );
 }
 
-function CashFlowTooltip() {
+function NetCashFlowTooltip() {
   return (
     <Tooltip>
       <TooltipTrigger>
@@ -144,7 +144,7 @@ function PortfolioDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 }
 
 function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
-  const { cashFlow } = SimulationDataExtractor.getCashFlowData(dp);
+  const { netCashFlow } = SimulationDataExtractor.getCashFlowData(dp);
   const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
 
   const portfolioData = dp.portfolio;
@@ -167,10 +167,10 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionDetails>{formatNumber(annualWithdrawals, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="flex items-center gap-3 font-bold">
-            Cash Flow
-            <CashFlowTooltip />
+            Net Cash Flow
+            <NetCashFlowTooltip />
           </DescriptionTerm>
-          <DescriptionDetails className="font-bold">{formatNumber(cashFlow, 2, '$')}</DescriptionDetails>
+          <DescriptionDetails className="font-bold">{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="flex items-center gap-3 font-bold">
             Savings Rate
@@ -276,7 +276,7 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const annualContributions = portfolioData.contributionsForPeriod;
   const annualEmployerMatch = portfolioData.employerMatchForPeriod;
 
-  const { cashFlow } = SimulationDataExtractor.getCashFlowData(dp);
+  const { netCashFlow } = SimulationDataExtractor.getCashFlowData(dp);
 
   return (
     <div>
@@ -290,10 +290,10 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="flex items-center gap-3">
-            Cash Flow
-            <CashFlowTooltip />
+            Net Cash Flow
+            <NetCashFlowTooltip />
           </DescriptionTerm>
-          <DescriptionDetails>{formatNumber(cashFlow, 2, '$')}</DescriptionDetails>
+          <DescriptionDetails>{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm>Annual Employer Match</DescriptionTerm>
           <DescriptionDetails>{formatNumber(annualEmployerMatch, 2, '$')}</DescriptionDetails>
@@ -311,7 +311,7 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const totalValue = portfolioData.totalValue;
   const annualWithdrawals = portfolioData.withdrawalsForPeriod;
 
-  const { cashFlow } = SimulationDataExtractor.getCashFlowData(dp);
+  const { netCashFlow } = SimulationDataExtractor.getCashFlowData(dp);
   const withdrawalRate = SimulationDataExtractor.getWithdrawalRate(dp);
 
   return (
@@ -326,10 +326,10 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="flex items-center gap-3">
-            Cash Flow
-            <CashFlowTooltip />
+            Net Cash Flow
+            <NetCashFlowTooltip />
           </DescriptionTerm>
-          <DescriptionDetails>{formatNumber(cashFlow, 2, '$')}</DescriptionDetails>
+          <DescriptionDetails>{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="font-bold">Annual Withdrawals</DescriptionTerm>
           <DescriptionDetails className="font-bold">{formatNumber(annualWithdrawals, 2, '$')}</DescriptionDetails>

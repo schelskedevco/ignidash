@@ -64,7 +64,7 @@ export abstract class ChartDataExtractor {
         taxExemptIncome,
         employerMatch,
         totalExpenses: expenses,
-        cashFlow,
+        netCashFlow,
       } = SimulationDataExtractor.getCashFlowData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
 
@@ -84,7 +84,7 @@ export abstract class ChartDataExtractor {
         earlyWithdrawalPenalties,
         taxesAndPenalties,
         expenses,
-        cashFlow,
+        netCashFlow,
         savingsRate,
       };
     });

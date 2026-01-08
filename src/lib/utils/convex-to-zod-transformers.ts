@@ -412,7 +412,7 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       dividendIncome: taxesData[i].dividendIncome,
       taxesAndPenalties: cashFlowData[i].taxesAndPenalties,
       expenses: cashFlowData[i].expenses,
-      netCashFlow: cashFlowData[i].cashFlow,
+      netCashFlow: cashFlowData[i].netCashFlow,
       savingsRate: cashFlowData[i].savingsRate,
 
       // Taxes

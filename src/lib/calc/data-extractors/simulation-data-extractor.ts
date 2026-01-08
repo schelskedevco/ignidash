@@ -25,7 +25,7 @@ export interface CashFlowData {
   employerMatch: number;
   totalExpenses: number;
   totalTaxesAndPenalties: number;
-  cashFlow: number;
+  netCashFlow: number;
 }
 
 export interface TaxAmountsByType {
@@ -197,7 +197,7 @@ export class SimulationDataExtractor {
     const totalExpenses = expensesData?.totalExpenses ?? 0;
     const { totalTaxesAndPenalties } = this.getTaxAmountsByType(dp);
 
-    const cashFlow = totalIncome - totalExpenses - totalTaxesAndPenalties;
+    const netCashFlow = totalIncome - totalExpenses - totalTaxesAndPenalties;
 
     return {
       totalIncome,
@@ -207,7 +207,7 @@ export class SimulationDataExtractor {
       employerMatch,
       totalExpenses,
       totalTaxesAndPenalties,
-      cashFlow,
+      netCashFlow,
     };
   }
 
@@ -375,12 +375,12 @@ export class SimulationDataExtractor {
   }
 
   static getSavingsRate(dp: SimulationDataPoint): number | null {
-    const { totalIncome, totalTaxesAndPenalties, cashFlow } = this.getCashFlowData(dp);
+    const { totalIncome, totalTaxesAndPenalties, netCashFlow } = this.getCashFlowData(dp);
 
     const totalIncomeMinusTaxes = totalIncome - totalTaxesAndPenalties;
     if (totalIncomeMinusTaxes <= 0) return null;
 
-    return Math.max(0, cashFlow / totalIncomeMinusTaxes);
+    return Math.max(0, netCashFlow / totalIncomeMinusTaxes);
   }
 
   static getWithdrawalRate(dp: SimulationDataPoint): number | null {
