@@ -96,7 +96,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   const transformedPayload = payload.filter((entry) => entry.color !== LINE_COLOR);
 
-  let header = null;
+  let body = null;
   let footer = null;
   switch (dataView) {
     case 'marginalRates':
@@ -150,7 +150,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         </p>
       ));
 
-      header = (
+      body = (
         <div className="mx-1 mb-2 flex flex-col gap-2">
           <p className="flex justify-between text-xs font-semibold">
             <span className="mr-2">Gross Income:</span>
@@ -184,7 +184,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         <span className="mr-2">Age {label}</span>
         <span className="text-muted-foreground ml-1">{yearForAge}</span>
       </p>
-      {header}
+      {body}
       <div className="flex flex-col gap-1">
         {transformedPayload
           .filter((entry) => entry.value !== 0)
