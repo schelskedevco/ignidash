@@ -41,8 +41,8 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled }: Cust
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
       <p className="mx-1 mb-2 flex justify-between text-xs font-semibold">
-        <span>Age {label}</span>
-        <span className="text-muted-foreground">{yearForAge}</span>
+        <span className="mr-2">Age {label}</span>
+        <span className="text-muted-foreground ml-1">{yearForAge}</span>
       </p>
       <div className="flex flex-col gap-1">
         {payload.map((entry) => (
