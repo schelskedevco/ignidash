@@ -80,20 +80,18 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         <span className="text-muted-foreground ml-1">{yearForAge}</span>
       </p>
       <div className="flex flex-col gap-1">
-        {payload
-          .filter((entry) => entry.value !== 0)
-          .map((entry) => (
-            <p
-              key={entry.dataKey}
-              style={{ backgroundColor: entry.color }}
-              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-xs', {
-                'text-background': needsBgTextColor.includes(entry.color),
-              })}
-            >
-              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-              <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
-            </p>
-          ))}
+        {payload.map((entry) => (
+          <p
+            key={entry.dataKey}
+            style={{ backgroundColor: entry.color }}
+            className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-xs', {
+              'text-background': needsBgTextColor.includes(entry.color),
+            })}
+          >
+            <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
+            <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
+          </p>
+        ))}
       </div>
       {footer}
     </div>
@@ -145,14 +143,17 @@ export default function SingleSimulationReturnsLineChart({
   switch (dataView) {
     case 'rates':
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+
       lineDataKeys.push('realStockReturn', 'realBondReturn', 'realCashReturn', 'inflationRate');
       break;
     case 'annualAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
+
       lineDataKeys.push('annualStockGrowth', 'annualBondGrowth', 'annualCashGrowth');
       break;
     case 'cumulativeAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
+
       lineDataKeys.push('cumulativeStockGrowth', 'cumulativeBondGrowth', 'cumulativeCashGrowth');
       break;
     case 'custom':
