@@ -291,6 +291,8 @@ export default function SingleSimulationTaxesBarChart({
           ]);
           break;
         case 'marginalCapGainsTaxRates':
+          stackId = 'stack';
+
           transformedChartData = chartData.flatMap((item) => [
             {
               name: taxableCapGainsLabel,
@@ -300,7 +302,6 @@ export default function SingleSimulationTaxesBarChart({
               ],
             },
           ]);
-          stackId = 'stack';
           break;
         default:
           transformedChartData = chartData.flatMap((item) => [
@@ -449,7 +450,7 @@ export default function SingleSimulationTaxesBarChart({
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
           {Array.from({ length: maxSegments }).map((_, segmentIndex) => (
-            <Bar key={segmentIndex} dataKey={getDataKey(segmentIndex)} maxBarSize={60} minPointSize={20} stackId={stackId}>
+            <Bar key={segmentIndex} dataKey={getDataKey(segmentIndex)} maxBarSize={75} minPointSize={20} stackId={stackId}>
               {normalizedData.map((entry, i) => {
                 const segment = entry.segments[segmentIndex];
 

@@ -197,7 +197,7 @@ export default function SingleSimulationWithdrawalsBarChart({
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          <Bar dataKey="amount" maxBarSize={100} minPointSize={20}>
+          <Bar dataKey="amount" maxBarSize={75} minPointSize={20}>
             {transformedChartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke={foregroundColor} strokeWidth={0.5} />
             ))}

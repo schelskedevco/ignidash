@@ -89,7 +89,7 @@ export default function MultiSimulationPhasesBarChart({ age, rawChartData }: Mul
             hide={isSmallScreen}
             tickFormatter={(value: number) => formatNumber(value, 0)}
           />
-          <Bar dataKey="amount" maxBarSize={100} minPointSize={20}>
+          <Bar dataKey="amount" maxBarSize={75} minPointSize={20}>
             {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke={foregroundColor} strokeWidth={0.5} />
             ))}
