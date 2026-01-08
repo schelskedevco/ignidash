@@ -288,20 +288,20 @@ export default function SingleSimulationCashFlowLineChart({
           <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
           {dataView === 'net' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
-          {lineDataKeys.map((dataKey, index) => (
+          {lineDataKeys.map((dataKey, i) => (
             <Line
-              key={dataKey}
+              key={`line-${dataKey}-${i}`}
               type="monotone"
               dataKey={dataKey}
-              stroke={strokeColors[index]}
+              stroke={strokeColors[i]}
               activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
               dot={{ fill: backgroundColor, strokeWidth: 2 }}
               strokeWidth={2}
               strokeOpacity={getOpacity(dataKey)}
             />
           ))}
-          {barDataKeys.map((dataKey, index) => (
-            <Bar key={`bar-${dataKey}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[index]} />
+          {barDataKeys.map((dataKey, i) => (
+            <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[i]} />
           ))}
           <Tooltip
             content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
