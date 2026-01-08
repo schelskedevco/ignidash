@@ -2,7 +2,7 @@
 
 import { useTheme } from 'next-themes';
 import { useState, useCallback, memo } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -137,24 +137,31 @@ export default function SingleSimulationReturnsLineChart({
     useChartDataSlice(rawChartData);
 
   const lineDataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
-  const strokeColors: string[] = ['var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--foreground)'];
+  const strokeColors: string[] = [];
+
+  const barDataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
+  const barColors: string[] = [];
 
   let formatter = undefined;
+
   switch (dataView) {
     case 'rates':
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
 
       lineDataKeys.push('realStockReturn', 'realBondReturn', 'realCashReturn', 'inflationRate');
+      strokeColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--foreground)');
       break;
     case 'annualAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
 
-      lineDataKeys.push('annualStockGrowth', 'annualBondGrowth', 'annualCashGrowth');
+      barDataKeys.push('annualStockGrowth', 'annualBondGrowth', 'annualCashGrowth');
+      barColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
       break;
     case 'cumulativeAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
 
-      lineDataKeys.push('cumulativeStockGrowth', 'cumulativeBondGrowth', 'cumulativeCashGrowth');
+      barDataKeys.push('cumulativeStockGrowth', 'cumulativeBondGrowth', 'cumulativeCashGrowth');
+      barColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
       break;
     case 'custom':
       if (!customDataID) {
@@ -167,18 +174,17 @@ export default function SingleSimulationReturnsLineChart({
       chartData = chartData.flatMap(({ age, perAccountData }) =>
         perAccountData
           .filter((account) => account.id === customDataID)
-          .map((account) => {
-            return {
-              age,
-              ...account,
-              annualStockGrowth: account.returnAmountsForPeriod.stocks,
-              annualBondGrowth: account.returnAmountsForPeriod.bonds,
-              annualCashGrowth: account.returnAmountsForPeriod.cash,
-            };
-          })
+          .map((account) => ({
+            age,
+            ...account,
+            annualStockGrowth: account.returnAmountsForPeriod.stocks,
+            annualBondGrowth: account.returnAmountsForPeriod.bonds,
+            annualCashGrowth: account.returnAmountsForPeriod.cash,
+          }))
       );
 
-      lineDataKeys.push('annualStockGrowth', 'annualBondGrowth', 'annualCashGrowth');
+      barDataKeys.push('annualStockGrowth', 'annualBondGrowth', 'annualCashGrowth');
+      barColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
       break;
   }
 
@@ -205,44 +211,45 @@ export default function SingleSimulationReturnsLineChart({
   const { getOpacity } = useLineChartLegendEffectOpacity();
 
   return (
-    <div>
-      <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
-        <LineChart
-          responsive
-          width="100%"
-          height="100%"
-          data={chartData}
-          className="text-xs"
-          margin={{ top: 5, right: 10, left: 10, bottom: 0 }}
-          tabIndex={-1}
-          onClick={onClick}
-        >
-          <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-          <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-          <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />
-          {lineDataKeys.map((dataKey, i) => (
-            <Line
-              key={`line-${dataKey}-${i}`}
-              type="monotone"
-              dataKey={dataKey}
-              stroke={strokeColors[i]}
-              activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
-              dot={{ fill: backgroundColor, strokeWidth: 2 }}
-              strokeWidth={2}
-              strokeOpacity={getOpacity(dataKey)}
-            />
-          ))}
-          <Tooltip
-            content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
-            cursor={{ stroke: foregroundColor }}
+    <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+      <ComposedChart
+        responsive
+        width="100%"
+        height="100%"
+        data={chartData}
+        className="text-xs"
+        margin={{ top: 5, right: 10, left: 10, bottom: 0 }}
+        tabIndex={-1}
+        onClick={onClick}
+      >
+        <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
+        <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
+        <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
+        {dataView !== 'rates' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
+        {lineDataKeys.map((dataKey, i) => (
+          <Line
+            key={`line-${dataKey}-${i}`}
+            type="monotone"
+            dataKey={dataKey}
+            stroke={strokeColors[i]}
+            activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
+            dot={{ fill: backgroundColor, strokeWidth: 2 }}
+            strokeWidth={2}
+            strokeOpacity={getOpacity(dataKey)}
           />
-          {keyMetrics.retirementAge && showReferenceLines && (
-            <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
-          )}
-          {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
-        </LineChart>
-      </div>
+        ))}
+        {barDataKeys.map((dataKey, i) => (
+          <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[i]} />
+        ))}
+        <Tooltip
+          content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
+          cursor={{ stroke: foregroundColor }}
+        />
+        {keyMetrics.retirementAge && showReferenceLines && (
+          <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+        )}
+        {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
+      </ComposedChart>
     </div>
   );
 }
