@@ -1,7 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LabelList, Cell /* Tooltip */ } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from 'recharts';
 
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -9,18 +9,16 @@ import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/char
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomLabelListContent = (props: any) => {
-  const { x, y, width, height, offset, value, fill, isSmallScreen } = props;
+  const { x, y, width, height, offset, value, isSmallScreen } = props;
   if (!value || value === 0) {
     return null;
   }
-
-  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
 
   return (
     <text
       x={x + width / 2}
       y={y + height / 2 + (isSmallScreen ? offset : 0)}
-      fill={needsBgTextColor.includes(fill) ? 'var(--background)' : 'var(--foreground)'}
+      fill="var(--foreground)"
       textAnchor="middle"
       dominantBaseline="middle"
       className="text-xs sm:text-sm"
@@ -44,8 +42,6 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
     </g>
   );
 };
-
-const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
 
 interface SingleSimulationWithdrawalsBarChartProps {
   age: number;
@@ -98,87 +94,92 @@ export default function SingleSimulationWithdrawalsBarChart({
 
   const chartData = rawChartData.filter((item) => item.age === age);
 
-  let transformedChartData: { name: string; amount: number }[] = [];
   const formatter = (value: number) => formatNumber(value, 1, '$');
+  let transformedChartData: { name: string; amount: number; color: string }[] = [];
+
   switch (dataView) {
-    case 'annualAmounts':
-      transformedChartData = chartData.flatMap((item) => [{ name: 'Annual Withdrawals', amount: item.annualWithdrawals }]);
+    case 'annualAmounts': {
+      transformedChartData = chartData.flatMap((item) => [
+        { name: 'Annual Withdrawals', amount: item.annualWithdrawals, color: 'var(--chart-2)' },
+      ]);
       break;
-    case 'cumulativeAmounts':
-      transformedChartData = chartData.flatMap((item) => [{ name: 'Cumul. Withdrawals', amount: item.cumulativeWithdrawals }]);
+    }
+    case 'cumulativeAmounts': {
+      transformedChartData = chartData.flatMap((item) => [
+        { name: 'Cumul. Withdrawals', amount: item.cumulativeWithdrawals, color: 'var(--chart-2)' },
+      ]);
       break;
+    }
     case 'taxCategory': {
       const [taxableLabel, taxDeferredLabel, taxFreeLabel, cashLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: taxableLabel, amount: item.taxableWithdrawals },
-        { name: taxDeferredLabel, amount: item.taxDeferredWithdrawals },
-        { name: taxFreeLabel, amount: item.taxFreeWithdrawals },
-        { name: cashLabel, amount: item.cashWithdrawals },
+        { name: taxableLabel, amount: item.taxableWithdrawals, color: 'var(--chart-1)' },
+        { name: taxDeferredLabel, amount: item.taxDeferredWithdrawals, color: 'var(--chart-2)' },
+        { name: taxFreeLabel, amount: item.taxFreeWithdrawals, color: 'var(--chart-3)' },
+        { name: cashLabel, amount: item.cashWithdrawals, color: 'var(--chart-4)' },
       ]);
       break;
     }
     case 'realizedGains': {
       const [annualLabel, cumulativeLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: annualLabel, amount: item.annualRealizedGains },
-        { name: cumulativeLabel, amount: item.cumulativeRealizedGains },
+        { name: annualLabel, amount: item.annualRealizedGains, color: 'var(--chart-2)' },
+        { name: cumulativeLabel, amount: item.cumulativeRealizedGains, color: 'var(--chart-4)' },
       ]);
       break;
     }
-    case 'requiredMinimumDistributions':
+    case 'requiredMinimumDistributions': {
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Annual RMDs', amount: item.annualRequiredMinimumDistributions },
-        { name: 'Cumul. RMDs', amount: item.cumulativeRequiredMinimumDistributions },
+        { name: 'Annual RMDs', amount: item.annualRequiredMinimumDistributions, color: 'var(--chart-2)' },
+        { name: 'Cumul. RMDs', amount: item.cumulativeRequiredMinimumDistributions, color: 'var(--chart-4)' },
       ]);
       break;
+    }
     case 'earlyWithdrawalPenalties': {
       const [annualLabel, cumulativeLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: annualLabel, amount: item.annualEarlyWithdrawalPenalties },
-        { name: cumulativeLabel, amount: item.cumulativeEarlyWithdrawalPenalties },
+        { name: annualLabel, amount: item.annualEarlyWithdrawalPenalties, color: 'var(--chart-2)' },
+        { name: cumulativeLabel, amount: item.cumulativeEarlyWithdrawalPenalties, color: 'var(--chart-4)' },
       ]);
       break;
     }
     case 'earlyWithdrawals': {
       const [annualLabel, cumulativeLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: annualLabel, amount: item.annualEarlyWithdrawals },
-        { name: cumulativeLabel, amount: item.cumulativeEarlyWithdrawals },
+        { name: annualLabel, amount: item.annualEarlyWithdrawals, color: 'var(--chart-2)' },
+        { name: cumulativeLabel, amount: item.cumulativeEarlyWithdrawals, color: 'var(--chart-4)' },
       ]);
       break;
     }
-    case 'shortfall':
+    case 'shortfall': {
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Annual Shortfall', amount: item.annualShortfall },
-        { name: 'Outstanding Shortfall', amount: item.outstandingShortfall },
+        { name: 'Annual Shortfall', amount: item.annualShortfall, color: 'var(--chart-2)' },
+        { name: 'Outstanding Shortfall', amount: item.outstandingShortfall, color: 'var(--chart-4)' },
       ]);
       break;
-    case 'withdrawalRate':
-      break;
-    case 'custom':
+    }
+    case 'custom': {
       if (!customDataID) {
         console.warn('Custom data name is required for custom data view');
-        transformedChartData = [];
         break;
       }
 
       transformedChartData = chartData
         .flatMap(({ perAccountData }) => perAccountData)
         .filter(({ id }) => id === customDataID)
-        .map(({ id, name, withdrawalsForPeriod }) => ({
-          id,
-          name,
-          amount: withdrawalsForPeriod,
-        }));
+        .map(({ name, withdrawalsForPeriod }) => ({ name, amount: withdrawalsForPeriod, color: 'var(--chart-2)' }));
+      break;
+    }
+    case 'withdrawalRate':
       break;
   }
 
+  transformedChartData = transformedChartData.filter((item) => item.amount !== 0).sort((a, b) => b.amount - a.amount);
   if (transformedChartData.length === 0) {
     return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
   }
 
   const gridColor = resolvedTheme === 'dark' ? '#3f3f46' : '#d4d4d8'; // zinc-700 : zinc-300
-  const foregroundColor = resolvedTheme === 'dark' ? '#f4f4f5' : '#18181b'; // zinc-100 : zinc-900
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d4d4d8' : '#52525b'; // zinc-300 : zinc-600
 
   const shouldUseCustomTick = transformedChartData.length > 3 || (isSmallScreen && transformedChartData.length > 1);
@@ -197,11 +198,10 @@ export default function SingleSimulationWithdrawalsBarChart({
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          <Bar dataKey="amount" maxBarSize={75} minPointSize={20}>
-            {transformedChartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke={foregroundColor} strokeWidth={0.5} />
+          <Bar dataKey="amount" maxBarSize={75} minPointSize={20} label={<CustomLabelListContent isSmallScreen={isSmallScreen} />}>
+            {transformedChartData.map((entry, i) => (
+              <Cell key={`${entry.name}-${i}`} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />
             ))}
-            <LabelList dataKey="amount" position="middle" content={<CustomLabelListContent isSmallScreen={isSmallScreen} />} />
           </Bar>
         </BarChart>
       </ResponsiveContainer>
