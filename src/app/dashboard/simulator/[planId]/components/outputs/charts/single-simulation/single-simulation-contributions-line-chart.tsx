@@ -126,7 +126,7 @@ export default function SingleSimulationContributionsLineChart({
   const barColors: string[] = [];
 
   const formatter = (value: number) => formatNumber(value, 1, '$');
-  let stackId: string | undefined = 'stack';
+  let stackId: string | undefined = undefined;
 
   switch (dataView) {
     case 'annualAmounts':
@@ -138,18 +138,16 @@ export default function SingleSimulationContributionsLineChart({
       strokeColors.push('var(--chart-2)');
       break;
     case 'taxCategory':
+      stackId = 'stack';
+
       barDataKeys.push('taxableContributions', 'taxDeferredContributions', 'taxFreeContributions', 'cashContributions');
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
       break;
     case 'employerMatch':
-      stackId = undefined;
-
       barDataKeys.push('annualEmployerMatch', 'cumulativeEmployerMatch');
       barColors.push('var(--chart-2)', 'var(--chart-4)');
       break;
     case 'shortfall':
-      stackId = undefined;
-
       barDataKeys.push('annualShortfallRepaid', 'outstandingShortfall');
       barColors.push('var(--chart-2)', 'var(--chart-4)');
       break;
@@ -158,8 +156,6 @@ export default function SingleSimulationContributionsLineChart({
         console.warn('Custom data name is required for custom data view');
         break;
       }
-
-      stackId = undefined;
 
       chartData = chartData.flatMap(({ age, perAccountData }) =>
         perAccountData
