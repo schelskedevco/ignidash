@@ -14,7 +14,13 @@ import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { Heading } from '@/components/catalyst/heading';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
-import { useSimulationResult, useKeyMetrics, useIsCalculationReady } from '@/lib/stores/simulator-store';
+import {
+  useSimulationResult,
+  useKeyMetrics,
+  useIsCalculationReady,
+  useInsightsSelectedPlan,
+  useUpdateInsightsSelectedPlan,
+} from '@/lib/stores/simulator-store';
 import { simulatorFromConvex } from '@/lib/utils/convex-to-zod-transformers';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
@@ -145,14 +151,19 @@ export default function PlanList({ preloadedPlans, preloadedAssets, preloadedLia
     setPlanDialogOpen(true);
   };
 
+  const insightsSelectedPlan = useInsightsSelectedPlan();
+  const updateInsightsSelectedPlan = useUpdateInsightsSelectedPlan();
+
   const [planToDelete, setPlanToDelete] = useState<{ id: string; name: string } | null>(null);
   const deleteMutation = useMutation(api.plans.deletePlan);
   const deletePlan = useCallback(
     async (planId: string) => {
+      if (insightsSelectedPlan?.id === planId) updateInsightsSelectedPlan(undefined);
+
       posthog.capture('delete_plan', { planId });
       await deleteMutation({ planId: planId as Id<'plans'> });
     },
-    [deleteMutation]
+    [deleteMutation, insightsSelectedPlan, updateInsightsSelectedPlan]
   );
 
   const setAsDefaultMutation = useMutation(api.plans.setPlanAsDefault);
