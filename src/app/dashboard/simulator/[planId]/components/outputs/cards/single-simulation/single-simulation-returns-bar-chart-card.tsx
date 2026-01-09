@@ -11,7 +11,7 @@ import SingleSimulationReturnsBarChart from '../../charts/single-simulation/sing
 interface SingleSimulationReturnsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationReturnsChartDataPoint[];
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
   customDataID: string;
 }
 
@@ -33,6 +33,9 @@ export default function SingleSimulationReturnsBarChartCard({
       break;
     case 'cumulativeAmounts':
       title = 'Cumulative Growth';
+      break;
+    case 'taxCategory':
+      title = 'By Tax Category';
       break;
     case 'custom':
       title = accountData ? `${accountData.name} — ${taxCategoryFromAccountTypeForDisplay(accountData.type)}` : 'Custom Account';

@@ -51,6 +51,10 @@ export interface SingleSimulationReturnsChartDataPoint {
   annualBondGain: number;
   annualCashGain: number;
   totalAnnualGain: number;
+  taxableGains: number;
+  taxDeferredGains: number;
+  taxFreeGains: number;
+  cashSavingsGains: number;
   perAccountData: AccountDataWithReturns[];
 }
 

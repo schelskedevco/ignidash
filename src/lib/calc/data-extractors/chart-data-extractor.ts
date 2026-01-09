@@ -180,6 +180,8 @@ export abstract class ChartDataExtractor {
       const totalAnnualGain =
         returnsData.returnAmountsForPeriod.stocks + returnsData.returnAmountsForPeriod.bonds + returnsData.returnAmountsForPeriod.cash;
 
+      const { taxableGains, taxDeferredGains, taxFreeGains, cashSavingsGains } = SimulationDataExtractor.getGainsByTaxCategory(data);
+
       return {
         age,
         realStockReturnRate: returnsData.annualReturnRates.stocks,
@@ -194,6 +196,10 @@ export abstract class ChartDataExtractor {
         annualBondGain: returnsData.returnAmountsForPeriod.bonds,
         annualCashGain: returnsData.returnAmountsForPeriod.cash,
         totalAnnualGain,
+        taxableGains,
+        taxDeferredGains,
+        taxFreeGains,
+        cashSavingsGains,
         perAccountData: Object.values(returnsData.perAccountData),
       };
     });

@@ -34,7 +34,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
 }
 
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -45,12 +45,13 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
 
-  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom') => {
+  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom') => {
     switch (mode) {
       case 'rates':
         return `${(value * 100).toFixed(1)}%`;
       case 'annualAmounts':
       case 'cumulativeAmounts':
+      case 'taxCategory':
       case 'custom':
         return formatNumber(value, 1, '$');
       default:
@@ -66,6 +67,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       break;
     case 'annualAmounts':
     case 'cumulativeAmounts':
+    case 'taxCategory':
     case 'custom':
       const lineEntry = payload.find((entry) => entry.color === LINE_COLOR);
       if (!lineEntry) {
@@ -120,7 +122,7 @@ interface SingleSimulationReturnsLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
   customDataID: string;
   startAge: number;
 }
@@ -147,8 +149,15 @@ export default function SingleSimulationReturnsLineChart({
 
   let chartData:
     | SingleSimulationReturnsChartDataPoint[]
-    | Array<{ age: number; annualStockGain: number; annualBondGain: number; annualCashGain: number } & AccountDataWithReturns> =
-    useChartDataSlice(rawChartData);
+    | Array<
+        {
+          age: number;
+          annualStockGain: number;
+          annualBondGain: number;
+          annualCashGain: number;
+          totalAnnualGain: number;
+        } & AccountDataWithReturns
+      > = useChartDataSlice(rawChartData);
 
   const lineDataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
   const strokeColors: string[] = [];
@@ -182,6 +191,15 @@ export default function SingleSimulationReturnsLineChart({
 
       barDataKeys.push('cumulativeStockGain', 'cumulativeBondGain', 'cumulativeCashGain');
       barColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
+      break;
+    case 'taxCategory':
+      formatter = (value: number) => formatNumber(value, 1, '$');
+
+      lineDataKeys.push('totalAnnualGain');
+      strokeColors.push(LINE_COLOR);
+
+      barDataKeys.push('taxableGains', 'taxDeferredGains', 'taxFreeGains', 'cashSavingsGains');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
       break;
     case 'custom':
       if (!customDataID) {

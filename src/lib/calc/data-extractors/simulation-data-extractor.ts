@@ -59,6 +59,13 @@ export interface PortfolioValueByTaxCategory {
   taxFreeValue: number;
 }
 
+export interface GainsByTaxCategory {
+  taxableGains: number;
+  taxDeferredGains: number;
+  taxFreeGains: number;
+  cashSavingsGains: number;
+}
+
 export interface HoldingsByAssetClass {
   stockHoldings: number;
   bondHoldings: number;
@@ -321,6 +328,42 @@ export class SimulationDataExtractor {
     }
 
     return { cashSavings, taxableBrokerageValue, taxDeferredValue, taxFreeValue };
+  }
+
+  static getGainsByTaxCategory(dp: SimulationDataPoint): GainsByTaxCategory {
+    const returnsData = dp.returns;
+
+    let taxableGains = 0;
+    let taxDeferredGains = 0;
+    let taxFreeGains = 0;
+    let cashSavingsGains = 0;
+
+    for (const account of Object.values(returnsData?.perAccountData ?? {})) {
+      const { stocks, bonds, cash } = account.returnAmountsForPeriod;
+      const totalGains = stocks + bonds + cash;
+
+      switch (account.type) {
+        case 'savings':
+          cashSavingsGains += totalGains;
+          break;
+        case 'taxableBrokerage':
+          taxableGains += totalGains;
+          break;
+        case '401k':
+        case '403b':
+        case 'ira':
+        case 'hsa':
+          taxDeferredGains += totalGains;
+          break;
+        case 'roth401k':
+        case 'roth403b':
+        case 'rothIra':
+          taxFreeGains += totalGains;
+          break;
+      }
+    }
+
+    return { taxableGains, taxDeferredGains, taxFreeGains, cashSavingsGains };
   }
 
   static getHoldingsByAssetClass(dp: SimulationDataPoint): HoldingsByAssetClass {

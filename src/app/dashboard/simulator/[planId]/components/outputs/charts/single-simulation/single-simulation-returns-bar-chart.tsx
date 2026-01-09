@@ -14,12 +14,13 @@ const CustomLabelListContent = (props: any) => {
     return null;
   }
 
-  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom') => {
+  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom') => {
     switch (mode) {
       case 'rates':
         return `${(value * 100).toFixed(1)}%`;
       case 'annualAmounts':
       case 'cumulativeAmounts':
+      case 'taxCategory':
       case 'custom':
         return formatNumber(value, 1, '$');
       default:
@@ -58,7 +59,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationReturnsBarChartProps {
   age: number;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
   rawChartData: SingleSimulationReturnsChartDataPoint[];
   customDataID: string;
 }
@@ -84,6 +85,10 @@ export default function SingleSimulationReturnsBarChart({
     cumulativeAmounts: {
       mobile: ['Cumul. Stock', 'Cumul. Bond', 'Cumul. Cash'],
       desktop: ['Cumul. Stock Gain', 'Cumul. Bond Gain', 'Cumul. Cash Gain'],
+    },
+    taxCategory: {
+      mobile: ['Taxable', 'Tax-Deferred', 'Tax-Free', 'Cash'],
+      desktop: ['Taxable Gains', 'Tax-Deferred Gains', 'Tax-Free Gains', 'Cash Gains'],
     },
     custom: {
       mobile: ['Stock Gain', 'Bond Gain', 'Cash Gain'],
@@ -135,6 +140,18 @@ export default function SingleSimulationReturnsBarChart({
       ]);
       break;
     }
+    case 'taxCategory': {
+      formatter = (value: number) => formatNumber(value, 1, '$');
+
+      const [taxableLabel, taxDeferredLabel, taxFreeLabel, cashLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      transformedChartData = chartData.flatMap((item) => [
+        { name: taxableLabel, amount: item.taxableGains, color: 'var(--chart-1)' },
+        { name: taxDeferredLabel, amount: item.taxDeferredGains, color: 'var(--chart-2)' },
+        { name: taxFreeLabel, amount: item.taxFreeGains, color: 'var(--chart-3)' },
+        { name: cashLabel, amount: item.cashSavingsGains, color: 'var(--chart-4)' },
+      ]);
+      break;
+    }
     case 'custom': {
       if (!customDataID) {
         console.warn('Custom data name is required for custom data view');
@@ -156,7 +173,6 @@ export default function SingleSimulationReturnsBarChart({
     }
   }
 
-  transformedChartData = transformedChartData.sort((a, b) => b.amount - a.amount);
   if (transformedChartData.length === 0) {
     return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
   }

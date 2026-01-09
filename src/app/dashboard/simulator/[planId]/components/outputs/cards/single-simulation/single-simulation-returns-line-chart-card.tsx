@@ -15,8 +15,8 @@ import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 interface SingleSimulationReturnsLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom') => void;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'custom';
+  setDataView: (view: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom') => void;
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
   rawChartData: SingleSimulationReturnsChartDataPoint[];
   keyMetrics: KeyMetrics;
   startAge: number;
@@ -62,12 +62,15 @@ export default function SingleSimulationReturnsLineChartCard({
             value={dataView === 'custom' ? customDataID : dataView}
             onChange={(e) => {
               const isCustomSelection =
-                e.target.value !== 'rates' && e.target.value !== 'annualAmounts' && e.target.value !== 'cumulativeAmounts';
+                e.target.value !== 'rates' &&
+                e.target.value !== 'annualAmounts' &&
+                e.target.value !== 'cumulativeAmounts' &&
+                e.target.value !== 'taxCategory';
               if (isCustomSelection) {
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'rates' | 'annualAmounts' | 'cumulativeAmounts');
+                setDataView(e.target.value as 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory');
                 setCustomDataID('');
               }
             }}
@@ -78,6 +81,7 @@ export default function SingleSimulationReturnsLineChartCard({
             <optgroup label="Return Amounts">
               <option value="annualAmounts">Annual Gains</option>
               <option value="cumulativeAmounts">Cumulative Gains</option>
+              <option value="taxCategory">Tax Category</option>
             </optgroup>
             <optgroup label="By Account">
               {uniqueAccounts.map((account) => (
