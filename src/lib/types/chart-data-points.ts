@@ -124,10 +124,10 @@ export interface SingleSimulationTaxesChartDataPoint {
 
 export interface SingleSimulationContributionsChartDataPoint {
   age: number;
-  cumulativeContributions: number;
   annualContributions: number;
-  cumulativeEmployerMatch: number;
+  cumulativeContributions: number;
   annualEmployerMatch: number;
+  cumulativeEmployerMatch: number;
   perAccountData: AccountDataWithTransactions[];
   taxableContributions: number;
   taxDeferredContributions: number;
@@ -139,16 +139,16 @@ export interface SingleSimulationContributionsChartDataPoint {
 
 export interface SingleSimulationWithdrawalsChartDataPoint {
   age: number;
-  cumulativeWithdrawals: number;
-  cumulativeRealizedGains: number;
-  cumulativeRequiredMinimumDistributions: number;
-  cumulativeEarlyWithdrawals: number;
-  cumulativeRothEarningsWithdrawals: number;
   annualWithdrawals: number;
+  cumulativeWithdrawals: number;
   annualRealizedGains: number;
+  cumulativeRealizedGains: number;
   annualRequiredMinimumDistributions: number;
+  cumulativeRequiredMinimumDistributions: number;
   annualEarlyWithdrawals: number;
+  cumulativeEarlyWithdrawals: number;
   annualRothEarningsWithdrawals: number;
+  cumulativeRothEarningsWithdrawals: number;
   perAccountData: AccountDataWithTransactions[];
   taxableWithdrawals: number;
   taxDeferredWithdrawals: number;
