@@ -268,6 +268,8 @@ export default function SingleSimulationTaxesLineChart({
 
   let formatter = undefined;
   let stackId: string | undefined = 'stack';
+  const stackOffset: 'sign' | undefined = undefined;
+
   switch (dataView) {
     case 'marginalRates':
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
@@ -300,6 +302,7 @@ export default function SingleSimulationTaxesLineChart({
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
       break;
     case 'taxableIncome':
+      // TODO: Include adjustments and deductions in taxable income
       formatter = (value: number) => formatNumber(value, 1, '$');
 
       lineDataKeys.push('taxableIncome');
@@ -309,6 +312,7 @@ export default function SingleSimulationTaxesLineChart({
       barColors.push('var(--chart-1)', 'var(--chart-2)');
       break;
     case 'adjustedGrossIncome':
+      // TODO: Include adjustments in adjusted gross income
       formatter = (value: number) => formatNumber(value, 1, '$');
 
       lineDataKeys.push('adjustedGrossIncome');
@@ -318,6 +322,7 @@ export default function SingleSimulationTaxesLineChart({
       barColors.push('var(--chart-1)');
       break;
     case 'investmentIncome':
+      // TODO: Include realized gains in investment income
       formatter = (value: number) => formatNumber(value, 1, '$');
 
       barDataKeys.push('interestIncome', 'dividendIncome');
@@ -405,6 +410,7 @@ export default function SingleSimulationTaxesLineChart({
         height="100%"
         data={chartData}
         className="text-xs"
+        stackOffset={stackOffset}
         margin={{ top: 5, right: 10, left: 10, bottom: 0 }}
         tabIndex={-1}
         onClick={onClick}
