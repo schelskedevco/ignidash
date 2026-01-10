@@ -96,12 +96,16 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   const transformedPayload = payload.filter((entry) => entry.color !== LINE_COLOR);
 
+  let filterZeroValues = true;
+
   let body = null;
   let footer = null;
+
   switch (dataView) {
     case 'marginalRates':
     case 'effectiveRates':
     case 'socialSecurityTaxablePercentage':
+      filterZeroValues = false;
       break;
     case 'annualAmounts':
     case 'cumulativeAmounts':
@@ -187,7 +191,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       {body}
       <div className="flex flex-col gap-1">
         {transformedPayload
-          .filter((entry) => entry.value !== 0)
+          .filter((entry) => (filterZeroValues ? entry.value !== 0 : true))
           .map((entry) => (
             <p
               key={entry.dataKey}
