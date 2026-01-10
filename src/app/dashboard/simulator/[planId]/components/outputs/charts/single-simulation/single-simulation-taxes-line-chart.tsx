@@ -356,7 +356,7 @@ export default function SingleSimulationTaxesLineChart({
       stackId = undefined;
 
       barDataKeys.push('annualEarlyWithdrawalPenalties', 'cumulativeEarlyWithdrawalPenalties');
-      barColors.push('var(--chart-1)', 'var(--chart-2)');
+      barColors.push('var(--chart-2)', 'var(--chart-4)');
       break;
     case 'adjustmentsAndDeductions':
       formatter = (value: number) => formatNumber(value, 1, '$');

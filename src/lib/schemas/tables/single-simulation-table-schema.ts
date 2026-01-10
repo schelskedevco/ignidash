@@ -228,7 +228,7 @@ const SINGLE_SIMULATION_TAXES_COLUMNS = {
   age: { title: 'Age', format: 'number' },
   phaseName: { title: 'Phase Name', format: 'string' },
   grossIncome: { title: 'Gross Income', format: 'currency' },
-  adjustedGrossIncome: { title: 'Adjusted Gross Income (AGI)', format: 'currency' },
+  adjustedGrossIncome: { title: 'Adjusted Gross Income', format: 'currency' },
   taxableIncome: { title: 'Taxable Income', format: 'currency' },
   earnedIncome: { title: 'Earned Income', format: 'currency' },
   annualFicaTax: { title: 'Annual FICA Tax', format: 'currency' },

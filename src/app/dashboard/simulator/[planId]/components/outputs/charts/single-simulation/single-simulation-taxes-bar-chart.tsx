@@ -327,6 +327,7 @@ export default function SingleSimulationTaxesBarChart({
       transformedChartData = chartData.flatMap((item) => [
         { name: 'Interest Income', segments: [{ amount: item.interestIncome, color: 'var(--chart-1)' }] },
         { name: 'Dividend Income', segments: [{ amount: item.dividendIncome, color: 'var(--chart-2)' }] },
+        { name: 'Realized Gains', segments: [{ amount: item.realizedGains, color: 'var(--chart-3)' }] },
       ]);
       break;
     }
@@ -377,8 +378,8 @@ export default function SingleSimulationTaxesBarChart({
 
       const [annualPenaltiesLabel, cumulativePenaltiesLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: annualPenaltiesLabel, segments: [{ amount: item.annualEarlyWithdrawalPenalties, color: 'var(--chart-1)' }] },
-        { name: cumulativePenaltiesLabel, segments: [{ amount: item.cumulativeEarlyWithdrawalPenalties, color: 'var(--chart-2)' }] },
+        { name: annualPenaltiesLabel, segments: [{ amount: item.annualEarlyWithdrawalPenalties, color: 'var(--chart-2)' }] },
+        { name: cumulativePenaltiesLabel, segments: [{ amount: item.cumulativeEarlyWithdrawalPenalties, color: 'var(--chart-4)' }] },
       ]);
       break;
     }
