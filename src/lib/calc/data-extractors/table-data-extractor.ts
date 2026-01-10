@@ -386,7 +386,7 @@ export abstract class TableDataExtractor {
       const portfolioData = data.portfolio;
       const totalPortfolioValue = portfolioData.totalValue;
       const annualContributions = sumTransactions(portfolioData.contributionsForPeriod);
-      const cumulativeContributions = sumTransactions(portfolioData.totalContributions);
+      const cumulativeContributions = sumTransactions(portfolioData.cumulativeContributions);
       const annualEmployerMatch = portfolioData.employerMatchForPeriod;
 
       const { taxableContributions, taxDeferredContributions, taxFreeContributions, cashSavingsContributions } =
@@ -405,7 +405,7 @@ export abstract class TableDataExtractor {
         taxFreeContributions,
         cashSavingsContributions,
         annualEmployerMatch,
-        cumulativeEmployerMatch: portfolioData.totalEmployerMatch,
+        cumulativeEmployerMatch: portfolioData.cumulativeEmployerMatch,
         totalPortfolioValue,
         netCashFlow,
         savingsRate,
@@ -459,7 +459,7 @@ export abstract class TableDataExtractor {
       const portfolioData = data.portfolio;
       const totalPortfolioValue = portfolioData.totalValue;
       const annualWithdrawals = sumTransactions(portfolioData.withdrawalsForPeriod);
-      const cumulativeWithdrawals = sumTransactions(portfolioData.totalWithdrawals);
+      const cumulativeWithdrawals = sumTransactions(portfolioData.cumulativeWithdrawals);
 
       const { taxableWithdrawals, taxDeferredWithdrawals, taxFreeWithdrawals, cashSavingsWithdrawals } =
         SimulationDataExtractor.getWithdrawalsByTaxCategory(data, age);
@@ -481,13 +481,13 @@ export abstract class TableDataExtractor {
         taxFreeWithdrawals,
         cashSavingsWithdrawals,
         annualRealizedGains: portfolioData.realizedGainsForPeriod,
-        cumulativeRealizedGains: portfolioData.totalRealizedGains,
+        cumulativeRealizedGains: portfolioData.cumulativeRealizedGains,
         annualRequiredMinimumDistributions: portfolioData.rmdsForPeriod,
-        cumulativeRequiredMinimumDistributions: portfolioData.totalRmds,
+        cumulativeRequiredMinimumDistributions: portfolioData.cumulativeRmds,
         annualEarlyWithdrawals,
         cumulativeEarlyWithdrawals,
         annualRothEarningsWithdrawals: portfolioData.earningsWithdrawnForPeriod,
-        cumulativeRothEarningsWithdrawals: portfolioData.totalEarningsWithdrawn,
+        cumulativeRothEarningsWithdrawals: portfolioData.cumulativeEarningsWithdrawn,
         totalPortfolioValue,
         netCashFlow,
         withdrawalRate,
@@ -538,9 +538,8 @@ export abstract class TableDataExtractor {
       const cumulativeReturnAmounts = lastDp.returns?.cumulativeReturnAmounts ?? { stocks: 0, bonds: 0, cash: 0 };
       const lifetimeReturns = sumReturns(cumulativeReturnAmounts);
 
-      const lifetimeContributions = sumTransactions(lastDp.portfolio.totalContributions);
-
-      const lifetimeWithdrawals = sumTransactions(lastDp.portfolio.totalWithdrawals);
+      const lifetimeContributions = sumTransactions(lastDp.portfolio.cumulativeContributions);
+      const lifetimeWithdrawals = sumTransactions(lastDp.portfolio.cumulativeWithdrawals);
 
       return {
         seed,
@@ -565,8 +564,8 @@ export abstract class TableDataExtractor {
         lifetimeReturns,
         lifetimeContributions,
         lifetimeWithdrawals,
-        lifetimeRealizedGains: lastDp.portfolio.totalRealizedGains,
-        lifetimeRequiredMinimumDistributions: lastDp.portfolio.totalRmds,
+        lifetimeRealizedGains: lastDp.portfolio.cumulativeRealizedGains,
+        lifetimeRequiredMinimumDistributions: lastDp.portfolio.cumulativeRmds,
         historicalRanges,
       };
     });

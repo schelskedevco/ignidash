@@ -167,8 +167,12 @@ export default function SingleSimulationWithdrawalsLineChart({
 
   let chartData:
     | SingleSimulationWithdrawalsChartDataPoint[]
-    | Array<{ age: number; annualWithdrawals: number; cumulativeWithdrawals: number } & AccountDataWithTransactions> =
-    useChartDataSlice(rawChartData);
+    | Array<
+        { age: number; annualWithdrawals: number; cumulativeWithdrawals: number } & Omit<
+          AccountDataWithTransactions,
+          'cumulativeWithdrawals'
+        >
+      > = useChartDataSlice(rawChartData);
 
   const lineDataKeys: (keyof SingleSimulationWithdrawalsChartDataPoint)[] = [];
   const strokeColors: string[] = [];
@@ -244,7 +248,7 @@ export default function SingleSimulationWithdrawalsLineChart({
             age,
             ...account,
             annualWithdrawals: sumTransactions(account.withdrawalsForPeriod),
-            cumulativeWithdrawals: sumTransactions(account.totalWithdrawals),
+            cumulativeWithdrawals: sumTransactions(account.cumulativeWithdrawals),
           }))
       );
 

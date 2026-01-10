@@ -117,8 +117,12 @@ export default function SingleSimulationContributionsLineChart({
 
   let chartData:
     | SingleSimulationContributionsChartDataPoint[]
-    | Array<{ age: number; annualContributions: number; cumulativeContributions: number } & AccountDataWithTransactions> =
-    useChartDataSlice(rawChartData);
+    | Array<
+        { age: number; annualContributions: number; cumulativeContributions: number } & Omit<
+          AccountDataWithTransactions,
+          'cumulativeContributions'
+        >
+      > = useChartDataSlice(rawChartData);
 
   const lineDataKeys: (keyof SingleSimulationContributionsChartDataPoint)[] = [];
   const strokeColors: string[] = [];
@@ -165,7 +169,7 @@ export default function SingleSimulationContributionsLineChart({
             age,
             ...account,
             annualContributions: sumTransactions(account.contributionsForPeriod),
-            cumulativeContributions: sumTransactions(account.totalContributions),
+            cumulativeContributions: sumTransactions(account.cumulativeContributions),
           }))
       );
 

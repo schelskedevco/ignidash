@@ -206,7 +206,7 @@ export abstract class ChartDataExtractor {
 
       const portfolioData = data.portfolio;
       const annualContributions = sumTransactions(portfolioData.contributionsForPeriod);
-      const cumulativeContributions = sumTransactions(portfolioData.totalContributions);
+      const cumulativeContributions = sumTransactions(portfolioData.cumulativeContributions);
 
       const {
         taxableContributions,
@@ -219,7 +219,7 @@ export abstract class ChartDataExtractor {
         age,
         cumulativeContributions,
         annualContributions,
-        cumulativeEmployerMatch: portfolioData.totalEmployerMatch,
+        cumulativeEmployerMatch: portfolioData.cumulativeEmployerMatch,
         annualEmployerMatch: portfolioData.employerMatchForPeriod,
         perAccountData: Object.values(portfolioData.perAccountData),
         taxableContributions,
@@ -240,7 +240,7 @@ export abstract class ChartDataExtractor {
 
       const portfolioData = data.portfolio;
       const annualWithdrawals = sumTransactions(portfolioData.withdrawalsForPeriod);
-      const cumulativeWithdrawals = sumTransactions(portfolioData.totalWithdrawals);
+      const cumulativeWithdrawals = sumTransactions(portfolioData.cumulativeWithdrawals);
 
       const {
         taxableWithdrawals,
@@ -258,11 +258,11 @@ export abstract class ChartDataExtractor {
         age,
         cumulativeWithdrawals,
         annualWithdrawals,
-        cumulativeRealizedGains: portfolioData.totalRealizedGains,
+        cumulativeRealizedGains: portfolioData.cumulativeRealizedGains,
         annualRealizedGains: portfolioData.realizedGainsForPeriod,
-        cumulativeRequiredMinimumDistributions: portfolioData.totalRmds,
+        cumulativeRequiredMinimumDistributions: portfolioData.cumulativeRmds,
         annualRequiredMinimumDistributions: portfolioData.rmdsForPeriod,
-        cumulativeRothEarningsWithdrawals: portfolioData.totalEarningsWithdrawn,
+        cumulativeRothEarningsWithdrawals: portfolioData.cumulativeEarningsWithdrawn,
         annualRothEarningsWithdrawals: portfolioData.earningsWithdrawnForPeriod,
         cumulativeEarlyWithdrawals,
         annualEarlyWithdrawals,

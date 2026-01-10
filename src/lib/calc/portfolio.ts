@@ -526,12 +526,12 @@ export class PortfolioProcessor {
   ): PortfolioData {
     return {
       totalValue: this.simulationState.portfolio.getTotalValue(),
-      totalWithdrawals: this.simulationState.portfolio.getTotalWithdrawals(),
-      totalContributions: this.simulationState.portfolio.getTotalContributions(),
-      totalEmployerMatch: this.simulationState.portfolio.getTotalEmployerMatch(),
-      totalRealizedGains: this.simulationState.portfolio.getTotalRealizedGains(),
-      totalEarningsWithdrawn: this.simulationState.portfolio.getTotalEarningsWithdrawn(),
-      totalRmds: this.simulationState.portfolio.getTotalRmds(),
+      cumulativeWithdrawals: this.simulationState.portfolio.getCumulativeWithdrawals(),
+      cumulativeContributions: this.simulationState.portfolio.getCumulativeContributions(),
+      cumulativeEmployerMatch: this.simulationState.portfolio.getCumulativeEmployerMatch(),
+      cumulativeRealizedGains: this.simulationState.portfolio.getCumulativeRealizedGains(),
+      cumulativeEarningsWithdrawn: this.simulationState.portfolio.getCumulativeEarningsWithdrawn(),
+      cumulativeRmds: this.simulationState.portfolio.getCumulativeRmds(),
       outstandingShortfall: this.outstandingShortfall,
       ...forPeriodData,
       perAccountData,
@@ -784,12 +784,12 @@ export class PortfolioProcessor {
 
 export interface PortfolioData {
   totalValue: number;
-  totalWithdrawals: AssetTransactions;
-  totalContributions: AssetTransactions;
-  totalEmployerMatch: number;
-  totalRealizedGains: number;
-  totalEarningsWithdrawn: number;
-  totalRmds: number;
+  cumulativeWithdrawals: AssetTransactions;
+  cumulativeContributions: AssetTransactions;
+  cumulativeEmployerMatch: number;
+  cumulativeRealizedGains: number;
+  cumulativeEarningsWithdrawn: number;
+  cumulativeRmds: number;
   outstandingShortfall: number;
   withdrawalsForPeriod: AssetTransactions;
   contributionsForPeriod: AssetTransactions;
@@ -873,28 +873,28 @@ export class Portfolio {
     return this.accounts.reduce((acc, account) => acc + account.getBalance(), 0);
   }
 
-  getTotalWithdrawals(): AssetTransactions {
-    return this.accounts.reduce((acc, account) => addTransactions(acc, account.getTotalWithdrawals()), zeroTransactions());
+  getCumulativeWithdrawals(): AssetTransactions {
+    return this.accounts.reduce((acc, account) => addTransactions(acc, account.getCumulativeWithdrawals()), zeroTransactions());
   }
 
-  getTotalContributions(): AssetTransactions {
-    return this.accounts.reduce((acc, account) => addTransactions(acc, account.getTotalContributions()), zeroTransactions());
+  getCumulativeContributions(): AssetTransactions {
+    return this.accounts.reduce((acc, account) => addTransactions(acc, account.getCumulativeContributions()), zeroTransactions());
   }
 
-  getTotalEmployerMatch(): number {
-    return this.accounts.reduce((acc, account) => acc + account.getTotalEmployerMatch(), 0);
+  getCumulativeEmployerMatch(): number {
+    return this.accounts.reduce((acc, account) => acc + account.getCumulativeEmployerMatch(), 0);
   }
 
-  getTotalRealizedGains(): number {
-    return this.accounts.reduce((acc, account) => acc + account.getTotalRealizedGains(), 0);
+  getCumulativeRealizedGains(): number {
+    return this.accounts.reduce((acc, account) => acc + account.getCumulativeRealizedGains(), 0);
   }
 
-  getTotalEarningsWithdrawn(): number {
-    return this.accounts.reduce((acc, account) => acc + account.getTotalEarningsWithdrawn(), 0);
+  getCumulativeEarningsWithdrawn(): number {
+    return this.accounts.reduce((acc, account) => acc + account.getCumulativeEarningsWithdrawn(), 0);
   }
 
-  getTotalRmds(): number {
-    return this.accounts.reduce((acc, account) => acc + account.getTotalRmds(), 0);
+  getCumulativeRmds(): number {
+    return this.accounts.reduce((acc, account) => acc + account.getCumulativeRmds(), 0);
   }
 
   getCumulativeReturns(): AssetReturnAmounts {

@@ -15,12 +15,12 @@ type ContributionType = 'self' | 'employer';
 
 export interface AccountData {
   balance: number;
-  totalContributions: AssetTransactions;
-  totalEmployerMatch: number;
-  totalWithdrawals: AssetTransactions;
-  totalRealizedGains: number;
-  totalEarningsWithdrawn: number;
-  totalRmds: number;
+  cumulativeContributions: AssetTransactions;
+  cumulativeEmployerMatch: number;
+  cumulativeWithdrawals: AssetTransactions;
+  cumulativeRealizedGains: number;
+  cumulativeEarningsWithdrawn: number;
+  cumulativeRmds: number;
   name: string;
   id: string;
   type: AccountInputs['type'];
@@ -45,12 +45,12 @@ export abstract class Account {
     protected id: string,
     protected type: AccountInputs['type'],
     protected cumulativeReturns: AssetReturnAmounts,
-    protected totalContributions: AssetTransactions,
-    protected totalEmployerMatch: number,
-    protected totalWithdrawals: AssetTransactions,
-    protected totalRealizedGains: number,
-    protected totalEarningsWithdrawn: number,
-    protected totalRmds: number,
+    protected cumulativeContributions: AssetTransactions,
+    protected cumulativeEmployerMatch: number,
+    protected cumulativeWithdrawals: AssetTransactions,
+    protected cumulativeRealizedGains: number,
+    protected cumulativeEarningsWithdrawn: number,
+    protected cumulativeRmds: number,
     protected cumulativeYields: AssetYieldAmounts
   ) {}
 
@@ -74,28 +74,28 @@ export abstract class Account {
     return this.cumulativeReturns;
   }
 
-  getTotalContributions(): AssetTransactions {
-    return this.totalContributions;
+  getCumulativeContributions(): AssetTransactions {
+    return this.cumulativeContributions;
   }
 
-  getTotalEmployerMatch(): number {
-    return this.totalEmployerMatch;
+  getCumulativeEmployerMatch(): number {
+    return this.cumulativeEmployerMatch;
   }
 
-  getTotalWithdrawals(): AssetTransactions {
-    return this.totalWithdrawals;
+  getCumulativeWithdrawals(): AssetTransactions {
+    return this.cumulativeWithdrawals;
   }
 
-  getTotalRealizedGains(): number {
-    return this.totalRealizedGains;
+  getCumulativeRealizedGains(): number {
+    return this.cumulativeRealizedGains;
   }
 
-  getTotalEarningsWithdrawn(): number {
-    return this.totalEarningsWithdrawn;
+  getCumulativeEarningsWithdrawn(): number {
+    return this.cumulativeEarningsWithdrawn;
   }
 
-  getTotalRmds(): number {
-    return this.totalRmds;
+  getCumulativeRmds(): number {
+    return this.cumulativeRmds;
   }
 
   getCumulativeYields(): AssetYieldAmounts {
@@ -119,8 +119,8 @@ export class SavingsAccount extends Account {
 
   constructor(data: AccountInputs) {
     const cumulativeReturns: AssetReturnAmounts = { cash: 0, bonds: 0, stocks: 0 };
-    const totalContributions: AssetTransactions = { cash: 0, bonds: 0, stocks: 0 };
-    const totalWithdrawals: AssetTransactions = { cash: 0, bonds: 0, stocks: 0 };
+    const cumulativeContributions: AssetTransactions = { cash: 0, bonds: 0, stocks: 0 };
+    const cumulativeWithdrawals: AssetTransactions = { cash: 0, bonds: 0, stocks: 0 };
     const cumulativeYields: AssetYieldAmounts = { cash: 0, bonds: 0, stocks: 0 };
 
     super(
@@ -129,9 +129,9 @@ export class SavingsAccount extends Account {
       data.id,
       data.type,
       cumulativeReturns,
-      totalContributions,
+      cumulativeContributions,
       0,
-      totalWithdrawals,
+      cumulativeWithdrawals,
       0,
       0,
       0,
@@ -148,12 +148,12 @@ export class SavingsAccount extends Account {
 
     return {
       balance: this.balance,
-      totalWithdrawals: { ...this.totalWithdrawals },
-      totalContributions: { ...this.totalContributions },
-      totalEmployerMatch: this.totalEmployerMatch,
-      totalRealizedGains: this.totalRealizedGains,
-      totalEarningsWithdrawn: this.totalEarningsWithdrawn,
-      totalRmds: this.totalRmds,
+      cumulativeWithdrawals: { ...this.cumulativeWithdrawals },
+      cumulativeContributions: { ...this.cumulativeContributions },
+      cumulativeEmployerMatch: this.cumulativeEmployerMatch,
+      cumulativeRealizedGains: this.cumulativeRealizedGains,
+      cumulativeEarningsWithdrawn: this.cumulativeEarningsWithdrawn,
+      cumulativeRmds: this.cumulativeRmds,
       name: this.name,
       id: this.id,
       type: this.type,
@@ -184,8 +184,8 @@ export class SavingsAccount extends Account {
 
   applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): AssetTransactions {
     this.balance += amount;
-    this.totalContributions.cash += amount;
-    if (type === 'employer') this.totalEmployerMatch += amount;
+    this.cumulativeContributions.cash += amount;
+    if (type === 'employer') this.cumulativeEmployerMatch += amount;
 
     return { stocks: 0, bonds: 0, cash: amount };
   }
@@ -199,7 +199,7 @@ export class SavingsAccount extends Account {
     if (type === 'rmd') throw new Error('Savings account should not have RMDs');
 
     this.balance -= amount;
-    this.totalWithdrawals.cash += amount;
+    this.cumulativeWithdrawals.cash += amount;
 
     return { stocks: 0, bonds: 0, cash: amount, realizedGains: 0, earningsWithdrawn: 0 };
   }
@@ -210,8 +210,8 @@ export abstract class InvestmentAccount extends Account {
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
     const cumulativeReturns: AssetReturnAmounts = { cash: 0, bonds: 0, stocks: 0 };
-    const totalContributions: AssetTransactions = { cash: 0, bonds: 0, stocks: 0 };
-    const totalWithdrawals: AssetTransactions = { cash: 0, bonds: 0, stocks: 0 };
+    const cumulativeContributions: AssetTransactions = { cash: 0, bonds: 0, stocks: 0 };
+    const cumulativeWithdrawals: AssetTransactions = { cash: 0, bonds: 0, stocks: 0 };
     const cumulativeYields: AssetYieldAmounts = { cash: 0, bonds: 0, stocks: 0 };
 
     super(
@@ -220,9 +220,9 @@ export abstract class InvestmentAccount extends Account {
       data.id,
       data.type,
       cumulativeReturns,
-      totalContributions,
+      cumulativeContributions,
       0,
-      totalWithdrawals,
+      cumulativeWithdrawals,
       0,
       0,
       0,
@@ -240,12 +240,12 @@ export abstract class InvestmentAccount extends Account {
 
     return {
       balance: this.balance,
-      totalWithdrawals: { ...this.totalWithdrawals },
-      totalContributions: { ...this.totalContributions },
-      totalEmployerMatch: this.totalEmployerMatch,
-      totalRealizedGains: this.totalRealizedGains,
-      totalEarningsWithdrawn: this.totalEarningsWithdrawn,
-      totalRmds: this.totalRmds,
+      cumulativeWithdrawals: { ...this.cumulativeWithdrawals },
+      cumulativeContributions: { ...this.cumulativeContributions },
+      cumulativeEmployerMatch: this.cumulativeEmployerMatch,
+      cumulativeRealizedGains: this.cumulativeRealizedGains,
+      cumulativeEarningsWithdrawn: this.cumulativeEarningsWithdrawn,
+      cumulativeRmds: this.cumulativeRmds,
       name: this.name,
       id: this.id,
       type: this.type,
@@ -315,9 +315,9 @@ export abstract class InvestmentAccount extends Account {
     this.balance = newBalance;
     this.currPercentBonds = newBalance > 0 ? newBondsValue / newBalance : this.currPercentBonds;
 
-    this.totalContributions.stocks += stockContribution;
-    this.totalContributions.bonds += bondContribution;
-    if (type === 'employer') this.totalEmployerMatch += amount;
+    this.cumulativeContributions.stocks += stockContribution;
+    this.cumulativeContributions.bonds += bondContribution;
+    if (type === 'employer') this.cumulativeEmployerMatch += amount;
 
     return { stocks: stockContribution, bonds: bondContribution, cash: 0 };
   }
@@ -341,9 +341,9 @@ export abstract class InvestmentAccount extends Account {
     this.balance = Math.max(0, newBalance);
     this.currPercentBonds = newBalance > 0 ? newBondsValue / newBalance : this.currPercentBonds;
 
-    this.totalWithdrawals.stocks += stockWithdrawal;
-    this.totalWithdrawals.bonds += bondWithdrawal;
-    if (type === 'rmd') this.totalRmds += amount;
+    this.cumulativeWithdrawals.stocks += stockWithdrawal;
+    this.cumulativeWithdrawals.bonds += bondWithdrawal;
+    if (type === 'rmd') this.cumulativeRmds += amount;
 
     return { stocks: stockWithdrawal, bonds: bondWithdrawal, cash: 0 };
   }
@@ -401,7 +401,7 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
     this.costBasis -= basisWithdrawn;
 
     const realizedGains = amount - basisWithdrawn;
-    this.totalRealizedGains += realizedGains;
+    this.cumulativeRealizedGains += realizedGains;
 
     const withdrawn = super.applyWithdrawalShared(amount, type, withdrawalAllocation);
 
@@ -416,7 +416,7 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
     const basisSold = Math.min(totalSold * basisProportion, this.costBasis);
 
     const realizedGains = totalSold - basisSold;
-    this.totalRealizedGains += realizedGains;
+    this.cumulativeRealizedGains += realizedGains;
 
     this.costBasis += realizedGains;
 
@@ -474,7 +474,7 @@ export class TaxFreeAccount extends InvestmentAccount {
     this.contributionBasis -= contributionWithdrawn;
 
     const earningsWithdrawn = amount - contributionWithdrawn;
-    this.totalEarningsWithdrawn += earningsWithdrawn;
+    this.cumulativeEarningsWithdrawn += earningsWithdrawn;
 
     const withdrawn = super.applyWithdrawalShared(amount, type, withdrawalAllocation);
 
