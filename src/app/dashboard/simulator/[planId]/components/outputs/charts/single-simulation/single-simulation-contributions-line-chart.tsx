@@ -50,7 +50,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
     case 'taxCategory':
     case 'custom':
       footer = (
-        <p className="mx-1 mt-2 flex justify-between text-xs font-semibold">
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
           <span className="mr-2">Total:</span>
           <span className="ml-1 font-semibold">
             {formatNumber(
@@ -68,7 +68,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
-      <p className="mx-1 mb-2 flex justify-between text-xs font-semibold">
+      <p className="mx-1 mb-2 flex justify-between text-sm font-semibold">
         <span className="mr-2">Age {label}</span>
         <span className="text-muted-foreground ml-1">{yearForAge}</span>
       </p>
@@ -79,7 +79,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
             <p
               key={entry.dataKey}
               style={{ backgroundColor: entry.color }}
-              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-xs', {
+              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
                 'text-background': needsBgTextColor.includes(entry.color),
               })}
             >
