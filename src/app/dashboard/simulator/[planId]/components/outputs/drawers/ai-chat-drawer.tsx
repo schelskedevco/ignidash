@@ -81,7 +81,7 @@ function DemoQuestionButton({ label, question, setChatMessage }: DemoQuestionBut
       }}
       type="button"
       className={cn(
-        'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border/25 relative inline-flex items-center rounded-full border px-3 py-2 text-sm shadow-md focus:z-10'
+        'text-foreground/85 bg-emphasized-background hover:bg-background focus-outline border-border/25 relative inline-flex items-center rounded-full border px-3 py-2 text-sm shadow-md focus:z-10'
       )}
     >
       <span className="whitespace-nowrap">{label}</span>
