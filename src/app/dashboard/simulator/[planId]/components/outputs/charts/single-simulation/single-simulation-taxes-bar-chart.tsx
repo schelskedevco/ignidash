@@ -219,12 +219,13 @@ export default function SingleSimulationTaxesBarChart({
 
   let transformedChartData: BarChartData[] = [];
   let formatter = undefined;
-
+  let filterZeroValues = true;
   let stackId: string | undefined = undefined;
 
   switch (dataView) {
     case 'marginalRates': {
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      filterZeroValues = false;
 
       const [incomeTaxLabel, capGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
@@ -235,6 +236,7 @@ export default function SingleSimulationTaxesBarChart({
     }
     case 'effectiveRates': {
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      filterZeroValues = false;
 
       const [incomeTaxLabel, capGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
@@ -277,7 +279,6 @@ export default function SingleSimulationTaxesBarChart({
     }
     case 'taxableIncome': {
       formatter = (value: number) => formatNumber(value, 1, '$');
-
       stackId = 'stack';
 
       transformedChartData = chartData.flatMap((item) => [
@@ -293,7 +294,6 @@ export default function SingleSimulationTaxesBarChart({
     }
     case 'adjustedGrossIncome': {
       formatter = (value: number) => formatNumber(value, 1, '$');
-
       stackId = 'stack';
 
       transformedChartData = chartData.flatMap((item) => [
@@ -313,7 +313,7 @@ export default function SingleSimulationTaxesBarChart({
       transformedChartData = chartData.flatMap((item) => [
         { name: 'Interest Income', segments: [{ amount: item.taxableInterestIncome, color: 'var(--chart-1)' }] },
         { name: 'Dividend Income', segments: [{ amount: item.taxableDividendIncome, color: 'var(--chart-2)' }] },
-        { name: 'Realized Gains', segments: [{ amount: item.taxableRealizedGains, color: 'var(--chart-3)' }] },
+        { name: 'Realized Gains', segments: [{ amount: item.realizedGains, color: 'var(--chart-3)' }] },
       ]);
       break;
     }
@@ -354,7 +354,7 @@ export default function SingleSimulationTaxesBarChart({
       formatter = (value: number) => formatNumber(value, 1, '$');
 
       transformedChartData = chartData.flatMap((item) => [
-        { name: 'Realized Gains', segments: [{ amount: item.taxableRealizedGains, color: 'var(--chart-1)' }] },
+        { name: 'Realized Gains', segments: [{ amount: item.realizedGains, color: 'var(--chart-1)' }] },
         { name: 'Dividend Income', segments: [{ amount: item.taxableDividendIncome, color: 'var(--chart-2)' }] },
       ]);
       break;
@@ -395,6 +395,7 @@ export default function SingleSimulationTaxesBarChart({
     }
     case 'socialSecurityTaxablePercentage': {
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+      filterZeroValues = false;
 
       transformedChartData = chartData.flatMap((item) => [
         { name: 'Max Taxable %', segments: [{ amount: item.maxTaxablePercentage, color: 'var(--chart-2)' }] },
@@ -406,7 +407,7 @@ export default function SingleSimulationTaxesBarChart({
 
   const getTotalAmount = (item: BarChartData) => item.segments.reduce((acc, s) => acc + s.amount, 0);
   transformedChartData = transformedChartData
-    .filter((item) => getTotalAmount(item) !== 0)
+    .filter((item) => (filterZeroValues ? getTotalAmount(item) !== 0 : true))
     .sort((a, b) => getTotalAmount(b) - getTotalAmount(a));
   if (transformedChartData.length === 0) {
     return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
@@ -430,10 +431,6 @@ export default function SingleSimulationTaxesBarChart({
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          {((dataView === 'taxableIncome' && (referenceLineMode ?? 'hideReferenceLines') === 'hideReferenceLines') ||
-            dataView === 'adjustedGrossIncome') && (
-            <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />
-          )}
           {Array.from({ length: maxSegments }).map((_, segmentIndex) => (
             <Bar key={segmentIndex} dataKey={getDataKey(segmentIndex)} maxBarSize={75} minPointSize={20} stackId={stackId}>
               {normalizedData.map((entry, i) => {
@@ -442,7 +439,10 @@ export default function SingleSimulationTaxesBarChart({
                 const color = segment?.color;
                 const amount = segment?.amount;
 
-                return <Cell key={i} fill={color} fillOpacity={amount !== 0 ? 0.5 : 0} stroke={color} strokeWidth={amount !== 0 ? 3 : 0} />;
+                const fillOpacity = filterZeroValues ? (amount !== 0 ? 0.5 : 0) : 0.5;
+                const strokeWidth = filterZeroValues ? (amount !== 0 ? 3 : 0) : 3;
+
+                return <Cell key={i} fill={color} fillOpacity={fillOpacity} stroke={color} strokeWidth={strokeWidth} />;
               })}
               <LabelList
                 dataKey={getDataKey(segmentIndex)}

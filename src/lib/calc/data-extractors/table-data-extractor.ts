@@ -253,7 +253,7 @@ export abstract class TableDataExtractor {
         provisionalIncome: taxesData?.socialSecurityTaxes.provisionalIncome ?? 0,
         maxTaxableSocialSecurityPercentage: taxesData?.socialSecurityTaxes.maxTaxablePercentage ?? 0,
         actualTaxableSocialSecurityPercentage: taxesData?.socialSecurityTaxes.actualTaxablePercentage ?? 0,
-        realizedGains: taxesData?.incomeSources.taxableRealizedGains ?? 0,
+        realizedGains: taxesData?.incomeSources.realizedGains ?? 0,
         dividendIncome: taxesData?.incomeSources.taxableDividendIncome ?? 0,
         annualCapGainsTax,
         cumulativeCapGainsTax,

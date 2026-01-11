@@ -408,7 +408,7 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       taxExemptIncome: cashFlowData[i].taxExemptIncome,
       retirementDistributions: taxesData[i].taxableRetirementDistributions,
       interestIncome: taxesData[i].taxableInterestIncome,
-      realizedGains: taxesData[i].taxableRealizedGains,
+      realizedGains: taxesData[i].realizedGains,
       dividendIncome: taxesData[i].taxableDividendIncome,
       taxesAndPenalties: cashFlowData[i].taxesAndPenalties,
       expenses: cashFlowData[i].expenses,

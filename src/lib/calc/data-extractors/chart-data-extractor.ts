@@ -142,7 +142,7 @@ export abstract class ChartDataExtractor {
         taxableSocialSecurityIncome: taxesData.socialSecurityTaxes.taxableSocialSecurityIncome,
         maxTaxablePercentage: taxesData.socialSecurityTaxes.maxTaxablePercentage,
         actualTaxablePercentage: taxesData.socialSecurityTaxes.actualTaxablePercentage,
-        taxableRealizedGains: taxesData.incomeSources.taxableRealizedGains,
+        realizedGains: taxesData.incomeSources.realizedGains,
         taxableDividendIncome: taxesData.incomeSources.taxableDividendIncome,
         taxableIncomeTaxedAsCapGains: taxesData.capitalGainsTaxes.taxableIncomeTaxedAsCapGains,
         adjustedIncomeTaxedAsCapGains: taxesData.incomeSources.adjustedIncomeTaxedAsCapGains,

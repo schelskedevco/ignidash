@@ -90,7 +90,7 @@ export interface SingleSimulationTaxesChartDataPoint {
   actualTaxablePercentage: number;
 
   // Cap Gains
-  taxableRealizedGains: number;
+  realizedGains: number;
   taxableDividendIncome: number;
   taxableIncomeTaxedAsCapGains: number;
   adjustedIncomeTaxedAsCapGains: number;
