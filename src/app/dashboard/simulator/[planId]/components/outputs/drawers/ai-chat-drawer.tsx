@@ -205,7 +205,7 @@ function ConversationListItem({ conversation, selectedConversationId, setSelecte
           <p
             className={cn(
               'truncate text-sm font-semibold text-stone-900 dark:text-white',
-              'relative after:absolute after:bottom-0 after:left-0 after:h-[1px] after:bg-current/80',
+              'relative after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:bg-current/80',
               'after:w-0 after:transition-all after:duration-300 after:ease-in-out',
               conversation._id === selectedConversationId && 'after:w-full'
             )}

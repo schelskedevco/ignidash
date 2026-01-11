@@ -120,7 +120,16 @@ export default function Table<T extends Record<string, unknown>>({
                             className="focus-outline inline-flex w-full cursor-pointer items-center text-left text-sm font-semibold whitespace-nowrap"
                             aria-label={`Sort by ${col.title}, currently ${sortDirection}`}
                           >
-                            {col.title}
+                            <span
+                              className={cn(
+                                'relative after:absolute after:bottom-0 after:left-0 after:h-[1.5px] after:bg-current/80',
+                                'after:w-0 after:transition-all after:duration-300 after:ease-in-out',
+                                'group-hover:after:w-full',
+                                isSorted && 'after:w-full'
+                              )}
+                            >
+                              {col.title}
+                            </span>
                             <span className="text-muted-foreground ml-2 flex-none rounded-sm" aria-hidden="true">
                               {isSorted && sortState.direction === 'asc' ? (
                                 <ChevronUpIcon className="size-5" />
@@ -174,9 +183,10 @@ export default function Table<T extends Record<string, unknown>>({
                       <tr
                         key={String(row[keyField])}
                         className={cn(
-                          'focus-outline hover:bg-emphasized-background/50',
+                          'focus-outline hover:bg-emphasized-background',
+                          'even:bg-emphasized-background/50',
                           onRowClick && 'cursor-pointer',
-                          selectedRow === String(row[keyField]) && 'bg-emphasized-background/50'
+                          selectedRow === String(row[keyField]) && 'bg-emphasized-background even:bg-emphasized-background'
                         )}
                         role={onRowClick ? 'button' : undefined}
                         aria-label={onRowClick ? `View details for simulation number ${String(row[keyField])}` : undefined}
@@ -208,7 +218,7 @@ export default function Table<T extends Record<string, unknown>>({
                                 key={String(col.key)}
                                 className={cn(
                                   'text-foreground py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-6 lg:pl-8',
-                                  hoveredColumn === col.key && 'bg-emphasized-background/50',
+                                  hoveredColumn === col.key && 'bg-emphasized-background',
                                   onRowClick && 'text-primary hover:underline'
                                 )}
                               >
@@ -222,7 +232,7 @@ export default function Table<T extends Record<string, unknown>>({
                               key={String(col.key)}
                               className={cn(
                                 'text-muted-foreground border-border/25 border-l px-3 py-4 text-sm whitespace-nowrap',
-                                hoveredColumn === col.key && 'bg-emphasized-background/50'
+                                hoveredColumn === col.key && 'bg-emphasized-background'
                               )}
                             >
                               {displayValue}
