@@ -31,7 +31,7 @@ export default function Table<T extends Record<string, unknown>>({
   columns,
   data,
   keyField,
-  itemsPerPage = 10,
+  itemsPerPage = 12,
   showPagination = true,
   onRowClick,
 }: TableProps<T>) {
