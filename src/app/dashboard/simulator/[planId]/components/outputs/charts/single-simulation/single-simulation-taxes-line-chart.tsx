@@ -163,6 +163,9 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       break;
   }
 
+  const positiveEntries = transformedPayload.filter((entry) => (filterZeroValues ? entry.value > 0 : entry.value >= 0));
+  const negativeEntries = transformedPayload.filter((entry) => entry.value < 0);
+
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
       <p className="mx-1 mb-2 flex justify-between text-xs font-semibold">
@@ -171,10 +174,9 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       </p>
       {header}
       <div className="flex flex-col gap-2">
-        <div className="flex flex-col gap-1">
-          {transformedPayload
-            .filter((entry) => (filterZeroValues ? entry.value > 0 : entry.value >= 0))
-            .map((entry) => (
+        {positiveEntries.length > 0 && (
+          <div className="flex flex-col gap-1">
+            {positiveEntries.map((entry) => (
               <p
                 key={entry.dataKey}
                 style={{ backgroundColor: entry.color }}
@@ -186,27 +188,24 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
                 <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
               </p>
             ))}
-        </div>
-        {transformedPayload.some((entry) => entry.value < 0) && (
-          <>
-            <Divider soft />
-            <div className="flex flex-col gap-1">
-              {transformedPayload
-                .filter((entry) => entry.value < 0)
-                .map((entry) => (
-                  <p
-                    key={entry.dataKey}
-                    style={{ backgroundColor: entry.color }}
-                    className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-xs', {
-                      'text-background': needsBgTextColor.includes(entry.color),
-                    })}
-                  >
-                    <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-                    <span className="ml-1 font-semibold">{formatValue(Math.abs(entry.value), dataView)}</span>
-                  </p>
-                ))}
-            </div>
-          </>
+          </div>
+        )}
+        {positiveEntries.length > 0 && negativeEntries.length > 0 && <Divider soft />}
+        {negativeEntries.length > 0 && (
+          <div className="flex flex-col gap-1">
+            {negativeEntries.map((entry) => (
+              <p
+                key={entry.dataKey}
+                style={{ backgroundColor: entry.color }}
+                className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-xs', {
+                  'text-background': needsBgTextColor.includes(entry.color),
+                })}
+              >
+                <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
+                <span className="ml-1 font-semibold">{formatValue(Math.abs(entry.value), dataView)}</span>
+              </p>
+            ))}
+          </div>
         )}
       </div>
       {footer}
