@@ -217,8 +217,9 @@ export default function SingleSimulationTaxesBarChart({
   const { incomeTaxBrackets, capitalGainsTaxBrackets } = getTaxBrackets(chartData);
   const taxableIncome = Math.max(...chartData.map((item) => item.taxableIncome));
 
-  let transformedChartData: BarChartData[] = [];
   let formatter = undefined;
+  let transformedChartData: BarChartData[] = [];
+
   let filterZeroValues = true;
   let stackId: string | undefined = undefined;
 
