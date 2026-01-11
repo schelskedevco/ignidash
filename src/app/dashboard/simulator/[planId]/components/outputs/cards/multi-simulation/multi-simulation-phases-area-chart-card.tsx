@@ -28,7 +28,7 @@ export default function MultiSimulationPhasesAreaChartCard({
           <span className="mr-2">Phases</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
-        <ChartTimeFrameDropdown />
+        <ChartTimeFrameDropdown timeFrameType="monteCarlo" />
       </div>
       <MultiSimulationPhasesAreaChart
         rawChartData={rawChartData}

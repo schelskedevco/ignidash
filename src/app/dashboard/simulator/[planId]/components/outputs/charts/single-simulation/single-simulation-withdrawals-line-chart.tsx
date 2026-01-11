@@ -192,7 +192,7 @@ export default function SingleSimulationWithdrawalsLineChart({
           annualBondWithdrawals: number;
           annualCashWithdrawals: number;
         } & AccountDataWithTransactions
-      > = useChartDataSlice(rawChartData);
+      > = useChartDataSlice(rawChartData, 'single');
 
   const lineDataKeys: (keyof SingleSimulationWithdrawalsChartDataPoint)[] = [];
   const strokeColors: string[] = [];

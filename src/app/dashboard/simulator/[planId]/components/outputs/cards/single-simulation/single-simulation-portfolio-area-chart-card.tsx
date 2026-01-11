@@ -81,7 +81,7 @@ export default function SingleSimulationPortfolioAreaChartCard({
               ))}
             </optgroup>
           </Select>
-          <ChartTimeFrameDropdown />
+          <ChartTimeFrameDropdown timeFrameType="single" />
         </div>
       </div>
       <SingleSimulationPortfolioAreaChart

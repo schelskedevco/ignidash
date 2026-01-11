@@ -155,7 +155,7 @@ export default function SingleSimulationCashFlowLineChart({
   );
 
   let chartData: SingleSimulationCashFlowChartDataPoint[] | Array<{ age: number } & IncomeData> | Array<{ age: number } & ExpenseData> =
-    useChartDataSlice(rawChartData);
+    useChartDataSlice(rawChartData, 'single');
 
   const lineDataKeys: (keyof SingleSimulationCashFlowChartDataPoint | keyof IncomeData | keyof ExpenseData)[] = [];
   const strokeColors: string[] = [];

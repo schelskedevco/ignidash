@@ -91,7 +91,7 @@ export default function SingleSimulationReturnsLineChartCard({
               ))}
             </optgroup>
           </Select>
-          <ChartTimeFrameDropdown />
+          <ChartTimeFrameDropdown timeFrameType="single" />
         </div>
       </div>
       <SingleSimulationReturnsLineChart

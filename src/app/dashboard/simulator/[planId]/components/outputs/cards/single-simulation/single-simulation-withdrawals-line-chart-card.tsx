@@ -129,7 +129,7 @@ export default function SingleSimulationWithdrawalsLineChartCard({
               ))}
             </optgroup>
           </Select>
-          <ChartTimeFrameDropdown />
+          <ChartTimeFrameDropdown timeFrameType="single" />
         </div>
       </div>
       <SingleSimulationWithdrawalsLineChart

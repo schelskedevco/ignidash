@@ -1,11 +1,14 @@
 import { useMemo } from 'react';
-import { useChartTimeFrameToShow } from '@/lib/stores/simulator-store';
+import { useChartTimeFrameToShow, useMonteCarloTimeFrameToShow } from '@/lib/stores/simulator-store';
 
-export function useChartDataSlice<T>(data: T[]): T[] {
+export function useChartDataSlice<T>(data: T[], timeFrameType: 'single' | 'monteCarlo'): T[] {
   const chartTimeFrameToShow = useChartTimeFrameToShow();
+  const monteCarloTimeFrameToShow = useMonteCarloTimeFrameToShow();
+
+  const timeFrameToShow = timeFrameType === 'single' ? chartTimeFrameToShow : monteCarloTimeFrameToShow;
 
   return useMemo(() => {
-    switch (chartTimeFrameToShow) {
+    switch (timeFrameToShow) {
       case 'tenYears':
         return data.slice(0, 10);
       case 'twentyYears':
@@ -17,5 +20,5 @@ export function useChartDataSlice<T>(data: T[]): T[] {
       default:
         return data;
     }
-  }, [data, chartTimeFrameToShow]);
+  }, [data, timeFrameToShow]);
 }

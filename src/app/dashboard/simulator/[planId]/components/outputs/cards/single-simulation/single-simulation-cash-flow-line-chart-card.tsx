@@ -98,7 +98,7 @@ export default function SingleSimulationCashFlowLineChartCard({
               ))}
             </optgroup>
           </Select>
-          <ChartTimeFrameDropdown />
+          <ChartTimeFrameDropdown timeFrameType="single" />
         </div>
       </div>
       <SingleSimulationCashFlowLineChart

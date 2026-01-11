@@ -28,7 +28,7 @@ export default function MultiSimulationPortfolioAreaChartCard({
           <span className="mr-2">Portfolio</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
-        <ChartTimeFrameDropdown />
+        <ChartTimeFrameDropdown timeFrameType="monteCarlo" />
       </div>
       <MultiSimulationPortfolioAreaChart
         rawChartData={rawChartData}

@@ -157,7 +157,7 @@ export default function SingleSimulationReturnsLineChart({
           annualCashGain: number;
           totalAnnualGains: number;
         } & AccountDataWithReturns
-      > = useChartDataSlice(rawChartData);
+      > = useChartDataSlice(rawChartData, 'single');
 
   const lineDataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
   const strokeColors: string[] = [];

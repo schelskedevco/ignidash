@@ -89,7 +89,7 @@ export default function SingleSimulationContributionsLineChartCard({
               ))}
             </optgroup>
           </Select>
-          <ChartTimeFrameDropdown />
+          <ChartTimeFrameDropdown timeFrameType="single" />
         </div>
       </div>
       <SingleSimulationContributionsLineChart

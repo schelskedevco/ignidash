@@ -86,7 +86,7 @@ export default function MultiSimulationPortfolioAreaChart({
     () => setClickedOutsideChart(false)
   );
 
-  const chartData: MultiSimulationPortfolioChartDataPoint[] = useChartDataSlice(rawChartData);
+  const chartData: MultiSimulationPortfolioChartDataPoint[] = useChartDataSlice(rawChartData, 'monteCarlo');
   const dataKeys: (keyof MultiSimulationPortfolioChartDataPoint)[] = ['p75PortfolioValue', 'p50PortfolioValue', 'p25PortfolioValue'];
   const formatter = (value: number) => formatNumber(value, 1, '$');
 

@@ -107,7 +107,7 @@ export default function SingleSimulationPortfolioAreaChart({
   let chartData:
     | SingleSimulationPortfolioChartDataPoint[]
     | Array<{ age: number; stockHoldings: number; bondHoldings: number; cashHoldings: number } & AccountDataWithTransactions> =
-    useChartDataSlice(rawChartData);
+    useChartDataSlice(rawChartData, 'single');
 
   const dataKeys: (keyof SingleSimulationPortfolioChartDataPoint | keyof AccountDataWithTransactions)[] = [];
   const formatter = (value: number) => formatNumber(value, 1, '$');

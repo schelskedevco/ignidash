@@ -126,7 +126,7 @@ export default function SingleSimulationTaxesLineChartCard({
               <option value="socialSecurityTaxablePercentage">Taxable % of Social Security</option>
             </optgroup>
           </Select>
-          <ChartTimeFrameDropdown />
+          <ChartTimeFrameDropdown timeFrameType="single" />
         </div>
       </div>
       <SingleSimulationTaxesLineChart

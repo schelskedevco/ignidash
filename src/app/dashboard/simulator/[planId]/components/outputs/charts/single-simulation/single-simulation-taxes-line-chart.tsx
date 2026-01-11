@@ -264,7 +264,7 @@ export default function SingleSimulationTaxesLineChart({
     () => setClickedOutsideChart(false)
   );
 
-  let chartData: SingleSimulationTaxesChartDataPoint[] = useChartDataSlice(rawChartData);
+  let chartData: SingleSimulationTaxesChartDataPoint[] = useChartDataSlice(rawChartData, 'single');
 
   const lineDataKeys: (keyof SingleSimulationTaxesChartDataPoint)[] = [];
   const strokeColors: string[] = [];

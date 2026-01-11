@@ -76,6 +76,7 @@ interface SimulatorState {
     multiSimulationCategory: MultiSimulationCategory;
     monteCarloSortMode: MonteCarloSortMode;
     chartTimeFrameToShow: ChartTimeFrame;
+    monteCarloTimeFrameToShow: ChartTimeFrame;
     cachedKeyMetrics: KeyMetrics | null;
   };
 
@@ -102,6 +103,7 @@ interface SimulatorState {
     updateMultiSimulationCategory: (category: MultiSimulationCategory) => void;
     updateMonteCarloSortMode: (value: MonteCarloSortMode) => void;
     updateChartTimeFrameToShow: (value: ChartTimeFrame) => void;
+    updateMonteCarloTimeFrameToShow: (value: ChartTimeFrame) => void;
     updateCachedKeyMetrics: (metrics: KeyMetrics | null) => void;
 
     /* Preferences */
@@ -128,6 +130,7 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
     multiSimulationCategory: MultiSimulationCategory.Portfolio,
     monteCarloSortMode: 'finalPortfolioValue',
     chartTimeFrameToShow: 'twentyYears',
+    monteCarloTimeFrameToShow: 'fullPlan',
     cachedKeyMetrics: null,
   },
   preferences: {
@@ -183,6 +186,10 @@ export const useSimulatorStore = create<SimulatorState>()(
           updateChartTimeFrameToShow: (value) =>
             set((state) => {
               state.results.chartTimeFrameToShow = value;
+            }),
+          updateMonteCarloTimeFrameToShow: (value) =>
+            set((state) => {
+              state.results.monteCarloTimeFrameToShow = value;
             }),
           updateCachedKeyMetrics: (metrics) =>
             set((state) => {
@@ -240,6 +247,7 @@ export const useSingleSimulationCategory = () => useSimulatorStore((state) => st
 export const useMultiSimulationCategory = () => useSimulatorStore((state) => state.results.multiSimulationCategory);
 export const useMonteCarloSortMode = () => useSimulatorStore((state) => state.results.monteCarloSortMode);
 export const useChartTimeFrameToShow = () => useSimulatorStore((state) => state.results.chartTimeFrameToShow);
+export const useMonteCarloTimeFrameToShow = () => useSimulatorStore((state) => state.results.monteCarloTimeFrameToShow);
 export const useCachedKeyMetrics = () => useSimulatorStore((state) => state.results.cachedKeyMetrics);
 export const useSelectedConversationId = () => useSimulatorStore((state) => state.chat.selectedConversationId);
 export const useInsightsSelectedPlan = () => useSimulatorStore((state) => state.insights.selectedPlan);
@@ -259,6 +267,7 @@ export const useUpdateShowReferenceLines = () => useSimulatorStore((state) => st
 export const useUpdateSidebarCollapsed = () => useSimulatorStore((state) => state.actions.updateSidebarCollapsed);
 export const useUpdateMonteCarloSortMode = () => useSimulatorStore((state) => state.actions.updateMonteCarloSortMode);
 export const useUpdateChartTimeFrameToShow = () => useSimulatorStore((state) => state.actions.updateChartTimeFrameToShow);
+export const useUpdateMonteCarloTimeFrameToShow = () => useSimulatorStore((state) => state.actions.updateMonteCarloTimeFrameToShow);
 export const useUpdateCachedKeyMetrics = () => useSimulatorStore((state) => state.actions.updateCachedKeyMetrics);
 export const useUpdateSelectedConversationId = () => useSimulatorStore((state) => state.actions.updateSelectedConversationId);
 export const useUpdateInsightsSelectedPlan = () => useSimulatorStore((state) => state.actions.updateInsightsSelectedPlan);

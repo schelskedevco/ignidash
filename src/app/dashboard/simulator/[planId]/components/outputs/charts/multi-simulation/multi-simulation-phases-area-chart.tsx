@@ -86,7 +86,7 @@ export default function MultiSimulationPhasesAreaChart({
     () => setClickedOutsideChart(false)
   );
 
-  const chartData: MultiSimulationPhasesChartDataPoint[] = useChartDataSlice(rawChartData);
+  const chartData: MultiSimulationPhasesChartDataPoint[] = useChartDataSlice(rawChartData, 'monteCarlo');
   const dataKeys: (keyof MultiSimulationPhasesChartDataPoint)[] = ['percentAccumulation', 'percentRetirement', 'percentBankrupt'];
   const formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
 

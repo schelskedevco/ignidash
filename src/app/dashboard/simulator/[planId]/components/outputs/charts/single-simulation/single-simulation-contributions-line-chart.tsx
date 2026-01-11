@@ -137,7 +137,7 @@ export default function SingleSimulationContributionsLineChart({
           annualBondContributions: number;
           annualCashContributions: number;
         } & AccountDataWithTransactions
-      > = useChartDataSlice(rawChartData);
+      > = useChartDataSlice(rawChartData, 'single');
 
   const lineDataKeys: (keyof SingleSimulationContributionsChartDataPoint)[] = [];
   const strokeColors: string[] = [];
