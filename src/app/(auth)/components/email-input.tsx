@@ -9,7 +9,7 @@ interface EmailInputProps {
 export default function EmailInput({ errorMessage }: EmailInputProps) {
   return (
     <div>
-      <label htmlFor="email" className="block text-sm/6 font-medium text-zinc-900 dark:text-white">
+      <label htmlFor="email" className="block text-sm/6 font-medium text-stone-900 dark:text-white">
         Email address
       </label>
       <div className="relative mt-2">
@@ -22,7 +22,7 @@ export default function EmailInput({ errorMessage }: EmailInputProps) {
           aria-invalid={!!errorMessage}
           {...(errorMessage && { 'aria-describedby': 'email-error' })}
           className={cn(
-            'block w-full rounded-md bg-white px-3 py-1.5 pr-10 text-base text-zinc-900 outline-1 -outline-offset-1 outline-zinc-400 placeholder:text-zinc-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/25 dark:placeholder:text-zinc-500 dark:focus:outline-rose-500',
+            'block w-full rounded-md bg-white px-3 py-1.5 pr-10 text-base text-stone-900 outline-1 -outline-offset-1 outline-stone-400 placeholder:text-stone-400 focus:outline-2 focus:-outline-offset-2 focus:outline-rose-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/25 dark:placeholder:text-stone-500 dark:focus:outline-rose-500',
             {
               'text-red-900 outline-red-300 placeholder:text-red-300 dark:text-red-400 dark:outline-red-500/50 dark:placeholder:text-red-400/70':
                 !!errorMessage,

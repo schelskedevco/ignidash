@@ -44,14 +44,14 @@ export function Listbox<T>({
           // Focus ring
           'data-focus:after:ring-primary after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:ring-transparent after:ring-inset data-focus:after:ring-2',
           // Disabled state
-          'data-disabled:opacity-50 data-disabled:before:bg-zinc-950/5 data-disabled:before:shadow-none',
+          'data-disabled:opacity-50 data-disabled:before:bg-stone-950/5 data-disabled:before:shadow-none',
           className,
         ])}
       >
         <ListboxSelectedOption
           as="span"
           options={options}
-          placeholder={placeholder && <span className="block truncate text-zinc-500">{placeholder}</span>}
+          placeholder={placeholder && <span className="block truncate text-stone-500">{placeholder}</span>}
           className={cn([
             // Basic layout
             'relative block w-full appearance-none rounded-lg py-[calc(--spacing(2.5)-1px)] sm:py-[calc(--spacing(1.5)-1px)]',
@@ -60,20 +60,20 @@ export function Listbox<T>({
             // Horizontal padding
             'pr-[calc(--spacing(7)-1px)] pl-[calc(--spacing(3.5)-1px)] sm:pl-[calc(--spacing(3)-1px)]',
             // Typography
-            'text-left text-base/6 text-zinc-950 placeholder:text-zinc-500 sm:text-sm/6 dark:text-white forced-colors:text-[CanvasText]',
+            'text-left text-base/6 text-stone-950 placeholder:text-stone-500 sm:text-sm/6 dark:text-white forced-colors:text-[CanvasText]',
             // Border
-            'border border-zinc-950/25 group-data-active:border-zinc-950/50 group-data-hover:border-zinc-950/50 dark:border-white/25 dark:group-data-active:border-white/50 dark:group-data-hover:border-white/50',
+            'border border-stone-950/25 group-data-active:border-stone-950/50 group-data-hover:border-stone-950/50 dark:border-white/25 dark:group-data-active:border-white/50 dark:group-data-hover:border-white/50',
             // Background color
             'bg-transparent dark:bg-white/5',
             // Invalid state
             'group-data-invalid:border-red-500 group-data-hover:group-data-invalid:border-red-500 dark:group-data-invalid:border-red-600 dark:data-hover:group-data-invalid:border-red-600',
             // Disabled state
-            'group-data-disabled:border-zinc-950/20 group-data-disabled:opacity-100 dark:group-data-disabled:border-white/15 dark:group-data-disabled:bg-white/2.5 dark:group-data-disabled:data-hover:border-white/15',
+            'group-data-disabled:border-stone-950/20 group-data-disabled:opacity-100 dark:group-data-disabled:border-white/15 dark:group-data-disabled:bg-white/2.5 dark:group-data-disabled:data-hover:border-white/15',
           ])}
         />
         <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
           <svg
-            className="size-5 stroke-zinc-500 group-data-disabled:stroke-zinc-600 sm:size-4 dark:stroke-zinc-400 forced-colors:stroke-[CanvasText]"
+            className="size-5 stroke-stone-500 group-data-disabled:stroke-stone-600 sm:size-4 dark:stroke-stone-400 forced-colors:stroke-[CanvasText]"
             viewBox="0 0 16 16"
             aria-hidden="true"
             fill="none"
@@ -96,9 +96,9 @@ export function Listbox<T>({
           // Handle scrolling when menu won't fit in viewport
           'overflow-y-scroll overscroll-contain',
           // Popover background
-          'bg-white/75 backdrop-blur-xl dark:bg-zinc-800/75',
+          'bg-white/75 backdrop-blur-xl dark:bg-stone-800/75',
           // Shadows
-          'shadow-lg ring-1 ring-zinc-950/10 dark:ring-white/10 dark:ring-inset',
+          'shadow-lg ring-1 ring-stone-950/10 dark:ring-white/10 dark:ring-inset',
           // Transitions
           'transition-opacity duration-100 ease-in data-closed:data-leave:opacity-0 data-transition:pointer-events-none'
         )}
@@ -138,7 +138,7 @@ export function ListboxOption<T>({
               // Basic layout
               'group/option grid cursor-default grid-cols-[--spacing(5)_1fr] items-baseline gap-x-2 rounded-lg py-2.5 pr-3.5 pl-2 sm:grid-cols-[--spacing(4)_1fr] sm:py-1.5 sm:pr-3 sm:pl-1.5',
               // Typography
-              'text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white forced-colors:text-[CanvasText]',
+              'text-base/6 text-stone-950 sm:text-sm/6 dark:text-white forced-colors:text-[CanvasText]',
               // Focus
               'data-focus:bg-primary outline-hidden data-focus:text-white',
               // Forced colors mode
@@ -172,7 +172,7 @@ export function ListboxDescription({ className, children, ...props }: React.Comp
     <span
       {...props}
       className={cn(
-        'flex flex-1 overflow-hidden text-zinc-500 group-data-focus/option:text-white before:w-2 before:min-w-0 before:shrink dark:text-zinc-400',
+        'flex flex-1 overflow-hidden text-stone-500 group-data-focus/option:text-white before:w-2 before:min-w-0 before:shrink dark:text-stone-400',
         className
       )}
     >

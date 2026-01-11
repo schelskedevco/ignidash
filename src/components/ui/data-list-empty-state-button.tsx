@@ -21,14 +21,14 @@ export default function DataListEmptyStateButton({
     <button
       type="button"
       className={cn(
-        'focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-zinc-300 p-4 text-center hover:border-zinc-400 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/15 dark:hover:border-white/25',
+        'focus-outline relative block w-full grow rounded-lg border-2 border-dashed border-stone-300 p-4 text-center hover:border-stone-400 disabled:cursor-not-allowed disabled:opacity-50 dark:border-white/15 dark:hover:border-white/25',
         className
       )}
       onClick={onClick}
       disabled={disabled}
     >
       <Icon aria-hidden="true" className="text-primary mx-auto size-12" />
-      <span className="mt-2 block text-sm font-semibold text-zinc-900 dark:text-white">{buttonText}</span>
+      <span className="mt-2 block text-sm font-semibold text-stone-900 dark:text-white">{buttonText}</span>
     </button>
   );
 }

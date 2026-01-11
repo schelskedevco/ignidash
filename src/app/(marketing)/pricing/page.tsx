@@ -70,11 +70,11 @@ export default async function PricingPage() {
       </div>
       <div className="mx-auto max-w-4xl text-center">
         <h2 className="text-primary text-base/7 font-semibold">Pricing</h2>
-        <p className="mt-2 text-5xl font-semibold tracking-tight text-balance text-zinc-900 sm:text-6xl dark:text-white">
+        <p className="mt-2 text-5xl font-semibold tracking-tight text-balance text-stone-900 sm:text-6xl dark:text-white">
           Select your tier
         </p>
       </div>
-      <p className="mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-zinc-600 sm:text-xl/8 dark:text-zinc-400">
+      <p className="mx-auto mt-6 max-w-2xl text-center text-lg font-medium text-pretty text-stone-600 sm:text-xl/8 dark:text-stone-400">
         Visualize, understand, and refine your financial plan. <br className="hidden sm:block" /> No credit card required.
       </p>
       <div className="mx-auto mt-16 grid max-w-lg grid-cols-1 items-center gap-y-6 sm:mt-20 sm:gap-y-0 lg:max-w-4xl lg:grid-cols-2">
@@ -83,31 +83,33 @@ export default async function PricingPage() {
             key={tier.id}
             className={cn(
               tier.featured
-                ? 'relative bg-zinc-900 shadow-2xl dark:bg-zinc-800 dark:shadow-none'
+                ? 'relative bg-stone-900 shadow-2xl dark:bg-stone-800 dark:shadow-none'
                 : 'bg-white/60 sm:mx-8 lg:mx-0 dark:bg-white/2.5',
               tier.featured
                 ? ''
                 : tierIdx === 0
                   ? 'rounded-t-3xl sm:rounded-b-none lg:rounded-tr-none lg:rounded-bl-3xl'
                   : 'sm:rounded-t-none lg:rounded-tr-3xl lg:rounded-bl-none',
-              'rounded-3xl p-8 ring-1 ring-zinc-900/10 sm:p-10 dark:ring-white/10'
+              'rounded-3xl p-8 ring-1 ring-stone-900/10 sm:p-10 dark:ring-white/10'
             )}
           >
             <h3 id={tier.id} className={cn(tier.featured ? 'text-rose-400' : 'text-primary', 'text-base/7 font-semibold')}>
               {tier.name}
             </h3>
             <p className="mt-4 flex items-baseline gap-x-2">
-              <span className={cn(tier.featured ? 'text-white' : 'text-zinc-900 dark:text-white', 'text-5xl font-semibold tracking-tight')}>
+              <span
+                className={cn(tier.featured ? 'text-white' : 'text-stone-900 dark:text-white', 'text-5xl font-semibold tracking-tight')}
+              >
                 {tier.priceMonthly}
               </span>
-              <span className={cn(tier.featured ? 'text-zinc-400' : 'text-zinc-500 dark:text-zinc-400', 'text-base')}>/month</span>
+              <span className={cn(tier.featured ? 'text-stone-400' : 'text-stone-500 dark:text-stone-400', 'text-base')}>/month</span>
             </p>
-            <p className={cn(tier.featured ? 'text-zinc-300' : 'text-zinc-600 dark:text-zinc-300', 'mt-6 text-base/7')}>
+            <p className={cn(tier.featured ? 'text-stone-300' : 'text-stone-600 dark:text-stone-300', 'mt-6 text-base/7')}>
               {tier.description}
             </p>
             <ul
               role="list"
-              className={cn(tier.featured ? 'text-zinc-300' : 'text-zinc-600 dark:text-zinc-300', 'mt-8 space-y-3 text-sm/6 sm:mt-10')}
+              className={cn(tier.featured ? 'text-stone-300' : 'text-stone-600 dark:text-stone-300', 'mt-8 space-y-3 text-sm/6 sm:mt-10')}
             >
               {tier.features.map((feature) => (
                 <li key={feature} className="flex gap-x-3">

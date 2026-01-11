@@ -109,10 +109,10 @@ export default function FAQSection() {
       <div className="mx-auto max-w-2xl px-6 py-24 sm:pt-32 lg:max-w-7xl lg:px-8 lg:py-40">
         <div className="lg:grid lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-5">
-            <h2 className="text-3xl font-semibold tracking-tight text-pretty text-zinc-900 sm:text-4xl dark:text-white">
+            <h2 className="text-3xl font-semibold tracking-tight text-pretty text-stone-900 sm:text-4xl dark:text-white">
               Frequently asked questions
             </h2>
-            <p className="mt-4 text-base/7 text-pretty text-zinc-600 dark:text-zinc-400">
+            <p className="mt-4 text-base/7 text-pretty text-stone-600 dark:text-stone-400">
               Can&apos;t find the answer you&apos;re looking for? Reach out to our{' '}
               <a
                 href="mailto:joe@schelske.dev"
@@ -127,8 +127,8 @@ export default function FAQSection() {
             <dl className="space-y-10">
               {faqs.map((faq) => (
                 <div key={faq.question}>
-                  <dt className="text-base/7 font-semibold text-zinc-900 dark:text-white">{faq.question}</dt>
-                  <dd className="mt-2 text-base/7 text-zinc-600 dark:text-zinc-400">{faq.answer}</dd>
+                  <dt className="text-base/7 font-semibold text-stone-900 dark:text-white">{faq.question}</dt>
+                  <dd className="mt-2 text-base/7 text-stone-600 dark:text-stone-400">{faq.answer}</dd>
                 </div>
               ))}
             </dl>

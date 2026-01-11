@@ -6,11 +6,11 @@
 
 :root {
   --background: #ffffff;
-  --emphasized-background: #f4f4f5; /* zinc-100 */
-  --foreground: #18181b; /* zinc-900 */
-  --muted-foreground: #71717a; /* zinc-500 */
+  --emphasized-background: #f5f5f4; /* stone-100 */
+  --foreground: #1c1917; /* stone-900 */
+  --muted-foreground: #78716c; /* stone-500 */
   --primary: #e11d48; /* rose-600 */
-  --border: #71717a; /* zinc-500 */
+  --border: #78716c; /* stone-500 */
 
   --chart-1: hsl(346 55% 90%);
   --chart-2: hsl(346 55% 70%);
@@ -34,12 +34,12 @@
 }
 
 .dark {
-  --background: #27272a; /* zinc-800 */
-  --emphasized-background: #18181b; /* zinc-900 */
-  --foreground: #f4f4f5; /* zinc-100 */
-  --muted-foreground: #a1a1aa; /* zinc-400 */
+  --background: #292524; /* stone-800 */
+  --emphasized-background: #1c1917; /* stone-900 */
+  --foreground: #f5f5f4; /* stone-100 */
+  --muted-foreground: #a8a29e; /* stone-400 */
   --primary: #fb7185; /* rose-400 */
-  --border: #71717a; /* zinc-500 */
+  --border: #78716c; /* stone-500 */
 
   --chart-1: hsl(346 55% 20%);
   --chart-2: hsl(346 55% 40%);

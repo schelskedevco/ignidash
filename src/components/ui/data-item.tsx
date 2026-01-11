@@ -55,7 +55,7 @@ export default function DataItem({
         <div className="flex-1 truncate px-4 py-2">
           <h4
             className={cn(
-              'text-base font-medium text-zinc-900 hover:text-zinc-600 dark:text-white dark:hover:text-zinc-200',
+              'text-base font-medium text-stone-900 hover:text-stone-600 dark:text-white dark:hover:text-stone-200',
               disabled && 'line-through'
             )}
           >

@@ -17,7 +17,7 @@ export default function HeroSection() {
       </div>
       <div className="mx-auto max-w-2xl pt-32 sm:pt-48 lg:pt-56">
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
-          <div className="relative rounded-full px-3 py-1 text-sm/6 text-zinc-600 ring-1 ring-zinc-900/10 hover:ring-zinc-900/20 dark:text-zinc-300 dark:ring-white/10 dark:hover:ring-white/20">
+          <div className="relative rounded-full px-3 py-1 text-sm/6 text-stone-600 ring-1 ring-stone-900/10 hover:ring-stone-900/20 dark:text-stone-300 dark:ring-white/10 dark:hover:ring-white/20">
             New: AI chat and insights are here.{' '}
             <Link href="/dashboard" className="text-primary font-semibold">
               <span aria-hidden="true" className="absolute inset-0" />
@@ -26,11 +26,11 @@ export default function HeroSection() {
           </div>
         </div>
         <div className="text-center">
-          <h1 className="text-5xl font-semibold tracking-tight text-balance text-zinc-900 antialiased sm:text-7xl dark:text-white">
+          <h1 className="text-5xl font-semibold tracking-tight text-balance text-stone-900 antialiased sm:text-7xl dark:text-white">
             <span className="bg-gradient-to-r from-pink-500 to-rose-600 bg-clip-text text-transparent">FIRE</span> Planning Made{' '}
             <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">Smarter</span>.
           </h1>
-          <p className="mt-8 text-lg font-medium text-pretty text-zinc-500 sm:text-xl/8 dark:text-zinc-300">
+          <p className="mt-8 text-lg font-medium text-pretty text-stone-500 sm:text-xl/8 dark:text-stone-300">
             Explore your financial future with AI-powered simulations.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
@@ -43,13 +43,13 @@ export default function HeroSection() {
       </div>
       <div className="mx-auto max-w-7xl px-6 pb-32 sm:pb-48 lg:px-8 lg:pb-56">
         <div className="mt-16 flow-root sm:mt-24">
-          <div className="-m-2 rounded-xl bg-zinc-900/5 p-2 ring-1 ring-zinc-900/10 ring-inset lg:-m-4 lg:rounded-2xl lg:p-4 dark:bg-white/2.5 dark:ring-white/10">
+          <div className="-m-2 rounded-xl bg-stone-900/5 p-2 ring-1 ring-stone-900/10 ring-inset lg:-m-4 lg:rounded-2xl lg:p-4 dark:bg-white/2.5 dark:ring-white/10">
             <Image
               alt="App screenshot"
               src="/screenshots/simulator-light.webp"
               width={2362}
               height={1328}
-              className="ring-border/50 rounded-md bg-zinc-50 shadow-xl ring-1 dark:hidden"
+              className="ring-border/50 rounded-md bg-stone-50 shadow-xl ring-1 dark:hidden"
               unoptimized
               priority
             />

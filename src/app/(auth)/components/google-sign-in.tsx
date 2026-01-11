@@ -21,16 +21,16 @@ export default function GoogleSignIn({ safeRedirect }: GoogleSignInProps) {
   return (
     <div>
       <div className="mt-10 flex items-center gap-x-6">
-        <div className="w-full flex-1 border-t border-zinc-200 dark:border-white/10" />
-        <p className="text-sm/6 font-medium text-nowrap text-zinc-900 dark:text-white">Or continue with</p>
-        <div className="w-full flex-1 border-t border-zinc-200 dark:border-white/10" />
+        <div className="w-full flex-1 border-t border-stone-200 dark:border-white/10" />
+        <p className="text-sm/6 font-medium text-nowrap text-stone-900 dark:text-white">Or continue with</p>
+        <div className="w-full flex-1 border-t border-stone-200 dark:border-white/10" />
       </div>
 
       <div className="mt-6">
         <button
           onClick={handleGoogleSignIn}
           type="button"
-          className="focus-outline flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-zinc-900 shadow-xs inset-ring inset-ring-zinc-300 hover:bg-zinc-50 focus-visible:inset-ring-transparent dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20"
+          className="focus-outline flex w-full items-center justify-center gap-3 rounded-md bg-white px-3 py-2 text-sm font-semibold text-stone-900 shadow-xs inset-ring inset-ring-stone-300 hover:bg-stone-50 focus-visible:inset-ring-transparent dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
             <path

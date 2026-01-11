@@ -7,7 +7,7 @@ interface BannerProps {
 
 export default function Banner({ setShowBanner }: BannerProps) {
   return (
-    <div className="border-border/25 relative isolate flex items-center gap-x-6 overflow-hidden border-b bg-zinc-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1 dark:bg-zinc-800/50 dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:bottom-0 dark:after:h-px dark:after:bg-white/10">
+    <div className="border-border/25 relative isolate flex items-center gap-x-6 overflow-hidden border-b bg-stone-50 px-6 py-2.5 sm:px-3.5 sm:before:flex-1 dark:bg-stone-800/50 dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:bottom-0 dark:after:h-px dark:after:bg-white/10">
       <div aria-hidden="true" className="absolute top-1/2 left-[max(-7rem,calc(50%-52rem))] -z-10 -translate-y-1/2 transform-gpu blur-2xl">
         <div
           style={{
@@ -26,11 +26,11 @@ export default function Banner({ setShowBanner }: BannerProps) {
           className="aspect-577/310 w-144.25 bg-linear-to-r from-[#ff80b5] to-[#e11d48] opacity-30 dark:opacity-40"
         />
       </div>
-      <p className="text-sm/6 text-zinc-900 dark:text-zinc-100">
+      <p className="text-sm/6 text-stone-900 dark:text-stone-100">
         Beta users receive 50% off their first month when subscriptions launch.{' '}
         <Link
           href="/signup"
-          className="font-semibold whitespace-nowrap text-zinc-900 hover:text-zinc-700 dark:text-white dark:hover:text-zinc-300"
+          className="font-semibold whitespace-nowrap text-stone-900 hover:text-stone-700 dark:text-white dark:hover:text-stone-300"
         >
           Sign up today&nbsp;<span aria-hidden="true">&rarr;</span>
         </Link>
@@ -38,7 +38,7 @@ export default function Banner({ setShowBanner }: BannerProps) {
       <div className="flex flex-1 justify-end">
         <button type="button" className="-m-3 p-3 focus-visible:-outline-offset-4" onClick={() => setShowBanner(false)}>
           <span className="sr-only">Dismiss</span>
-          <XMarkIcon aria-hidden="true" className="size-5 text-zinc-900 dark:text-zinc-100" />
+          <XMarkIcon aria-hidden="true" className="size-5 text-stone-900 dark:text-stone-100" />
         </button>
       </div>
     </div>

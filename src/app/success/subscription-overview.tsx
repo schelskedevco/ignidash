@@ -27,7 +27,7 @@ export default function SubscriptionOverview({ subscription }: SubscriptionOverv
       <div className="flex flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <FireIcon className="text-primary mx-auto h-10 w-auto" />
-          <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-zinc-900 dark:text-white">
+          <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-stone-900 dark:text-white">
             {isFreeTrial ? 'Your Ignidash Pro trial has started!' : 'Welcome to Ignidash Pro!'}
           </h2>
         </div>
@@ -67,7 +67,7 @@ export default function SubscriptionOverview({ subscription }: SubscriptionOverv
           >
             Go to dashboard <span aria-hidden="true">→</span>
           </Link>
-          <p className="mt-10 text-center text-sm/6 text-zinc-500 dark:text-zinc-400">
+          <p className="mt-10 text-center text-sm/6 text-stone-500 dark:text-stone-400">
             Manage your subscription from{' '}
             <Link href="/settings" className="font-semibold text-rose-600 hover:text-rose-500 dark:text-rose-400 dark:hover:text-rose-300">
               Settings
@@ -76,13 +76,13 @@ export default function SubscriptionOverview({ subscription }: SubscriptionOverv
           </p>
         </div>
       </div>
-      <p className="pb-6 text-center text-xs/6 text-zinc-500 dark:text-zinc-400">
+      <p className="pb-6 text-center text-xs/6 text-stone-500 dark:text-stone-400">
         Questions? Read our{' '}
-        <Link href="/terms" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
+        <Link href="/terms" className="underline hover:text-stone-700 dark:hover:text-stone-300">
           Terms of Service
         </Link>{' '}
         and{' '}
-        <Link href="/privacy" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
+        <Link href="/privacy" className="underline hover:text-stone-700 dark:hover:text-stone-300">
           Privacy Policy
         </Link>
         .

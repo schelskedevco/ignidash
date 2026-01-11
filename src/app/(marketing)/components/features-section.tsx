@@ -12,7 +12,7 @@ const sectionHeader = {
   subhead: (
     <>
       With intuitive tools and AI assistance, creating a comprehensive retirement plan you{' '}
-      <span className="text-zinc-700 underline decoration-zinc-300 underline-offset-4 dark:text-zinc-100 dark:decoration-zinc-600">
+      <span className="text-stone-700 underline decoration-stone-300 underline-offset-4 dark:text-stone-100 dark:decoration-stone-600">
         feel confident about
       </span>{' '}
       has never been easier.
@@ -61,19 +61,19 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <div className="bg-white py-24 sm:py-32 dark:bg-zinc-800" id="features">
+    <div className="bg-white py-24 sm:py-32 dark:bg-stone-800" id="features">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2 className="text-base/7 font-semibold text-rose-600 dark:text-rose-400">{sectionHeader.eyebrow}</h2>
-          <p className="mt-2 text-4xl font-semibold tracking-tight text-pretty text-zinc-900 sm:text-5xl dark:text-white">
+          <p className="mt-2 text-4xl font-semibold tracking-tight text-pretty text-stone-900 sm:text-5xl dark:text-white">
             {sectionHeader.headline}
           </p>
-          <p className="mt-6 text-lg/8 text-zinc-700 dark:text-zinc-300">{sectionHeader.subhead}</p>
+          <p className="mt-6 text-lg/8 text-stone-700 dark:text-stone-300">{sectionHeader.subhead}</p>
         </div>
-        <dl className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 text-base/7 text-zinc-600 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:gap-x-16 dark:text-zinc-400">
+        <dl className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 text-base/7 text-stone-600 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-3 lg:gap-x-16 dark:text-stone-400">
           {features.map((feature) => (
             <div key={feature.name} className="relative pl-9">
-              <dt className="inline-flex items-center font-semibold text-zinc-900 dark:text-white">
+              <dt className="inline-flex items-center font-semibold text-stone-900 dark:text-white">
                 <feature.icon aria-hidden="true" className="absolute top-1 left-1 size-5 text-rose-600 dark:text-rose-400" />
                 {feature.name}
                 {feature.status === 'coming-soon' && <Badge className="ml-3">Coming Soon</Badge>}

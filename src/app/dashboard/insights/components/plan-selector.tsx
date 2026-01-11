@@ -30,12 +30,12 @@ function PlanListItem({ plan }: PlanListItemProps) {
   const updateInsightsSelectedPlan = useUpdateInsightsSelectedPlan();
 
   return (
-    <li key={plan._id} className="relative flex items-center space-x-4 px-4 py-4 hover:bg-zinc-50 sm:px-6 lg:px-8 dark:hover:bg-black/10">
+    <li key={plan._id} className="relative flex items-center space-x-4 px-4 py-4 hover:bg-stone-50 sm:px-6 lg:px-8 dark:hover:bg-black/10">
       <div className="min-w-0 flex-auto">
         <div className="flex items-center gap-x-3">
-          <p className="truncate text-sm/6 font-semibold text-zinc-900 dark:text-white">{plan.name}</p>
+          <p className="truncate text-sm/6 font-semibold text-stone-900 dark:text-white">{plan.name}</p>
           {status === 'In progress' ? (
-            <p className="mt-0.5 hidden rounded-md bg-zinc-50 px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-zinc-600 inset-ring inset-ring-zinc-500/10 sm:block dark:bg-zinc-400/10 dark:text-zinc-400 dark:inset-ring-zinc-400/20">
+            <p className="mt-0.5 hidden rounded-md bg-stone-50 px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-stone-600 inset-ring inset-ring-stone-500/10 sm:block dark:bg-stone-400/10 dark:text-stone-400 dark:inset-ring-stone-400/20">
               {status}
             </p>
           ) : null}
@@ -50,7 +50,7 @@ function PlanListItem({ plan }: PlanListItemProps) {
             </p>
           ) : null}
         </div>
-        <div className="mt-1 flex items-center gap-x-2 text-xs/5 text-zinc-500 dark:text-zinc-400">
+        <div className="mt-1 flex items-center gap-x-2 text-xs/5 text-stone-500 dark:text-stone-400">
           <p className="whitespace-nowrap">
             <span className="font-bold">{numInsights}</span> {numInsights === 1 ? 'insight' : 'insights'} generated
           </p>
@@ -92,7 +92,7 @@ export default function PlanSelector({ preloadedPlans }: PlanSelectorProps) {
   const plans = usePreloadedAuthQuery(preloadedPlans);
 
   return (
-    <aside className="border-border/50 -mx-2 border-b sm:-mx-3 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:mx-0 lg:w-96 lg:overflow-y-auto lg:border-b-0 lg:border-l lg:bg-zinc-50 dark:lg:bg-black/10">
+    <aside className="border-border/50 -mx-2 border-b sm:-mx-3 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:mx-0 lg:w-96 lg:overflow-y-auto lg:border-b-0 lg:border-l lg:bg-stone-50 dark:lg:bg-black/10">
       <header className="from-emphasized-background to-background border-border/50 flex items-center justify-between border-b bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
         <Heading level={4}>Plans</Heading>
       </header>

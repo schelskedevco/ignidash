@@ -127,11 +127,11 @@ export default function HelpPage() {
               —I&apos;ll be there, and hopefully by the time you&apos;re reading this, other users will be too!
             </Text>
           </div>
-          <dl className="divide-y divide-zinc-900/10 dark:divide-white/10">
+          <dl className="divide-y divide-stone-900/10 dark:divide-white/10">
             {faqs.map((faq) => (
               <Disclosure key={faq.question} as="div" className="py-6 first:pt-0 last:pb-0">
                 <dt>
-                  <DisclosureButton className="group flex w-full items-start justify-between text-left text-zinc-900 dark:text-white">
+                  <DisclosureButton className="group flex w-full items-start justify-between text-left text-stone-900 dark:text-white">
                     <span className="text-sm/7 font-semibold">{faq.question}</span>
                     <span className="ml-6 flex h-7 items-center">
                       <PlusSmallIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
@@ -140,7 +140,7 @@ export default function HelpPage() {
                   </DisclosureButton>
                 </dt>
                 <DisclosurePanel as="dd" className="mt-2 pr-12">
-                  <p className="text-sm/7 text-zinc-600 dark:text-zinc-400">{faq.answer}</p>
+                  <p className="text-sm/7 text-stone-600 dark:text-stone-400">{faq.answer}</p>
                 </DisclosurePanel>
               </Disclosure>
             ))}

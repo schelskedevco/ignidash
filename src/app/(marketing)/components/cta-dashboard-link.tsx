@@ -13,7 +13,7 @@ export default function CTADashboardLink() {
   const [isLoading, setIsLoading] = useState(false);
 
   const className =
-    'rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-zinc-900 shadow-xs hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring dark:inset-ring-white/5 dark:hover:bg-white/15 dark:focus-visible:outline-white';
+    'rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-stone-900 shadow-xs hover:bg-stone-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring dark:inset-ring-white/5 dark:hover:bg-white/15 dark:focus-visible:outline-white';
 
   if (isLoading) {
     return (

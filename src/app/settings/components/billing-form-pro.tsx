@@ -57,7 +57,7 @@ export default function BillingFormPro({ subscriptions }: BillingFormProProps) {
             {activeSubscriptions.length > 0 ? (
               <Badge color="green">{activeSubscriptions[0].status === 'active' ? 'Active' : 'Free trial'}</Badge>
             ) : (
-              <Badge color="zinc">Inactive</Badge>
+              <Badge color="stone">Inactive</Badge>
             )}
             {cancelAtTime && <Badge color="red">Cancels at {new Date(cancelAtTime * 1000).toLocaleDateString()}</Badge>}
           </Legend>

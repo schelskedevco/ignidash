@@ -108,12 +108,12 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
 
   return (
     <>
-      <aside className="border-border/50 -mx-2 border-t sm:-mx-3 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:mx-0 lg:w-96 lg:overflow-y-auto lg:border-t-0 lg:border-l lg:bg-zinc-50 dark:lg:bg-black/10">
+      <aside className="border-border/50 -mx-2 border-t sm:-mx-3 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:mx-0 lg:w-96 lg:overflow-y-auto lg:border-t-0 lg:border-l lg:bg-stone-50 dark:lg:bg-black/10">
         <header className="from-emphasized-background to-background border-border/50 flex items-center justify-between border-b bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
           <div className="flex w-full items-center gap-3">
             <Tooltip>
               <TooltipTrigger>
-                <Heading level={4} className="underline decoration-zinc-300 underline-offset-4 dark:decoration-zinc-600">
+                <Heading level={4} className="underline decoration-stone-300 underline-offset-4 dark:decoration-stone-600">
                   NW Tracker
                 </Heading>
               </TooltipTrigger>
@@ -154,7 +154,7 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                 <Subheading level={5} className="font-medium">
                   Assets
                 </Subheading>
-                <span className="text-base/7 font-bold text-zinc-950 sm:text-sm/6 dark:text-white">
+                <span className="text-base/7 font-bold text-stone-950 sm:text-sm/6 dark:text-white">
                   {formatNumber(totalAssets, 0, '$')}
                 </span>
               </div>
@@ -187,7 +187,7 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                 <Subheading level={5} className="font-medium">
                   Liabilities
                 </Subheading>
-                <span className="text-base/7 font-bold text-zinc-950 sm:text-sm/6 dark:text-white">
+                <span className="text-base/7 font-bold text-stone-950 sm:text-sm/6 dark:text-white">
                   {formatNumber(totalLiabilities, 0, '$')}
                 </span>
               </div>

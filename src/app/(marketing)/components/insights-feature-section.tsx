@@ -4,25 +4,25 @@ export default function InsightsFeatureSection() {
   return (
     <div className="overflow-hidden py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <p className="max-w-2xl text-5xl font-semibold tracking-tight text-pretty text-zinc-900 sm:text-6xl sm:text-balance dark:text-white">
+        <p className="max-w-2xl text-5xl font-semibold tracking-tight text-pretty text-stone-900 sm:text-6xl sm:text-balance dark:text-white">
           A <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">full breakdown</span> of what
           matters.
         </p>
-        <p className="mt-6 max-w-xl text-lg/8 text-pretty text-zinc-700 dark:text-zinc-300">
+        <p className="mt-6 max-w-xl text-lg/8 text-pretty text-stone-700 dark:text-stone-300">
           AI-generated insights explain how{' '}
-          <span className="text-zinc-700 underline decoration-zinc-300 underline-offset-4 dark:text-zinc-100 dark:decoration-zinc-600">
+          <span className="text-stone-700 underline decoration-stone-300 underline-offset-4 dark:text-stone-100 dark:decoration-stone-600">
             taxes
           </span>
           ,{' '}
-          <span className="text-zinc-700 underline decoration-zinc-300 underline-offset-4 dark:text-zinc-100 dark:decoration-zinc-600">
+          <span className="text-stone-700 underline decoration-stone-300 underline-offset-4 dark:text-stone-100 dark:decoration-stone-600">
             RMDs
           </span>
           ,{' '}
-          <span className="text-zinc-700 underline decoration-zinc-300 underline-offset-4 dark:text-zinc-100 dark:decoration-zinc-600">
+          <span className="text-stone-700 underline decoration-stone-300 underline-offset-4 dark:text-stone-100 dark:decoration-stone-600">
             Roth conversions
           </span>
           ,{' '}
-          <span className="text-zinc-700 underline decoration-zinc-300 underline-offset-4 dark:text-zinc-100 dark:decoration-zinc-600">
+          <span className="text-stone-700 underline decoration-stone-300 underline-offset-4 dark:text-stone-100 dark:decoration-stone-600">
             withdrawal strategies
           </span>
           , and more affect your results.

@@ -130,7 +130,7 @@ function ChatMessage({ message, image }: ChatMessageProps) {
       >
         <div className="space-y-2">
           <div
-            className={cn('prose prose-sm prose-zinc max-w-none', {
+            className={cn('prose prose-sm prose-stone max-w-none', {
               'prose-invert': (resolvedTheme === 'dark' && !isUser) || (resolvedTheme === 'light' && isUser),
             })}
           >
@@ -190,8 +190,8 @@ function ConversationListItem({ conversation, selectedConversationId, setSelecte
   return (
     <li
       key={conversation._id}
-      className={cn('relative flex items-center space-x-4 px-2 py-4 hover:bg-zinc-100 dark:hover:bg-black/15', {
-        'bg-zinc-100 dark:bg-black/15': conversation._id === selectedConversationId,
+      className={cn('relative flex items-center space-x-4 px-2 py-4 hover:bg-stone-100 dark:hover:bg-black/15', {
+        'bg-stone-100 dark:bg-black/15': conversation._id === selectedConversationId,
       })}
     >
       <button
@@ -204,7 +204,7 @@ function ConversationListItem({ conversation, selectedConversationId, setSelecte
         <div className="flex items-center gap-x-3">
           <p
             className={cn(
-              'truncate text-sm font-semibold text-zinc-900 dark:text-white',
+              'truncate text-sm font-semibold text-stone-900 dark:text-white',
               'relative after:absolute after:bottom-0 after:left-0 after:h-[1px] after:bg-current/80',
               'after:w-0 after:transition-all after:duration-300 after:ease-in-out',
               conversation._id === selectedConversationId && 'after:w-full'
@@ -213,7 +213,7 @@ function ConversationListItem({ conversation, selectedConversationId, setSelecte
             {conversation.title}
           </p>
         </div>
-        <div className="mt-1 flex items-center gap-x-2 text-xs text-zinc-500 dark:text-zinc-400">
+        <div className="mt-1 flex items-center gap-x-2 text-xs text-stone-500 dark:text-stone-400">
           <p className="whitespace-nowrap">
             Created{' '}
             <time dateTime={new Date(conversation._creationTime).toISOString()}>
@@ -333,7 +333,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
   return (
     <>
       <aside className="hidden md:fixed md:top-[4.8125rem] md:bottom-0 md:-mx-3 md:flex md:w-64 md:flex-col">
-        <div className="border-border/50 flex h-full flex-col border-r bg-zinc-50 dark:bg-black/10">
+        <div className="border-border/50 flex h-full flex-col border-r bg-stone-50 dark:bg-black/10">
           <ul className="divide-border/25 flex-1 divide-y overflow-y-auto">
             <Subheading level={3} className="px-4 py-3">
               Recent Chats
@@ -373,7 +373,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
         {selectedConversationId && (
           <div className="border-border/50 from-emphasized-background to-background -mx-2 block border-b bg-gradient-to-l sm:-mx-3 md:hidden">
             <div className="flex items-center justify-between gap-2 px-3 py-2">
-              <h3 className="truncate text-sm font-semibold text-zinc-900 dark:text-white">{selectedConversation?.title || 'Chat'}</h3>
+              <h3 className="truncate text-sm font-semibold text-stone-900 dark:text-white">{selectedConversation?.title || 'Chat'}</h3>
               <Button
                 outline
                 onClick={() => {
@@ -393,7 +393,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
               <div className="absolute inset-0 flex h-full flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
                 <div className="mx-auto w-full max-w-md">
                   <FireIcon className="text-primary mx-auto h-10 w-auto" />
-                  <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-zinc-900 dark:text-white">Your AI Assistant</h2>
+                  <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-stone-900 dark:text-white">Your AI Assistant</h2>
                   <p className="text-muted-foreground mt-2 text-sm/6">
                     The AI assistant is for educational purposes only and does not provide professional financial advice. Read our{' '}
                     <Link href="/terms" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">

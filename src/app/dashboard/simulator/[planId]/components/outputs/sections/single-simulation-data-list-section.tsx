@@ -18,7 +18,7 @@ function NetPortfolioChangeTooltip() {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
+        <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
         <p>Calculated as annual returns plus contributions, minus withdrawals.</p>
@@ -31,7 +31,7 @@ function NetCashFlowTooltip() {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
+        <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
         <p>Earned income, employer match, tax-exempt income, and Social Security, minus taxes and expenses.</p>
@@ -45,7 +45,7 @@ function SavingsRateTooltip() {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
+        <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
         <p>The percentage of after-tax income that you save rather than spend.</p>
@@ -59,7 +59,7 @@ function GrossIncomeTooltip() {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
+        <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
         <p>Total taxable income before adjustments and deductions.</p>
@@ -73,7 +73,7 @@ function TotalIncomeTooltip() {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
+        <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
         <p>Gross income plus tax-exempt income and the non-taxable portion of Social Security.</p>
@@ -87,7 +87,7 @@ function WithdrawalRateTooltip() {
   return (
     <Tooltip>
       <TooltipTrigger>
-        <InfoIcon className="size-4 fill-white dark:fill-zinc-950" />
+        <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
         <p>The percentage of your total portfolio value that you withdraw annually.</p>

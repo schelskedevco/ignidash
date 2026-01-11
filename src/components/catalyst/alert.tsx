@@ -34,7 +34,7 @@ export function Alert({
     <Dialog {...props} className="relative z-50">
       <DialogBackdrop
         transition
-        className="fixed inset-0 flex w-screen justify-center overflow-y-auto bg-zinc-100/75 px-2 py-2 transition duration-100 focus:outline-0 data-closed:opacity-0 data-enter:ease-out data-leave:ease-in sm:px-6 sm:py-8 lg:px-8 lg:py-16 dark:bg-zinc-900/75"
+        className="fixed inset-0 flex w-screen justify-center overflow-y-auto bg-stone-100/75 px-2 py-2 transition duration-100 focus:outline-0 data-closed:opacity-0 data-enter:ease-out data-leave:ease-in sm:px-6 sm:py-8 lg:px-8 lg:py-16 dark:bg-stone-900/75"
       />
 
       <div className="fixed inset-0 w-screen overflow-y-auto pt-6 sm:pt-0">
@@ -62,7 +62,7 @@ export function AlertTitle({ className, ...props }: { className?: string } & Omi
       {...props}
       className={clsx(
         className,
-        'text-center text-base/6 font-semibold text-balance text-zinc-950 sm:text-left sm:text-sm/6 sm:text-wrap dark:text-white'
+        'text-center text-base/6 font-semibold text-balance text-stone-950 sm:text-left sm:text-sm/6 sm:text-wrap dark:text-white'
       )}
     />
   );

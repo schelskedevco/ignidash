@@ -41,25 +41,25 @@ export function SwitchField({ className, ...props }: { className?: string } & Om
 }
 
 const colors = {
-  'dark/zinc': [
-    '[--switch-bg-ring:var(--color-zinc-950)]/90 [--switch-bg:var(--color-zinc-900)] dark:[--switch-bg-ring:transparent] dark:[--switch-bg:var(--color-white)]/25',
-    '[--switch-ring:var(--color-zinc-950)]/90 [--switch-shadow:var(--color-black)]/10 [--switch:white] dark:[--switch-ring:var(--color-zinc-700)]/90',
+  'dark/stone': [
+    '[--switch-bg-ring:var(--color-stone-950)]/90 [--switch-bg:var(--color-stone-900)] dark:[--switch-bg-ring:transparent] dark:[--switch-bg:var(--color-white)]/25',
+    '[--switch-ring:var(--color-stone-950)]/90 [--switch-shadow:var(--color-black)]/10 [--switch:white] dark:[--switch-ring:var(--color-stone-700)]/90',
   ],
   'dark/white': [
-    '[--switch-bg-ring:var(--color-zinc-950)]/90 [--switch-bg:var(--color-zinc-900)] dark:[--switch-bg-ring:transparent] dark:[--switch-bg:var(--color-white)]',
-    '[--switch-ring:var(--color-zinc-950)]/90 [--switch-shadow:var(--color-black)]/10 [--switch:white] dark:[--switch-ring:transparent] dark:[--switch:var(--color-zinc-900)]',
+    '[--switch-bg-ring:var(--color-stone-950)]/90 [--switch-bg:var(--color-stone-900)] dark:[--switch-bg-ring:transparent] dark:[--switch-bg:var(--color-white)]',
+    '[--switch-ring:var(--color-stone-950)]/90 [--switch-shadow:var(--color-black)]/10 [--switch:white] dark:[--switch-ring:transparent] dark:[--switch:var(--color-stone-900)]',
   ],
   dark: [
-    '[--switch-bg-ring:var(--color-zinc-950)]/90 [--switch-bg:var(--color-zinc-900)] dark:[--switch-bg-ring:var(--color-white)]/15',
-    '[--switch-ring:var(--color-zinc-950)]/90 [--switch-shadow:var(--color-black)]/10 [--switch:white]',
+    '[--switch-bg-ring:var(--color-stone-950)]/90 [--switch-bg:var(--color-stone-900)] dark:[--switch-bg-ring:var(--color-white)]/15',
+    '[--switch-ring:var(--color-stone-950)]/90 [--switch-shadow:var(--color-black)]/10 [--switch:white]',
   ],
-  zinc: [
-    '[--switch-bg-ring:var(--color-zinc-700)]/90 [--switch-bg:var(--color-zinc-600)] dark:[--switch-bg-ring:transparent]',
-    '[--switch-shadow:var(--color-black)]/10 [--switch:white] [--switch-ring:var(--color-zinc-700)]/90',
+  stone: [
+    '[--switch-bg-ring:var(--color-stone-700)]/90 [--switch-bg:var(--color-stone-600)] dark:[--switch-bg-ring:transparent]',
+    '[--switch-shadow:var(--color-black)]/10 [--switch:white] [--switch-ring:var(--color-stone-700)]/90',
   ],
   white: [
     '[--switch-bg-ring:var(--color-black)]/15 [--switch-bg:white] dark:[--switch-bg-ring:transparent]',
-    '[--switch-shadow:var(--color-black)]/10 [--switch-ring:transparent] [--switch:var(--color-zinc-950)]',
+    '[--switch-shadow:var(--color-black)]/10 [--switch-ring:transparent] [--switch:var(--color-stone-950)]',
   ],
   red: [
     '[--switch-bg-ring:var(--color-red-700)]/90 [--switch-bg:var(--color-red-600)] dark:[--switch-bg-ring:transparent]',
@@ -134,7 +134,7 @@ const colors = {
 type Color = keyof typeof colors;
 
 export function Switch({
-  color = 'dark/zinc',
+  color = 'dark/stone',
   className,
   ...props
 }: {
@@ -154,7 +154,7 @@ export function Switch({
         // Outline and background color in forced-colors mode so switch is still visible
         'forced-colors:outline forced-colors:[--switch-bg:Highlight] dark:forced-colors:[--switch-bg:Highlight]',
         // Unchecked
-        'bg-zinc-200 ring-1 ring-black/5 ring-inset dark:bg-white/5 dark:ring-white/15',
+        'bg-stone-200 ring-1 ring-black/5 ring-inset dark:bg-white/5 dark:ring-white/15',
         // Checked
         'data-checked:bg-(--switch-bg) data-checked:ring-(--switch-bg-ring) dark:data-checked:bg-(--switch-bg) dark:data-checked:ring-(--switch-bg-ring)',
         // Focus
@@ -163,7 +163,7 @@ export function Switch({
         'data-hover:ring-black/15 data-hover:data-checked:ring-(--switch-bg-ring)',
         'dark:data-hover:ring-white/25 dark:data-hover:data-checked:ring-(--switch-bg-ring)',
         // Disabled
-        'data-disabled:bg-zinc-200 data-disabled:opacity-50 data-disabled:data-checked:bg-zinc-200 data-disabled:data-checked:ring-black/5',
+        'data-disabled:bg-stone-200 data-disabled:opacity-50 data-disabled:data-checked:bg-stone-200 data-disabled:data-checked:ring-black/5',
         'dark:data-disabled:bg-white/15 dark:data-disabled:data-checked:bg-white/15 dark:data-disabled:data-checked:ring-white/15',
         // Color specific styles
         colors[color]

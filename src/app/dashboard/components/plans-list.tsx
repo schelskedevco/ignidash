@@ -57,12 +57,12 @@ function PlanListItem({
   const { disableEdit, disableClone, disableDelete } = disableActions;
 
   return (
-    <li key={plan._id} className="relative flex items-center space-x-4 px-4 py-4 hover:bg-zinc-50 sm:px-6 lg:px-8 dark:hover:bg-black/10">
+    <li key={plan._id} className="relative flex items-center space-x-4 px-4 py-4 hover:bg-stone-50 sm:px-6 lg:px-8 dark:hover:bg-black/10">
       <div className="min-w-0 flex-auto">
         <div className="flex items-center gap-x-3">
-          <p className="truncate text-sm/6 font-semibold text-zinc-900 dark:text-white">{plan.name}</p>
+          <p className="truncate text-sm/6 font-semibold text-stone-900 dark:text-white">{plan.name}</p>
           {status === 'In progress' ? (
-            <p className="mt-0.5 hidden rounded-md bg-zinc-50 px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-zinc-600 inset-ring inset-ring-zinc-500/10 sm:block dark:bg-zinc-400/10 dark:text-zinc-400 dark:inset-ring-zinc-400/20">
+            <p className="mt-0.5 hidden rounded-md bg-stone-50 px-1.5 py-0.5 text-xs font-medium whitespace-nowrap text-stone-600 inset-ring inset-ring-stone-500/10 sm:block dark:bg-stone-400/10 dark:text-stone-400 dark:inset-ring-stone-400/20">
               {status}
             </p>
           ) : null}
@@ -77,7 +77,7 @@ function PlanListItem({
             </p>
           ) : null}
         </div>
-        <div className="mt-1 flex items-center gap-x-2 text-xs/5 text-zinc-500 dark:text-zinc-400">
+        <div className="mt-1 flex items-center gap-x-2 text-xs/5 text-stone-500 dark:text-stone-400">
           <p className="whitespace-nowrap">
             Created <time dateTime={new Date(plan._creationTime).toISOString()}>{new Date(plan._creationTime).toLocaleDateString()}</time>
           </p>

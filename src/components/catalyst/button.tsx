@@ -42,50 +42,50 @@ const styles = {
   ],
   outline: [
     // Base
-    'border-border/50 text-zinc-950 data-active:bg-zinc-950/2.5 data-hover:bg-zinc-950/2.5',
+    'border-border/50 text-stone-950 data-active:bg-stone-950/2.5 data-hover:bg-stone-950/2.5',
     // Dark mode
     'dark:text-white dark:[--btn-bg:transparent] dark:data-active:bg-white/5 dark:data-hover:bg-white/5',
     // Icon
-    '[--btn-icon:var(--color-zinc-500)] data-active:[--btn-icon:var(--color-zinc-700)] data-hover:[--btn-icon:var(--color-zinc-700)] dark:data-active:[--btn-icon:var(--color-zinc-400)] dark:data-hover:[--btn-icon:var(--color-zinc-400)]',
+    '[--btn-icon:var(--color-stone-500)] data-active:[--btn-icon:var(--color-stone-700)] data-hover:[--btn-icon:var(--color-stone-700)] dark:data-active:[--btn-icon:var(--color-stone-400)] dark:data-hover:[--btn-icon:var(--color-stone-400)]',
   ],
   plain: [
     // Base
-    'border-transparent text-zinc-950 data-active:bg-zinc-950/5 data-hover:bg-zinc-950/5',
+    'border-transparent text-stone-950 data-active:bg-stone-950/5 data-hover:bg-stone-950/5',
     // Dark mode
     'dark:text-white dark:data-active:bg-white/10 dark:data-hover:bg-white/10',
     // Icon
-    '[--btn-icon:var(--color-zinc-500)] data-active:[--btn-icon:var(--color-zinc-700)] data-hover:[--btn-icon:var(--color-zinc-700)] dark:[--btn-icon:var(--color-zinc-500)] dark:data-active:[--btn-icon:var(--color-zinc-400)] dark:data-hover:[--btn-icon:var(--color-zinc-400)]',
+    '[--btn-icon:var(--color-stone-500)] data-active:[--btn-icon:var(--color-stone-700)] data-hover:[--btn-icon:var(--color-stone-700)] dark:[--btn-icon:var(--color-stone-500)] dark:data-active:[--btn-icon:var(--color-stone-400)] dark:data-hover:[--btn-icon:var(--color-stone-400)]',
   ],
   colors: {
-    'dark/zinc': [
-      'text-white [--btn-bg:var(--color-zinc-900)] [--btn-border:var(--color-zinc-950)]/90 [--btn-hover-overlay:var(--color-white)]/10',
-      'dark:text-white dark:[--btn-bg:var(--color-zinc-600)] dark:[--btn-hover-overlay:var(--color-white)]/5',
-      '[--btn-icon:var(--color-zinc-400)] data-active:[--btn-icon:var(--color-zinc-300)] data-hover:[--btn-icon:var(--color-zinc-300)]',
+    'dark/stone': [
+      'text-white [--btn-bg:var(--color-stone-900)] [--btn-border:var(--color-stone-950)]/90 [--btn-hover-overlay:var(--color-white)]/10',
+      'dark:text-white dark:[--btn-bg:var(--color-stone-600)] dark:[--btn-hover-overlay:var(--color-white)]/5',
+      '[--btn-icon:var(--color-stone-400)] data-active:[--btn-icon:var(--color-stone-300)] data-hover:[--btn-icon:var(--color-stone-300)]',
     ],
     light: [
-      'text-zinc-950 [--btn-bg:white] [--btn-border:var(--color-zinc-950)]/10 [--btn-hover-overlay:var(--color-zinc-950)]/2.5 data-active:[--btn-border:var(--color-zinc-950)]/15 data-hover:[--btn-border:var(--color-zinc-950)]/15',
-      'dark:text-white dark:[--btn-hover-overlay:var(--color-white)]/5 dark:[--btn-bg:var(--color-zinc-800)]',
-      '[--btn-icon:var(--color-zinc-500)] data-active:[--btn-icon:var(--color-zinc-700)] data-hover:[--btn-icon:var(--color-zinc-700)] dark:[--btn-icon:var(--color-zinc-500)] dark:data-active:[--btn-icon:var(--color-zinc-400)] dark:data-hover:[--btn-icon:var(--color-zinc-400)]',
+      'text-stone-950 [--btn-bg:white] [--btn-border:var(--color-stone-950)]/10 [--btn-hover-overlay:var(--color-stone-950)]/2.5 data-active:[--btn-border:var(--color-stone-950)]/15 data-hover:[--btn-border:var(--color-stone-950)]/15',
+      'dark:text-white dark:[--btn-hover-overlay:var(--color-white)]/5 dark:[--btn-bg:var(--color-stone-800)]',
+      '[--btn-icon:var(--color-stone-500)] data-active:[--btn-icon:var(--color-stone-700)] data-hover:[--btn-icon:var(--color-stone-700)] dark:[--btn-icon:var(--color-stone-500)] dark:data-active:[--btn-icon:var(--color-stone-400)] dark:data-hover:[--btn-icon:var(--color-stone-400)]',
     ],
     'dark/white': [
-      'text-white [--btn-bg:var(--color-zinc-900)] [--btn-border:var(--color-zinc-950)]/90 [--btn-hover-overlay:var(--color-white)]/10',
-      'dark:text-zinc-950 dark:[--btn-bg:white] dark:[--btn-hover-overlay:var(--color-zinc-950)]/5',
-      '[--btn-icon:var(--color-zinc-400)] data-active:[--btn-icon:var(--color-zinc-300)] data-hover:[--btn-icon:var(--color-zinc-300)] dark:[--btn-icon:var(--color-zinc-500)] dark:data-active:[--btn-icon:var(--color-zinc-400)] dark:data-hover:[--btn-icon:var(--color-zinc-400)]',
+      'text-white [--btn-bg:var(--color-stone-900)] [--btn-border:var(--color-stone-950)]/90 [--btn-hover-overlay:var(--color-white)]/10',
+      'dark:text-stone-950 dark:[--btn-bg:white] dark:[--btn-hover-overlay:var(--color-stone-950)]/5',
+      '[--btn-icon:var(--color-stone-400)] data-active:[--btn-icon:var(--color-stone-300)] data-hover:[--btn-icon:var(--color-stone-300)] dark:[--btn-icon:var(--color-stone-500)] dark:data-active:[--btn-icon:var(--color-stone-400)] dark:data-hover:[--btn-icon:var(--color-stone-400)]',
     ],
     dark: [
-      'text-white [--btn-bg:var(--color-zinc-900)] [--btn-border:var(--color-zinc-950)]/90 [--btn-hover-overlay:var(--color-white)]/10',
-      'dark:[--btn-hover-overlay:var(--color-white)]/5 dark:[--btn-bg:var(--color-zinc-800)]',
-      '[--btn-icon:var(--color-zinc-400)] data-active:[--btn-icon:var(--color-zinc-300)] data-hover:[--btn-icon:var(--color-zinc-300)]',
+      'text-white [--btn-bg:var(--color-stone-900)] [--btn-border:var(--color-stone-950)]/90 [--btn-hover-overlay:var(--color-white)]/10',
+      'dark:[--btn-hover-overlay:var(--color-white)]/5 dark:[--btn-bg:var(--color-stone-800)]',
+      '[--btn-icon:var(--color-stone-400)] data-active:[--btn-icon:var(--color-stone-300)] data-hover:[--btn-icon:var(--color-stone-300)]',
     ],
     white: [
-      'text-zinc-950 [--btn-bg:white] [--btn-border:var(--color-zinc-950)]/10 [--btn-hover-overlay:var(--color-zinc-950)]/2.5 data-active:[--btn-border:var(--color-zinc-950)]/15 data-hover:[--btn-border:var(--color-zinc-950)]/15',
-      'dark:[--btn-hover-overlay:var(--color-zinc-950)]/5',
-      '[--btn-icon:var(--color-zinc-400)] data-active:[--btn-icon:var(--color-zinc-500)] data-hover:[--btn-icon:var(--color-zinc-500)]',
+      'text-stone-950 [--btn-bg:white] [--btn-border:var(--color-stone-950)]/10 [--btn-hover-overlay:var(--color-stone-950)]/2.5 data-active:[--btn-border:var(--color-stone-950)]/15 data-hover:[--btn-border:var(--color-stone-950)]/15',
+      'dark:[--btn-hover-overlay:var(--color-stone-950)]/5',
+      '[--btn-icon:var(--color-stone-400)] data-active:[--btn-icon:var(--color-stone-500)] data-hover:[--btn-icon:var(--color-stone-500)]',
     ],
-    zinc: [
-      'text-white [--btn-hover-overlay:var(--color-white)]/10 [--btn-bg:var(--color-zinc-600)] [--btn-border:var(--color-zinc-700)]/90',
+    stone: [
+      'text-white [--btn-hover-overlay:var(--color-white)]/10 [--btn-bg:var(--color-stone-600)] [--btn-border:var(--color-stone-700)]/90',
       'dark:[--btn-hover-overlay:var(--color-white)]/5',
-      '[--btn-icon:var(--color-zinc-400)] data-active:[--btn-icon:var(--color-zinc-300)] data-hover:[--btn-icon:var(--color-zinc-300)]',
+      '[--btn-icon:var(--color-stone-400)] data-active:[--btn-icon:var(--color-stone-300)] data-hover:[--btn-icon:var(--color-stone-300)]',
     ],
     indigo: [
       'text-white [--btn-hover-overlay:var(--color-white)]/10 [--btn-bg:var(--color-indigo-500)] [--btn-border:var(--color-indigo-600)]/90',
@@ -174,7 +174,7 @@ export const Button = forwardRef(function Button(
   const classes = cn(
     styles.base,
     className,
-    outline ? styles.outline : plain ? styles.plain : cn(styles.solid, styles.colors[color ?? 'dark/zinc'])
+    outline ? styles.outline : plain ? styles.plain : cn(styles.solid, styles.colors[color ?? 'dark/stone'])
   );
 
   return 'href' in props ? (

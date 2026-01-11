@@ -23,14 +23,14 @@ export default function SuccessNotification({ title, desc, setShow, show }: Succ
                   <CheckCircleIcon aria-hidden="true" className="size-6 text-green-400" />
                 </div>
                 <div className="ml-3 w-0 flex-1 pt-0.5">
-                  <p className="text-sm font-medium text-zinc-900 dark:text-white">{title}</p>
-                  <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{desc}</p>
+                  <p className="text-sm font-medium text-stone-900 dark:text-white">{title}</p>
+                  <p className="mt-1 text-sm text-stone-500 dark:text-stone-400">{desc}</p>
                 </div>
                 <div className="ml-4 flex shrink-0">
                   <button
                     type="button"
                     onClick={() => setShow(false)}
-                    className="inline-flex rounded-md text-zinc-400 hover:text-zinc-500 focus:outline-2 focus:outline-offset-2 focus:outline-rose-600 dark:hover:text-white dark:focus:outline-rose-500"
+                    className="inline-flex rounded-md text-stone-400 hover:text-stone-500 focus:outline-2 focus:outline-offset-2 focus:outline-rose-600 dark:hover:text-white dark:focus:outline-rose-500"
                   >
                     <span className="sr-only">Close</span>
                     <XMarkIcon aria-hidden="true" className="size-5" />

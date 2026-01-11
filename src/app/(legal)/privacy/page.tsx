@@ -926,98 +926,98 @@ export default function PrivacyPage() {
             &quot;
           </p>
           <div className="mb-4 overflow-x-auto">
-            <table className="bg-background min-w-full border-collapse border border-zinc-300">
+            <table className="bg-background min-w-full border-collapse border border-stone-300">
               <thead>
                 <tr>
-                  <th className="border border-zinc-300 px-4 py-2 text-left">Category</th>
-                  <th className="border border-zinc-300 px-4 py-2 text-left">Examples</th>
-                  <th className="border border-zinc-300 px-4 py-2 text-left">Collected</th>
+                  <th className="border border-stone-300 px-4 py-2 text-left">Category</th>
+                  <th className="border border-stone-300 px-4 py-2 text-left">Examples</th>
+                  <th className="border border-stone-300 px-4 py-2 text-left">Collected</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">A. Identifiers</td>
-                  <td className="border border-zinc-300 px-4 py-2">
+                  <td className="border border-stone-300 px-4 py-2">A. Identifiers</td>
+                  <td className="border border-stone-300 px-4 py-2">
                     Contact details, such as real name, alias, postal address, telephone or mobile contact number, unique personal
                     identifier, online identifier, Internet Protocol address, email address, and account name
                   </td>
-                  <td className="border border-zinc-300 px-4 py-2">YES</td>
+                  <td className="border border-stone-300 px-4 py-2">YES</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">
+                  <td className="border border-stone-300 px-4 py-2">
                     B. Personal information as defined in the California Customer Records statute
                   </td>
-                  <td className="border border-zinc-300 px-4 py-2">
+                  <td className="border border-stone-300 px-4 py-2">
                     Name, contact information, education, employment, employment history, and financial information
                   </td>
-                  <td className="border border-zinc-300 px-4 py-2">YES</td>
+                  <td className="border border-stone-300 px-4 py-2">YES</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">
+                  <td className="border border-stone-300 px-4 py-2">
                     C. Protected classification characteristics under state or federal law
                   </td>
-                  <td className="border border-zinc-300 px-4 py-2">
+                  <td className="border border-stone-300 px-4 py-2">
                     Gender, age, date of birth, race and ethnicity, national origin, marital status, and other demographic data
                   </td>
-                  <td className="border border-zinc-300 px-4 py-2">YES</td>
+                  <td className="border border-stone-300 px-4 py-2">YES</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">D. Commercial information</td>
-                  <td className="border border-zinc-300 px-4 py-2">
+                  <td className="border border-stone-300 px-4 py-2">D. Commercial information</td>
+                  <td className="border border-stone-300 px-4 py-2">
                     Transaction information, purchase history, financial details, and payment information
                   </td>
-                  <td className="border border-zinc-300 px-4 py-2">YES</td>
+                  <td className="border border-stone-300 px-4 py-2">YES</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">E. Biometric information</td>
-                  <td className="border border-zinc-300 px-4 py-2">Fingerprints and voiceprints</td>
-                  <td className="border border-zinc-300 px-4 py-2">NO</td>
+                  <td className="border border-stone-300 px-4 py-2">E. Biometric information</td>
+                  <td className="border border-stone-300 px-4 py-2">Fingerprints and voiceprints</td>
+                  <td className="border border-stone-300 px-4 py-2">NO</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">F. Internet or other similar network activity</td>
-                  <td className="border border-zinc-300 px-4 py-2">
+                  <td className="border border-stone-300 px-4 py-2">F. Internet or other similar network activity</td>
+                  <td className="border border-stone-300 px-4 py-2">
                     Browsing history, search history, online behavior, interest data, and interactions with our and other websites,
                     applications, systems, and advertisements
                   </td>
-                  <td className="border border-zinc-300 px-4 py-2">NO</td>
+                  <td className="border border-stone-300 px-4 py-2">NO</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">G. Geolocation data</td>
-                  <td className="border border-zinc-300 px-4 py-2">Device location</td>
-                  <td className="border border-zinc-300 px-4 py-2">NO</td>
+                  <td className="border border-stone-300 px-4 py-2">G. Geolocation data</td>
+                  <td className="border border-stone-300 px-4 py-2">Device location</td>
+                  <td className="border border-stone-300 px-4 py-2">NO</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">H. Audio, electronic, sensory, or similar information</td>
-                  <td className="border border-zinc-300 px-4 py-2">
+                  <td className="border border-stone-300 px-4 py-2">H. Audio, electronic, sensory, or similar information</td>
+                  <td className="border border-stone-300 px-4 py-2">
                     Images and audio, video or call recordings created in connection with our business activities
                   </td>
-                  <td className="border border-zinc-300 px-4 py-2">NO</td>
+                  <td className="border border-stone-300 px-4 py-2">NO</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">I. Professional or employment-related information</td>
-                  <td className="border border-zinc-300 px-4 py-2">
+                  <td className="border border-stone-300 px-4 py-2">I. Professional or employment-related information</td>
+                  <td className="border border-stone-300 px-4 py-2">
                     Business contact details in order to provide you our Services at a business level or job title, work history, and
                     professional qualifications if you apply for a job with us
                   </td>
-                  <td className="border border-zinc-300 px-4 py-2">YES</td>
+                  <td className="border border-stone-300 px-4 py-2">YES</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">J. Education Information</td>
-                  <td className="border border-zinc-300 px-4 py-2">Student records and directory information</td>
-                  <td className="border border-zinc-300 px-4 py-2">NO</td>
+                  <td className="border border-stone-300 px-4 py-2">J. Education Information</td>
+                  <td className="border border-stone-300 px-4 py-2">Student records and directory information</td>
+                  <td className="border border-stone-300 px-4 py-2">NO</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">K. Inferences drawn from collected personal information</td>
-                  <td className="border border-zinc-300 px-4 py-2">
+                  <td className="border border-stone-300 px-4 py-2">K. Inferences drawn from collected personal information</td>
+                  <td className="border border-stone-300 px-4 py-2">
                     Inferences drawn from any of the collected personal information listed above to create a profile or summary about, for
                     example, an individual&apos;s preferences and characteristics
                   </td>
-                  <td className="border border-zinc-300 px-4 py-2">NO</td>
+                  <td className="border border-stone-300 px-4 py-2">NO</td>
                 </tr>
                 <tr>
-                  <td className="border border-zinc-300 px-4 py-2">L. Sensitive personal Information</td>
-                  <td className="border border-zinc-300 px-4 py-2">Account login information</td>
-                  <td className="border border-zinc-300 px-4 py-2">YES</td>
+                  <td className="border border-stone-300 px-4 py-2">L. Sensitive personal Information</td>
+                  <td className="border border-stone-300 px-4 py-2">Account login information</td>
+                  <td className="border border-stone-300 px-4 py-2">YES</td>
                 </tr>
               </tbody>
             </table>

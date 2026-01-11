@@ -143,7 +143,7 @@ export default function ProfileInfoForm({
                 </Button>
               </div>
               {!otherUserData.canChangeEmail && (
-                <p className="-mt-2 text-base/6 text-zinc-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-zinc-400">
+                <p className="-mt-2 text-base/6 text-stone-500 data-disabled:opacity-50 sm:text-sm/6 dark:text-stone-400">
                   Your email is linked to your
                   <svg viewBox="0 0 24 24" aria-hidden="true" className="mx-2 inline-block h-5 w-5 align-middle">
                     <path

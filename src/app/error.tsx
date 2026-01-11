@@ -16,13 +16,13 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   }, [error]);
 
   return (
-    <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8 dark:bg-zinc-900">
+    <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8 dark:bg-stone-900">
       <div className="text-center">
         <p className="text-base font-semibold text-rose-600 dark:text-rose-400">500</p>
-        <h1 className="mt-4 text-5xl font-semibold tracking-tight text-balance text-zinc-900 sm:text-7xl dark:text-white">
+        <h1 className="mt-4 text-5xl font-semibold tracking-tight text-balance text-stone-900 sm:text-7xl dark:text-white">
           Unexpected error
         </h1>
-        <p className="mt-6 text-lg font-medium text-pretty text-zinc-500 sm:text-xl/8 dark:text-zinc-400">
+        <p className="mt-6 text-lg font-medium text-pretty text-stone-500 sm:text-xl/8 dark:text-stone-400">
           Sorry, something unexpected happened. Please try again.
         </p>
         <div className="mt-10 flex items-center justify-center gap-x-6">
@@ -34,7 +34,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
           </button>
           <a
             href="mailto:joe@schelske.dev?subject=Support Request&body=Hello, I need help with..."
-            className="text-sm font-semibold text-zinc-900 dark:text-white"
+            className="text-sm font-semibold text-stone-900 dark:text-white"
           >
             Contact support <span aria-hidden="true">&rarr;</span>
           </a>

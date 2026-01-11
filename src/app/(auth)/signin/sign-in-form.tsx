@@ -77,7 +77,7 @@ export default function SignInForm() {
         <div className="flex flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
           <div className="sm:mx-auto sm:w-full sm:max-w-md">
             <FireIcon className="text-primary mx-auto h-10 w-auto" />
-            <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-zinc-900 dark:text-white">Sign in to Ignidash</h2>
+            <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-stone-900 dark:text-white">Sign in to Ignidash</h2>
           </div>
 
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
@@ -94,13 +94,13 @@ export default function SignInForm() {
                           id="remember-me"
                           name="remember-me"
                           type="checkbox"
-                          className="col-start-1 row-start-1 appearance-none rounded-sm border border-zinc-300 bg-white checked:border-rose-600 checked:bg-rose-600 indeterminate:border-rose-600 indeterminate:bg-rose-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 disabled:border-zinc-300 disabled:bg-zinc-100 disabled:checked:bg-zinc-100 dark:border-white/10 dark:bg-white/5 dark:checked:border-rose-500 dark:checked:bg-rose-500 dark:indeterminate:border-rose-500 dark:indeterminate:bg-rose-500 dark:focus-visible:outline-rose-500 forced-colors:appearance-auto"
+                          className="col-start-1 row-start-1 appearance-none rounded-sm border border-stone-300 bg-white checked:border-rose-600 checked:bg-rose-600 indeterminate:border-rose-600 indeterminate:bg-rose-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-600 disabled:border-stone-300 disabled:bg-stone-100 disabled:checked:bg-stone-100 dark:border-white/10 dark:bg-white/5 dark:checked:border-rose-500 dark:checked:bg-rose-500 dark:indeterminate:border-rose-500 dark:indeterminate:bg-rose-500 dark:focus-visible:outline-rose-500 forced-colors:appearance-auto"
                           defaultChecked
                         />
                         <svg
                           fill="none"
                           viewBox="0 0 14 14"
-                          className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-zinc-950/25 dark:group-has-disabled:stroke-white/25"
+                          className="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-stone-950/25 dark:group-has-disabled:stroke-white/25"
                         >
                           <path
                             d="M3 8L6 11L11 3.5"
@@ -119,7 +119,7 @@ export default function SignInForm() {
                         </svg>
                       </div>
                     </div>
-                    <label htmlFor="remember-me" className="block text-sm/6 text-zinc-900 dark:text-white">
+                    <label htmlFor="remember-me" className="block text-sm/6 text-stone-900 dark:text-white">
                       Remember me
                     </label>
                   </div>
@@ -147,7 +147,7 @@ export default function SignInForm() {
               <GoogleSignIn safeRedirect={safeRedirect} />
             </div>
 
-            <p className="mt-10 text-center text-sm/6 text-zinc-500 dark:text-zinc-400">
+            <p className="mt-10 text-center text-sm/6 text-stone-500 dark:text-stone-400">
               New to Ignidash?{' '}
               <Link
                 href={buildRedirectUrl('/signup')}
@@ -158,13 +158,13 @@ export default function SignInForm() {
             </p>
           </div>
         </div>
-        <p className="pb-6 text-center text-xs/6 text-zinc-500 dark:text-zinc-400">
+        <p className="pb-6 text-center text-xs/6 text-stone-500 dark:text-stone-400">
           By signing in, you agree to the{' '}
-          <Link href="/terms" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
+          <Link href="/terms" className="underline hover:text-stone-700 dark:hover:text-stone-300">
             Terms of Service
           </Link>{' '}
           and{' '}
-          <Link href="/privacy" className="underline hover:text-zinc-700 dark:hover:text-zinc-300">
+          <Link href="/privacy" className="underline hover:text-stone-700 dark:hover:text-stone-300">
             Privacy Policy
           </Link>
           .

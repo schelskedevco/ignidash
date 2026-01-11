@@ -46,11 +46,11 @@ export default function ProgressBar({ progressPercent }: ProgressBarProps) {
               ) : status === 'current' ? (
                 <>
                   <div aria-hidden="true" className="absolute inset-0 flex items-center">
-                    <div className="h-0.5 w-full bg-zinc-200 dark:bg-white/15" />
+                    <div className="h-0.5 w-full bg-stone-200 dark:bg-white/15" />
                   </div>
                   <a
                     aria-current="step"
-                    className="relative flex size-8 items-center justify-center rounded-full border-2 border-rose-600 bg-white dark:border-rose-500 dark:bg-zinc-900"
+                    className="relative flex size-8 items-center justify-center rounded-full border-2 border-rose-600 bg-white dark:border-rose-500 dark:bg-stone-900"
                   >
                     <span aria-hidden="true" className="size-2.5 rounded-full bg-rose-600 dark:bg-rose-500" />
                     <span className="sr-only">{step.name}</span>
@@ -59,12 +59,12 @@ export default function ProgressBar({ progressPercent }: ProgressBarProps) {
               ) : (
                 <>
                   <div aria-hidden="true" className="absolute inset-0 flex items-center">
-                    <div className="h-0.5 w-full bg-zinc-200 dark:bg-white/15" />
+                    <div className="h-0.5 w-full bg-stone-200 dark:bg-white/15" />
                   </div>
-                  <a className="group relative flex size-8 items-center justify-center rounded-full border-2 border-zinc-300 bg-white hover:border-zinc-400 dark:border-white/15 dark:bg-zinc-900 dark:hover:border-white/25">
+                  <a className="group relative flex size-8 items-center justify-center rounded-full border-2 border-stone-300 bg-white hover:border-stone-400 dark:border-white/15 dark:bg-stone-900 dark:hover:border-white/25">
                     <span
                       aria-hidden="true"
-                      className="size-2.5 rounded-full bg-transparent group-hover:bg-zinc-300 dark:group-hover:bg-white/15"
+                      className="size-2.5 rounded-full bg-transparent group-hover:bg-stone-300 dark:group-hover:bg-white/15"
                     />
                     <span className="sr-only">{step.name}</span>
                   </a>
