@@ -303,6 +303,13 @@ export default function SingleSimulationWithdrawalsLineChart({
 
   const { getOpacity } = useLineChartLegendEffectOpacity();
 
+  const allDataKeys = [...lineDataKeys, ...barDataKeys];
+  const hasNoData =
+    chartData.length === 0 || chartData.every((point) => allDataKeys.every((key) => point[key as keyof typeof point] === 0));
+  if (hasNoData) {
+    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+  }
+
   return (
     <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
       <ComposedChart
