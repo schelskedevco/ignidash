@@ -362,6 +362,7 @@ export default function SingleSimulationTaxesBarChart({
     }
     case 'earlyWithdrawalPenalties': {
       formatter = (value: number) => formatNumber(value, 1, '$');
+      filterZeroValues = false;
 
       const [annualPenaltiesLabel, cumulativePenaltiesLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
@@ -386,6 +387,7 @@ export default function SingleSimulationTaxesBarChart({
     }
     case 'socialSecurityIncome': {
       formatter = (value: number) => formatNumber(value, 1, '$');
+      filterZeroValues = false;
 
       const [socialSecurityLabel, taxableSocialSecurityLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [

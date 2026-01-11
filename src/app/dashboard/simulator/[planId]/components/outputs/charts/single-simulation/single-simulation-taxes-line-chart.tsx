@@ -159,7 +159,10 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       );
       break;
     case 'earlyWithdrawalPenalties':
+      filterZeroValues = false;
+      break;
     case 'socialSecurityIncome':
+      filterZeroValues = false;
       break;
   }
 
