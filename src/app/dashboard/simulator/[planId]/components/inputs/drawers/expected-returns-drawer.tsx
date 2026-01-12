@@ -111,7 +111,7 @@ export default function ExpectedReturnsDrawer({ setOpen, marketAssumptions }: Ex
                     autoFocus
                   />
                   {errors.stockReturn && <ErrorMessage>{errors.stockReturn?.message}</ErrorMessage>}
-                  <Description>Expected total annual return for stocks including reinvested dividends.</Description>
+                  <Description>Expected total annual return for stocks, including reinvested dividends.</Description>
                 </Field>
                 <Field>
                   <Label htmlFor="stockYield" className="flex w-full items-center justify-between">
@@ -120,7 +120,9 @@ export default function ExpectedReturnsDrawer({ setOpen, marketAssumptions }: Ex
                   </Label>
                   <NumberInput name="stockYield" control={control} id="stockYield" inputMode="decimal" placeholder="3.5%" suffix="%" />
                   {errors.stockYield && <ErrorMessage>{errors.stockYield?.message}</ErrorMessage>}
-                  <Description>Percentage of stock value paid out as dividends annually.</Description>
+                  <Description>
+                    Percentage of stock value received as qualified dividends annually, used to calculate preferentially taxed income.
+                  </Description>
                 </Field>
                 <Divider />
                 <Field>
@@ -130,7 +132,7 @@ export default function ExpectedReturnsDrawer({ setOpen, marketAssumptions }: Ex
                   </Label>
                   <NumberInput id="bondReturn" control={control} name="bondReturn" inputMode="decimal" placeholder="5%" suffix="%" />
                   {errors.bondReturn && <ErrorMessage>{errors.bondReturn?.message}</ErrorMessage>}
-                  <Description>Expected total annual return for bonds including reinvested interest.</Description>
+                  <Description>Expected total annual return for bonds, including reinvested interest.</Description>
                 </Field>
                 <Field>
                   <Label htmlFor="bondYield" className="flex w-full items-center justify-between">
@@ -139,7 +141,9 @@ export default function ExpectedReturnsDrawer({ setOpen, marketAssumptions }: Ex
                   </Label>
                   <NumberInput id="bondYield" control={control} name="bondYield" inputMode="decimal" placeholder="4.5%" suffix="%" />
                   {errors.bondYield && <ErrorMessage>{errors.bondYield?.message}</ErrorMessage>}
-                  <Description>Percentage of bond value paid out as interest annually.</Description>
+                  <Description>
+                    Percentage of bond value received as interest annually, used to calculate taxable ordinary income.
+                  </Description>
                 </Field>
                 <Divider />
                 <Field>
