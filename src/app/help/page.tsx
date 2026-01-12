@@ -160,16 +160,13 @@ export default function HelpPage() {
             <DescriptionTerm>Configurable drawdown order</DescriptionTerm>
             <DescriptionDetails>Q1 2026</DescriptionDetails>
 
-            <DescriptionTerm>Configurable rebalancing rules</DescriptionTerm>
-            <DescriptionDetails>Q1 2026</DescriptionDetails>
-
             <DescriptionTerm>Modeling debt in Simulator</DescriptionTerm>
             <DescriptionDetails>Q1 2026</DescriptionDetails>
 
             <DescriptionTerm>Modeling physical assets in Simulator</DescriptionTerm>
             <DescriptionDetails>Q1 2026</DescriptionDetails>
 
-            <DescriptionTerm>State & local taxes</DescriptionTerm>
+            <DescriptionTerm>State & local taxes, IRMAA surcharges</DescriptionTerm>
             <DescriptionDetails>Q1 2026</DescriptionDetails>
 
             <DescriptionTerm>Roth conversions & SEPP</DescriptionTerm>
