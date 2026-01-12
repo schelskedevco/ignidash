@@ -20,6 +20,7 @@ import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import { getErrorMessages } from '@/lib/utils/form-utils';
 
 interface AccountDialogProps {
   onClose: () => void;
@@ -55,6 +56,8 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
     resolver: zodResolver(accountFormSchema),
     defaultValues,
   });
+
+  const hasFormErrors = Object.keys(errors).length > 0;
 
   const m = useMutation(api.account.upsertAccount);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -117,7 +120,7 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
         <Fieldset aria-label="Account details">
           <DialogBody>
             <FieldGroup>
-              {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <div className="grid grid-cols-2 gap-4">
                 <Field className="col-span-2">
                   <Label htmlFor="name">Name</Label>

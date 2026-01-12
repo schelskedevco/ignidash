@@ -19,6 +19,7 @@ import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
+import { getErrorMessages } from '@/lib/utils/form-utils';
 
 interface LiabilityDialogProps {
   onClose: () => void;
@@ -52,6 +53,8 @@ export default function LiabilityDialog({ onClose, selectedLiability: _selectedL
     defaultValues,
   });
 
+  const hasFormErrors = Object.keys(errors).length > 0;
+
   const m = useMutation(api.finances.upsertLiability);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -80,7 +83,7 @@ export default function LiabilityDialog({ onClose, selectedLiability: _selectedL
         <Fieldset aria-label="Liability details">
           <DialogBody>
             <FieldGroup>
-              {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <Field>
                 <Label htmlFor="name">Name</Label>
                 <Input

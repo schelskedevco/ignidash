@@ -26,6 +26,7 @@ import { Button } from '@/components/catalyst/button';
 import { Switch, SwitchField } from '@/components/catalyst/switch';
 import { Divider } from '@/components/catalyst/divider';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import { getErrorMessages } from '@/lib/utils/form-utils';
 
 interface GlidePathDialogProps {
   onClose: () => void;
@@ -79,6 +80,8 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
     resolver: zodResolver(glidePathSchema),
     defaultValues,
   });
+
+  const hasFormErrors = Object.keys(errors).length > 0;
 
   const m = useMutation(api.glide_path.update);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -155,7 +158,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
         <Fieldset aria-label="Glide path details">
           <DialogBody>
             <FieldGroup>
-              {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <SwitchField>
                 <Label>Enable glide path</Label>
                 <Description>

@@ -27,6 +27,7 @@ import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import { getErrorMessages } from '@/lib/utils/form-utils';
 
 interface IncomeDialogProps {
   onClose: () => void;
@@ -217,7 +218,9 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
         <Fieldset aria-label="Income details">
           <DialogBody>
             <FieldGroup>
-              {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              {(saveError || Object.keys(errors).length > 0) && (
+                <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <Field className="col-span-2">
                   <Label htmlFor="name">Name</Label>

@@ -17,6 +17,7 @@ import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
+import { getErrorMessages } from '@/lib/utils/form-utils';
 
 interface PlanDialogProps {
   onClose: () => void;
@@ -48,6 +49,8 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
     resolver: zodResolver(planMetadataSchema),
     defaultValues,
   });
+
+  const hasFormErrors = Object.keys(errors).length > 0;
 
   const updateNameMutation = useMutation(api.plans.updatePlanName);
   const clonePlanMutation = useMutation(api.plans.clonePlan);
@@ -88,7 +91,7 @@ export default function PlanDialog({ onClose, numPlans, selectedPlan: _selectedP
         <Fieldset aria-label="Simulator plan details">
           <DialogBody>
             <FieldGroup>
-              {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <Field>
                 <Label htmlFor="name">Name</Label>
                 <Input

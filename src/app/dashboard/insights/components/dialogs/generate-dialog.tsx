@@ -21,6 +21,7 @@ import { Button } from '@/components/catalyst/button';
 import { Textarea } from '@/components/catalyst/textarea';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
+import { getErrorMessages } from '@/lib/utils/form-utils';
 
 interface GenerateDialogProps {
   onClose: () => void;
@@ -52,6 +53,8 @@ export default function GenerateDialog({
     defaultValues: { userPrompt: undefined },
   });
 
+  const hasFormErrors = Object.keys(errors).length > 0;
+
   const m = useMutation(api.insights.generate);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -80,7 +83,7 @@ export default function GenerateDialog({
         <Fieldset aria-label="Generate insights">
           <DialogBody>
             <FieldGroup>
-              {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <Field>
                 <Label htmlFor="userPrompt" className="flex w-full items-center justify-between">
                   <span className="whitespace-nowrap">Supplemental prompt</span>

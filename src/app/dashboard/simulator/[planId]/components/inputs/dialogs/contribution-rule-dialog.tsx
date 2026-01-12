@@ -31,6 +31,7 @@ import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { formatNumber } from '@/lib/utils';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import { getErrorMessages } from '@/lib/utils/form-utils';
 
 interface ContributionRuleDialogProps {
   onClose: () => void;
@@ -70,6 +71,8 @@ export default function ContributionRuleDialog({
     resolver: zodResolver(contributionFormSchema),
     defaultValues,
   });
+
+  const hasFormErrors = Object.keys(errors).length > 0;
 
   const m = useMutation(api.contribution_rule.upsertContributionRule);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -145,7 +148,7 @@ export default function ContributionRuleDialog({
         <Fieldset aria-label="Contribution details">
           <DialogBody>
             <FieldGroup>
-              {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <Field>
                 <Label htmlFor="accountId">To Account</Label>
                 <Select {...register('accountId')} id="accountId" name="accountId" defaultValue="" invalid={!!errors.accountId}>

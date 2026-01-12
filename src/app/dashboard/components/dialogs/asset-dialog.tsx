@@ -19,6 +19,7 @@ import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
+import { getErrorMessages } from '@/lib/utils/form-utils';
 
 interface AssetDialogProps {
   onClose: () => void;
@@ -52,6 +53,8 @@ export default function AssetDialog({ onClose, selectedAsset: _selectedAsset, nu
     defaultValues,
   });
 
+  const hasFormErrors = Object.keys(errors).length > 0;
+
   const m = useMutation(api.finances.upsertAsset);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -80,7 +83,7 @@ export default function AssetDialog({ onClose, selectedAsset: _selectedAsset, nu
         <Fieldset aria-label="Asset details">
           <DialogBody>
             <FieldGroup>
-              {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <Field>
                 <Label htmlFor="name">Name</Label>
                 <Input

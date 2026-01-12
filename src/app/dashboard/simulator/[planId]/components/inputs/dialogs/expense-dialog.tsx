@@ -27,6 +27,7 @@ import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import { getErrorMessages } from '@/lib/utils/form-utils';
 
 interface ExpenseDialogProps {
   onClose: () => void;
@@ -62,6 +63,8 @@ export default function ExpenseDialog({ onClose, selectedExpense: _selectedExpen
     resolver: zodResolver(expenseFormSchema),
     defaultValues,
   });
+
+  const hasFormErrors = Object.keys(errors).length > 0;
 
   const m = useMutation(api.expense.upsertExpense);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -199,7 +202,7 @@ export default function ExpenseDialog({ onClose, selectedExpense: _selectedExpen
         <Fieldset aria-label="Expense details">
           <DialogBody>
             <FieldGroup>
-              {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <div className="grid grid-cols-2 gap-4">
                 <Field className="col-span-2">
                   <Label htmlFor="name">Name</Label>

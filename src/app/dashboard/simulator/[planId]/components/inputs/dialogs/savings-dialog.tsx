@@ -19,6 +19,7 @@ import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import { getErrorMessages } from '@/lib/utils/form-utils';
 
 interface SavingsDialogProps {
   onClose: () => void;
@@ -52,6 +53,8 @@ export default function SavingsDialog({ onClose, selectedAccount: _selectedAccou
     defaultValues,
   });
 
+  const hasFormErrors = Object.keys(errors).length > 0;
+
   const m = useMutation(api.account.upsertAccount);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -80,7 +83,7 @@ export default function SavingsDialog({ onClose, selectedAccount: _selectedAccou
         <Fieldset aria-label="Account details">
           <DialogBody>
             <FieldGroup>
-              {saveError && <ErrorMessageCard errorMessage={saveError} />}
+              {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <Field>
                 <Label htmlFor="name">Name</Label>
                 <Input
