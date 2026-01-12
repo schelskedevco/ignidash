@@ -19,6 +19,7 @@ import {
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { Field as HeadlessField } from '@headlessui/react';
+import { InfoIcon } from 'lucide-react';
 
 import { useContributionRulesData, useBaseContributionRuleData, useAccountsData } from '@/hooks/use-convex-data';
 import { contributionToConvex, baseContributionToConvex } from '@/lib/utils/convex-to-zod-transformers';
@@ -29,7 +30,7 @@ import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { Divider } from '@/components/catalyst/divider';
 import { Select } from '@/components/catalyst/select';
-import { Label, Description } from '@/components/catalyst/fieldset';
+import { Label } from '@/components/catalyst/fieldset';
 import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
 import { accountTypeForDisplay, type AccountInputs, taxCategoryFromAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import type { TaxCategory } from '@/lib/calc/asset';
@@ -37,6 +38,7 @@ import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 import ContributionRuleDialog from '../dialogs/contribution-rule-dialog';
 import SortableContributionItem from '../sortable-contribution-item';
@@ -198,18 +200,27 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
     <>
       <DisclosureSection title="Contributions" icon={HandCoinsIcon} centerPanelContent hideBottomBorders {...props}>
         <div className="flex h-full flex-col">
-          <HeadlessField className="flex items-baseline justify-center gap-4">
-            <Label className="flex-shrink-0">Base Rule:</Label>
-            <Select
-              name="status"
-              value={baseContributionRule?.type ?? 'save'}
-              onChange={async (e) => await updateBaseContributionRule({ type: e.target.value as 'spend' | 'save' })}
-            >
-              <option value="spend">Spend anything left</option>
-              <option value="save">Save anything left</option>
-            </Select>
-            <Description className="sr-only">Allocate any leftover cash after your contribution rules are applied.</Description>
-          </HeadlessField>
+          <div className="flex items-center justify-between gap-3">
+            <HeadlessField className="grow">
+              <Label className="sr-only">Base Rule</Label>
+              <Select
+                name="status"
+                value={baseContributionRule?.type ?? 'save'}
+                onChange={async (e) => await updateBaseContributionRule({ type: e.target.value as 'spend' | 'save' })}
+              >
+                <option value="spend">Spend anything left</option>
+                <option value="save">Save anything left</option>
+              </Select>
+            </HeadlessField>
+            <Tooltip>
+              <TooltipTrigger>
+                <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Allocate any leftover cash after your contribution rules are applied.</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <Divider className="my-4" soft />
           {hasContributionRules && (
             <>
