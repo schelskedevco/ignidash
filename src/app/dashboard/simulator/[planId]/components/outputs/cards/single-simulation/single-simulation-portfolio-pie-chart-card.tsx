@@ -15,7 +15,7 @@ import SingleSimulationPortfolioPieChart from '../../charts/single-simulation/si
 interface SingleSimulationPortfolioAssetTypePieChartCardProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
   selectedAge: number;
-  dataView: 'assetClass' | 'taxCategory' | 'custom';
+  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'custom';
   customDataID: string;
 }
 
@@ -50,6 +50,9 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
           { name: 'taxFreeValue', value: taxFreeValue },
           { name: 'cashSavings', value: cashSavings },
         ]);
+      break;
+    case 'netChange':
+      title = 'Net Portfolio Change';
       break;
     case 'custom':
       title = accountData ? `${accountData.name} — ${taxCategoryFromAccountTypeForDisplay(accountData.type)}` : 'Custom Account';

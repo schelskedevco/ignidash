@@ -14,6 +14,10 @@ export interface SingleSimulationPortfolioChartDataPoint {
   taxDeferredValue: number;
   taxFreeValue: number;
   cashSavings: number;
+  annualReturns: number;
+  annualContributions: number;
+  annualWithdrawals: number;
+  netPortfolioChange: number;
   perAccountData: AccountDataWithTransactions[];
 }
 

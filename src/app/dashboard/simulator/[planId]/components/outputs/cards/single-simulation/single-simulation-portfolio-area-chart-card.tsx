@@ -17,8 +17,8 @@ interface SingleSimulationPortfolioAreaChartCardProps {
   keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'assetClass' | 'taxCategory' | 'custom') => void;
-  dataView: 'assetClass' | 'taxCategory' | 'custom';
+  setDataView: (view: 'assetClass' | 'taxCategory' | 'netChange' | 'custom') => void;
+  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'custom';
   setCustomDataID: (name: string) => void;
   customDataID: string;
   startAge: number;
@@ -61,18 +61,20 @@ export default function SingleSimulationPortfolioAreaChartCard({
             name="portfolio-data-view"
             value={dataView === 'custom' ? customDataID : dataView}
             onChange={(e) => {
-              const isCustomSelection = e.target.value !== 'assetClass' && e.target.value !== 'taxCategory';
+              const isCustomSelection =
+                e.target.value !== 'assetClass' && e.target.value !== 'taxCategory' && e.target.value !== 'netChange';
               if (isCustomSelection) {
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'assetClass' | 'taxCategory');
+                setDataView(e.target.value as 'assetClass' | 'taxCategory' | 'netChange');
                 setCustomDataID('');
               }
             }}
           >
             <option value="assetClass">Asset Class</option>
             <option value="taxCategory">Tax Category</option>
+            <option value="netChange">Net Portfolio Change</option>
             <optgroup label="By Account">
               {uniqueAccounts.map((account) => (
                 <option key={account.id} value={account.id}>

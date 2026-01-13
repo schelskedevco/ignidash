@@ -39,7 +39,7 @@ interface ChartsCategoryProps {
 function PortfolioCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationPortfolioChartData(simulation);
 
-  const [dataView, setDataView] = useState<'assetClass' | 'taxCategory' | 'custom'>('taxCategory');
+  const [dataView, setDataView] = useState<'assetClass' | 'taxCategory' | 'netChange' | 'custom'>('taxCategory');
   const [customDataID, setCustomDataID] = useState<string>('');
 
   return (

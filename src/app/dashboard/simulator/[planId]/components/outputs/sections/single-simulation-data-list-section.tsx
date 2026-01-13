@@ -113,8 +113,8 @@ function PortfolioDataListCardV2({ dp, selectedAge }: DataListCardProps) {
 
   const portfolioData = dp.portfolio;
 
-  const annualWithdrawals = sumTransactions(portfolioData.withdrawalsForPeriod);
   const annualContributions = sumTransactions(portfolioData.contributionsForPeriod);
+  const annualWithdrawals = sumTransactions(portfolioData.withdrawalsForPeriod);
 
   return (
     <Card className="my-0">

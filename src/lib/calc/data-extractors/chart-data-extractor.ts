@@ -23,10 +23,22 @@ export abstract class ChartDataExtractor {
   static extractSingleSimulationPortfolioChartData(simulation: SimulationResult): SingleSimulationPortfolioChartDataPoint[] {
     return simulation.data.map((data) => {
       const age = Math.floor(data.age);
-      const portfolioData = data.portfolio;
 
       const { stockHoldings, bondHoldings, cashHoldings } = SimulationDataExtractor.getHoldingsByAssetClass(data);
       const { taxableValue, taxDeferredValue, taxFreeValue, cashSavings } = SimulationDataExtractor.getPortfolioValueByTaxCategory(data);
+
+      const returnsData = data.returns;
+
+      const {
+        stocks: stockAmount,
+        bonds: bondAmount,
+        cash: cashAmount,
+      } = returnsData?.returnAmountsForPeriod ?? { stocks: 0, bonds: 0, cash: 0 };
+
+      const portfolioData = data.portfolio;
+
+      const annualContributions = sumTransactions(portfolioData.contributionsForPeriod);
+      const annualWithdrawals = sumTransactions(portfolioData.withdrawalsForPeriod);
 
       return {
         age,
@@ -37,6 +49,10 @@ export abstract class ChartDataExtractor {
         taxDeferredValue,
         taxFreeValue,
         cashSavings,
+        annualReturns: stockAmount + bondAmount + cashAmount,
+        annualContributions,
+        annualWithdrawals,
+        netPortfolioChange: stockAmount + bondAmount + cashAmount + annualContributions - annualWithdrawals,
         perAccountData: Object.values(portfolioData.perAccountData),
       };
     });

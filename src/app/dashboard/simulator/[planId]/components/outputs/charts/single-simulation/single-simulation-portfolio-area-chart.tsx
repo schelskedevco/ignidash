@@ -2,7 +2,8 @@
 
 import { useTheme } from 'next-themes';
 import { useState, useCallback, memo } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { ComposedChart, Area, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { ChartLineIcon } from 'lucide-react';
 
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
@@ -11,6 +12,7 @@ import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
+import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -26,9 +28,10 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
+  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'custom';
 }
 
-const CustomTooltip = memo(({ active, payload, label, startAge, disabled }: CustomTooltipProps) => {
+const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
   const currentYear = new Date().getFullYear();
@@ -36,7 +39,76 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled }: Cust
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
 
-  const total = payload.reduce((sum, item) => sum + item.value, 0);
+  const transformedPayload = payload.filter((entry) => entry.color !== LINE_COLOR);
+
+  let body = null;
+  let footer = null;
+  switch (dataView) {
+    case 'netChange':
+      const netPortfolioChange = payload.find((entry) => entry.dataKey === 'netPortfolioChange');
+      if (!netPortfolioChange) {
+        console.error('Net portfolio change data not found');
+        break;
+      }
+
+      body = (
+        <div className="flex flex-col gap-1">
+          {transformedPayload.map((entry) => (
+            <p
+              key={entry.dataKey}
+              style={{ backgroundColor: entry.color }}
+              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
+                'text-background': needsBgTextColor.includes(entry.color),
+              })}
+            >
+              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
+              <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
+            </p>
+          ))}
+        </div>
+      );
+
+      footer = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="flex items-center gap-1">
+            <ChartLineIcon className="h-3 w-3" />
+            <span className="mr-2">Net Portfolio Change:</span>
+          </span>
+          <span className="ml-1 font-semibold">{formatNumber(netPortfolioChange.value, 3, '$')}</span>
+        </p>
+      );
+      break;
+    default:
+      const total = payload.reduce((sum, item) => sum + item.value, 0);
+
+      body = (
+        <div className="flex flex-col gap-1">
+          {transformedPayload.map((entry) => (
+            <p
+              key={entry.dataKey}
+              style={{ backgroundColor: entry.color }}
+              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
+                'text-background': needsBgTextColor.includes(entry.color),
+              })}
+            >
+              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
+              <span className="ml-1 font-semibold">
+                {formatNumber(entry.value, 1, '$')}
+                {total > 0 && ` (${formatNumber((entry.value / total) * 100, 1)}%)`}
+              </span>
+            </p>
+          ))}
+        </div>
+      );
+
+      footer = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="mr-2">Total:</span>
+          <span className="ml-1 font-semibold">{formatNumber(total, 3, '$')}</span>
+        </p>
+      );
+      break;
+  }
 
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
@@ -44,33 +116,15 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled }: Cust
         <span className="mr-2">Age {label}</span>
         <span className="text-muted-foreground ml-1">{yearForAge}</span>
       </p>
-      <div className="flex flex-col gap-1">
-        {payload.map((entry) => (
-          <p
-            key={entry.dataKey}
-            style={{ backgroundColor: entry.color }}
-            className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-              'text-background': needsBgTextColor.includes(entry.color),
-            })}
-          >
-            <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-            <span className="ml-1 font-semibold">
-              {formatNumber(entry.value, 1, '$')}
-              {total > 0 && ` (${formatNumber((entry.value / total) * 100, 1)}%)`}
-            </span>
-          </p>
-        ))}
-      </div>
-      <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
-        <span className="mr-2">Total:</span>
-        <span className="ml-1 font-semibold">{formatNumber(total, 3, '$')}</span>
-      </p>
+      {body}
+      {footer}
     </div>
   );
 });
 
 CustomTooltip.displayName = 'CustomTooltip';
 
+const LINE_COLOR = 'var(--foreground)';
 const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
 
 interface SingleSimulationPortfolioAreaChartProps {
@@ -78,7 +132,7 @@ interface SingleSimulationPortfolioAreaChartProps {
   startAge: number;
   keyMetrics: KeyMetrics;
   showReferenceLines: boolean;
-  dataView: 'assetClass' | 'taxCategory' | 'custom';
+  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'custom';
   customDataID: string;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
@@ -109,14 +163,27 @@ export default function SingleSimulationPortfolioAreaChart({
     | Array<{ age: number; stockHoldings: number; bondHoldings: number; cashHoldings: number } & AccountDataWithTransactions> =
     useChartDataSlice(rawChartData, 'single');
 
-  const dataKeys: (keyof SingleSimulationPortfolioChartDataPoint | keyof AccountDataWithTransactions)[] = [];
+  const areaDataKeys: (keyof SingleSimulationPortfolioChartDataPoint | keyof AccountDataWithTransactions)[] = [];
+  const lineDataKeys: (keyof SingleSimulationPortfolioChartDataPoint)[] = [];
+  const barDataKeys: (keyof SingleSimulationPortfolioChartDataPoint)[] = [];
+
   const formatter = (value: number) => formatNumber(value, 1, '$');
+  let stackOffset: 'sign' | undefined = undefined;
+
   switch (dataView) {
     case 'assetClass':
-      dataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
+      areaDataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
       break;
     case 'taxCategory':
-      dataKeys.push('taxableValue', 'taxDeferredValue', 'taxFreeValue', 'cashSavings');
+      areaDataKeys.push('taxableValue', 'taxDeferredValue', 'taxFreeValue', 'cashSavings');
+      break;
+    case 'netChange':
+      lineDataKeys.push('netPortfolioChange');
+      barDataKeys.push('annualReturns', 'annualContributions', 'annualWithdrawals');
+
+      chartData = chartData.map((entry) => ({ ...entry, annualWithdrawals: -entry.annualWithdrawals }));
+
+      stackOffset = 'sign';
       break;
     case 'custom':
       if (!customDataID) {
@@ -146,12 +213,13 @@ export default function SingleSimulationPortfolioAreaChart({
       );
 
       chartData = perAccountData;
-      dataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
+      areaDataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
       break;
   }
 
   const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
   const foregroundColor = resolvedTheme === 'dark' ? '#f5f5f4' : '#1c1917'; // stone-100 : stone-900
+  const backgroundColor = resolvedTheme === 'dark' ? '#292524' : '#ffffff'; // stone-800 : white
   const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
 
   const calculateInterval = useCallback((dataLength: number, desiredTicks = 12) => {
@@ -169,14 +237,24 @@ export default function SingleSimulationPortfolioAreaChart({
     [onAgeSelect]
   );
 
+  const { getOpacity } = useLineChartLegendEffectOpacity();
+
+  const allDataKeys = [...areaDataKeys, ...lineDataKeys, ...barDataKeys];
+  const hasNoData =
+    chartData.length === 0 || chartData.every((point) => allDataKeys.every((key) => point[key as keyof typeof point] === 0));
+  if (hasNoData) {
+    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+  }
+
   return (
     <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
-      <AreaChart
+      <ComposedChart
         responsive
         width="100%"
         height="100%"
         data={chartData}
         className="text-xs"
+        stackOffset={stackOffset}
         margin={{ top: 5, right: 10, left: 10, bottom: 0 }}
         tabIndex={-1}
         onClick={onClick}
@@ -184,7 +262,7 @@ export default function SingleSimulationPortfolioAreaChart({
         <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
         <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
         <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {dataKeys.map((dataKey, index) => (
+        {areaDataKeys.map((dataKey, index) => (
           <Area
             key={dataKey}
             type="monotone"
@@ -196,8 +274,23 @@ export default function SingleSimulationPortfolioAreaChart({
             activeDot={false}
           />
         ))}
+        {lineDataKeys.map((dataKey, i) => (
+          <Line
+            key={`line-${dataKey}-${i}`}
+            type="monotone"
+            dataKey={dataKey}
+            stroke={LINE_COLOR}
+            activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
+            dot={{ fill: backgroundColor, strokeWidth: 2 }}
+            strokeWidth={2}
+            strokeOpacity={getOpacity(dataKey)}
+          />
+        ))}
+        {barDataKeys.map((dataKey, i) => (
+          <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={COLORS[i]} />
+        ))}
         <Tooltip
-          content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
+          content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
           cursor={{ stroke: foregroundColor }}
         />
         {keyMetrics.retirementAge && showReferenceLines && (
@@ -207,7 +300,7 @@ export default function SingleSimulationPortfolioAreaChart({
         {keyMetrics.portfolioAtRetirement && showReferenceLines && dataView !== 'custom' && (
           <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
         )}
-      </AreaChart>
+      </ComposedChart>
     </div>
   );
 }
