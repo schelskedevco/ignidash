@@ -197,7 +197,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
 
   return (
     <>
-      <DisclosureSection title="Contributions" icon={HandCoinsIcon} centerPanelContent hideBottomBorders {...props}>
+      <DisclosureSection title="Contribution Order" icon={HandCoinsIcon} centerPanelContent hideBottomBorders {...props}>
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between gap-3">
             <HeadlessField className="grow">
@@ -282,7 +282,7 @@ export default function ContributionsSection(props: ContributionsSectionProps) {
                 </Tooltip>
                 <Button outline onClick={() => setContributionRuleDialogOpen(true)} disabled={!!selectedContributionRule}>
                   <PlusIcon />
-                  Contribution
+                  Contribution Rule
                 </Button>
               </div>
             </>

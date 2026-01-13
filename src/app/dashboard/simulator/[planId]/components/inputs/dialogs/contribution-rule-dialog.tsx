@@ -141,11 +141,11 @@ export default function ContributionRuleDialog({
       <DialogTitle onClose={onClose}>
         <div className="flex items-center gap-4">
           <HandCoinsIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
-          <span>{selectedContributionRule ? 'Edit Contribution' : 'New Contribution'}</span>
+          <span>{selectedContributionRule ? 'Edit Contribution Rule' : 'New Contribution Rule'}</span>
         </div>
       </DialogTitle>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Fieldset aria-label="Contribution details">
+        <Fieldset aria-label="Contribution rule details">
           <DialogBody>
             <FieldGroup>
               {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
@@ -179,7 +179,7 @@ export default function ContributionRuleDialog({
                     ))}
                   </Select>
                   {errors.incomeIds && <ErrorMessage>{errors.incomeIds?.message}</ErrorMessage>}
-                  <Description>Select specific income(s) to restrict contributions to those sources only.</Description>
+                  <Description>Selecting specific income(s) will restrict contributions to those sources only.</Description>
                 </Field>
               )}
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
@@ -254,7 +254,7 @@ export default function ContributionRuleDialog({
                     prefix="$"
                   />
                   {errors.employerMatch && <ErrorMessage>{errors.employerMatch?.message}</ErrorMessage>}
-                  <Description>Employer will match contributions dollar-for-dollar up to this amount.</Description>
+                  <Description>Employer will match your contributions dollar-for-dollar up to this amount.</Description>
                 </Field>
               )}
             </FieldGroup>
