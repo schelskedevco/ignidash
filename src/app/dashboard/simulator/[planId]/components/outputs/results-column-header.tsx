@@ -4,12 +4,14 @@ import { useState, lazy, Suspense } from 'react';
 import { MessageCircleMoreIcon, PresentationIcon, SettingsIcon, WandSparklesIcon } from 'lucide-react';
 import posthog from 'posthog-js';
 
+import { cn } from '@/lib/utils';
 import IconButton from '@/components/ui/icon-button';
 import PageLoading from '@/components/ui/page-loading';
 import Drawer from '@/components/ui/drawer';
 import ColumnHeader from '@/components/ui/column-header';
 import { useRegenSimulation } from '@/hooks/use-regen-simulation';
 import { useSimulationSettingsData } from '@/hooks/use-convex-data';
+import { useShowAIChatPulse, useUpdateShowAIChatPulse } from '@/lib/stores/simulator-store';
 
 import DrillDownBreadcrumb from './drill-down-breadcrumb';
 
@@ -64,6 +66,9 @@ export default function ResultsColumnHeader() {
     }
   }
 
+  const showAIChatPulse = useShowAIChatPulse();
+  const updateShowAIChatPulse = useUpdateShowAIChatPulse();
+
   return (
     <>
       <ColumnHeader
@@ -71,18 +76,21 @@ export default function ResultsColumnHeader() {
         icon={PresentationIcon}
         iconButton={
           <div className="flex items-center gap-x-1">
-            {!isDisabled && (
-              <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
-            )}
             <IconButton
               icon={WandSparklesIcon}
+              iconClassName={cn({ 'animate-pulse': showAIChatPulse })}
+              className="text-primary ring-primary"
               label="Ask AI"
               onClick={() => {
+                if (showAIChatPulse) updateShowAIChatPulse(false);
                 posthog.capture('open_ai_chat');
                 setAiChatOpen(true);
               }}
               surfaceColor="emphasized"
             />
+            {!isDisabled && (
+              <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
+            )}
             <IconButton
               icon={SettingsIcon}
               label="Simulation Settings"

@@ -18,6 +18,7 @@ import IconButton from '@/components/ui/icon-button';
 import PageLoading from '@/components/ui/page-loading';
 import Drawer from '@/components/ui/drawer';
 import { useRegenSimulation } from '@/hooks/use-regen-simulation';
+import { useShowAIChatPulse, useUpdateShowAIChatPulse } from '@/lib/stores/simulator-store';
 import { useMarketAssumptionsData, useTaxSettingsData, useTimelineData, useSimulationSettingsData } from '@/hooks/use-convex-data';
 
 const UserFeedbackDrawer = lazy(() => import('@/components/layout/user-feedback-drawer'));
@@ -93,6 +94,9 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
     </div>
   );
 
+  const showAIChatPulse = useShowAIChatPulse();
+  const updateShowAIChatPulse = useUpdateShowAIChatPulse();
+
   return (
     <>
       <div className="border-border/50 from-emphasized-background to-background fixed top-[4.0625rem] z-30 -mx-2 w-full border-b bg-gradient-to-bl py-2 sm:-mx-3 lg:top-0 lg:-mx-4 lg:w-[calc(100%-18rem)] lg:py-4 lg:group-data-[state=collapsed]/sidebar:w-[calc(100%-4rem)]">
@@ -128,18 +132,21 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
           )}
           {activeSection === 'results' && (
             <div className="flex items-center gap-x-1">
-              {!isDisabled && (
-                <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
-              )}
               <IconButton
                 icon={WandSparklesIcon}
+                iconClassName={cn({ 'animate-pulse': showAIChatPulse })}
+                className="text-primary ring-primary"
                 label="Ask AI"
                 onClick={() => {
+                  if (showAIChatPulse) updateShowAIChatPulse(false);
                   posthog.capture('open_ai_chat');
                   setAiChatOpen(true);
                 }}
                 surfaceColor="emphasized"
               />
+              {!isDisabled && (
+                <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
+              )}
               <IconButton
                 icon={SettingsIcon}
                 label="Simulation Settings"

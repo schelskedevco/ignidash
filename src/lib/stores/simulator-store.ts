@@ -93,6 +93,10 @@ interface SimulatorState {
     selectedPlan: { id: Id<'plans'>; name: string; keyMetrics: KeyMetrics; simulationResult: SimulationResult } | undefined;
   };
 
+  nux: {
+    showAIChatPulse: boolean;
+  };
+
   actions: {
     /* Results */
     updateQuickSelectPercentile: (percentile: QuickSelectPercentile) => void;
@@ -117,6 +121,9 @@ interface SimulatorState {
     updateInsightsSelectedPlan: (
       plan: { id: Id<'plans'>; name: string; keyMetrics: KeyMetrics; simulationResult: SimulationResult } | undefined
     ) => void;
+
+    /* NUX */
+    updateShowAIChatPulse: (value: boolean) => void;
   };
 }
 
@@ -142,6 +149,9 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
   },
   insights: {
     selectedPlan: undefined,
+  },
+  nux: {
+    showAIChatPulse: true,
   },
 };
 
@@ -211,6 +221,10 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               state.insights.selectedPlan = plan;
             }),
+          updateShowAIChatPulse: (value) =>
+            set((state) => {
+              state.nux.showAIChatPulse = value;
+            }),
         },
       })),
       {
@@ -218,7 +232,7 @@ export const useSimulatorStore = create<SimulatorState>()(
         version: 11,
         migrate: () => ({ ...defaultState }),
         partialize: (state) => {
-          const baseResult = { preferences: state.preferences };
+          const baseResult = { preferences: state.preferences, nux: state.nux };
 
           return baseResult;
         },
@@ -251,6 +265,7 @@ export const useMonteCarloTimeFrameToShow = () => useSimulatorStore((state) => s
 export const useCachedKeyMetrics = () => useSimulatorStore((state) => state.results.cachedKeyMetrics);
 export const useSelectedConversationId = () => useSimulatorStore((state) => state.chat.selectedConversationId);
 export const useInsightsSelectedPlan = () => useSimulatorStore((state) => state.insights.selectedPlan);
+export const useShowAIChatPulse = () => useSimulatorStore((state) => state.nux.showAIChatPulse);
 
 /**
  * Action selectors
@@ -271,6 +286,7 @@ export const useUpdateMonteCarloTimeFrameToShow = () => useSimulatorStore((state
 export const useUpdateCachedKeyMetrics = () => useSimulatorStore((state) => state.actions.updateCachedKeyMetrics);
 export const useUpdateSelectedConversationId = () => useSimulatorStore((state) => state.actions.updateSelectedConversationId);
 export const useUpdateInsightsSelectedPlan = () => useSimulatorStore((state) => state.actions.updateInsightsSelectedPlan);
+export const useUpdateShowAIChatPulse = () => useSimulatorStore((state) => state.actions.updateShowAIChatPulse);
 
 /**
  * Preferences selectors
