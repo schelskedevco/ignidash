@@ -123,7 +123,7 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
                     <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Add all current savings and investment accounts to simulate your portfolio.</p>
+                    <p>Add all current cash savings and investment accounts to simulate your portfolio.</p>
                     <p>Set a glide path to automatically rebalance toward your target bond allocation.</p>
                   </TooltipContent>
                 </Tooltip>
