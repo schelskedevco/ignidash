@@ -18,7 +18,7 @@ import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { expenseFormSchema, type ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import { timeFrameForDisplay, growthForDisplay } from '@/lib/utils/data-display-formatters';
-import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
+import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, Fieldset, FieldGroup, Label, ErrorMessage } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';
@@ -29,6 +29,7 @@ import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { Divider } from '@/components/catalyst/divider';
 
 interface ExpenseDialogProps {
   onClose: () => void;
@@ -199,11 +200,15 @@ export default function ExpenseDialog({ onClose, selectedExpense: _selectedExpen
           <span>{selectedExpense ? 'Edit Expense' : 'New Expense'}</span>
         </div>
       </DialogTitle>
+      <DialogDescription className="hidden sm:block">
+        Add any expense you expect to incur during your lifetime, excluding taxes.
+      </DialogDescription>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Fieldset aria-label="Expense details">
-          <DialogBody>
+          <DialogBody className="sm:mt-4">
             <FieldGroup>
               {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
+              <Divider soft className="hidden sm:block" />
               <div className="grid grid-cols-2 gap-4">
                 <Field className="col-span-2">
                   <Label htmlFor="name">Name</Label>

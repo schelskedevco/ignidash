@@ -12,7 +12,7 @@ import posthog from 'posthog-js';
 
 import { useAccountsData, useIncomesData, useTimelineData } from '@/hooks/use-convex-data';
 import { contributionToConvex } from '@/lib/utils/convex-to-zod-transformers';
-import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
+import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import {
   contributionFormSchema,
   type ContributionInputs,
@@ -32,6 +32,7 @@ import { Button } from '@/components/catalyst/button';
 import { formatNumber } from '@/lib/utils';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
+import { Divider } from '@/components/catalyst/divider';
 
 interface ContributionRuleDialogProps {
   onClose: () => void;
@@ -144,11 +145,15 @@ export default function ContributionRuleDialog({
           <span>{selectedContributionRule ? 'Edit Contribution Rule' : 'New Contribution Rule'}</span>
         </div>
       </DialogTitle>
+      <DialogDescription className="hidden sm:block">
+        Add a rule to control how excess cash is contributed to your accounts during the simulation.
+      </DialogDescription>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Fieldset aria-label="Contribution rule details">
-          <DialogBody>
+          <DialogBody className="sm:mt-4">
             <FieldGroup>
               {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
+              <Divider soft className="hidden sm:block" />
               <Field>
                 <Label htmlFor="accountId">To Account</Label>
                 <Select {...register('accountId')} id="accountId" name="accountId" defaultValue="" invalid={!!errors.accountId}>

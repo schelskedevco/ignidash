@@ -18,7 +18,7 @@ import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { incomeFormSchema, type IncomeInputs, supportsWithholding } from '@/lib/schemas/inputs/income-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import { timeFrameForDisplay, growthForDisplay, incomeTaxTreatmentForDisplay } from '@/lib/utils/data-display-formatters';
-import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
+import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, Fieldset, FieldGroup, Label, ErrorMessage /* Description */ } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';
@@ -29,6 +29,7 @@ import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { Divider } from '@/components/catalyst/divider';
 
 interface IncomeDialogProps {
   onClose: () => void;
@@ -217,11 +218,15 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
           <span>{selectedIncome ? 'Edit Income' : 'New Income'}</span>
         </div>
       </DialogTitle>
+      <DialogDescription className="hidden sm:block">
+        Add any income source you expect to receive during your lifetime, excluding investment income and portfolio withdrawals.
+      </DialogDescription>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Fieldset aria-label="Income details">
-          <DialogBody>
+          <DialogBody className="sm:mt-4">
             <FieldGroup>
               {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
+              <Divider soft className="hidden sm:block" />
               <div className="grid grid-cols-2 gap-4">
                 <Field className="col-span-2">
                   <Label htmlFor="name">Name</Label>

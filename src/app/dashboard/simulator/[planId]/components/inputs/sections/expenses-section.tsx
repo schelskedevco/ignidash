@@ -20,7 +20,6 @@ import DataItem from '@/components/ui/data-item';
 import { Skeleton } from '@/components/ui/skeleton';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 import ExpenseDialog from '../dialogs/expense-dialog';
 
@@ -114,18 +113,10 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
                 ))}
               </ul>
               <div className="mt-auto flex items-center justify-end gap-x-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button outline onClick={() => setExpenseDialogOpen(true)} disabled={!!selectedExpense}>
-                      <PlusIcon />
-                      Expense
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="sm:hidden">Add expected lifetime expenses (excluding taxes).</p>
-                    <p className="hidden sm:block">Add the expenses you expect to incur during your lifetime, excluding taxes.</p>
-                  </TooltipContent>
-                </Tooltip>
+                <Button outline onClick={() => setExpenseDialogOpen(true)} disabled={!!selectedExpense}>
+                  <PlusIcon />
+                  Expense
+                </Button>
               </div>
             </>
           )}

@@ -273,20 +273,10 @@ export default function ContributionOrderSection(props: ContributionOrderSection
                 </DragOverlay>
               </DndContext>
               <div className="mt-auto flex items-center justify-end gap-x-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button outline onClick={() => setContributionRuleDialogOpen(true)} disabled={!!selectedContributionRule}>
-                      <PlusIcon />
-                      Contribution Rule
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="sm:hidden">Set the order in which excess cash is contributed.</p>
-                    <p className="hidden sm:block">
-                      Set the order in which excess cash is contributed to your accounts during the simulation.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
+                <Button outline onClick={() => setContributionRuleDialogOpen(true)} disabled={!!selectedContributionRule}>
+                  <PlusIcon />
+                  Contribution Rule
+                </Button>
               </div>
             </>
           )}

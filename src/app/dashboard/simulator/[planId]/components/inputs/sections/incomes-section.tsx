@@ -20,7 +20,6 @@ import DataItem from '@/components/ui/data-item';
 import { Skeleton } from '@/components/ui/skeleton';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 import IncomeDialog from '../dialogs/income-dialog';
 
@@ -114,22 +113,10 @@ export default function IncomesSection(props: IncomesSectionProps) {
                 ))}
               </ul>
               <div className="mt-auto flex items-center justify-end gap-x-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button outline onClick={() => setIncomeDialogOpen(true)} disabled={!!selectedIncome}>
-                      <PlusIcon />
-                      Income
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="sm:hidden">Add expected lifetime income sources.</p>
-
-                    <div className="hidden sm:block">
-                      <p>Add the income sources you expect to receive during your lifetime.</p>
-                      <p>Exclude investment income and portfolio withdrawals (calculated automatically).</p>
-                    </div>
-                  </TooltipContent>
-                </Tooltip>
+                <Button outline onClick={() => setIncomeDialogOpen(true)} disabled={!!selectedIncome}>
+                  <PlusIcon />
+                  Income
+                </Button>
               </div>
             </>
           )}

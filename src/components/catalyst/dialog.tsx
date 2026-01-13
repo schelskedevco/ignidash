@@ -44,10 +44,10 @@ export function Dialog({
           <DialogPanel
             transition
             className={cn(
-              className,
               sizes[size],
               'bg-background ring-border/50 row-start-2 w-full min-w-90 rounded-t-3xl p-(--gutter) shadow-lg ring-1 [--gutter:--spacing(8)] sm:mb-auto sm:rounded-2xl forced-colors:outline',
-              'transition duration-100 will-change-transform data-closed:translate-y-12 data-closed:opacity-0 data-enter:ease-out data-leave:ease-in sm:data-closed:translate-y-0 sm:data-closed:data-enter:scale-95'
+              'transition duration-100 will-change-transform data-closed:translate-y-12 data-closed:opacity-0 data-enter:ease-out data-leave:ease-in sm:data-closed:translate-y-0 sm:data-closed:data-enter:scale-95',
+              className
             )}
           >
             {children}
@@ -65,7 +65,7 @@ export function DialogTitle({
   ...props
 }: { className?: string; children?: React.ReactNode; onClose: () => void } & Omit<DialogTitleProps, 'as' | 'className'>) {
   return (
-    <HeadlessDialogTitle {...props} className={cn(className, 'text-foreground text-2xl/6 font-semibold text-balance')}>
+    <HeadlessDialogTitle {...props} className={cn('text-foreground text-2xl/6 font-semibold text-balance', className)}>
       <div className="flex items-center justify-between">
         {children}
         <button type="button" onClick={onClose} className="focus-outline hover:text-muted-foreground rounded-md">
@@ -81,18 +81,18 @@ export function DialogDescription({
   className,
   ...props
 }: { className?: string } & Omit<DescriptionProps<typeof Text>, 'as' | 'className'>) {
-  return <Description as={Text} {...props} className={cn(className, 'mt-2 text-pretty')} />;
+  return <Description as={Text} {...props} className={cn('mt-2 text-pretty', className)} />;
 }
 
 export function DialogBody({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
-  return <div {...props} className={cn(className, 'mt-6')} />;
+  return <div {...props} className={cn('mt-6', className)} />;
 }
 
 export function DialogActions({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   return (
     <div
       {...props}
-      className={cn(className, 'mt-6 flex flex-col-reverse items-center justify-end gap-3 *:w-full sm:mt-8 sm:flex-row sm:*:w-auto')}
+      className={cn('mt-6 flex flex-col-reverse items-center justify-end gap-3 *:w-full sm:mt-8 sm:flex-row sm:*:w-auto', className)}
     />
   );
 }
