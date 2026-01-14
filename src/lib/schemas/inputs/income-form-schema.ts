@@ -26,12 +26,12 @@ export const incomeTaxSchema = z
   .refine(
     (data) => {
       if (data.incomeType === 'socialSecurity' && data.withholding !== undefined) {
-        return [7, 10, 12, 22].includes(data.withholding);
+        return [0, 7, 10, 12, 22].includes(data.withholding);
       }
       return true;
     },
     {
-      message: 'Social Security withholding must be 7%, 10%, 12%, or 22%',
+      message: 'Social Security withholding must be 0%, 7%, 10%, 12%, or 22%',
       path: ['withholding'],
     }
   )
