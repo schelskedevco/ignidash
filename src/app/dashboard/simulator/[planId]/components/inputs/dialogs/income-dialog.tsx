@@ -15,12 +15,18 @@ import posthog from 'posthog-js';
 import { useTimelineData } from '@/hooks/use-convex-data';
 import { incomeToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { incomeFormSchema, type IncomeInputs, supportsWithholding } from '@/lib/schemas/inputs/income-form-schema';
+import {
+  incomeFormSchema,
+  type IncomeInputs,
+  supportsWithholding,
+  type IncomeType,
+  defaultWithholding as getDefaultWithholding,
+} from '@/lib/schemas/inputs/income-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import { timeFrameForDisplay, growthForDisplay, incomeTaxTreatmentForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
-import { Field, Fieldset, FieldGroup, Label, ErrorMessage /* Description */ } from '@/components/catalyst/fieldset';
+import { Field, Fieldset, FieldGroup, Label, ErrorMessage } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/combobox';
 import { Select } from '@/components/catalyst/select';
@@ -49,7 +55,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
         frequency: 'yearly',
         timeframe: { start: { type: 'now' }, end: { type: 'atRetirement' } },
         growth: { growthRate: 0 },
-        taxes: { incomeType: 'wage', withholding: 20 },
+        taxes: { incomeType: 'wage', withholding: getDefaultWithholding('wage') },
       }) as const satisfies Partial<IncomeInputs>,
     [numIncomes]
   );
@@ -61,6 +67,7 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
     unregister,
     control,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(incomeFormSchema),
@@ -135,6 +142,23 @@ export default function IncomeDialog({ onClose, selectedIncome: _selectedIncome,
       unregister('taxes.withholding', { keepDefaultValue: true });
     }
   }, [frequency, startType, endType, unregister, incomeType]);
+
+  const prevIncomeTypeRef = useRef<IncomeType>(incomeType);
+
+  useEffect(() => {
+    if (prevIncomeTypeRef.current !== incomeType) {
+      if (selectedIncome?.taxes.incomeType === incomeType) {
+        setValue('taxes.withholding', selectedIncome.taxes.withholding, { shouldValidate: true });
+      } else {
+        const defaultWithholding = getDefaultWithholding(incomeType);
+        if (defaultWithholding !== undefined) {
+          setValue('taxes.withholding', defaultWithholding, { shouldValidate: true });
+        }
+      }
+
+      prevIncomeTypeRef.current = incomeType;
+    }
+  }, [incomeType, setValue, selectedIncome]);
 
   const getStartColSpan = () => {
     if (startType === 'customDate') return 'col-span-2';

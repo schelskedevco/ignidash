@@ -95,3 +95,16 @@ export const supportsWithholding = (incomeType: IncomeType): boolean => {
       return false;
   }
 };
+
+export const defaultWithholding = (incomeType: IncomeType): number | undefined => {
+  switch (incomeType) {
+    case 'wage':
+      return 20;
+    case 'socialSecurity':
+      return 0;
+    case 'exempt':
+    case 'selfEmployment':
+    case 'pension':
+      return undefined;
+  }
+};
