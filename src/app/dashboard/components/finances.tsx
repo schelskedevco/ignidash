@@ -20,6 +20,7 @@ import { Divider } from '@/components/catalyst/divider';
 import DataItem from '@/components/ui/data-item';
 import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
+import { cn } from '@/lib/utils';
 
 import AssetDialog from './dialogs/asset-dialog';
 import LiabilityDialog from './dialogs/liability-dialog';
@@ -47,6 +48,38 @@ function getLiabilityDesc(liability: LiabilityInputs) {
         Updated <time dateTime={new Date(liability.updatedAt).toISOString()}>{new Date(liability.updatedAt).toLocaleDateString()}</time>
       </p>
     </>
+  );
+}
+
+function HoverableIcon({
+  defaultIcon: DefaultIcon,
+  hoverIcon: HoverIcon,
+  className,
+  href,
+}: {
+  defaultIcon: React.ComponentType<{ className?: string }>;
+  hoverIcon: React.ComponentType<{ className?: string }>;
+  className?: string;
+  href?: string;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  if (!href) return <DefaultIcon className={className} />;
+
+  return (
+    <div className="relative" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+      <DefaultIcon className={cn(className, 'transition-opacity duration-200', { 'opacity-0': isHovered })} />
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn('absolute inset-0 transition-opacity duration-200', {
+          'pointer-events-none opacity-0': !isHovered,
+        })}
+      >
+        <HoverIcon className={className} />
+      </a>
+    </div>
   );
 }
 
@@ -169,16 +202,15 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                       index={index}
                       name={
                         asset.url ? (
-                          <a href={asset.url} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2">
-                            <span className="underline-offset-2 group-hover:underline">{asset.name}</span>
-                            <ExternalLinkIcon className="text-muted-foreground size-3.5 shrink-0" />
+                          <a href={asset.url} target="_blank" rel="noopener noreferrer">
+                            {asset.name}
                           </a>
                         ) : (
                           asset.name
                         )
                       }
                       desc={getAssetDesc(asset)}
-                      leftAddOn={<Icon className="size-8" />}
+                      leftAddOn={<HoverableIcon defaultIcon={Icon} hoverIcon={ExternalLinkIcon} className="size-8" href={asset.url} />}
                       onDropdownClickEdit={() => handleEditAsset(asset)}
                       onDropdownClickDelete={() => setAssetToDelete({ id: asset.id, name: asset.name })}
                       colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
@@ -211,21 +243,15 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                       index={index}
                       name={
                         liability.url ? (
-                          <a
-                            href={liability.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group inline-flex items-center gap-2"
-                          >
-                            <span className="underline-offset-2 group-hover:underline">{liability.name}</span>
-                            <ExternalLinkIcon className="text-muted-foreground size-3.5 shrink-0" />
+                          <a href={liability.url} target="_blank" rel="noopener noreferrer">
+                            {liability.name}
                           </a>
                         ) : (
                           liability.name
                         )
                       }
                       desc={getLiabilityDesc(liability)}
-                      leftAddOn={<Icon className="size-8" />}
+                      leftAddOn={<HoverableIcon defaultIcon={Icon} hoverIcon={ExternalLinkIcon} className="size-8" href={liability.url} />}
                       onDropdownClickEdit={() => handleEditLiability(liability)}
                       onDropdownClickDelete={() => setLiabilityToDelete({ id: liability.id, name: liability.name })}
                       colorClassName="bg-[var(--chart-4)] dark:bg-[var(--chart-1)]"
