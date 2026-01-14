@@ -27,7 +27,7 @@ function getAssetDesc(asset: AssetInputs) {
   return (
     <>
       <p>
-        {formatNumber(asset.value, 0, '$')} | {assetTypeForDisplay(asset.type)}
+        {formatNumber(asset.value, 1, '$')} | {assetTypeForDisplay(asset.type)}
       </p>
       <p>
         Updated <time dateTime={new Date(asset.updatedAt).toISOString()}>{new Date(asset.updatedAt).toLocaleDateString()}</time>
@@ -40,7 +40,7 @@ function getLiabilityDesc(liability: LiabilityInputs) {
   return (
     <>
       <p>
-        {formatNumber(liability.balance, 0, '$')} | {liabilityTypeForDisplay(liability.type)}
+        {formatNumber(liability.balance, 1, '$')} | {liabilityTypeForDisplay(liability.type)}
       </p>
       <p>
         Updated <time dateTime={new Date(liability.updatedAt).toISOString()}>{new Date(liability.updatedAt).toLocaleDateString()}</time>
@@ -122,7 +122,7 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                 <p>Note: entries are not connected to Simulator plans.</p>
               </TooltipContent>
             </Tooltip>
-            <span className="text-muted-foreground text-2xl/8 font-normal sm:text-xl/8">{formatNumber(netWorth, 0, '$')}</span>
+            <span className="text-muted-foreground text-2xl/8 font-normal sm:text-xl/8">{formatNumber(netWorth, 2, '$')}</span>
           </div>
           <div className="flex items-center gap-2">
             <Tooltip>
@@ -155,7 +155,7 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                   Assets
                 </Subheading>
                 <span className="text-base/7 font-bold text-stone-950 sm:text-sm/6 dark:text-white">
-                  {formatNumber(totalAssets, 0, '$')}
+                  {formatNumber(totalAssets, 2, '$')}
                 </span>
               </div>
               <ul role="list" className="grid grid-cols-1 gap-3">
@@ -188,7 +188,7 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                   Liabilities
                 </Subheading>
                 <span className="text-base/7 font-bold text-stone-950 sm:text-sm/6 dark:text-white">
-                  {formatNumber(totalLiabilities, 0, '$')}
+                  {formatNumber(totalLiabilities, 2, '$')}
                 </span>
               </div>
               <ul role="list" className="grid grid-cols-1 gap-3">
