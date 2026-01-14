@@ -77,7 +77,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         });
       },
       onPasswordReset: async ({ user }, request) => {
-        console.log(`Password for user ${user.email} has been reset.`);
+        console.log(`Password reset completed for user ${user.id}`);
       },
     },
     socialProviders: {
@@ -147,7 +147,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
           });
         },
         afterDelete: async (user, request) => {
-          console.log(`User with email ${user.email} has deleted their account.`);
+          console.log(`Account deleted for user ${user.id}`);
 
           try {
             await fetch(`${process.env.CONVEX_SITE_URL}/deleteUserData`, {
