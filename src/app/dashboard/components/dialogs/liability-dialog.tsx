@@ -36,6 +36,7 @@ export default function LiabilityDialog({ onClose, selectedLiability: _selectedL
         name: 'Liability ' + (numLiabilities + 1),
         id: '',
         updatedAt: -1,
+        url: '',
         type: 'creditCard' as LiabilityInputs['type'],
       }) as const satisfies Partial<LiabilityInputs>,
     [numLiabilities]
@@ -115,6 +116,24 @@ export default function LiabilityDialog({ onClose, selectedLiability: _selectedL
                   <option value="other">Other</option>
                 </Select>
                 {errors.type && <ErrorMessage>{errors.type?.message}</ErrorMessage>}
+              </Field>
+              <Field>
+                <Label htmlFor="url" className="flex w-full items-center justify-between">
+                  <span className="whitespace-nowrap">URL</span>
+                  <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
+                </Label>
+                <Input
+                  {...register('url')}
+                  id="url"
+                  name="url"
+                  type="url"
+                  placeholder="https://www.example.com"
+                  autoComplete="off"
+                  inputMode="url"
+                  invalid={!!errors.url}
+                  aria-invalid={!!errors.url}
+                />
+                {errors.url && <ErrorMessage>{errors.url?.message}</ErrorMessage>}
               </Field>
             </FieldGroup>
           </DialogBody>

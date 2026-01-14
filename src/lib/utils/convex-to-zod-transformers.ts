@@ -356,14 +356,14 @@ export function simulatorToConvex(
  * Transforms Zod AssetInputs to Convex asset format
  */
 export function assetToConvex(asset: AssetInputs): Doc<'finances'>['assets'][number] {
-  return { ...asset };
+  return { ...asset, url: asset.url === '' ? undefined : asset.url };
 }
 
 /**
  * Transforms Zod LiabilityInputs to Convex liability format
  */
 export function liabilityToConvex(liability: LiabilityInputs): Doc<'finances'>['liabilities'][number] {
-  return { ...liability };
+  return { ...liability, url: liability.url === '' ? undefined : liability.url };
 }
 
 /**

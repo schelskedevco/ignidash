@@ -7,6 +7,7 @@ import { usePreloadedAuthQuery } from '@convex-dev/better-auth/nextjs/client';
 import { useState } from 'react';
 import { WalletIcon as MicroWalletIcon, CreditCardIcon as MicroCreditCardIcon } from '@heroicons/react/16/solid';
 import { WalletIcon, CreditCardIcon } from '@heroicons/react/24/outline';
+import { ExternalLinkIcon } from 'lucide-react';
 
 import { type AssetInputs, assetTypeForDisplay, assetIconForDisplay } from '@/lib/schemas/finances/asset-schema';
 import { type LiabilityInputs, liabilityTypeForDisplay, liabilityIconForDisplay } from '@/lib/schemas/finances/liability-schema';
@@ -166,7 +167,16 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                       key={asset.id}
                       id={asset.id}
                       index={index}
-                      name={asset.name}
+                      name={
+                        asset.url ? (
+                          <a href={asset.url} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-2">
+                            <span>{asset.name}</span>
+                            <ExternalLinkIcon className="text-muted-foreground size-4 shrink-0" />
+                          </a>
+                        ) : (
+                          asset.name
+                        )
+                      }
                       desc={getAssetDesc(asset)}
                       leftAddOn={<Icon className="size-8" />}
                       onDropdownClickEdit={() => handleEditAsset(asset)}
@@ -199,7 +209,21 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                       key={liability.id}
                       id={liability.id}
                       index={index}
-                      name={liability.name}
+                      name={
+                        liability.url ? (
+                          <a
+                            href={liability.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group inline-flex items-center gap-2"
+                          >
+                            <span>{liability.name}</span>
+                            <ExternalLinkIcon className="text-muted-foreground size-4 shrink-0" />
+                          </a>
+                        ) : (
+                          liability.name
+                        )
+                      }
                       desc={getLiabilityDesc(liability)}
                       leftAddOn={<Icon className="size-8" />}
                       onDropdownClickEdit={() => handleEditLiability(liability)}

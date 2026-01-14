@@ -8,6 +8,7 @@ export const liabilityFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
   balance: currencyFieldAllowsZero('Balance cannot be negative'),
   updatedAt: z.number(),
+  url: z.url().optional().or(z.literal('')),
   type: z.enum(['mortgage', 'autoLoan', 'studentLoan', 'personalLoan', 'creditCard', 'medicalDebt', 'other']),
 });
 

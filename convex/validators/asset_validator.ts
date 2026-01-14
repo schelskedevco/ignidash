@@ -5,6 +5,7 @@ export const assetValidator = v.object({
   name: v.string(),
   value: v.number(),
   updatedAt: v.number(),
+  url: v.optional(v.string()),
   type: v.union(
     v.literal('savings'),
     v.literal('checking'),

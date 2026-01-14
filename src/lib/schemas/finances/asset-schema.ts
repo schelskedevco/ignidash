@@ -8,6 +8,7 @@ export const assetFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
   value: currencyFieldAllowsZero('Value cannot be negative'),
   updatedAt: z.number(),
+  url: z.url().optional().or(z.literal('')),
   type: z.enum([
     'savings',
     'checking',
