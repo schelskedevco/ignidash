@@ -349,7 +349,7 @@ export default function Table<T extends Record<string, unknown>>({
         </Button>
         <Button onClick={handleExport}>
           <DownloadIcon data-slot="icon" />
-          Export
+          Export CSV
         </Button>
       </div>
     </>
