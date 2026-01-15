@@ -32,6 +32,9 @@ interface SingleSimulationTaxesBarChartCardProps {
   setReferenceLineMode: (mode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates') => void;
   referenceLineMode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates';
   referenceLineModes: readonly ('hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates')[];
+  setAgiReferenceLineMode: (mode: 'hideReferenceLines' | 'niitThreshold') => void;
+  agiReferenceLineMode: 'hideReferenceLines' | 'niitThreshold';
+  agiReferenceLineModes: readonly ('hideReferenceLines' | 'niitThreshold')[];
 }
 
 export default function SingleSimulationTaxesBarChartCard({
@@ -41,6 +44,9 @@ export default function SingleSimulationTaxesBarChartCard({
   setReferenceLineMode: setCurrReferenceLineMode,
   referenceLineMode: currReferenceLineMode,
   referenceLineModes,
+  setAgiReferenceLineMode: setCurrAgiReferenceLineMode,
+  agiReferenceLineMode: currAgiReferenceLineMode,
+  agiReferenceLineModes,
 }: SingleSimulationTaxesBarChartCardProps) {
   let title;
   switch (dataView) {
@@ -113,12 +119,28 @@ export default function SingleSimulationTaxesBarChartCard({
             </DropdownMenu>
           </Dropdown>
         )}
+        {dataView === 'adjustedGrossIncome' && (
+          <Dropdown>
+            <DropdownButton plain aria-label="Open chart view options" className="absolute top-3 right-3 sm:top-5 sm:right-5">
+              <EyeIcon data-slot="icon" />
+            </DropdownButton>
+            <DropdownMenu>
+              {agiReferenceLineModes.map((agiReferenceLineMode) => (
+                <DropdownItem key={agiReferenceLineMode} onClick={() => setCurrAgiReferenceLineMode(agiReferenceLineMode)}>
+                  <CheckIcon data-slot="icon" className={cn({ invisible: currAgiReferenceLineMode !== agiReferenceLineMode })} />
+                  <DropdownLabel>{formatChartString(agiReferenceLineMode)}</DropdownLabel>
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+        )}
       </div>
       <SingleSimulationTaxesBarChart
         age={selectedAge}
         rawChartData={rawChartData}
         dataView={dataView}
         referenceLineMode={dataView === 'taxableIncome' ? currReferenceLineMode : null}
+        agiReferenceLineMode={dataView === 'adjustedGrossIncome' ? currAgiReferenceLineMode : null}
       />
     </Card>
   );

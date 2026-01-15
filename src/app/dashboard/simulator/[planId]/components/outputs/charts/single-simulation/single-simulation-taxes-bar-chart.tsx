@@ -7,6 +7,7 @@ import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import type { IncomeTaxBracket } from '@/lib/calc/tax-data/income-tax-brackets';
 import type { CapitalGainsTaxBracket } from '@/lib/calc/tax-data/capital-gains-tax-brackets';
+import { NIIT_RATE } from '@/lib/calc/tax-data/niit-thresholds';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
 
 const getTaxBrackets = (
@@ -42,6 +43,26 @@ const renderTaxBracketReferenceLines = (
       }}
     />
   ));
+};
+
+const getNiitThreshold = (chartData: SingleSimulationTaxesChartDataPoint[]): number | null => {
+  return chartData[0]?.niitThreshold ?? null;
+};
+
+const renderNiitThresholdReferenceLine = (niitThreshold: number, foregroundColor: string, foregroundMutedColor: string) => {
+  return (
+    <ReferenceLine
+      y={niitThreshold}
+      stroke={foregroundMutedColor}
+      ifOverflow="extendDomain"
+      label={{
+        value: `${(NIIT_RATE * 100).toFixed(1)}% (${formatNumber(niitThreshold, 1, '$')})`,
+        position: 'insideTopRight',
+        fill: foregroundColor,
+        fontWeight: '600',
+      }}
+    />
+  );
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -158,6 +179,7 @@ interface SingleSimulationTaxesBarChartProps {
     | 'socialSecurityTaxablePercentage';
   rawChartData: SingleSimulationTaxesChartDataPoint[];
   referenceLineMode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates' | null;
+  agiReferenceLineMode: 'hideReferenceLines' | 'niitThreshold' | null;
 }
 
 export default function SingleSimulationTaxesBarChart({
@@ -165,6 +187,7 @@ export default function SingleSimulationTaxesBarChart({
   dataView,
   rawChartData,
   referenceLineMode,
+  agiReferenceLineMode,
 }: SingleSimulationTaxesBarChartProps) {
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
@@ -215,6 +238,7 @@ export default function SingleSimulationTaxesBarChart({
   const chartData = rawChartData.filter((item) => item.age === age);
 
   const { incomeTaxBrackets, capitalGainsTaxBrackets } = getTaxBrackets(chartData);
+  const niitThreshold = getNiitThreshold(chartData);
   const taxableIncome = Math.max(...chartData.map((item) => item.taxableIncome));
 
   let formatter = undefined;
@@ -460,6 +484,9 @@ export default function SingleSimulationTaxesBarChart({
           {referenceLineMode === 'marginalCapGainsTaxRates' &&
             capitalGainsTaxBrackets &&
             renderTaxBracketReferenceLines(capitalGainsTaxBrackets, taxableIncome, foregroundColor, foregroundMutedColor)}
+          {agiReferenceLineMode === 'niitThreshold' &&
+            niitThreshold &&
+            renderNiitThresholdReferenceLine(niitThreshold, foregroundColor, foregroundMutedColor)}
         </BarChart>
       </ResponsiveContainer>
     </div>

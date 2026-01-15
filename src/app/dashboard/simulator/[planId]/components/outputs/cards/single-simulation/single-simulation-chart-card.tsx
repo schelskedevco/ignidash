@@ -118,6 +118,9 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
   const referenceLineModes = ['marginalIncomeTaxRates', 'marginalCapGainsTaxRates', 'hideReferenceLines'] as const;
   const [referenceLineMode, setReferenceLineMode] = useState<(typeof referenceLineModes)[number]>(referenceLineModes[0]);
 
+  const agiReferenceLineModes = ['niitThreshold', 'hideReferenceLines'] as const;
+  const [agiReferenceLineMode, setAgiReferenceLineMode] = useState<(typeof agiReferenceLineModes)[number]>(agiReferenceLineModes[0]);
+
   return (
     <>
       <SingleSimulationTaxesLineChartCard
@@ -136,6 +139,9 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
         setReferenceLineMode={setReferenceLineMode}
         referenceLineMode={referenceLineMode}
         referenceLineModes={referenceLineModes}
+        setAgiReferenceLineMode={setAgiReferenceLineMode}
+        agiReferenceLineMode={agiReferenceLineMode}
+        agiReferenceLineModes={agiReferenceLineModes}
       />
     </>
   );
