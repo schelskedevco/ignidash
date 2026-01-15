@@ -190,6 +190,8 @@ export class StochasticReturnsProvider implements ReturnsProvider {
    * the yield follows a log-normal distribution
    */
   private generateLogNormalYield(expectedYield: number, volatility: number, z: number): number {
+    if (expectedYield <= 0) return 0;
+
     const mean = expectedYield;
     const variance = volatility * volatility;
 

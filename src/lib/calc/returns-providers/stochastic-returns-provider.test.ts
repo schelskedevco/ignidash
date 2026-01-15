@@ -418,4 +418,58 @@ describe('StochasticReturnsProvider', () => {
       expect(maxStockYield).toBeLessThan(1.0); // Less than 100%
     });
   });
+
+  describe('generateLogNormalYield edge cases', () => {
+    it('should return 0 when expected yield is 0', () => {
+      const provider = new StochasticReturnsProvider(defaultInputs, 12345);
+      const generateLogNormalYield = StochasticReturnsProvider.prototype['generateLogNormalYield'];
+
+      const result = generateLogNormalYield.call(provider, 0, 0.01, 2);
+
+      expect(result).toBe(0);
+    });
+
+    it('should return 0 when expected yield is negative', () => {
+      const provider = new StochasticReturnsProvider(defaultInputs, 12345);
+      const generateLogNormalYield = StochasticReturnsProvider.prototype['generateLogNormalYield'];
+
+      const result = generateLogNormalYield.call(provider, -0.05, 0.01, 1);
+
+      expect(result).toBe(0);
+    });
+
+    it('should always return non-negative values for positive expected yields', () => {
+      const provider = new StochasticReturnsProvider(defaultInputs, 12345);
+      const generateLogNormalYield = StochasticReturnsProvider.prototype['generateLogNormalYield'];
+
+      // Test with extreme negative z-scores
+      const extremeZScores = [-10, -5, -3, -2, -1, 0, 1, 2, 3, 5, 10];
+
+      for (const z of extremeZScores) {
+        const result = generateLogNormalYield.call(provider, 0.03, 0.01, z);
+        expect(result).toBeGreaterThan(0);
+      }
+    });
+
+    it('should return expected yield when volatility is 0', () => {
+      const provider = new StochasticReturnsProvider(defaultInputs, 12345);
+      const generateLogNormalYield = StochasticReturnsProvider.prototype['generateLogNormalYield'];
+
+      const expectedYield = 0.045;
+      const result = generateLogNormalYield.call(provider, expectedYield, 0, 5);
+
+      expect(result).toBeCloseTo(expectedYield, 10);
+    });
+
+    it('should handle very small positive expected yields without numerical issues', () => {
+      const provider = new StochasticReturnsProvider(defaultInputs, 12345);
+      const generateLogNormalYield = StochasticReturnsProvider.prototype['generateLogNormalYield'];
+
+      const tinyYield = 0.0001; // 0.01%
+      const result = generateLogNormalYield.call(provider, tinyYield, 0.00005, 0);
+
+      expect(result).toBeGreaterThan(0);
+      expect(isFinite(result)).toBe(true);
+    });
+  });
 });
