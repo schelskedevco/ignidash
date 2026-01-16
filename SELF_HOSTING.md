@@ -1,14 +1,33 @@
 # Self-Hosting Ignidash
 
-Run Ignidash on your own infrastructure using Docker.
+Run your own instance of Ignidash. Choose the hosting option that best fits your needs:
 
-## Prerequisites
+| Option                                    | Best For                              | Infrastructure        |
+| ----------------------------------------- | ------------------------------------- | --------------------- |
+| [Docker Self-Hosted](#docker-self-hosted) | Full control, air-gapped environments | Your servers (Docker) |
+| [Cloud Hosted](#cloud-hosted)             | Simpler setup, managed backend        | Convex Cloud + Vercel |
+
+---
+
+## Docker Self-Hosted
+
+Run Ignidash entirely on your own infrastructure using Docker. This includes a self-hosted Convex backend.
+
+### Convex Self-Hosting Documentation
+
+- [Self-Hosting Overview](https://docs.convex.dev/self-hosting)
+- [Develop & Deploy Guide](https://stack.convex.dev/self-hosted-develop-and-deploy)
+- [GitHub: Self-Hosted README](https://github.com/get-convex/convex-backend/blob/main/self-hosted/README.md)
+- [GitHub: Hosting on Own Infrastructure](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/hosting_on_own_infra.md)
+- [GitHub: Upgrading](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md)
+
+### Prerequisites
 
 - Docker and Docker Compose
 - Node.js 22+
 - 4GB RAM minimum
 
-## Quick Start
+### Quick Start
 
 ```bash
 git clone https://github.com/your-org/ignidash.git
@@ -30,14 +49,14 @@ Once complete:
 - Application: http://localhost:3000
 - Convex Dashboard: http://localhost:6791
 
-## Manual Setup
+### Manual Setup
 
 If you prefer to set things up manually:
 
-### 1. Create Environment File
+#### 1. Create Environment File
 
 ```bash
-cp .env.example .env.local
+cp .env.selfhost.example .env.local
 ```
 
 Generate and add secrets to `.env.local`:
@@ -47,13 +66,13 @@ openssl rand -base64 32  # For BETTER_AUTH_SECRET
 openssl rand -base64 32  # For CONVEX_API_SECRET
 ```
 
-### 2. Start Docker Containers
+#### 2. Start Docker Containers
 
 ```bash
 npm run docker:up
 ```
 
-### 3. Generate Convex Admin Key
+#### 3. Generate Convex Admin Key
 
 ```bash
 docker compose exec convex-backend ./generate_admin_key.sh
@@ -61,7 +80,7 @@ docker compose exec convex-backend ./generate_admin_key.sh
 
 Add the generated key to `.env.local` as `CONVEX_SELF_HOSTED_ADMIN_KEY`.
 
-### 4. Sync Environment Variables to Convex
+#### 4. Sync Environment Variables to Convex
 
 Convex serverless functions need their own environment variables (separate from `.env.local`). Sync them:
 
@@ -77,11 +96,104 @@ npx convex env set BETTER_AUTH_SECRET "your-secret" --url http://127.0.0.1:3210 
 # ... repeat for other variables
 ```
 
-### 5. Deploy Convex Functions
+#### 5. Deploy Convex Functions
 
 ```bash
 npx convex deploy --url $CONVEX_SELF_HOSTED_URL --admin-key $CONVEX_SELF_HOSTED_ADMIN_KEY
 ```
+
+### Docker Commands
+
+```bash
+npm run docker:build   # Build images
+npm run docker:up      # Start services
+npm run docker:down    # Stop services
+npm run docker:logs    # View logs
+```
+
+### Updating (Docker)
+
+```bash
+git pull
+docker compose down
+docker compose build
+docker compose up -d
+npx convex deploy --url $CONVEX_SELF_HOSTED_URL --admin-key $CONVEX_SELF_HOSTED_ADMIN_KEY
+```
+
+---
+
+## Cloud Hosted
+
+Run Ignidash using Convex Cloud for the backend and deploy the frontend to Vercel (or any Node.js host). This is simpler to set up and maintain.
+
+### Prerequisites
+
+- Node.js 22+
+- [Convex account](https://dashboard.convex.dev) (free tier available)
+- [Vercel account](https://vercel.com) (optional, for hosting)
+
+### Convex Documentation
+
+- [Next.js Quickstart](https://docs.convex.dev/quickstart/nextjs)
+- [Production Guide](https://docs.convex.dev/production)
+- [Hosting Options](https://docs.convex.dev/production/hosting)
+
+### Setup
+
+#### 1. Create Convex Project
+
+1. Go to [dashboard.convex.dev](https://dashboard.convex.dev)
+2. Create a new project
+3. Note your project URL (e.g., `https://your-project-name.convex.cloud`)
+
+#### 2. Configure Environment
+
+```bash
+cp .env.cloud.example .env.local
+```
+
+Fill in your Convex project details:
+
+```bash
+CONVEX_DEPLOYMENT=dev:your-project-name
+NEXT_PUBLIC_CONVEX_URL=https://your-project-name.convex.cloud
+NEXT_PUBLIC_CONVEX_SITE_URL=https://your-project-name.convex.site
+```
+
+Generate secrets:
+
+```bash
+openssl rand -base64 32  # For BETTER_AUTH_SECRET
+openssl rand -base64 32  # For CONVEX_API_SECRET
+```
+
+#### 3. Deploy Convex Functions
+
+```bash
+npx convex dev
+```
+
+This will deploy your functions to Convex Cloud and start watching for changes.
+
+#### 4. Run Locally or Deploy
+
+**Local development:**
+
+```bash
+npm run dev
+```
+
+**Deploy to Vercel:**
+
+1. Push your code to GitHub
+2. Import the project in [Vercel](https://vercel.com)
+3. Add your environment variables in Vercel's project settings
+4. Deploy
+
+See [Convex hosting docs](https://docs.convex.dev/production/hosting) for detailed Vercel setup.
+
+---
 
 ## Environment Variables
 
@@ -96,14 +208,17 @@ npx convex deploy --url $CONVEX_SELF_HOSTED_URL --admin-key $CONVEX_SELF_HOSTED_
 
 ### Required Variables
 
-| Variable                       | Description                                                 |
-| ------------------------------ | ----------------------------------------------------------- |
-| `SELF_HOSTED`                  | Set to `true` for Docker builds (enables standalone output) |
-| `CONVEX_SELF_HOSTED_URL`       | Convex backend URL (default: `http://127.0.0.1:3210`)       |
-| `CONVEX_SELF_HOSTED_ADMIN_KEY` | Admin key for Convex CLI (generated)                        |
-| `SITE_URL`                     | Application URL                                             |
-| `BETTER_AUTH_SECRET`           | Session encryption secret                                   |
-| `CONVEX_API_SECRET`            | Internal API authentication                                 |
+| Variable                       | Description                                                 | Docker | Cloud |
+| ------------------------------ | ----------------------------------------------------------- | ------ | ----- |
+| `SELF_HOSTED`                  | Set to `true` for Docker builds (enables standalone output) | Yes    | No    |
+| `CONVEX_SELF_HOSTED_URL`       | Convex backend URL (default: `http://127.0.0.1:3210`)       | Yes    | No    |
+| `CONVEX_SELF_HOSTED_ADMIN_KEY` | Admin key for Convex CLI (generated)                        | Yes    | No    |
+| `CONVEX_DEPLOYMENT`            | Convex Cloud deployment ID                                  | No     | Yes   |
+| `NEXT_PUBLIC_CONVEX_URL`       | Public Convex URL (browser)                                 | Yes    | Yes   |
+| `NEXT_PUBLIC_CONVEX_SITE_URL`  | Public Convex Site URL                                      | Yes    | Yes   |
+| `SITE_URL`                     | Application URL                                             | Yes    | Yes   |
+| `BETTER_AUTH_SECRET`           | Session encryption secret                                   | Yes    | Yes   |
+| `CONVEX_API_SECRET`            | Internal API authentication                                 | Yes    | Yes   |
 
 ### Optional Variables
 
@@ -116,18 +231,11 @@ npx convex deploy --url $CONVEX_SELF_HOSTED_URL --admin-key $CONVEX_SELF_HOSTED_
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`                            | Client-side Stripe            |
 | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`           | Analytics                     |
 
-## Docker Commands
-
-```bash
-npm run docker:build   # Build images
-npm run docker:up      # Start services
-npm run docker:down    # Stop services
-npm run docker:logs    # View logs
-```
+---
 
 ## Troubleshooting
 
-### Services won't start
+### Docker: Services won't start
 
 ```bash
 docker compose logs
@@ -135,13 +243,13 @@ docker compose logs
 
 Common issues: port conflicts (3000, 3210, 3211, 6791), insufficient memory.
 
-### Can't connect to Convex
+### Docker: Can't connect to Convex
 
 ```bash
 curl http://localhost:3210/version
 ```
 
-### Missing environment variables in Convex
+### Docker: Missing environment variables in Convex
 
 ```bash
 npx convex env list --url http://127.0.0.1:3210 --admin-key YOUR_KEY
@@ -153,12 +261,6 @@ Re-sync with:
 npm run selfhost -- --sync-only
 ```
 
-## Updating
+### Cloud: Convex deployment issues
 
-```bash
-git pull
-docker compose down
-docker compose build
-docker compose up -d
-npx convex deploy --url $CONVEX_SELF_HOSTED_URL --admin-key $CONVEX_SELF_HOSTED_ADMIN_KEY
-```
+Check the [Convex status page](https://status.convex.dev) and your project dashboard at [dashboard.convex.dev](https://dashboard.convex.dev).

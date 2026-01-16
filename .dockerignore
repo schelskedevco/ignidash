@@ -16,7 +16,8 @@ dist
 # Environment files (sensitive - use docker-compose env vars instead)
 .env
 .env.*
-!.env.example
+!.env.selfhost.example
+!.env.cloud.example
 
 # IDE/Editor
 .vscode
