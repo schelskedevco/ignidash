@@ -131,6 +131,7 @@ sync_convex_env() {
 
     # List of vars to sync to Convex (only set if they have values)
     CONVEX_VARS=(
+        "SELF_HOSTED"
         "SITE_URL"
         "BETTER_AUTH_SECRET"
         "CONVEX_API_SECRET"
