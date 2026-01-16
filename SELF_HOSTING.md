@@ -25,15 +25,13 @@ Run Ignidash entirely on your own infrastructure using Docker. This includes a s
 
 - Docker and Docker Compose
 - Node.js 22+
-- 4GB RAM minimum
 
 ### Quick Start
 
 ```bash
-git clone https://github.com/your-org/ignidash.git
+git clone https://github.com/schelskedevco/ignidash.git
 cd ignidash
-npm install
-npm run selfhost
+npm run selfhost --init
 ```
 
 The setup script will:
@@ -49,59 +47,6 @@ Once complete:
 - Application: http://localhost:3000
 - Convex Dashboard: http://localhost:6791
 
-### Manual Setup
-
-If you prefer to set things up manually:
-
-#### 1. Create Environment File
-
-```bash
-cp .env.selfhost.example .env.local
-```
-
-Generate and add secrets to `.env.local`:
-
-```bash
-openssl rand -base64 32  # For BETTER_AUTH_SECRET
-openssl rand -base64 32  # For CONVEX_API_SECRET
-```
-
-#### 2. Start Docker Containers
-
-```bash
-npm run docker:up
-```
-
-#### 3. Generate Convex Admin Key
-
-```bash
-docker compose exec convex-backend ./generate_admin_key.sh
-```
-
-Add the generated key to `.env.local` as `CONVEX_SELF_HOSTED_ADMIN_KEY`.
-
-#### 4. Sync Environment Variables to Convex
-
-Convex serverless functions need their own environment variables (separate from `.env.local`). Sync them:
-
-```bash
-npm run selfhost -- --sync-only
-```
-
-Or set them manually:
-
-```bash
-npx convex env set SITE_URL "http://localhost:3000" --url http://127.0.0.1:3210 --admin-key YOUR_KEY
-npx convex env set BETTER_AUTH_SECRET "your-secret" --url http://127.0.0.1:3210 --admin-key YOUR_KEY
-# ... repeat for other variables
-```
-
-#### 5. Deploy Convex Functions
-
-```bash
-npx convex deploy --url $CONVEX_SELF_HOSTED_URL --admin-key $CONVEX_SELF_HOSTED_ADMIN_KEY
-```
-
 ### Docker Commands
 
 ```bash
@@ -111,15 +56,17 @@ npm run docker:down    # Stop services
 npm run docker:logs    # View logs
 ```
 
-### Updating (Docker)
+### Upgrading
+
+**Update the app:**
 
 ```bash
 git pull
 docker compose down
-docker compose build
-docker compose up -d
-npx convex deploy --url $CONVEX_SELF_HOSTED_URL --admin-key $CONVEX_SELF_HOSTED_ADMIN_KEY
+npm run selfhost
 ```
+
+**Update Convex backend:** New versions may require database migrations. Back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md).
 
 ---
 
@@ -168,21 +115,16 @@ openssl rand -base64 32  # For BETTER_AUTH_SECRET
 openssl rand -base64 32  # For CONVEX_API_SECRET
 ```
 
-#### 3. Deploy Convex Functions
-
-```bash
-npx convex dev
-```
-
-This will deploy your functions to Convex Cloud and start watching for changes.
-
-#### 4. Run Locally or Deploy
+#### 3. Run Locally or Deploy
 
 **Local development:**
 
 ```bash
-npm run dev
+npm run dev          # Start Next.js app
+npm run dev:convex   # Start Convex dev server (in another terminal)
 ```
+
+This deploys your Convex functions and watches for changes.
 
 **Deploy to Vercel:**
 
