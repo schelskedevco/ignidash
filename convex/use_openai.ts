@@ -1,5 +1,6 @@
 'use node';
 
+import { ConvexError } from 'convex/values';
 import { AzureOpenAI } from 'openai';
 import { internalAction } from './_generated/server';
 import type { Id, Doc } from './_generated/dataModel';
@@ -7,25 +8,26 @@ import { internal } from './_generated/api';
 
 import type { SubscriptionType } from './utils/ai_utils';
 
+let openaiChat: AzureOpenAI | null = null;
+let openaiInsights: AzureOpenAI | null = null;
+
 const apiKey = process.env.OPENAI_API_KEY;
-if (!apiKey) throw new Error('OPENAI_API_KEY environment variable is not set.');
-
 const endpoint = process.env.OPENAI_ENDPOINT;
-if (!endpoint) throw new Error('OPENAI_ENDPOINT environment variable is not set.');
+if (apiKey && endpoint) {
+  openaiChat = new AzureOpenAI({
+    endpoint,
+    apiKey,
+    deployment: 'gpt-5.2-chat',
+    apiVersion: '2024-04-01-preview',
+  });
 
-const openaiChat = new AzureOpenAI({
-  endpoint,
-  apiKey,
-  deployment: 'gpt-5.2-chat',
-  apiVersion: '2024-04-01-preview',
-});
-
-const openaiInsights = new AzureOpenAI({
-  endpoint,
-  apiKey,
-  deployment: 'gpt-5.2',
-  apiVersion: '2024-12-01-preview',
-});
+  openaiInsights = new AzureOpenAI({
+    endpoint,
+    apiKey,
+    deployment: 'gpt-5.2',
+    apiVersion: '2024-12-01-preview',
+  });
+}
 
 type StreamChatParams = {
   userId: string;
@@ -41,6 +43,8 @@ export const streamChat = internalAction({
     ctx,
     { userId, messages, assistantMessageId, systemPrompt, subscriptionStartTime, subscriptionType }: StreamChatParams
   ) => {
+    if (!openaiChat) throw new ConvexError('Azure OpenAI environment variables are not set.');
+
     const hasBody = (msg: Doc<'messages'>): msg is Doc<'messages'> & { body: string } => msg.body !== undefined;
 
     try {
@@ -116,6 +120,8 @@ type StreamInsightsParams = {
 
 export const streamInsights = internalAction({
   handler: async (ctx, { userId, insightId, systemPrompt, subscriptionStartTime, subscriptionType }: StreamInsightsParams) => {
+    if (!openaiInsights) throw new ConvexError('Azure OpenAI environment variables are not set.');
+
     try {
       const stream = await openaiInsights.chat.completions.create({
         model: 'gpt-5.2',

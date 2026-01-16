@@ -5,6 +5,7 @@ import { convex } from '@convex-dev/better-auth/plugins';
 import { requireActionCtx } from '@convex-dev/better-auth/utils';
 import { Resend } from '@convex-dev/resend';
 import { betterAuth, type BetterAuthOptions } from 'better-auth/minimal';
+import type { BetterAuthPlugin } from 'better-auth';
 import { stripe } from '@better-auth/stripe';
 import Stripe from 'stripe';
 import { APIError, createAuthMiddleware } from 'better-auth/api';
@@ -81,10 +82,13 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       },
     },
     socialProviders: {
-      google: {
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      },
+      ...(process.env.GOOGLE_CLIENT_ID &&
+        process.env.GOOGLE_CLIENT_SECRET && {
+          google: {
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          },
+        }),
     },
     user: {
       additionalFields: {
@@ -166,34 +170,36 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     },
     plugins: [
       convex({ authConfig, jwksRotateOnTokenGenerationError: true, jwt: { expirationSeconds: 60 * 60 * 24 } }),
-      stripe({
-        stripeClient,
-        stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-        createCustomerOnSignUp: true,
-        subscription: {
-          enabled: true,
-          plans: [
-            {
-              name: 'pro',
-              priceId: process.env.STRIPE_PRICE_ID!,
-              freeTrial: {
-                days: 7,
-                onTrialStart: async (subscription) => {
-                  try {
-                    const customerId = subscription.stripeCustomerId;
-                    if (!customerId) return;
+      process.env.STRIPE_WEBHOOK_SECRET &&
+        process.env.STRIPE_PRICE_ID &&
+        stripe({
+          stripeClient,
+          stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+          createCustomerOnSignUp: true,
+          subscription: {
+            enabled: true,
+            plans: [
+              {
+                name: 'pro',
+                priceId: process.env.STRIPE_PRICE_ID,
+                freeTrial: {
+                  days: 7,
+                  onTrialStart: async (subscription) => {
+                    try {
+                      const customerId = subscription.stripeCustomerId;
+                      if (!customerId) return;
 
-                    const customer = await stripeClient.customers.retrieve(customerId);
-                    if (customer.deleted || !customer.email) {
-                      console.error('Customer deleted or email not found');
-                      return;
-                    }
+                      const customer = await stripeClient.customers.retrieve(customerId);
+                      if (customer.deleted || !customer.email) {
+                        console.error('Customer deleted or email not found');
+                        return;
+                      }
 
-                    await resend.sendEmail(requireActionCtx(ctx), {
-                      from: 'Ignidash <noreply@mail.ignidash.com>',
-                      to: customer.email,
-                      subject: 'Your 7-day Pro trial has started!',
-                      html: `
+                      await resend.sendEmail(requireActionCtx(ctx), {
+                        from: 'Ignidash <noreply@mail.ignidash.com>',
+                        to: customer.email,
+                        subject: 'Your 7-day Pro trial has started!',
+                        html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                           <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
                             Hi there,
@@ -209,27 +215,27 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                           </p>
                         </div>
                       `,
-                    });
-                  } catch (error) {
-                    console.error('Error sending trial start email:', error);
-                  }
-                },
-                onTrialEnd: async ({ subscription }, request) => {
-                  try {
-                    const customerId = subscription.stripeCustomerId;
-                    if (!customerId) return;
-
-                    const customer = await stripeClient.customers.retrieve(customerId);
-                    if (customer.deleted || !customer.email) {
-                      console.error('Customer deleted or email not found');
-                      return;
+                      });
+                    } catch (error) {
+                      console.error('Error sending trial start email:', error);
                     }
+                  },
+                  onTrialEnd: async ({ subscription }, request) => {
+                    try {
+                      const customerId = subscription.stripeCustomerId;
+                      if (!customerId) return;
 
-                    await resend.sendEmail(requireActionCtx(ctx), {
-                      from: 'Ignidash <noreply@mail.ignidash.com>',
-                      to: customer.email,
-                      subject: 'Your Pro subscription is now active!',
-                      html: `
+                      const customer = await stripeClient.customers.retrieve(customerId);
+                      if (customer.deleted || !customer.email) {
+                        console.error('Customer deleted or email not found');
+                        return;
+                      }
+
+                      await resend.sendEmail(requireActionCtx(ctx), {
+                        from: 'Ignidash <noreply@mail.ignidash.com>',
+                        to: customer.email,
+                        subject: 'Your Pro subscription is now active!',
+                        html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                           <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
                             Hi there,
@@ -245,27 +251,27 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                           </p>
                         </div>
                       `,
-                    });
-                  } catch (error) {
-                    console.error('Error sending trial end email:', error);
-                  }
-                },
-                onTrialExpired: async (subscription, request) => {
-                  try {
-                    const customerId = subscription.stripeCustomerId;
-                    if (!customerId) return;
-
-                    const customer = await stripeClient.customers.retrieve(customerId);
-                    if (customer.deleted || !customer.email) {
-                      console.error('Customer deleted or email not found');
-                      return;
+                      });
+                    } catch (error) {
+                      console.error('Error sending trial end email:', error);
                     }
+                  },
+                  onTrialExpired: async (subscription, request) => {
+                    try {
+                      const customerId = subscription.stripeCustomerId;
+                      if (!customerId) return;
 
-                    await resend.sendEmail(requireActionCtx(ctx), {
-                      from: 'Ignidash <noreply@mail.ignidash.com>',
-                      to: customer.email,
-                      subject: 'Your Pro trial has expired',
-                      html: `
+                      const customer = await stripeClient.customers.retrieve(customerId);
+                      if (customer.deleted || !customer.email) {
+                        console.error('Customer deleted or email not found');
+                        return;
+                      }
+
+                      await resend.sendEmail(requireActionCtx(ctx), {
+                        from: 'Ignidash <noreply@mail.ignidash.com>',
+                        to: customer.email,
+                        subject: 'Your Pro trial has expired',
+                        html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                           <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
                             Hi there,
@@ -281,38 +287,38 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                           </p>
                         </div>
                       `,
-                    });
-                  } catch (error) {
-                    console.error('Error sending trial expired email:', error);
-                  }
+                      });
+                    } catch (error) {
+                      console.error('Error sending trial expired email:', error);
+                    }
+                  },
                 },
               },
+            ],
+            getCheckoutSessionParams: async ({ user, session, plan, subscription }, ctx) => {
+              return {
+                params: {
+                  allow_promotion_codes: true,
+                },
+              };
             },
-          ],
-          getCheckoutSessionParams: async ({ user, session, plan, subscription }, ctx) => {
-            return {
-              params: {
-                allow_promotion_codes: true,
-              },
-            };
           },
-        },
-        onEvent: async (event) => {
-          switch (event.type) {
-            case 'checkout.session.completed': {
-              const checkoutSession = event.data.object;
-              const customerEmail = checkoutSession.customer_details?.email;
+          onEvent: async (event) => {
+            switch (event.type) {
+              case 'checkout.session.completed': {
+                const checkoutSession = event.data.object;
+                const customerEmail = checkoutSession.customer_details?.email;
 
-              if (checkoutSession.mode !== 'subscription' || !customerEmail) {
-                console.error('Skipping email: not a subscription or no email found');
-                return;
-              }
+                if (checkoutSession.mode !== 'subscription' || !customerEmail) {
+                  console.error('Skipping email: not a subscription or no email found');
+                  return;
+                }
 
-              await resend.sendEmail(requireActionCtx(ctx), {
-                from: 'Ignidash <noreply@mail.ignidash.com>',
-                to: customerEmail,
-                subject: 'Welcome to Ignidash Pro!',
-                html: `
+                await resend.sendEmail(requireActionCtx(ctx), {
+                  from: 'Ignidash <noreply@mail.ignidash.com>',
+                  to: customerEmail,
+                  subject: 'Welcome to Ignidash Pro!',
+                  html: `
                   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
                       Hi there,
@@ -325,29 +331,29 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                     </p>
                   </div>
                 `,
-              });
-              break;
-            }
-            case 'customer.subscription.updated': {
-              const subscription = event.data.object;
-              const cancelAt = subscription.cancel_at;
-              if (!cancelAt) return;
-
-              const customerId = subscription.customer.toString();
-              const customer = await stripeClient.customers.retrieve(customerId);
-
-              if (customer.deleted || !customer.email) {
-                console.error('Customer deleted or email not found');
-                return;
+                });
+                break;
               }
+              case 'customer.subscription.updated': {
+                const subscription = event.data.object;
+                const cancelAt = subscription.cancel_at;
+                if (!cancelAt) return;
 
-              const cancelDate = new Date(cancelAt * 1000).toLocaleDateString();
+                const customerId = subscription.customer.toString();
+                const customer = await stripeClient.customers.retrieve(customerId);
 
-              await resend.sendEmail(requireActionCtx(ctx), {
-                from: 'Ignidash <noreply@mail.ignidash.com>',
-                to: customer.email,
-                subject: 'Your subscription has been canceled',
-                html: `
+                if (customer.deleted || !customer.email) {
+                  console.error('Customer deleted or email not found');
+                  return;
+                }
+
+                const cancelDate = new Date(cancelAt * 1000).toLocaleDateString();
+
+                await resend.sendEmail(requireActionCtx(ctx), {
+                  from: 'Ignidash <noreply@mail.ignidash.com>',
+                  to: customer.email,
+                  subject: 'Your subscription has been canceled',
+                  html: `
                   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
                       Hi there,
@@ -363,24 +369,24 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                     </p>
                   </div>
                 `,
-              });
-              break;
-            }
-            case 'customer.subscription.deleted': {
-              const subscription = event.data.object;
-              const customerId = subscription.customer.toString();
-              const customer = await stripeClient.customers.retrieve(customerId);
-
-              if (customer.deleted || !customer.email) {
-                console.error('Customer deleted or email not found');
-                return;
+                });
+                break;
               }
+              case 'customer.subscription.deleted': {
+                const subscription = event.data.object;
+                const customerId = subscription.customer.toString();
+                const customer = await stripeClient.customers.retrieve(customerId);
 
-              await resend.sendEmail(requireActionCtx(ctx), {
-                from: 'Ignidash <noreply@mail.ignidash.com>',
-                to: customer.email,
-                subject: 'Your Pro access has ended',
-                html: `
+                if (customer.deleted || !customer.email) {
+                  console.error('Customer deleted or email not found');
+                  return;
+                }
+
+                await resend.sendEmail(requireActionCtx(ctx), {
+                  from: 'Ignidash <noreply@mail.ignidash.com>',
+                  to: customer.email,
+                  subject: 'Your Pro access has ended',
+                  html: `
                   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                     <p style="font-size: 16px; color: #555; line-height: 1.6; margin-bottom: 10px;">
                       Hi there,
@@ -396,13 +402,13 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                     </p>
                   </div>
                 `,
-              });
-              break;
+                });
+                break;
+              }
             }
-          }
-        },
-      }),
-    ],
+          },
+        }),
+    ].filter(Boolean) as BetterAuthPlugin[],
     emailVerification: {
       sendVerificationEmail: async ({ user, url }) => {
         const { ok } = await rateLimiter.limit(requireActionCtx(ctx), 'emailVerification', { key: user.id });

@@ -7,8 +7,13 @@ import { PostHog } from 'posthog-node';
 let posthogClient: PostHog | null = null;
 
 function getPostHogClient() {
+  if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+    console.warn('NEXT_PUBLIC_POSTHOG_KEY is not set, PostHog will not be initialized');
+    return null;
+  }
+
   if (!posthogClient) {
-    posthogClient = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+    posthogClient = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
       host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
       flushAt: 1,
       flushInterval: 0,
@@ -26,7 +31,7 @@ export const captureSignUp = internalAction({
   },
   handler: async (ctx, { userId, method, email, name }) => {
     const posthog = getPostHogClient();
-    posthog.capture({
+    posthog?.capture({
       distinctId: userId,
       event: 'server_sign_up',
       properties: {
@@ -47,7 +52,7 @@ export const captureSignIn = internalAction({
   },
   handler: async (ctx, { userId, method }) => {
     const posthog = getPostHogClient();
-    posthog.capture({
+    posthog?.capture({
       distinctId: userId,
       event: 'server_sign_in',
       properties: {
