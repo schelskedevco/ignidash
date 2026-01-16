@@ -32,16 +32,7 @@ services:
     stop_grace_period: 10s
 
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - SELF_HOSTED=true
-        - NEXT_PUBLIC_CONVEX_URL=http://localhost:3210
-        - NEXT_PUBLIC_CONVEX_SITE_URL=http://localhost:3211
-        - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
-        - NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY:-}
-        - NEXT_PUBLIC_POSTHOG_HOST=${NEXT_PUBLIC_POSTHOG_HOST:-}
+    image: ghcr.io/schelskedevco/ignidash-v2:latest
     ports:
       - '3000:3000'
     depends_on:
