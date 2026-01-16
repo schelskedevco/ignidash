@@ -5,6 +5,12 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: 'Skip image tests after build'
+        required: false
+        default: false
+        type: boolean
 
 env:
   REGISTRY: ghcr.io
@@ -23,6 +29,8 @@ jobs:
 
       - name: Set up QEMU (for multi-platform builds)
         uses: docker/setup-qemu-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -48,8 +56,13 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             # Tag with major (v1.2.3 -> 1)
             type=semver,pattern={{major}}
+          labels: |
+            org.opencontainers.image.title=Ignidash
+            org.opencontainers.image.description=Self-hosted Ignidash application
+            org.opencontainers.image.vendor=SchelskeDevCo
 
       - name: Build and push Docker image
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -63,3 +76,32 @@ jobs:
             NEXT_PUBLIC_CONVEX_SITE_URL=http://localhost:3211
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Test image
+        if: ${{ !inputs.skip_tests }}
+        run: |
+          echo "Testing amd64 image..."
+          docker run --rm --platform linux/amd64 --entrypoint node ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest --version
+          echo "Image test passed"
+
+      - name: Generate build summary
+        run: |
+          echo "## Docker Image Published 🐳" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Tags" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Platforms" >> $GITHUB_STEP_SUMMARY
+          echo "- \`linux/amd64\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`linux/arm64\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Pull Command" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Digest:** \`${{ steps.build.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
