@@ -6,7 +6,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  output: process.env.SELF_HOSTED === 'true' ? 'standalone' : undefined,
   images: {
     remotePatterns: [
       {

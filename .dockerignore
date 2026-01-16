@@ -17,7 +17,6 @@ dist
 .env
 .env.*
 !.env.example
-!.env.self-hosted.example
 
 # IDE/Editor
 .vscode
@@ -47,6 +46,8 @@ coverage
 *.log
 demo-log.json
 .husky
+.convex
+.claude
 
 # Docker files (avoid recursion)
 Dockerfile

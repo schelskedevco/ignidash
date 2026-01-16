@@ -37,6 +37,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
+        - SELF_HOSTED=true
         - NEXT_PUBLIC_CONVEX_URL=http://localhost:3210
         - NEXT_PUBLIC_CONVEX_SITE_URL=http://localhost:3211
         - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
@@ -55,9 +56,9 @@ services:
       # Client-side uses build-time baked values (http://localhost:3210) which is correct for browser
       - NEXT_PUBLIC_CONVEX_URL=http://convex-backend:3210
       - NEXT_PUBLIC_CONVEX_SITE_URL=http://convex-backend:3211
-      # Server-only vars for auth-server.ts
-      - CONVEX_URL_INTERNAL=http://convex-backend:3210
-      - CONVEX_SITE_URL_INTERNAL=http://convex-backend:3211
+      # Server-only vars for auth-server.ts (self-hosted Docker networking)
+      - SELF_HOSTED_CONVEX_URL=http://convex-backend:3210
+      - SELF_HOSTED_CONVEX_SITE_URL=http://convex-backend:3211
       # Application URL
       - SITE_URL=${SITE_URL:-http://localhost:3000}
     stop_signal: SIGINT
