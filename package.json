@@ -13,7 +13,11 @@
     "format": "prettier --write .",
     "prepare": "husky",
     "test": "vitest",
-    "create-demo": "tsx scripts/convert-inputs-json-to-demo-inputs.ts"
+    "create-demo": "tsx scripts/convert-inputs-json-to-demo-inputs.ts",
+    "docker:build": "docker compose build",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f"
   },
   "dependencies": {
     "@azure/openai": "^2.0.0",
