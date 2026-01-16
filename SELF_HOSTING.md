@@ -66,7 +66,13 @@ docker compose down
 npm run selfhost
 ```
 
-**Update Convex backend:** New versions may require database migrations. Back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md).
+**Update Convex backend:**
+
+```bash
+docker compose down && docker compose pull && docker compose up -d
+```
+
+New versions may require database migrations - back up with `npx convex export` first. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md).
 
 ---
 
