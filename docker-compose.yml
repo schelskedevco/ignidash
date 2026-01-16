@@ -1,0 +1,67 @@
+services:
+  convex-backend:
+    image: ghcr.io/get-convex/convex-backend:latest
+    ports:
+      - "3210:3210"
+      - "3211:3211"
+    volumes:
+      - convex-data:/convex/data
+    environment:
+      - RUST_LOG=info
+      - RUST_BACKTRACE=1
+      # These tell the backend its public URLs so process.env.CONVEX_CLOUD_URL and CONVEX_SITE_URL work
+      - CONVEX_CLOUD_ORIGIN=http://localhost:3210
+      - CONVEX_SITE_ORIGIN=http://localhost:3211
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3210/version"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    stop_signal: SIGINT
+    stop_grace_period: 10s
+
+  convex-dashboard:
+    image: ghcr.io/get-convex/convex-dashboard:latest
+    ports:
+      - "6791:6791"
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+    environment:
+      - CONVEX_BACKEND_URL=http://convex-backend:3210
+    stop_signal: SIGINT
+    stop_grace_period: 10s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_CONVEX_URL=http://localhost:3210
+        - NEXT_PUBLIC_CONVEX_SITE_URL=http://localhost:3211
+        - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
+        - NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY:-}
+        - NEXT_PUBLIC_POSTHOG_HOST=${NEXT_PUBLIC_POSTHOG_HOST:-}
+    ports:
+      - "3000:3000"
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=production
+      # Override NEXT_PUBLIC_* for server-side code (runtime reads from process.env)
+      # Client-side uses build-time baked values (http://localhost:3210) which is correct for browser
+      - NEXT_PUBLIC_CONVEX_URL=http://convex-backend:3210
+      - NEXT_PUBLIC_CONVEX_SITE_URL=http://convex-backend:3211
+      # Server-only vars for auth-server.ts
+      - CONVEX_URL_INTERNAL=http://convex-backend:3210
+      - CONVEX_SITE_URL_INTERNAL=http://convex-backend:3211
+      # Application URL
+      - SITE_URL=${SITE_URL:-http://localhost:3000}
+    stop_signal: SIGINT
+    stop_grace_period: 10s
+
+volumes:
+  convex-data:

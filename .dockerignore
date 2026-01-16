@@ -1,0 +1,54 @@
+# Dependencies
+node_modules
+npm-debug.log*
+yarn-error.log*
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Git
+.git
+.gitignore
+
+# Environment files (sensitive - use docker-compose env vars instead)
+.env
+.env.*
+!.env.example
+!.env.self-hosted.example
+
+# IDE/Editor
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+__tests__
+coverage
+.vitest
+
+# Documentation (not needed in image)
+*.md
+!README.md
+
+# Misc
+*.log
+demo-log.json
+.husky
+
+# Docker files (avoid recursion)
+Dockerfile
+docker-compose.yml
+.dockerignore
