@@ -64,12 +64,14 @@ setup_env_file() {
     CONVEX_API_SECRET=$(openssl rand -base64 32)
 
     # Update .env.local with generated secrets (macOS vs Linux sed)
+    # Use | as delimiter since base64 can contain /
+    # Wrap in quotes since base64 can contain =, /, +
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        sed -i '' "s/^BETTER_AUTH_SECRET=.*/BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET/" .env.local
-        sed -i '' "s/^CONVEX_API_SECRET=.*/CONVEX_API_SECRET=$CONVEX_API_SECRET/" .env.local
+        sed -i '' "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=\"$BETTER_AUTH_SECRET\"|" .env.local
+        sed -i '' "s|^CONVEX_API_SECRET=.*|CONVEX_API_SECRET=\"$CONVEX_API_SECRET\"|" .env.local
     else
-        sed -i "s/^BETTER_AUTH_SECRET=.*/BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET/" .env.local
-        sed -i "s/^CONVEX_API_SECRET=.*/CONVEX_API_SECRET=$CONVEX_API_SECRET/" .env.local
+        sed -i "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=\"$BETTER_AUTH_SECRET\"|" .env.local
+        sed -i "s|^CONVEX_API_SECRET=.*|CONVEX_API_SECRET=\"$CONVEX_API_SECRET\"|" .env.local
     fi
 
     echo -e "${GREEN}Created .env.local with generated secrets${NC}"
@@ -109,11 +111,8 @@ setup_convex_admin_key() {
         exit 1
     fi
 
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        sed -i '' "s/^CONVEX_SELF_HOSTED_ADMIN_KEY=.*/CONVEX_SELF_HOSTED_ADMIN_KEY=\"$ADMIN_KEY\"/" .env.local
-    else
-        sed -i "s/^CONVEX_SELF_HOSTED_ADMIN_KEY=.*/CONVEX_SELF_HOSTED_ADMIN_KEY=\"$ADMIN_KEY\"/" .env.local
-    fi
+    # Use awk to safely replace the admin key (handles any special characters)
+    awk -v key="$ADMIN_KEY" '/^CONVEX_SELF_HOSTED_ADMIN_KEY=/{$0="CONVEX_SELF_HOSTED_ADMIN_KEY=\""key"\""}1' .env.local > .env.local.tmp && mv .env.local.tmp .env.local
 
     echo -e "${GREEN}Convex admin key saved to .env.local${NC}"
     echo ""

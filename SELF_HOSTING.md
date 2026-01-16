@@ -31,7 +31,7 @@ Run Ignidash entirely on your own infrastructure using Docker. This includes a s
 ```bash
 git clone https://github.com/schelskedevco/ignidash.git
 cd ignidash
-npm run selfhost --init
+npm run selfhost -- --init
 ```
 
 The setup script will:
@@ -208,6 +208,21 @@ Re-sync with:
 ```bash
 npm run selfhost -- --sync-only
 ```
+
+### Docker: "Failed to decrypt private key" error on login
+
+If you see this error after changing `BETTER_AUTH_SECRET`:
+
+```
+BetterAuthError: Failed to decrypt private key. Make sure the secret currently in use is the same as the one used to encrypt the private key.
+```
+
+The JWKS (JSON Web Key Set) was encrypted with a previous secret. To fix:
+
+1. Open Convex Dashboard at http://localhost:6791
+2. Find the `betterAuth_jwks` table (in the Better Auth component tables)
+3. Delete all rows in that table
+4. Try logging in again - new keys will be generated automatically
 
 ### Cloud: Convex deployment issues
 

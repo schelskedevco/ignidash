@@ -43,7 +43,13 @@ export const streamChat = internalAction({
     ctx,
     { userId, messages, assistantMessageId, systemPrompt, subscriptionStartTime, subscriptionType }: StreamChatParams
   ) => {
-    if (!openaiChat) throw new ConvexError('Azure OpenAI environment variables are not set.');
+    if (!openaiChat) {
+      const errorMessage = 'The required Azure OpenAI environment variables (OPENAI_API_KEY, OPENAI_ENDPOINT) are not set.';
+      console.error(errorMessage);
+
+      await ctx.runMutation(internal.messages.setBody, { messageId: assistantMessageId, body: errorMessage, isLoading: false });
+      throw new ConvexError(errorMessage);
+    }
 
     const hasBody = (msg: Doc<'messages'>): msg is Doc<'messages'> & { body: string } => msg.body !== undefined;
 
@@ -120,7 +126,13 @@ type StreamInsightsParams = {
 
 export const streamInsights = internalAction({
   handler: async (ctx, { userId, insightId, systemPrompt, subscriptionStartTime, subscriptionType }: StreamInsightsParams) => {
-    if (!openaiInsights) throw new ConvexError('Azure OpenAI environment variables are not set.');
+    if (!openaiInsights) {
+      const errorMessage = 'The required Azure OpenAI environment variables (OPENAI_API_KEY, OPENAI_ENDPOINT) are not set.';
+      console.error(errorMessage);
+
+      await ctx.runMutation(internal.insights.setContent, { insightId, content: errorMessage, isLoading: false });
+      throw new ConvexError(errorMessage);
+    }
 
     try {
       const stream = await openaiInsights.chat.completions.create({
