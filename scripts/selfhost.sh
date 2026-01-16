@@ -57,7 +57,7 @@ setup_env_file() {
         fi
     fi
 
-    cp .env.example .env.local
+    cp .env.selfhost.example .env.local
 
     # Generate secrets
     BETTER_AUTH_SECRET=$(openssl rand -base64 32)
