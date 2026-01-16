@@ -23,6 +23,7 @@ import type * as insights from "../insights.js";
 import type * as market_assumptions from "../market_assumptions.js";
 import type * as messages from "../messages.js";
 import type * as migrations from "../migrations.js";
+import type * as onboarding from "../onboarding.js";
 import type * as plans from "../plans.js";
 import type * as posthog from "../posthog.js";
 import type * as privacy_settings from "../privacy_settings.js";
@@ -78,6 +79,7 @@ declare const fullApi: ApiFromModules<{
   market_assumptions: typeof market_assumptions;
   messages: typeof messages;
   migrations: typeof migrations;
+  onboarding: typeof onboarding;
   plans: typeof plans;
   posthog: typeof posthog;
   privacy_settings: typeof privacy_settings;

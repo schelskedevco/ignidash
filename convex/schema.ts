@@ -81,4 +81,8 @@ export default defineSchema({
   })
     .index('by_planId_updatedAt', ['planId', 'updatedAt'])
     .index('by_userId_updatedAt', ['userId', 'updatedAt']),
+  onboarding: defineTable({
+    userId: v.string(),
+    onboardingDialogCompleted: v.boolean(),
+  }).index('by_userId', ['userId']),
 });
