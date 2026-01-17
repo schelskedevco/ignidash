@@ -18,7 +18,7 @@ const navigation = {
     },
     {
       name: 'GitHub',
-      href: 'https://github.com/schelskedevco',
+      href: 'https://github.com/schelskedevco/ignidash',
       icon: (props: React.SVGProps<SVGSVGElement>) => (
         <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
           <path
