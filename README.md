@@ -1,6 +1,8 @@
-<h1 align="center">
-  <img src="public/favicon-96x96.png" width="36" height="36" alt="Ignidash" style="vertical-align: middle; margin-right: 8px;">Ignidash
-</h1>
+<div align="center">
+  <h1>
+    <img src="public/favicon-96x96.png" width="32" height="32" alt="Ignidash" align="absmiddle">&nbsp;Ignidash
+  </h1>
+</div>
 
 <p align="center">
   <b>An open-source personal financial planning app with AI-powered features.</b><br />
