@@ -1,6 +1,6 @@
 # Self-Hosting Ignidash
 
-Run Ignidash entirely on your own infrastructure using Docker. This includes a self-hosted Convex backend.
+Run Ignidash on your own infrastructure using Docker including a self-hosted Convex backend.
 
 ## Prerequisites
 
@@ -88,6 +88,15 @@ See [Optional Environment Variables](./README.md#optional-environment-variables)
 
 ## Troubleshooting
 
+### "Failed to decrypt private key" error
+
+If you see this after changing `BETTER_AUTH_SECRET`:
+
+1. Open Convex Dashboard at http://localhost:6791
+2. Find the `betterAuth_jwks` table
+3. Delete all rows
+4. Try logging in again
+
 ### Services won't start
 
 ```bash
@@ -113,15 +122,6 @@ Re-sync with:
 ```bash
 npm run selfhost -- --sync-only
 ```
-
-### "Failed to decrypt private key" error
-
-If you see this after changing `BETTER_AUTH_SECRET`:
-
-1. Open Convex Dashboard at http://localhost:6791
-2. Find the `betterAuth_jwks` table
-3. Delete all rows
-4. Try logging in again
 
 ## Convex Self-Hosting Documentation
 
