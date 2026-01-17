@@ -1,6 +1,42 @@
-# Ignidash
+<h1 align="center">Ignidash</h1>
 
-An open-source personal financial planning app with AI-powered features.
+<p align="center">
+  <b>An open-source personal financial planning app with AI-powered features.</b><br />
+  <b>Monte Carlo simulations • Historical backtesting • US tax estimation • AI chat & insights</b>
+</p>
+
+<p align="center">
+  <a href="#gh-light-mode-only">
+    <img src="public/screenshots/simulator-light.webp" alt="Ignidash Simulator">
+  </a>
+  <a href="#gh-dark-mode-only">
+    <img src="public/screenshots/simulator-dark.webp" alt="Ignidash Simulator">
+  </a>
+</p>
+
+<h3 align="center">
+  <a href="https://www.ignidash.com/">Website</a> &bull;
+  <a href="https://discord.gg/AVNg9JCNUr">Discord</a> &bull;
+  <a href="./SELF_HOSTING.md">Self-Hosting</a>
+</h3>
+
+<p align="center">
+  <a href="https://github.com/schelskedevco/ignidash/stargazers">
+    <img src="https://img.shields.io/github/stars/schelskedevco/ignidash?style=social" alt="GitHub Stars" />
+  </a>
+  <a href="https://github.com/schelskedevco/ignidash?tab=AGPL-3.0-1-ov-file#readme">
+    <img src="https://img.shields.io/github/license/schelskedevco/ignidash?color=blue" alt="AGPL-3.0 License" />
+  </a>
+  <a href="https://github.com/schelskedevco/ignidash/blob/main/CONTRIBUTING.md">
+    <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen" alt="PRs welcome!" />
+  </a>
+  <a href="https://discord.gg/AVNg9JCNUr">
+    <img src="https://img.shields.io/discord/1444517377491603479?color=5865F2&label=Discord&logo=discord&logoColor=white" alt="Discord" />
+  </a>
+  <a href="https://x.com/schelskedevco">
+    <img src="https://img.shields.io/twitter/follow/schelskedevco?style=social" alt="Follow on X" />
+  </a>
+</p>
 
 ## Tech Stack
 
@@ -29,11 +65,9 @@ cd ignidash
 npm install
 
 cp .env.cloud.example .env.local
-
-# Get Convex vars from https://dashboard.convex.dev
 ```
 
-Edit `.env.local` with your Convex deployment URL and generate secrets:
+Edit `.env.local` with your [Convex deployment URL](https://dashboard.convex.dev) and generate secrets:
 
 ```bash
 openssl rand -base64 32  # For BETTER_AUTH_SECRET
