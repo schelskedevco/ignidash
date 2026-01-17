@@ -1,5 +1,5 @@
 {
-  "name": "ignidash-v2",
+  "name": "ignidash",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -18,7 +18,8 @@
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",
-    "selfhost": "bash scripts/selfhost.sh"
+    "selfhost": "bash scripts/selfhost.sh",
+    "sync-env": "bash scripts/sync-env.sh"
   },
   "dependencies": {
     "@azure/openai": "^2.0.0",

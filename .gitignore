@@ -32,6 +32,7 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.cloud.example
 !.env.selfhost.example
 
 # docker compose override (for local testing)
