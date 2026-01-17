@@ -18,8 +18,7 @@ See [SELF_HOSTING.md](./SELF_HOSTING.md) for instructions on running Ignidash on
 
 ### Prerequisites
 
-- Node.js 22+
-- npm
+- Node.js 22+ (includes npm and npx)
 
 ### Setup
 
