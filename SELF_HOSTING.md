@@ -17,16 +17,17 @@ npm run selfhost -- --init
 
 The setup script will:
 
-1. Create `.env.local` from the template with generated secrets
+1. Create `.env.local` from the template with generated secrets (only with `--init`)
 2. Start Docker containers (Convex backend, dashboard, and app)
 3. Generate and save the Convex admin key
 4. Sync environment variables to Convex
 5. Deploy Convex functions
 
-Once complete:
+Once complete, the script will display:
 
 - **Application:** http://localhost:3000
 - **Convex Dashboard:** http://localhost:6791
+- **Dashboard credentials** (Deployment URL and Admin Key for logging into the Convex Dashboard)
 
 ## Docker Images
 
@@ -45,6 +46,8 @@ The default `docker-compose.yml` uses `stable`.
 | `npm run selfhost -- --init`      | First-time setup                                 |
 | `npm run selfhost`                | Rebuild and restart (uses existing `.env.local`) |
 | `npm run selfhost -- --sync-only` | Sync env vars to Convex without restart          |
+| `npm run selfhost:convex-dev`     | Hot reload for Convex functions in development   |
+| `npm run selfhost:convex-deploy`  | Deploy Convex functions to self-hosted backend   |
 | `npm run docker:build`            | Build images                                     |
 | `npm run docker:up`               | Start services                                   |
 | `npm run docker:down`             | Stop services                                    |
@@ -52,21 +55,13 @@ The default `docker-compose.yml` uses `stable`.
 
 ## Upgrading
 
-**Update the app:**
-
 ```bash
 git pull
-docker compose down
+docker compose pull
 npm run selfhost
 ```
 
-**Update Convex backend:**
-
-```bash
-docker compose down && docker compose pull && docker compose up -d
-```
-
-New versions may require database migrations. Back up with `npx convex export` first. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md).
+Back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md).
 
 ## Environment Variables
 
