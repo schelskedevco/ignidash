@@ -23,7 +23,7 @@ export const authComponent = createClient<DataModel, typeof authSchema>(componen
     schema: authSchema,
   },
 });
-export const resend = new Resend(components.resend, { testMode: false });
+export const resend = process.env.RESEND_API_KEY ? new Resend(components.resend, { testMode: false }) : null;
 
 const rateLimiter = new RateLimiter(components.rateLimiter, {
   passwordReset: { kind: 'fixed window', rate: 3, period: 3 * HOUR },
@@ -58,7 +58,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         const { ok } = await rateLimiter.limit(requireActionCtx(ctx), 'passwordReset', { key: user.id });
         if (!ok) throw new APIError('TOO_MANY_REQUESTS', { message: 'Too many password reset requests. Please try again later.' });
 
-        await resend.sendEmail(requireActionCtx(ctx), {
+        await resend?.sendEmail(requireActionCtx(ctx), {
           from: 'Ignidash <noreply@mail.ignidash.com>',
           to: user.email,
           subject: 'Reset your password',
@@ -105,7 +105,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
           const { ok } = await rateLimiter.limit(requireActionCtx(ctx), 'emailChange', { key: user.id });
           if (!ok) throw new APIError('TOO_MANY_REQUESTS', { message: 'Too many email change requests. Please try again later.' });
 
-          await resend.sendEmail(requireActionCtx(ctx), {
+          await resend?.sendEmail(requireActionCtx(ctx), {
             from: 'Ignidash <noreply@mail.ignidash.com>',
             to: user.email,
             subject: 'Approve email change',
@@ -131,7 +131,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
           const { ok } = await rateLimiter.limit(requireActionCtx(ctx), 'deleteAccount', { key: user.id });
           if (!ok) throw new APIError('TOO_MANY_REQUESTS', { message: 'Too many account deletion requests. Please try again later.' });
 
-          await resend.sendEmail(requireActionCtx(ctx), {
+          await resend?.sendEmail(requireActionCtx(ctx), {
             from: 'Ignidash <noreply@mail.ignidash.com>',
             to: user.email,
             subject: 'Account deletion request',
@@ -195,7 +195,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                         return;
                       }
 
-                      await resend.sendEmail(requireActionCtx(ctx), {
+                      await resend?.sendEmail(requireActionCtx(ctx), {
                         from: 'Ignidash <noreply@mail.ignidash.com>',
                         to: customer.email,
                         subject: 'Your 7-day Pro trial has started!',
@@ -231,7 +231,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                         return;
                       }
 
-                      await resend.sendEmail(requireActionCtx(ctx), {
+                      await resend?.sendEmail(requireActionCtx(ctx), {
                         from: 'Ignidash <noreply@mail.ignidash.com>',
                         to: customer.email,
                         subject: 'Your Pro subscription is now active!',
@@ -267,7 +267,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                         return;
                       }
 
-                      await resend.sendEmail(requireActionCtx(ctx), {
+                      await resend?.sendEmail(requireActionCtx(ctx), {
                         from: 'Ignidash <noreply@mail.ignidash.com>',
                         to: customer.email,
                         subject: 'Your Pro trial has expired',
@@ -314,7 +314,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                   return;
                 }
 
-                await resend.sendEmail(requireActionCtx(ctx), {
+                await resend?.sendEmail(requireActionCtx(ctx), {
                   from: 'Ignidash <noreply@mail.ignidash.com>',
                   to: customerEmail,
                   subject: 'Welcome to Ignidash Pro!',
@@ -349,7 +349,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
 
                 const cancelDate = new Date(cancelAt * 1000).toLocaleDateString();
 
-                await resend.sendEmail(requireActionCtx(ctx), {
+                await resend?.sendEmail(requireActionCtx(ctx), {
                   from: 'Ignidash <noreply@mail.ignidash.com>',
                   to: customer.email,
                   subject: 'Your subscription has been canceled',
@@ -382,7 +382,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
                   return;
                 }
 
-                await resend.sendEmail(requireActionCtx(ctx), {
+                await resend?.sendEmail(requireActionCtx(ctx), {
                   from: 'Ignidash <noreply@mail.ignidash.com>',
                   to: customer.email,
                   subject: 'Your Pro access has ended',
@@ -414,7 +414,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
         const { ok } = await rateLimiter.limit(requireActionCtx(ctx), 'emailVerification', { key: user.id });
         if (!ok) throw new APIError('TOO_MANY_REQUESTS', { message: 'Too many email verification requests. Please try again later.' });
 
-        await resend.sendEmail(requireActionCtx(ctx), {
+        await resend?.sendEmail(requireActionCtx(ctx), {
           from: 'Ignidash <noreply@mail.ignidash.com>',
           to: user.email,
           subject: 'Verify your email address',

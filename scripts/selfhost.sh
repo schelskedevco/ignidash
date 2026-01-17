@@ -194,10 +194,19 @@ deploy_convex() {
 
 # Print next steps
 print_next_steps() {
+    # Source .env.local to get the credentials
+    set -a
+    source .env.local
+    set +a
+
     echo -e "${GREEN}Setup complete!${NC}"
     echo ""
     echo "Access the application at: http://localhost:3000"
     echo "Convex Dashboard at: http://localhost:6791"
+    echo ""
+    echo "Convex Dashboard credentials:"
+    echo "  Deployment URL: $CONVEX_SELF_HOSTED_URL"
+    echo "  Admin Key: $CONVEX_SELF_HOSTED_ADMIN_KEY"
     echo ""
     echo "Next steps:"
     echo "1. Edit .env.local to add your API keys (Google OAuth, Stripe, OpenAI, etc.)"
