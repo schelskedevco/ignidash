@@ -132,3 +132,4 @@ If you see this after changing `BETTER_AUTH_SECRET`:
 - [Develop & Deploy Guide](https://stack.convex.dev/self-hosted-develop-and-deploy)
 - [GitHub: Self-Hosted README](https://github.com/get-convex/convex-backend/blob/main/self-hosted/README.md)
 - [GitHub: Upgrading](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md)
+- [GitHub: Hosting on Own Infrastructure](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/hosting_on_own_infra.md)
