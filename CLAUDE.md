@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**ignidash-v2** is a full-stack financial planning application built with Next.js 16 and Convex. It helps users simulate retirement scenarios using Monte Carlo methods, historical backtesting, and AI-powered insights. The app targets FIRE (Financial Independence, Early Retirement) planning with features like multi-plan comparison, tax optimization, and portfolio analysis.
+**Ignidash** is a full-stack financial planning application built with Next.js 16 and Convex. It helps users simulate retirement scenarios using Monte Carlo methods, historical backtesting, and AI-powered insights. The app targets FIRE (Financial Independence, Early Retirement) planning with features like multi-plan comparison, tax optimization, and portfolio analysis.
 
 ## Essential Commands
 

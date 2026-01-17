@@ -34,7 +34,7 @@ services:
     stop_grace_period: 10s
 
   app:
-    image: ghcr.io/schelskedevco/ignidash-v2:stable
+    image: ghcr.io/schelskedevco/ignidash:stable
     restart: unless-stopped
     ports:
       - '3000:3000'

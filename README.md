@@ -1,15 +1,6 @@
 # Ignidash
 
-A financial planning application for simulating retirement scenarios using Monte Carlo methods, historical backtesting, and AI-powered insights. Built for FIRE (Financial Independence, Early Retirement) planning.
-
-## Features
-
-- **Monte Carlo Simulations** - Run thousands of scenarios with stochastic returns
-- **Historical Backtesting** - Test against real market data
-- **Multi-Plan Comparison** - Compare different retirement strategies side-by-side
-- **Tax Optimization** - Model tax implications across account types
-- **Portfolio Analysis** - Track asset allocation and rebalancing
-- **AI Insights** - Get AI-powered analysis of your financial plans
+An open-source personal financial planning app with AI-powered features.
 
 ## Tech Stack
 
@@ -37,23 +28,35 @@ cd ignidash
 npm install
 
 # Copy environment template
-cp .env.selfhost.example .env.local
+cp .env.cloud.example .env.local
 
-# Generate secrets
+# Fill in your Convex deployment URL and secrets
+# Get your Convex URL from https://dashboard.convex.dev
+```
+
+Edit `.env.local` with your Convex deployment URL and generate secrets:
+
+```bash
 openssl rand -base64 32  # For BETTER_AUTH_SECRET
 openssl rand -base64 32  # For CONVEX_API_SECRET
 ```
 
-Edit `.env.local` and fill in the generated secrets.
+### Syncing Environment Variables
+
+After updating `.env.local`, sync your environment variables to Convex:
+
+```bash
+npm run sync-env
+```
 
 ### Running Locally
 
 ```bash
-# Terminal 1: Start Next.js dev server
-npm run dev
-
-# Terminal 2: Start Convex local backend
+# Terminal 1: Start Convex backend (creates deployment on first run)
 npm run dev:convex
+
+# Terminal 2: Start Next.js dev server
+npm run dev
 ```
 
 Open http://localhost:3000 in your browser.
