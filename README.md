@@ -40,6 +40,27 @@
   </a>
 </p>
 
+## What is Ignidash?
+
+Ignidash is a powerful, web-based FIRE (Financial Independence, Retire Early) planning tool. While most other personal finance apps focus on budgeting and day-to-day expense tracking, Ignidash focuses on long-term financial projections.
+
+**What it does:**
+
+- **Monte Carlo & Historical Backtesting**
+  Run hundreds of simulations to identify risks and calculate your probability of success. Test your plan against actual historical market data to see how it would have performed.
+
+- **US Tax Estimation**
+  Model how withdrawals, asset location, and income changes impact your estimated tax liability.
+
+- **AI Chat**
+  Ask questions, clarify results, and learn about retirement planning concepts with an AI chatbot that knows your plan.
+
+- **AI Insights**
+  Generate educational overviews explaining how taxes, RMDs, Roth conversions, withdrawal strategies, and more affect your results.
+
+- **Compare Plans** _(Coming Soon)_
+  Create multiple plans and view key outcomes side-by-side to see how different choices affect your future.
+
 ## Tech Stack
 
 - **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS
@@ -125,6 +146,23 @@ Open http://localhost:3000 in your browser.
 - ESLint and Prettier run automatically on commit via Husky
 - Run `npm run format` to format all files
 - Run `npm run lint:fix` to auto-fix linting issues
+
+## Roadmap
+
+Ignidash is in beta and actively under development. Planned features:
+
+**Q1 2026**
+
+- Configurable drawdown order
+- Modeling debt and physical assets
+- State & local taxes, IRMAA surcharges
+
+**Q2 2026**
+
+- Roth conversions & SEPP
+- Custom financial goals & milestones
+
+See [Known Limitations](https://www.ignidash.com/help#:~:text=Known%20limitations) for details.
 
 ## License
 
