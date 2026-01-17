@@ -84,14 +84,14 @@ To use your own domain with a reverse proxy, you'll need to configure routing an
 
 ### Optional
 
-| Variable                                                        | Description                   |
-| --------------------------------------------------------------- | ----------------------------- |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`                      | Google OAuth for social login |
-| `OPENAI_API_KEY`, `OPENAI_ENDPOINT`                             | Azure OpenAI for AI features  |
-| `RESEND_API_KEY`                                                | Email service                 |
-| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` | Payments                      |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`                            | Client-side Stripe            |
-| `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`           | Analytics                     |
+| Variable                                                        | Description                                                               |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`                      | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) |
+| `OPENAI_API_KEY`, `OPENAI_ENDPOINT`                             | [Azure AI Foundry](https://ai.azure.com/)                                 |
+| `RESEND_API_KEY`                                                | [Resend](https://resend.com/)                                             |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` | [Stripe Dashboard](https://dashboard.stripe.com/)                         |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`                            | [Stripe Dashboard](https://dashboard.stripe.com/)                         |
+| `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`           | [PostHog](https://posthog.com/)                                           |
 
 ## Troubleshooting
 
