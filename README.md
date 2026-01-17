@@ -64,7 +64,7 @@ Ignidash is a web-based retirement planning tool. It focuses on long-term financ
 - **Compare Plans** _(Coming Soon)_
   Create multiple plans and view key outcomes side-by-side to see how different choices affect your future.
 
-**[Try Ignidash at ignidash.com](https://www.ignidash.com/)**
+[Try hosted version at ignidash.com](https://www.ignidash.com/)
 
 ## Roadmap
 
