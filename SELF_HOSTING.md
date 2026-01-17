@@ -1,33 +1,65 @@
 # Self-Hosting Ignidash
 
-Run Ignidash on your own infrastructure using Docker including a self-hosted Convex backend.
+Run Ignidash on your own infrastructure using Docker, including a self-hosted Convex backend.
 
-## Prerequisites
+## Setup Guide
 
-- [Docker and Docker Compose](https://docs.docker.com/get-docker/)
-- [Node.js 22+](https://nodejs.org/)
+Follow the steps below to get your app running.
 
-## Quick Start
+### Step 1: Install Docker
+
+1. Install Docker Engine by following [the official guide](https://docs.docker.com/get-docker/)
+2. Start the Docker service on your machine
+3. Verify Docker is installed and running:
+
+```bash
+docker run hello-world
+```
+
+If Docker is set up correctly, this command will print a success message.
+
+### Step 2: Clone the Repository
 
 ```bash
 git clone https://github.com/schelskedevco/ignidash.git
 cd ignidash
+```
+
+### Step 3: Run the Setup Script
+
+```bash
 npm run selfhost -- --init
 ```
 
 The setup script will:
 
-1. Create `.env.local` from the template with generated secrets (only with `--init`)
+1. Create `.env.local` from the template with generated secrets
 2. Start Docker containers (Convex backend, dashboard, and app)
 3. Generate and save the Convex admin key
 4. Sync environment variables to Convex
 5. Deploy Convex functions
 
+### Step 4: Access Your App
+
 Once complete, the script will display:
 
 - **Application:** http://localhost:3000
 - **Convex Dashboard:** http://localhost:6791
-- **Dashboard credentials** (Deployment URL and Admin Key for logging into the Convex Dashboard)
+- **Dashboard credentials** (Deployment URL and Admin Key)
+
+Open your browser and navigate to http://localhost:3000. You should see the Ignidash home page.
+
+### Step 5: Create Your Account
+
+The first time you run the app, create a new account:
+
+1. Click "Create an account" on the sign in page
+2. Enter your email, name, and password
+3. You're in!
+
+### Step 6: Enjoy!
+
+Your self-hosted Ignidash is now running. If you find bugs or have feature requests, join our [Discord](https://discord.gg/AVNg9JCNUr) or open a [GitHub Issue](https://github.com/schelskedevco/ignidash/issues).
 
 ## Docker Images
 
@@ -65,7 +97,7 @@ Back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](
 
 ## Custom Domain
 
-To use your own domain with a reverse proxy, you'll need to configure routing and update the Convex origin environment variables. See [Hosting on Own Infrastructure](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/hosting_on_own_infra.md).
+To use your own domain with a reverse proxy, configure routing and update the Convex origin environment variables. See [Hosting on Own Infrastructure](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/hosting_on_own_infra.md).
 
 ## Environment Variables
 

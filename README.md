@@ -1,4 +1,6 @@
-<h1 align="center">Ignidash</h1>
+<h1 align="center">
+  <img src="public/favicon-96x96.png" width="36" height="36" alt="Ignidash" style="vertical-align: middle; margin-right: 8px;">Ignidash
+</h1>
 
 <p align="center">
   <b>An open-source personal financial planning app with AI-powered features.</b><br />
@@ -163,6 +165,12 @@ Open http://localhost:3000 in your browser.
 - ESLint and Prettier run automatically on commit via Husky
 - Run `npm run format` to format all files
 - Run `npm run lint:fix` to auto-fix linting issues
+
+## Contributing
+
+- **Bug reports & feature requests:** [GitHub Issues](https://github.com/schelskedevco/ignidash/issues)
+- **Questions & discussion:** [Discord](https://discord.gg/AVNg9JCNUr)
+- **Pull requests:** Fork the repo, make your changes, and submit a PR
 
 ## License
 
