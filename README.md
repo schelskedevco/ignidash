@@ -42,12 +42,12 @@
 
 ## What is Ignidash?
 
-Ignidash is a web-based FIRE (Financial Independence, Retire Early) planning tool. It focuses on long-term financial projections as opposed to budgeting and day-to-day expense tracking.
+Ignidash is a web-based retirement planning tool. It focuses on long-term financial projections as opposed to budgeting and day-to-day expense tracking.
 
 **What it does:**
 
 - **Monte Carlo & Historical Backtesting**
-  Run hundreds of simulations to identify risks and calculate your probability of success. Test your plan against actual historical market data to see how it would have performed.
+  Run hundreds of simulations to identify risks and calculate your probability of success. Test against actual historical market data to see how your plan would have performed.
 
 - **US Tax Estimation**
   Model how withdrawals, asset location, and income changes impact your estimated tax liability.
@@ -71,7 +71,7 @@ Ignidash is a web-based FIRE (Financial Independence, Retire Early) planning too
 
 ## Self-Hosting with Docker
 
-See [SELF_HOSTING.md](./SELF_HOSTING.md) for instructions on running Ignidash on your own infrastructure.
+See [SELF_HOSTING.md](./SELF_HOSTING.md) for how to host Ignidash yourself with Docker.
 
 ## Local Development
 

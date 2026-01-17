@@ -90,7 +90,9 @@ See [Optional Environment Variables](./README.md#optional-environment-variables)
 
 ### "Failed to decrypt private key" error
 
-If you see this after changing `BETTER_AUTH_SECRET`:
+This happens when `BETTER_AUTH_SECRET` changes but the database still has keys encrypted with the old secret. Common cause: running `npm run selfhost -- --init` a second time after already logging in.
+
+To fix:
 
 1. Open Convex Dashboard at http://localhost:6791
 2. Find the `betterAuth_jwks` table
