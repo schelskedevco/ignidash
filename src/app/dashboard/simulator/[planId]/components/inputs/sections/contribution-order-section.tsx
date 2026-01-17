@@ -197,11 +197,11 @@ export default function ContributionOrderSection(props: ContributionOrderSection
 
   return (
     <>
-      <DisclosureSection title="Contribution Order" icon={HandCoinsIcon} centerPanelContent hideBottomBorders {...props}>
+      <DisclosureSection title="Contribution Rules" icon={HandCoinsIcon} centerPanelContent hideBottomBorders {...props}>
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between gap-3">
             <HeadlessField className="grow">
-              <Label className="sr-only">Base Rule</Label>
+              <Label className="sr-only">Base Contribution Rule</Label>
               <Select
                 name="status"
                 value={baseContributionRule?.type ?? 'save'}
