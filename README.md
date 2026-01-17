@@ -1,9 +1,10 @@
 <h1 align="center">
-  <img src="public/favicon-96x96.png" width="96" height="96" alt="Ignidash">
+  <img src="public/favicon-96x96.png" width="96" height="96" alt="Ignidash"><br />
+  Ignidash
 </h1>
 
 <p align="center">
-  <b>Ignidash</b> is an open-source personal financial planning app with AI-powered features.<br />
+  <b>An open-source personal financial planning app with AI-powered features.</b><br />
   Monte Carlo simulations • Historical backtesting • US tax estimation • AI chat & insights
 </p>
 
