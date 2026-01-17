@@ -13,7 +13,7 @@ services:
       - CONVEX_CLOUD_ORIGIN=http://localhost:3210
       - CONVEX_SITE_ORIGIN=http://localhost:3211
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:3210/version']
+      test: ['CMD', 'curl', '-f', 'http://127.0.0.1:3210/version']
       interval: 5s
       timeout: 3s
       retries: 10
@@ -51,7 +51,7 @@ services:
       - SELF_HOSTED_CONVEX_SITE_URL=http://convex-backend:3211
       - SITE_URL=${SITE_URL:-http://localhost:3000}
     healthcheck:
-      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3000/api/health']
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:3000/api/health']
       interval: 10s
       timeout: 5s
       retries: 5
