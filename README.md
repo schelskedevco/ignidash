@@ -10,6 +10,10 @@ An open-source personal financial planning app with AI-powered features.
 - **Payments:** Stripe
 - **AI:** Azure OpenAI
 
+## Self-Hosting with Docker
+
+See [SELF_HOSTING.md](./SELF_HOSTING.md) for instructions on running Ignidash on your own infrastructure.
+
 ## Local Development
 
 ### Prerequisites
@@ -79,10 +83,6 @@ Open http://localhost:3000 in your browser.
 - ESLint and Prettier run automatically on commit via Husky
 - Run `npm run format` to format all files
 - Run `npm run lint:fix` to auto-fix linting issues
-
-## Self-Hosting with Docker
-
-See [SELF_HOSTING.md](./SELF_HOSTING.md) for instructions on running Ignidash on your own infrastructure.
 
 ## License
 
