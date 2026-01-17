@@ -5,22 +5,13 @@
   <b>Monte Carlo simulations • Historical backtesting • US tax estimation • AI chat & insights</b>
 </p>
 
-<p align="center">
-  <a href="#gh-light-mode-only">
-    <img src="public/screenshots/simulator-light.webp" alt="Ignidash Simulator">
-  </a>
-  <a href="#gh-dark-mode-only">
-    <img src="public/screenshots/simulator-dark.webp" alt="Ignidash Simulator">
-  </a>
-</p>
-
 <h3 align="center">
   <a href="https://www.ignidash.com/">Website</a> &bull;
   <a href="https://discord.gg/AVNg9JCNUr">Discord</a> &bull;
   <a href="./SELF_HOSTING.md">Self-Hosting</a>
 </h3>
 
-<p align="center">
+<h4 align="center">
   <a href="https://github.com/schelskedevco/ignidash/stargazers">
     <img src="https://img.shields.io/github/stars/schelskedevco/ignidash?style=social" alt="GitHub Stars" />
   </a>
@@ -35,6 +26,17 @@
   </a>
   <a href="https://x.com/schelskedevco">
     <img src="https://img.shields.io/twitter/follow/schelskedevco?style=social" alt="Follow on X" />
+  </a>
+</h4>
+
+---
+
+<p align="center">
+  <a href="#gh-light-mode-only">
+    <img src="public/screenshots/simulator-light.webp" alt="Ignidash Simulator">
+  </a>
+  <a href="#gh-dark-mode-only">
+    <img src="public/screenshots/simulator-dark.webp" alt="Ignidash Simulator">
   </a>
 </p>
 
