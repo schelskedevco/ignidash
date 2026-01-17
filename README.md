@@ -61,6 +61,23 @@ Ignidash is a web-based retirement planning tool. It focuses on long-term financ
 - **Compare Plans** _(Coming Soon)_
   Create multiple plans and view key outcomes side-by-side to see how different choices affect your future.
 
+## Roadmap
+
+Ignidash is in beta and actively under development. Planned features:
+
+**Q1 2026**
+
+- Configurable drawdown order
+- Modeling debt and physical assets
+- State & local taxes, IRMAA surcharges
+
+**Q2 2026**
+
+- Roth conversions & SEPP
+- Custom financial goals & milestones
+
+See [Known Limitations](https://www.ignidash.com/help#:~:text=Known%20limitations) for details.
+
 ## Tech Stack
 
 - **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS
@@ -77,7 +94,7 @@ See [SELF_HOSTING.md](./SELF_HOSTING.md) for how to host Ignidash yourself with 
 
 ### Prerequisites
 
-- Node.js 22+ (includes npm and npx)
+- [Node.js 22+](https://nodejs.org/)
 
 ### Setup
 
@@ -119,8 +136,7 @@ npm run sync-env
 ### Running Locally
 
 ```bash
-# Terminal 1: Start Convex backend (creates deployment on first run)
-# Save env vars from step #3 in Quickstart: https://docs.convex.dev/quickstart/nextjs
+# Terminal 1: Start Convex (follow prompts to create deployment)
 npm run dev:convex
 
 # Terminal 2: Start Next.js dev server
@@ -147,23 +163,6 @@ Open http://localhost:3000 in your browser.
 - ESLint and Prettier run automatically on commit via Husky
 - Run `npm run format` to format all files
 - Run `npm run lint:fix` to auto-fix linting issues
-
-## Roadmap
-
-Ignidash is in beta and actively under development. Planned features:
-
-**Q1 2026**
-
-- Configurable drawdown order
-- Modeling debt and physical assets
-- State & local taxes, IRMAA surcharges
-
-**Q2 2026**
-
-- Roth conversions & SEPP
-- Custom financial goals & milestones
-
-See [Known Limitations](https://www.ignidash.com/help#:~:text=Known%20limitations) for details.
 
 ## License
 
