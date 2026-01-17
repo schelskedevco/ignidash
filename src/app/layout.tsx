@@ -152,7 +152,7 @@ export default function RootLayout({
           <ConvexClientProvider>
             {children}
             <CookieBanner />
-            <Analytics />
+            {process.env.VERCEL && <Analytics />}
           </ConvexClientProvider>
         </ThemeProvider>
       </body>
