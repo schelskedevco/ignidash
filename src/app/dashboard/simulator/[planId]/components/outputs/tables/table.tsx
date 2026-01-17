@@ -342,7 +342,7 @@ export default function Table<T extends Record<string, unknown>>({
           />
         )}
       </Card>
-      <div className="mt-2 flex justify-end gap-x-2">
+      <div className="mt-2 flex justify-start gap-x-2">
         <Button outline onClick={handleCopy}>
           {copied ? <CheckIcon data-slot="icon" /> : <CopyIcon data-slot="icon" />}
           {copied ? 'Copied' : 'Copy'}
