@@ -63,6 +63,10 @@ npm run selfhost
 
 Back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md).
 
+## Custom Domain
+
+To use your own domain with a reverse proxy, you'll need to configure routing and update the Convex origin environment variables. See [Hosting on Own Infrastructure](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/hosting_on_own_infra.md).
+
 ## Environment Variables
 
 ### Required
