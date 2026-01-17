@@ -5,7 +5,7 @@ An open-source personal financial planning app with AI-powered features.
 ## Tech Stack
 
 - **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS
-- **Backend:** Convex (serverless database + functions)
+- **Backend:** Convex (DB & server functions)
 - **Auth:** Better-Auth with Google OAuth
 - **Payments:** Stripe
 - **AI:** Azure OpenAI
@@ -23,18 +23,14 @@ See [SELF_HOSTING.md](./SELF_HOSTING.md) for instructions on running Ignidash on
 ### Setup
 
 ```bash
-# Clone the repository
 git clone https://github.com/schelskedevco/ignidash.git
 cd ignidash
 
-# Install dependencies
 npm install
 
-# Copy environment template
 cp .env.cloud.example .env.local
 
-# Fill in your Convex deployment URL and secrets
-# Get your Convex URL from https://dashboard.convex.dev
+# Get Convex vars from https://dashboard.convex.dev
 ```
 
 Edit `.env.local` with your Convex deployment URL and generate secrets:
