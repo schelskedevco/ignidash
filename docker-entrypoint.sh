@@ -5,7 +5,7 @@ set -e
 # Next.js bakes NEXT_PUBLIC_* vars at build time, so we need to patch
 # the server-side bundles to use the internal Docker network URLs.
 
-PATCH_MARKER="/app/.patched"
+PATCH_MARKER="/tmp/.patched"
 
 if [ -n "$SELF_HOSTED_CONVEX_URL" ] && [ ! -f "$PATCH_MARKER" ]; then
   echo "Patching server bundles..."
