@@ -3,8 +3,8 @@
 </h1>
 
 <p align="center">
-  <b>An open-source personal financial planning app with AI-powered features.</b><br />
-  <b>Monte Carlo simulations • Historical backtesting • US tax estimation • AI chat & insights</b>
+  <b>Ignidash</b> is an open-source personal financial planning app with AI-powered features.<br />
+  Monte Carlo simulations • Historical backtesting • US tax estimation • AI chat & insights
 </p>
 
 <h3 align="center">
@@ -63,6 +63,8 @@ Ignidash is a web-based retirement planning tool. It focuses on long-term financ
 - **Compare Plans** _(Coming Soon)_
   Create multiple plans and view key outcomes side-by-side to see how different choices affect your future.
 
+**[Try Ignidash at ignidash.com](https://www.ignidash.com/)**
+
 ## Roadmap
 
 Ignidash is in beta and actively under development. Planned features:
@@ -91,6 +93,8 @@ See [Known Limitations](https://www.ignidash.com/help#:~:text=Known%20limitation
 ## Self-Hosting with Docker
 
 See [SELF_HOSTING.md](./SELF_HOSTING.md) for how to host Ignidash yourself with Docker.
+
+> **Prefer a hassle-free experience?** Use the [hosted version at ignidash.com](https://www.ignidash.com/) — no setup required, automatic updates, and you'll support ongoing development.
 
 ## Local Development
 
