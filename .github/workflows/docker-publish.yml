@@ -1,8 +1,10 @@
 name: Build and Push Docker Image
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       skip_tests:
@@ -110,10 +112,14 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest
+            # Push to main: edge + sha
+            type=raw,value=edge,enable={{is_default_branch}}
+            type=sha,prefix=,enable={{is_default_branch}}
+            # Tags/releases: latest + semver versions
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
+            type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
           labels: |
             org.opencontainers.image.title=Ignidash
             org.opencontainers.image.description=Self-hosted Ignidash application
@@ -147,7 +153,8 @@ jobs:
       - name: Test amd64 image
         run: |
           echo "Testing amd64 image..."
-          docker run --rm --platform linux/amd64 --entrypoint node ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest --version
+          TAG=${{ startsWith(github.ref, 'refs/tags/v') && 'latest' || 'edge' }}
+          docker run --rm --platform linux/amd64 --entrypoint node ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG --version
           echo "Image test passed"
 
   summary:
@@ -164,10 +171,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest
+            type=raw,value=edge,enable={{is_default_branch}}
+            type=sha,prefix=,enable={{is_default_branch}}
+            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
+            type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
 
       - name: Generate build summary
         run: |
@@ -186,5 +195,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Pull Command" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_STEP_SUMMARY
+          TAG=${{ startsWith(github.ref, 'refs/tags/v') && 'latest' || 'edge' }}
+          echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

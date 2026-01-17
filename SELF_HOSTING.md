@@ -31,12 +31,8 @@ Run Ignidash entirely on your own infrastructure using Docker. This includes a s
 ```bash
 git clone https://github.com/schelskedevco/ignidash.git
 cd ignidash
-git checkout v0.1.0  # Always checkout a release tag
-npm install
 npm run selfhost -- --init
 ```
-
-> **Important:** Always checkout a release tag before running `npm install`. This ensures your local Convex functions match the Docker image version. Using `main` may cause version mismatches.
 
 The setup script will:
 
@@ -65,9 +61,7 @@ npm run docker:logs    # View logs
 **Update the app:**
 
 ```bash
-git fetch --tags
-git checkout v0.2.0  # Checkout the new release tag
-npm install
+git pull
 docker compose down
 npm run selfhost
 ```
