@@ -4,8 +4,8 @@ Run Ignidash on your own infrastructure using Docker including a self-hosted Con
 
 ## Prerequisites
 
-- Docker and Docker Compose
-- Node.js 22+ (for initial setup only; includes npm and npx)
+- [Docker and Docker Compose](https://docs.docker.com/get-docker/)
+- [Node.js 22+](https://nodejs.org/)
 
 ## Quick Start
 
