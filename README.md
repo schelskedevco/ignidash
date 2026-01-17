@@ -21,7 +21,7 @@
   <a href="https://github.com/schelskedevco/ignidash?tab=AGPL-3.0-1-ov-file#readme">
     <img src="https://img.shields.io/github/license/schelskedevco/ignidash?color=blue" alt="AGPL-3.0 License" />
   </a>
-  <a href="https://github.com/schelskedevco/ignidash/blob/main/CONTRIBUTING.md">
+  <a href="#contributing">
     <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen" alt="PRs welcome!" />
   </a>
   <a href="https://discord.gg/AVNg9JCNUr">
