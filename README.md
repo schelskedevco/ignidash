@@ -1,6 +1,6 @@
 <div align="center">
   <h1>
-    <img src="public/favicon-96x96.png" width="32" height="32" alt="Ignidash" align="absmiddle">&nbsp;Ignidash
+    <img src="public/favicon-96x96.png" width="36" height="36" alt="Ignidash" align="absmiddle">&nbsp;Ignidash
   </h1>
 </div>
 
