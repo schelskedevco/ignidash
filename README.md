@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="public/favicon-96x96.png" width="40" height="40" alt="Ignidash" align="absmiddle">&nbsp;Ignidash
+  <img src="public/favicon-96x96.png" width="96" height="96" alt="Ignidash">
 </h1>
 
 <p align="center">
