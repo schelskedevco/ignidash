@@ -86,4 +86,4 @@ See [SELF_HOSTING.md](./SELF_HOSTING.md) for instructions on running Ignidash on
 
 ## License
 
-MIT
+[AGPL-3.0](https://github.com/schelskedevco/ignidash/blob/main/LICENSE)
