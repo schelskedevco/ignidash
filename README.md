@@ -40,6 +40,17 @@ openssl rand -base64 32  # For BETTER_AUTH_SECRET
 openssl rand -base64 32  # For CONVEX_API_SECRET
 ```
 
+### Optional Environment Variables
+
+| Variable                                                        | Description                                                               |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`                      | [Google Cloud Console](https://console.cloud.google.com/apis/credentials) |
+| `OPENAI_API_KEY`, `OPENAI_ENDPOINT`                             | [Azure AI Foundry](https://ai.azure.com/)                                 |
+| `RESEND_API_KEY`                                                | [Resend](https://resend.com/)                                             |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` | [Stripe Dashboard](https://dashboard.stripe.com/)                         |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`                            | [Stripe Dashboard](https://dashboard.stripe.com/)                         |
+| `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`           | [PostHog](https://posthog.com/)                                           |
+
 ### Syncing Environment Variables
 
 After updating `.env.local`, sync your environment variables to Convex:
