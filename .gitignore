@@ -33,7 +33,9 @@ yarn-error.log*
 # env files
 .env*
 !.env.selfhost.example
-!.env.cloud.example
+
+# docker compose override (for local testing)
+docker-compose.override.yml
 
 # vercel
 .vercel

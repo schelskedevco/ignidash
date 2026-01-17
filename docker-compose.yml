@@ -1,6 +1,7 @@
 services:
   convex-backend:
     image: ghcr.io/get-convex/convex-backend:latest
+    restart: unless-stopped
     ports:
       - '3210:3210'
       - '3211:3211'
@@ -21,6 +22,7 @@ services:
 
   convex-dashboard:
     image: ghcr.io/get-convex/convex-dashboard:latest
+    restart: unless-stopped
     ports:
       - '6791:6791'
     depends_on:
@@ -32,7 +34,8 @@ services:
     stop_grace_period: 10s
 
   app:
-    image: ghcr.io/schelskedevco/ignidash-v2:latest
+    image: ghcr.io/schelskedevco/ignidash-v2:stable
+    restart: unless-stopped
     ports:
       - '3000:3000'
     depends_on:
@@ -47,6 +50,17 @@ services:
       - SELF_HOSTED_CONVEX_URL=http://convex-backend:3210
       - SELF_HOSTED_CONVEX_SITE_URL=http://convex-backend:3211
       - SITE_URL=${SITE_URL:-http://localhost:3000}
+    healthcheck:
+      test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://localhost:3000/api/health']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
     stop_signal: SIGINT
     stop_grace_period: 10s
 

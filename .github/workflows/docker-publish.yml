@@ -112,11 +112,11 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            # Push to main: edge + sha
-            type=raw,value=edge,enable={{is_default_branch}}
+            # Push to main: latest + sha
+            type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix=,enable={{is_default_branch}}
-            # Tags/releases: latest + semver versions
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            # Tags/releases: stable + semver versions
+            type=raw,value=stable,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
@@ -156,9 +156,9 @@ jobs:
         run: |
           echo "Testing amd64 image..."
           if [[ "${{ startsWith(github.ref, 'refs/tags/v') }}" == "true" ]]; then
-            TAG="latest"
+            TAG="stable"
           elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            TAG="edge"
+            TAG="latest"
           else
             TAG="${GITHUB_REF_NAME//\//-}"
           fi
@@ -180,9 +180,9 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=edge,enable={{is_default_branch}}
+            type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix=,enable={{is_default_branch}}
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=stable,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}},enable=${{ !startsWith(github.ref, 'refs/tags/v0.') }}
@@ -206,9 +206,9 @@ jobs:
           echo "### Pull Command" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
           if [[ "${{ startsWith(github.ref, 'refs/tags/v') }}" == "true" ]]; then
-            TAG="latest"
+            TAG="stable"
           elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            TAG="edge"
+            TAG="latest"
           else
             TAG="${GITHUB_REF_NAME//\//-}"
           fi
