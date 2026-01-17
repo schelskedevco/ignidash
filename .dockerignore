@@ -45,10 +45,18 @@ coverage
 
 # Misc
 *.log
+**/*.log
 demo-log.json
 .husky
 .convex
 .claude
+
+# Scripts (not needed at runtime)
+scripts/
+
+# Backup files
+*.backup
+*.bak
 
 # Docker files (avoid recursion)
 Dockerfile

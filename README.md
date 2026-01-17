@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ignidash
 
-## Getting Started
+A financial planning application for simulating retirement scenarios using Monte Carlo methods, historical backtesting, and AI-powered insights. Built for FIRE (Financial Independence, Early Retirement) planning.
 
-First, run the development server:
+## Features
+
+- **Monte Carlo Simulations** - Run thousands of scenarios with stochastic returns
+- **Historical Backtesting** - Test against real market data
+- **Multi-Plan Comparison** - Compare different retirement strategies side-by-side
+- **Tax Optimization** - Model tax implications across account types
+- **Portfolio Analysis** - Track asset allocation and rebalancing
+- **AI Insights** - Get AI-powered analysis of your financial plans
+
+## Tech Stack
+
+- **Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS
+- **Backend:** Convex (serverless database + functions)
+- **Auth:** Better-Auth with Google OAuth
+- **Payments:** Stripe
+- **AI:** Azure OpenAI
+
+## Local Development
+
+### Prerequisites
+
+- Node.js 22+
+- npm
+
+### Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone https://github.com/schelskedevco/ignidash.git
+cd ignidash
+
+# Install dependencies
+npm install
+
+# Copy environment template
+cp .env.selfhost.example .env.local
+
+# Generate secrets
+openssl rand -base64 32  # For BETTER_AUTH_SECRET
+openssl rand -base64 32  # For CONVEX_API_SECRET
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Edit `.env.local` and fill in the generated secrets.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Running Locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Terminal 1: Start Next.js dev server
+npm run dev
 
-## Learn More
+# Terminal 2: Start Convex local backend
+npm run dev:convex
+```
 
-To learn more about Next.js, take a look at the following resources:
+Open http://localhost:3000 in your browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Available Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Command              | Description                |
+| -------------------- | -------------------------- |
+| `npm run dev`        | Start Next.js dev server   |
+| `npm run dev:convex` | Start Convex local backend |
+| `npm run build`      | Production build           |
+| `npm run lint`       | Run ESLint                 |
+| `npm run lint:fix`   | Run ESLint with auto-fix   |
+| `npm run typecheck`  | TypeScript type checking   |
+| `npm run format`     | Format with Prettier       |
+| `npm run test`       | Run Vitest tests           |
 
-## Deploy on Vercel
+### Code Style
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- ESLint and Prettier run automatically on commit via Husky
+- Run `npm run format` to format all files
+- Run `npm run lint:fix` to auto-fix linting issues
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Self-Hosting with Docker
+
+See [SELF_HOSTING.md](./SELF_HOSTING.md) for instructions on running Ignidash on your own infrastructure.
+
+## License
+
+MIT
