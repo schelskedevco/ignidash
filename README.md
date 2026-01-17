@@ -42,7 +42,7 @@
 
 ## What is Ignidash?
 
-Ignidash is a powerful, web-based FIRE (Financial Independence, Retire Early) planning tool. While most other personal finance apps focus on budgeting and day-to-day expense tracking, Ignidash focuses on long-term financial projections.
+Ignidash is a web-based FIRE (Financial Independence, Retire Early) planning tool. It focuses on long-term financial projections as opposed to budgeting and day-to-day expense tracking.
 
 **What it does:**
 
@@ -90,7 +90,7 @@ npm install
 cp .env.cloud.example .env.local
 ```
 
-Edit `.env.local` with your [Convex deployment URL](https://dashboard.convex.dev) and generate secrets:
+Generate secrets and edit `.env.local` with them:
 
 ```bash
 openssl rand -base64 32  # For BETTER_AUTH_SECRET
@@ -120,6 +120,7 @@ npm run sync-env
 
 ```bash
 # Terminal 1: Start Convex backend (creates deployment on first run)
+# Save env vars from step #3 in Quickstart: https://docs.convex.dev/quickstart/nextjs
 npm run dev:convex
 
 # Terminal 2: Start Next.js dev server
