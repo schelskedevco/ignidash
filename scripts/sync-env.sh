@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Sync environment variables from .env.local to Convex (cloud deployment)
+# Sync environment variables from .env.local to Convex
 # Usage: ./scripts/sync-env.sh [env-file]
 
 ENV_FILE="${1:-.env.local}"
