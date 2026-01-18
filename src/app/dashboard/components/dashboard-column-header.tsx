@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, lazy, Suspense } from 'react';
-import { LayoutDashboardIcon, MessageCircleMoreIcon } from 'lucide-react';
+import { LayoutDashboardIcon, MessageCircleMoreIcon, InfoIcon } from 'lucide-react';
 import type { Preloaded } from 'convex/react';
 import { usePreloadedAuthQuery } from '@convex-dev/better-auth/nextjs/client';
 import { api } from '@/convex/_generated/api';
@@ -9,7 +9,10 @@ import { api } from '@/convex/_generated/api';
 import IconButton from '@/components/ui/icon-button';
 import PageLoading from '@/components/ui/page-loading';
 import Drawer from '@/components/ui/drawer';
+import { Dialog } from '@/components/catalyst/dialog';
 import ColumnHeader from '@/components/ui/column-header';
+
+import OnboardingDialog from './dialogs/onboarding-dialog';
 
 const UserFeedbackDrawer = lazy(() => import('@/components/layout/user-feedback-drawer'));
 
@@ -20,6 +23,9 @@ interface DashboardColumnHeaderProps {
 export default function DashboardColumnHeader({ preloadedUser }: DashboardColumnHeaderProps) {
   const user = usePreloadedAuthQuery(preloadedUser);
   const name = user?.name ?? 'Anonymous';
+
+  const [onboardingDialogOpen, setOnboardingDialogOpen] = useState(false);
+  const handleOnboardingDialogClose = () => setOnboardingDialogOpen(false);
 
   const [userFeedbackOpen, setUserFeedbackOpen] = useState(false);
   const userFeedbackTitleComponent = (
@@ -37,6 +43,7 @@ export default function DashboardColumnHeader({ preloadedUser }: DashboardColumn
         className="w-[calc(100%-18rem)] group-data-[state=collapsed]/sidebar:w-[calc(100%-4rem)]"
         iconButton={
           <div className="flex items-center gap-x-1">
+            <IconButton icon={InfoIcon} label="Onboarding" onClick={() => setOnboardingDialogOpen(true)} surfaceColor="emphasized" />
             <IconButton
               icon={MessageCircleMoreIcon}
               label="Share Feedback"
@@ -52,6 +59,9 @@ export default function DashboardColumnHeader({ preloadedUser }: DashboardColumn
           <UserFeedbackDrawer setOpen={setUserFeedbackOpen} />
         </Suspense>
       </Drawer>
+      <Dialog size="xl" open={onboardingDialogOpen} onClose={handleOnboardingDialogClose}>
+        <OnboardingDialog onClose={handleOnboardingDialogClose} />
+      </Dialog>
     </>
   );
 }

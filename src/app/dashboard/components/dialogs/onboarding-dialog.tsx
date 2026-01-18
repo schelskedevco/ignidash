@@ -35,7 +35,7 @@ export default function OnboardingDialog({ onClose }: OnboardingDialogProps) {
       </DialogDescription>
 
       <DialogBody className="space-y-4">
-        <Disclosure as="div" className="border-border/25 border-t pt-4" defaultOpen>
+        <Disclosure as="div" className="border-border/25 border-t pt-4">
           <DisclosureButton className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4">
             <div className="flex items-center gap-2">
               <LayoutDashboardIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
