@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 
 import HeroDashboardLink from './hero-dashboard-link';
 
@@ -19,7 +18,13 @@ export default function HeroSection() {
         <div className="hidden sm:mb-8 sm:flex sm:justify-center">
           <div className="relative rounded-full px-3 py-1 text-sm/6 text-stone-600 ring-1 ring-stone-900/10 hover:ring-stone-900/20 dark:text-stone-300 dark:ring-white/10 dark:hover:ring-white/20">
             Now open source & self-hostable.{' '}
-            <Link href="/dashboard" className="text-primary font-semibold">
+            <a
+              href="https://github.com/schelskedevco/ignidash"
+              className="text-primary font-semibold"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub repository"
+            >
               <span aria-hidden="true" className="absolute inset-0" />
               <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" className="inline size-4.5 align-text-bottom">
                 <path
@@ -29,7 +34,7 @@ export default function HeroSection() {
                 />
               </svg>{' '}
               GitHub <span aria-hidden="true">&rarr;</span>
-            </Link>
+            </a>
           </div>
         </div>
         <div className="text-center">

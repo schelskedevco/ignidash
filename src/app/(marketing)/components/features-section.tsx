@@ -76,7 +76,11 @@ export default function FeaturesSection() {
               <dt className="inline-flex items-center font-semibold text-stone-900 dark:text-white">
                 <feature.icon aria-hidden="true" className="absolute top-1 left-1 size-5 text-rose-600 dark:text-rose-400" />
                 {feature.name}
-                {feature.status === 'coming-soon' && <Badge className="ml-3">Coming Soon</Badge>}
+                {feature.status === 'coming-soon' && (
+                  <Badge color="rose" className="ml-3">
+                    Coming Soon
+                  </Badge>
+                )}
                 {feature.pro && (
                   <BadgeButton color="rose" href="/pricing" className="ml-3">
                     Pro
