@@ -78,7 +78,7 @@ export default function FeaturesSection() {
                 {feature.name}
                 {feature.status === 'coming-soon' && (
                   <Badge color="rose" className="ml-3">
-                    Coming Soon
+                    Coming soon
                   </Badge>
                 )}
                 {feature.pro && (
