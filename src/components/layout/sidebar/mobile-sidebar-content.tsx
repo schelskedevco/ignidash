@@ -35,7 +35,7 @@ export default function MobileSidebarContent({ onClose }: MobileSidebarContentPr
             />
           </li>
           <li className="mb-1">
-            <ul role="list" className="space-y-1.5">
+            <ul role="list" className="space-y-2">
               <li key="dark-mode">
                 <SidebarModeToggle />
               </li>
