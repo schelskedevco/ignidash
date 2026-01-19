@@ -11,7 +11,7 @@ export default function MobileSidebarNavigation({ onClose }: MobileSidebarNaviga
   const navigation = useNavigationItems();
 
   return (
-    <ul role="list" className="space-y-1.5">
+    <ul role="list" className="space-y-2">
       {navigation.map(({ name, href, icon: Icon, current, ...other }) => (
         <li key={name} onClick={onClose}>
           <SidebarLink href={href} current={current} {...other}>

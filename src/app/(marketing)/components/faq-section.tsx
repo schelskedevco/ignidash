@@ -23,7 +23,7 @@ const jsonLd = {
       name: 'Is Ignidash free to use?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'All core planning tools are completely free during beta, but will be $7/month after. Access to AI features requires a paid subscription.',
+        text: 'All core planning tools are completely free during beta, but will be $7/month after. Access to AI features requires a paid subscription. Self-hosting with Docker is free forever.',
       },
     },
     {
@@ -65,8 +65,21 @@ const faqs = [
   },
   {
     question: 'Is Ignidash free to use?',
-    answer:
-      'All core planning tools are completely free during beta, but will be $7/month after. Access to AI features requires a paid subscription.',
+    answer: (
+      <>
+        All core planning tools are completely free during beta, but will be $7/month after. Access to AI features requires a paid
+        subscription.{' '}
+        <a
+          href="https://github.com/schelskedevco/ignidash"
+          className="text-primary hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Self-hosting with Docker
+        </a>{' '}
+        is free forever.
+      </>
+    ),
   },
   {
     question: 'Is my financial data secure?',

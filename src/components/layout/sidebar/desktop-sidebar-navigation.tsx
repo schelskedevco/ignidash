@@ -9,7 +9,7 @@ export default function DesktopSidebarNavigation() {
   const navigation = useNavigationItems();
 
   return (
-    <ul role="list" className="space-y-1.5">
+    <ul role="list" className="space-y-2">
       {navigation.map(({ name, href, icon: Icon, current, ...other }) => (
         <li key={name}>
           <SidebarLink href={href} current={current} tooltipLabel={name} {...other}>
