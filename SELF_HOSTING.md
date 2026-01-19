@@ -139,12 +139,6 @@ docker compose logs
 
 Common issues: port conflicts (3000, 3210, 3211, 6791), insufficient memory.
 
-### Can't connect to Convex
-
-```bash
-curl http://localhost:3210/version
-```
-
 ### Missing environment variables in Convex
 
 ```bash
