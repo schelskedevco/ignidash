@@ -11,7 +11,8 @@
 <h3 align="center">
   <a href="https://www.ignidash.com/">Website</a> &bull;
   <a href="https://discord.gg/AVNg9JCNUr">Discord</a> &bull;
-  <a href="./SELF_HOSTING.md">Self-Hosting</a>
+  <a href="./SELF_HOSTING.md">Self-Hosting</a> &bull;
+  <a href="https://github.com/schelskedevco/ignidash/tree/main/public/screenshots">Image Gallery</a>
 </h3>
 
 <h4 align="center">

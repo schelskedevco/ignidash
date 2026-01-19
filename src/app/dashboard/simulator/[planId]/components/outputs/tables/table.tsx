@@ -347,7 +347,7 @@ export default function Table<T extends Record<string, unknown>>({
           {copied ? <CheckIcon data-slot="icon" /> : <CopyIcon data-slot="icon" />}
           {copied ? 'Copied' : 'Copy'}
         </Button>
-        <Button onClick={handleExport}>
+        <Button color="dark/white" onClick={handleExport}>
           <DownloadIcon data-slot="icon" />
           Export CSV
         </Button>
