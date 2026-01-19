@@ -31,7 +31,8 @@ export default function OnboardingDialog({ onClose }: OnboardingDialogProps) {
         </div>
       </DialogTitle>
       <DialogDescription>
-        Here&apos;s a brief overview of the app. Feel free to skip it if you&apos;d like to explore things on your own.
+        Here&apos;s a brief overview of the Ignidash app. Feel free to skip if you&apos;d like to explore things on your own; you can always
+        return to this dialog later from Dashboard.
       </DialogDescription>
 
       <DialogBody className="space-y-4">
