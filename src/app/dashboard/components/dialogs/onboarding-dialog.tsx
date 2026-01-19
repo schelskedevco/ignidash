@@ -10,7 +10,7 @@ import {
   WandSparklesIcon,
   SettingsIcon,
   CircleQuestionMarkIcon,
-  LinkIcon,
+  BookOpenIcon,
 } from 'lucide-react';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 
@@ -59,6 +59,7 @@ export default function OnboardingDialog({ onClose }: OnboardingDialogProps) {
     },
     [activeDisclosure]
   );
+
   return (
     <>
       <DialogTitle onClose={onClose}>
@@ -68,8 +69,7 @@ export default function OnboardingDialog({ onClose }: OnboardingDialogProps) {
         </div>
       </DialogTitle>
       <DialogDescription>
-        Here&apos;s a brief overview of the Ignidash app. Feel free to skip if you&apos;d like to explore things on your own; you can always
-        return to this dialog later from Dashboard.
+        Here&apos;s a brief overview of the Ignidash app. Feel free to skip if you&apos;d like to explore things on your own.
       </DialogDescription>
 
       <DialogBody className="space-y-4">
@@ -227,8 +227,8 @@ export default function OnboardingDialog({ onClose }: OnboardingDialogProps) {
                 className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
               >
                 <div className="flex items-center gap-2">
-                  <LinkIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
-                  <span className="text-base/7 font-semibold">Links</span>
+                  <BookOpenIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
+                  <span className="text-base/7 font-semibold">Resources</span>
                   <span className="hidden sm:inline">|</span>
                   <span className="text-muted-foreground hidden truncate sm:inline">Source code, self-hosting, & Discord</span>
                 </div>
