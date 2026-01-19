@@ -49,16 +49,13 @@ export default function OnboardingDialog({ onClose }: OnboardingDialogProps) {
             </span>
           </DisclosureButton>
           <DisclosurePanel className="space-y-2 pt-4">
+            <Text>Dashboard is your home base in Ignidash.</Text>
             <Text>
-              <Strong>Dashboard</Strong> is your home base in Ignidash.
+              From here, you can view existing Simulator plans, create new ones, and track your net worth by adding assets and liabilities.
             </Text>
             <Text>
-              From here, you can view existing <Strong>Simulator</Strong> plans, create new ones, and track your <Strong>Net Worth</Strong>{' '}
-              by adding assets and liabilities.
-            </Text>
-            <Text>
-              <Strong>Tip:</Strong> Click <Strong>Create</Strong> and select a Demo Plan under <Strong>With Template</Strong> to try{' '}
-              <Strong>Simulator</Strong> with demo data.
+              <Strong>Tip:</Strong> Click <Strong>Create</Strong> and select a Demo Plan under <Strong>With Template</Strong> to try
+              Simulator with demo data.
             </Text>
           </DisclosurePanel>
         </Disclosure>
@@ -77,15 +74,13 @@ export default function OnboardingDialog({ onClose }: OnboardingDialogProps) {
             </span>
           </DisclosureButton>
           <DisclosurePanel className="space-y-2 pt-4">
-            <Text>
-              <Strong>Simulator</Strong> is where you&apos;ll spend most of your time.
-            </Text>
+            <Text>Simulator is where you&apos;ll spend most of your time.</Text>
             <Text>
               Here, you&apos;ll enter financial information such as incomes, expenses, and investment accounts under{' '}
               <Strong>Numbers</Strong>, and receive detailed long-term projections under <Strong>Results</Strong>.
             </Text>
             <Text>
-              To discuss your plan and results with AI chat powered by <Strong>GPT-5.2</Strong>, click the{' '}
+              To discuss your plan and results with AI chat powered by GPT-5.2, click the{' '}
               <WandSparklesIcon className="text-primary mx-1 inline size-5 shrink-0" aria-label="Ask AI button icon" /> next to{' '}
               <Strong>Results</Strong>.
             </Text>
@@ -112,16 +107,12 @@ export default function OnboardingDialog({ onClose }: OnboardingDialogProps) {
             </span>
           </DisclosureButton>
           <DisclosurePanel className="space-y-2 pt-4">
+            <Text>From Insights, you can generate a comprehensive breakdown of your plan and results with AI.</Text>
             <Text>
-              From <Strong>Insights</Strong>, you can generate a comprehensive breakdown of your plan and results with AI.
+              Visit Insights after you&apos;ve finished a Simulator plan, reviewed some of the outputs, and are ready to dive deeper.
             </Text>
             <Text>
-              Visit <Strong>Insights</Strong> after you&apos;ve finished a <Strong>Simulator</Strong> plan, reviewed some of the outputs,
-              and are ready to dive deeper.
-            </Text>
-            <Text>
-              <Strong>Tip:</Strong> Discuss topics from <Strong>Insights</Strong> further by returning to your <Strong>Simulator</Strong>{' '}
-              plan and clicking the{' '}
+              <Strong>Tip:</Strong> Discuss topics from Insights further by returning to your Simulator plan and clicking the{' '}
               <WandSparklesIcon className="text-primary mx-1 inline size-5 shrink-0" aria-label="Ask AI button icon" /> next to{' '}
               <Strong>Results</Strong>.
             </Text>
