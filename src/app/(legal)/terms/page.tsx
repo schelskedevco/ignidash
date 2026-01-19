@@ -18,7 +18,7 @@ export default function TermsPage() {
           <HandshakeIcon className="text-primary h-12 w-12" />
           <div>
             <h1 className="mb-2 text-3xl font-bold">Terms of Service</h1>
-            <p className="text-muted-foreground text-sm">Last updated: December 14, 2025</p>
+            <p className="text-muted-foreground text-sm">Last updated: December 22, 2025</p>
           </div>
         </div>
       </header>

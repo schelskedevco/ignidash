@@ -65,7 +65,7 @@ export default function Footer() {
           ))}
         </div>
         <p className="mt-10 text-center text-sm/6 text-stone-600 dark:text-stone-400">
-          &copy; 2025 Schelske Dev Co. LLC. All rights reserved.
+          &copy; 2026 Schelske Dev Co. LLC. All rights reserved.
         </p>
         <p className="text-muted-foreground border-border/50 mx-auto mt-10 max-w-4xl rounded-md border p-2 text-xs/6">
           <strong>Disclaimer:</strong> Ignidash is an educational financial planning tool with AI-powered features and does not provide
