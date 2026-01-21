@@ -1,6 +1,6 @@
 import type {
   SingleSimulationPortfolioTableRow,
-  SingleSimulationCashFlowTableRow,
+  SingleSimulationIncomeExpensesTableRow,
   SingleSimulationTaxesTableRow,
   SingleSimulationReturnsTableRow,
   SingleSimulationContributionsTableRow,
@@ -87,7 +87,7 @@ export abstract class TableDataExtractor {
     });
   }
 
-  static extractSingleSimulationCashFlowData(simulation: SimulationResult): SingleSimulationCashFlowTableRow[] {
+  static extractSingleSimulationIncomeExpensesData(simulation: SimulationResult): SingleSimulationIncomeExpensesTableRow[] {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
     return simulation.data.map((data, idx) => {

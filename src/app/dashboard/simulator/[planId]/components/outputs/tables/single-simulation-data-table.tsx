@@ -3,7 +3,7 @@
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import type {
   SingleSimulationPortfolioTableRow,
-  SingleSimulationCashFlowTableRow,
+  SingleSimulationIncomeExpensesTableRow,
   SingleSimulationReturnsTableRow,
   SingleSimulationTaxesTableRow,
   SingleSimulationContributionsTableRow,
@@ -12,7 +12,7 @@ import type {
 import { SingleSimulationCategory } from '@/lib/types/simulation-category';
 import {
   useSingleSimulationPortfolioTableData,
-  useSingleSimulationCashFlowTableData,
+  useSingleSimulationIncomeExpensesTableData,
   useSingleSimulationReturnsTableData,
   useSingleSimulationTaxesTableData,
   useSingleSimulationContributionsTableData,
@@ -21,7 +21,7 @@ import {
 } from '@/lib/stores/simulator-store';
 import {
   generatePortfolioTableColumns,
-  generateCashFlowTableColumns,
+  generateIncomeExpensesTableColumns,
   generateReturnsTableColumns,
   generateTaxesTableColumns,
   generateContributionsTableColumns,
@@ -47,15 +47,15 @@ function PortfolioTable({ simulation }: TableCategoryProps) {
   );
 }
 
-function IncomeAndExpensesTable({ simulation }: TableCategoryProps) {
-  const tableData = useSingleSimulationCashFlowTableData(simulation);
+function IncomeExpensesTable({ simulation }: TableCategoryProps) {
+  const tableData = useSingleSimulationIncomeExpensesTableData(simulation);
 
   return (
-    <Table<SingleSimulationCashFlowTableRow>
-      columns={generateCashFlowTableColumns()}
+    <Table<SingleSimulationIncomeExpensesTableRow>
+      columns={generateIncomeExpensesTableColumns()}
       data={tableData}
       keyField="year"
-      exportFilename="cash-flow-data.csv"
+      exportFilename="income-expenses-data.csv"
     />
   );
 }
@@ -125,7 +125,7 @@ export default function SingleSimulationDataTable({ simulation }: SingleSimulati
     case SingleSimulationCategory.Portfolio:
       return <PortfolioTable {...props} />;
     case SingleSimulationCategory.IncomeExpenses:
-      return <IncomeAndExpensesTable {...props} />;
+      return <IncomeExpensesTable {...props} />;
     case SingleSimulationCategory.Returns:
       return <ReturnsTable {...props} />;
     case SingleSimulationCategory.Taxes:

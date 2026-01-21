@@ -382,7 +382,7 @@ export function glidePathToConvex(glidePath: GlidePathInputs): NonNullable<Doc<'
  */
 export function simulationResultToConvex(simulation: SimulationResult): ConvexSimulationResult {
   const portfolioData = ChartDataExtractor.extractSingleSimulationPortfolioChartData(simulation).slice(1);
-  const cashFlowData = ChartDataExtractor.extractSingleSimulationCashFlowChartData(simulation);
+  const incomeExpensesData = ChartDataExtractor.extractSingleSimulationIncomeExpensesChartData(simulation);
   const taxesData = ChartDataExtractor.extractSingleSimulationTaxesChartData(simulation);
   const contributionsData = ChartDataExtractor.extractSingleSimulationContributionsChartData(simulation);
   const withdrawalsData = ChartDataExtractor.extractSingleSimulationWithdrawalsChartData(simulation);
@@ -403,17 +403,17 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       totalValue: portfolioData[i].stockHoldings + portfolioData[i].bondHoldings + portfolioData[i].cashHoldings,
 
       // Income & Expenses
-      earnedIncome: cashFlowData[i].earnedIncome,
-      socialSecurityIncome: cashFlowData[i].socialSecurityIncome,
-      nonTaxableIncome: cashFlowData[i].nonTaxableIncome,
+      earnedIncome: incomeExpensesData[i].earnedIncome,
+      socialSecurityIncome: incomeExpensesData[i].socialSecurityIncome,
+      nonTaxableIncome: incomeExpensesData[i].nonTaxableIncome,
       retirementDistributions: taxesData[i].taxableRetirementDistributions,
       interestIncome: taxesData[i].taxableInterestIncome,
       realizedGains: taxesData[i].realizedGains,
       dividendIncome: taxesData[i].taxableDividendIncome,
-      taxesAndPenalties: cashFlowData[i].taxesAndPenalties,
-      expenses: cashFlowData[i].expenses,
-      surplusDeficit: cashFlowData[i].surplusDeficit,
-      savingsRate: cashFlowData[i].savingsRate,
+      taxesAndPenalties: incomeExpensesData[i].taxesAndPenalties,
+      expenses: incomeExpensesData[i].expenses,
+      surplusDeficit: incomeExpensesData[i].surplusDeficit,
+      savingsRate: incomeExpensesData[i].savingsRate,
 
       // Taxes
       grossIncome: taxesData[i].grossIncome,

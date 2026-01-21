@@ -479,13 +479,13 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
     ].filter(Boolean);
     if (income.length) sections.push(`income: ${income.join(', ')}`);
 
-    const incomeAndExpenses = [
+    const incomeExpenses = [
       d.expenses && `expenses:${fmt(d.expenses)}`,
       d.taxesAndPenalties && `taxes:${fmt(d.taxesAndPenalties)}`,
       d.surplusDeficit && `surplusDeficit:${fmt(d.surplusDeficit)}`,
       d.savingsRate && `saveRate:${pct(d.savingsRate)}`,
     ].filter(Boolean);
-    if (incomeAndExpenses.length) sections.push(`incomeExpenses: ${incomeAndExpenses.join(', ')}`);
+    if (incomeExpenses.length) sections.push(`incomeExpenses: ${incomeExpenses.join(', ')}`);
 
     const taxBasis = [
       d.grossIncome && `gross:${fmt(d.grossIncome)}`,

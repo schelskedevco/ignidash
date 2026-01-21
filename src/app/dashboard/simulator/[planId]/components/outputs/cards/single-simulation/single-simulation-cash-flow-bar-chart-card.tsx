@@ -1,7 +1,7 @@
 'use client';
 
 import Card from '@/components/ui/card';
-import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
+import type { SingleSimulationIncomeExpensesChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
 import { useIncomeData, useExpenseData } from '@/hooks/use-convex-data';
 
@@ -9,7 +9,7 @@ import SingleSimulationCashFlowBarChart from '../../charts/single-simulation/sin
 
 interface SingleSimulationCashFlowBarChartCardProps {
   selectedAge: number;
-  rawChartData: SingleSimulationCashFlowChartDataPoint[];
+  rawChartData: SingleSimulationIncomeExpensesChartDataPoint[];
   dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
   customDataID: string;
 }

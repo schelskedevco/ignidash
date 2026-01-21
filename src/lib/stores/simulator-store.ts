@@ -21,7 +21,7 @@ import { createWorkerPool, releaseWorkerPool } from '@/lib/workers/simulation-wo
 import { getMergeWorker } from '@/lib/workers/merge-worker-api';
 import type {
   SingleSimulationPortfolioTableRow,
-  SingleSimulationCashFlowTableRow,
+  SingleSimulationIncomeExpensesTableRow,
   SingleSimulationReturnsTableRow,
   SingleSimulationTaxesTableRow,
   SingleSimulationContributionsTableRow,
@@ -31,7 +31,7 @@ import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/sch
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type {
   SingleSimulationPortfolioChartDataPoint,
-  SingleSimulationCashFlowChartDataPoint,
+  SingleSimulationIncomeExpensesChartDataPoint,
   SingleSimulationTaxesChartDataPoint,
   SingleSimulationReturnsChartDataPoint,
   SingleSimulationContributionsChartDataPoint,
@@ -473,9 +473,11 @@ export const useSingleSimulationPortfolioChartData = (simulation: SimulationResu
   }, [simulation]);
 };
 
-export const useSingleSimulationCashFlowChartData = (simulation: SimulationResult): SingleSimulationCashFlowChartDataPoint[] => {
+export const useSingleSimulationIncomeExpensesChartData = (
+  simulation: SimulationResult
+): SingleSimulationIncomeExpensesChartDataPoint[] => {
   return useMemo(() => {
-    return ChartDataExtractor.extractSingleSimulationCashFlowChartData(simulation);
+    return ChartDataExtractor.extractSingleSimulationIncomeExpensesChartData(simulation);
   }, [simulation]);
 };
 
@@ -513,9 +515,9 @@ export const useSingleSimulationPortfolioTableData = (simulation: SimulationResu
   }, [simulation]);
 };
 
-export const useSingleSimulationCashFlowTableData = (simulation: SimulationResult): SingleSimulationCashFlowTableRow[] => {
+export const useSingleSimulationIncomeExpensesTableData = (simulation: SimulationResult): SingleSimulationIncomeExpensesTableRow[] => {
   return useMemo(() => {
-    return TableDataExtractor.extractSingleSimulationCashFlowData(simulation);
+    return TableDataExtractor.extractSingleSimulationIncomeExpensesData(simulation);
   }, [simulation]);
 };
 

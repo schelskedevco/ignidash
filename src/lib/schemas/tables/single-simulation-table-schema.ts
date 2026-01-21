@@ -50,10 +50,10 @@ export const SIMULATION_PORTFOLIO_TABLE_CONFIG: Record<keyof SingleSimulationPor
   SINGLE_SIMULATION_COLUMNS;
 
 // ================================
-// CASH FLOW TABLE SCHEMA
+// INCOME & EXPENSES TABLE SCHEMA
 // ================================
 
-export const singleSimulationCashFlowTableRowSchema = z.object({
+export const singleSimulationIncomeExpensesTableRowSchema = z.object({
   year: z.number(),
   age: z.number(),
   phaseName: z.string().nullable(),
@@ -73,9 +73,9 @@ export const singleSimulationCashFlowTableRowSchema = z.object({
   historicalYear: z.number().nullable(),
 });
 
-export type SingleSimulationCashFlowTableRow = z.infer<typeof singleSimulationCashFlowTableRowSchema>;
+export type SingleSimulationIncomeExpensesTableRow = z.infer<typeof singleSimulationIncomeExpensesTableRowSchema>;
 
-const SINGLE_SIMULATION_CASHFLOW_COLUMNS = {
+const SINGLE_SIMULATION_INCOME_EXPENSES_COLUMNS = {
   year: { title: 'Year', format: 'number' },
   age: { title: 'Age', format: 'number' },
   phaseName: { title: 'Phase Name', format: 'string' },
@@ -95,8 +95,10 @@ const SINGLE_SIMULATION_CASHFLOW_COLUMNS = {
   historicalYear: { title: 'Historical Year', format: 'number' },
 } as const;
 
-export const SIMULATION_CASHFLOW_TABLE_CONFIG: Record<keyof SingleSimulationCashFlowTableRow, { title: string; format: ColumnFormat }> =
-  SINGLE_SIMULATION_CASHFLOW_COLUMNS;
+export const SIMULATION_INCOME_EXPENSES_TABLE_CONFIG: Record<
+  keyof SingleSimulationIncomeExpensesTableRow,
+  { title: string; format: ColumnFormat }
+> = SINGLE_SIMULATION_INCOME_EXPENSES_COLUMNS;
 
 // ================================
 // TAXES TABLE SCHEMA

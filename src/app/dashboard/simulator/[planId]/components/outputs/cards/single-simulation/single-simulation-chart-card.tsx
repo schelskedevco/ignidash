@@ -5,7 +5,7 @@ import { useState } from 'react';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import {
   useSingleSimulationPortfolioChartData,
-  useSingleSimulationCashFlowChartData,
+  useSingleSimulationIncomeExpensesChartData,
   useSingleSimulationReturnsChartData,
   useSingleSimulationTaxesChartData,
   useSingleSimulationContributionsChartData,
@@ -65,8 +65,8 @@ function PortfolioCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, sta
   );
 }
 
-function IncomeAndExpensesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
-  const rawChartData = useSingleSimulationCashFlowChartData(simulation);
+function IncomeExpensesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
+  const rawChartData = useSingleSimulationIncomeExpensesChartData(simulation);
 
   const [dataView, setDataView] = useState<'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate'>('surplusDeficit');
   const [customDataID, setCustomDataID] = useState<string>('');
@@ -263,7 +263,7 @@ export default function SingleSimulationChartCard({ simulation, keyMetrics, onAg
     case SingleSimulationCategory.Portfolio:
       return <PortfolioCharts {...props} />;
     case SingleSimulationCategory.IncomeExpenses:
-      return <IncomeAndExpensesCharts {...props} />;
+      return <IncomeExpensesCharts {...props} />;
     case SingleSimulationCategory.Taxes:
       return <TaxesCharts {...props} />;
     case SingleSimulationCategory.Returns:

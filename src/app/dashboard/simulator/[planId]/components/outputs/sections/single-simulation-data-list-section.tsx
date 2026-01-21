@@ -143,7 +143,7 @@ function PortfolioDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   );
 }
 
-function IncomeAndExpensesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
+function IncomeExpensesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const { surplusDeficit } = SimulationDataExtractor.getSurplusDeficitData(dp);
   const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
 
@@ -358,7 +358,7 @@ function SingleSimulationDataListSection({ simulation, selectedAge }: SingleSimu
     case SingleSimulationCategory.IncomeExpenses:
       return (
         <div className="grid grid-cols-1 gap-2">
-          <IncomeAndExpensesDataListCardV2 {...props} />
+          <IncomeExpensesDataListCardV2 {...props} />
         </div>
       );
     case SingleSimulationCategory.Taxes:

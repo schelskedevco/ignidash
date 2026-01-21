@@ -6,7 +6,7 @@ import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
-import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
+import type { SingleSimulationIncomeExpensesChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
 
 import SingleSimulationCashFlowLineChart from '../../charts/single-simulation/single-simulation-cash-flow-line-chart';
@@ -19,7 +19,7 @@ interface SingleSimulationCashFlowLineChartCardProps {
   dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
   setCustomDataID: (name: string) => void;
   customDataID: string;
-  rawChartData: SingleSimulationCashFlowChartDataPoint[];
+  rawChartData: SingleSimulationIncomeExpensesChartDataPoint[];
   keyMetrics: KeyMetrics;
   startAge: number;
 }

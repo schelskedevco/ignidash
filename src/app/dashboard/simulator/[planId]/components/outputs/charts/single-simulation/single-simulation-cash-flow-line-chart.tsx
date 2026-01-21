@@ -9,7 +9,7 @@ import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
-import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
+import type { SingleSimulationIncomeExpensesChartDataPoint } from '@/lib/types/chart-data-points';
 import type { IncomeData } from '@/lib/calc/incomes';
 import type { ExpenseData } from '@/lib/calc/expenses';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
@@ -21,8 +21,8 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof SingleSimulationCashFlowChartDataPoint | keyof IncomeData | keyof ExpenseData;
-    payload: SingleSimulationCashFlowChartDataPoint | ({ age: number } & IncomeData) | ({ age: number } & ExpenseData);
+    dataKey: keyof SingleSimulationIncomeExpensesChartDataPoint | keyof IncomeData | keyof ExpenseData;
+    payload: SingleSimulationIncomeExpensesChartDataPoint | ({ age: number } & IncomeData) | ({ age: number } & ExpenseData);
   }>;
   label?: number;
   startAge: number;
@@ -124,7 +124,7 @@ CustomTooltip.displayName = 'CustomTooltip';
 const LINE_COLOR = 'var(--foreground)';
 
 interface SingleSimulationCashFlowLineChartProps {
-  rawChartData: SingleSimulationCashFlowChartDataPoint[];
+  rawChartData: SingleSimulationIncomeExpensesChartDataPoint[];
   startAge: number;
   keyMetrics: KeyMetrics;
   showReferenceLines: boolean;
@@ -154,13 +154,15 @@ export default function SingleSimulationCashFlowLineChart({
     () => setClickedOutsideChart(false)
   );
 
-  let chartData: SingleSimulationCashFlowChartDataPoint[] | Array<{ age: number } & IncomeData> | Array<{ age: number } & ExpenseData> =
-    useChartDataSlice(rawChartData, 'single');
+  let chartData:
+    | SingleSimulationIncomeExpensesChartDataPoint[]
+    | Array<{ age: number } & IncomeData>
+    | Array<{ age: number } & ExpenseData> = useChartDataSlice(rawChartData, 'single');
 
-  const lineDataKeys: (keyof SingleSimulationCashFlowChartDataPoint | keyof IncomeData | keyof ExpenseData)[] = [];
+  const lineDataKeys: (keyof SingleSimulationIncomeExpensesChartDataPoint | keyof IncomeData | keyof ExpenseData)[] = [];
   const strokeColors: string[] = [];
 
-  const barDataKeys: (keyof SingleSimulationCashFlowChartDataPoint | keyof IncomeData | keyof ExpenseData)[] = [];
+  const barDataKeys: (keyof SingleSimulationIncomeExpensesChartDataPoint | keyof IncomeData | keyof ExpenseData)[] = [];
   const barColors: string[] = [];
 
   let formatter = undefined;

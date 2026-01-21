@@ -1,6 +1,6 @@
 import type {
   SingleSimulationPortfolioChartDataPoint,
-  SingleSimulationCashFlowChartDataPoint,
+  SingleSimulationIncomeExpensesChartDataPoint,
   SingleSimulationTaxesChartDataPoint,
   SingleSimulationReturnsChartDataPoint,
   SingleSimulationContributionsChartDataPoint,
@@ -58,7 +58,7 @@ export abstract class ChartDataExtractor {
     });
   }
 
-  static extractSingleSimulationCashFlowChartData(simulation: SimulationResult): SingleSimulationCashFlowChartDataPoint[] {
+  static extractSingleSimulationIncomeExpensesChartData(simulation: SimulationResult): SingleSimulationIncomeExpensesChartDataPoint[] {
     return simulation.data.slice(1).map((data) => {
       const age = Math.floor(data.age);
 
