@@ -242,7 +242,7 @@ export const useSimulatorStore = create<SimulatorState>()(
       })),
       {
         name: 'quick-plan-storage',
-        version: 11,
+        version: 12,
         migrate: () => ({ ...defaultState }),
         partialize: (state) => {
           const baseResult = { preferences: state.preferences, nux: state.nux };

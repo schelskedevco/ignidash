@@ -18,7 +18,7 @@ export interface ReturnsStatsData {
   earlyRetirementStockReturn: number | null;
 }
 
-export interface CashFlowData {
+export interface SurplusDeficitData {
   totalIncome: number;
   earnedIncome: number;
   employerMatch: number;
@@ -26,7 +26,7 @@ export interface CashFlowData {
   nonTaxableIncome: number;
   totalExpenses: number;
   totalTaxesAndPenalties: number;
-  netCashFlow: number;
+  surplusDeficit: number;
 }
 
 export interface TaxAmountsByType {
@@ -200,7 +200,7 @@ export class SimulationDataExtractor {
     return { incomeTax, ficaTax, capGainsTax, niit, totalTaxes, earlyWithdrawalPenalties, totalTaxesAndPenalties };
   }
 
-  static getCashFlowData(dp: SimulationDataPoint): CashFlowData {
+  static getSurplusDeficitData(dp: SimulationDataPoint): SurplusDeficitData {
     const incomesData = dp.incomes;
     const expensesData = dp.expenses;
     const portfolioData = dp.portfolio;
@@ -216,7 +216,7 @@ export class SimulationDataExtractor {
     const totalExpenses = expensesData?.totalExpenses ?? 0;
     const { totalTaxesAndPenalties } = this.getTaxAmountsByType(dp);
 
-    const netCashFlow = totalIncome - totalExpenses - totalTaxesAndPenalties;
+    const surplusDeficit = totalIncome - totalExpenses - totalTaxesAndPenalties;
 
     return {
       totalIncome,
@@ -226,7 +226,7 @@ export class SimulationDataExtractor {
       nonTaxableIncome,
       totalExpenses,
       totalTaxesAndPenalties,
-      netCashFlow,
+      surplusDeficit,
     };
   }
 
@@ -430,12 +430,12 @@ export class SimulationDataExtractor {
   }
 
   static getSavingsRate(dp: SimulationDataPoint): number | null {
-    const { totalIncome, totalTaxesAndPenalties, netCashFlow } = this.getCashFlowData(dp);
+    const { totalIncome, totalTaxesAndPenalties, surplusDeficit } = this.getSurplusDeficitData(dp);
 
     const totalIncomeMinusTaxes = totalIncome - totalTaxesAndPenalties;
     if (totalIncomeMinusTaxes <= 0) return null;
 
-    return Math.max(0, netCashFlow / totalIncomeMinusTaxes);
+    return Math.max(0, surplusDeficit / totalIncomeMinusTaxes);
   }
 
   static getWithdrawalRate(dp: SimulationDataPoint): number | null {

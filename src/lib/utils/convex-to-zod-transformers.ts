@@ -402,7 +402,7 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       cashSavings: portfolioData[i].cashSavings,
       totalValue: portfolioData[i].stockHoldings + portfolioData[i].bondHoldings + portfolioData[i].cashHoldings,
 
-      // Cash Flow
+      // Income & Expenses
       earnedIncome: cashFlowData[i].earnedIncome,
       socialSecurityIncome: cashFlowData[i].socialSecurityIncome,
       nonTaxableIncome: cashFlowData[i].nonTaxableIncome,
@@ -412,7 +412,7 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       dividendIncome: taxesData[i].taxableDividendIncome,
       taxesAndPenalties: cashFlowData[i].taxesAndPenalties,
       expenses: cashFlowData[i].expenses,
-      netCashFlow: cashFlowData[i].netCashFlow,
+      surplusDeficit: cashFlowData[i].surplusDeficit,
       savingsRate: cashFlowData[i].savingsRate,
 
       // Taxes

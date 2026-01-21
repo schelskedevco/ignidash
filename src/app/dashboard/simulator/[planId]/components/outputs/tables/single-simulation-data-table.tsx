@@ -47,7 +47,7 @@ function PortfolioTable({ simulation }: TableCategoryProps) {
   );
 }
 
-function CashFlowTable({ simulation }: TableCategoryProps) {
+function IncomeAndExpensesTable({ simulation }: TableCategoryProps) {
   const tableData = useSingleSimulationCashFlowTableData(simulation);
 
   return (
@@ -124,8 +124,8 @@ export default function SingleSimulationDataTable({ simulation }: SingleSimulati
   switch (resultsCategory) {
     case SingleSimulationCategory.Portfolio:
       return <PortfolioTable {...props} />;
-    case SingleSimulationCategory.CashFlow:
-      return <CashFlowTable {...props} />;
+    case SingleSimulationCategory.IncomeExpenses:
+      return <IncomeAndExpensesTable {...props} />;
     case SingleSimulationCategory.Returns:
       return <ReturnsTable {...props} />;
     case SingleSimulationCategory.Taxes:

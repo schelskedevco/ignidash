@@ -19,7 +19,7 @@ export const simulationDataPointValidator = v.object({
   cashSavings: v.number(),
   totalValue: v.number(),
 
-  // Cash Flow
+  // Income & Expenses
   earnedIncome: v.number(),
   socialSecurityIncome: v.number(),
   nonTaxableIncome: v.number(),
@@ -29,7 +29,7 @@ export const simulationDataPointValidator = v.object({
   dividendIncome: v.number(),
   taxesAndPenalties: v.number(),
   expenses: v.number(),
-  netCashFlow: v.number(),
+  surplusDeficit: v.number(),
   savingsRate: v.nullable(v.number()),
 
   // Taxes

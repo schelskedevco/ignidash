@@ -77,8 +77,8 @@ export abstract class ChartDataExtractor {
         nonTaxableIncome,
         employerMatch,
         totalExpenses: expenses,
-        netCashFlow,
-      } = SimulationDataExtractor.getCashFlowData(data);
+        surplusDeficit,
+      } = SimulationDataExtractor.getSurplusDeficitData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
 
       return {
@@ -97,7 +97,7 @@ export abstract class ChartDataExtractor {
         earlyWithdrawalPenalties,
         taxesAndPenalties,
         expenses,
-        netCashFlow,
+        surplusDeficit,
         savingsRate,
       };
     });

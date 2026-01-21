@@ -10,7 +10,7 @@ import SingleSimulationCashFlowBarChart from '../../charts/single-simulation/sin
 interface SingleSimulationCashFlowBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
-  dataView: 'net' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
   customDataID: string;
 }
 
@@ -25,8 +25,8 @@ export default function SingleSimulationCashFlowBarChartCard({
 
   let title;
   switch (dataView) {
-    case 'net':
-      title = 'Income Sources & Expenses';
+    case 'surplusDeficit':
+      title = 'Surplus/Deficit';
       break;
     case 'incomes':
       title = 'Income Sources';

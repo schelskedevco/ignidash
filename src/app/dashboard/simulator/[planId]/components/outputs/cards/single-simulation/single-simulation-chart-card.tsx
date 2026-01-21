@@ -65,10 +65,10 @@ function PortfolioCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, sta
   );
 }
 
-function CashFlowCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
+function IncomeAndExpensesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationCashFlowChartData(simulation);
 
-  const [dataView, setDataView] = useState<'net' | 'incomes' | 'expenses' | 'custom' | 'savingsRate'>('net');
+  const [dataView, setDataView] = useState<'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate'>('surplusDeficit');
   const [customDataID, setCustomDataID] = useState<string>('');
 
   return (
@@ -262,8 +262,8 @@ export default function SingleSimulationChartCard({ simulation, keyMetrics, onAg
   switch (resultsCategory) {
     case SingleSimulationCategory.Portfolio:
       return <PortfolioCharts {...props} />;
-    case SingleSimulationCategory.CashFlow:
-      return <CashFlowCharts {...props} />;
+    case SingleSimulationCategory.IncomeExpenses:
+      return <IncomeAndExpensesCharts {...props} />;
     case SingleSimulationCategory.Taxes:
       return <TaxesCharts {...props} />;
     case SingleSimulationCategory.Returns:

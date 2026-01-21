@@ -37,7 +37,7 @@ export interface SingleSimulationCashFlowChartDataPoint {
   earlyWithdrawalPenalties: number;
   taxesAndPenalties: number;
   expenses: number;
-  netCashFlow: number;
+  surplusDeficit: number;
   savingsRate: number | null;
 }
 

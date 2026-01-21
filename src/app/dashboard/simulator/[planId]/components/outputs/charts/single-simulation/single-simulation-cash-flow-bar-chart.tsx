@@ -46,7 +46,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationCashFlowBarChartProps {
   age: number;
-  dataView: 'net' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
   customDataID: string;
 }
@@ -61,7 +61,7 @@ export default function SingleSimulationCashFlowBarChart({
   const isSmallScreen = useIsMobile();
 
   const labelConfig: Record<string, { mobile: string[]; desktop: string[] }> = {
-    net: {
+    surplusDeficit: {
       mobile: ['Earned', 'Soc. Sec.', 'Non-Taxable', 'Match', 'Taxes', 'Expenses'],
       desktop: ['Earned Income', 'Social Security', 'Non-Taxable Income', 'Employer Match', 'Taxes & Penalties', 'Expenses'],
     },
@@ -85,7 +85,7 @@ export default function SingleSimulationCashFlowBarChart({
   const formatter = (value: number) => formatNumber(value, 1, '$');
 
   switch (dataView) {
-    case 'net': {
+    case 'surplusDeficit': {
       const [
         earnedIncomeLabel,
         socialSecurityIncomeLabel,
@@ -189,7 +189,7 @@ export default function SingleSimulationCashFlowBarChart({
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          {dataView === 'net' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
+          {dataView === 'surplusDeficit' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
           <Bar dataKey="amount" maxBarSize={75} minPointSize={20} label={<CustomLabelListContent isSmallScreen={isSmallScreen} />}>
             {transformedChartData.map((entry, i) => (
               <Cell key={`${entry.name}-${i}`} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />

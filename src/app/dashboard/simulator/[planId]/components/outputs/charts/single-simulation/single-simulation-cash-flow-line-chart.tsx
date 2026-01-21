@@ -27,7 +27,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'net' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
 }
 
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -38,7 +38,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
 
-  const formatValue = (value: number, mode: 'net' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => {
+  const formatValue = (value: number, mode: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => {
     switch (mode) {
       case 'savingsRate':
         return `${(value * 100).toFixed(1)}%`;
@@ -70,10 +70,10 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   let footer = null;
   switch (dataView) {
-    case 'net':
-      const netCashFlow = payload.find((entry) => entry.dataKey === 'netCashFlow');
-      if (!netCashFlow) {
-        console.error('Cash flow data not found');
+    case 'surplusDeficit':
+      const surplusDeficit = payload.find((entry) => entry.dataKey === 'surplusDeficit');
+      if (!surplusDeficit) {
+        console.error('Surplus/deficit data not found');
         break;
       }
 
@@ -81,9 +81,9 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
           <span className="flex items-center gap-1">
             <ChartLineIcon className="h-3 w-3" />
-            <span className="mr-2">Net Cash Flow:</span>
+            <span className="mr-2">Surplus/Deficit:</span>
           </span>
-          <span className="ml-1 font-semibold">{formatNumber(netCashFlow.value, 3, '$')}</span>
+          <span className="ml-1 font-semibold">{formatNumber(surplusDeficit.value, 3, '$')}</span>
         </p>
       );
       break;
@@ -130,7 +130,7 @@ interface SingleSimulationCashFlowLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'net' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
   customDataID?: string;
 }
 
@@ -167,10 +167,10 @@ export default function SingleSimulationCashFlowLineChart({
   let stackOffset: 'sign' | undefined = undefined;
 
   switch (dataView) {
-    case 'net': {
+    case 'surplusDeficit': {
       formatter = (value: number) => formatNumber(value, 1, '$');
 
-      lineDataKeys.push('netCashFlow');
+      lineDataKeys.push('surplusDeficit');
       strokeColors.push(LINE_COLOR);
 
       barDataKeys.push('income', 'expenses', 'taxesAndPenalties');
@@ -287,7 +287,7 @@ export default function SingleSimulationCashFlowLineChart({
         <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
         <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
         <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {dataView === 'net' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
+        {dataView === 'surplusDeficit' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
         {lineDataKeys.map((dataKey, i) => (
           <Line
             key={`line-${dataKey}-${i}`}

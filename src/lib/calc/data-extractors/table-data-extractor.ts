@@ -113,7 +113,7 @@ export abstract class TableDataExtractor {
           earlyWithdrawalPenalties: null,
           totalTaxesAndPenalties: null,
           expenses: null,
-          netCashFlow: null,
+          surplusDeficit: null,
           savingsRate: null,
           historicalYear,
         };
@@ -127,8 +127,8 @@ export abstract class TableDataExtractor {
         nonTaxableIncome,
         employerMatch,
         totalExpenses: expenses,
-        netCashFlow,
-      } = SimulationDataExtractor.getCashFlowData(data);
+        surplusDeficit,
+      } = SimulationDataExtractor.getSurplusDeficitData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
 
       return {
@@ -146,7 +146,7 @@ export abstract class TableDataExtractor {
         earlyWithdrawalPenalties,
         totalTaxesAndPenalties,
         expenses,
-        netCashFlow,
+        surplusDeficit,
         savingsRate,
         historicalYear,
       };
@@ -378,7 +378,7 @@ export abstract class TableDataExtractor {
           annualEmployerMatch: null,
           cumulativeEmployerMatch: null,
           totalPortfolioValue: null,
-          netCashFlow: null,
+          surplusDeficit: null,
           savingsRate: null,
           annualShortfallRepaid: null,
           outstandingShortfall: null,
@@ -394,7 +394,7 @@ export abstract class TableDataExtractor {
 
       const { taxableContributions, taxDeferredContributions, taxFreeContributions, cashSavingsContributions } =
         SimulationDataExtractor.getContributionsByTaxCategory(data);
-      const { netCashFlow } = SimulationDataExtractor.getCashFlowData(data);
+      const { surplusDeficit } = SimulationDataExtractor.getSurplusDeficitData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
 
       return {
@@ -413,7 +413,7 @@ export abstract class TableDataExtractor {
         annualEmployerMatch,
         cumulativeEmployerMatch: portfolioData.cumulativeEmployerMatch,
         totalPortfolioValue,
-        netCashFlow,
+        surplusDeficit,
         savingsRate,
         annualShortfallRepaid: portfolioData.shortfallRepaidForPeriod,
         outstandingShortfall: portfolioData.outstandingShortfall,
@@ -457,7 +457,7 @@ export abstract class TableDataExtractor {
           annualRothEarningsWithdrawals: null,
           cumulativeRothEarningsWithdrawals: null,
           totalPortfolioValue: null,
-          netCashFlow: null,
+          surplusDeficit: null,
           withdrawalRate: null,
           annualShortfall: null,
           outstandingShortfall: null,
@@ -476,7 +476,7 @@ export abstract class TableDataExtractor {
       const annualEarlyWithdrawals = SimulationDataExtractor.getEarlyWithdrawals(data, age);
       cumulativeEarlyWithdrawals += annualEarlyWithdrawals;
 
-      const { netCashFlow } = SimulationDataExtractor.getCashFlowData(data);
+      const { surplusDeficit } = SimulationDataExtractor.getSurplusDeficitData(data);
       const withdrawalRate = SimulationDataExtractor.getWithdrawalRate(data);
 
       return {
@@ -501,7 +501,7 @@ export abstract class TableDataExtractor {
         annualRothEarningsWithdrawals: portfolioData.earningsWithdrawnForPeriod,
         cumulativeRothEarningsWithdrawals: portfolioData.cumulativeEarningsWithdrawn,
         totalPortfolioValue,
-        netCashFlow,
+        surplusDeficit,
         withdrawalRate,
         annualShortfall: portfolioData.shortfallForPeriod,
         outstandingShortfall: portfolioData.outstandingShortfall,

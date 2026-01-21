@@ -27,7 +27,7 @@ function NetPortfolioChangeTooltip() {
   );
 }
 
-function NetCashFlowTooltip() {
+function SurplusDeficitTooltip() {
   return (
     <Tooltip>
       <TooltipTrigger>
@@ -35,7 +35,7 @@ function NetCashFlowTooltip() {
       </TooltipTrigger>
       <TooltipContent>
         <p>Earned income, employer match, non-taxable income, and Social Security, minus taxes and expenses.</p>
-        <p>Dividends and interest (automatically reinvested) are tracked separately, as are withdrawals.</p>
+        <p>Dividends and interest (automatically reinvested) are not included.</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -49,7 +49,7 @@ function SavingsRateTooltip() {
       </TooltipTrigger>
       <TooltipContent>
         <p>The percentage of after-tax income that you save rather than spend.</p>
-        <p>Calculated with the same income sources as Cash Flow.</p>
+        <p>Calculated with the same income sources as Surplus/Deficit.</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -143,8 +143,8 @@ function PortfolioDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   );
 }
 
-function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
-  const { netCashFlow } = SimulationDataExtractor.getCashFlowData(dp);
+function IncomeAndExpensesDataListCardV2({ dp, selectedAge }: DataListCardProps) {
+  const { surplusDeficit } = SimulationDataExtractor.getSurplusDeficitData(dp);
   const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
 
   const portfolioData = dp.portfolio;
@@ -167,10 +167,10 @@ function CashFlowDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionDetails>{formatNumber(annualWithdrawals, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="flex items-center gap-3 font-bold">
-            Net Cash Flow
-            <NetCashFlowTooltip />
+            Surplus/Deficit
+            <SurplusDeficitTooltip />
           </DescriptionTerm>
-          <DescriptionDetails className="font-bold">{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
+          <DescriptionDetails className="font-bold">{formatNumber(surplusDeficit, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="flex items-center gap-3 font-bold">
             Savings Rate
@@ -259,7 +259,7 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const totalValue = portfolioData.totalValue;
   const annualContributions = sumTransactions(portfolioData.contributionsForPeriod);
 
-  const { netCashFlow } = SimulationDataExtractor.getCashFlowData(dp);
+  const { surplusDeficit } = SimulationDataExtractor.getSurplusDeficitData(dp);
   const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
 
   return (
@@ -274,10 +274,10 @@ function ContributionsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="flex items-center gap-3">
-            Net Cash Flow
-            <NetCashFlowTooltip />
+            Surplus/Deficit
+            <SurplusDeficitTooltip />
           </DescriptionTerm>
-          <DescriptionDetails>{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
+          <DescriptionDetails>{formatNumber(surplusDeficit, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="font-bold">Annual Contributions</DescriptionTerm>
           <DescriptionDetails className="font-bold">{formatNumber(annualContributions, 2, '$')}</DescriptionDetails>
@@ -300,7 +300,7 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
   const totalValue = portfolioData.totalValue;
   const annualWithdrawals = sumTransactions(portfolioData.withdrawalsForPeriod);
 
-  const { netCashFlow } = SimulationDataExtractor.getCashFlowData(dp);
+  const { surplusDeficit } = SimulationDataExtractor.getSurplusDeficitData(dp);
   const withdrawalRate = SimulationDataExtractor.getWithdrawalRate(dp);
 
   return (
@@ -315,10 +315,10 @@ function WithdrawalsDataListCardV2({ dp, selectedAge }: DataListCardProps) {
           <DescriptionDetails>{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="flex items-center gap-3">
-            Net Cash Flow
-            <NetCashFlowTooltip />
+            Surplus/Deficit
+            <SurplusDeficitTooltip />
           </DescriptionTerm>
-          <DescriptionDetails>{formatNumber(netCashFlow, 2, '$')}</DescriptionDetails>
+          <DescriptionDetails>{formatNumber(surplusDeficit, 2, '$')}</DescriptionDetails>
 
           <DescriptionTerm className="font-bold">Annual Withdrawals</DescriptionTerm>
           <DescriptionDetails className="font-bold">{formatNumber(annualWithdrawals, 2, '$')}</DescriptionDetails>
@@ -355,10 +355,10 @@ function SingleSimulationDataListSection({ simulation, selectedAge }: SingleSimu
           <PortfolioDataListCardV2 {...props} />
         </div>
       );
-    case SingleSimulationCategory.CashFlow:
+    case SingleSimulationCategory.IncomeExpenses:
       return (
         <div className="grid grid-cols-1 gap-2">
-          <CashFlowDataListCardV2 {...props} />
+          <IncomeAndExpensesDataListCardV2 {...props} />
         </div>
       );
     case SingleSimulationCategory.Taxes:
