@@ -35,7 +35,7 @@ function SurplusDeficitTooltip() {
       </TooltipTrigger>
       <TooltipContent>
         <p>Earned income, employer match, non-taxable income, and Social Security, minus taxes and expenses.</p>
-        <p>Dividends and interest (automatically reinvested) are not included.</p>
+        <p>Portfolio withdrawals, dividends, and interest are not included.</p>
       </TooltipContent>
     </Tooltip>
   );
