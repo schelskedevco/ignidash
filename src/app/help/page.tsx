@@ -72,7 +72,7 @@ const faqs = [
       "No. For now, Ignidash always assumes that dividends and interest are automatically reinvested, which is a common practice. There are currently no plans to change this in the future, but let me know if it's something you'd like.",
   },
   {
-    question: "Why doesn't investment income, such as dividends and interest, show up in the Cash Flow tab?",
+    question: "Why doesn't investment income, such as dividends and interest, show up in the Income & Expenses tab?",
     answer: (
       <>
         Since Ignidash automatically reinvests dividends and interest, this investment income never becomes available as cash to spend;
@@ -81,21 +81,21 @@ const faqs = [
         <br />
         <br />
         If you need to see investment income for tax purposes, check out the Taxes tab. And if you feel strongly about seeing investment
-        income in Cash Flow, feel free to reach out through the contact info at the top of the page!
+        income in Income & Expenses, feel free to reach out through the contact info at the top of the page!
       </>
     ),
   },
   {
-    question: "Why don't retirement distributions, such as 401(k) withdrawals, show up in the Cash Flow tab?",
+    question: "Why don't retirement distributions, such as 401(k) withdrawals, show up in the Income & Expenses tab?",
     answer: (
       <>
-        The Cash Flow tab is designed to show external money flows like salary, business income, and expenses. Since retirement
+        The Income & Expenses tab is designed to show external money flows like salary, business income, and expenses. Since retirement
         distributions are withdrawals from your accumulated savings rather than new money earned, they&apos;re tracked separately in the
-        Withdrawals tab. This keeps Cash Flow focused on actual income and spending flows.
+        Withdrawals tab. This keeps Income & Expenses focused on actual income and spending.
         <br />
         <br />
         For tax reporting purposes, you can see all income sources including retirement distributions in the Taxes tab. If you&apos;d prefer
-        to see retirement distributions in Cash Flow as well, let me know through the contact info at the top of the page!
+        to see retirement distributions in Income & Expenses as well, let me know through the contact info at the top of the page!
       </>
     ),
   },
