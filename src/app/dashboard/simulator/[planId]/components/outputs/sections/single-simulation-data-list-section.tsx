@@ -67,8 +67,7 @@ function NetCashFlowTooltip() {
       <TooltipContent>
         <p>The net change in cash holdings after income, expenses, and portfolio transactions.</p>
         <p>
-          <strong>Zero</strong> = balanced (typical). <strong>Positive</strong> = unallocated cash. <strong>Negative</strong> = drawing down
-          cash savings.
+          <strong>Positive</strong> = cash accumulating. <strong>Negative</strong> = depleting cash reserves.
         </p>
       </TooltipContent>
     </Tooltip>
