@@ -72,7 +72,7 @@ const faqs = [
       "No. For now, Ignidash always assumes that dividends and interest are automatically reinvested, which is a common practice. There are currently no plans to change this in the future, but let me know if it's something you'd like.",
   },
   {
-    question: "Why doesn't investment income, such as dividends and interest, show up in the Income & Expenses tab?",
+    question: "Why doesn't investment income, such as dividends and interest, show up in the Cash Flow tab?",
     answer: (
       <>
         Since Ignidash automatically reinvests dividends and interest, this investment income never becomes available as cash to spend;
@@ -81,21 +81,7 @@ const faqs = [
         <br />
         <br />
         If you need to see investment income for tax purposes, check out the Taxes tab. And if you feel strongly about seeing investment
-        income in Income & Expenses, feel free to reach out through the contact info at the top of the page!
-      </>
-    ),
-  },
-  {
-    question: "Why don't retirement distributions, such as 401(k) withdrawals, show up in the Income & Expenses tab?",
-    answer: (
-      <>
-        The Income & Expenses tab is designed to show external money flows like salary, business income, and expenses. Since retirement
-        distributions are withdrawals from your accumulated savings rather than new money earned, they&apos;re tracked separately in the
-        Withdrawals tab. This keeps Income & Expenses focused on actual income and spending.
-        <br />
-        <br />
-        For tax reporting purposes, you can see all income sources including retirement distributions in the Taxes tab. If you&apos;d prefer
-        to see retirement distributions in Income & Expenses as well, let me know through the contact info at the top of the page!
+        income in Cash Flow, feel free to reach out through the contact info at the top of the page!
       </>
     ),
   },
@@ -110,7 +96,7 @@ export default function HelpPage() {
             <CircleQuestionMarkIcon className="text-primary h-12 w-12" />
             <div>
               <h1 className="mb-2 text-3xl font-bold">Help Center</h1>
-              <p className="text-muted-foreground text-sm">Last updated: January 19, 2026</p>
+              <p className="text-muted-foreground text-sm">Last updated: January 23, 2026</p>
             </div>
           </div>
         </div>
