@@ -1,6 +1,6 @@
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 
-import { ReturnsProvider, type ReturnsWithMetadata } from './returns-provider';
+import { ReturnsProvider, type ReturnsProviderData } from './returns-provider';
 import { SeededRandom } from './seeded-random';
 import type { PhaseData } from '../phase';
 
@@ -95,7 +95,7 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     this.volatility = DEFAULT_VOLATILITY;
   }
 
-  getReturns(phaseData: PhaseData | null): ReturnsWithMetadata {
+  getReturns(phaseData: PhaseData | null): ReturnsProviderData {
     // Generate independent standard normal random variables
     const independentRandoms = Array(6)
       .fill(null)
@@ -129,7 +129,6 @@ export class StochasticReturnsProvider implements ReturnsProvider {
       returns: { stocks: realStockReturn, bonds: realBondReturn, cash: realCashReturn },
       yields: { stocks: nominalStockYield * 100, bonds: nominalBondYield * 100, cash: nominalCashReturn * 100 },
       inflationRate: inflation * 100,
-      metadata: {},
     };
   }
 

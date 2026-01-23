@@ -1,4 +1,4 @@
-import { ReturnsProvider, type ReturnsWithMetadata } from './returns-provider';
+import { ReturnsProvider, type ReturnsProviderData } from './returns-provider';
 import { nyuHistoricalData, type NyuHistoricalYearData, getNyuDataRange } from '../historical-data/nyu-historical-data';
 import { shillerHistoricalData, type ShillerHistoricalYearData } from '../historical-data/shiller-historical-yield-data';
 import type { AssetReturnRates } from '../asset';
@@ -10,6 +10,7 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   private readonly historicalData: NyuHistoricalYearData[];
   private readonly historicalYieldData: ShillerHistoricalYearData[];
   private readonly rng: SeededRandom;
+
   private currentHistoricalYear: number;
   private historicalRanges: Array<{ startYear: number; endYear: number }> = [];
   private phaseName: PhaseName | null = null;
@@ -23,6 +24,7 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
     this.historicalData = nyuHistoricalData;
     this.historicalYieldData = shillerHistoricalData;
     this.rng = new SeededRandom(seed);
+
     this.currentHistoricalYear = startYearOverride || this.generateRandomStartYear();
     this.historicalRanges = [{ startYear: this.currentHistoricalYear, endYear: this.currentHistoricalYear }];
   }
@@ -34,7 +36,7 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
     return this.historicalDataRange.startYear + randomOffset;
   }
 
-  getReturns(phaseData: PhaseData | null): ReturnsWithMetadata {
+  getReturns(phaseData: PhaseData | null): ReturnsProviderData {
     const prevPhaseName = this.phaseName;
     const currPhaseName = phaseData?.name ?? null;
 
@@ -64,7 +66,6 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
       returns,
       yields: { stocks: yieldData.stockYield * 100, bonds: yieldData.bondYield * 100, cash: nominalCashYield * 100 },
       inflationRate: yearData.inflationRate * 100,
-      metadata: {},
     };
   }
 
