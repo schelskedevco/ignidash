@@ -116,6 +116,9 @@ export abstract class TableDataExtractor {
           expenses: null,
           surplusDeficit: null,
           savingsRate: null,
+          invested: null,
+          liquidated: null,
+          netCashFlow: null,
           historicalYear,
         };
       }
@@ -129,6 +132,9 @@ export abstract class TableDataExtractor {
         employerMatch,
         totalExpenses: expenses,
         surplusDeficit,
+        invested,
+        liquidated,
+        netCashFlow,
       } = SimulationDataExtractor.getCashFlowData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
 
@@ -149,6 +155,9 @@ export abstract class TableDataExtractor {
         expenses,
         surplusDeficit,
         savingsRate,
+        invested,
+        liquidated,
+        netCashFlow,
         historicalYear,
       };
     });

@@ -70,6 +70,9 @@ export const singleSimulationCashFlowTableRowSchema = z.object({
   expenses: z.number().nullable(),
   surplusDeficit: z.number().nullable(),
   savingsRate: z.number().nullable(),
+  invested: z.number().nullable(),
+  liquidated: z.number().nullable(),
+  netCashFlow: z.number().nullable(),
   historicalYear: z.number().nullable(),
 });
 
@@ -92,6 +95,9 @@ const SINGLE_SIMULATION_CASH_FLOW_COLUMNS = {
   expenses: { title: 'Expenses', format: 'currency' },
   surplusDeficit: { title: 'Surplus/Deficit', format: 'currency' },
   savingsRate: { title: 'Savings Rate', format: 'percentage' },
+  invested: { title: 'Invested', format: 'currency' },
+  liquidated: { title: 'Liquidated', format: 'currency' },
+  netCashFlow: { title: 'Net Cash Flow', format: 'currency' },
   historicalYear: { title: 'Historical Year', format: 'number' },
 } as const;
 
