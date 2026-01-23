@@ -36,7 +36,7 @@ describe('LcgHistoricalBacktestReturnsProvider', () => {
       expect(result.returns.stocks).toBe(expectedData.stockReturn);
       expect(result.returns.bonds).toBe(expectedData.bondReturn);
       expect(result.returns.cash).toBe(expectedData.cashReturn);
-      expect(result.metadata.inflationRate).toBeCloseTo(expectedData.inflationRate * 100, 10); // Converted to percentage
+      expect(result.inflationRate).toBeCloseTo(expectedData.inflationRate * 100, 10); // Converted to percentage
     });
 
     it('should produce consistent results with same seed', () => {

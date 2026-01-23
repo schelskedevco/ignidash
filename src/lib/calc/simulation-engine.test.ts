@@ -557,11 +557,11 @@ describe('FixedReturnsProvider', () => {
       marketAssumptions: { stockReturn: 10, bondReturn: 5, cashReturn: 3, inflationRate: 3, stockYield: 2, bondYield: 3.5 },
     });
     const provider = new FixedReturnsProvider(inputs);
-    const { returns, metadata } = provider.getReturns(null);
+    const { returns, inflationRate } = provider.getReturns(null);
     expect(returns.stocks).toBeCloseTo(1.1 / 1.03 - 1, 6);
     expect(returns.bonds).toBeCloseTo(1.05 / 1.03 - 1, 6);
     expect(returns.cash).toBeCloseTo(0, 6);
-    expect(metadata.inflationRate).toBe(3);
+    expect(inflationRate).toBe(3);
   });
 
   it('should return consistent values regardless of phase', () => {

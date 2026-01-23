@@ -533,7 +533,8 @@ describe('ReturnsProcessor.getAnnualData', () => {
         return {
           returns: { stocks: isFirstYear ? 0.08 : 0.12, bonds: 0.04, cash: 0.02 },
           yields: { stocks: isFirstYear ? 2 : 4, bonds: 3, cash: 1 }, // percentages
-          metadata: { inflationRate: isFirstYear ? 3 : 5 }, // percentage
+          inflationRate: isFirstYear ? 3 : 5, // percentage
+          metadata: {},
         };
       },
     };
@@ -575,7 +576,8 @@ describe('ReturnsProcessor.getAnnualData', () => {
       getReturns: () => ({
         returns: { stocks: 0.08, bonds: 0.04, cash: 0.02 },
         yields: { stocks: 0.02, bonds: 0.03, cash: 0.01 },
-        metadata: { inflationRate: 3 },
+        inflationRate: 3,
+        metadata: {},
       }),
     };
 
@@ -608,7 +610,8 @@ describe('ReturnsProcessor.getAnnualData', () => {
       getReturns: () => ({
         returns: { stocks: 0.08, bonds: 0.04, cash: 0.02 },
         yields: { stocks: 0.02, bonds: 0.03, cash: 0.01 },
-        metadata: { inflationRate: 3 },
+        inflationRate: 3,
+        metadata: {},
       }),
     };
 
@@ -641,7 +644,8 @@ describe('ReturnsProcessor.getAnnualData', () => {
       getReturns: () => ({
         returns: { stocks: 0.08, bonds: 0.04, cash: 0.02 },
         yields: { stocks: 0.02, bonds: 0.03, cash: 0.01 },
-        metadata: { inflationRate: 3 },
+        inflationRate: 3,
+        metadata: {},
       }),
     };
 
@@ -672,7 +676,8 @@ describe('ReturnsProcessor.getAnnualData', () => {
       getReturns: () => ({
         returns: { stocks: 0.08, bonds: 0.04, cash: 0.02 },
         yields: { stocks: 0.02, bonds: 0.03, cash: 0.01 },
-        metadata: { inflationRate: 3 },
+        inflationRate: 3,
+        metadata: {},
       }),
     };
 

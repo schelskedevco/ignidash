@@ -177,7 +177,7 @@ describe('StochasticReturnsProvider', () => {
       expect(result1.returns.stocks).toBe(result2.returns.stocks);
       expect(result1.returns.bonds).toBe(result2.returns.bonds);
       expect(result1.returns.cash).toBe(result2.returns.cash);
-      expect(result1.metadata.inflationRate).toBe(result2.metadata.inflationRate);
+      expect(result1.inflationRate).toBe(result2.inflationRate);
     });
 
     it('should converge to expected statistical properties across many simulations', () => {
@@ -217,14 +217,14 @@ describe('StochasticReturnsProvider', () => {
           const result = scenarioProvider.getReturns(phaseData);
 
           // Convert real returns back to nominal for statistical analysis
-          const nominalStock = (1 + result.returns.stocks) * (1 + result.metadata.inflationRate / 100) - 1;
-          const nominalBond = (1 + result.returns.bonds) * (1 + result.metadata.inflationRate / 100) - 1;
-          const nominalCash = (1 + result.returns.cash) * (1 + result.metadata.inflationRate / 100) - 1;
+          const nominalStock = (1 + result.returns.stocks) * (1 + result.inflationRate / 100) - 1;
+          const nominalBond = (1 + result.returns.bonds) * (1 + result.inflationRate / 100) - 1;
+          const nominalCash = (1 + result.returns.cash) * (1 + result.inflationRate / 100) - 1;
 
           returns.stocks.push(nominalStock);
           returns.bonds.push(nominalBond);
           returns.cash.push(nominalCash);
-          returns.inflation.push(result.metadata.inflationRate / 100);
+          returns.inflation.push(result.inflationRate / 100);
         }
       }
 
@@ -377,7 +377,7 @@ describe('StochasticReturnsProvider', () => {
 
           yields.bondYield.push(result.yields.bonds / 100);
           yields.stockYield.push(result.yields.stocks / 100);
-          yields.inflation.push(result.metadata.inflationRate / 100);
+          yields.inflation.push(result.inflationRate / 100);
         }
       }
 

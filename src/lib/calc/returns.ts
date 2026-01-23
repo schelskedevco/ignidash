@@ -50,7 +50,7 @@ export class ReturnsProcessor {
     const returns = this.returnsProvider.getReturns(phaseData);
 
     this.cachedAnnualReturnRates = returns.returns;
-    this.cachedAnnualInflationRate = returns.metadata.inflationRate / 100;
+    this.cachedAnnualInflationRate = returns.inflationRate / 100;
     this.cachedAnnualYieldRates = {
       stocks: returns.yields.stocks / 100,
       bonds: returns.yields.bonds / 100,
@@ -66,7 +66,7 @@ export class ReturnsProcessor {
       const returns = this.returnsProvider.getReturns(phaseData);
 
       this.cachedAnnualReturnRates = returns.returns;
-      this.cachedAnnualInflationRate = returns.metadata.inflationRate / 100;
+      this.cachedAnnualInflationRate = returns.inflationRate / 100;
       this.cachedAnnualYieldRates = {
         stocks: returns.yields.stocks / 100,
         bonds: returns.yields.bonds / 100,
@@ -128,6 +128,9 @@ export class ReturnsProcessor {
       };
     };
 
+    const zeroAssetReturnAmounts: AssetReturnAmounts = { stocks: 0, bonds: 0, cash: 0 };
+    const zeroAssetYieldAmounts: AssetYieldAmounts = { stocks: 0, bonds: 0, cash: 0 };
+
     const lastMonthData = this.monthlyData[this.monthlyData.length - 1];
 
     return {
@@ -155,12 +158,12 @@ export class ReturnsProcessor {
           return acc;
         },
         {
-          returnAmountsForPeriod: { stocks: 0, bonds: 0, cash: 0 },
+          returnAmountsForPeriod: { ...zeroAssetReturnAmounts },
           yieldAmountsForPeriod: {
-            taxable: { stocks: 0, bonds: 0, cash: 0 },
-            taxDeferred: { stocks: 0, bonds: 0, cash: 0 },
-            taxFree: { stocks: 0, bonds: 0, cash: 0 },
-            cashSavings: { stocks: 0, bonds: 0, cash: 0 },
+            taxable: { ...zeroAssetYieldAmounts },
+            taxDeferred: { ...zeroAssetYieldAmounts },
+            taxFree: { ...zeroAssetYieldAmounts },
+            cashSavings: { ...zeroAssetYieldAmounts },
           },
           perAccountData: {} as Record<string, AccountDataWithReturns>,
         }
