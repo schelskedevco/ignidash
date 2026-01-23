@@ -30,6 +30,7 @@ export interface SingleSimulationIncomeExpensesChartDataPoint {
   socialSecurityIncome: number;
   nonTaxableIncome: number;
   income: number;
+  incomeExcludingEmployerMatch: number;
   incomeTax: number;
   ficaTax: number;
   capGainsTax: number;
@@ -39,6 +40,9 @@ export interface SingleSimulationIncomeExpensesChartDataPoint {
   expenses: number;
   surplusDeficit: number;
   savingsRate: number | null;
+  invested: number;
+  liquidated: number;
+  netCashFlow: number;
 }
 
 export interface SingleSimulationReturnsChartDataPoint {

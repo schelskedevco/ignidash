@@ -27,7 +27,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  dataView: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
 }
 
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -38,7 +38,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
 
-  const formatValue = (value: number, mode: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => {
+  const formatValue = (value: number, mode: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => {
     switch (mode) {
       case 'savingsRate':
         return `${(value * 100).toFixed(1)}%`;
@@ -87,6 +87,23 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         </p>
       );
       break;
+    case 'cashFlow':
+      const netCashFlow = payload.find((entry) => entry.dataKey === 'netCashFlow');
+      if (!netCashFlow) {
+        console.error('Net cash flow data not found');
+        break;
+      }
+
+      footer = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="flex items-center gap-1">
+            <ChartLineIcon className="h-3 w-3" />
+            <span className="mr-2">Net Cash Flow:</span>
+          </span>
+          <span className="ml-1 font-semibold">{formatNumber(netCashFlow.value, 3, '$')}</span>
+        </p>
+      );
+      break;
     case 'incomes':
     case 'expenses':
       footer = (
@@ -130,7 +147,7 @@ interface SingleSimulationIncomeExpensesLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  dataView: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
   customDataID?: string;
 }
 
@@ -182,6 +199,25 @@ export default function SingleSimulationIncomeExpensesLineChart({
         ...entry,
         expenses: -entry.expenses,
         taxesAndPenalties: -entry.taxesAndPenalties,
+      }));
+
+      stackOffset = 'sign';
+      break;
+    }
+    case 'cashFlow': {
+      formatter = (value: number) => formatNumber(value, 1, '$');
+
+      lineDataKeys.push('netCashFlow');
+      strokeColors.push(LINE_COLOR);
+
+      barDataKeys.push('incomeExcludingEmployerMatch', 'liquidated', 'expenses', 'taxesAndPenalties', 'invested');
+      barColors.push('var(--chart-1)', 'var(--chart-4)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-5)');
+
+      chartData = chartData.map((entry) => ({
+        ...entry,
+        expenses: -entry.expenses,
+        taxesAndPenalties: -entry.taxesAndPenalties,
+        invested: -entry.invested,
       }));
 
       stackOffset = 'sign';
@@ -289,7 +325,9 @@ export default function SingleSimulationIncomeExpensesLineChart({
         <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
         <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
         <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {dataView === 'surplusDeficit' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
+        {(dataView === 'surplusDeficit' || dataView === 'cashFlow') && (
+          <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />
+        )}
         {lineDataKeys.map((dataKey, i) => (
           <Line
             key={`line-${dataKey}-${i}`}

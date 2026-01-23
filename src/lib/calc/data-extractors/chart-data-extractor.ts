@@ -72,12 +72,16 @@ export abstract class ChartDataExtractor {
       } = SimulationDataExtractor.getTaxAmountsByType(data);
       const {
         totalIncome: income,
+        totalIncomeExcludingEmployerMatch: incomeExcludingEmployerMatch,
         earnedIncome,
         socialSecurityIncome,
         nonTaxableIncome,
         employerMatch,
         totalExpenses: expenses,
         surplusDeficit,
+        invested,
+        liquidated,
+        netCashFlow,
       } = SimulationDataExtractor.getSurplusDeficitData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
 
@@ -90,6 +94,7 @@ export abstract class ChartDataExtractor {
         socialSecurityIncome,
         nonTaxableIncome,
         income,
+        incomeExcludingEmployerMatch,
         incomeTax,
         ficaTax,
         capGainsTax,
@@ -99,6 +104,9 @@ export abstract class ChartDataExtractor {
         expenses,
         surplusDeficit,
         savingsRate,
+        invested,
+        liquidated,
+        netCashFlow,
       };
     });
   }

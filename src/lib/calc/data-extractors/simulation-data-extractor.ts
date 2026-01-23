@@ -1,5 +1,5 @@
 import type { MultiSimulationResult, SimulationDataPoint, SimulationResult } from '@/lib/calc/simulation-engine';
-import { sumTransactions } from '@/lib/calc/asset';
+import { sumTransactions, sumInvestments, sumLiquidations } from '@/lib/calc/asset';
 
 export interface MilestonesData {
   yearsToRetirement: number | null;
@@ -20,6 +20,7 @@ export interface ReturnsStatsData {
 
 export interface SurplusDeficitData {
   totalIncome: number;
+  totalIncomeExcludingEmployerMatch: number;
   earnedIncome: number;
   employerMatch: number;
   socialSecurityIncome: number;
@@ -27,6 +28,9 @@ export interface SurplusDeficitData {
   totalExpenses: number;
   totalTaxesAndPenalties: number;
   surplusDeficit: number;
+  invested: number;
+  liquidated: number;
+  netCashFlow: number;
 }
 
 export interface TaxAmountsByType {
@@ -211,6 +215,7 @@ export class SimulationDataExtractor {
     const earnedIncome = totalIncomeFromIncomes - socialSecurityIncome - nonTaxableIncome;
 
     const employerMatch = portfolioData.employerMatchForPeriod;
+    const totalIncomeExcludingEmployerMatch = totalIncomeFromIncomes;
     const totalIncome = totalIncomeFromIncomes + employerMatch;
 
     const totalExpenses = expensesData?.totalExpenses ?? 0;
@@ -218,8 +223,13 @@ export class SimulationDataExtractor {
 
     const surplusDeficit = totalIncome - totalExpenses - totalTaxesAndPenalties;
 
+    const invested = sumInvestments(portfolioData.contributionsForPeriod) - employerMatch;
+    const liquidated = sumLiquidations(portfolioData.withdrawalsForPeriod);
+    const netCashFlow = totalIncomeExcludingEmployerMatch + liquidated - totalExpenses - totalTaxesAndPenalties - invested;
+
     return {
       totalIncome,
+      totalIncomeExcludingEmployerMatch,
       earnedIncome,
       employerMatch,
       socialSecurityIncome,
@@ -227,6 +237,9 @@ export class SimulationDataExtractor {
       totalExpenses,
       totalTaxesAndPenalties,
       surplusDeficit,
+      invested,
+      liquidated,
+      netCashFlow,
     };
   }
 

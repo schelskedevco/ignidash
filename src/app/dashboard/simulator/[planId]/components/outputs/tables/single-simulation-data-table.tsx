@@ -124,7 +124,7 @@ export default function SingleSimulationDataTable({ simulation }: SingleSimulati
   switch (resultsCategory) {
     case SingleSimulationCategory.Portfolio:
       return <PortfolioTable {...props} />;
-    case SingleSimulationCategory.IncomeExpenses:
+    case SingleSimulationCategory.CashFlow:
       return <IncomeExpensesTable {...props} />;
     case SingleSimulationCategory.Returns:
       return <ReturnsTable {...props} />;

@@ -46,7 +46,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationIncomeExpensesBarChartProps {
   age: number;
-  dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  dataView: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
   rawChartData: SingleSimulationIncomeExpensesChartDataPoint[];
   customDataID: string;
 }
@@ -64,6 +64,10 @@ export default function SingleSimulationIncomeExpensesBarChart({
     surplusDeficit: {
       mobile: ['Earned', 'Soc. Sec.', 'Non-Taxable', 'Match', 'Taxes', 'Expenses'],
       desktop: ['Earned Income', 'Social Security', 'Non-Taxable Income', 'Employer Match', 'Taxes & Penalties', 'Expenses'],
+    },
+    cashFlow: {
+      mobile: ['Earned', 'Soc. Sec.', 'Non-Taxable', 'Liquidated', 'Taxes', 'Expenses', 'Invested'],
+      desktop: ['Earned Income', 'Social Security', 'Non-Taxable Income', 'Liquidated', 'Taxes & Penalties', 'Expenses', 'Invested'],
     },
     incomes: {
       mobile: ['Match'],
@@ -103,6 +107,30 @@ export default function SingleSimulationIncomeExpensesBarChart({
           { name: employerMatchLabel, amount: employerMatch, color: 'var(--chart-1)' },
           { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-3)' },
           { name: expensesLabel, amount: -expenses, color: 'var(--chart-2)' },
+        ]
+      );
+      break;
+    }
+    case 'cashFlow': {
+      const [
+        earnedIncomeLabel,
+        socialSecurityIncomeLabel,
+        nonTaxableIncomeLabel,
+        liquidatedLabel,
+        taxesAndPenaltiesLabel,
+        expensesLabel,
+        investedLabel,
+      ] = getLabelsForScreenSize(dataView, isSmallScreen);
+
+      transformedChartData = chartData.flatMap(
+        ({ earnedIncome, socialSecurityIncome, nonTaxableIncome, liquidated, taxesAndPenalties, expenses, invested }) => [
+          { name: earnedIncomeLabel, amount: earnedIncome, color: 'var(--chart-1)' },
+          { name: socialSecurityIncomeLabel, amount: socialSecurityIncome, color: 'var(--chart-1)' },
+          { name: nonTaxableIncomeLabel, amount: nonTaxableIncome, color: 'var(--chart-1)' },
+          { name: liquidatedLabel, amount: liquidated, color: 'var(--chart-4)' },
+          { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-3)' },
+          { name: expensesLabel, amount: -expenses, color: 'var(--chart-2)' },
+          { name: investedLabel, amount: -invested, color: 'var(--chart-5)' },
         ]
       );
       break;
@@ -189,7 +217,9 @@ export default function SingleSimulationIncomeExpensesBarChart({
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          {dataView === 'surplusDeficit' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
+          {(dataView === 'surplusDeficit' || dataView === 'cashFlow') && (
+            <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />
+          )}
           <Bar dataKey="amount" maxBarSize={75} minPointSize={20} label={<CustomLabelListContent isSmallScreen={isSmallScreen} />}>
             {transformedChartData.map((entry, i) => (
               <Cell key={`${entry.name}-${i}`} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />

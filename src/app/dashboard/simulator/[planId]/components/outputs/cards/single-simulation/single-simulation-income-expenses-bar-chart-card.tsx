@@ -10,7 +10,7 @@ import SingleSimulationIncomeExpensesBarChart from '../../charts/single-simulati
 interface SingleSimulationIncomeExpensesBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationIncomeExpensesChartDataPoint[];
-  dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  dataView: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
   customDataID: string;
 }
 
@@ -27,6 +27,9 @@ export default function SingleSimulationIncomeExpensesBarChartCard({
   switch (dataView) {
     case 'surplusDeficit':
       title = 'Surplus/Deficit';
+      break;
+    case 'cashFlow':
+      title = 'Cash Flow';
       break;
     case 'incomes':
       title = 'Income Sources';

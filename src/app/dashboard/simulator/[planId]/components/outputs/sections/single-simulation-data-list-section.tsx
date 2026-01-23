@@ -355,7 +355,7 @@ function SingleSimulationDataListSection({ simulation, selectedAge }: SingleSimu
           <PortfolioDataListCardV2 {...props} />
         </div>
       );
-    case SingleSimulationCategory.IncomeExpenses:
+    case SingleSimulationCategory.CashFlow:
       return (
         <div className="grid grid-cols-1 gap-2">
           <IncomeExpensesDataListCardV2 {...props} />

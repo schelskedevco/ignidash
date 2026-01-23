@@ -12,3 +12,6 @@ export type AssetValues = Record<AssetClass, number>;
 export type AssetTransactions = Record<AssetClass, number>;
 
 export const sumTransactions = (t: AssetTransactions): number => t.stocks + t.bonds + t.cash;
+
+export const sumInvestments = (t: AssetTransactions): number => t.stocks + t.bonds;
+export const sumLiquidations = (t: AssetTransactions): number => t.stocks + t.bonds;

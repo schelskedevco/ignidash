@@ -15,8 +15,8 @@ import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 interface SingleSimulationIncomeExpensesLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => void;
-  dataView: 'surplusDeficit' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  setDataView: (view: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => void;
+  dataView: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
   setCustomDataID: (name: string) => void;
   customDataID: string;
   rawChartData: SingleSimulationIncomeExpensesChartDataPoint[];
@@ -54,19 +54,20 @@ export default function SingleSimulationIncomeExpensesLineChartCard({
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
         <Subheading level={3} className="truncate">
-          <span className="mr-2">Income & Expenses</span>
+          <span className="mr-2">Cash Flow</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
         <div className="flex shrink-0 items-center gap-2">
           <Select
-            aria-label="Income & expenses data view options"
+            aria-label="Cash flow data view options"
             className="max-w-48 sm:max-w-64"
-            id="income-expenses-data-view"
-            name="income-expenses-data-view"
+            id="cash-flow-data-view"
+            name="cash-flow-data-view"
             value={dataView === 'custom' ? customDataID : dataView}
             onChange={(e) => {
               const isCustomSelection =
                 e.target.value !== 'surplusDeficit' &&
+                e.target.value !== 'cashFlow' &&
                 e.target.value !== 'incomes' &&
                 e.target.value !== 'expenses' &&
                 e.target.value !== 'savingsRate';
@@ -74,12 +75,13 @@ export default function SingleSimulationIncomeExpensesLineChartCard({
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'surplusDeficit' | 'incomes' | 'expenses' | 'savingsRate');
+                setDataView(e.target.value as 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'savingsRate');
                 setCustomDataID('');
               }
             }}
           >
             <option value="surplusDeficit">Surplus/Deficit</option>
+            <option value="cashFlow">Cash Flow</option>
             <option value="incomes">Income Sources</option>
             <option value="expenses">Expenses &amp; Taxes</option>
             <option value="savingsRate">Savings Rate</option>
