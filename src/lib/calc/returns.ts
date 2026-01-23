@@ -60,8 +60,8 @@ export class ReturnsProcessor {
   }
 
   process(): ReturnsData {
-    const currentYear = Math.floor(this.simulationState.time.year);
-    if (currentYear !== this.lastYear) {
+    const currentYear = this.simulationState.time.year;
+    if (currentYear > this.lastYear + 1) {
       const phaseData = this.simulationState.phase;
       const returns = this.returnsProvider.getReturns(phaseData);
 
@@ -72,7 +72,7 @@ export class ReturnsProcessor {
         bonds: returns.yields.bonds / 100,
         cash: returns.yields.cash / 100,
       };
-      this.lastYear = currentYear;
+      this.lastYear = Math.floor(currentYear);
     }
 
     const returnRatesForPeriod: AssetReturnRates = {
@@ -128,14 +128,10 @@ export class ReturnsProcessor {
       };
     };
 
-    const firstMonthData = this.monthlyData[0];
     const lastMonthData = this.monthlyData[this.monthlyData.length - 1];
 
     return {
       ...lastMonthData,
-      annualReturnRates: firstMonthData.annualReturnRates,
-      annualInflationRate: firstMonthData.annualInflationRate,
-      annualYieldRates: firstMonthData.annualYieldRates,
       ...this.monthlyData.reduce(
         (acc, curr) => {
           acc.returnAmountsForPeriod.stocks += curr.returnAmountsForPeriod.stocks;
