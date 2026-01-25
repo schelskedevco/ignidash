@@ -74,6 +74,8 @@ const createDataPoint = (age: number, returns: ReturnsData | null, phase: 'accum
   },
   incomes: null,
   expenses: null,
+  debts: null,
+  physicalAssets: null,
   taxes: null,
   returns,
   phase: { name: phase },
@@ -283,6 +285,8 @@ const createMilestoneDataPoint = (age: number, phase: 'accumulation' | 'retireme
   },
   incomes: null,
   expenses: null,
+  debts: null,
+  physicalAssets: null,
   taxes: null,
   returns: null,
   phase: { name: phase },
@@ -413,6 +417,8 @@ const createTaxDataPoint = (options: {
     perIncomeData: {},
   },
   expenses: null,
+  debts: null,
+  physicalAssets: null,
   taxes: {
     incomeTaxes: {
       taxableIncomeTaxedAsOrdinary: 65400,
@@ -532,6 +538,8 @@ describe('SimulationDataExtractor.getTaxAmountsByType', () => {
       ...createTaxDataPoint({}),
       taxes: null,
       incomes: null,
+      debts: null,
+      physicalAssets: null,
     };
 
     const taxes = SimulationDataExtractor.getTaxAmountsByType(dp);
@@ -594,6 +602,8 @@ const createCashFlowDataPoint = (options: {
     totalExpenses: options.totalExpenses,
     perExpenseData: {},
   },
+  debts: null,
+  physicalAssets: null,
   taxes: {
     incomeTaxes: {
       taxableIncomeTaxedAsOrdinary: options.totalIncome - 14600,
@@ -727,6 +737,8 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
         totalTaxesAndPenalties: 0,
       }),
       incomes: null,
+      debts: null,
+      physicalAssets: null,
     };
 
     const data = SimulationDataExtractor.getCashFlowData(dp);

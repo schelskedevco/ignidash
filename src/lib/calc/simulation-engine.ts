@@ -12,6 +12,8 @@ import { PhaseIdentifier, type PhaseData } from './phase';
 import { ReturnsProcessor, type ReturnsData } from './returns';
 import { Incomes, IncomesProcessor, type IncomesData } from './incomes';
 import { Expenses, ExpensesProcessor, type ExpensesData } from './expenses';
+import { Debts, DebtsProcessor, type DebtsData } from './debts';
+import { PhysicalAssets, PhysicalAssetsProcessor, type PhysicalAssetsData } from './physical-assets';
 import { TaxProcessor, type TaxesData } from './taxes';
 
 /**
@@ -29,6 +31,8 @@ export interface SimulationDataPoint {
   portfolio: PortfolioData;
   incomes: IncomesData | null;
   expenses: ExpensesData | null;
+  debts: DebtsData | null;
+  physicalAssets: PhysicalAssetsData | null;
   phase: PhaseData | null;
   taxes: TaxesData | null;
   returns: ReturnsData | null;
@@ -75,6 +79,8 @@ export class FinancialSimulationEngine {
 
     const incomes = new Incomes(Object.values(this.inputs.incomes));
     const expenses = new Expenses(Object.values(this.inputs.expenses));
+    const debts = new Debts(Object.values(this.inputs.debts));
+    const physicalAssets = new PhysicalAssets(Object.values(this.inputs.physicalAssets));
     const contributionRules = new ContributionRules(Object.values(this.inputs.contributionRules), this.inputs.baseContributionRule);
 
     const resultData: Array<SimulationDataPoint> = [this.initSimulationDataPoint(simulationState)];
@@ -83,6 +89,8 @@ export class FinancialSimulationEngine {
     const returnsProcessor = new ReturnsProcessor(simulationState, returnsProvider);
     const incomesProcessor = new IncomesProcessor(simulationState, incomes);
     const expensesProcessor = new ExpensesProcessor(simulationState, expenses);
+    const debtsProcessor = new DebtsProcessor(simulationState, debts);
+    const physicalAssetsProcessor = new PhysicalAssetsProcessor(simulationState, physicalAssets);
     const portfolioProcessor = new PortfolioProcessor(simulationState, simulationContext, contributionRules, this.inputs.glidePath);
     const taxProcessor = new TaxProcessor(simulationState, this.inputs.taxSettings.filingStatus);
 
@@ -101,10 +109,14 @@ export class FinancialSimulationEngine {
       returnsProcessor.process();
       const incomesData = incomesProcessor.process();
       const expensesData = expensesProcessor.process();
+      const physicalAssetsData = physicalAssetsProcessor.process();
+      const debtsData = debtsProcessor.process();
 
       const { discretionaryExpense: monthlyDiscretionaryExpense } = portfolioProcessor.processContributionsAndWithdrawals(
         incomesData,
-        expensesData
+        expensesData,
+        debtsData,
+        physicalAssetsData
       );
       if (monthlyDiscretionaryExpense) expensesProcessor.processDiscretionaryExpense(monthlyDiscretionaryExpense);
 
@@ -113,9 +125,16 @@ export class FinancialSimulationEngine {
         const annualPortfolioDataBeforeTaxes = portfolioProcessor.getAnnualData();
         const annualIncomesData = incomesProcessor.getAnnualData();
         const annualReturnsData = returnsProcessor.getAnnualData();
+        const annualDebtsData = debtsProcessor.getAnnualData();
+        const annualPhysicalAssetsData = physicalAssetsProcessor.getAnnualData();
 
         // Process taxes
-        let annualTaxesData = taxProcessor.process(annualPortfolioDataBeforeTaxes, annualIncomesData, annualReturnsData);
+        let annualTaxesData = taxProcessor.process(
+          annualPortfolioDataBeforeTaxes,
+          annualIncomesData,
+          annualReturnsData,
+          annualPhysicalAssetsData
+        );
         const { totalTaxesDue, totalTaxesRefund } = annualTaxesData;
 
         // Process portfolio updates after calculating taxes
@@ -126,7 +145,12 @@ export class FinancialSimulationEngine {
         // Iteratively reconcile taxes until convergence
         let totalTaxesPaid = totalTaxesDue;
         for (let i = 0; i < 10 && totalTaxesDue > 0; i++) {
-          annualTaxesData = taxProcessor.process(annualPortfolioDataAfterTaxes, annualIncomesData, annualReturnsData);
+          annualTaxesData = taxProcessor.process(
+            annualPortfolioDataAfterTaxes,
+            annualIncomesData,
+            annualReturnsData,
+            annualPhysicalAssetsData
+          );
           const totalTaxesDue = annualTaxesData.totalTaxesDue;
 
           const remainingTaxesDue = totalTaxesDue - totalTaxesPaid;
@@ -155,6 +179,8 @@ export class FinancialSimulationEngine {
           portfolio: annualPortfolioDataAfterTaxes,
           incomes: annualIncomesData,
           expenses: annualExpensesData,
+          debts: annualDebtsData,
+          physicalAssets: annualPhysicalAssetsData,
           phase: { ...simulationState.phase },
           taxes: annualTaxesData,
           returns: annualReturnsData,
@@ -164,6 +190,8 @@ export class FinancialSimulationEngine {
         returnsProcessor.resetMonthlyData();
         incomesProcessor.resetMonthlyData();
         expensesProcessor.resetMonthlyData();
+        debtsProcessor.resetMonthlyData();
+        physicalAssetsProcessor.resetMonthlyData();
         portfolioProcessor.resetMonthlyData();
       }
     }
@@ -270,6 +298,8 @@ export class FinancialSimulationEngine {
       },
       incomes: null,
       expenses: null,
+      debts: null,
+      physicalAssets: null,
       phase: null,
       taxes: null,
       returns: null,

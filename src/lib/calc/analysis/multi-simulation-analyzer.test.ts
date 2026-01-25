@@ -71,6 +71,8 @@ const createDataPoint = (options: {
     totalExpenses: 50000,
     perExpenseData: {},
   },
+  debts: null,
+  physicalAssets: null,
   taxes: {
     incomeTaxes: {
       taxableIncomeTaxedAsOrdinary: 65400,

@@ -164,6 +164,8 @@ export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
     accounts,
     glidePath,
     expenses,
+    debts: {},
+    physicalAssets: {},
     contributionRules,
     baseContributionRule: baseContributionFromConvex(plan.baseContributionRule),
     marketAssumptions: marketAssumptionsFromConvex(plan.marketAssumptions),

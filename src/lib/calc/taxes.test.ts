@@ -8,7 +8,12 @@ import {
   STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD,
 } from './tax-data/standard-deduction';
 import { NIIT_RATE, NIIT_THRESHOLDS } from './tax-data/niit-thresholds';
-import { createEmptyPortfolioData, createEmptyIncomesData, createEmptyReturnsData } from './__tests__/test-utils';
+import {
+  createEmptyPortfolioData,
+  createEmptyIncomesData,
+  createEmptyReturnsData,
+  createEmptyPhysicalAssetsData,
+} from './__tests__/test-utils';
 import type { SimulationState } from './simulation-engine';
 
 const createMockSimulationState = (age: number): SimulationState => ({
@@ -31,7 +36,7 @@ describe('TaxProcessor', () => {
         // Income of 26,925 - standard deduction of 15,000 = 11,925 taxable
         incomes.totalIncome = 26925;
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(11925);
         expect(result.incomeTaxes.incomeTaxAmount).toBeCloseTo(1192.5, 2); // 11,925 * 10%
@@ -44,7 +49,7 @@ describe('TaxProcessor', () => {
         // Income of 63,475 - standard deduction of 15,000 = 48,475 taxable
         incomes.totalIncome = 63475;
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(48475);
         // 11,925 * 10% + (48,475 - 11,925) * 12% = 1,192.50 + 4,386 = 5,578.50
@@ -58,7 +63,7 @@ describe('TaxProcessor', () => {
         // Income of 115,000 - standard deduction of 15,000 = 100,000 taxable
         incomes.totalIncome = 115000;
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(100000);
         // 11,925 * 10% + (48,475 - 11,925) * 12% + (100,000 - 48,475) * 22%
@@ -75,7 +80,7 @@ describe('TaxProcessor', () => {
         // Income of 53,850 - standard deduction of 30,000 = 23,850 taxable
         incomes.totalIncome = 53850;
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(23850);
         expect(result.incomeTaxes.incomeTaxAmount).toBeCloseTo(2385, 2); // 23,850 * 10%
@@ -90,7 +95,7 @@ describe('TaxProcessor', () => {
         // Income of 39,050 - standard deduction of 22,500 = 16,550 taxable
         incomes.totalIncome = 39050;
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(16550);
         expect(result.incomeTaxes.incomeTaxAmount).toBeCloseTo(1655, 2); // 16,550 * 10%
@@ -104,7 +109,7 @@ describe('TaxProcessor', () => {
         const incomes = createEmptyIncomesData();
         incomes.totalIncome = 50000;
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         // 50,000 - 15,000 standard deduction = 35,000 taxable
         expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(35000);
@@ -118,9 +123,24 @@ describe('TaxProcessor', () => {
         const incomes = createEmptyIncomesData();
         incomes.totalIncome = 100000;
 
-        const singleResult = singleProcessor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
-        const marriedResult = marriedProcessor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
-        const hohResult = hohProcessor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const singleResult = singleProcessor.process(
+          createEmptyPortfolioData(),
+          incomes,
+          createEmptyReturnsData(),
+          createEmptyPhysicalAssetsData()
+        );
+        const marriedResult = marriedProcessor.process(
+          createEmptyPortfolioData(),
+          incomes,
+          createEmptyReturnsData(),
+          createEmptyPhysicalAssetsData()
+        );
+        const hohResult = hohProcessor.process(
+          createEmptyPortfolioData(),
+          incomes,
+          createEmptyReturnsData(),
+          createEmptyPhysicalAssetsData()
+        );
 
         expect(singleResult.deductions.standardDeduction).toBe(STANDARD_DEDUCTION_SINGLE);
         expect(marriedResult.deductions.standardDeduction).toBe(STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY);
@@ -134,7 +154,7 @@ describe('TaxProcessor', () => {
         const portfolioData = createEmptyPortfolioData();
         portfolioData.realizedGainsForPeriod = 20000; // 20k capital gains
 
-        const result = processor.process(portfolioData, incomes, createEmptyReturnsData());
+        const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         // Standard deduction of 15k: 10k applied to ordinary, 5k to cap gains
         expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(0);
@@ -155,7 +175,7 @@ describe('TaxProcessor', () => {
       // No ordinary income, 32,025 gains - 15,000 std deduction = 17,025 taxable
       portfolioData.realizedGainsForPeriod = 32025;
 
-      const result = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       expect(result.capitalGainsTaxes.taxableIncomeTaxedAsCapGains).toBe(17025);
       expect(result.capitalGainsTaxes.capitalGainsTaxAmount).toBe(0);
@@ -168,7 +188,7 @@ describe('TaxProcessor', () => {
       // No ordinary income, 100,000 gains - 15,000 std deduction = 85,000 taxable
       portfolioData.realizedGainsForPeriod = 100000;
 
-      const result = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // 47,025 at 0% + (85,000 - 47,025) at 15% = 0 + 5,696.25 = 5,696.25
       expect(result.capitalGainsTaxes.capitalGainsTaxAmount).toBeCloseTo(5696.25, 2);
@@ -183,7 +203,7 @@ describe('TaxProcessor', () => {
       const portfolioData = createEmptyPortfolioData();
       portfolioData.realizedGainsForPeriod = 10000; // All taxed at 15%
 
-      const result = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // Capital gains start at 47,025 threshold, so 10k at 15%
       expect(result.capitalGainsTaxes.capitalGainsTaxAmount).toBeCloseTo(1500, 2);
@@ -196,7 +216,7 @@ describe('TaxProcessor', () => {
       const returnsData = createEmptyReturnsData();
       returnsData.yieldAmountsForPeriod.taxable.stocks = 5000; // Dividends
 
-      const result = processor.process(portfolioData, incomes, returnsData);
+      const result = processor.process(portfolioData, incomes, returnsData, createEmptyPhysicalAssetsData());
 
       // Dividends are taxed as capital gains
       expect(result.incomeSources.taxableDividendIncome).toBe(5000);
@@ -215,7 +235,7 @@ describe('TaxProcessor', () => {
       const portfolioData = createEmptyPortfolioData();
       portfolioData.realizedGainsForPeriod = 50000;
 
-      const result = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // AGI of 150k is below single threshold of 200k
       expect(result.niit.niitAmount).toBe(0);
@@ -228,7 +248,7 @@ describe('TaxProcessor', () => {
       const portfolioData = createEmptyPortfolioData();
       portfolioData.realizedGainsForPeriod = 100000;
 
-      const result = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // AGI of 250k, threshold 200k, excess of 50k
       // Net investment income = 100k gains
@@ -244,7 +264,7 @@ describe('TaxProcessor', () => {
       const portfolioData = createEmptyPortfolioData();
       portfolioData.realizedGainsForPeriod = 100000;
 
-      const result = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // AGI of 300k, threshold 250k for MFJ, excess of 50k
       expect(result.niit.threshold).toBe(NIIT_THRESHOLDS.marriedFilingJointly);
@@ -262,7 +282,7 @@ describe('TaxProcessor', () => {
       returnsData.yieldAmountsForPeriod.taxable.bonds = 5000; // Interest
       returnsData.yieldAmountsForPeriod.cashSavings.cash = 3000; // Cash interest
 
-      const result = processor.process(portfolioData, incomes, returnsData);
+      const result = processor.process(portfolioData, incomes, returnsData, createEmptyPhysicalAssetsData());
 
       // NII = 20k gains + 10k dividends + 5k bond interest + 3k cash = 38k
       expect(result.niit.netInvestmentIncome).toBe(38000);
@@ -280,7 +300,7 @@ describe('TaxProcessor', () => {
       incomes.totalSocialSecurityIncome = 20000;
       // Provisional income = 0 + (20,000 * 0.5) = 10,000, below 25k threshold
 
-      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       expect(result.socialSecurityTaxes.taxableSocialSecurityIncome).toBe(0);
       expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0);
@@ -301,7 +321,7 @@ describe('TaxProcessor', () => {
       incomes2.totalIncome = 40000; // 20k SS + 20k earned
       // Provisional = 20k earned + 10k (half SS) = 30k, in 50% tier (25k-34k)
 
-      const result = processor.process(createEmptyPortfolioData(), incomes2, createEmptyReturnsData());
+      const result = processor.process(createEmptyPortfolioData(), incomes2, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0.5);
       // Taxable = min((30k - 25k) * 0.5, 20k * 0.5) = min(2.5k, 10k) = 2.5k
@@ -315,7 +335,7 @@ describe('TaxProcessor', () => {
       incomes.totalIncome = 80000; // 30k SS + 50k earned
       // Provisional = 50k earned + 15k (half SS) = 65k, well above 34k threshold
 
-      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0.85);
       // Max taxable = 30k * 0.85 = 25.5k
@@ -329,7 +349,7 @@ describe('TaxProcessor', () => {
       incomes.totalIncome = 50000; // 30k SS + 20k earned
       // Provisional = 20k + 15k = 35k, in 50% tier for MFJ (32k-44k)
 
-      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0.5);
     });
@@ -345,7 +365,7 @@ describe('TaxProcessor', () => {
         incomes.totalIncome = 35000; // 20k SS + 15k earned
         // Provisional = 15k + 10k = 25k (exactly at threshold)
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         // At exactly 25k, we're at the boundary - no SS should be taxable yet
         expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0);
@@ -359,7 +379,7 @@ describe('TaxProcessor', () => {
         incomes.totalIncome = 35001; // 20k SS + 15001 earned
         // Provisional = 15001 + 10000 = 25001 (just above threshold)
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0.5);
         // Taxable = (25001 - 25000) * 0.5 = 0.5
@@ -375,7 +395,7 @@ describe('TaxProcessor', () => {
         incomes.totalIncome = 44000; // 20k SS + 24k earned
         // Provisional = 24k + 10k = 34k (exactly at upper threshold)
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         // At exactly 34k, still in 50% tier
         expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0.5);
@@ -390,7 +410,7 @@ describe('TaxProcessor', () => {
         incomes.totalIncome = 44001; // 20k SS + 24001 earned
         // Provisional = 24001 + 10000 = 34001 (just above upper threshold)
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0.85);
       });
@@ -404,7 +424,7 @@ describe('TaxProcessor', () => {
         incomes.totalIncome = 44000; // 24k SS + 20k earned
         // Provisional = 20k + 12k = 32k (exactly at threshold)
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0);
         expect(result.socialSecurityTaxes.taxableSocialSecurityIncome).toBe(0);
@@ -417,7 +437,7 @@ describe('TaxProcessor', () => {
         incomes.totalIncome = 44001; // 24k SS + 20001 earned
         // Provisional = 20001 + 12000 = 32001 (just above threshold)
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0.5);
       });
@@ -431,7 +451,7 @@ describe('TaxProcessor', () => {
         incomes.totalIncome = 56000; // 24k SS + 32k earned
         // Provisional = 32k + 12k = 44k (exactly at upper threshold)
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         // At exactly 44k, still in 50% tier
         expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0.5);
@@ -444,7 +464,7 @@ describe('TaxProcessor', () => {
         incomes.totalIncome = 56001; // 24k SS + 32001 earned
         // Provisional = 32001 + 12000 = 44001 (just above upper threshold)
 
-        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         expect(result.socialSecurityTaxes.maxTaxablePercentage).toBe(0.85);
       });
@@ -481,7 +501,7 @@ describe('TaxProcessor', () => {
         },
       };
 
-      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData());
+      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // 10k withdrawal * 10% = 1k penalty
       expect(result.earlyWithdrawalPenalties.taxDeferredPenaltyAmount).toBe(1000);
@@ -512,7 +532,7 @@ describe('TaxProcessor', () => {
         },
       };
 
-      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData());
+      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       expect(result.earlyWithdrawalPenalties.taxDeferredPenaltyAmount).toBe(0);
     });
@@ -542,7 +562,7 @@ describe('TaxProcessor', () => {
         },
       };
 
-      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData());
+      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // 5k withdrawal * 20% = 1k penalty
       expect(result.earlyWithdrawalPenalties.taxDeferredPenaltyAmount).toBe(1000);
@@ -573,7 +593,7 @@ describe('TaxProcessor', () => {
         },
       };
 
-      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData());
+      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // Only 3k earnings * 10% = 300 penalty (contributions are not penalized)
       expect(result.earlyWithdrawalPenalties.taxFreePenaltyAmount).toBe(300);
@@ -590,7 +610,7 @@ describe('TaxProcessor', () => {
       const portfolioData = createEmptyPortfolioData();
       portfolioData.realizedGainsForPeriod = -10000; // 10k loss
 
-      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData());
+      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       expect(result.incomeTaxes.capitalLossDeduction).toBe(3000);
     });
@@ -603,20 +623,20 @@ describe('TaxProcessor', () => {
 
       // Year 1: 10k loss, deduct 3k, carry over 7k
       portfolioData.realizedGainsForPeriod = -10000;
-      const result1 = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result1 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
       expect(result1.incomeTaxes.capitalLossDeduction).toBe(3000);
 
       // Year 2: No new gains/losses, deduct 3k from carryover, 4k remaining
       portfolioData.realizedGainsForPeriod = 0;
-      const result2 = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result2 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
       expect(result2.incomeTaxes.capitalLossDeduction).toBe(3000);
 
       // Year 3: No new gains/losses, deduct 3k from carryover, 1k remaining
-      const result3 = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result3 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
       expect(result3.incomeTaxes.capitalLossDeduction).toBe(3000);
 
       // Year 4: No new gains/losses, deduct remaining 1k
-      const result4 = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result4 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
       expect(result4.incomeTaxes.capitalLossDeduction).toBe(1000);
     });
 
@@ -628,12 +648,12 @@ describe('TaxProcessor', () => {
 
       // Year 1: 10k loss
       portfolioData.realizedGainsForPeriod = -10000;
-      processor.process(portfolioData, incomes, createEmptyReturnsData());
+      processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // Year 2: 5k gain, should offset with 5k carryover, leaving 2k carryover
       // Then deduct remaining from ordinary income (but there's only 2k left)
       portfolioData.realizedGainsForPeriod = 5000;
-      const result2 = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result2 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
       // Carryover was 7k after year 1
       // 5k gain offsets 5k of carryover, leaving 2k
       // 2k loss deduction from carryover
@@ -674,7 +694,7 @@ describe('TaxProcessor', () => {
         },
       };
 
-      const result = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // 20k contributions - 5k employer match = 15k deductible
       expect(result.adjustments.taxDeductibleContributions).toBe(15000);
@@ -728,7 +748,7 @@ describe('TaxProcessor', () => {
         },
       };
 
-      const result = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // 7k IRA + 4k HSA = 11k deductible
       expect(result.adjustments.taxDeductibleContributions).toBe(11000);
@@ -761,7 +781,7 @@ describe('TaxProcessor', () => {
         },
       };
 
-      const result = processor.process(portfolioData, incomes, createEmptyReturnsData());
+      const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // Roth contributions are not deductible
       expect(result.adjustments.taxDeductibleContributions).toBe(0);
@@ -779,7 +799,7 @@ describe('TaxProcessor', () => {
       incomes.totalIncome = 50000;
       incomes.totalAmountWithheld = 10000; // Over-withheld
 
-      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // Tax on 35k taxable: 11,925 * 10% + 23,075 * 12% = 1,192.5 + 2,769 = 3,961.5
       expect(result.totalTaxesRefund).toBeGreaterThan(0);
@@ -792,7 +812,7 @@ describe('TaxProcessor', () => {
       incomes.totalIncome = 100000;
       incomes.totalAmountWithheld = 5000; // Under-withheld
 
-      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData());
+      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       expect(result.totalTaxesDue).toBeGreaterThan(0);
       expect(result.totalTaxesRefund).toBe(0);

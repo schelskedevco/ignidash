@@ -12,12 +12,16 @@ import type { ContributionInputs } from '@/lib/schemas/inputs/contribution-form-
 import type { TimelineInputs } from '@/lib/schemas/inputs/timeline-form-schema';
 import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assumptions-schema';
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
+import type { PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-schema';
+import type { DebtInputs } from '@/lib/schemas/inputs/debt-schema';
 
 import type { SimulationState, SimulationContext } from '../simulation-engine';
 import type { PortfolioData } from '../portfolio';
 import type { IncomesData } from '../incomes';
 import type { ExpensesData } from '../expenses';
 import type { ReturnsData } from '../returns';
+import type { PhysicalAssetsData } from '../physical-assets';
+import type { DebtsData } from '../debts';
 import type { TaxCategory } from '../asset';
 import { Portfolio } from '../portfolio';
 
@@ -165,6 +169,61 @@ export const createLivingExpense = (overrides?: {
 });
 
 // ============================================================================
+// Physical Asset Factories
+// ============================================================================
+
+export const createPhysicalAssetInput = (overrides?: Partial<PhysicalAssetInputs>): PhysicalAssetInputs => ({
+  id: overrides?.id ?? 'asset-1',
+  name: overrides?.name ?? 'Primary Residence',
+  purchaseDate: overrides?.purchaseDate ?? { type: 'now' },
+  purchasePrice: overrides?.purchasePrice ?? 400000,
+  marketValueAtPurchase: overrides?.marketValueAtPurchase,
+  annualAppreciationRate: overrides?.annualAppreciationRate ?? 3,
+  saleDate: overrides?.saleDate,
+  financing: overrides?.financing,
+  disabled: overrides?.disabled ?? false,
+});
+
+export const createFinancedAssetInput = (overrides?: Partial<PhysicalAssetInputs>): PhysicalAssetInputs => {
+  const purchasePrice = overrides?.purchasePrice ?? 400000;
+  const downPayment = overrides?.financing?.downPayment ?? 80000;
+  const loanAmount = overrides?.financing?.loanAmount ?? purchasePrice - downPayment;
+
+  return {
+    id: overrides?.id ?? 'asset-1',
+    name: overrides?.name ?? 'Primary Residence',
+    purchaseDate: overrides?.purchaseDate ?? { type: 'now' },
+    purchasePrice,
+    marketValueAtPurchase: overrides?.marketValueAtPurchase,
+    annualAppreciationRate: overrides?.annualAppreciationRate ?? 3,
+    saleDate: overrides?.saleDate,
+    financing: {
+      downPayment,
+      loanAmount,
+      apr: overrides?.financing?.apr ?? 6,
+      termMonths: overrides?.financing?.termMonths ?? 360,
+    },
+    disabled: overrides?.disabled ?? false,
+  };
+};
+
+// ============================================================================
+// Debt Factories
+// ============================================================================
+
+export const createDebtInput = (overrides?: Partial<DebtInputs>): DebtInputs => ({
+  id: overrides?.id ?? 'debt-1',
+  name: overrides?.name ?? 'Credit Card',
+  balance: overrides?.balance ?? 10000,
+  apr: overrides?.apr ?? 18,
+  interestType: overrides?.interestType ?? 'simple',
+  compoundingFrequency: overrides?.compoundingFrequency,
+  startDate: overrides?.startDate ?? { type: 'now' },
+  monthlyPayment: overrides?.monthlyPayment ?? 500,
+  disabled: overrides?.disabled ?? false,
+});
+
+// ============================================================================
 // Contribution Rule Factory
 // ============================================================================
 
@@ -237,6 +296,8 @@ export const createSimulatorInputs = (overrides?: Partial<SimulatorInputs>): Sim
   timeline: overrides?.timeline !== undefined ? overrides.timeline : createDefaultTimeline(),
   incomes: overrides?.incomes ?? {},
   expenses: overrides?.expenses ?? {},
+  debts: overrides?.debts ?? {},
+  physicalAssets: overrides?.physicalAssets ?? {},
   accounts: overrides?.accounts ?? {},
   contributionRules: overrides?.contributionRules ?? {},
   baseContributionRule: overrides?.baseContributionRule ?? { type: 'save' },
@@ -359,6 +420,26 @@ export const createEmptyReturnsData = (): ReturnsData => ({
   annualYieldRates: { stocks: 0, bonds: 0, cash: 0 },
   annualInflationRate: 0,
   perAccountData: {},
+});
+
+export const createEmptyPhysicalAssetsData = (overrides?: Partial<PhysicalAssetsData>): PhysicalAssetsData => ({
+  totalMarketValue: overrides?.totalMarketValue ?? 0,
+  totalLoanBalance: overrides?.totalLoanBalance ?? 0,
+  totalEquity: overrides?.totalEquity ?? 0,
+  totalAppreciationForPeriod: overrides?.totalAppreciationForPeriod ?? 0,
+  totalLoanPaymentForPeriod: overrides?.totalLoanPaymentForPeriod ?? 0,
+  totalPurchaseExpenseForPeriod: overrides?.totalPurchaseExpenseForPeriod ?? 0,
+  totalSaleProceedsForPeriod: overrides?.totalSaleProceedsForPeriod ?? 0,
+  totalCapitalGainForPeriod: overrides?.totalCapitalGainForPeriod ?? 0,
+  perAssetData: overrides?.perAssetData ?? {},
+});
+
+export const createEmptyDebtsData = (overrides?: Partial<DebtsData>): DebtsData => ({
+  totalDebtBalance: overrides?.totalDebtBalance ?? 0,
+  totalPaymentForPeriod: overrides?.totalPaymentForPeriod ?? 0,
+  totalInterestForPeriod: overrides?.totalInterestForPeriod ?? 0,
+  totalPrincipalPaidForPeriod: overrides?.totalPrincipalPaidForPeriod ?? 0,
+  perDebtData: overrides?.perDebtData ?? {},
 });
 
 // ============================================================================
