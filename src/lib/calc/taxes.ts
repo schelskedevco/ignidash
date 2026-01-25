@@ -5,6 +5,7 @@ import type { SimulationState } from './simulation-engine';
 import type { IncomesData } from './incomes';
 import type { PortfolioData } from './portfolio';
 import type { ReturnsData } from './returns';
+import type { PhysicalAssetsData } from './physical-assets';
 import { sumTransactions } from './asset';
 import {
   STANDARD_DEDUCTION_SINGLE,
@@ -118,8 +119,18 @@ export class TaxProcessor {
     private filingStatus: FilingStatus
   ) {}
 
-  process(annualPortfolioDataBeforeTaxes: PortfolioData, annualIncomesData: IncomesData, annualReturnsData: ReturnsData): TaxesData {
-    const incomeData = this.getTaxableIncomeData(annualPortfolioDataBeforeTaxes, annualIncomesData, annualReturnsData);
+  process(
+    annualPortfolioDataBeforeTaxes: PortfolioData,
+    annualIncomesData: IncomesData,
+    annualReturnsData: ReturnsData,
+    annualPhysicalAssetsData: PhysicalAssetsData
+  ): TaxesData {
+    const incomeData = this.getTaxableIncomeData(
+      annualPortfolioDataBeforeTaxes,
+      annualIncomesData,
+      annualReturnsData,
+      annualPhysicalAssetsData
+    );
 
     const socialSecurityTaxes: SocialSecurityTaxesData = {
       taxableSocialSecurityIncome: incomeData.taxableSocialSecurityIncome,
@@ -188,7 +199,8 @@ export class TaxProcessor {
   private getTaxableIncomeData(
     annualPortfolioDataBeforeTaxes: PortfolioData,
     annualIncomesData: IncomesData,
-    annualReturnsData: ReturnsData
+    annualReturnsData: ReturnsData,
+    annualPhysicalAssetsData: PhysicalAssetsData
   ): IncomeSourcesData {
     const age = this.simulationState.time.age;
 
@@ -234,7 +246,10 @@ export class TaxProcessor {
     }
 
     const taxableRetirementDistributions = taxDeferredWithdrawals + earlyRothEarningsWithdrawals;
-    const { realizedGains, capitalLossDeduction } = this.getRealizedGainsAndCapLossDeductionData(annualPortfolioDataBeforeTaxes);
+    const { realizedGains, capitalLossDeduction } = this.getRealizedGainsAndCapLossDeductionData(
+      annualPortfolioDataBeforeTaxes,
+      annualPhysicalAssetsData
+    );
     const taxableDividendIncome = annualReturnsData.yieldAmountsForPeriod.taxable.stocks;
     const taxableInterestIncome =
       annualReturnsData.yieldAmountsForPeriod.taxable.bonds + annualReturnsData.yieldAmountsForPeriod.cashSavings.cash;
@@ -304,11 +319,18 @@ export class TaxProcessor {
     };
   }
 
-  private getRealizedGainsAndCapLossDeductionData(annualPortfolioDataBeforeTaxes: PortfolioData): {
+  private getRealizedGainsAndCapLossDeductionData(
+    annualPortfolioDataBeforeTaxes: PortfolioData,
+    annualPhysicalAssetsData: PhysicalAssetsData
+  ): {
     realizedGains: number;
     capitalLossDeduction: number;
   } {
-    const realizedGainsAfterCarryover = annualPortfolioDataBeforeTaxes.realizedGainsForPeriod + this.capitalLossCarryover;
+    const realizedGainsAfterCarryover =
+      annualPortfolioDataBeforeTaxes.realizedGainsForPeriod +
+      annualPhysicalAssetsData.totalCapitalGainForPeriod +
+      this.capitalLossCarryover;
+
     if (realizedGainsAfterCarryover >= 0) {
       this.capitalLossCarryover = 0;
       return { realizedGains: realizedGainsAfterCarryover, capitalLossDeduction: 0 };

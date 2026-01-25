@@ -14,6 +14,8 @@ describe('StochasticReturnsProvider', () => {
     timeline: null,
     incomes: {},
     expenses: {},
+    debts: {},
+    physicalAssets: {},
     accounts: {},
     contributionRules: {},
     baseContributionRule: { type: 'save' },

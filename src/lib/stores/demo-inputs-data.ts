@@ -95,6 +95,8 @@ export const demoInputs1: SimulatorInputs = {
       },
     },
   },
+  debts: {},
+  physicalAssets: {},
   accounts: {
     'account-1': {
       type: '401k',
@@ -315,6 +317,8 @@ export const demoInputs2: SimulatorInputs = {
       },
     },
   },
+  debts: {},
+  physicalAssets: {},
   accounts: {
     'account-1': {
       type: '401k',

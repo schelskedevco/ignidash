@@ -24,6 +24,8 @@ import type {
 import { ContributionRules } from './contribution-rules';
 import type { IncomesData } from './incomes';
 import type { ExpensesData } from './expenses';
+import type { DebtsData } from './debts';
+import type { PhysicalAssetsData } from './physical-assets';
 import type { AccountDataWithReturns } from './returns';
 import { uniformLifetimeMap } from './historical-data/rmds-table';
 
@@ -77,9 +79,21 @@ export class PortfolioProcessor {
 
   processContributionsAndWithdrawals(
     incomesData: IncomesData,
-    expensesData: ExpensesData
+    expensesData: ExpensesData,
+    debtsData: DebtsData,
+    physicalAssetsData: PhysicalAssetsData
   ): { portfolioData: PortfolioData; discretionaryExpense: number } {
-    const surplusDeficitAfterPayrollDeductions = incomesData.totalIncomeAfterPayrollDeductions - expensesData.totalExpenses;
+    const debtAndLoanPayments = debtsData.totalPaymentForPeriod + physicalAssetsData.totalLoanPaymentForPeriod;
+
+    const physicalAssetPurchaseExpenses = physicalAssetsData.totalPurchaseExpenseForPeriod;
+    const physicalAssetSaleProceeds = physicalAssetsData.totalSaleProceedsForPeriod;
+
+    const surplusDeficitAfterPayrollDeductions =
+      incomesData.totalIncomeAfterPayrollDeductions +
+      physicalAssetSaleProceeds -
+      expensesData.totalExpenses -
+      debtAndLoanPayments -
+      physicalAssetPurchaseExpenses;
 
     const {
       totalForPeriod: contributionsForPeriod,

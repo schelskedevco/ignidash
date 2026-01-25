@@ -144,6 +144,8 @@ const createSimulatorInputs = (overrides?: Partial<SimulatorInputs>): SimulatorI
   timeline: overrides?.timeline !== undefined ? overrides.timeline : createDefaultTimeline(),
   incomes: overrides?.incomes ?? {},
   expenses: overrides?.expenses ?? {},
+  debts: overrides?.debts ?? {},
+  physicalAssets: overrides?.physicalAssets ?? {},
   accounts: overrides?.accounts ?? {},
   contributionRules: overrides?.contributionRules ?? {},
   baseContributionRule: overrides?.baseContributionRule ?? { type: 'save' },
