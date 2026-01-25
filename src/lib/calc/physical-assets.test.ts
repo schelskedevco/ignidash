@@ -329,10 +329,13 @@ describe('PhysicalAsset Class', () => {
         asset.applyMonthlyAppreciation();
       }
 
+      const marketValueBeforeSale = asset.getMarketValue();
+      const loanBalanceBeforeSale = asset.getLoanBalance();
       const { saleProceeds, capitalGain } = asset.sell();
 
-      // Proceeds should be 0 when underwater (can't be negative)
-      expect(saleProceeds).toBe(0);
+      // Proceeds can be negative when underwater (seller owes money)
+      expect(saleProceeds).toBe(marketValueBeforeSale - loanBalanceBeforeSale);
+      expect(saleProceeds).toBeLessThan(0);
       // Capital gain will be negative (loss)
       expect(capitalGain).toBeLessThan(0);
     });
@@ -352,90 +355,83 @@ describe('PhysicalAsset Class', () => {
     });
   });
 
-  describe('Activation Tests (getIsActive)', () => {
-    it('now - active immediately', () => {
+  describe('Ownership Status Tests', () => {
+    it('now - owned immediately', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchaseDate: { type: 'now' },
         })
       );
 
-      const simState = createSimulationState();
-      expect(asset.getIsActive(simState)).toBe(true);
+      expect(asset.getOwnershipStatus()).toBe('owned');
     });
 
-    it('customAge - active at age after purchase', () => {
+    it('customAge - pending until purchased', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchaseDate: { type: 'customAge', age: 40 },
         })
       );
 
-      // Before age 40 - pending, not active
+      // Before age 40 - pending
       let simState = createSimulationState({ time: { age: 39, year: 2028, month: 1, date: new Date(2028, 0, 1) } });
-      expect(asset.getIsActive(simState)).toBe(false);
       expect(asset.getOwnershipStatus()).toBe('pending');
 
       // At age 40 - still pending until purchased
       simState = createSimulationState({ time: { age: 40, year: 2029, month: 1, date: new Date(2029, 0, 1) } });
-      expect(asset.getIsActive(simState)).toBe(false);
+      expect(asset.getOwnershipStatus()).toBe('pending');
       expect(asset.shouldPurchaseThisPeriod(simState)).toBe(true);
 
-      // After purchasing, asset becomes active
+      // After purchasing, asset becomes owned
       asset.purchase();
       expect(asset.getOwnershipStatus()).toBe('owned');
-      expect(asset.getIsActive(simState)).toBe(true);
-
-      // After age 40
-      simState = createSimulationState({ time: { age: 45, year: 2034, month: 1, date: new Date(2034, 0, 1) } });
-      expect(asset.getIsActive(simState)).toBe(true);
     });
 
-    it('customDate - active at date after purchase', () => {
+    it('customDate - pending until purchased', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchaseDate: { type: 'customDate', year: 2025, month: 6 },
         })
       );
 
-      // Before June 2025 - pending, not active
+      // Before June 2025 - pending
       let simState = createSimulationState({ time: { age: 36, year: 2025, month: 5, date: new Date(2025, 4, 1) } });
-      expect(asset.getIsActive(simState)).toBe(false);
+      expect(asset.getOwnershipStatus()).toBe('pending');
       expect(asset.shouldPurchaseThisPeriod(simState)).toBe(false);
 
       // At June 2025 - still pending until purchased
       simState = createSimulationState({ time: { age: 36, year: 2025, month: 6, date: new Date(2025, 5, 1) } });
-      expect(asset.getIsActive(simState)).toBe(false);
+      expect(asset.getOwnershipStatus()).toBe('pending');
       expect(asset.shouldPurchaseThisPeriod(simState)).toBe(true);
 
-      // After purchasing, asset becomes active
+      // After purchasing, asset becomes owned
       asset.purchase();
-      expect(asset.getIsActive(simState)).toBe(true);
+      expect(asset.getOwnershipStatus()).toBe('owned');
     });
 
-    it('atRetirement - active in retirement after purchase', () => {
+    it('atRetirement - pending until purchased', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchaseDate: { type: 'atRetirement' },
         })
       );
 
-      // Pre-retirement - pending, not active
+      // Pre-retirement - pending
       let simState = createSimulationState({ phase: { name: 'accumulation' } });
-      expect(asset.getIsActive(simState)).toBe(false);
+      expect(asset.getOwnershipStatus()).toBe('pending');
       expect(asset.shouldPurchaseThisPeriod(simState)).toBe(false);
 
       // In retirement - still pending until purchased
       simState = createSimulationState({ phase: { name: 'retirement' } });
-      expect(asset.getIsActive(simState)).toBe(false);
+      expect(asset.getOwnershipStatus()).toBe('pending');
       expect(asset.shouldPurchaseThisPeriod(simState)).toBe(true);
 
-      // After purchasing, asset becomes active
+      // After purchasing, asset becomes owned
       asset.purchase();
-      expect(asset.getIsActive(simState)).toBe(true);
+      expect(asset.getOwnershipStatus()).toBe('owned');
     });
 
-    it('sold asset is never active', () => {
+    it('sold asset has sold status', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchaseDate: { type: 'now' },
@@ -444,8 +440,7 @@ describe('PhysicalAsset Class', () => {
 
       asset.sell();
 
-      const simState = createSimulationState();
-      expect(asset.getIsActive(simState)).toBe(false);
+      expect(asset.getOwnershipStatus()).toBe('sold');
     });
   });
 
@@ -572,14 +567,13 @@ describe('PhysicalAssets Collection', () => {
       createPhysicalAssetInput({ id: 'disabled', name: 'Disabled', disabled: true }),
     ]);
 
-    const simState = createSimulationState();
-    const activeAssets = assets.getActiveAssets(simState);
+    const ownedAssets = assets.getOwnedAssets();
 
-    expect(activeAssets.length).toBe(1);
-    expect(activeAssets[0].getName()).toBe('Enabled');
+    expect(ownedAssets.length).toBe(1);
+    expect(ownedAssets[0].getName()).toBe('Enabled');
   });
 
-  it('getActiveAssets returns only currently active assets', () => {
+  it('getOwnedAssets returns only currently owned assets', () => {
     const assets = new PhysicalAssets([
       createPhysicalAssetInput({
         id: 'current',
@@ -593,11 +587,10 @@ describe('PhysicalAssets Collection', () => {
       }),
     ]);
 
-    const simState = createSimulationState({ time: { age: 35, year: 2024, month: 1, date: new Date(2024, 0, 1) } });
-    const activeAssets = assets.getActiveAssets(simState);
+    const ownedAssets = assets.getOwnedAssets();
 
-    expect(activeAssets.length).toBe(1);
-    expect(activeAssets[0].getName()).toBe('Current Home');
+    expect(ownedAssets.length).toBe(1);
+    expect(ownedAssets[0].getName()).toBe('Current Home');
   });
 
   it('getAssetsToSellThisPeriod returns only assets scheduled for sale', () => {
@@ -671,6 +664,7 @@ describe('PhysicalAssetsProcessor', () => {
         id: 'selling',
         name: 'Selling House',
         purchasePrice: 500000,
+        annualAppreciationRate: 0, // No appreciation for predictable test
         saleDate: { type: 'customAge', age: 35 },
       }),
     ]);
@@ -1066,15 +1060,13 @@ describe('Purchase Expense Tracking', () => {
 // ============================================================================
 
 describe('Edge Cases', () => {
-  it('asset purchased in future is not active and has no market value', () => {
+  it('asset purchased in future is pending and has no market value', () => {
     const asset = new PhysicalAsset(
       createPhysicalAssetInput({
         purchaseDate: { type: 'customDate', year: 2030, month: 1 },
       })
     );
 
-    const simState = createSimulationState({ time: { age: 35, year: 2024, month: 1, date: new Date(2024, 0, 1) } });
-    expect(asset.getIsActive(simState)).toBe(false);
     expect(asset.getOwnershipStatus()).toBe('pending');
     expect(asset.getMarketValue()).toBe(0); // Pending assets don't contribute to net worth
   });
@@ -1128,16 +1120,17 @@ describe('Edge Cases', () => {
     expect(asset.getEquity()).toBe(0);
   });
 
-  it('atLifeExpectancy purchase date never activates', () => {
+  it('atLifeExpectancy purchase date stays pending', () => {
     const asset = new PhysicalAsset(
       createPhysicalAssetInput({
         purchaseDate: { type: 'atLifeExpectancy' },
       })
     );
 
-    // Should never be active
+    // Should stay pending (atLifeExpectancy returns false for shouldPurchaseThisPeriod)
     const simState = createSimulationState({ time: { age: 100, year: 2089, month: 1, date: new Date(2089, 0, 1) } });
-    expect(asset.getIsActive(simState)).toBe(false);
+    expect(asset.getOwnershipStatus()).toBe('pending');
+    expect(asset.shouldPurchaseThisPeriod(simState)).toBe(false);
   });
 
   it('very small loan balance is paid off cleanly', () => {

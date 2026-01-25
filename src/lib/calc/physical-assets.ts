@@ -31,8 +31,8 @@ export class PhysicalAssetsProcessor {
     let totalCapitalGain = 0;
     const perAssetData: Record<string, PhysicalAssetData> = {};
 
-    const activeAssets = this.physicalAssets.getActiveAssets(this.simulationState);
-    for (const asset of activeAssets) {
+    const ownedAssets = this.physicalAssets.getOwnedAssets();
+    for (const asset of ownedAssets) {
       const { monthlyAppreciation: appreciationForPeriod } = asset.applyMonthlyAppreciation();
 
       const { monthlyLoanPayment: loanPaymentForPeriod } = asset.getMonthlyLoanPayment();
@@ -165,8 +165,8 @@ export class PhysicalAssets {
     this.assets = data.filter((asset) => !asset.disabled).map((asset) => new PhysicalAsset(asset));
   }
 
-  getActiveAssets(simulationState: SimulationState): PhysicalAsset[] {
-    return this.assets.filter((asset) => asset.getIsActive(simulationState));
+  getOwnedAssets(): PhysicalAsset[] {
+    return this.assets.filter((asset) => asset.getOwnershipStatus() === 'owned');
   }
 
   getAssetsToSellThisPeriod(simulationState: SimulationState): PhysicalAsset[] {
@@ -301,11 +301,6 @@ export class PhysicalAsset {
     }
   }
 
-  getIsActive(simulationState: SimulationState): boolean {
-    if (this.ownershipStatus !== 'owned') return false;
-    return !this.shouldSellThisPeriod(simulationState);
-  }
-
   shouldSellThisPeriod(simulationState: SimulationState): boolean {
     if (this.ownershipStatus !== 'owned' || !this.saleDate) return false;
     return this.getIsSimTimeAtOrAfterTimePoint(simulationState, this.saleDate);
@@ -314,7 +309,7 @@ export class PhysicalAsset {
   sell(): { saleProceeds: number; capitalGain: number } {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
 
-    const saleProceeds = Math.max(0, this.marketValue - this.loanBalance);
+    const saleProceeds = this.marketValue - this.loanBalance;
     const capitalGain = this.marketValue - this.purchasePrice;
 
     this.ownershipStatus = 'sold';
