@@ -128,7 +128,9 @@ export class FinancialSimulationEngine {
         const annualDebtsData = debtsProcessor.getAnnualData();
         const annualPhysicalAssetsData = physicalAssetsProcessor.getAnnualData();
 
-        // Process taxes
+        // Process taxes - save carryover snapshot before first calculation
+        taxProcessor.saveCarryoverSnapshot();
+
         let annualTaxesData = taxProcessor.process(
           annualPortfolioDataBeforeTaxes,
           annualIncomesData,
@@ -145,6 +147,9 @@ export class FinancialSimulationEngine {
         // Iteratively reconcile taxes until convergence
         let totalTaxesPaid = totalTaxesDue;
         for (let i = 0; i < 10 && totalTaxesDue > 0; i++) {
+          // Restore carryover to start-of-year state before each iteration
+          taxProcessor.restoreCarryoverSnapshot();
+
           annualTaxesData = taxProcessor.process(
             annualPortfolioDataAfterTaxes,
             annualIncomesData,

@@ -113,11 +113,24 @@ export interface IncomeSourcesData {
 
 export class TaxProcessor {
   private capitalLossCarryover = 0;
+  private capitalLossCarryoverSnapshot: number | null = null;
 
   constructor(
     private simulationState: SimulationState,
     private filingStatus: FilingStatus
   ) {}
+
+  /** Save carryover state before first tax calculation of the year */
+  saveCarryoverSnapshot(): void {
+    this.capitalLossCarryoverSnapshot = this.capitalLossCarryover;
+  }
+
+  /** Restore carryover state before each convergence iteration */
+  restoreCarryoverSnapshot(): void {
+    if (this.capitalLossCarryoverSnapshot !== null) {
+      this.capitalLossCarryover = this.capitalLossCarryoverSnapshot;
+    }
+  }
 
   process(
     annualPortfolioDataBeforeTaxes: PortfolioData,

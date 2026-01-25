@@ -660,6 +660,51 @@ describe('TaxProcessor', () => {
       expect(result2.incomeSources.realizedGains).toBe(0);
       expect(result2.incomeTaxes.capitalLossDeduction).toBe(2000);
     });
+
+    it('should preserve carryover across iterative convergence using snapshot/restore', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const portfolioData = createEmptyPortfolioData();
+      const incomes = createEmptyIncomesData();
+      incomes.totalIncome = 50000;
+
+      // Year 1: 10k loss - simulate iterative convergence by calling process() multiple times
+      portfolioData.realizedGainsForPeriod = -10000;
+
+      // Save snapshot before first calculation
+      processor.saveCarryoverSnapshot();
+
+      const result1a = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+      expect(result1a.incomeTaxes.capitalLossDeduction).toBe(3000);
+
+      // Simulate convergence iterations - restore and process again
+      processor.restoreCarryoverSnapshot();
+      const result1b = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+      expect(result1b.incomeTaxes.capitalLossDeduction).toBe(3000);
+
+      processor.restoreCarryoverSnapshot();
+      const result1c = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+      expect(result1c.incomeTaxes.capitalLossDeduction).toBe(3000);
+
+      // Year 2: No new losses - should still have 7k carryover available
+      portfolioData.realizedGainsForPeriod = 0;
+      processor.saveCarryoverSnapshot();
+      const result2 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+
+      // Should deduct another 3k from the 7k carryover
+      expect(result2.incomeTaxes.capitalLossDeduction).toBe(3000);
+
+      // Year 3: No new losses - should still have 4k carryover available
+      processor.saveCarryoverSnapshot();
+      const result3 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+
+      expect(result3.incomeTaxes.capitalLossDeduction).toBe(3000);
+
+      // Year 4: No new losses - should have 1k carryover remaining
+      processor.saveCarryoverSnapshot();
+      const result4 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+
+      expect(result4.incomeTaxes.capitalLossDeduction).toBe(1000);
+    });
   });
 
   // ============================================================================
