@@ -256,6 +256,10 @@ export class PhysicalAsset {
     return this.ownershipStatus === 'sold';
   }
 
+  isPaidOff(): boolean {
+    return this.ownershipStatus === 'owned' && this.loanBalance <= 0;
+  }
+
   getOwnershipStatus(): OwnershipStatus {
     return this.ownershipStatus;
   }
@@ -277,14 +281,14 @@ export class PhysicalAsset {
 
   getMonthlyLoanPayment(): { monthlyLoanPayment: number } {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
-    if (this.loanBalance <= 0) return { monthlyLoanPayment: 0 };
+    if (this.isPaidOff()) return { monthlyLoanPayment: 0 };
 
     return { monthlyLoanPayment: Math.min(this.monthlyLoanPayment, this.loanBalance + this.calculateMonthlyInterest()) };
   }
 
   applyLoanPayment(payment: number): void {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
-    if (this.loanBalance <= 0) return;
+    if (this.isPaidOff()) return;
 
     const interestForPeriod = this.calculateMonthlyInterest();
 
