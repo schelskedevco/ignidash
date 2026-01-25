@@ -1059,6 +1059,244 @@ describe('Purchase Expense Tracking', () => {
 // Edge Cases
 // ============================================================================
 
+// ============================================================================
+// Full Amortization Tests
+// ============================================================================
+
+describe('Full Amortization Tests', () => {
+  it('should pay off loan exactly at term end with correct total interest', () => {
+    const loanAmount = 320000;
+    const apr = 6;
+    const termMonths = 360;
+    const monthlyRate = apr / 100 / 12;
+
+    const asset = new PhysicalAsset(
+      createFinancedAssetInput({
+        purchasePrice: 400000,
+        financing: {
+          downPayment: 80000,
+          loanAmount,
+          apr,
+          termMonths,
+        },
+      })
+    );
+
+    // Calculate expected monthly payment using standard amortization formula
+    const expectedMonthlyPayment =
+      (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
+
+    // Apply all payments
+    let totalPayments = 0;
+    for (let i = 0; i < termMonths; i++) {
+      const { monthlyLoanPayment } = asset.getMonthlyLoanPayment();
+      if (monthlyLoanPayment === 0) break;
+
+      asset.applyLoanPayment(monthlyLoanPayment);
+      totalPayments += monthlyLoanPayment;
+    }
+
+    // Loan should be paid off exactly
+    expect(asset.getLoanBalance()).toBeCloseTo(0, 2);
+    expect(asset.getMonthlyLoanPayment()).toEqual({ monthlyLoanPayment: 0 });
+
+    // Total payments should match expected (principal + total interest)
+    // Total interest for 30-year mortgage at 6% on $320k is roughly $370k
+    const expectedTotalPayments = expectedMonthlyPayment * termMonths;
+    expect(totalPayments).toBeCloseTo(expectedTotalPayments, 0);
+
+    // Verify total interest paid
+    const totalInterest = totalPayments - loanAmount;
+    expect(totalInterest).toBeGreaterThan(0);
+    expect(totalInterest).toBeCloseTo(expectedTotalPayments - loanAmount, 0);
+  });
+
+  it('should pay off zero APR loan with exact payments', () => {
+    const loanAmount = 24000;
+    const termMonths = 48;
+
+    const asset = new PhysicalAsset(
+      createFinancedAssetInput({
+        purchasePrice: 30000,
+        financing: {
+          downPayment: 6000,
+          loanAmount,
+          apr: 0,
+          termMonths,
+        },
+      })
+    );
+
+    const expectedPayment = loanAmount / termMonths;
+
+    // Apply all payments
+    let totalPayments = 0;
+    for (let i = 0; i < termMonths; i++) {
+      const { monthlyLoanPayment } = asset.getMonthlyLoanPayment();
+      expect(monthlyLoanPayment).toBeCloseTo(expectedPayment, 2);
+
+      asset.applyLoanPayment(monthlyLoanPayment);
+      totalPayments += monthlyLoanPayment;
+    }
+
+    // Loan should be paid off exactly with zero interest
+    expect(asset.getLoanBalance()).toBe(0);
+    expect(totalPayments).toBeCloseTo(loanAmount, 2);
+  });
+
+  it('should correctly track principal vs interest split over loan life', () => {
+    const loanAmount = 100000;
+    const apr = 5;
+    const termMonths = 120; // 10 year loan
+    const monthlyRate = apr / 100 / 12;
+
+    const asset = new PhysicalAsset(
+      createFinancedAssetInput({
+        purchasePrice: 125000,
+        financing: {
+          downPayment: 25000,
+          loanAmount,
+          apr,
+          termMonths,
+        },
+      })
+    );
+
+    let totalPrincipal = 0;
+    let totalInterest = 0;
+
+    for (let i = 0; i < termMonths; i++) {
+      const balanceBefore = asset.getLoanBalance();
+      const { monthlyLoanPayment } = asset.getMonthlyLoanPayment();
+      if (monthlyLoanPayment === 0) break;
+
+      const interestThisMonth = balanceBefore * monthlyRate;
+      const principalThisMonth = monthlyLoanPayment - interestThisMonth;
+
+      totalInterest += interestThisMonth;
+      totalPrincipal += principalThisMonth;
+
+      asset.applyLoanPayment(monthlyLoanPayment);
+    }
+
+    // Total principal should equal original loan amount
+    expect(totalPrincipal).toBeCloseTo(loanAmount, 0);
+
+    // Total interest should be positive for a loan with APR > 0
+    expect(totalInterest).toBeGreaterThan(0);
+
+    // Loan should be paid off
+    expect(asset.getLoanBalance()).toBeCloseTo(0, 2);
+  });
+});
+
+// ============================================================================
+// Capital Loss Scenario Tests
+// ============================================================================
+
+describe('Capital Loss Scenarios', () => {
+  it('should calculate negative capital gain on depreciated asset sale', () => {
+    const purchasePrice = 50000;
+    const depreciationRate = -20; // 20% annual depreciation
+
+    const asset = new PhysicalAsset(
+      createPhysicalAssetInput({
+        purchasePrice,
+        annualAppreciationRate: depreciationRate,
+      })
+    );
+
+    // Apply 24 months of depreciation
+    for (let i = 0; i < 24; i++) {
+      asset.applyMonthlyAppreciation();
+    }
+
+    const marketValueBeforeSale = asset.getMarketValue();
+    const { capitalGain, saleProceeds } = asset.sell();
+
+    // Asset should have depreciated: 50000 * (0.8)^2 = 32000
+    expect(marketValueBeforeSale).toBeCloseTo(purchasePrice * Math.pow(1 - 0.2, 2), -1);
+
+    // Capital gain should be negative (a loss)
+    expect(capitalGain).toBeLessThan(0);
+    expect(capitalGain).toBeCloseTo(marketValueBeforeSale - purchasePrice, 0);
+
+    // Sale proceeds should equal market value (no loan)
+    expect(saleProceeds).toBeCloseTo(marketValueBeforeSale, 0);
+  });
+
+  it('should calculate capital loss on financed depreciated asset', () => {
+    const purchasePrice = 40000;
+    const downPayment = 8000;
+    const loanAmount = 32000;
+
+    const asset = new PhysicalAsset(
+      createFinancedAssetInput({
+        purchasePrice,
+        annualAppreciationRate: -15, // 15% annual depreciation (like a car)
+        financing: {
+          downPayment,
+          loanAmount,
+          apr: 4,
+          termMonths: 60,
+        },
+      })
+    );
+
+    // Apply 12 months of depreciation and payments
+    for (let i = 0; i < 12; i++) {
+      asset.applyMonthlyAppreciation();
+      const { monthlyLoanPayment } = asset.getMonthlyLoanPayment();
+      asset.applyLoanPayment(monthlyLoanPayment);
+    }
+
+    const marketValueBeforeSale = asset.getMarketValue();
+    const loanBalanceBeforeSale = asset.getLoanBalance();
+    const { capitalGain, saleProceeds } = asset.sell();
+
+    // Market value after 1 year: 40000 * 0.85 = 34000
+    expect(marketValueBeforeSale).toBeCloseTo(purchasePrice * Math.pow(1 - 0.15, 1), -2);
+
+    // Capital gain should be negative (loss)
+    expect(capitalGain).toBeLessThan(0);
+    expect(capitalGain).toBeCloseTo(marketValueBeforeSale - purchasePrice, 0);
+
+    // Sale proceeds = market value - remaining loan
+    expect(saleProceeds).toBeCloseTo(marketValueBeforeSale - loanBalanceBeforeSale, 0);
+  });
+
+  it('should handle zero capital gain when sold at purchase price', () => {
+    const asset = new PhysicalAsset(
+      createPhysicalAssetInput({
+        purchasePrice: 300000,
+        annualAppreciationRate: 0, // No change in value
+      })
+    );
+
+    const { capitalGain, saleProceeds } = asset.sell();
+
+    expect(capitalGain).toBe(0);
+    expect(saleProceeds).toBe(300000);
+  });
+
+  it('should track capital loss correctly with marketValueAtPurchase', () => {
+    // Asset was purchased for $200k, now worth $180k (already depreciated)
+    const asset = new PhysicalAsset(
+      createPhysicalAssetInput({
+        purchasePrice: 200000, // Original cost basis
+        marketValueAtPurchase: 180000, // Current value (already lost value)
+        annualAppreciationRate: 0,
+      })
+    );
+
+    const { capitalGain, saleProceeds } = asset.sell();
+
+    // Capital gain uses cost basis, not current market value
+    expect(capitalGain).toBe(180000 - 200000); // -$20,000 loss
+    expect(saleProceeds).toBe(180000);
+  });
+});
+
 describe('Edge Cases', () => {
   it('asset purchased in future is pending and has no market value', () => {
     const asset = new PhysicalAsset(

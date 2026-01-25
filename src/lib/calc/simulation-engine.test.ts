@@ -614,3 +614,423 @@ describe('Edge Cases', () => {
     expect(() => new FinancialSimulationEngine(inputs).runSimulation(new FixedReturnsProvider(inputs), inputs.timeline!)).not.toThrow();
   });
 });
+
+// ============================================================================
+// Debts Integration Tests
+// ============================================================================
+
+describe('Debts Integration', () => {
+  it('should deduct debt payments from surplus before contributions', () => {
+    // Without debt: all surplus goes to contributions
+    const inputsWithoutDebt = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 92 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 10000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 60000 }) }, // $5000/month
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 24000 }) }, // $2000/month
+      debts: {},
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const resultWithoutDebt = new FinancialSimulationEngine(inputsWithoutDebt).runSimulation(
+      new FixedReturnsProvider(inputsWithoutDebt),
+      inputsWithoutDebt.timeline!
+    );
+
+    // With debt: debt payments reduce surplus available for contributions
+    const inputsWithDebt = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 92 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 10000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 60000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 24000 }) },
+      debts: {
+        'debt-1': {
+          id: 'debt-1',
+          name: 'Credit Card',
+          balance: 10000,
+          apr: 18,
+          interestType: 'simple' as const,
+          startDate: { type: 'now' as const },
+          monthlyPayment: 500, // $500/month debt payment
+        },
+      },
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const resultWithDebt = new FinancialSimulationEngine(inputsWithDebt).runSimulation(
+      new FixedReturnsProvider(inputsWithDebt),
+      inputsWithDebt.timeline!
+    );
+
+    // After year 1, debt payments should reduce portfolio value
+    const portfolioYear1WithoutDebt = resultWithoutDebt.data[1].portfolio.totalValue;
+    const portfolioYear1WithDebt = resultWithDebt.data[1].portfolio.totalValue;
+
+    // Debt payments ($500/month * 12 = $6000/year) reduce contributions
+    expect(portfolioYear1WithDebt).toBeLessThan(portfolioYear1WithoutDebt);
+
+    // Verify debt data is tracked
+    expect(resultWithDebt.data[1].debts).not.toBeNull();
+    expect(resultWithDebt.data[1].debts!.totalPaymentForPeriod).toBeGreaterThan(0);
+  });
+
+  it('should stop payments after debt is paid off', () => {
+    const inputs = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 95 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 50000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 120000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 36000 }) },
+      debts: {
+        'debt-1': {
+          id: 'debt-1',
+          name: 'Car Loan',
+          balance: 6000, // Small loan that will pay off in year 1
+          apr: 5,
+          interestType: 'simple' as const,
+          startDate: { type: 'now' as const },
+          monthlyPayment: 600, // Will pay off in ~10 months
+        },
+      },
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const result = new FinancialSimulationEngine(inputs).runSimulation(new FixedReturnsProvider(inputs), inputs.timeline!);
+
+    // Year 1: Debt should have payments and be paid off by end of year
+    expect(result.data[1].debts!.totalPaymentForPeriod).toBeGreaterThan(0);
+    expect(result.data[1].debts!.perDebtData['debt-1'].balance).toBe(0);
+
+    // Year 2: Debt is paid off, no more payments
+    expect(result.data[2].debts!.totalPaymentForPeriod).toBe(0);
+  });
+
+  it('should respect debt start date timepoints', () => {
+    const inputs = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 95 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 50000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 120000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 36000 }) },
+      debts: {
+        'debt-1': {
+          id: 'debt-1',
+          name: 'Future Debt',
+          balance: 20000,
+          apr: 8,
+          interestType: 'simple' as const,
+          startDate: { type: 'customAge' as const, age: 40 }, // Starts at age 40
+          monthlyPayment: 500,
+        },
+      },
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const result = new FinancialSimulationEngine(inputs).runSimulation(new FixedReturnsProvider(inputs), inputs.timeline!);
+
+    // Find year before and after age 40
+    const yearBefore40 = result.data.find((d) => Math.floor(d.age) === 39);
+    const yearAfter40 = result.data.find((d) => Math.floor(d.age) === 41);
+
+    // Before age 40: No debt payments
+    expect(yearBefore40?.debts?.totalPaymentForPeriod ?? 0).toBe(0);
+
+    // After age 40: Debt payments should be happening
+    expect(yearAfter40?.debts?.totalPaymentForPeriod).toBeGreaterThan(0);
+  });
+});
+
+// ============================================================================
+// Physical Assets Integration Tests
+// ============================================================================
+
+describe('Physical Assets Integration', () => {
+  it('should add sale proceeds to available surplus', () => {
+    // Without asset sale
+    const inputsWithoutSale = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 50 }, // Shorter timeline
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 50000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 100000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 60000 }) },
+      physicalAssets: {},
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const resultWithoutSale = new FinancialSimulationEngine(inputsWithoutSale).runSimulation(
+      new FixedReturnsProvider(inputsWithoutSale),
+      inputsWithoutSale.timeline!
+    );
+
+    // With asset sale at age 40
+    const inputsWithSale = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 50 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 50000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 100000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 60000 }) },
+      physicalAssets: {
+        'asset-1': {
+          id: 'asset-1',
+          name: 'Rental Property',
+          purchaseDate: { type: 'now' as const },
+          purchasePrice: 100000,
+          annualAppreciationRate: 0, // No appreciation for predictable test
+          saleDate: { type: 'customAge' as const, age: 40 },
+        },
+      },
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const resultWithSale = new FinancialSimulationEngine(inputsWithSale).runSimulation(
+      new FixedReturnsProvider(inputsWithSale),
+      inputsWithSale.timeline!
+    );
+
+    // Find the year when the sale occurs by checking physicalAssets data
+    const saleYearData = resultWithSale.data.find((d) => (d.physicalAssets?.totalSaleProceedsForPeriod ?? 0) > 0);
+
+    // Verify sale proceeds are tracked
+    expect(saleYearData).toBeDefined();
+    expect(saleYearData!.physicalAssets!.totalSaleProceedsForPeriod).toBe(100000);
+
+    // At the sale year, the portfolio with sale should have gained the sale proceeds
+    const saleYearIndex = resultWithSale.data.indexOf(saleYearData!);
+    const portfolioWithSaleAtSale = resultWithSale.data[saleYearIndex].portfolio.totalValue;
+    const portfolioWithoutSaleAtSale = resultWithoutSale.data[saleYearIndex].portfolio.totalValue;
+
+    // Sale proceeds should have added to the portfolio
+    expect(portfolioWithSaleAtSale - portfolioWithoutSaleAtSale).toBeGreaterThan(90000); // ~$100k difference minus taxes
+  });
+
+  it('should deduct purchase down payment from surplus', () => {
+    // Without asset purchase
+    const inputsWithoutPurchase = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 50 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 100000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 120000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 60000 }) },
+      physicalAssets: {},
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const resultWithoutPurchase = new FinancialSimulationEngine(inputsWithoutPurchase).runSimulation(
+      new FixedReturnsProvider(inputsWithoutPurchase),
+      inputsWithoutPurchase.timeline!
+    );
+
+    // With asset purchase at age 40 (clear future date)
+    const inputsWithPurchase = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 50 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 100000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 120000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 60000 }) },
+      physicalAssets: {
+        'asset-1': {
+          id: 'asset-1',
+          name: 'Investment Property',
+          purchaseDate: { type: 'customAge' as const, age: 40 },
+          purchasePrice: 300000,
+          annualAppreciationRate: 0,
+          financing: {
+            downPayment: 60000, // 20% down
+            loanAmount: 240000,
+            apr: 6,
+            termMonths: 360,
+          },
+        },
+      },
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const resultWithPurchase = new FinancialSimulationEngine(inputsWithPurchase).runSimulation(
+      new FixedReturnsProvider(inputsWithPurchase),
+      inputsWithPurchase.timeline!
+    );
+
+    // Find the year when purchase happens by checking physicalAssets data
+    const purchaseYearData = resultWithPurchase.data.find((d) => (d.physicalAssets?.totalPurchaseExpenseForPeriod ?? 0) > 0);
+
+    // Verify purchase expense is tracked
+    expect(purchaseYearData).toBeDefined();
+    expect(purchaseYearData!.physicalAssets!.totalPurchaseExpenseForPeriod).toBe(60000);
+
+    // After purchase, portfolio with down payment should have less liquid assets
+    const yearAfterPurchase = resultWithPurchase.data.findIndex((d) => (d.physicalAssets?.totalPurchaseExpenseForPeriod ?? 0) > 0);
+    if (yearAfterPurchase >= 0 && yearAfterPurchase < resultWithoutPurchase.data.length) {
+      const portfolioWithPurchase = resultWithPurchase.data[yearAfterPurchase].portfolio.totalValue;
+      const portfolioWithoutPurchase = resultWithoutPurchase.data[yearAfterPurchase].portfolio.totalValue;
+      expect(portfolioWithPurchase).toBeLessThan(portfolioWithoutPurchase);
+    }
+  });
+
+  it('should include capital gains from physical assets in tax calculation', () => {
+    const inputs = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 50 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 50000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 100000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 50000 }) },
+      physicalAssets: {
+        'asset-1': {
+          id: 'asset-1',
+          name: 'Appreciated Property',
+          purchaseDate: { type: 'now' as const },
+          purchasePrice: 200000, // Cost basis
+          marketValueAtPurchase: 350000, // Current value (already appreciated)
+          annualAppreciationRate: 0,
+          saleDate: { type: 'customAge' as const, age: 40 }, // Sell at age 40
+        },
+      },
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const result = new FinancialSimulationEngine(inputs).runSimulation(new FixedReturnsProvider(inputs), inputs.timeline!);
+
+    // Find year when sale occurs by checking physicalAssets data
+    const saleYearData = result.data.find((d) => (d.physicalAssets?.totalSaleProceedsForPeriod ?? 0) > 0);
+
+    // Verify capital gain is tracked
+    expect(saleYearData).toBeDefined();
+    expect(saleYearData!.physicalAssets!.totalCapitalGainForPeriod).toBeCloseTo(150000, 0); // 350000 - 200000
+
+    // Verify taxes include the capital gain (uses incomeSources, not incomeBreakdown)
+    expect(saleYearData!.taxes).not.toBeNull();
+    expect(saleYearData!.taxes!.incomeSources.realizedGains).toBeGreaterThan(0);
+  });
+
+  it('should track asset equity in simulation data', () => {
+    const inputs = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 50 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 50000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 150000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 60000 }) },
+      physicalAssets: {
+        'asset-1': {
+          id: 'asset-1',
+          name: 'Home',
+          purchaseDate: { type: 'now' as const },
+          purchasePrice: 400000,
+          annualAppreciationRate: 3,
+          financing: {
+            downPayment: 80000,
+            loanAmount: 320000,
+            apr: 6,
+            termMonths: 360,
+          },
+        },
+      },
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const result = new FinancialSimulationEngine(inputs).runSimulation(new FixedReturnsProvider(inputs), inputs.timeline!);
+
+    // Verify physical assets data is tracked over time
+    expect(result.data[1].physicalAssets).not.toBeNull();
+    expect(result.data[1].physicalAssets!.perAssetData['asset-1']).toBeDefined();
+
+    // Year 1: Equity should be positive (appreciation + principal paydown)
+    const year1Equity = result.data[1].physicalAssets!.perAssetData['asset-1'].equity;
+    expect(year1Equity).toBeGreaterThan(80000); // More than initial down payment
+
+    // Year 5: Equity should have grown further
+    const year5 = result.data[5];
+    if (year5?.physicalAssets?.perAssetData['asset-1']) {
+      const year5Equity = year5.physicalAssets.perAssetData['asset-1'].equity;
+      expect(year5Equity).toBeGreaterThan(year1Equity);
+    }
+  });
+
+  it('should apply capital loss deduction when physical asset sold at a loss', () => {
+    const inputs = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 50 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 50000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 100000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 50000 }) },
+      physicalAssets: {
+        'asset-1': {
+          id: 'asset-1',
+          name: 'Depreciated Property',
+          purchaseDate: { type: 'now' as const },
+          purchasePrice: 200000, // Cost basis
+          annualAppreciationRate: -20, // Severe depreciation
+          saleDate: { type: 'customAge' as const, age: 37 }, // Sell after 3 years of depreciation
+        },
+      },
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const result = new FinancialSimulationEngine(inputs).runSimulation(new FixedReturnsProvider(inputs), inputs.timeline!);
+
+    // Find year when sale occurs - sale proceeds are positive even though there's a loss
+    // (because it's unfinanced, saleProceeds = marketValue which is still positive)
+    const saleYearData = result.data.find((d) => d.physicalAssets?.perAssetData['asset-1']?.isSold === true);
+    expect(saleYearData).toBeDefined();
+
+    // Capital gain should be negative (a loss) since marketValue < purchasePrice
+    expect(saleYearData!.physicalAssets!.totalCapitalGainForPeriod).toBeLessThan(0);
+
+    // Realized gains should be 0 (losses don't create taxable gains)
+    expect(saleYearData!.taxes!.incomeSources.realizedGains).toBe(0);
+
+    // Capital loss deduction should be applied (up to $3,000)
+    expect(saleYearData!.taxes!.incomeSources.capitalLossDeduction).toBeGreaterThan(0);
+    expect(saleYearData!.taxes!.incomeSources.capitalLossDeduction).toBeLessThanOrEqual(3000);
+  });
+
+  it('should handle underwater sale where loan exceeds market value', () => {
+    // Create an extremely underwater scenario:
+    // - Minimal down payment (1%)
+    // - Severe depreciation (-50%/year)
+    // - Quick sale at age 36 (only ~1 year of ownership)
+    const inputs = createSimulatorInputs({
+      timeline: { ...createDefaultTimeline(), birthYear: 1990, lifeExpectancy: 50 },
+      accounts: { 'account-1': createSavingsAccount({ id: 'account-1', balance: 100000 }) },
+      incomes: { 'income-1': createWageIncome({ id: 'income-1', amount: 150000 }) },
+      expenses: { 'expense-1': createLivingExpense({ id: 'expense-1', amount: 60000 }) },
+      physicalAssets: {
+        'asset-1': {
+          id: 'asset-1',
+          name: 'Underwater Property',
+          purchaseDate: { type: 'now' as const },
+          purchasePrice: 500000,
+          annualAppreciationRate: -50, // Extreme depreciation (50% value loss per year)
+          financing: {
+            downPayment: 5000, // Only 1% down (99% LTV)
+            loanAmount: 495000,
+            apr: 6,
+            termMonths: 360,
+          },
+          saleDate: { type: 'customAge' as const, age: 36 }, // Sell after ~1 year
+        },
+      },
+      contributionRules: {},
+      baseContributionRule: { type: 'save' },
+    });
+
+    const result = new FinancialSimulationEngine(inputs).runSimulation(new FixedReturnsProvider(inputs), inputs.timeline!);
+
+    // Find year when sale occurs using isSold flag
+    const saleYearData = result.data.find((d) => d.physicalAssets?.perAssetData['asset-1']?.isSold === true);
+    expect(saleYearData).toBeDefined();
+
+    // Sale proceeds should be negative (underwater: marketValue < loanBalance)
+    // After ~1 year at -50%: marketValue ~= 500,000 * 0.5 = 250,000
+    // Loan balance after 1 year is still ~490,000 (mostly interest early in loan)
+    // saleProceeds = marketValue - loanBalance = 250,000 - 490,000 = -240,000 (approximately)
+    expect(saleYearData!.physicalAssets!.totalSaleProceedsForPeriod).toBeLessThan(0);
+
+    // Verify the simulation continues and handles the deficit
+    // The negative proceeds reduce surplus, requiring withdrawals or reducing contributions
+    const yearAfterSale = result.data[result.data.indexOf(saleYearData!) + 1];
+    expect(yearAfterSale).toBeDefined();
+
+    // Portfolio should still have a reasonable value (deficit handled via withdrawals or reduced contributions)
+    expect(yearAfterSale.portfolio.totalValue).toBeGreaterThanOrEqual(0);
+  });
+});
