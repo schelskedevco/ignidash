@@ -25,6 +25,8 @@ export const deleteAppData = mutation({
         timeline: null,
         incomes: [],
         expenses: [],
+        debts: [],
+        physicalAssets: [],
         accounts: [],
         contributionRules: [],
         baseContributionRule: { type: 'save' },

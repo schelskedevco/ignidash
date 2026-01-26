@@ -9,6 +9,8 @@ import { getPlanForCurrentUserOrThrow, getAllPlansForUser } from './utils/plan_u
 import { timelineValidator } from './validators/timeline_validator';
 import { incomeValidator } from './validators/incomes_validator';
 import { expenseValidator } from './validators/expenses_validator';
+import { debtValidator } from './validators/debt_validator';
+import { physicalAssetValidator } from './validators/physical_asset_validator';
 import { accountValidator } from './validators/accounts_validator';
 import { glidePathValidator } from './validators/glide_path_validator';
 import { contributionRulesValidator, baseContributionRuleValidator } from './validators/contribution_rules_validator';
@@ -73,6 +75,8 @@ export const getOrCreateDefaultPlan = mutation({
       timeline: null,
       incomes: [],
       expenses: [],
+      debts: [],
+      physicalAssets: [],
       accounts: [],
       contributionRules: [],
       baseContributionRule: { type: 'save' },
@@ -101,6 +105,8 @@ export const internalGetOrCreateDefaultPlan = internalMutation({
       timeline: null,
       incomes: [],
       expenses: [],
+      debts: [],
+      physicalAssets: [],
       accounts: [],
       contributionRules: [],
       baseContributionRule: { type: 'save' },
@@ -127,6 +133,8 @@ export const createBlankPlan = mutation({
       timeline: null,
       incomes: [],
       expenses: [],
+      debts: [],
+      physicalAssets: [],
       accounts: [],
       contributionRules: [],
       baseContributionRule: { type: 'save' },
@@ -145,6 +153,8 @@ export const createPlanWithData = mutation({
     timeline: v.union(timelineValidator, v.null()),
     incomes: v.array(incomeValidator),
     expenses: v.array(expenseValidator),
+    debts: v.optional(v.array(debtValidator)),
+    physicalAssets: v.optional(v.array(physicalAssetValidator)),
     accounts: v.array(accountValidator),
     glidePath: v.optional(glidePathValidator),
     contributionRules: v.array(contributionRulesValidator),
@@ -162,6 +172,8 @@ export const createPlanWithData = mutation({
       timeline,
       incomes,
       expenses,
+      debts,
+      physicalAssets,
       accounts,
       glidePath,
       contributionRules,
@@ -184,6 +196,8 @@ export const createPlanWithData = mutation({
       timeline,
       incomes,
       expenses,
+      debts,
+      physicalAssets,
       accounts,
       glidePath,
       contributionRules,
@@ -217,6 +231,8 @@ export const clonePlan = mutation({
       timeline,
       incomes,
       expenses,
+      debts,
+      physicalAssets,
       accounts,
       contributionRules,
       baseContributionRule,
@@ -229,6 +245,8 @@ export const clonePlan = mutation({
       timeline: structuredClone(timeline),
       incomes: structuredClone(incomes),
       expenses: structuredClone(expenses),
+      debts: structuredClone(debts),
+      physicalAssets: structuredClone(physicalAssets),
       accounts: structuredClone(accounts),
       contributionRules: structuredClone(contributionRules),
       baseContributionRule: structuredClone(baseContributionRule),

@@ -140,6 +140,8 @@ export const earlyRetirementTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime'
       disabled: false,
     },
   ],
+  debts: [],
+  physicalAssets: [],
   accounts: [
     {
       type: '401k',

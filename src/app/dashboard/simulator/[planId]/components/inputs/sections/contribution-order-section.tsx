@@ -197,7 +197,13 @@ export default function ContributionOrderSection(props: ContributionOrderSection
 
   return (
     <>
-      <DisclosureSection title="Contribution Rules" icon={HandCoinsIcon} centerPanelContent hideBottomBorders {...props}>
+      <DisclosureSection
+        title="Contribution Rules"
+        icon={HandCoinsIcon}
+        centerPanelContent={!hasContributionRules}
+        hideBottomBorders
+        {...props}
+      >
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between gap-3">
             <HeadlessField className="grow">

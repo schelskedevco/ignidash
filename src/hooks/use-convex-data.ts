@@ -8,6 +8,8 @@ import {
   timelineFromConvex,
   incomeFromConvex,
   expenseFromConvex,
+  debtFromConvex,
+  physicalAssetFromConvex,
   accountFromConvex,
   contributionFromConvex,
   baseContributionFromConvex,
@@ -78,6 +80,50 @@ export const useExpenseData = (expenseId: string | null) => {
   const planId = useSelectedPlanId();
   const q = useQuery(api.expense.getExpense, { planId, expenseId });
   return useMemo(() => (q ? expenseFromConvex(q) : null), [q]);
+};
+
+// Debts
+export const useDebtsData = () => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.debt.getDebts, { planId });
+  return {
+    data: useMemo(() => (q ? Object.fromEntries(q.map((debt) => [debt.id, debtFromConvex(debt)])) : {}), [q]),
+    isLoading: q === undefined,
+  };
+};
+
+export const useCountOfDebts = () => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.debt.getCountOfDebts, { planId });
+  return useMemo(() => (q ? q : 0), [q]);
+};
+
+export const useDebtData = (debtId: string | null) => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.debt.getDebt, { planId, debtId });
+  return useMemo(() => (q ? debtFromConvex(q) : null), [q]);
+};
+
+// Physical Assets
+export const usePhysicalAssetsData = () => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.physical_asset.getPhysicalAssets, { planId });
+  return {
+    data: useMemo(() => (q ? Object.fromEntries(q.map((asset) => [asset.id, physicalAssetFromConvex(asset)])) : {}), [q]),
+    isLoading: q === undefined,
+  };
+};
+
+export const useCountOfPhysicalAssets = () => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.physical_asset.getCountOfPhysicalAssets, { planId });
+  return useMemo(() => (q ? q : 0), [q]);
+};
+
+export const usePhysicalAssetData = (physicalAssetId: string | null) => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.physical_asset.getPhysicalAsset, { planId, physicalAssetId });
+  return useMemo(() => (q ? physicalAssetFromConvex(q) : null), [q]);
 };
 
 // Accounts

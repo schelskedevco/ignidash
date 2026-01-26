@@ -99,6 +99,8 @@ export const basicTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId
       disabled: false,
     },
   ],
+  debts: [],
+  physicalAssets: [],
   accounts: [
     {
       type: '401k',

@@ -6,6 +6,8 @@ import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
 import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
+import type { DebtInputs } from '@/lib/schemas/inputs/debt-schema';
+import type { PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-schema';
 import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assumptions-schema';
 import type { TimelineInputs } from '@/lib/schemas/inputs/timeline-form-schema';
 import type { TaxSettingsInputs } from '@/lib/schemas/inputs/tax-settings-schema';
@@ -112,6 +114,40 @@ export function expenseFromConvex(expense: Doc<'plans'>['expenses'][number]): Ex
 }
 
 /**
+ * Transforms a Convex debt to Zod DebtInputs format
+ */
+export function debtFromConvex(debt: NonNullable<Doc<'plans'>['debts']>[number]): DebtInputs {
+  return {
+    id: debt.id,
+    name: debt.name,
+    balance: debt.balance,
+    apr: debt.apr,
+    interestType: debt.interestType,
+    compoundingFrequency: debt.compoundingFrequency,
+    startDate: { ...debt.startDate },
+    monthlyPayment: debt.monthlyPayment,
+    disabled: debt.disabled ?? false,
+  };
+}
+
+/**
+ * Transforms a Convex physical asset to Zod PhysicalAssetInputs format
+ */
+export function physicalAssetFromConvex(physicalAsset: NonNullable<Doc<'plans'>['physicalAssets']>[number]): PhysicalAssetInputs {
+  return {
+    id: physicalAsset.id,
+    name: physicalAsset.name,
+    purchaseDate: { ...physicalAsset.purchaseDate },
+    purchasePrice: physicalAsset.purchasePrice,
+    marketValueAtPurchase: physicalAsset.marketValueAtPurchase,
+    annualAppreciationRate: physicalAsset.annualAppreciationRate,
+    saleDate: physicalAsset.saleDate ? { ...physicalAsset.saleDate } : undefined,
+    financing: physicalAsset.financing ? { ...physicalAsset.financing } : undefined,
+    disabled: physicalAsset.disabled ?? false,
+  };
+}
+
+/**
  * Transforms a Convex income to Zod IncomeInputs format
  */
 export function incomeFromConvex(income: Doc<'plans'>['incomes'][number]): IncomeInputs {
@@ -156,6 +192,8 @@ export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
   const accounts = Object.fromEntries(plan.accounts.map((account) => [account.id, accountFromConvex(account)]));
   const glidePath = glidePathFromConvex(plan.glidePath);
   const expenses = Object.fromEntries(plan.expenses.map((expense) => [expense.id, expenseFromConvex(expense)]));
+  const debts = Object.fromEntries((plan.debts ?? []).map((debt) => [debt.id, debtFromConvex(debt)]));
+  const physicalAssets = Object.fromEntries((plan.physicalAssets ?? []).map((asset) => [asset.id, physicalAssetFromConvex(asset)]));
   const contributionRules = Object.fromEntries(plan.contributionRules.map((rule) => [rule.id, contributionFromConvex(rule)]));
 
   return {
@@ -164,8 +202,8 @@ export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
     accounts,
     glidePath,
     expenses,
-    debts: {},
-    physicalAssets: {},
+    debts,
+    physicalAssets,
     contributionRules,
     baseContributionRule: baseContributionFromConvex(plan.baseContributionRule),
     marketAssumptions: marketAssumptionsFromConvex(plan.marketAssumptions),
@@ -291,6 +329,40 @@ export function expenseToConvex(expense: ExpenseInputs): Doc<'plans'>['expenses'
 }
 
 /**
+ * Transforms Zod DebtInputs to Convex debt format
+ */
+export function debtToConvex(debt: DebtInputs): NonNullable<Doc<'plans'>['debts']>[number] {
+  return {
+    id: debt.id,
+    name: debt.name,
+    balance: debt.balance,
+    apr: debt.apr,
+    interestType: debt.interestType,
+    compoundingFrequency: debt.compoundingFrequency,
+    startDate: { ...debt.startDate },
+    monthlyPayment: debt.monthlyPayment,
+    disabled: debt.disabled ?? false,
+  };
+}
+
+/**
+ * Transforms Zod PhysicalAssetInputs to Convex physical asset format
+ */
+export function physicalAssetToConvex(physicalAsset: PhysicalAssetInputs): NonNullable<Doc<'plans'>['physicalAssets']>[number] {
+  return {
+    id: physicalAsset.id,
+    name: physicalAsset.name,
+    purchaseDate: { ...physicalAsset.purchaseDate },
+    purchasePrice: physicalAsset.purchasePrice,
+    marketValueAtPurchase: physicalAsset.marketValueAtPurchase,
+    annualAppreciationRate: physicalAsset.annualAppreciationRate,
+    saleDate: physicalAsset.saleDate ? { ...physicalAsset.saleDate } : undefined,
+    financing: physicalAsset.financing ? { ...physicalAsset.financing } : undefined,
+    disabled: physicalAsset.disabled ?? false,
+  };
+}
+
+/**
  * Transforms Zod IncomeInputs to Convex income format
  */
 export function incomeToConvex(income: IncomeInputs): Doc<'plans'>['incomes'][number] {
@@ -337,6 +409,8 @@ export function simulatorToConvex(
   const accounts = Object.values(simulator.accounts).map(accountToConvex);
   const glidePath = simulator.glidePath ? glidePathToConvex(simulator.glidePath) : undefined;
   const expenses = Object.values(simulator.expenses).map(expenseToConvex);
+  const debts = Object.values(simulator.debts).map(debtToConvex);
+  const physicalAssets = Object.values(simulator.physicalAssets).map(physicalAssetToConvex);
   const contributionRules = Object.values(simulator.contributionRules).map(contributionToConvex);
 
   return {
@@ -345,6 +419,8 @@ export function simulatorToConvex(
     accounts,
     glidePath,
     expenses,
+    debts,
+    physicalAssets,
     contributionRules,
     baseContributionRule: baseContributionToConvex(simulator.baseContributionRule),
     marketAssumptions: marketAssumptionsToConvex(simulator.marketAssumptions),
