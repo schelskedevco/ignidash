@@ -179,28 +179,27 @@ export const createPhysicalAssetInput = (overrides?: Partial<PhysicalAssetInputs
   purchasePrice: overrides?.purchasePrice ?? 400000,
   marketValue: overrides?.marketValue,
   appreciationRate: overrides?.appreciationRate ?? 3,
-  saleDate: overrides?.saleDate,
+  saleDate: overrides?.saleDate ?? { type: 'atLifeExpectancy' },
   financing: overrides?.financing,
 });
 
 export const createFinancedAssetInput = (overrides?: Partial<PhysicalAssetInputs>): PhysicalAssetInputs => {
-  const purchasePrice = overrides?.purchasePrice ?? 400000;
   const downPayment = overrides?.financing?.downPayment ?? 80000;
-  const loanAmount = overrides?.financing?.loanAmount ?? purchasePrice - downPayment;
+  const loanBalance = overrides?.financing?.loanBalance ?? 320000;
 
   return {
     id: overrides?.id ?? 'asset-1',
     name: overrides?.name ?? 'Primary Residence',
     purchaseDate: overrides?.purchaseDate ?? { type: 'now' },
-    purchasePrice,
+    purchasePrice: overrides?.purchasePrice ?? 400000,
     marketValue: overrides?.marketValue,
     appreciationRate: overrides?.appreciationRate ?? 3,
-    saleDate: overrides?.saleDate,
+    saleDate: overrides?.saleDate ?? { type: 'atLifeExpectancy' },
     financing: {
       downPayment,
-      loanAmount,
+      loanBalance,
       apr: overrides?.financing?.apr ?? 6,
-      termMonths: overrides?.financing?.termMonths ?? 360,
+      monthlyPayment: overrides?.financing?.monthlyPayment ?? 1918.56, // Standard 30yr payment at 6% APR on $320k
     },
   };
 };

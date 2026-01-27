@@ -41,28 +41,30 @@ const createPhysicalAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}):
   purchasePrice: overrides.purchasePrice ?? 400000,
   marketValue: overrides.marketValue,
   appreciationRate: overrides.appreciationRate ?? 3,
-  saleDate: overrides.saleDate,
+  saleDate: overrides.saleDate ?? { type: 'atLifeExpectancy' },
   financing: overrides.financing,
 });
 
 const createFinancedAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}): PhysicalAssetInputs => {
-  const purchasePrice = overrides.purchasePrice ?? 400000;
   const downPayment = overrides.financing?.downPayment ?? 80000;
-  const loanAmount = overrides.financing?.loanAmount ?? purchasePrice - downPayment;
+  const loanBalance = overrides.financing?.loanBalance ?? 320000;
+  const apr = overrides.financing?.apr ?? 6;
+  // Default monthly payment calculated from standard amortization formula for 30yr @ 6% on $320k
+  const monthlyPayment = overrides.financing?.monthlyPayment ?? 1918.56;
 
   return {
     id: overrides.id ?? 'asset-1',
     name: overrides.name ?? 'Primary Residence',
     purchaseDate: overrides.purchaseDate ?? { type: 'now' },
-    purchasePrice,
+    purchasePrice: overrides.purchasePrice ?? 400000,
     marketValue: overrides.marketValue,
     appreciationRate: overrides.appreciationRate ?? 3,
-    saleDate: overrides.saleDate,
+    saleDate: overrides.saleDate ?? { type: 'atLifeExpectancy' },
     financing: {
       downPayment,
-      loanAmount,
-      apr: overrides.financing?.apr ?? 6,
-      termMonths: overrides.financing?.termMonths ?? 360,
+      loanBalance,
+      apr,
+      monthlyPayment,
     },
   };
 };
@@ -156,66 +158,74 @@ describe('PhysicalAsset Class', () => {
   });
 
   describe('Loan Payment Tests', () => {
-    it('calculates amortized payment correctly', () => {
+    it('returns the configured monthly payment', () => {
+      // Formula: P * r * (1+r)^n / ((1+r)^n - 1)
+      const monthlyRate = 0.06 / 12;
+      const numPayments = 360;
+      const configuredPayment =
+        (320000 * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 400000,
           financing: {
             downPayment: 80000,
-            loanAmount: 320000,
+            loanBalance: 320000,
             apr: 6,
-            termMonths: 360,
+            monthlyPayment: configuredPayment,
           },
         })
       );
 
-      // Formula: P * r * (1+r)^n / ((1+r)^n - 1)
-      const monthlyRate = 0.06 / 12;
-      const numPayments = 360;
-      const expectedPayment =
-        (320000 * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
-
       const { monthlyLoanPayment } = asset.getMonthlyLoanPayment();
 
-      expect(monthlyLoanPayment).toBeCloseTo(expectedPayment, 2);
+      expect(monthlyLoanPayment).toBeCloseTo(configuredPayment, 2);
     });
 
     it('handles zero APR loan', () => {
+      // Zero APR: payment = loanBalance / termMonths (configured by user)
+      const expectedPayment = 24000 / 48;
+
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 30000,
           financing: {
             downPayment: 6000,
-            loanAmount: 24000,
+            loanBalance: 24000,
             apr: 0,
-            termMonths: 48,
+            monthlyPayment: expectedPayment,
           },
         })
       );
 
-      // Zero APR: payment = loanAmount / termMonths
-      const expectedPayment = 24000 / 48;
       const { monthlyLoanPayment } = asset.getMonthlyLoanPayment();
 
       expect(monthlyLoanPayment).toBeCloseTo(expectedPayment);
     });
 
     it('applies payment (interest vs principal split)', () => {
+      const loanBalance = 320000;
+      const apr = 6;
+      const monthlyRate = apr / 100 / 12;
+      const numPayments = 360;
+      const monthlyPayment =
+        (loanBalance * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 400000,
           financing: {
             downPayment: 80000,
-            loanAmount: 320000,
-            apr: 6,
-            termMonths: 360,
+            loanBalance,
+            apr,
+            monthlyPayment,
           },
         })
       );
 
       const initialBalance = asset.getLoanBalance();
       const { monthlyLoanPayment } = asset.getMonthlyLoanPayment();
-      const interest = initialBalance * (0.06 / 12); // Monthly interest
+      const interest = initialBalance * (apr / 100 / 12); // Monthly interest
       const principal = monthlyLoanPayment - interest;
 
       asset.applyLoanPayment(monthlyLoanPayment);
@@ -229,9 +239,9 @@ describe('PhysicalAsset Class', () => {
           purchasePrice: 10000,
           financing: {
             downPayment: 0,
-            loanAmount: 10000,
+            loanBalance: 10000,
             apr: 0,
-            termMonths: 10,
+            monthlyPayment: 1000, // 10000 / 10 payments
           },
         })
       );
@@ -261,14 +271,21 @@ describe('PhysicalAsset Class', () => {
 
   describe('Sale Tests', () => {
     it('sale proceeds = market value - loan balance', () => {
+      const loanBalance = 320000;
+      const apr = 6;
+      const monthlyRate = apr / 100 / 12;
+      const numPayments = 360;
+      const monthlyPayment =
+        (loanBalance * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 400000,
           financing: {
             downPayment: 80000,
-            loanAmount: 320000,
-            apr: 6,
-            termMonths: 360,
+            loanBalance,
+            apr,
+            monthlyPayment,
           },
         })
       );
@@ -309,15 +326,22 @@ describe('PhysicalAsset Class', () => {
     });
 
     it('handles underwater sale (loan > value)', () => {
+      const loanBalance = 380000;
+      const apr = 6;
+      const monthlyRate = apr / 100 / 12;
+      const numPayments = 360;
+      const monthlyPayment =
+        (loanBalance * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 400000,
           appreciationRate: -20, // Major depreciation
           financing: {
             downPayment: 20000,
-            loanAmount: 380000, // High LTV
-            apr: 6,
-            termMonths: 360,
+            loanBalance, // High LTV
+            apr,
+            monthlyPayment,
           },
         })
       );
@@ -507,14 +531,14 @@ describe('PhysicalAsset Class', () => {
           purchasePrice: 400000,
           financing: {
             downPayment: 80000,
-            loanAmount: 320000,
+            loanBalance: 320000,
             apr: 6,
-            termMonths: 360,
+            monthlyPayment: 1918.56,
           },
         })
       );
 
-      // Initial equity should be the down payment
+      // Initial equity should be market value - loan balance
       expect(asset.getEquity()).toBeCloseTo(80000, 0);
     });
 
@@ -530,15 +554,22 @@ describe('PhysicalAsset Class', () => {
     });
 
     it('equity cannot be negative', () => {
+      const loanBalance = 95000;
+      const apr = 6;
+      const monthlyRate = apr / 100 / 12;
+      const numPayments = 360;
+      const monthlyPayment =
+        (loanBalance * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 100000,
           appreciationRate: -50, // Extreme depreciation
           financing: {
             downPayment: 5000,
-            loanAmount: 95000,
-            apr: 6,
-            termMonths: 360,
+            loanBalance,
+            apr,
+            monthlyPayment,
           },
         })
       );
@@ -605,7 +636,7 @@ describe('PhysicalAssets Collection', () => {
       createFinancedAssetInput({
         id: 'house1',
         purchasePrice: 400000,
-        financing: { downPayment: 80000, loanAmount: 320000, apr: 6, termMonths: 360 },
+        financing: { downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
       }),
       createPhysicalAssetInput({
         id: 'car',
@@ -630,7 +661,7 @@ describe('PhysicalAssetsProcessor', () => {
         id: 'house',
         purchasePrice: 400000,
         appreciationRate: 3,
-        financing: { downPayment: 80000, loanAmount: 320000, apr: 6, termMonths: 360 },
+        financing: { downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
       }),
     ]);
 
@@ -671,7 +702,7 @@ describe('PhysicalAssetsProcessor', () => {
         id: 'house',
         purchasePrice: 400000,
         appreciationRate: 3,
-        financing: { downPayment: 80000, loanAmount: 320000, apr: 6, termMonths: 360 },
+        financing: { downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
       }),
     ]);
 
@@ -792,9 +823,9 @@ describe('Purchase Expense Tracking', () => {
           purchasePrice: 400000,
           financing: {
             downPayment: 80000,
-            loanAmount: 320000,
+            loanBalance: 320000,
             apr: 6,
-            termMonths: 360,
+            monthlyPayment: 1918.56,
           },
         })
       );
@@ -806,15 +837,22 @@ describe('Purchase Expense Tracking', () => {
     });
 
     it('purchase() returns 0 for zero down payment (100% financed)', () => {
+      const loanBalance = 400000;
+      const apr = 6;
+      const monthlyRate = apr / 100 / 12;
+      const numPayments = 360;
+      const monthlyPayment =
+        (loanBalance * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchaseDate: { type: 'customAge', age: 40 },
           purchasePrice: 400000,
           financing: {
             downPayment: 0,
-            loanAmount: 400000,
-            apr: 6,
-            termMonths: 360,
+            loanBalance,
+            apr,
+            monthlyPayment,
           },
         })
       );
@@ -962,9 +1000,9 @@ describe('Purchase Expense Tracking', () => {
           purchasePrice: 400000,
           financing: {
             downPayment: 80000,
-            loanAmount: 320000,
+            loanBalance: 320000,
             apr: 6,
-            termMonths: 360,
+            monthlyPayment: 1918.56,
           },
         }),
       ]);
@@ -1051,26 +1089,26 @@ describe('Purchase Expense Tracking', () => {
 
 describe('Full Amortization Tests', () => {
   it('should pay off loan exactly at term end with correct total interest', () => {
-    const loanAmount = 320000;
+    const loanBalance = 320000;
     const apr = 6;
     const termMonths = 360;
     const monthlyRate = apr / 100 / 12;
+
+    // Calculate expected monthly payment using standard amortization formula
+    const expectedMonthlyPayment =
+      (loanBalance * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
 
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
         purchasePrice: 400000,
         financing: {
           downPayment: 80000,
-          loanAmount,
+          loanBalance,
           apr,
-          termMonths,
+          monthlyPayment: expectedMonthlyPayment,
         },
       })
     );
-
-    // Calculate expected monthly payment using standard amortization formula
-    const expectedMonthlyPayment =
-      (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
 
     // Apply all payments
     let totalPayments = 0;
@@ -1092,28 +1130,27 @@ describe('Full Amortization Tests', () => {
     expect(totalPayments).toBeCloseTo(expectedTotalPayments, 0);
 
     // Verify total interest paid
-    const totalInterest = totalPayments - loanAmount;
+    const totalInterest = totalPayments - loanBalance;
     expect(totalInterest).toBeGreaterThan(0);
-    expect(totalInterest).toBeCloseTo(expectedTotalPayments - loanAmount, 0);
+    expect(totalInterest).toBeCloseTo(expectedTotalPayments - loanBalance, 0);
   });
 
   it('should pay off zero APR loan with exact payments', () => {
-    const loanAmount = 24000;
+    const loanBalance = 24000;
     const termMonths = 48;
+    const expectedPayment = loanBalance / termMonths;
 
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
         purchasePrice: 30000,
         financing: {
           downPayment: 6000,
-          loanAmount,
+          loanBalance,
           apr: 0,
-          termMonths,
+          monthlyPayment: expectedPayment,
         },
       })
     );
-
-    const expectedPayment = loanAmount / termMonths;
 
     // Apply all payments
     let totalPayments = 0;
@@ -1127,23 +1164,27 @@ describe('Full Amortization Tests', () => {
 
     // Loan should be paid off exactly with zero interest
     expect(asset.getLoanBalance()).toBe(0);
-    expect(totalPayments).toBeCloseTo(loanAmount, 2);
+    expect(totalPayments).toBeCloseTo(loanBalance, 2);
   });
 
   it('should correctly track principal vs interest split over loan life', () => {
-    const loanAmount = 100000;
+    const loanBalance = 100000;
     const apr = 5;
     const termMonths = 120; // 10 year loan
     const monthlyRate = apr / 100 / 12;
+
+    // Calculate monthly payment using standard amortization formula
+    const monthlyPayment =
+      (loanBalance * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
 
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
         purchasePrice: 125000,
         financing: {
           downPayment: 25000,
-          loanAmount,
+          loanBalance,
           apr,
-          termMonths,
+          monthlyPayment,
         },
       })
     );
@@ -1165,8 +1206,8 @@ describe('Full Amortization Tests', () => {
       asset.applyLoanPayment(monthlyLoanPayment);
     }
 
-    // Total principal should equal original loan amount
-    expect(totalPrincipal).toBeCloseTo(loanAmount, 0);
+    // Total principal should equal original loan balance
+    expect(totalPrincipal).toBeCloseTo(loanBalance, 0);
 
     // Total interest should be positive for a loan with APR > 0
     expect(totalInterest).toBeGreaterThan(0);
@@ -1214,7 +1255,12 @@ describe('Capital Loss Scenarios', () => {
   it('should calculate capital loss on financed depreciated asset', () => {
     const purchasePrice = 40000;
     const downPayment = 8000;
-    const loanAmount = 32000;
+    const loanBalance = 32000;
+    const apr = 4;
+    const monthlyRate = apr / 100 / 12;
+    const termMonths = 60;
+    const monthlyPayment =
+      (loanBalance * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
 
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
@@ -1222,9 +1268,9 @@ describe('Capital Loss Scenarios', () => {
         appreciationRate: -15, // 15% annual depreciation (like a car)
         financing: {
           downPayment,
-          loanAmount,
-          apr: 4,
-          termMonths: 60,
+          loanBalance,
+          apr,
+          monthlyPayment,
         },
       })
     );
@@ -1313,15 +1359,22 @@ describe('Edge Cases', () => {
   });
 
   it('deprecating asset becomes underwater', () => {
+    const loanBalance = 27000;
+    const apr = 5;
+    const monthlyRate = apr / 100 / 12;
+    const termMonths = 60;
+    const monthlyPayment =
+      (loanBalance * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / (Math.pow(1 + monthlyRate, termMonths) - 1);
+
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
         purchasePrice: 30000, // Car
         appreciationRate: -25, // 25% annual depreciation
         financing: {
           downPayment: 3000,
-          loanAmount: 27000,
-          apr: 5,
-          termMonths: 60,
+          loanBalance,
+          apr,
+          monthlyPayment,
         },
       })
     );
@@ -1335,10 +1388,10 @@ describe('Edge Cases', () => {
 
     // Asset should be underwater (loan > value)
     const marketValue = asset.getMarketValue();
-    const loanBalance = asset.getLoanBalance();
+    const currentLoanBalance = asset.getLoanBalance();
 
     // Market value after 2 years: 30000 * (0.75)^2 = 16875
-    expect(marketValue).toBeLessThan(loanBalance);
+    expect(marketValue).toBeLessThan(currentLoanBalance);
 
     // Equity should be 0 (floored)
     expect(asset.getEquity()).toBe(0);
@@ -1363,9 +1416,9 @@ describe('Edge Cases', () => {
         purchasePrice: 10000,
         financing: {
           downPayment: 0,
-          loanAmount: 10000,
+          loanBalance: 10000,
           apr: 0,
-          termMonths: 10,
+          monthlyPayment: 1000, // 10000 / 10 payments
         },
       })
     );

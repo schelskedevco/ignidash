@@ -214,22 +214,13 @@ export class PhysicalAsset {
     this.financing = data.financing;
 
     if (data.financing) {
-      this.loanBalance = data.financing.loanAmount;
-      this.monthlyLoanPayment = this.calculateMonthlyLoanPayment(data.financing);
+      this.loanBalance = data.financing.loanBalance;
+      this.monthlyLoanPayment = data.financing.monthlyPayment;
     }
 
     // Assets with purchaseDate.type === 'now' are already owned (no purchase expense)
     // All other purchase date types start as pending
     this.ownershipStatus = data.purchaseDate.type === 'now' ? 'owned' : 'pending';
-  }
-
-  private calculateMonthlyLoanPayment(financing: FinancingInputs): number {
-    const monthlyRate = financing.apr / 100 / 12;
-    const numPayments = financing.termMonths;
-
-    if (monthlyRate === 0) return financing.loanAmount / numPayments;
-
-    return (financing.loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
   }
 
   getId(): string {

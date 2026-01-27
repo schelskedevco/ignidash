@@ -90,6 +90,7 @@ export default function PhysicalAssetDialog({
 
   const purchaseTimePoint = useWatch({ control, name: 'purchaseDate' });
   const purchaseDateType = purchaseTimePoint.type;
+  const showDownPaymentField = purchaseDateType !== 'now';
 
   const saleTimePoint = useWatch({ control, name: 'saleDate' });
   const saleDateType = saleTimePoint?.type;
@@ -119,6 +120,11 @@ export default function PhysicalAssetDialog({
   const getDateColSpan = (type: string | undefined) => {
     if (type === 'customDate') return 'col-span-2';
     if (type === 'customAge') return 'col-span-1';
+    return 'col-span-2';
+  };
+
+  const getAPRColSpan = () => {
+    if (showDownPaymentField) return 'col-span-1';
     return 'col-span-2';
   };
 
@@ -494,30 +500,30 @@ export default function PhysicalAssetDialog({
                     <DisclosurePanel className="pt-4">
                       <div className="grid grid-cols-2 gap-4">
                         <Field>
-                          <Label htmlFor="financing.downPayment">Down Payment</Label>
+                          <Label htmlFor="financing.loanBalance">Loan Balance</Label>
                           <NumberInput
-                            name="financing.downPayment"
+                            name="financing.loanBalance"
                             control={control}
-                            id="financing.downPayment"
-                            inputMode="decimal"
-                            placeholder="$100,000"
-                            prefix="$"
-                          />
-                          {errors.financing?.downPayment && <ErrorMessage>{errors.financing?.downPayment?.message}</ErrorMessage>}
-                        </Field>
-                        <Field>
-                          <Label htmlFor="financing.loanAmount">Loan Amount</Label>
-                          <NumberInput
-                            name="financing.loanAmount"
-                            control={control}
-                            id="financing.loanAmount"
+                            id="financing.loanBalance"
                             inputMode="decimal"
                             placeholder="$400,000"
                             prefix="$"
                           />
-                          {errors.financing?.loanAmount && <ErrorMessage>{errors.financing?.loanAmount?.message}</ErrorMessage>}
+                          {errors.financing?.loanBalance && <ErrorMessage>{errors.financing?.loanBalance?.message}</ErrorMessage>}
                         </Field>
                         <Field>
+                          <Label htmlFor="financing.monthlyPayment">Monthly Payment</Label>
+                          <NumberInput
+                            name="financing.monthlyPayment"
+                            control={control}
+                            id="financing.monthlyPayment"
+                            inputMode="decimal"
+                            placeholder="$2,400"
+                            prefix="$"
+                          />
+                          {errors.financing?.monthlyPayment && <ErrorMessage>{errors.financing?.monthlyPayment?.message}</ErrorMessage>}
+                        </Field>
+                        <Field className={getAPRColSpan()}>
                           <Label htmlFor="financing.apr">APR</Label>
                           <NumberInput
                             name="financing.apr"
@@ -529,17 +535,20 @@ export default function PhysicalAssetDialog({
                           />
                           {errors.financing?.apr && <ErrorMessage>{errors.financing?.apr?.message}</ErrorMessage>}
                         </Field>
-                        <Field>
-                          <Label htmlFor="financing.termMonths">Term (Months)</Label>
-                          <NumberInput
-                            name="financing.termMonths"
-                            control={control}
-                            id="financing.termMonths"
-                            inputMode="numeric"
-                            placeholder="360"
-                          />
-                          {errors.financing?.termMonths && <ErrorMessage>{errors.financing?.termMonths?.message}</ErrorMessage>}
-                        </Field>
+                        {showDownPaymentField && (
+                          <Field>
+                            <Label htmlFor="financing.downPayment">Down Payment</Label>
+                            <NumberInput
+                              name="financing.downPayment"
+                              control={control}
+                              id="financing.downPayment"
+                              inputMode="decimal"
+                              placeholder="$100,000"
+                              prefix="$"
+                            />
+                            {errors.financing?.downPayment && <ErrorMessage>{errors.financing?.downPayment?.message}</ErrorMessage>}
+                          </Field>
+                        )}
                       </div>
                     </DisclosurePanel>
                   </>
