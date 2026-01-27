@@ -109,7 +109,7 @@ const systemPrompt = (planData: string, keyMetrics: string): string => `
   - **Expenses:** Name, amount, frequency, start/end dates, growth rate with optional cap
   - **Accounts:** Savings, Taxable Brokerage, 401(k), Roth 401(k), Traditional IRA, Roth IRA, HSA—each with balance and bond allocation; taxable accounts track cost basis, Roth accounts track contribution basis
   - **Glide Path:** Enable/disable automatic rebalancing toward a target bond allocation; specify end time (custom date or custom age) and target bond percentage; prioritizes tax-advantaged accounts for rebalancing
-  - **Contribution Rules:** Priority-ordered rules specifying account, amount (fixed/percentage/unlimited), optional employer match, optional max balance cap
+  - **Contribution Order:** Priority-ordered rules specifying account, amount (fixed/percentage/unlimited), optional employer match, optional max balance cap
   - **Market Assumptions:** Expected returns and dividend/interest yields for stocks, bonds, and cash; inflation rate
   - **Tax Settings:** Filing status (single, married filing jointly, head of household)
   - **Simulation Mode:** Single projection (fixed, stochastic, or historical returns with custom start years) or Monte Carlo (500 runs); seed available for reproducibility
@@ -277,7 +277,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - **Expenses:** Name, amount, frequency, start/end dates, growth rate with optional cap
   - **Accounts:** Savings, Taxable Brokerage, 401(k), Roth 401(k), Traditional IRA, Roth IRA, HSA—each with balance and bond allocation; taxable accounts track cost basis, Roth accounts track contribution basis
   - **Glide Path:** Enable/disable automatic rebalancing toward a target bond allocation; specify end time (custom date or custom age) and target bond percentage; prioritizes tax-advantaged accounts for rebalancing
-  - **Contribution Rules:** Priority-ordered rules specifying account, amount (fixed/percentage/unlimited), optional employer match, optional max balance cap
+  - **Contribution Order:** Priority-ordered rules specifying account, amount (fixed/percentage/unlimited), optional employer match, optional max balance cap
   - **Market Assumptions:** Expected returns and dividend/interest yields for stocks, bonds, and cash; inflation rate
   - **Tax Settings:** Filing status (single, married filing jointly, head of household)
   - **Simulation Mode:** Single projection (fixed, stochastic, or historical returns with custom start years) or Monte Carlo (500 runs); seed available for reproducibility

@@ -198,7 +198,7 @@ export default function ContributionOrderSection(props: ContributionOrderSection
   return (
     <>
       <DisclosureSection
-        title="Contribution Rules"
+        title="Contribution Order"
         icon={HandCoinsIcon}
         centerPanelContent={!hasContributionRules}
         hideBottomBorders
