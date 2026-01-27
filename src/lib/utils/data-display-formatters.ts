@@ -34,6 +34,37 @@ export const timeFrameForDisplay = (startTimePoint: TimePoint, endTimePoint?: Ti
   return endLabel ? `${startLabel} → ${endLabel}` : startLabel;
 };
 
+export const physicalAssetTimeFrameForDisplay = (startTimePoint: TimePoint, endTimePoint?: TimePoint) => {
+  function labelFromType(tp: TimePoint) {
+    switch (tp.type) {
+      case 'now':
+        return 'Already Owned';
+      case 'atRetirement':
+        return 'Retirement';
+      case 'atLifeExpectancy':
+        return 'Never Sold';
+      case 'customDate': {
+        const month = tp.month;
+        const year = tp.year;
+        if (month !== undefined && year !== undefined) {
+          const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' });
+          return formatter.format(new Date(year, month - 1));
+        }
+        return 'Custom Date';
+      }
+      case 'customAge': {
+        if (tp.age !== undefined) return `Age ${tp.age}`;
+        return 'Custom Age';
+      }
+    }
+  }
+
+  const startLabel = labelFromType(startTimePoint);
+  const endLabel = endTimePoint ? labelFromType(endTimePoint) : undefined;
+
+  return endLabel ? `${startLabel} → ${endLabel}` : startLabel;
+};
+
 export const growthForDisplay = (growthRate: Growth['growthRate'], growthLimit: Growth['growthLimit']) => {
   if (growthRate === undefined) return 'No Growth';
 

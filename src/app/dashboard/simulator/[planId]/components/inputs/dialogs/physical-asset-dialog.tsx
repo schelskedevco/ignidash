@@ -17,7 +17,7 @@ import { physicalAssetToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { physicalAssetFormSchema, type PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
-import { timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
+import { physicalAssetTimeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
 import { Field, Fieldset, FieldGroup, Label, ErrorMessage } from '@/components/catalyst/fieldset';
@@ -51,7 +51,7 @@ export default function PhysicalAssetDialog({
         name: 'Asset ' + (numPhysicalAssets + 1),
         purchaseDate: { type: 'now' },
         appreciationRate: 4,
-        saleDate: undefined,
+        saleDate: { type: 'atLifeExpectancy' },
         financing: undefined,
       }) as const satisfies Partial<PhysicalAssetInputs>,
     [numPhysicalAssets]
@@ -268,7 +268,7 @@ export default function PhysicalAssetDialog({
                         <span className="text-base/7 font-semibold">Timeframe</span>
                         <span className="hidden sm:inline">|</span>
                         <span className="text-muted-foreground hidden truncate sm:inline">
-                          {timeFrameForDisplay(purchaseTimePoint, saleTimePoint)}
+                          {physicalAssetTimeFrameForDisplay(purchaseTimePoint, saleTimePoint)}
                         </span>
                       </div>
                       <span className="text-muted-foreground ml-6 flex h-7 items-center">
@@ -371,8 +371,8 @@ export default function PhysicalAssetDialog({
                           <Field className={getDateColSpan(saleDateType)}>
                             <Label htmlFor="saleDate.type">Sale Time</Label>
                             <Select {...register('saleDate.type')} id="saleDate.type" name="saleDate.type">
+                              <option value="atLifeExpectancy">Never Sold</option>
                               <option value="atRetirement">At Retirement</option>
-                              <option value="atLifeExpectancy">At Life Expectancy</option>
                               <option value="customDate">Custom Date</option>
                               <option value="customAge">Custom Age</option>
                             </Select>
