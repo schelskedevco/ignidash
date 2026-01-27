@@ -1,4 +1,4 @@
-import type { PhysicalAssetInputs, FinancingInputs } from '@/lib/schemas/inputs/physical-asset-schema';
+import type { PhysicalAssetInputs, FinancingInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
 import type { TimePoint } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 
 import type { SimulationState } from './simulation-engine';

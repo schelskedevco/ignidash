@@ -15,7 +15,7 @@ import posthog from 'posthog-js';
 import { useTimelineData } from '@/hooks/use-convex-data';
 import { physicalAssetToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { physicalAssetFormSchema, type PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-schema';
+import { physicalAssetFormSchema, type PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import { timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';

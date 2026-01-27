@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import type { DebtInputs } from '@/lib/schemas/inputs/debt-schema';
+import type { DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
 
 import { Debt, Debts, DebtsProcessor } from './debts';
 import type { SimulationState } from './simulation-engine';

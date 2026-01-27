@@ -1,4 +1,4 @@
-import type { DebtInputs, CompoundingFrequency } from '@/lib/schemas/inputs/debt-schema';
+import type { DebtInputs, CompoundingFrequency } from '@/lib/schemas/inputs/debt-form-schema';
 import type { TimePoint } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 
 import type { SimulationState } from './simulation-engine';

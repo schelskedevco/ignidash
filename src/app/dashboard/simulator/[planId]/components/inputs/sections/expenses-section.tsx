@@ -15,7 +15,7 @@ import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
-import type { DebtInputs } from '@/lib/schemas/inputs/debt-schema';
+import type { DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DataItem from '@/components/ui/data-item';
 import { Skeleton } from '@/components/ui/skeleton';

@@ -15,7 +15,7 @@ import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { accountTypeForDisplay, taxCategoryFromAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import type { TaxCategory } from '@/lib/calc/asset';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
-import type { PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-schema';
+import type { PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DataItem from '@/components/ui/data-item';
 import { Skeleton } from '@/components/ui/skeleton';

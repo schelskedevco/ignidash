@@ -12,8 +12,8 @@ import type { ContributionInputs } from '@/lib/schemas/inputs/contribution-form-
 import type { TimelineInputs } from '@/lib/schemas/inputs/timeline-form-schema';
 import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assumptions-schema';
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
-import type { PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-schema';
-import type { DebtInputs } from '@/lib/schemas/inputs/debt-schema';
+import type { PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
+import type { DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
 
 import type { SimulationState, SimulationContext } from '../simulation-engine';
 import type { PortfolioData } from '../portfolio';

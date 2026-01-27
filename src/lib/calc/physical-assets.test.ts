@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import type { PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-schema';
+import type { PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
 
 import { PhysicalAsset, PhysicalAssets, PhysicalAssetsProcessor } from './physical-assets';
 import type { SimulationState } from './simulation-engine';
