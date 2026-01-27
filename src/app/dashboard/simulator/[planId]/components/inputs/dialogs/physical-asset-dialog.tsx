@@ -282,7 +282,7 @@ export default function PhysicalAssetDialog({
                           <Field className={getDateColSpan(purchaseDateType)}>
                             <Label htmlFor="purchaseDate.type">Purchase Time</Label>
                             <Select {...register('purchaseDate.type')} id="purchaseDate.type" name="purchaseDate.type">
-                              <option value="now">Now</option>
+                              <option value="now">Already Owned</option>
                               <option value="atRetirement">At Retirement</option>
                               <option value="customDate">Custom Date</option>
                               <option value="customAge">Custom Age</option>
