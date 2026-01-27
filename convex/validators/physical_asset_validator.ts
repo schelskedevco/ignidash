@@ -26,7 +26,7 @@ export const physicalAssetValidator = v.object({
   purchaseDate: physicalAssetTimePointValidator,
   purchasePrice: v.number(),
   marketValue: v.optional(v.number()),
-  annualAppreciationRate: v.number(),
+  appreciationRate: v.number(),
   saleDate: v.optional(physicalAssetTimePointValidator),
   financing: v.optional(financingValidator),
 });

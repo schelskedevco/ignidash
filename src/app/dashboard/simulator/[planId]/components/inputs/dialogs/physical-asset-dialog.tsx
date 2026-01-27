@@ -50,7 +50,7 @@ export default function PhysicalAssetDialog({
         id: '',
         name: 'Asset ' + (numPhysicalAssets + 1),
         purchaseDate: { type: 'now' },
-        annualAppreciationRate: 4,
+        appreciationRate: 4,
         saleDate: undefined,
         financing: undefined,
       }) as const satisfies Partial<PhysicalAssetInputs>,
@@ -234,16 +234,16 @@ export default function PhysicalAssetDialog({
                   {errors.marketValue && <ErrorMessage>{errors.marketValue?.message}</ErrorMessage>}
                 </Field>
                 <Field className="col-span-2">
-                  <Label htmlFor="annualAppreciationRate">Annual Appreciation Rate</Label>
+                  <Label htmlFor="appreciationRate">Real Annual Appreciation</Label>
                   <NumberInput
-                    name="annualAppreciationRate"
+                    name="appreciationRate"
                     control={control}
-                    id="annualAppreciationRate"
+                    id="appreciationRate"
                     inputMode="decimal"
                     placeholder="3%"
                     suffix="%"
                   />
-                  {errors.annualAppreciationRate && <ErrorMessage>{errors.annualAppreciationRate?.message}</ErrorMessage>}
+                  {errors.appreciationRate && <ErrorMessage>{errors.appreciationRate?.message}</ErrorMessage>}
                 </Field>
               </div>
               <Disclosure as="div" className="border-border/25 border-t pt-4">

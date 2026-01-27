@@ -18,7 +18,7 @@ export const physicalAssetFormSchema = z
     purchaseDate: timePointSchema,
     purchasePrice: currencyFieldForbidsZero('Purchase price must be greater than zero'),
     marketValue: currencyFieldForbidsZero('Market value must be greater than zero').optional(),
-    annualAppreciationRate: percentageField(-30, 20, 'Annual appreciation rate'),
+    appreciationRate: percentageField(-30, 20, 'Annual appreciation rate'),
     saleDate: timePointSchema.optional(),
     financing: financingSchema.optional(),
   })

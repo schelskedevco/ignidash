@@ -40,7 +40,7 @@ const createPhysicalAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}):
   purchaseDate: overrides.purchaseDate ?? { type: 'now' },
   purchasePrice: overrides.purchasePrice ?? 400000,
   marketValue: overrides.marketValue,
-  annualAppreciationRate: overrides.annualAppreciationRate ?? 3,
+  appreciationRate: overrides.appreciationRate ?? 3,
   saleDate: overrides.saleDate,
   financing: overrides.financing,
 });
@@ -56,7 +56,7 @@ const createFinancedAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}):
     purchaseDate: overrides.purchaseDate ?? { type: 'now' },
     purchasePrice,
     marketValue: overrides.marketValue,
-    annualAppreciationRate: overrides.annualAppreciationRate ?? 3,
+    appreciationRate: overrides.appreciationRate ?? 3,
     saleDate: overrides.saleDate,
     financing: {
       downPayment,
@@ -77,7 +77,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchasePrice: 400000,
-          annualAppreciationRate: 3, // 3% annual
+          appreciationRate: 3, // 3% annual
         })
       );
 
@@ -95,7 +95,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchasePrice: 400000,
-          annualAppreciationRate: 3,
+          appreciationRate: 3,
         })
       );
 
@@ -112,7 +112,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchasePrice: 300000,
-          annualAppreciationRate: 0,
+          appreciationRate: 0,
         })
       );
 
@@ -126,7 +126,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchasePrice: 50000, // Car
-          annualAppreciationRate: -15, // 15% depreciation
+          appreciationRate: -15, // 15% depreciation
         })
       );
 
@@ -144,7 +144,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchasePrice: 400000,
-          annualAppreciationRate: 3,
+          appreciationRate: 3,
         })
       );
 
@@ -292,7 +292,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchasePrice: 300000,
-          annualAppreciationRate: 5,
+          appreciationRate: 5,
         })
       );
 
@@ -312,7 +312,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 400000,
-          annualAppreciationRate: -20, // Major depreciation
+          appreciationRate: -20, // Major depreciation
           financing: {
             downPayment: 20000,
             loanAmount: 380000, // High LTV
@@ -533,7 +533,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 100000,
-          annualAppreciationRate: -50, // Extreme depreciation
+          appreciationRate: -50, // Extreme depreciation
           financing: {
             downPayment: 5000,
             loanAmount: 95000,
@@ -629,7 +629,7 @@ describe('PhysicalAssetsProcessor', () => {
       createFinancedAssetInput({
         id: 'house',
         purchasePrice: 400000,
-        annualAppreciationRate: 3,
+        appreciationRate: 3,
         financing: { downPayment: 80000, loanAmount: 320000, apr: 6, termMonths: 360 },
       }),
     ]);
@@ -650,7 +650,7 @@ describe('PhysicalAssetsProcessor', () => {
         id: 'selling',
         name: 'Selling House',
         purchasePrice: 500000,
-        annualAppreciationRate: 0, // No appreciation for predictable test
+        appreciationRate: 0, // No appreciation for predictable test
         saleDate: { type: 'customAge', age: 35 },
       }),
     ]);
@@ -670,7 +670,7 @@ describe('PhysicalAssetsProcessor', () => {
       createFinancedAssetInput({
         id: 'house',
         purchasePrice: 400000,
-        annualAppreciationRate: 3,
+        appreciationRate: 3,
         financing: { downPayment: 80000, loanAmount: 320000, apr: 6, termMonths: 360 },
       }),
     ]);
@@ -696,7 +696,7 @@ describe('PhysicalAssetsProcessor', () => {
       createPhysicalAssetInput({
         id: 'house',
         purchasePrice: 400000,
-        annualAppreciationRate: 3,
+        appreciationRate: 3,
       }),
     ]);
 
@@ -1188,7 +1188,7 @@ describe('Capital Loss Scenarios', () => {
     const asset = new PhysicalAsset(
       createPhysicalAssetInput({
         purchasePrice,
-        annualAppreciationRate: depreciationRate,
+        appreciationRate: depreciationRate,
       })
     );
 
@@ -1219,7 +1219,7 @@ describe('Capital Loss Scenarios', () => {
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
         purchasePrice,
-        annualAppreciationRate: -15, // 15% annual depreciation (like a car)
+        appreciationRate: -15, // 15% annual depreciation (like a car)
         financing: {
           downPayment,
           loanAmount,
@@ -1255,7 +1255,7 @@ describe('Capital Loss Scenarios', () => {
     const asset = new PhysicalAsset(
       createPhysicalAssetInput({
         purchasePrice: 300000,
-        annualAppreciationRate: 0, // No change in value
+        appreciationRate: 0, // No change in value
       })
     );
 
@@ -1271,7 +1271,7 @@ describe('Capital Loss Scenarios', () => {
       createPhysicalAssetInput({
         purchasePrice: 200000, // Original cost basis
         marketValue: 180000, // Current value (already lost value)
-        annualAppreciationRate: 0,
+        appreciationRate: 0,
       })
     );
 
@@ -1300,7 +1300,7 @@ describe('Edge Cases', () => {
       createPhysicalAssetInput({
         purchasePrice: 300000, // Original cost basis
         marketValue: 450000, // Current value (appreciated)
-        annualAppreciationRate: 3,
+        appreciationRate: 3,
       })
     );
 
@@ -1316,7 +1316,7 @@ describe('Edge Cases', () => {
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
         purchasePrice: 30000, // Car
-        annualAppreciationRate: -25, // 25% annual depreciation
+        appreciationRate: -25, // 25% annual depreciation
         financing: {
           downPayment: 3000,
           loanAmount: 27000,

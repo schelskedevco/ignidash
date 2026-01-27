@@ -775,7 +775,7 @@ describe('Physical Assets Integration', () => {
           name: 'Rental Property',
           purchaseDate: { type: 'now' as const },
           purchasePrice: 100000,
-          annualAppreciationRate: 0, // No appreciation for predictable test
+          appreciationRate: 0, // No appreciation for predictable test
           saleDate: { type: 'customAge' as const, age: 40 },
         },
       },
@@ -833,7 +833,7 @@ describe('Physical Assets Integration', () => {
           name: 'Investment Property',
           purchaseDate: { type: 'customAge' as const, age: 40 },
           purchasePrice: 300000,
-          annualAppreciationRate: 0,
+          appreciationRate: 0,
           financing: {
             downPayment: 60000, // 20% down
             loanAmount: 240000,
@@ -880,7 +880,7 @@ describe('Physical Assets Integration', () => {
           purchaseDate: { type: 'now' as const },
           purchasePrice: 200000, // Cost basis
           marketValue: 350000, // Current value (already appreciated)
-          annualAppreciationRate: 0,
+          appreciationRate: 0,
           saleDate: { type: 'customAge' as const, age: 40 }, // Sell at age 40
         },
       },
@@ -914,7 +914,7 @@ describe('Physical Assets Integration', () => {
           name: 'Home',
           purchaseDate: { type: 'now' as const },
           purchasePrice: 400000,
-          annualAppreciationRate: 3,
+          appreciationRate: 3,
           financing: {
             downPayment: 80000,
             loanAmount: 320000,
@@ -957,7 +957,7 @@ describe('Physical Assets Integration', () => {
           name: 'Depreciated Property',
           purchaseDate: { type: 'now' as const },
           purchasePrice: 200000, // Cost basis
-          annualAppreciationRate: -20, // Severe depreciation
+          appreciationRate: -20, // Severe depreciation
           saleDate: { type: 'customAge' as const, age: 37 }, // Sell after 3 years of depreciation
         },
       },
@@ -999,7 +999,7 @@ describe('Physical Assets Integration', () => {
           name: 'Underwater Property',
           purchaseDate: { type: 'now' as const },
           purchasePrice: 500000,
-          annualAppreciationRate: -50, // Extreme depreciation (50% value loss per year)
+          appreciationRate: -50, // Extreme depreciation (50% value loss per year)
           financing: {
             downPayment: 5000, // Only 1% down (99% LTV)
             loanAmount: 495000,

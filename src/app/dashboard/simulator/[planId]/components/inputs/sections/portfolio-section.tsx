@@ -39,7 +39,7 @@ function getAccountDesc(account: AccountInputs) {
 function getPhysicalAssetDesc(asset: PhysicalAssetInputs) {
   return (
     <p>
-      {formatNumber(asset.marketValue ?? asset.purchasePrice, 2, '$')} | {formatNumber(asset.annualAppreciationRate, 1)}% appreciation
+      {formatNumber(asset.marketValue ?? asset.purchasePrice, 2, '$')} | {formatNumber(asset.appreciationRate, 1)}% appreciation
       {` | ${asset.financing ? 'Financed' : 'Owned'}`}
     </p>
   );

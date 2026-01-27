@@ -196,7 +196,7 @@ export class PhysicalAsset {
   private purchaseDate: TimePoint;
   private marketValue: number;
   private purchasePrice: number;
-  private annualAppreciationRate: number;
+  private appreciationRate: number;
   private saleDate: TimePoint | undefined;
   private financing: FinancingInputs | undefined;
   private loanBalance: number = 0;
@@ -209,7 +209,7 @@ export class PhysicalAsset {
     this.purchaseDate = data.purchaseDate;
     this.marketValue = data.marketValue ?? data.purchasePrice;
     this.purchasePrice = data.purchasePrice;
-    this.annualAppreciationRate = data.annualAppreciationRate / 100;
+    this.appreciationRate = data.appreciationRate / 100;
     this.saleDate = data.saleDate;
     this.financing = data.financing;
 
@@ -267,7 +267,7 @@ export class PhysicalAsset {
   applyMonthlyAppreciation(): { monthlyAppreciation: number } {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
 
-    const monthlyRate = Math.pow(1 + this.annualAppreciationRate, 1 / 12) - 1;
+    const monthlyRate = Math.pow(1 + this.appreciationRate, 1 / 12) - 1;
     const monthlyAppreciation = this.marketValue * monthlyRate;
 
     this.marketValue += monthlyAppreciation;
