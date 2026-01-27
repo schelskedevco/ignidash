@@ -177,11 +177,10 @@ export const createPhysicalAssetInput = (overrides?: Partial<PhysicalAssetInputs
   name: overrides?.name ?? 'Primary Residence',
   purchaseDate: overrides?.purchaseDate ?? { type: 'now' },
   purchasePrice: overrides?.purchasePrice ?? 400000,
-  marketValueAtPurchase: overrides?.marketValueAtPurchase,
+  marketValue: overrides?.marketValue,
   annualAppreciationRate: overrides?.annualAppreciationRate ?? 3,
   saleDate: overrides?.saleDate,
   financing: overrides?.financing,
-  disabled: overrides?.disabled ?? false,
 });
 
 export const createFinancedAssetInput = (overrides?: Partial<PhysicalAssetInputs>): PhysicalAssetInputs => {
@@ -194,7 +193,7 @@ export const createFinancedAssetInput = (overrides?: Partial<PhysicalAssetInputs
     name: overrides?.name ?? 'Primary Residence',
     purchaseDate: overrides?.purchaseDate ?? { type: 'now' },
     purchasePrice,
-    marketValueAtPurchase: overrides?.marketValueAtPurchase,
+    marketValue: overrides?.marketValue,
     annualAppreciationRate: overrides?.annualAppreciationRate ?? 3,
     saleDate: overrides?.saleDate,
     financing: {
@@ -203,7 +202,6 @@ export const createFinancedAssetInput = (overrides?: Partial<PhysicalAssetInputs
       apr: overrides?.financing?.apr ?? 6,
       termMonths: overrides?.financing?.termMonths ?? 360,
     },
-    disabled: overrides?.disabled ?? false,
   };
 };
 

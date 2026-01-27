@@ -39,11 +39,10 @@ const createPhysicalAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}):
   name: overrides.name ?? 'Primary Residence',
   purchaseDate: overrides.purchaseDate ?? { type: 'now' },
   purchasePrice: overrides.purchasePrice ?? 400000,
-  marketValueAtPurchase: overrides.marketValueAtPurchase,
+  marketValue: overrides.marketValue,
   annualAppreciationRate: overrides.annualAppreciationRate ?? 3,
   saleDate: overrides.saleDate,
   financing: overrides.financing,
-  disabled: overrides.disabled ?? false,
 });
 
 const createFinancedAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}): PhysicalAssetInputs => {
@@ -56,7 +55,7 @@ const createFinancedAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}):
     name: overrides.name ?? 'Primary Residence',
     purchaseDate: overrides.purchaseDate ?? { type: 'now' },
     purchasePrice,
-    marketValueAtPurchase: overrides.marketValueAtPurchase,
+    marketValue: overrides.marketValue,
     annualAppreciationRate: overrides.annualAppreciationRate ?? 3,
     saleDate: overrides.saleDate,
     financing: {
@@ -65,7 +64,6 @@ const createFinancedAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}):
       apr: overrides.financing?.apr ?? 6,
       termMonths: overrides.financing?.termMonths ?? 360,
     },
-    disabled: overrides.disabled ?? false,
   };
 };
 
@@ -561,18 +559,6 @@ describe('PhysicalAsset Class', () => {
 // ============================================================================
 
 describe('PhysicalAssets Collection', () => {
-  it('filters disabled assets', () => {
-    const assets = new PhysicalAssets([
-      createPhysicalAssetInput({ id: 'enabled', name: 'Enabled', disabled: false }),
-      createPhysicalAssetInput({ id: 'disabled', name: 'Disabled', disabled: true }),
-    ]);
-
-    const ownedAssets = assets.getOwnedAssets();
-
-    expect(ownedAssets.length).toBe(1);
-    expect(ownedAssets[0].getName()).toBe('Enabled');
-  });
-
   it('getOwnedAssets returns only currently owned assets', () => {
     const assets = new PhysicalAssets([
       createPhysicalAssetInput({
@@ -1284,7 +1270,7 @@ describe('Capital Loss Scenarios', () => {
     const asset = new PhysicalAsset(
       createPhysicalAssetInput({
         purchasePrice: 200000, // Original cost basis
-        marketValueAtPurchase: 180000, // Current value (already lost value)
+        marketValue: 180000, // Current value (already lost value)
         annualAppreciationRate: 0,
       })
     );
@@ -1313,7 +1299,7 @@ describe('Edge Cases', () => {
     const asset = new PhysicalAsset(
       createPhysicalAssetInput({
         purchasePrice: 300000, // Original cost basis
-        marketValueAtPurchase: 450000, // Current value (appreciated)
+        marketValue: 450000, // Current value (appreciated)
         annualAppreciationRate: 3,
       })
     );

@@ -25,9 +25,8 @@ export const physicalAssetValidator = v.object({
   name: v.string(),
   purchaseDate: physicalAssetTimePointValidator,
   purchasePrice: v.number(),
-  marketValueAtPurchase: v.optional(v.number()),
+  marketValue: v.optional(v.number()),
   annualAppreciationRate: v.number(),
   saleDate: v.optional(physicalAssetTimePointValidator),
   financing: v.optional(financingValidator),
-  disabled: v.optional(v.boolean()),
 });

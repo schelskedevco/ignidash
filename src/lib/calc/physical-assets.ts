@@ -162,7 +162,7 @@ export class PhysicalAssets {
   private readonly assets: PhysicalAsset[];
 
   constructor(data: PhysicalAssetInputs[]) {
-    this.assets = data.filter((asset) => !asset.disabled).map((asset) => new PhysicalAsset(asset));
+    this.assets = data.map((asset) => new PhysicalAsset(asset));
   }
 
   getOwnedAssets(): PhysicalAsset[] {
@@ -207,7 +207,7 @@ export class PhysicalAsset {
     this.id = data.id;
     this.name = data.name;
     this.purchaseDate = data.purchaseDate;
-    this.marketValue = data.marketValueAtPurchase ?? data.purchasePrice;
+    this.marketValue = data.marketValue ?? data.purchasePrice;
     this.purchasePrice = data.purchasePrice;
     this.annualAppreciationRate = data.annualAppreciationRate / 100;
     this.saleDate = data.saleDate;

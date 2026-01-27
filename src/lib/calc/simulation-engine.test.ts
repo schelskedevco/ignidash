@@ -879,7 +879,7 @@ describe('Physical Assets Integration', () => {
           name: 'Appreciated Property',
           purchaseDate: { type: 'now' as const },
           purchasePrice: 200000, // Cost basis
-          marketValueAtPurchase: 350000, // Current value (already appreciated)
+          marketValue: 350000, // Current value (already appreciated)
           annualAppreciationRate: 0,
           saleDate: { type: 'customAge' as const, age: 40 }, // Sell at age 40
         },

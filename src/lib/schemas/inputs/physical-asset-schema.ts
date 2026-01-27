@@ -16,21 +16,11 @@ export const physicalAssetFormSchema = z
     id: z.string(),
     name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
     purchaseDate: timePointSchema,
-    /**
-     * What was paid for the asset. Used as the cost basis for capital gains calculations.
-     * If you already own the asset, this is your original purchase price.
-     */
     purchasePrice: currencyFieldForbidsZero('Purchase price must be greater than zero'),
-    /**
-     * Current market value if different from purchase price.
-     * Use this for assets you already own that have appreciated or depreciated since purchase.
-     * If omitted, defaults to purchasePrice (i.e., assumed asset was just purchased).
-     */
-    marketValueAtPurchase: currencyFieldForbidsZero('Market value must be greater than zero').optional(),
+    marketValue: currencyFieldForbidsZero('Market value must be greater than zero').optional(),
     annualAppreciationRate: percentageField(-30, 20, 'Annual appreciation rate'),
     saleDate: timePointSchema.optional(),
     financing: financingSchema.optional(),
-    disabled: z.boolean().optional(),
   })
   .refine(
     (data) => {

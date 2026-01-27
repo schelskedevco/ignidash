@@ -43,10 +43,11 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
   const newDebtDefaultValues = useMemo(
     () =>
       ({
-        name: 'Debt ' + (numDebts + 1),
         id: '',
-        apr: 0,
-        interestType: 'simple',
+        name: 'Debt ' + (numDebts + 1),
+        apr: 24,
+        interestType: 'compound',
+        compoundingFrequency: 'daily',
         startDate: { type: 'now' },
       }) as const satisfies Partial<DebtInputs>,
     [numDebts]
@@ -214,7 +215,7 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
                 </Field>
                 <Field className="col-span-2">
                   <Label htmlFor="apr">APR</Label>
-                  <NumberInput name="apr" control={control} id="apr" inputMode="decimal" placeholder="18%" suffix="%" />
+                  <NumberInput name="apr" control={control} id="apr" inputMode="decimal" placeholder="24%" suffix="%" />
                   {errors.apr && <ErrorMessage>{errors.apr?.message}</ErrorMessage>}
                 </Field>
                 <Field className={getInterestTypeColSpan()}>

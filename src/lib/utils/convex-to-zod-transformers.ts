@@ -139,11 +139,10 @@ export function physicalAssetFromConvex(physicalAsset: NonNullable<Doc<'plans'>[
     name: physicalAsset.name,
     purchaseDate: { ...physicalAsset.purchaseDate },
     purchasePrice: physicalAsset.purchasePrice,
-    marketValueAtPurchase: physicalAsset.marketValueAtPurchase,
+    marketValue: physicalAsset.marketValue,
     annualAppreciationRate: physicalAsset.annualAppreciationRate,
     saleDate: physicalAsset.saleDate ? { ...physicalAsset.saleDate } : undefined,
     financing: physicalAsset.financing ? { ...physicalAsset.financing } : undefined,
-    disabled: physicalAsset.disabled ?? false,
   };
 }
 
@@ -354,11 +353,10 @@ export function physicalAssetToConvex(physicalAsset: PhysicalAssetInputs): NonNu
     name: physicalAsset.name,
     purchaseDate: { ...physicalAsset.purchaseDate },
     purchasePrice: physicalAsset.purchasePrice,
-    marketValueAtPurchase: physicalAsset.marketValueAtPurchase,
+    marketValue: physicalAsset.marketValue,
     annualAppreciationRate: physicalAsset.annualAppreciationRate,
     saleDate: physicalAsset.saleDate ? { ...physicalAsset.saleDate } : undefined,
     financing: physicalAsset.financing ? { ...physicalAsset.financing } : undefined,
-    disabled: physicalAsset.disabled ?? false,
   };
 }
 
