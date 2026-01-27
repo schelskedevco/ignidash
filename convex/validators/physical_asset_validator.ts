@@ -15,9 +15,9 @@ const physicalAssetTimePointValidator = v.object({
 
 const financingValidator = v.object({
   downPayment: v.number(),
-  loanAmount: v.number(),
+  loanBalance: v.number(),
   apr: v.number(),
-  termMonths: v.number(),
+  monthlyPayment: v.number(),
 });
 
 export const physicalAssetValidator = v.object({

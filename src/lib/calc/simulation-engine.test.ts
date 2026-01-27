@@ -834,11 +834,12 @@ describe('Physical Assets Integration', () => {
           purchaseDate: { type: 'customAge' as const, age: 40 },
           purchasePrice: 300000,
           appreciationRate: 0,
+          saleDate: { type: 'atLifeExpectancy' as const },
           financing: {
             downPayment: 60000, // 20% down
-            loanAmount: 240000,
+            loanBalance: 240000,
             apr: 6,
-            termMonths: 360,
+            monthlyPayment: 1438.92, // Standard 30yr payment at 6% APR on $240k
           },
         },
       },
@@ -915,11 +916,12 @@ describe('Physical Assets Integration', () => {
           purchaseDate: { type: 'now' as const },
           purchasePrice: 400000,
           appreciationRate: 3,
+          saleDate: { type: 'atLifeExpectancy' as const },
           financing: {
             downPayment: 80000,
-            loanAmount: 320000,
+            loanBalance: 320000,
             apr: 6,
-            termMonths: 360,
+            monthlyPayment: 1918.56, // Standard 30yr payment at 6% APR on $320k
           },
         },
       },
@@ -1002,9 +1004,9 @@ describe('Physical Assets Integration', () => {
           appreciationRate: -50, // Extreme depreciation (50% value loss per year)
           financing: {
             downPayment: 5000, // Only 1% down (99% LTV)
-            loanAmount: 495000,
+            loanBalance: 495000,
             apr: 6,
-            termMonths: 360,
+            monthlyPayment: 2967.73, // Standard 30yr payment at 6% APR on $495k
           },
           saleDate: { type: 'customAge' as const, age: 36 }, // Sell after ~1 year
         },
