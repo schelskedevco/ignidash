@@ -11,14 +11,16 @@ export class DebtsProcessor {
     private debts: Debts
   ) {}
 
-  process(): DebtsData {
+  process(monthlyInflationRate: number): DebtsData {
+    this.debts.applyMonthlyInflation(monthlyInflationRate);
+
     let totalPayment = 0;
     let totalInterest = 0;
     const perDebtData: Record<string, DebtData> = {};
 
     const activeDebts = this.debts.getActiveDebts(this.simulationState);
     for (const debt of activeDebts) {
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo();
+      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflationRate);
       debt.applyPayment(monthlyPaymentDue, interestForPeriod);
 
       const debtData: DebtData = {
@@ -106,6 +108,10 @@ export class Debts {
     this.debts = data.filter((debt) => !debt.disabled).map((debt) => new Debt(debt));
   }
 
+  applyMonthlyInflation(monthlyInflationRate: number): void {
+    this.debts.forEach((debt) => debt.applyMonthlyInflation(monthlyInflationRate));
+  }
+
   getActiveDebts(simulationState: SimulationState): Debt[] {
     return this.debts.filter((debt) => debt.getIsActive(simulationState));
   }
@@ -119,21 +125,27 @@ export class Debt {
   private id: string;
   private name: string;
   private balance: number;
-  private apr: number;
+  private principal: number;
+  private nominalAPR: number; // Store nominal APR (user input)
   private interestType: 'simple' | 'compound';
   private compoundingFrequency: CompoundingFrequency | undefined;
   private startDate: TimePoint;
-  private monthlyPayment: number;
+  private monthlyPayment: number; // Mutable, deflates over time
 
   constructor(data: DebtInputs) {
     this.id = data.id;
     this.name = data.name;
     this.balance = data.balance;
-    this.apr = data.apr / 100;
+    this.principal = data.balance;
+    this.nominalAPR = data.apr / 100;
     this.interestType = data.interestType;
     this.compoundingFrequency = data.compoundingFrequency;
     this.startDate = data.startDate;
     this.monthlyPayment = data.monthlyPayment;
+  }
+
+  applyMonthlyInflation(monthlyInflationRate: number): void {
+    this.monthlyPayment /= 1 + monthlyInflationRate;
   }
 
   getId(): string {
@@ -152,28 +164,46 @@ export class Debt {
     return this.balance <= 0;
   }
 
-  getMonthlyPaymentInfo(): { monthlyPaymentDue: number; interestForPeriod: number } {
+  getMonthlyPaymentInfo(monthlyInflationRate: number): { monthlyPaymentDue: number; interestForPeriod: number } {
     if (this.isPaidOff()) return { monthlyPaymentDue: 0, interestForPeriod: 0 };
 
-    const interestForPeriod = this.calculateMonthlyInterest();
+    const interestForPeriod = this.calculateMonthlyInterest(monthlyInflationRate);
     const monthlyPaymentDue = Math.min(this.monthlyPayment, this.balance + interestForPeriod);
 
     return { monthlyPaymentDue, interestForPeriod };
   }
 
   applyPayment(payment: number, interestForPeriod: number): void {
-    if (payment >= interestForPeriod) {
-      const principalPayment = payment - interestForPeriod;
-      this.balance = Math.max(0, this.balance - principalPayment);
-    } else {
-      const unpaidInterest = interestForPeriod - payment;
-      this.balance += unpaidInterest;
+    switch (this.interestType) {
+      case 'simple':
+        const unpaidPrevInterest = Math.max(0, this.balance - this.principal);
+        let remainingPayment = payment;
+
+        const paidCurrInterest = Math.min(remainingPayment, interestForPeriod);
+        remainingPayment -= paidCurrInterest;
+        const unpaidCurrInterest = interestForPeriod - paidCurrInterest;
+
+        const paidPrevInterest = Math.min(remainingPayment, unpaidPrevInterest);
+        remainingPayment -= paidPrevInterest;
+
+        this.principal = Math.max(0, this.principal - remainingPayment);
+        this.balance = this.principal + (unpaidPrevInterest - paidPrevInterest) + unpaidCurrInterest;
+        break;
+      case 'compound':
+        if (payment >= interestForPeriod) {
+          const principalPayment = payment - interestForPeriod;
+          this.balance = Math.max(0, this.balance - principalPayment);
+        } else {
+          const unpaidInterest = interestForPeriod - payment;
+          this.balance += unpaidInterest;
+        }
+        break;
     }
   }
 
-  private calculateMonthlyInterest(): number {
+  private calculateMonthlyInterest(monthlyInflationRate: number): number {
     if (this.isPaidOff()) return 0;
-    if (this.interestType === 'simple') return this.balance * (this.apr / 12);
+    if (this.interestType === 'simple') return this.principal * ((1 + this.nominalAPR / 12) / (1 + monthlyInflationRate) - 1);
 
     if (!this.compoundingFrequency) throw new Error(`Missing compoundingFrequency for debt: ${this.name}`);
 
@@ -187,8 +217,9 @@ export class Debt {
         break;
     }
 
-    const periodicRate = this.apr / periodsPerYear;
     const periodsPerMonth = periodsPerYear / 12;
+    const periodicInflationRate = Math.pow(1 + monthlyInflationRate, 1 / periodsPerMonth) - 1;
+    const periodicRate = (1 + this.nominalAPR / periodsPerYear) / (1 + periodicInflationRate) - 1;
 
     const endBalance = this.balance * Math.pow(1 + periodicRate, periodsPerMonth);
     return endBalance - this.balance;

@@ -11,6 +11,7 @@ import type { SimulationState } from './simulation-engine';
  * Tests for:
  * - Interest calculations (simple, compound monthly, compound daily)
  * - Payment processing (principal reduction, interest-only, negative amortization)
+ * - Inflation adjustment (payment deflation, real interest rates)
  * - Activation/scheduling (timeframe handling)
  * - Collection operations (filtering, aggregation)
  * - Processor operations (process, annual data, reset)
@@ -19,6 +20,9 @@ import type { SimulationState } from './simulation-engine';
 // ============================================================================
 // Helper Functions
 // ============================================================================
+
+// Default to zero inflation for legacy tests to maintain existing behavior
+const ZERO_INFLATION = 0;
 
 const createSimulationState = (overrides: Partial<SimulationState> = {}): SimulationState => ({
   time: {
@@ -61,7 +65,7 @@ describe('Debt Class', () => {
       );
 
       // Formula: balance * (apr / 12) = 10000 * (0.18 / 12) = 150
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo();
+      const { interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
       expect(interestForPeriod).toBeCloseTo(150);
     });
@@ -80,7 +84,7 @@ describe('Debt Class', () => {
       // Formula: balance * ((1 + apr/periodsPerYear)^periodsPerMonth - 1)
       // = 10000 * ((1 + 0.18/12)^1 - 1) = 10000 * (0.015) = 150
       const expectedInterest = 10000 * (Math.pow(1 + 0.18 / 12, 1) - 1);
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo();
+      const { interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
       expect(interestForPeriod).toBeCloseTo(expectedInterest);
     });
@@ -99,7 +103,7 @@ describe('Debt Class', () => {
       // Formula: balance * ((1 + apr/periodsPerYear)^periodsPerMonth - 1)
       const periodsPerMonth = 365 / 12;
       const expectedInterest = 10000 * (Math.pow(1 + 0.18 / 365, periodsPerMonth) - 1);
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo();
+      const { interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
       expect(interestForPeriod).toBeCloseTo(expectedInterest);
     });
@@ -113,7 +117,7 @@ describe('Debt Class', () => {
         })
       );
 
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo();
+      const { interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
       expect(interestForPeriod).toBe(0);
     });
@@ -131,7 +135,7 @@ describe('Debt Class', () => {
       );
 
       const initialBalance = debt.getBalance();
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo();
+      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
       // Payment = 500, Interest = 150, Principal = 350
       debt.applyPayment(monthlyPaymentDue, interestForPeriod);
@@ -152,7 +156,7 @@ describe('Debt Class', () => {
       );
 
       const initialBalance = debt.getBalance();
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo();
+      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
       // Interest = 150, payment = 150, principal = 0
       expect(monthlyPaymentDue).toBeCloseTo(interestForPeriod);
@@ -163,7 +167,7 @@ describe('Debt Class', () => {
       expect(debt.getBalance()).toBeCloseTo(initialBalance);
     });
 
-    it('payment < interest increases balance (negative amortization)', () => {
+    it('payment < interest increases balance but interest basis unchanged (simple interest)', () => {
       const debt = new Debt(
         createDebtInput({
           balance: 10000,
@@ -174,7 +178,9 @@ describe('Debt Class', () => {
       );
 
       const initialBalance = debt.getBalance();
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo();
+
+      // Month 1
+      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
       // Interest = 150, payment = 100, unpaid interest = 50
       expect(interestForPeriod).toBeCloseTo(150);
@@ -186,6 +192,32 @@ describe('Debt Class', () => {
       const expectedBalance = initialBalance + (interestForPeriod - monthlyPaymentDue);
       expect(debt.getBalance()).toBeCloseTo(expectedBalance);
       expect(debt.getBalance()).toBeCloseTo(10050);
+
+      // Month 2 - interest should STILL be $150 (simple interest calculates on principal, not balance)
+      const { interestForPeriod: interestMonth2 } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      expect(interestMonth2).toBeCloseTo(150); // NOT 150.75 (which would be compound)
+    });
+
+    it('payment < interest compounds for compound interest type', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 10000,
+          apr: 18,
+          monthlyPayment: 100, // Less than interest
+          interestType: 'compound',
+          compoundingFrequency: 'monthly',
+        })
+      );
+
+      // Month 1
+      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      expect(interestForPeriod).toBeCloseTo(150);
+      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+
+      // Month 2 - interest SHOULD be higher (compound interest adds unpaid interest to balance)
+      const { interestForPeriod: interestMonth2 } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      expect(interestMonth2).toBeGreaterThan(150); // Should be ~150.75
+      expect(interestMonth2).toBeCloseTo(150.75, 1);
     });
 
     it('final payment handles exact payoff', () => {
@@ -200,7 +232,7 @@ describe('Debt Class', () => {
 
       // Pay off the loan in 10 payments
       for (let i = 0; i < 10; i++) {
-        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo();
+        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
         debt.applyPayment(monthlyPaymentDue, interestForPeriod);
       }
 
@@ -219,14 +251,14 @@ describe('Debt Class', () => {
       );
 
       // First payment pays it off
-      const firstPayment = debt.getMonthlyPaymentInfo();
+      const firstPayment = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
       expect(firstPayment.monthlyPaymentDue).toBe(100); // Capped at balance
       debt.applyPayment(firstPayment.monthlyPaymentDue, firstPayment.interestForPeriod);
 
       expect(debt.isPaidOff()).toBe(true);
 
       // Second call should return 0
-      const secondPayment = debt.getMonthlyPaymentInfo();
+      const secondPayment = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
       expect(secondPayment.monthlyPaymentDue).toBe(0);
     });
   });
@@ -323,7 +355,7 @@ describe('Debt Class', () => {
       expect(debt.getIsActive(simState)).toBe(true);
 
       // Pay off
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo();
+      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
       debt.applyPayment(monthlyPaymentDue, interestForPeriod);
 
       // After payoff - not active
@@ -412,7 +444,7 @@ describe('DebtsProcessor', () => {
     const simState = createSimulationState();
     const processor = new DebtsProcessor(simState, debts);
 
-    const result = processor.process();
+    const result = processor.process(ZERO_INFLATION);
 
     // Interest = 10000 * 0.18 / 12 = 150
     // Principal = 500 - 150 = 350
@@ -446,7 +478,7 @@ describe('DebtsProcessor', () => {
     const simState = createSimulationState();
     const processor = new DebtsProcessor(simState, debts);
 
-    const result = processor.process();
+    const result = processor.process(ZERO_INFLATION);
 
     // Card 1: interest = 5000 * 0.20 / 12 = 83.33
     // Card 2: interest = 8000 * 0.15 / 12 = 100
@@ -475,7 +507,7 @@ describe('DebtsProcessor', () => {
 
     // Process 12 months - loan pays off in 10 months
     for (let i = 0; i < 12; i++) {
-      processor.process();
+      processor.process(ZERO_INFLATION);
     }
 
     const annualData = processor.getAnnualData();
@@ -503,9 +535,9 @@ describe('DebtsProcessor', () => {
     const processor = new DebtsProcessor(simState, debts);
 
     // Process some months
-    processor.process();
-    processor.process();
-    processor.process();
+    processor.process(ZERO_INFLATION);
+    processor.process(ZERO_INFLATION);
+    processor.process(ZERO_INFLATION);
 
     let annualData = processor.getAnnualData();
     expect(annualData.totalPaymentForPeriod).toBeGreaterThan(0);
@@ -533,22 +565,22 @@ describe('DebtsProcessor', () => {
     const processor = new DebtsProcessor(simState, debts);
 
     // Month 1: payment 400, balance 600
-    let result = processor.process();
+    let result = processor.process(ZERO_INFLATION);
     expect(result.totalDebtBalance).toBe(600);
     expect(result.perDebtData['small-debt'].isPaidOff).toBe(false);
 
     // Month 2: payment 400, balance 200
-    result = processor.process();
+    result = processor.process(ZERO_INFLATION);
     expect(result.totalDebtBalance).toBe(200);
     expect(result.perDebtData['small-debt'].isPaidOff).toBe(false);
 
     // Month 3: payment 200 (final), balance 0
-    result = processor.process();
+    result = processor.process(ZERO_INFLATION);
     expect(result.totalDebtBalance).toBe(0);
     expect(result.perDebtData['small-debt'].isPaidOff).toBe(true);
 
     // Month 4: no more payments
-    result = processor.process();
+    result = processor.process(ZERO_INFLATION);
     expect(result.totalPaymentForPeriod).toBe(0);
   });
 });
@@ -569,7 +601,7 @@ describe('Edge Cases', () => {
     );
 
     // Interest = 500 * 4.00 / 12 = 166.67
-    const { interestForPeriod, monthlyPaymentDue } = debt.getMonthlyPaymentInfo();
+    const { interestForPeriod, monthlyPaymentDue } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
     expect(interestForPeriod).toBeCloseTo(166.67, 1);
     expect(monthlyPaymentDue).toBe(100); // Capped at payment amount
@@ -590,7 +622,7 @@ describe('Edge Cases', () => {
       })
     );
 
-    expect(() => debt.getMonthlyPaymentInfo()).toThrow('Missing compoundingFrequency');
+    expect(() => debt.getMonthlyPaymentInfo(ZERO_INFLATION)).toThrow('Missing compoundingFrequency');
   });
 
   it('very small balance is paid off cleanly', () => {
@@ -603,7 +635,7 @@ describe('Edge Cases', () => {
       })
     );
 
-    const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo();
+    const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
     // Payment should be capped at balance + interest
     expect(monthlyPaymentDue).toBeLessThan(1);
@@ -659,23 +691,137 @@ describe('Edge Cases', () => {
       })
     );
 
-    const dailyInterest = dailyDebt.getMonthlyPaymentInfo().interestForPeriod;
-    const monthlyInterest = monthlyDebt.getMonthlyPaymentInfo().interestForPeriod;
+    const dailyInterest = dailyDebt.getMonthlyPaymentInfo(ZERO_INFLATION).interestForPeriod;
+    const monthlyInterest = monthlyDebt.getMonthlyPaymentInfo(ZERO_INFLATION).interestForPeriod;
 
     // Daily compounding should yield slightly higher interest
     expect(dailyInterest).toBeGreaterThan(monthlyInterest);
   });
+});
 
-  it('simple interest equals monthly compound interest', () => {
-    const simpleDebt = new Debt(
+// ============================================================================
+// Extreme Inflation Edge Cases
+// ============================================================================
+
+describe('Extreme Inflation Edge Cases', () => {
+  it('should handle very high inflation (50% annual) without errors', () => {
+    const debt = new Debt(
       createDebtInput({
         balance: 10000,
-        apr: 18,
+        apr: 5,
+        monthlyPayment: 100,
         interestType: 'simple',
       })
     );
 
-    const compoundDebt = new Debt(
+    const annualInflation = 0.5; // 50%
+    const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+
+    // Should not throw, real rate should be negative
+    const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+    expect(interestForPeriod).toBeLessThan(0);
+  });
+
+  it('should handle zero inflation without division issues', () => {
+    const debt = new Debt(
+      createDebtInput({
+        balance: 10000,
+        apr: 7,
+        interestType: 'simple',
+      })
+    );
+
+    const { interestForPeriod } = debt.getMonthlyPaymentInfo(0);
+    // With zero inflation, real rate = nominal rate
+    expect(interestForPeriod).toBeCloseTo(10000 * (0.07 / 12));
+  });
+
+  it('should handle very high inflation (50% annual) with compound interest', () => {
+    const debt = new Debt(
+      createDebtInput({
+        balance: 10000,
+        apr: 5,
+        monthlyPayment: 100,
+        interestType: 'compound',
+        compoundingFrequency: 'daily',
+      })
+    );
+
+    const annualInflation = 0.5; // 50%
+    const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+
+    // Should not throw, real rate should be negative
+    const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+    expect(interestForPeriod).toBeLessThan(0);
+  });
+});
+
+// ============================================================================
+// Compound Interest with Inflation Tests
+// ============================================================================
+
+describe('Compound Interest with Inflation', () => {
+  it('should apply Fisher equation correctly for monthly compounding', () => {
+    const debt = new Debt(
+      createDebtInput({
+        balance: 10000,
+        apr: 12, // 12% APR
+        interestType: 'compound',
+        compoundingFrequency: 'monthly',
+        monthlyPayment: 500,
+      })
+    );
+
+    const annualInflation = 0.03;
+    const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+
+    const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+    // For monthly compounding: periodsPerMonth = 1
+    // periodicInflationRate = monthlyInflation
+    // realRate = (1 + 0.12/12) / (1 + monthlyInflation) - 1
+    const realRate = (1 + 0.12 / 12) / (1 + monthlyInflation) - 1;
+    const expected = 10000 * realRate;
+
+    expect(interestForPeriod).toBeCloseTo(expected, 2);
+  });
+
+  it('should apply Fisher equation correctly for daily compounding', () => {
+    const debt = new Debt(
+      createDebtInput({
+        balance: 10000,
+        apr: 12,
+        interestType: 'compound',
+        compoundingFrequency: 'daily',
+        monthlyPayment: 500,
+      })
+    );
+
+    const annualInflation = 0.03;
+    const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+
+    const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+    // For daily compounding: periodsPerMonth = 365/12
+    const periodsPerMonth = 365 / 12;
+    const periodicInflation = Math.pow(1 + monthlyInflation, 1 / periodsPerMonth) - 1;
+    const periodicRate = (1 + 0.12 / 365) / (1 + periodicInflation) - 1;
+    const expected = 10000 * (Math.pow(1 + periodicRate, periodsPerMonth) - 1);
+
+    expect(interestForPeriod).toBeCloseTo(expected, 2);
+  });
+
+  it('daily compounding with inflation should still be higher than monthly', () => {
+    const dailyDebt = new Debt(
+      createDebtInput({
+        balance: 10000,
+        apr: 18,
+        interestType: 'compound',
+        compoundingFrequency: 'daily',
+      })
+    );
+
+    const monthlyDebt = new Debt(
       createDebtInput({
         balance: 10000,
         apr: 18,
@@ -684,10 +830,300 @@ describe('Edge Cases', () => {
       })
     );
 
-    const simpleInterest = simpleDebt.getMonthlyPaymentInfo().interestForPeriod;
-    const compoundInterest = compoundDebt.getMonthlyPaymentInfo().interestForPeriod;
+    const monthlyInflation = Math.pow(1.03, 1 / 12) - 1;
 
-    // For monthly compounding, the formulas are equivalent
-    expect(simpleInterest).toBeCloseTo(compoundInterest);
+    const dailyInterest = dailyDebt.getMonthlyPaymentInfo(monthlyInflation).interestForPeriod;
+    const monthlyInterest = monthlyDebt.getMonthlyPaymentInfo(monthlyInflation).interestForPeriod;
+
+    expect(dailyInterest).toBeGreaterThan(monthlyInterest);
+  });
+
+  it('compound interest with negative real rate should erode debt', () => {
+    const debt = new Debt(
+      createDebtInput({
+        balance: 100000,
+        apr: 5, // 5% nominal APR
+        interestType: 'compound',
+        compoundingFrequency: 'daily',
+        monthlyPayment: 0, // No payments - pure erosion test
+      })
+    );
+
+    // 10% annual inflation > 5% APR = negative real rate
+    const annualInflation = 0.1;
+    const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+
+    const initialBalance = debt.getBalance();
+
+    // Run 12 months
+    for (let i = 0; i < 12; i++) {
+      debt.applyMonthlyInflation(monthlyInflation);
+      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+    }
+
+    // Balance should decrease due to negative real interest rate
+    expect(debt.getBalance()).toBeLessThan(initialBalance);
+  });
+});
+
+// ============================================================================
+// Inflation Adjustment Tests
+// ============================================================================
+
+describe('Inflation Adjustment', () => {
+  describe('Payoff Timing Equivalence', () => {
+    it('should pay off in same number of months as nominal calculation', () => {
+      // Setup: $100K loan, 7% nominal APR, ~$665/month payment (30-year mortgage)
+      const nominalBalance = 100_000;
+      const nominalAPR = 0.07;
+      const nominalPayment = 665.3;
+      const annualInflation = 0.03;
+      const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+
+      // Calculate nominal payoff months (standard loan amortization)
+      let nomBalance = nominalBalance;
+      let nomMonths = 0;
+      while (nomBalance > 0 && nomMonths < 400) {
+        const interest = nomBalance * (nominalAPR / 12);
+        nomBalance = nomBalance + interest - Math.min(nominalPayment, nomBalance + interest);
+        nomMonths++;
+      }
+
+      // Calculate real payoff months using our inflation-adjusted approach
+      const debt = new Debt(
+        createDebtInput({
+          balance: nominalBalance,
+          apr: 7,
+          monthlyPayment: nominalPayment,
+          interestType: 'simple',
+        })
+      );
+
+      let realMonths = 0;
+      while (!debt.isPaidOff() && realMonths < 400) {
+        debt.applyMonthlyInflation(monthlyInflation);
+        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+        realMonths++;
+      }
+
+      // Should pay off in same number of months (within 1 month tolerance for rounding)
+      expect(realMonths).toBeCloseTo(nomMonths, 0);
+    });
+  });
+
+  describe('Payment Deflation', () => {
+    it('should deflate payments by cumulative inflation', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 100000,
+          apr: 0, // Zero APR so we can focus on payment deflation
+          monthlyPayment: 1000,
+        })
+      );
+
+      const monthlyInflation = 0.0025; // ~3% annual
+
+      // After 12 months of inflation
+      for (let i = 0; i < 12; i++) {
+        debt.applyMonthlyInflation(monthlyInflation);
+      }
+
+      const { monthlyPaymentDue } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+      // Payment should be ~$970 (deflated by ~3%)
+      const expectedPayment = 1000 / Math.pow(1 + monthlyInflation, 12);
+      expect(monthlyPaymentDue).toBeCloseTo(expectedPayment, 1);
+    });
+  });
+
+  describe('Real Interest Rate Calculation', () => {
+    it('should correctly convert nominal to real interest rate', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 10000,
+          apr: 7, // 7% nominal APR
+          monthlyPayment: 500,
+          interestType: 'simple',
+        })
+      );
+
+      // 3% annual inflation = ~0.247% monthly inflation
+      const annualInflation = 0.03;
+      const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+
+      const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+      // Real monthly rate = (1 + 0.07/12) / (1 + monthlyInflation) - 1
+      const nominalMonthlyRate = 0.07 / 12;
+      const realMonthlyRate = (1 + nominalMonthlyRate) / (1 + monthlyInflation) - 1;
+      const expectedInterest = 10000 * realMonthlyRate;
+
+      expect(interestForPeriod).toBeCloseTo(expectedInterest, 2);
+    });
+
+    it('should correctly handle negative real interest rates', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 10000,
+          apr: 7, // 7% nominal APR
+          monthlyPayment: 500,
+          interestType: 'simple',
+        })
+      );
+
+      // 10% annual inflation > 7% nominal APR = negative real rate
+      const annualInflation = 0.1;
+      const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+
+      const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+      // Real rate should be negative, so interest should be negative (debt erodes)
+      const nominalMonthlyRate = 0.07 / 12;
+      const realMonthlyRate = (1 + nominalMonthlyRate) / (1 + monthlyInflation) - 1;
+
+      expect(realMonthlyRate).toBeLessThan(0);
+      expect(interestForPeriod).toBeLessThan(0);
+    });
+  });
+
+  describe('Processor Integration', () => {
+    it('should apply inflation through processor', () => {
+      const debts = new Debts([
+        createDebtInput({
+          id: 'loan',
+          balance: 10000,
+          apr: 6,
+          monthlyPayment: 200,
+          interestType: 'simple',
+        }),
+      ]);
+
+      const simState = createSimulationState();
+      const processor = new DebtsProcessor(simState, debts);
+
+      const monthlyInflation = Math.pow(1.03, 1 / 12) - 1; // ~3% annual
+
+      // Process first month
+      const result1 = processor.process(monthlyInflation);
+
+      // Process second month - payment should be slightly lower due to deflation
+      const result2 = processor.process(monthlyInflation);
+
+      // Both should have payments (less than original 200 due to inflation)
+      expect(result1.totalPaymentForPeriod).toBeLessThan(200);
+      expect(result2.totalPaymentForPeriod).toBeLessThan(result1.totalPaymentForPeriod);
+    });
+  });
+
+  describe('Real Balance with Interest-Only Payments', () => {
+    it('should significantly reduce real balance when inflation doubles over loan life (APR = inflation)', () => {
+      // When nominal APR equals inflation, real interest rate ≈ 0
+      // So all payments go to principal reduction in real terms
+      // After 10 years of ~7.177% inflation, prices roughly double
+      // Starting with $1M, interest-only payments in nominal terms
+      // means real balance should be close to half the original
+
+      const balance = 1_000_000;
+      const annualInflation = 0.07177; // 7.177% makes (1.07177)^10 ≈ 2.0
+      const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+      const apr = annualInflation * 100; // APR matches inflation rate
+      // Nominal interest-only payment = balance * (APR / 12)
+      const monthlyPayment = balance * (annualInflation / 12);
+
+      const debt = new Debt(
+        createDebtInput({
+          balance,
+          apr,
+          monthlyPayment,
+          interestType: 'simple',
+        })
+      );
+
+      // Run 120 months (10 years)
+      for (let i = 0; i < 120; i++) {
+        debt.applyMonthlyInflation(monthlyInflation);
+        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      }
+
+      // Real balance should be approximately half of initial
+      // (small drift due to monthly compounding vs annual rate approximation)
+      expect(debt.getBalance()).toBeLessThan(550_000);
+      expect(debt.getBalance()).toBeGreaterThan(450_000);
+    });
+  });
+
+  describe('Zero Payment with Equal Rates', () => {
+    it('should maintain roughly constant real balance with zero payments when APR = inflation', () => {
+      // When APR equals inflation and no payments are made:
+      // - Real interest rate ≈ 0% (Fisher equation)
+      // - No payments means no principal reduction
+      // - Real balance stays approximately constant
+      // Note: small drift occurs due to monthly compounding vs annual rate approximation
+
+      const balance = 1_000_000;
+      const annualInflation = 0.05;
+      const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+      const apr = annualInflation * 100; // APR matches inflation
+
+      const debt = new Debt(
+        createDebtInput({
+          balance,
+          apr,
+          monthlyPayment: 0, // No payments
+          interestType: 'simple',
+        })
+      );
+
+      // Run 120 months
+      for (let i = 0; i < 120; i++) {
+        debt.applyMonthlyInflation(monthlyInflation);
+        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      }
+
+      // Real balance should stay approximately at $1M (within ~2% after 10 years)
+      // Small drift due to APR being simple interest (annual/12) vs inflation being compound
+      expect(debt.getBalance()).toBeGreaterThan(balance * 0.98);
+      expect(debt.getBalance()).toBeLessThan(balance * 1.02);
+    });
+  });
+
+  describe('Debt Erosion with High Inflation', () => {
+    it('should erode debt when inflation exceeds APR', () => {
+      // When inflation > APR:
+      // - Real interest rate is negative
+      // - Even with zero payments, real balance decreases
+      // - This represents debt being "inflated away"
+
+      const balance = 1_000_000;
+      const apr = 5; // 5% nominal
+      const annualInflation = 0.1; // 10% inflation
+      const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
+
+      const debt = new Debt(
+        createDebtInput({
+          balance,
+          apr,
+          monthlyPayment: 0, // No payments - pure erosion test
+          interestType: 'simple',
+        })
+      );
+
+      // Run 120 months
+      for (let i = 0; i < 120; i++) {
+        debt.applyMonthlyInflation(monthlyInflation);
+        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      }
+
+      // Real rate ≈ (1.05/1.10) - 1 ≈ -4.5% annually
+      // After 10 years: balance should be significantly less
+      // Roughly: $1M * (0.955)^10 ≈ $630K
+      expect(debt.getBalance()).toBeLessThan(700_000);
+      expect(debt.getBalance()).toBeGreaterThan(500_000);
+    });
   });
 });

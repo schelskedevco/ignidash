@@ -13,7 +13,9 @@ export class PhysicalAssetsProcessor {
     private physicalAssets: PhysicalAssets
   ) {}
 
-  process(): PhysicalAssetsData {
+  process(monthlyInflationRate: number): PhysicalAssetsData {
+    this.physicalAssets.applyMonthlyInflation(monthlyInflationRate);
+
     let totalPurchaseExpense = 0;
     const purchaseExpenseByAsset: Record<string, number> = {};
 
@@ -35,8 +37,8 @@ export class PhysicalAssetsProcessor {
     for (const asset of ownedAssets) {
       const { monthlyAppreciation: appreciationForPeriod } = asset.applyMonthlyAppreciation();
 
-      const { monthlyLoanPayment: loanPaymentForPeriod } = asset.getMonthlyLoanPayment();
-      asset.applyLoanPayment(loanPaymentForPeriod);
+      const { monthlyLoanPayment: loanPaymentForPeriod } = asset.getMonthlyLoanPayment(monthlyInflationRate);
+      asset.applyLoanPayment(loanPaymentForPeriod, monthlyInflationRate);
 
       const assetData: PhysicalAssetData = {
         id: asset.getId(),
@@ -165,6 +167,10 @@ export class PhysicalAssets {
     this.assets = data.map((asset) => new PhysicalAsset(asset));
   }
 
+  applyMonthlyInflation(monthlyInflationRate: number): void {
+    this.assets.forEach((asset) => asset.applyMonthlyInflation(monthlyInflationRate));
+  }
+
   getOwnedAssets(): PhysicalAsset[] {
     return this.assets.filter((asset) => asset.getOwnershipStatus() === 'owned');
   }
@@ -200,7 +206,9 @@ export class PhysicalAsset {
   private saleDate: TimePoint | undefined;
   private paymentMethod: PaymentMethodInputs;
   private loanBalance: number = 0;
-  private monthlyLoanPayment: number = 0;
+  private loanPrincipal: number = 0;
+  private nominalAPR: number = 0; // Store nominal APR (user input)
+  private monthlyLoanPayment: number = 0; // Mutable, deflates over time
   private ownershipStatus: OwnershipStatus;
 
   constructor(data: PhysicalAssetInputs) {
@@ -215,12 +223,20 @@ export class PhysicalAsset {
 
     if (data.paymentMethod.type === 'loan') {
       this.loanBalance = data.paymentMethod.loanBalance;
+      this.loanPrincipal = data.paymentMethod.loanBalance;
+      this.nominalAPR = data.paymentMethod.apr / 100;
       this.monthlyLoanPayment = data.paymentMethod.monthlyPayment;
     }
 
     // Assets with purchaseDate.type === 'now' are already owned (no purchase expense)
     // All other purchase date types start as pending
     this.ownershipStatus = data.purchaseDate.type === 'now' ? 'owned' : 'pending';
+  }
+
+  applyMonthlyInflation(monthlyInflationRate: number): void {
+    if (this.paymentMethod.type === 'loan') {
+      this.monthlyLoanPayment /= 1 + monthlyInflationRate;
+    }
   }
 
   getId(): string {
@@ -265,31 +281,38 @@ export class PhysicalAsset {
     return { monthlyAppreciation };
   }
 
-  private calculateMonthlyInterest(): number {
+  private calculateMonthlyInterest(monthlyInflationRate: number): number {
     if (this.paymentMethod.type !== 'loan') return 0;
-    return this.loanBalance * (this.paymentMethod.apr / 100 / 12);
+    return this.loanPrincipal * ((1 + this.nominalAPR / 12) / (1 + monthlyInflationRate) - 1);
   }
 
-  getMonthlyLoanPayment(): { monthlyLoanPayment: number } {
+  getMonthlyLoanPayment(monthlyInflationRate: number): { monthlyLoanPayment: number } {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
     if (this.isPaidOff()) return { monthlyLoanPayment: 0 };
 
-    return { monthlyLoanPayment: Math.min(this.monthlyLoanPayment, this.loanBalance + this.calculateMonthlyInterest()) };
+    return {
+      monthlyLoanPayment: Math.min(this.monthlyLoanPayment, this.loanBalance + this.calculateMonthlyInterest(monthlyInflationRate)),
+    };
   }
 
-  applyLoanPayment(payment: number): void {
+  applyLoanPayment(payment: number, monthlyInflationRate: number): void {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
     if (this.isPaidOff()) return;
 
-    const interestForPeriod = this.calculateMonthlyInterest();
+    const interestForPeriod = this.calculateMonthlyInterest(monthlyInflationRate);
 
-    if (payment >= interestForPeriod) {
-      const principalPayment = payment - interestForPeriod;
-      this.loanBalance = Math.max(0, this.loanBalance - principalPayment);
-    } else {
-      const unpaidInterest = interestForPeriod - payment;
-      this.loanBalance += unpaidInterest;
-    }
+    const unpaidPrevInterest = Math.max(0, this.loanBalance - this.loanPrincipal);
+    let remainingPayment = payment;
+
+    const paidCurrInterest = Math.min(remainingPayment, interestForPeriod);
+    remainingPayment -= paidCurrInterest;
+    const unpaidCurrInterest = interestForPeriod - paidCurrInterest;
+
+    const paidPrevInterest = Math.min(remainingPayment, unpaidPrevInterest);
+    remainingPayment -= paidPrevInterest;
+
+    this.loanPrincipal = Math.max(0, this.loanPrincipal - remainingPayment);
+    this.loanBalance = this.loanPrincipal + (unpaidPrevInterest - paidPrevInterest) + unpaidCurrInterest;
   }
 
   shouldSellThisPeriod(simulationState: SimulationState): boolean {

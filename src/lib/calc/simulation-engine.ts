@@ -106,11 +106,11 @@ export class FinancialSimulationEngine {
         portfolioProcessor.processRequiredMinimumDistributions();
 
       // Process one month of simulation
-      returnsProcessor.process();
+      const { inflationRateForPeriod: monthlyInflationRate } = returnsProcessor.process();
       const incomesData = incomesProcessor.process();
       const expensesData = expensesProcessor.process();
-      const physicalAssetsData = physicalAssetsProcessor.process();
-      const debtsData = debtsProcessor.process();
+      const physicalAssetsData = physicalAssetsProcessor.process(monthlyInflationRate);
+      const debtsData = debtsProcessor.process(monthlyInflationRate);
 
       const { discretionaryExpense: monthlyDiscretionaryExpense } = portfolioProcessor.processContributionsAndWithdrawals(
         incomesData,
