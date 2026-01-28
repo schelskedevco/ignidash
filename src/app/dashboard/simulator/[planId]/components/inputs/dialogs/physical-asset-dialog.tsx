@@ -129,7 +129,11 @@ export default function PhysicalAssetDialog({
       unregister('paymentMethod.apr');
       unregister('paymentMethod.monthlyPayment');
     }
-  }, [purchaseDateType, saleDateType, paymentMethodType, unregister]);
+
+    if (!showDownPaymentField) {
+      unregister('paymentMethod.downPayment');
+    }
+  }, [purchaseDateType, saleDateType, paymentMethodType, showDownPaymentField, unregister]);
 
   const getDateColSpan = (type: string | undefined) => {
     if (type === 'customDate') return 'col-span-2';

@@ -8,7 +8,7 @@ const cashPaymentSchema = z.object({
 
 const loanPaymentSchema = z.object({
   type: z.literal('loan'),
-  downPayment: currencyFieldAllowsZero('Down payment cannot be negative'),
+  downPayment: currencyFieldAllowsZero('Down payment cannot be negative').optional(),
   loanBalance: currencyFieldForbidsZero('Loan balance must be greater than zero'),
   apr: percentageField(0, 25, 'APR'),
   monthlyPayment: currencyFieldForbidsZero('Monthly payment must be greater than zero'),

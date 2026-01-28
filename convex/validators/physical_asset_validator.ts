@@ -19,7 +19,7 @@ const cashPaymentValidator = v.object({
 
 const loanPaymentValidator = v.object({
   type: v.literal('loan'),
-  downPayment: v.number(),
+  downPayment: v.optional(v.number()),
   loanBalance: v.number(),
   apr: v.number(),
   monthlyPayment: v.number(),

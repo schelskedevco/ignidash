@@ -318,7 +318,7 @@ export class PhysicalAsset {
 
     this.ownershipStatus = 'owned';
 
-    return { purchaseExpense: this.paymentMethod.type === 'loan' ? this.paymentMethod.downPayment : this.purchasePrice };
+    return { purchaseExpense: this.paymentMethod.type === 'loan' ? (this.paymentMethod.downPayment ?? 0) : this.purchasePrice };
   }
 
   private getIsSimTimeAtOrAfterTimePoint(simulationState: SimulationState, timePoint: TimePoint): boolean {
