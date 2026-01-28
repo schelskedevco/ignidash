@@ -142,7 +142,7 @@ export function physicalAssetFromConvex(physicalAsset: NonNullable<Doc<'plans'>[
     marketValue: physicalAsset.marketValue,
     appreciationRate: physicalAsset.appreciationRate,
     saleDate: physicalAsset.saleDate ? { ...physicalAsset.saleDate } : { type: 'atLifeExpectancy' },
-    financing: physicalAsset.financing ? { ...physicalAsset.financing } : undefined,
+    paymentMethod: physicalAsset.paymentMethod,
   };
 }
 
@@ -356,7 +356,7 @@ export function physicalAssetToConvex(physicalAsset: PhysicalAssetInputs): NonNu
     marketValue: physicalAsset.marketValue,
     appreciationRate: physicalAsset.appreciationRate,
     saleDate: physicalAsset.saleDate ? { ...physicalAsset.saleDate } : undefined,
-    financing: physicalAsset.financing ? { ...physicalAsset.financing } : undefined,
+    paymentMethod: physicalAsset.paymentMethod,
   };
 }
 

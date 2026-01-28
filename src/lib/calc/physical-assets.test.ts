@@ -42,15 +42,16 @@ const createPhysicalAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}):
   marketValue: overrides.marketValue,
   appreciationRate: overrides.appreciationRate ?? 3,
   saleDate: overrides.saleDate ?? { type: 'atLifeExpectancy' },
-  financing: overrides.financing,
+  paymentMethod: overrides.paymentMethod ?? { type: 'cash' },
 });
 
 const createFinancedAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}): PhysicalAssetInputs => {
-  const downPayment = overrides.financing?.downPayment ?? 80000;
-  const loanBalance = overrides.financing?.loanBalance ?? 320000;
-  const apr = overrides.financing?.apr ?? 6;
+  const paymentMethodOverrides = overrides.paymentMethod?.type === 'loan' ? overrides.paymentMethod : undefined;
+  const downPayment = paymentMethodOverrides?.downPayment ?? 80000;
+  const loanBalance = paymentMethodOverrides?.loanBalance ?? 320000;
+  const apr = paymentMethodOverrides?.apr ?? 6;
   // Default monthly payment calculated from standard amortization formula for 30yr @ 6% on $320k
-  const monthlyPayment = overrides.financing?.monthlyPayment ?? 1918.56;
+  const monthlyPayment = paymentMethodOverrides?.monthlyPayment ?? 1918.56;
 
   return {
     id: overrides.id ?? 'asset-1',
@@ -60,7 +61,8 @@ const createFinancedAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}):
     marketValue: overrides.marketValue,
     appreciationRate: overrides.appreciationRate ?? 3,
     saleDate: overrides.saleDate ?? { type: 'atLifeExpectancy' },
-    financing: {
+    paymentMethod: {
+      type: 'loan',
       downPayment,
       loanBalance,
       apr,
@@ -168,12 +170,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 400000,
-          financing: {
-            downPayment: 80000,
-            loanBalance: 320000,
-            apr: 6,
-            monthlyPayment: configuredPayment,
-          },
+          paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: configuredPayment },
         })
       );
 
@@ -189,12 +186,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 30000,
-          financing: {
-            downPayment: 6000,
-            loanBalance: 24000,
-            apr: 0,
-            monthlyPayment: expectedPayment,
-          },
+          paymentMethod: { type: 'loan', downPayment: 6000, loanBalance: 24000, apr: 0, monthlyPayment: expectedPayment },
         })
       );
 
@@ -214,12 +206,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 400000,
-          financing: {
-            downPayment: 80000,
-            loanBalance,
-            apr,
-            monthlyPayment,
-          },
+          paymentMethod: { type: 'loan', downPayment: 80000, loanBalance, apr, monthlyPayment },
         })
       );
 
@@ -237,7 +224,8 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 10000,
-          financing: {
+          paymentMethod: {
+            type: 'loan',
             downPayment: 0,
             loanBalance: 10000,
             apr: 0,
@@ -260,7 +248,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchasePrice: 400000,
-          financing: undefined, // Cash purchase
+          paymentMethod: undefined, // Cash purchase
         })
       );
 
@@ -281,12 +269,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 400000,
-          financing: {
-            downPayment: 80000,
-            loanBalance,
-            apr,
-            monthlyPayment,
-          },
+          paymentMethod: { type: 'loan', downPayment: 80000, loanBalance, apr, monthlyPayment },
         })
       );
 
@@ -337,7 +320,8 @@ describe('PhysicalAsset Class', () => {
         createFinancedAssetInput({
           purchasePrice: 400000,
           appreciationRate: -20, // Major depreciation
-          financing: {
+          paymentMethod: {
+            type: 'loan',
             downPayment: 20000,
             loanBalance, // High LTV
             apr,
@@ -529,12 +513,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createFinancedAssetInput({
           purchasePrice: 400000,
-          financing: {
-            downPayment: 80000,
-            loanBalance: 320000,
-            apr: 6,
-            monthlyPayment: 1918.56,
-          },
+          paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
         })
       );
 
@@ -546,7 +525,7 @@ describe('PhysicalAsset Class', () => {
       const asset = new PhysicalAsset(
         createPhysicalAssetInput({
           purchasePrice: 400000,
-          financing: undefined,
+          paymentMethod: undefined,
         })
       );
 
@@ -565,12 +544,7 @@ describe('PhysicalAsset Class', () => {
         createFinancedAssetInput({
           purchasePrice: 100000,
           appreciationRate: -50, // Extreme depreciation
-          financing: {
-            downPayment: 5000,
-            loanBalance,
-            apr,
-            monthlyPayment,
-          },
+          paymentMethod: { type: 'loan', downPayment: 5000, loanBalance, apr, monthlyPayment },
         })
       );
 
@@ -636,7 +610,7 @@ describe('PhysicalAssets Collection', () => {
       createFinancedAssetInput({
         id: 'house1',
         purchasePrice: 400000,
-        financing: { downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
+        paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
       }),
       createPhysicalAssetInput({
         id: 'car',
@@ -661,7 +635,7 @@ describe('PhysicalAssetsProcessor', () => {
         id: 'house',
         purchasePrice: 400000,
         appreciationRate: 3,
-        financing: { downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
+        paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
       }),
     ]);
 
@@ -702,7 +676,7 @@ describe('PhysicalAssetsProcessor', () => {
         id: 'house',
         purchasePrice: 400000,
         appreciationRate: 3,
-        financing: { downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
+        paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
       }),
     ]);
 
@@ -805,7 +779,7 @@ describe('Purchase Expense Tracking', () => {
         createPhysicalAssetInput({
           purchaseDate: { type: 'customAge', age: 40 },
           purchasePrice: 400000,
-          financing: undefined,
+          paymentMethod: undefined,
         })
       );
 
@@ -821,12 +795,7 @@ describe('Purchase Expense Tracking', () => {
         createFinancedAssetInput({
           purchaseDate: { type: 'customAge', age: 40 },
           purchasePrice: 400000,
-          financing: {
-            downPayment: 80000,
-            loanBalance: 320000,
-            apr: 6,
-            monthlyPayment: 1918.56,
-          },
+          paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
         })
       );
 
@@ -848,12 +817,7 @@ describe('Purchase Expense Tracking', () => {
         createFinancedAssetInput({
           purchaseDate: { type: 'customAge', age: 40 },
           purchasePrice: 400000,
-          financing: {
-            downPayment: 0,
-            loanBalance,
-            apr,
-            monthlyPayment,
-          },
+          paymentMethod: { type: 'loan', downPayment: 0, loanBalance, apr, monthlyPayment },
         })
       );
 
@@ -963,7 +927,7 @@ describe('Purchase Expense Tracking', () => {
           name: 'Future House',
           purchaseDate: { type: 'customAge', age: 40 },
           purchasePrice: 500000,
-          financing: undefined, // Cash purchase
+          paymentMethod: undefined, // Cash purchase
         }),
       ]);
 
@@ -980,7 +944,7 @@ describe('Purchase Expense Tracking', () => {
           name: 'Future House',
           purchaseDate: { type: 'customAge', age: 40 },
           purchasePrice: 500000,
-          financing: undefined,
+          paymentMethod: undefined,
         }),
       ]);
       const simStateAt = createSimulationState({ time: { age: 40, year: 2029, month: 1, date: new Date(2029, 0, 1) } });
@@ -998,12 +962,7 @@ describe('Purchase Expense Tracking', () => {
           name: 'Future House',
           purchaseDate: { type: 'customAge', age: 40 },
           purchasePrice: 400000,
-          financing: {
-            downPayment: 80000,
-            loanBalance: 320000,
-            apr: 6,
-            monthlyPayment: 1918.56,
-          },
+          paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
         }),
       ]);
 
@@ -1101,12 +1060,7 @@ describe('Full Amortization Tests', () => {
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
         purchasePrice: 400000,
-        financing: {
-          downPayment: 80000,
-          loanBalance,
-          apr,
-          monthlyPayment: expectedMonthlyPayment,
-        },
+        paymentMethod: { type: 'loan', downPayment: 80000, loanBalance, apr, monthlyPayment: expectedMonthlyPayment },
       })
     );
 
@@ -1143,12 +1097,7 @@ describe('Full Amortization Tests', () => {
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
         purchasePrice: 30000,
-        financing: {
-          downPayment: 6000,
-          loanBalance,
-          apr: 0,
-          monthlyPayment: expectedPayment,
-        },
+        paymentMethod: { type: 'loan', downPayment: 6000, loanBalance, apr: 0, monthlyPayment: expectedPayment },
       })
     );
 
@@ -1180,12 +1129,7 @@ describe('Full Amortization Tests', () => {
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
         purchasePrice: 125000,
-        financing: {
-          downPayment: 25000,
-          loanBalance,
-          apr,
-          monthlyPayment,
-        },
+        paymentMethod: { type: 'loan', downPayment: 25000, loanBalance, apr, monthlyPayment },
       })
     );
 
@@ -1266,12 +1210,7 @@ describe('Capital Loss Scenarios', () => {
       createFinancedAssetInput({
         purchasePrice,
         appreciationRate: -15, // 15% annual depreciation (like a car)
-        financing: {
-          downPayment,
-          loanBalance,
-          apr,
-          monthlyPayment,
-        },
+        paymentMethod: { type: 'loan', downPayment, loanBalance, apr, monthlyPayment },
       })
     );
 
@@ -1370,12 +1309,7 @@ describe('Edge Cases', () => {
       createFinancedAssetInput({
         purchasePrice: 30000, // Car
         appreciationRate: -25, // 25% annual depreciation
-        financing: {
-          downPayment: 3000,
-          loanBalance,
-          apr,
-          monthlyPayment,
-        },
+        paymentMethod: { type: 'loan', downPayment: 3000, loanBalance, apr, monthlyPayment },
       })
     );
 
@@ -1414,7 +1348,8 @@ describe('Edge Cases', () => {
     const asset = new PhysicalAsset(
       createFinancedAssetInput({
         purchasePrice: 10000,
-        financing: {
+        paymentMethod: {
+          type: 'loan',
           downPayment: 0,
           loanBalance: 10000,
           apr: 0,

@@ -2,14 +2,21 @@ import { z } from 'zod';
 import { currencyFieldForbidsZero, currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-schema-utils';
 import { timePointSchema } from './income-expenses-shared-schemas';
 
-const financingSchema = z.object({
+const cashPaymentSchema = z.object({
+  type: z.literal('cash'),
+});
+
+const loanPaymentSchema = z.object({
+  type: z.literal('loan'),
   downPayment: currencyFieldAllowsZero('Down payment cannot be negative'),
   loanBalance: currencyFieldForbidsZero('Loan balance must be greater than zero'),
   apr: percentageField(0, 25, 'APR'),
   monthlyPayment: currencyFieldForbidsZero('Monthly payment must be greater than zero'),
 });
 
-export type FinancingInputs = z.infer<typeof financingSchema>;
+const paymentMethodSchema = z.discriminatedUnion('type', [cashPaymentSchema, loanPaymentSchema]);
+
+export type PaymentMethodInputs = z.infer<typeof paymentMethodSchema>;
 
 export const physicalAssetFormSchema = z.object({
   id: z.string(),
@@ -19,9 +26,9 @@ export const physicalAssetFormSchema = z.object({
   marketValue: currencyFieldForbidsZero('Market value must be greater than zero').optional(),
   appreciationRate: percentageField(-30, 20, 'Annual appreciation rate'),
   saleDate: timePointSchema,
-  financing: financingSchema.optional(),
+  paymentMethod: paymentMethodSchema,
 });
 
 export type PhysicalAssetInputs = z.infer<typeof physicalAssetFormSchema>;
 
-export const isFinancedAsset = (asset: PhysicalAssetInputs): boolean => asset.financing !== undefined;
+export const hasLoan = (asset: PhysicalAssetInputs): boolean => asset.paymentMethod.type === 'loan';

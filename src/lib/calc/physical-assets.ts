@@ -1,4 +1,4 @@
-import type { PhysicalAssetInputs, FinancingInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
+import type { PhysicalAssetInputs, PaymentMethodInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
 import type { TimePoint } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 
 import type { SimulationState } from './simulation-engine';
@@ -198,7 +198,7 @@ export class PhysicalAsset {
   private purchasePrice: number;
   private appreciationRate: number;
   private saleDate: TimePoint | undefined;
-  private financing: FinancingInputs | undefined;
+  private paymentMethod: PaymentMethodInputs;
   private loanBalance: number = 0;
   private monthlyLoanPayment: number = 0;
   private ownershipStatus: OwnershipStatus;
@@ -211,11 +211,11 @@ export class PhysicalAsset {
     this.purchasePrice = data.purchasePrice;
     this.appreciationRate = data.appreciationRate / 100;
     this.saleDate = data.saleDate;
-    this.financing = data.financing;
+    this.paymentMethod = data.paymentMethod;
 
-    if (data.financing) {
-      this.loanBalance = data.financing.loanBalance;
-      this.monthlyLoanPayment = data.financing.monthlyPayment;
+    if (data.paymentMethod.type === 'loan') {
+      this.loanBalance = data.paymentMethod.loanBalance;
+      this.monthlyLoanPayment = data.paymentMethod.monthlyPayment;
     }
 
     // Assets with purchaseDate.type === 'now' are already owned (no purchase expense)
@@ -266,8 +266,8 @@ export class PhysicalAsset {
   }
 
   private calculateMonthlyInterest(): number {
-    if (!this.financing) return 0;
-    return this.loanBalance * (this.financing.apr / 100 / 12);
+    if (this.paymentMethod.type !== 'loan') return 0;
+    return this.loanBalance * (this.paymentMethod.apr / 100 / 12);
   }
 
   getMonthlyLoanPayment(): { monthlyLoanPayment: number } {
@@ -318,7 +318,7 @@ export class PhysicalAsset {
 
     this.ownershipStatus = 'owned';
 
-    return { purchaseExpense: this.financing ? this.financing.downPayment : this.purchasePrice };
+    return { purchaseExpense: this.paymentMethod.type === 'loan' ? this.paymentMethod.downPayment : this.purchasePrice };
   }
 
   private getIsSimTimeAtOrAfterTimePoint(simulationState: SimulationState, timePoint: TimePoint): boolean {

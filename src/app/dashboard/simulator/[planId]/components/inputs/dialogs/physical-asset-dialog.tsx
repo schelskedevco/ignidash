@@ -7,7 +7,7 @@ import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { CalendarIcon, HomeIcon, WeightIcon } from 'lucide-react';
+import { CalendarIcon, HomeIcon, BanknoteArrowDownIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
@@ -52,7 +52,7 @@ export default function PhysicalAssetDialog({
         purchaseDate: { type: 'now' },
         appreciationRate: 4,
         saleDate: { type: 'atLifeExpectancy' },
-        financing: undefined,
+        paymentMethod: { type: 'cash' },
       }) as const satisfies Partial<PhysicalAssetInputs>,
     [numPhysicalAssets]
   );
@@ -64,6 +64,7 @@ export default function PhysicalAssetDialog({
     unregister,
     control,
     handleSubmit,
+    getFieldState,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(physicalAssetFormSchema),
@@ -71,6 +72,11 @@ export default function PhysicalAssetDialog({
   });
 
   const hasFormErrors = Object.keys(errors).length > 0;
+
+  const { error: loanBalanceError } = getFieldState('paymentMethod.loanBalance');
+  const { error: monthlyPaymentError } = getFieldState('paymentMethod.monthlyPayment');
+  const { error: aprError } = getFieldState('paymentMethod.apr');
+  const { error: downPaymentError } = getFieldState('paymentMethod.downPayment');
 
   const m = useMutation(api.physical_asset.upsertPhysicalAsset);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -95,7 +101,7 @@ export default function PhysicalAssetDialog({
   const saleTimePoint = useWatch({ control, name: 'saleDate' });
   const saleDateType = saleTimePoint?.type;
 
-  const financing = useWatch({ control, name: 'financing' });
+  const paymentMethod = useWatch({ control, name: 'paymentMethod' });
 
   useEffect(() => {
     if (purchaseDateType !== 'customDate') {
@@ -154,7 +160,7 @@ export default function PhysicalAssetDialog({
   const ages = Array.from({ length: lifeExpectancy - currentAge + 1 }, (_, i) => currentAge + i);
 
   const timeFrameButtonRef = useRef<HTMLButtonElement>(null);
-  const financingButtonRef = useRef<HTMLButtonElement>(null);
+  const paymentMethodButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeDisclosure, setActiveDisclosure] = useState<DisclosureState | null>(null);
   const toggleDisclosure = useCallback(
@@ -165,8 +171,8 @@ export default function PhysicalAssetDialog({
           case 'timeframe':
             targetRef = timeFrameButtonRef.current;
             break;
-          case 'financing':
-            targetRef = financingButtonRef.current;
+          case 'paymentMethod':
+            targetRef = paymentMethodButtonRef.current;
             break;
         }
 
@@ -471,25 +477,25 @@ export default function PhysicalAssetDialog({
                 {({ open, close }) => (
                   <>
                     <DisclosureButton
-                      ref={financingButtonRef}
+                      ref={paymentMethodButtonRef}
                       onClick={() => {
                         if (!open) close();
-                        toggleDisclosure({ open, close, key: 'financing' });
+                        toggleDisclosure({ open, close, key: 'paymentMethod' });
                       }}
                       onKeyDown={(event) => {
                         if (event.key === 'Enter' || event.key === ' ') {
                           if (!open) close();
-                          toggleDisclosure({ open, close, key: 'financing' });
+                          toggleDisclosure({ open, close, key: 'paymentMethod' });
                         }
                       }}
                       className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
                     >
                       <div className="flex items-center gap-2">
-                        <WeightIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
-                        <span className="text-base/7 font-semibold">Financing</span>
+                        <BanknoteArrowDownIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
+                        <span className="text-base/7 font-semibold">Payment Method</span>
                         <span className="hidden sm:inline">|</span>
                         <span className="text-muted-foreground hidden truncate sm:inline">
-                          {financing !== undefined ? 'Financed' : 'Paid in Full'}
+                          {paymentMethod.type === 'loan' ? 'Loan' : 'Cash'}
                         </span>
                       </div>
                       <span className="text-muted-foreground ml-6 flex h-7 items-center">
@@ -500,53 +506,53 @@ export default function PhysicalAssetDialog({
                     <DisclosurePanel className="pt-4">
                       <div className="grid grid-cols-2 gap-4">
                         <Field>
-                          <Label htmlFor="financing.loanBalance">Loan Balance</Label>
+                          <Label htmlFor="paymentMethod.loanBalance">Loan Balance</Label>
                           <NumberInput
-                            name="financing.loanBalance"
+                            name="paymentMethod.loanBalance"
                             control={control}
-                            id="financing.loanBalance"
+                            id="paymentMethod.loanBalance"
                             inputMode="decimal"
                             placeholder="$400,000"
                             prefix="$"
                           />
-                          {errors.financing?.loanBalance && <ErrorMessage>{errors.financing?.loanBalance?.message}</ErrorMessage>}
+                          {loanBalanceError && <ErrorMessage>{loanBalanceError.message}</ErrorMessage>}
                         </Field>
                         <Field>
-                          <Label htmlFor="financing.monthlyPayment">Monthly Payment</Label>
+                          <Label htmlFor="paymentMethod.monthlyPayment">Monthly Payment</Label>
                           <NumberInput
-                            name="financing.monthlyPayment"
+                            name="paymentMethod.monthlyPayment"
                             control={control}
-                            id="financing.monthlyPayment"
+                            id="paymentMethod.monthlyPayment"
                             inputMode="decimal"
                             placeholder="$2,400"
                             prefix="$"
                           />
-                          {errors.financing?.monthlyPayment && <ErrorMessage>{errors.financing?.monthlyPayment?.message}</ErrorMessage>}
+                          {monthlyPaymentError && <ErrorMessage>{monthlyPaymentError.message}</ErrorMessage>}
                         </Field>
                         <Field className={getAPRColSpan()}>
-                          <Label htmlFor="financing.apr">APR</Label>
+                          <Label htmlFor="paymentMethod.apr">APR</Label>
                           <NumberInput
-                            name="financing.apr"
+                            name="paymentMethod.apr"
                             control={control}
-                            id="financing.apr"
+                            id="paymentMethod.apr"
                             inputMode="decimal"
                             placeholder="6%"
                             suffix="%"
                           />
-                          {errors.financing?.apr && <ErrorMessage>{errors.financing?.apr?.message}</ErrorMessage>}
+                          {aprError && <ErrorMessage>{aprError.message}</ErrorMessage>}
                         </Field>
                         {showDownPaymentField && (
                           <Field>
-                            <Label htmlFor="financing.downPayment">Down Payment</Label>
+                            <Label htmlFor="paymentMethod.downPayment">Down Payment</Label>
                             <NumberInput
-                              name="financing.downPayment"
+                              name="paymentMethod.downPayment"
                               control={control}
-                              id="financing.downPayment"
+                              id="paymentMethod.downPayment"
                               inputMode="decimal"
                               placeholder="$100,000"
                               prefix="$"
                             />
-                            {errors.financing?.downPayment && <ErrorMessage>{errors.financing?.downPayment?.message}</ErrorMessage>}
+                            {downPaymentError && <ErrorMessage>{downPaymentError.message}</ErrorMessage>}
                           </Field>
                         )}
                       </div>

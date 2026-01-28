@@ -180,12 +180,13 @@ export const createPhysicalAssetInput = (overrides?: Partial<PhysicalAssetInputs
   marketValue: overrides?.marketValue,
   appreciationRate: overrides?.appreciationRate ?? 3,
   saleDate: overrides?.saleDate ?? { type: 'atLifeExpectancy' },
-  financing: overrides?.financing,
+  paymentMethod: overrides?.paymentMethod ?? { type: 'cash' },
 });
 
 export const createFinancedAssetInput = (overrides?: Partial<PhysicalAssetInputs>): PhysicalAssetInputs => {
-  const downPayment = overrides?.financing?.downPayment ?? 80000;
-  const loanBalance = overrides?.financing?.loanBalance ?? 320000;
+  const paymentMethodOverrides = overrides?.paymentMethod?.type === 'loan' ? overrides.paymentMethod : undefined;
+  const downPayment = paymentMethodOverrides?.downPayment ?? 80000;
+  const loanBalance = paymentMethodOverrides?.loanBalance ?? 320000;
 
   return {
     id: overrides?.id ?? 'asset-1',
@@ -195,11 +196,12 @@ export const createFinancedAssetInput = (overrides?: Partial<PhysicalAssetInputs
     marketValue: overrides?.marketValue,
     appreciationRate: overrides?.appreciationRate ?? 3,
     saleDate: overrides?.saleDate ?? { type: 'atLifeExpectancy' },
-    financing: {
+    paymentMethod: {
+      type: 'loan',
       downPayment,
       loanBalance,
-      apr: overrides?.financing?.apr ?? 6,
-      monthlyPayment: overrides?.financing?.monthlyPayment ?? 1918.56, // Standard 30yr payment at 6% APR on $320k
+      apr: paymentMethodOverrides?.apr ?? 6,
+      monthlyPayment: paymentMethodOverrides?.monthlyPayment ?? 1918.56, // Standard 30yr payment at 6% APR on $320k
     },
   };
 };

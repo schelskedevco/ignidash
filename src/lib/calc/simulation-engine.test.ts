@@ -777,6 +777,7 @@ describe('Physical Assets Integration', () => {
           purchasePrice: 100000,
           appreciationRate: 0, // No appreciation for predictable test
           saleDate: { type: 'customAge' as const, age: 40 },
+          paymentMethod: { type: 'cash' },
         },
       },
       contributionRules: {},
@@ -835,7 +836,8 @@ describe('Physical Assets Integration', () => {
           purchasePrice: 300000,
           appreciationRate: 0,
           saleDate: { type: 'atLifeExpectancy' as const },
-          financing: {
+          paymentMethod: {
+            type: 'loan',
             downPayment: 60000, // 20% down
             loanBalance: 240000,
             apr: 6,
@@ -883,6 +885,7 @@ describe('Physical Assets Integration', () => {
           marketValue: 350000, // Current value (already appreciated)
           appreciationRate: 0,
           saleDate: { type: 'customAge' as const, age: 40 }, // Sell at age 40
+          paymentMethod: { type: 'cash' },
         },
       },
       contributionRules: {},
@@ -917,7 +920,8 @@ describe('Physical Assets Integration', () => {
           purchasePrice: 400000,
           appreciationRate: 3,
           saleDate: { type: 'atLifeExpectancy' as const },
-          financing: {
+          paymentMethod: {
+            type: 'loan',
             downPayment: 80000,
             loanBalance: 320000,
             apr: 6,
@@ -961,6 +965,7 @@ describe('Physical Assets Integration', () => {
           purchasePrice: 200000, // Cost basis
           appreciationRate: -20, // Severe depreciation
           saleDate: { type: 'customAge' as const, age: 37 }, // Sell after 3 years of depreciation
+          paymentMethod: { type: 'cash' },
         },
       },
       contributionRules: {},
@@ -1002,7 +1007,8 @@ describe('Physical Assets Integration', () => {
           purchaseDate: { type: 'now' as const },
           purchasePrice: 500000,
           appreciationRate: -50, // Extreme depreciation (50% value loss per year)
-          financing: {
+          paymentMethod: {
+            type: 'loan',
             downPayment: 5000, // Only 1% down (99% LTV)
             loanBalance: 495000,
             apr: 6,

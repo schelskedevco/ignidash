@@ -40,7 +40,7 @@ function getPhysicalAssetDesc(asset: PhysicalAssetInputs) {
   return (
     <p>
       {formatNumber(asset.marketValue ?? asset.purchasePrice, 2, '$')} | {formatNumber(asset.appreciationRate, 1)}% appreciation
-      {` | ${asset.financing ? 'Financed' : 'Owned'}`}
+      {` | ${asset.paymentMethod.type === 'loan' ? 'Loan' : 'Cash'}`}
     </p>
   );
 }

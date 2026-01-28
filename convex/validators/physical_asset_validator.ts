@@ -13,12 +13,19 @@ const physicalAssetTimePointValidator = v.object({
   age: v.optional(v.number()),
 });
 
-const financingValidator = v.object({
+const cashPaymentValidator = v.object({
+  type: v.literal('cash'),
+});
+
+const loanPaymentValidator = v.object({
+  type: v.literal('loan'),
   downPayment: v.number(),
   loanBalance: v.number(),
   apr: v.number(),
   monthlyPayment: v.number(),
 });
+
+const paymentMethodValidator = v.union(cashPaymentValidator, loanPaymentValidator);
 
 export const physicalAssetValidator = v.object({
   id: v.string(),
@@ -28,5 +35,5 @@ export const physicalAssetValidator = v.object({
   marketValue: v.optional(v.number()),
   appreciationRate: v.number(),
   saleDate: v.optional(physicalAssetTimePointValidator),
-  financing: v.optional(financingValidator),
+  paymentMethod: paymentMethodValidator,
 });
