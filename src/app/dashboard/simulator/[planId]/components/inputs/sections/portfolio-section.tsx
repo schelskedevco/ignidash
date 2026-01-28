@@ -40,7 +40,6 @@ function getPhysicalAssetDesc(asset: PhysicalAssetInputs) {
   return (
     <p>
       {formatNumber(asset.marketValue ?? asset.purchasePrice, 2, '$')} | {formatNumber(asset.appreciationRate, 1)}% appreciation
-      {` | ${asset.paymentMethod.type === 'loan' ? 'Loan' : 'Cash'}`}
     </p>
   );
 }
@@ -163,7 +162,7 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
                       leftAddOn={<HomeIcon className="size-8" />}
                       onDropdownClickEdit={() => handlePhysicalAssetDropdownClickEdit(asset)}
                       onDropdownClickDelete={() => setPhysicalAssetToDelete({ id, name: asset.name })}
-                      colorClassName="bg-[var(--chart-5)]"
+                      colorClassName="bg-[var(--chart-7)]"
                     />
                   ))}
               </ul>
