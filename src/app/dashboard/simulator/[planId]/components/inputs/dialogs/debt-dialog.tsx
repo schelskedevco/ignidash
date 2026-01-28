@@ -166,7 +166,9 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
           <span>{selectedDebt ? 'Edit Debt' : 'New Debt'}</span>
         </div>
       </DialogTitle>
-      <DialogDescription className="hidden sm:block">Model debts like credit cards, student loans, or personal loans.</DialogDescription>
+      <DialogDescription className="hidden sm:block">
+        Any debt you have or expect to incur during your lifetime, excluding loans on physical assets.
+      </DialogDescription>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Fieldset aria-label="Debt details">
           <DialogBody className="sm:mt-4">

@@ -195,7 +195,9 @@ export default function PhysicalAssetDialog({
           <span>{selectedPhysicalAsset ? 'Edit Physical Asset' : 'New Physical Asset'}</span>
         </div>
       </DialogTitle>
-      <DialogDescription className="hidden sm:block">Model real estate, vehicles, or other physical assets.</DialogDescription>
+      <DialogDescription className="hidden sm:block">
+        Any real estate, vehicle, or other physical asset you own or expect to acquire during your lifetime.
+      </DialogDescription>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Fieldset aria-label="Physical asset details">
           <DialogBody className="sm:mt-4">
