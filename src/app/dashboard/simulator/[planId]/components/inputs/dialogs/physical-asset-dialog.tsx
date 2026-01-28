@@ -102,6 +102,7 @@ export default function PhysicalAssetDialog({
   const saleDateType = saleTimePoint?.type;
 
   const paymentMethod = useWatch({ control, name: 'paymentMethod' });
+  const paymentMethodType = paymentMethod.type;
 
   useEffect(() => {
     if (purchaseDateType !== 'customDate') {
@@ -121,7 +122,14 @@ export default function PhysicalAssetDialog({
     if (saleDateType !== 'customAge') {
       unregister('saleDate.age');
     }
-  }, [purchaseDateType, saleDateType, unregister]);
+
+    if (paymentMethodType !== 'loan') {
+      unregister('paymentMethod.downPayment');
+      unregister('paymentMethod.loanBalance');
+      unregister('paymentMethod.apr');
+      unregister('paymentMethod.monthlyPayment');
+    }
+  }, [purchaseDateType, saleDateType, paymentMethodType, unregister]);
 
   const getDateColSpan = (type: string | undefined) => {
     if (type === 'customDate') return 'col-span-2';
@@ -494,10 +502,10 @@ export default function PhysicalAssetDialog({
                     >
                       <div className="flex items-center gap-2">
                         <BanknoteArrowDownIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
-                        <span className="text-base/7 font-semibold">Payment Method</span>
+                        <span className="text-base/7 font-semibold">Payment</span>
                         <span className="hidden sm:inline">|</span>
                         <span className="text-muted-foreground hidden truncate sm:inline">
-                          {paymentMethod.type === 'loan' ? 'Loan' : 'Cash'}
+                          {paymentMethod.type === 'loan' ? 'Financed' : 'Paid in Full'}
                         </span>
                       </div>
                       <span className="text-muted-foreground ml-6 flex h-7 items-center">
@@ -507,55 +515,66 @@ export default function PhysicalAssetDialog({
                     </DisclosureButton>
                     <DisclosurePanel className="pt-4">
                       <div className="grid grid-cols-2 gap-4">
-                        <Field>
-                          <Label htmlFor="paymentMethod.loanBalance">Loan Balance</Label>
-                          <NumberInput
-                            name="paymentMethod.loanBalance"
-                            control={control}
-                            id="paymentMethod.loanBalance"
-                            inputMode="decimal"
-                            placeholder="$400,000"
-                            prefix="$"
-                          />
-                          {loanBalanceError && <ErrorMessage>{loanBalanceError.message}</ErrorMessage>}
+                        <Field className="col-span-2">
+                          <Label htmlFor="paymentMethod.type">Payment Method</Label>
+                          <Select {...register('paymentMethod.type')} id="paymentMethod.type" name="paymentMethod.type">
+                            <option value="cash">Paid in Full</option>
+                            <option value="loan">Financed</option>
+                          </Select>
                         </Field>
-                        <Field>
-                          <Label htmlFor="paymentMethod.monthlyPayment">Monthly Payment</Label>
-                          <NumberInput
-                            name="paymentMethod.monthlyPayment"
-                            control={control}
-                            id="paymentMethod.monthlyPayment"
-                            inputMode="decimal"
-                            placeholder="$2,400"
-                            prefix="$"
-                          />
-                          {monthlyPaymentError && <ErrorMessage>{monthlyPaymentError.message}</ErrorMessage>}
-                        </Field>
-                        <Field className={getAPRColSpan()}>
-                          <Label htmlFor="paymentMethod.apr">APR</Label>
-                          <NumberInput
-                            name="paymentMethod.apr"
-                            control={control}
-                            id="paymentMethod.apr"
-                            inputMode="decimal"
-                            placeholder="6%"
-                            suffix="%"
-                          />
-                          {aprError && <ErrorMessage>{aprError.message}</ErrorMessage>}
-                        </Field>
-                        {showDownPaymentField && (
-                          <Field>
-                            <Label htmlFor="paymentMethod.downPayment">Down Payment</Label>
-                            <NumberInput
-                              name="paymentMethod.downPayment"
-                              control={control}
-                              id="paymentMethod.downPayment"
-                              inputMode="decimal"
-                              placeholder="$100,000"
-                              prefix="$"
-                            />
-                            {downPaymentError && <ErrorMessage>{downPaymentError.message}</ErrorMessage>}
-                          </Field>
+                        {paymentMethod.type === 'loan' && (
+                          <>
+                            <Field>
+                              <Label htmlFor="paymentMethod.loanBalance">Loan Balance</Label>
+                              <NumberInput
+                                name="paymentMethod.loanBalance"
+                                control={control}
+                                id="paymentMethod.loanBalance"
+                                inputMode="decimal"
+                                placeholder="$400,000"
+                                prefix="$"
+                              />
+                              {loanBalanceError && <ErrorMessage>{loanBalanceError.message}</ErrorMessage>}
+                            </Field>
+                            <Field>
+                              <Label htmlFor="paymentMethod.monthlyPayment">Monthly Payment</Label>
+                              <NumberInput
+                                name="paymentMethod.monthlyPayment"
+                                control={control}
+                                id="paymentMethod.monthlyPayment"
+                                inputMode="decimal"
+                                placeholder="$2,400"
+                                prefix="$"
+                              />
+                              {monthlyPaymentError && <ErrorMessage>{monthlyPaymentError.message}</ErrorMessage>}
+                            </Field>
+                            <Field className={getAPRColSpan()}>
+                              <Label htmlFor="paymentMethod.apr">APR</Label>
+                              <NumberInput
+                                name="paymentMethod.apr"
+                                control={control}
+                                id="paymentMethod.apr"
+                                inputMode="decimal"
+                                placeholder="6%"
+                                suffix="%"
+                              />
+                              {aprError && <ErrorMessage>{aprError.message}</ErrorMessage>}
+                            </Field>
+                            {showDownPaymentField && (
+                              <Field>
+                                <Label htmlFor="paymentMethod.downPayment">Down Payment</Label>
+                                <NumberInput
+                                  name="paymentMethod.downPayment"
+                                  control={control}
+                                  id="paymentMethod.downPayment"
+                                  inputMode="decimal"
+                                  placeholder="$100,000"
+                                  prefix="$"
+                                />
+                                {downPaymentError && <ErrorMessage>{downPaymentError.message}</ErrorMessage>}
+                              </Field>
+                            )}
+                          </>
                         )}
                       </div>
                     </DisclosurePanel>
