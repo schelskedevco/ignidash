@@ -18,16 +18,29 @@ const paymentMethodSchema = z.discriminatedUnion('type', [cashPaymentSchema, loa
 
 export type PaymentMethodInputs = z.infer<typeof paymentMethodSchema>;
 
-export const physicalAssetFormSchema = z.object({
-  id: z.string(),
-  name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
-  purchaseDate: timePointSchema,
-  purchasePrice: currencyFieldForbidsZero('Purchase price must be greater than zero'),
-  marketValue: currencyFieldForbidsZero('Market value must be greater than zero').optional(),
-  appreciationRate: percentageField(-30, 20, 'Annual appreciation rate'),
-  saleDate: timePointSchema,
-  paymentMethod: paymentMethodSchema,
-});
+export const physicalAssetFormSchema = z
+  .object({
+    id: z.string(),
+    name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
+    purchaseDate: timePointSchema,
+    purchasePrice: currencyFieldForbidsZero('Purchase price must be greater than zero'),
+    marketValue: currencyFieldForbidsZero('Market value must be greater than zero').optional(),
+    appreciationRate: percentageField(-30, 20, 'Annual appreciation rate'),
+    saleDate: timePointSchema,
+    paymentMethod: paymentMethodSchema,
+  })
+  .refine(
+    (data) => {
+      if (data.paymentMethod.type === 'loan' && data.purchaseDate.type !== 'now') {
+        return data.paymentMethod.downPayment !== undefined;
+      }
+      return true;
+    },
+    {
+      path: ['paymentMethod', 'downPayment'],
+      message: 'Down payment is required when financing a future purchase',
+    }
+  );
 
 export type PhysicalAssetInputs = z.infer<typeof physicalAssetFormSchema>;
 
