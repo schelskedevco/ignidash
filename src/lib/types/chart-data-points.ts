@@ -22,11 +22,11 @@ export interface SingleSimulationNetWorthChartDataPoint {
   annualWithdrawals: number;
   netPortfolioChange: number;
   assetValue: number;
-  assetAppreciation: number;
+  annualAssetAppreciation: number;
   equity: number;
   debtBalance: number;
   netWorth: number;
-  debtPaydown: number;
+  annualDebtPaydown: number;
   netWorthChange: number;
   perAccountData: AccountDataWithTransactions[];
   perAssetData: PhysicalAssetData[];

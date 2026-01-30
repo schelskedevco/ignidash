@@ -272,8 +272,8 @@ export default function SingleSimulationNetWorthAreaChart({
     case 'netWorthChange':
       lineDataKeys.push('netWorthChange');
 
-      barDataKeys.push('netPortfolioChange', 'assetAppreciation', 'debtPaydown');
-      barColors.push('var(--chart-1)', 'var(--chart-4)', 'var(--chart-5)');
+      barDataKeys.push('annualReturns', 'annualContributions', 'annualWithdrawals', 'annualAssetAppreciation', 'annualDebtPaydown');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
 
       stackOffset = 'sign';
       break;
@@ -320,8 +320,8 @@ export default function SingleSimulationNetWorthAreaChart({
         customDataType = 'asset';
         lineDataKeys.push('equity');
 
-        barDataKeys.push('marketValue', 'loanBalance');
-        barColors.push('var(--chart-2)', 'var(--chart-3)');
+        barDataKeys.push('loanBalance', 'marketValue');
+        barColors.push('var(--chart-1)', 'var(--chart-2)');
 
         chartData = perAssetData;
 
@@ -336,7 +336,7 @@ export default function SingleSimulationNetWorthAreaChart({
         customDataType = 'debt';
 
         areaDataKeys.push('balance');
-        areaColors.push('var(--chart-3)');
+        areaColors.push('var(--chart-1)');
 
         chartData = perDebtData;
         break;
