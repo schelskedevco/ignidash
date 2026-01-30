@@ -167,7 +167,7 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
         </div>
       </DialogTitle>
       <DialogDescription className="hidden sm:block">
-        Any debt you have or expect to incur during your lifetime, excluding loans on physical assets.
+        Any unsecured debt you have or expect to incur during your lifetime.
       </DialogDescription>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Fieldset aria-label="Debt details">

@@ -8,6 +8,8 @@ import { ChartLineIcon } from 'lucide-react';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import type { AccountDataWithTransactions } from '@/lib/calc/account';
+import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
+import type { DebtData } from '@/lib/calc/debts';
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
@@ -20,15 +22,17 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof SingleSimulationPortfolioChartDataPoint;
+    dataKey: keyof SingleSimulationPortfolioChartDataPoint | keyof AccountDataWithTransactions | keyof PhysicalAssetData | keyof DebtData;
     payload:
       | SingleSimulationPortfolioChartDataPoint
-      | ({ age: number; stockHoldings: number; bondHoldings: number; cashHoldings: number } & AccountDataWithTransactions);
+      | ({ age: number; stockHoldings: number; bondHoldings: number; cashHoldings: number } & AccountDataWithTransactions)
+      | ({ age: number } & PhysicalAssetData)
+      | ({ age: number } & DebtData);
   }>;
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'custom';
+  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
 }
 
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -37,7 +41,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - Math.floor(startAge));
 
-  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
+  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--chart-8)', 'var(--foreground)'];
 
   const transformedPayload = payload.filter((entry) => entry.color !== LINE_COLOR);
 
@@ -75,6 +79,74 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
             <span className="mr-2">Net Portfolio Change:</span>
           </span>
           <span className="ml-1 font-semibold">{formatNumber(netPortfolioChange.value, 3, '$')}</span>
+        </p>
+      );
+      break;
+    case 'netWorth':
+      const netWorth = payload.find((entry) => entry.dataKey === 'netWorth');
+      if (!netWorth) {
+        console.error('Net worth data not found');
+        break;
+      }
+
+      body = (
+        <div className="flex flex-col gap-1">
+          {transformedPayload.map((entry) => (
+            <p
+              key={entry.dataKey}
+              style={{ backgroundColor: entry.color }}
+              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
+                'text-background': needsBgTextColor.includes(entry.color),
+              })}
+            >
+              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
+              <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
+            </p>
+          ))}
+        </div>
+      );
+
+      footer = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="flex items-center gap-1">
+            <ChartLineIcon className="h-3 w-3" />
+            <span className="mr-2">Net Worth:</span>
+          </span>
+          <span className="ml-1 font-semibold">{formatNumber(netWorth.value, 3, '$')}</span>
+        </p>
+      );
+      break;
+    case 'changeInNetWorth':
+      const changeInNetWorth = payload.find((entry) => entry.dataKey === 'changeInNetWorth');
+      if (!changeInNetWorth) {
+        console.error('Change in net worth data not found');
+        break;
+      }
+
+      body = (
+        <div className="flex flex-col gap-1">
+          {transformedPayload.map((entry) => (
+            <p
+              key={entry.dataKey}
+              style={{ backgroundColor: entry.color }}
+              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
+                'text-background': needsBgTextColor.includes(entry.color),
+              })}
+            >
+              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
+              <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
+            </p>
+          ))}
+        </div>
+      );
+
+      footer = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="flex items-center gap-1">
+            <ChartLineIcon className="h-3 w-3" />
+            <span className="mr-2">Change in NW:</span>
+          </span>
+          <span className="ml-1 font-semibold">{formatNumber(changeInNetWorth.value, 3, '$')}</span>
         </p>
       );
       break;
@@ -125,14 +197,13 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 CustomTooltip.displayName = 'CustomTooltip';
 
 const LINE_COLOR = 'var(--foreground)';
-const COLORS = ['var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)'];
 
 interface SingleSimulationPortfolioAreaChartProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
   startAge: number;
   keyMetrics: KeyMetrics;
   showReferenceLines: boolean;
-  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'custom';
+  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
   customDataID: string;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
@@ -160,12 +231,32 @@ export default function SingleSimulationPortfolioAreaChart({
 
   let chartData:
     | SingleSimulationPortfolioChartDataPoint[]
-    | Array<{ age: number; stockHoldings: number; bondHoldings: number; cashHoldings: number } & AccountDataWithTransactions> =
-    useChartDataSlice(rawChartData, 'single');
+    | Array<{ age: number; stockHoldings: number; bondHoldings: number; cashHoldings: number } & AccountDataWithTransactions>
+    | Array<{ age: number } & PhysicalAssetData>
+    | Array<{ age: number } & DebtData> = useChartDataSlice(rawChartData, 'single');
 
-  const areaDataKeys: (keyof SingleSimulationPortfolioChartDataPoint | keyof AccountDataWithTransactions)[] = [];
-  const lineDataKeys: (keyof SingleSimulationPortfolioChartDataPoint)[] = [];
-  const barDataKeys: (keyof SingleSimulationPortfolioChartDataPoint)[] = [];
+  const areaDataKeys: (
+    | keyof SingleSimulationPortfolioChartDataPoint
+    | keyof AccountDataWithTransactions
+    | keyof PhysicalAssetData
+    | keyof DebtData
+  )[] = [];
+  const areaColors: string[] = [];
+
+  const lineDataKeys: (
+    | keyof SingleSimulationPortfolioChartDataPoint
+    | keyof AccountDataWithTransactions
+    | keyof PhysicalAssetData
+    | keyof DebtData
+  )[] = [];
+
+  const barDataKeys: (
+    | keyof SingleSimulationPortfolioChartDataPoint
+    | keyof AccountDataWithTransactions
+    | keyof PhysicalAssetData
+    | keyof DebtData
+  )[] = [];
+  const barColors: string[] = [];
 
   const formatter = (value: number) => formatNumber(value, 1, '$');
   let stackOffset: 'sign' | undefined = undefined;
@@ -173,15 +264,50 @@ export default function SingleSimulationPortfolioAreaChart({
   switch (dataView) {
     case 'assetClass':
       areaDataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
+      areaColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
       break;
     case 'taxCategory':
       areaDataKeys.push('taxableValue', 'taxDeferredValue', 'taxFreeValue', 'cashSavings');
+      areaColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
       break;
     case 'netChange':
       lineDataKeys.push('netPortfolioChange');
+
       barDataKeys.push('annualReturns', 'annualContributions', 'annualWithdrawals');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
 
       chartData = chartData.map((entry) => ({ ...entry, annualWithdrawals: -entry.annualWithdrawals }));
+
+      stackOffset = 'sign';
+      break;
+    case 'netWorth':
+      lineDataKeys.push('netWorth');
+
+      barDataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings', 'assetMarketValue', 'debt');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-7)');
+
+      chartData = chartData.map((entry) => ({ ...entry, debt: -entry.debt }));
+
+      stackOffset = 'sign';
+      break;
+    case 'changeInNetWorth':
+      lineDataKeys.push('changeInNetWorth');
+
+      barDataKeys.push(
+        'annualReturns',
+        'annualContributions',
+        'annualWithdrawals',
+        'assetAppreciation',
+        'principalPayments',
+        'unpaidInterest'
+      );
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)', 'var(--chart-6)');
+
+      chartData = chartData.map((entry) => ({
+        ...entry,
+        annualWithdrawals: -entry.annualWithdrawals,
+        unpaidInterest: -entry.unpaidInterest,
+      }));
 
       stackOffset = 'sign';
       break;
@@ -191,6 +317,7 @@ export default function SingleSimulationPortfolioAreaChart({
         break;
       }
 
+      // Custom Account
       const perAccountData = chartData.flatMap(({ age, perAccountData }) =>
         perAccountData
           .filter((account) => account.id === customDataID)
@@ -211,9 +338,42 @@ export default function SingleSimulationPortfolioAreaChart({
             };
           })
       );
+      if (perAccountData.length > 0) {
+        areaDataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
+        areaColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
 
-      chartData = perAccountData;
-      areaDataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
+        chartData = perAccountData;
+        break;
+      }
+
+      // Custom Physical Asset
+      const perAssetData = chartData.flatMap(({ age, perAssetData }) =>
+        perAssetData.filter((asset) => asset.id === customDataID).map((asset) => ({ age, ...asset, loanBalance: -asset.loanBalance }))
+      );
+      if (perAssetData.length > 0) {
+        lineDataKeys.push('equity');
+
+        barDataKeys.push('marketValue', 'loanBalance');
+        barColors.push('var(--chart-1)', 'var(--chart-2)');
+
+        chartData = perAssetData;
+
+        stackOffset = 'sign';
+        break;
+      }
+
+      // Custom Debt
+      const perDebtData = chartData.flatMap(({ age, perDebtData }) =>
+        perDebtData.filter((debt) => debt.id === customDataID).map((debt) => ({ age, ...debt }))
+      );
+      if (perDebtData.length > 0) {
+        areaDataKeys.push('balance');
+        areaColors.push('var(--chart-2)');
+
+        chartData = perDebtData;
+        break;
+      }
+
       break;
   }
 
@@ -262,14 +422,15 @@ export default function SingleSimulationPortfolioAreaChart({
         <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
         <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
         <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {areaDataKeys.map((dataKey, index) => (
+        {stackOffset !== undefined && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
+        {areaDataKeys.map((dataKey, i) => (
           <Area
             key={dataKey}
             type="monotone"
             dataKey={dataKey}
             stackId="1"
-            stroke={COLORS[index % COLORS.length]}
-            fill={COLORS[index % COLORS.length]}
+            stroke={areaColors[i]}
+            fill={areaColors[i]}
             fillOpacity={1}
             activeDot={false}
           />
@@ -287,7 +448,7 @@ export default function SingleSimulationPortfolioAreaChart({
           />
         ))}
         {barDataKeys.map((dataKey, i) => (
-          <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={COLORS[i]} />
+          <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[i]} />
         ))}
         <Tooltip
           content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}

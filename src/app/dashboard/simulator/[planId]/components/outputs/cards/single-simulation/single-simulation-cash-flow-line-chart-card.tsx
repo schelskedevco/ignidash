@@ -49,6 +49,13 @@ export default function SingleSimulationCashFlowLineChartCard({
     () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perExpenseData)),
     [getUniqueItems, rawChartData]
   );
+  const uniqueDebtsAndLoans = useMemo(() => {
+    const debts = getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perDebtData));
+    const loans = getUniqueItems(
+      rawChartData.flatMap((dataPoint) => dataPoint.perAssetData).filter((asset) => asset.paymentType === 'loan')
+    );
+    return [...debts, ...loans];
+  }, [getUniqueItems, rawChartData]);
 
   return (
     <Card className="my-0">
@@ -96,6 +103,13 @@ export default function SingleSimulationCashFlowLineChartCard({
               {uniqueExpenses.map((expense) => (
                 <option key={expense.id} value={expense.id}>
                   {expense.name}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="By Debt">
+              {uniqueDebtsAndLoans.map((debt) => (
+                <option key={debt.id} value={debt.id}>
+                  {debt.name}
                 </option>
               ))}
             </optgroup>

@@ -551,6 +551,108 @@ describe('DebtsProcessor', () => {
     expect(annualData.totalPrincipalPaidForPeriod).toBe(0);
   });
 
+  it('unpaidInterest tracks interest not covered by payment', () => {
+    // When payment < interest, the unpaid portion gets added to debt balance
+    // unpaidInterest = max(0, interest - payment)
+
+    const debts = new Debts([
+      createDebtInput({
+        id: 'normal-debt',
+        name: 'Normal Debt',
+        balance: 5000,
+        apr: 20, // interest = 5000 * 0.20 / 12 = 83.33
+        monthlyPayment: 200, // payment > interest, so unpaidInterest = 0
+        interestType: 'simple',
+      }),
+      createDebtInput({
+        id: 'underwater-debt',
+        name: 'Underwater Debt',
+        balance: 10000,
+        apr: 200, // interest = 10000 * 2.00 / 12 = 1666.67
+        monthlyPayment: 50, // payment < interest, so unpaidInterest = 1616.67
+        interestType: 'simple',
+      }),
+    ]);
+
+    const simState = createSimulationState();
+    const processor = new DebtsProcessor(simState, debts);
+
+    const result = processor.process(ZERO_INFLATION);
+
+    // Verify individual calculations
+    const normalDebt = result.perDebtData['normal-debt'];
+    const underwaterDebt = result.perDebtData['underwater-debt'];
+
+    expect(normalDebt.unpaidInterestForPeriod).toBe(0);
+    expect(underwaterDebt.unpaidInterestForPeriod).toBeCloseTo(1616.67, 0);
+
+    // Total unpaid interest should be sum of individual values
+    expect(result.totalUnpaidInterestForPeriod).toBeCloseTo(1616.67, 0);
+
+    // Verify the relationship: principalPaid - unpaidInterest = payment - interest
+    const totalPayment = result.totalPaymentForPeriod;
+    const totalInterest = result.totalInterestForPeriod;
+    const totalPrincipalPaid = result.totalPrincipalPaidForPeriod;
+    const totalUnpaidInterest = result.totalUnpaidInterestForPeriod;
+
+    expect(totalPrincipalPaid - totalUnpaidInterest).toBeCloseTo(totalPayment - totalInterest, 1);
+  });
+
+  it('totalPrincipalPaid sums individual values (not derived from totals)', () => {
+    // This test verifies the fix for calculating totalPrincipalPaidForPeriod.
+    // The WRONG way: Math.max(0, totalPayment - totalInterest)
+    // The RIGHT way: sum of individual Math.max(0, payment_i - interest_i)
+    //
+    // With multiple debts where one has payment < interest:
+    // - Debt 1: payment = 200, interest = 83.33 → principal = 116.67
+    // - Debt 2: payment = 50, interest = 166.67 → principal = 0 (clamped, not -116.67)
+    //
+    // Correct total principal = 116.67 + 0 = 116.67
+    // Wrong calculation: max(0, 250 - 250) = 0  ← This is what the old code would produce
+
+    const debts = new Debts([
+      createDebtInput({
+        id: 'normal-debt',
+        name: 'Normal Debt',
+        balance: 5000,
+        apr: 20, // interest = 5000 * 0.20 / 12 = 83.33
+        monthlyPayment: 200, // payment > interest, so principal = 116.67
+        interestType: 'simple',
+      }),
+      createDebtInput({
+        id: 'underwater-debt',
+        name: 'Underwater Debt',
+        balance: 10000,
+        apr: 200, // interest = 10000 * 2.00 / 12 = 1666.67
+        monthlyPayment: 50, // payment < interest, so principal = 0 (not negative)
+        interestType: 'simple',
+      }),
+    ]);
+
+    const simState = createSimulationState();
+    const processor = new DebtsProcessor(simState, debts);
+
+    const result = processor.process(ZERO_INFLATION);
+
+    // Verify individual calculations
+    const normalDebt = result.perDebtData['normal-debt'];
+    const underwaterDebt = result.perDebtData['underwater-debt'];
+
+    expect(normalDebt.interestForPeriod).toBeCloseTo(83.33, 1);
+    expect(normalDebt.principalPaidForPeriod).toBeCloseTo(116.67, 1);
+
+    expect(underwaterDebt.interestForPeriod).toBeCloseTo(1666.67, 0);
+    expect(underwaterDebt.principalPaidForPeriod).toBe(0); // Clamped to 0, not negative
+
+    // The key assertion: total principal should be sum of individual values
+    // NOT derived from (totalPayment - totalInterest)
+    expect(result.totalPrincipalPaidForPeriod).toBeCloseTo(116.67, 1);
+
+    // If the old broken code were used, it would calculate:
+    // max(0, (200 + 50) - (83.33 + 1666.67)) = max(0, 250 - 1750) = 0
+    // which would fail this assertion
+  });
+
   it('process() handles debt that becomes paid off mid-simulation', () => {
     const debts = new Debts([
       createDebtInput({

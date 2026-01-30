@@ -4,6 +4,8 @@ import type { AccountDataWithTransactions } from '@/lib/calc/account';
 import type { AccountDataWithReturns } from '@/lib/calc/returns';
 import type { IncomeTaxBracket } from '@/lib/calc/tax-data/income-tax-brackets';
 import type { CapitalGainsTaxBracket } from '@/lib/calc/tax-data/capital-gains-tax-brackets';
+import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
+import type { DebtData } from '@/lib/calc/debts';
 
 export interface SingleSimulationPortfolioChartDataPoint {
   age: number;
@@ -18,13 +20,25 @@ export interface SingleSimulationPortfolioChartDataPoint {
   annualContributions: number;
   annualWithdrawals: number;
   netPortfolioChange: number;
+  assetMarketValue: number;
+  assetAppreciation: number;
+  equity: number;
+  debt: number;
+  netWorth: number;
+  principalPayments: number;
+  unpaidInterest: number;
+  changeInNetWorth: number;
   perAccountData: AccountDataWithTransactions[];
+  perAssetData: PhysicalAssetData[];
+  perDebtData: DebtData[];
 }
 
 export interface SingleSimulationCashFlowChartDataPoint {
   age: number;
   perIncomeData: IncomeData[];
   perExpenseData: ExpenseData[];
+  perAssetData: PhysicalAssetData[];
+  perDebtData: DebtData[];
   earnedIncome: number;
   employerMatch: number;
   socialSecurityIncome: number;
@@ -37,10 +51,13 @@ export interface SingleSimulationCashFlowChartDataPoint {
   earlyWithdrawalPenalties: number;
   taxesAndPenalties: number;
   expenses: number;
+  debtPayments: number;
   surplusDeficit: number;
   savingsRate: number | null;
   amountInvested: number;
   amountLiquidated: number;
+  assetsPurchased: number;
+  assetsSold: number;
   netCashFlow: number;
 }
 
@@ -62,7 +79,10 @@ export interface SingleSimulationReturnsChartDataPoint {
   taxDeferredGains: number;
   taxFreeGains: number;
   cashSavingsGains: number;
+  annualAssetAppreciation: number;
+  cumulativeAssetAppreciation: number;
   perAccountData: AccountDataWithReturns[];
+  perAssetData: PhysicalAssetData[];
 }
 
 export interface SingleSimulationTaxesChartDataPoint {

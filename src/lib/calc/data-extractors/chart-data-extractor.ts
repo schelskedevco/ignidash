@@ -39,6 +39,23 @@ export abstract class ChartDataExtractor {
       const annualContributions = sumTransactions(portfolioData.contributionsForPeriod);
       const annualWithdrawals = sumTransactions(portfolioData.withdrawalsForPeriod);
 
+      const netPortfolioChange = stockAmount + bondAmount + cashAmount + annualContributions - annualWithdrawals;
+
+      const physicalAssetsData = data.physicalAssets;
+      const debtsData = data.debts;
+
+      const {
+        marketValue: assetMarketValue,
+        equity,
+        debt,
+        netWorth,
+        appreciation: assetAppreciation,
+        principalPayments,
+        unpaidInterest,
+      } = SimulationDataExtractor.getAssetsAndLiabilitiesData(data);
+
+      const changeInNetWorth = netPortfolioChange + assetAppreciation + principalPayments - unpaidInterest;
+
       return {
         age,
         stockHoldings,
@@ -51,8 +68,18 @@ export abstract class ChartDataExtractor {
         annualReturns: stockAmount + bondAmount + cashAmount,
         annualContributions,
         annualWithdrawals,
-        netPortfolioChange: stockAmount + bondAmount + cashAmount + annualContributions - annualWithdrawals,
+        netPortfolioChange,
+        assetMarketValue,
+        assetAppreciation,
+        equity,
+        debt,
+        netWorth,
+        principalPayments,
+        unpaidInterest,
+        changeInNetWorth,
         perAccountData: Object.values(portfolioData.perAccountData),
+        perAssetData: Object.values(physicalAssetsData?.perAssetData ?? {}),
+        perDebtData: Object.values(debtsData?.perDebtData ?? {}),
       };
     });
   }
@@ -76,9 +103,12 @@ export abstract class ChartDataExtractor {
         taxFreeIncome,
         employerMatch,
         totalExpenses: expenses,
+        totalDebtPayments: debtPayments,
         surplusDeficit,
         amountInvested,
         amountLiquidated,
+        assetsPurchased,
+        assetsSold,
         netCashFlow,
       } = SimulationDataExtractor.getCashFlowData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
@@ -87,6 +117,8 @@ export abstract class ChartDataExtractor {
         age,
         perIncomeData: Object.values(data.incomes!.perIncomeData),
         perExpenseData: Object.values(data.expenses!.perExpenseData),
+        perAssetData: Object.values(data.physicalAssets!.perAssetData),
+        perDebtData: Object.values(data.debts!.perDebtData),
         earnedIncome,
         employerMatch,
         socialSecurityIncome,
@@ -99,10 +131,13 @@ export abstract class ChartDataExtractor {
         earlyWithdrawalPenalties,
         taxesAndPenalties,
         expenses,
+        debtPayments,
         surplusDeficit,
         savingsRate,
         amountInvested,
         amountLiquidated,
+        assetsPurchased,
+        assetsSold,
         netCashFlow,
       };
     });
@@ -193,6 +228,8 @@ export abstract class ChartDataExtractor {
   }
 
   static extractSingleSimulationReturnsData(simulation: SimulationResult): SingleSimulationReturnsChartDataPoint[] {
+    let cumulativeAssetAppreciation = 0;
+
     return simulation.data.slice(1).map((data) => {
       const age = Math.floor(data.age);
 
@@ -202,6 +239,11 @@ export abstract class ChartDataExtractor {
       const totalAnnualGains = sumReturnAmounts(returnsData.returnAmountsForPeriod);
 
       const { taxableGains, taxDeferredGains, taxFreeGains, cashSavingsGains } = SimulationDataExtractor.getGainsByTaxCategory(data);
+
+      const physicalAssetsData = data.physicalAssets!;
+
+      const annualAssetAppreciation = physicalAssetsData.totalAppreciationForPeriod;
+      cumulativeAssetAppreciation += annualAssetAppreciation;
 
       return {
         age,
@@ -221,7 +263,10 @@ export abstract class ChartDataExtractor {
         taxDeferredGains,
         taxFreeGains,
         cashSavingsGains,
+        annualAssetAppreciation,
+        cumulativeAssetAppreciation,
         perAccountData: Object.values(returnsData.perAccountData),
+        perAssetData: Object.values(physicalAssetsData.perAssetData),
       };
     });
   }

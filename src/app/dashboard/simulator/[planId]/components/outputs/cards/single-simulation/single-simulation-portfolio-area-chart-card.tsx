@@ -17,8 +17,8 @@ interface SingleSimulationPortfolioAreaChartCardProps {
   keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'assetClass' | 'taxCategory' | 'netChange' | 'custom') => void;
-  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'custom';
+  setDataView: (view: 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth' | 'custom') => void;
+  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
   setCustomDataID: (name: string) => void;
   customDataID: string;
   startAge: number;
@@ -45,6 +45,14 @@ export default function SingleSimulationPortfolioAreaChartCard({
     () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAccountData)),
     [getUniqueItems, rawChartData]
   );
+  const uniquePhysicalAssets = useMemo(
+    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAssetData)),
+    [getUniqueItems, rawChartData]
+  );
+  const uniqueDebts = useMemo(
+    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perDebtData)),
+    [getUniqueItems, rawChartData]
+  );
 
   return (
     <Card className="my-0">
@@ -62,12 +70,16 @@ export default function SingleSimulationPortfolioAreaChartCard({
             value={dataView === 'custom' ? customDataID : dataView}
             onChange={(e) => {
               const isCustomSelection =
-                e.target.value !== 'assetClass' && e.target.value !== 'taxCategory' && e.target.value !== 'netChange';
+                e.target.value !== 'assetClass' &&
+                e.target.value !== 'taxCategory' &&
+                e.target.value !== 'netChange' &&
+                e.target.value !== 'netWorth' &&
+                e.target.value !== 'changeInNetWorth';
               if (isCustomSelection) {
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'assetClass' | 'taxCategory' | 'netChange');
+                setDataView(e.target.value as 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth');
                 setCustomDataID('');
               }
             }}
@@ -75,6 +87,8 @@ export default function SingleSimulationPortfolioAreaChartCard({
             <option value="assetClass">Asset Class</option>
             <option value="taxCategory">Tax Category</option>
             <option value="netChange">Net Portfolio Change</option>
+            <option value="netWorth">Net Worth</option>
+            <option value="changeInNetWorth">Change in NW</option>
             <optgroup label="By Account">
               {uniqueAccounts.map((account) => (
                 <option key={account.id} value={account.id}>
@@ -82,6 +96,24 @@ export default function SingleSimulationPortfolioAreaChartCard({
                 </option>
               ))}
             </optgroup>
+            {uniquePhysicalAssets.length > 0 && (
+              <optgroup label="By Physical Asset">
+                {uniquePhysicalAssets.map((physicalAsset) => (
+                  <option key={physicalAsset.id} value={physicalAsset.id}>
+                    {physicalAsset.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
+            {uniqueDebts.length > 0 && (
+              <optgroup label="By Debt">
+                {uniqueDebts.map((debt) => (
+                  <option key={debt.id} value={debt.id}>
+                    {debt.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </Select>
           <ChartTimeFrameDropdown timeFrameType="single" />
         </div>
