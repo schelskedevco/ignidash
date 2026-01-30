@@ -61,7 +61,7 @@
     "react-hook-form": "^7.62.0",
     "react-markdown": "^10.1.0",
     "react-number-format": "^5.4.4",
-    "recharts": "3.5.1",
+    "recharts": "^3.7.0",
     "stripe": "^20.1.0",
     "swr": "^2.3.6",
     "tailwind-merge": "^3.3.1",
