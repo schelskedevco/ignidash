@@ -35,6 +35,7 @@ export abstract class ChartDataExtractor {
       } = returnsData?.returnAmountsForPeriod ?? { stocks: 0, bonds: 0, cash: 0 };
 
       const portfolioData = data.portfolio;
+      const portfolioValue = portfolioData.totalValue;
 
       const annualContributions = sumTransactions(portfolioData.contributionsForPeriod);
       const annualWithdrawals = sumTransactions(portfolioData.withdrawalsForPeriod);
@@ -42,16 +43,15 @@ export abstract class ChartDataExtractor {
       const netPortfolioChange = stockAmount + bondAmount + cashAmount + annualContributions - annualWithdrawals;
 
       const {
-        marketValue: assetMarketValue,
+        marketValue: assetValue,
         equity,
-        debt,
+        debt: debtBalance,
         netWorth,
         appreciation: assetAppreciation,
-        principalPayments,
-        unpaidInterest,
+        debtPaydown,
       } = SimulationDataExtractor.getAssetsAndLiabilitiesData(data);
 
-      const netWorthChange = netPortfolioChange + assetAppreciation + principalPayments - unpaidInterest;
+      const netWorthChange = netPortfolioChange + assetAppreciation + debtPaydown;
 
       return {
         age,
@@ -62,17 +62,17 @@ export abstract class ChartDataExtractor {
         taxDeferredValue,
         taxFreeValue,
         cashSavings,
+        portfolioValue,
         annualReturns: stockAmount + bondAmount + cashAmount,
         annualContributions,
         annualWithdrawals,
         netPortfolioChange,
-        assetMarketValue,
+        assetValue,
         assetAppreciation,
         equity,
-        debt,
+        debtBalance,
         netWorth,
-        principalPayments,
-        unpaidInterest,
+        debtPaydown,
         netWorthChange,
         perAccountData: Object.values(portfolioData.perAccountData),
         perAssetData: Object.values(data.physicalAssets?.perAssetData ?? {}),

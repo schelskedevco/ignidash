@@ -220,31 +220,18 @@ export default function SingleSimulationNetWorthAreaChart({
     case 'netWorth':
       lineDataKeys.push('netWorth');
 
-      barDataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings', 'assetMarketValue', 'debt');
-      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-7)');
+      barDataKeys.push('portfolioValue', 'assetValue', 'debtBalance');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
 
-      chartData = chartData.map((entry) => ({ ...entry, debt: -entry.debt }));
+      chartData = chartData.map((entry) => ({ ...entry, debtBalance: -entry.debtBalance }));
 
       stackOffset = 'sign';
       break;
     case 'netWorthChange':
       lineDataKeys.push('netWorthChange');
 
-      barDataKeys.push(
-        'annualReturns',
-        'annualContributions',
-        'annualWithdrawals',
-        'assetAppreciation',
-        'principalPayments',
-        'unpaidInterest'
-      );
-      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)', 'var(--chart-6)');
-
-      chartData = chartData.map((entry) => ({
-        ...entry,
-        annualWithdrawals: -entry.annualWithdrawals,
-        unpaidInterest: -entry.unpaidInterest,
-      }));
+      barDataKeys.push('netPortfolioChange', 'assetAppreciation', 'debtPaydown');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
 
       stackOffset = 'sign';
       break;

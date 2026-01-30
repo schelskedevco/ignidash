@@ -101,6 +101,7 @@ export interface AssetsAndLiabilitiesData {
   debtPayments: number;
   principalPayments: number;
   unpaidInterest: number;
+  debtPaydown: number;
 }
 
 export interface LifetimeTaxAmounts {
@@ -467,8 +468,20 @@ export class SimulationDataExtractor {
 
     const principalPayments = (physicalAssetsData?.totalPrincipalPaidForPeriod ?? 0) + (debtsData?.totalPrincipalPaidForPeriod ?? 0);
     const unpaidInterest = (physicalAssetsData?.totalUnpaidInterestForPeriod ?? 0) + (debtsData?.totalUnpaidInterestForPeriod ?? 0);
+    const debtPaydown = principalPayments - unpaidInterest;
 
-    return { marketValue, equity, debt, netWorth, appreciation, interest, debtPayments, principalPayments, unpaidInterest };
+    return {
+      marketValue,
+      equity,
+      debt,
+      netWorth,
+      appreciation,
+      interest,
+      debtPayments,
+      principalPayments,
+      unpaidInterest,
+      debtPaydown,
+    };
   }
 
   static getLifetimeTaxesAndPenalties(data: SimulationDataPoint[]): LifetimeTaxAmounts {
