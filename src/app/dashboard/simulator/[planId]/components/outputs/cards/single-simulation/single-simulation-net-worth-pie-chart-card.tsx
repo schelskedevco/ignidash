@@ -49,8 +49,8 @@ export default function SingleSimulationNetWorthPieChartCard({
           { name: 'cashHoldings', value: cashHoldings },
         ]);
 
-      totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
       nameForTotalValue = 'Total Portfolio Value';
+      totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
       break;
     case 'taxCategory':
       title = 'By Tax Category';
@@ -64,8 +64,8 @@ export default function SingleSimulationNetWorthPieChartCard({
           { name: 'cashSavings', value: cashSavings },
         ]);
 
-      totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
       nameForTotalValue = 'Total Portfolio Value';
+      totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
       break;
     case 'netPortfolioChange':
       title = 'Net Portfolio Change';
@@ -142,8 +142,8 @@ export default function SingleSimulationNetWorthPieChartCard({
 
         chartData = perDebtData.flatMap((debt) => [{ name: 'balance', value: debt.balance }]);
 
-        totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
         nameForTotalValue = 'Debt Balance';
+        totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
         break;
       }
 
