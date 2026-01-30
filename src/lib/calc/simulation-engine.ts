@@ -12,8 +12,8 @@ import { PhaseIdentifier, type PhaseData } from './phase';
 import { ReturnsProcessor, type ReturnsData } from './returns';
 import { Incomes, IncomesProcessor, type IncomesData } from './incomes';
 import { Expenses, ExpensesProcessor, type ExpensesData } from './expenses';
-import { Debts, DebtsProcessor, type DebtsData } from './debts';
-import { PhysicalAssets, PhysicalAssetsProcessor, type PhysicalAssetsData } from './physical-assets';
+import { Debts, DebtsProcessor, type DebtsData, type DebtData } from './debts';
+import { PhysicalAssets, PhysicalAssetsProcessor, type PhysicalAssetsData, type PhysicalAssetData } from './physical-assets';
 import { TaxProcessor, type TaxesData } from './taxes';
 
 /**
@@ -83,7 +83,7 @@ export class FinancialSimulationEngine {
     const physicalAssets = new PhysicalAssets(Object.values(this.inputs.physicalAssets));
     const contributionRules = new ContributionRules(Object.values(this.inputs.contributionRules), this.inputs.baseContributionRule);
 
-    const resultData: Array<SimulationDataPoint> = [this.initSimulationDataPoint(simulationState)];
+    const resultData: Array<SimulationDataPoint> = [this.initSimulationDataPoint(simulationState, debts, physicalAssets)];
 
     // Init simulation processors
     const returnsProcessor = new ReturnsProcessor(simulationState, returnsProvider);
@@ -257,7 +257,11 @@ export class FinancialSimulationEngine {
     };
   }
 
-  private initSimulationDataPoint(initialSimulationState: SimulationState): SimulationDataPoint {
+  private initSimulationDataPoint(
+    initialSimulationState: SimulationState,
+    debts: Debts,
+    physicalAssets: PhysicalAssets
+  ): SimulationDataPoint {
     const totalPortfolioValue = initialSimulationState.portfolio.getTotalValue();
     const assetAllocation = initialSimulationState.portfolio.getWeightedAssetAllocation();
 
@@ -277,6 +281,71 @@ export class FinancialSimulationEngine {
         .getAccounts()
         .map((account) => [account.getAccountID(), { ...account.getAccountData(), ...defaultTransactionsData }])
     );
+
+    const activeDebts = debts.getActiveDebts(initialSimulationState);
+    const perDebtData: Record<string, DebtData> = Object.fromEntries(
+      activeDebts.map((debt) => [
+        debt.getId(),
+        {
+          id: debt.getId(),
+          name: debt.getName(),
+          balance: debt.getBalance(),
+          paymentForPeriod: 0,
+          interestForPeriod: 0,
+          principalPaidForPeriod: 0,
+          unpaidInterestForPeriod: 0,
+          isPaidOff: debt.isPaidOff(),
+        },
+      ])
+    );
+
+    const debtsData: DebtsData = {
+      totalDebtBalance: debts.getTotalBalance(),
+      totalPaymentForPeriod: 0,
+      totalInterestForPeriod: 0,
+      totalPrincipalPaidForPeriod: 0,
+      totalUnpaidInterestForPeriod: 0,
+      perDebtData,
+    };
+
+    const ownedAssets = physicalAssets.getOwnedAssets();
+    const perAssetData: Record<string, PhysicalAssetData> = Object.fromEntries(
+      ownedAssets.map((asset) => [
+        asset.getId(),
+        {
+          id: asset.getId(),
+          name: asset.getName(),
+          marketValue: asset.getMarketValue(),
+          loanBalance: asset.getLoanBalance(),
+          equity: asset.getEquity(),
+          paymentType: asset.getPaymentType(),
+          appreciationForPeriod: 0,
+          loanPaymentForPeriod: 0,
+          purchaseExpenseForPeriod: 0,
+          saleProceedsForPeriod: 0,
+          capitalGainForPeriod: 0,
+          interestForPeriod: 0,
+          principalPaidForPeriod: 0,
+          unpaidInterestForPeriod: 0,
+          isSold: asset.isSold(),
+        },
+      ])
+    );
+
+    const physicalAssetsData: PhysicalAssetsData = {
+      totalMarketValue: physicalAssets.getTotalMarketValue(),
+      totalLoanBalance: physicalAssets.getTotalLoanBalance(),
+      totalEquity: physicalAssets.getTotalEquity(),
+      totalAppreciationForPeriod: 0,
+      totalLoanPaymentForPeriod: 0,
+      totalPurchaseExpenseForPeriod: 0,
+      totalSaleProceedsForPeriod: 0,
+      totalCapitalGainForPeriod: 0,
+      totalInterestForPeriod: 0,
+      totalPrincipalPaidForPeriod: 0,
+      totalUnpaidInterestForPeriod: 0,
+      perAssetData,
+    };
 
     return {
       date: new Date().toISOString().split('T')[0],
@@ -303,8 +372,8 @@ export class FinancialSimulationEngine {
       },
       incomes: null,
       expenses: null,
-      debts: null,
-      physicalAssets: null,
+      debts: debtsData,
+      physicalAssets: physicalAssetsData,
       phase: null,
       taxes: null,
       returns: null,
