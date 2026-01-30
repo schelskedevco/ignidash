@@ -91,12 +91,12 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
       );
 
       transformedChartData = chartData.flatMap(
-        ({ annualReturns, annualContributions, annualWithdrawals, assetAppreciation, debtPaydown }) => [
+        ({ annualReturns, annualContributions, annualWithdrawals, annualAssetAppreciation, annualDebtPaydown }) => [
           { name: returnsLabel, amount: annualReturns, color: 'var(--chart-1)' },
           { name: contributionsLabel, amount: annualContributions, color: 'var(--chart-2)' },
           { name: withdrawalsLabel, amount: -annualWithdrawals, color: 'var(--chart-3)' },
-          { name: appreciationLabel, amount: assetAppreciation, color: 'var(--chart-4)' },
-          { name: paydownLabel, amount: debtPaydown, color: 'var(--chart-5)' },
+          { name: appreciationLabel, amount: annualAssetAppreciation, color: 'var(--chart-4)' },
+          { name: paydownLabel, amount: annualDebtPaydown, color: 'var(--chart-5)' },
         ]
       );
       break;
