@@ -62,8 +62,16 @@ export default function SingleSimulationCashFlowBarChart({
 
   const labelConfig: Record<string, { mobile: string[]; desktop: string[] }> = {
     surplusDeficit: {
-      mobile: ['Earned', 'Soc. Sec.', 'Tax-Free', 'Match', 'Expenses', 'Taxes', 'Debt'],
-      desktop: ['Earned Income', 'Social Security', 'Tax-Free Income', 'Employer Match', 'Expenses', 'Taxes & Penalties', 'Debt Payments'],
+      mobile: ['Earned', 'Soc. Sec.', 'Tax-Free', 'Match', 'Expenses', 'Taxes', 'Interest'],
+      desktop: [
+        'Earned Income',
+        'Social Security',
+        'Tax-Free Income',
+        'Employer Match',
+        'Expenses',
+        'Taxes & Penalties',
+        'Interest Payments',
+      ],
     },
     cashFlow: {
       mobile: ['Earned', 'Soc. Sec.', 'Tax-Free', 'Liquidated', 'Sold', 'Expenses', 'Taxes', 'Debt', 'Invested', 'Purchased'],
@@ -108,18 +116,18 @@ export default function SingleSimulationCashFlowBarChart({
         employerMatchLabel,
         expensesLabel,
         taxesAndPenaltiesLabel,
-        debtPaymentsLabel,
+        interestPaymentsLabel,
       ] = getLabelsForScreenSize(dataView, isSmallScreen);
 
       transformedChartData = chartData.flatMap(
-        ({ earnedIncome, socialSecurityIncome, taxFreeIncome, employerMatch, expenses, taxesAndPenalties, debtPayments }) => [
+        ({ earnedIncome, socialSecurityIncome, taxFreeIncome, employerMatch, expenses, taxesAndPenalties, interestPayments }) => [
           { name: earnedIncomeLabel, amount: earnedIncome, color: 'var(--chart-1)' },
           { name: socialSecurityIncomeLabel, amount: socialSecurityIncome, color: 'var(--chart-1)' },
           { name: taxFreeIncomeLabel, amount: taxFreeIncome, color: 'var(--chart-1)' },
           { name: employerMatchLabel, amount: employerMatch, color: 'var(--chart-4)' },
           { name: expensesLabel, amount: -expenses, color: 'var(--chart-2)' },
           { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-3)' },
-          { name: debtPaymentsLabel, amount: -debtPayments, color: 'var(--chart-8)' },
+          { name: interestPaymentsLabel, amount: -interestPayments, color: 'var(--chart-5)' },
         ]
       );
       break;
