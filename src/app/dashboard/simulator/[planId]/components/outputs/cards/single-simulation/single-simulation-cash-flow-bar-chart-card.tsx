@@ -3,7 +3,7 @@
 import Card from '@/components/ui/card';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
-import { useIncomeData, useExpenseData } from '@/hooks/use-convex-data';
+import { useIncomeData, useExpenseData, usePhysicalAssetData, useDebtData } from '@/hooks/use-convex-data';
 
 import SingleSimulationCashFlowBarChart from '../../charts/single-simulation/single-simulation-cash-flow-bar-chart';
 
@@ -22,6 +22,8 @@ export default function SingleSimulationCashFlowBarChartCard({
 }: SingleSimulationCashFlowBarChartCardProps) {
   const incomeData = useIncomeData(customDataID !== '' ? customDataID : null);
   const expenseData = useExpenseData(customDataID !== '' ? customDataID : null);
+  const physicalAssetData = usePhysicalAssetData(customDataID !== '' ? customDataID : null);
+  const debtData = useDebtData(customDataID !== '' ? customDataID : null);
 
   let title;
   switch (dataView) {
@@ -42,6 +44,10 @@ export default function SingleSimulationCashFlowBarChartCard({
         title = `${incomeData.name} — Income`;
       } else if (expenseData) {
         title = `${expenseData.name} — Expense`;
+      } else if (physicalAssetData) {
+        title = `${physicalAssetData.name} — Loan`;
+      } else if (debtData) {
+        title = `${debtData.name} — Debt`;
       } else {
         title = 'Custom';
       }

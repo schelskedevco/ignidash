@@ -29,6 +29,9 @@ export class PhysicalAssetsProcessor {
 
     let totalAppreciation = 0;
     let totalLoanPayment = 0;
+    let totalInterest = 0;
+    let totalPrincipalPaid = 0;
+    let totalUnpaidInterest = 0;
     let totalSaleProceeds = 0;
     let totalCapitalGain = 0;
     const perAssetData: Record<string, PhysicalAssetData> = {};
@@ -37,8 +40,11 @@ export class PhysicalAssetsProcessor {
     for (const asset of ownedAssets) {
       const { monthlyAppreciation: appreciationForPeriod } = asset.applyMonthlyAppreciation();
 
-      const { monthlyLoanPayment: loanPaymentForPeriod } = asset.getMonthlyLoanPayment(monthlyInflationRate);
-      asset.applyLoanPayment(loanPaymentForPeriod, monthlyInflationRate);
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(monthlyInflationRate);
+      asset.applyLoanPayment(monthlyPaymentDue, monthlyInflationRate);
+
+      const principalPaidForPeriod = Math.max(0, monthlyPaymentDue - interestForPeriod);
+      const unpaidInterestForPeriod = Math.max(0, interestForPeriod - monthlyPaymentDue);
 
       const assetData: PhysicalAssetData = {
         id: asset.getId(),
@@ -46,8 +52,12 @@ export class PhysicalAssetsProcessor {
         marketValue: asset.getMarketValue(),
         loanBalance: asset.getLoanBalance(),
         equity: asset.getEquity(),
+        paymentType: asset.getPaymentType(),
         appreciationForPeriod,
-        loanPaymentForPeriod,
+        loanPaymentForPeriod: monthlyPaymentDue,
+        interestForPeriod,
+        principalPaidForPeriod,
+        unpaidInterestForPeriod,
         purchaseExpenseForPeriod: purchaseExpenseByAsset[asset.getId()] ?? 0,
         saleProceedsForPeriod: 0,
         capitalGainForPeriod: 0,
@@ -56,7 +66,10 @@ export class PhysicalAssetsProcessor {
 
       perAssetData[asset.getId()] = assetData;
       totalAppreciation += appreciationForPeriod;
-      totalLoanPayment += loanPaymentForPeriod;
+      totalLoanPayment += monthlyPaymentDue;
+      totalInterest += interestForPeriod;
+      totalPrincipalPaid += principalPaidForPeriod;
+      totalUnpaidInterest += unpaidInterestForPeriod;
     }
 
     const assetsToSell = this.physicalAssets.getAssetsToSellThisPeriod(this.simulationState);
@@ -83,6 +96,9 @@ export class PhysicalAssetsProcessor {
       totalEquity: this.physicalAssets.getTotalEquity(),
       totalAppreciationForPeriod: totalAppreciation,
       totalLoanPaymentForPeriod: totalLoanPayment,
+      totalInterestForPeriod: totalInterest,
+      totalPrincipalPaidForPeriod: totalPrincipalPaid,
+      totalUnpaidInterestForPeriod: totalUnpaidInterest,
       totalPurchaseExpenseForPeriod: totalPurchaseExpense,
       totalSaleProceedsForPeriod: totalSaleProceeds,
       totalCapitalGainForPeriod: totalCapitalGain,
@@ -102,6 +118,9 @@ export class PhysicalAssetsProcessor {
       (acc, curr) => {
         acc.totalAppreciationForPeriod += curr.totalAppreciationForPeriod;
         acc.totalLoanPaymentForPeriod += curr.totalLoanPaymentForPeriod;
+        acc.totalInterestForPeriod += curr.totalInterestForPeriod;
+        acc.totalPrincipalPaidForPeriod += curr.totalPrincipalPaidForPeriod;
+        acc.totalUnpaidInterestForPeriod += curr.totalUnpaidInterestForPeriod;
         acc.totalPurchaseExpenseForPeriod += curr.totalPurchaseExpenseForPeriod;
         acc.totalSaleProceedsForPeriod += curr.totalSaleProceedsForPeriod;
         acc.totalCapitalGainForPeriod += curr.totalCapitalGainForPeriod;
@@ -111,6 +130,9 @@ export class PhysicalAssetsProcessor {
             ...assetData,
             appreciationForPeriod: (acc.perAssetData[assetID]?.appreciationForPeriod ?? 0) + assetData.appreciationForPeriod,
             loanPaymentForPeriod: (acc.perAssetData[assetID]?.loanPaymentForPeriod ?? 0) + assetData.loanPaymentForPeriod,
+            interestForPeriod: (acc.perAssetData[assetID]?.interestForPeriod ?? 0) + assetData.interestForPeriod,
+            principalPaidForPeriod: (acc.perAssetData[assetID]?.principalPaidForPeriod ?? 0) + assetData.principalPaidForPeriod,
+            unpaidInterestForPeriod: (acc.perAssetData[assetID]?.unpaidInterestForPeriod ?? 0) + assetData.unpaidInterestForPeriod,
             purchaseExpenseForPeriod: (acc.perAssetData[assetID]?.purchaseExpenseForPeriod ?? 0) + assetData.purchaseExpenseForPeriod,
             saleProceedsForPeriod: (acc.perAssetData[assetID]?.saleProceedsForPeriod ?? 0) + assetData.saleProceedsForPeriod,
             capitalGainForPeriod: (acc.perAssetData[assetID]?.capitalGainForPeriod ?? 0) + assetData.capitalGainForPeriod,
@@ -125,6 +147,9 @@ export class PhysicalAssetsProcessor {
         totalEquity: this.monthlyData[this.monthlyData.length - 1]?.totalEquity ?? 0,
         totalAppreciationForPeriod: 0,
         totalLoanPaymentForPeriod: 0,
+        totalInterestForPeriod: 0,
+        totalPrincipalPaidForPeriod: 0,
+        totalUnpaidInterestForPeriod: 0,
         totalPurchaseExpenseForPeriod: 0,
         totalSaleProceedsForPeriod: 0,
         totalCapitalGainForPeriod: 0,
@@ -143,6 +168,9 @@ export interface PhysicalAssetsData {
   totalPurchaseExpenseForPeriod: number;
   totalSaleProceedsForPeriod: number;
   totalCapitalGainForPeriod: number;
+  totalInterestForPeriod: number;
+  totalPrincipalPaidForPeriod: number;
+  totalUnpaidInterestForPeriod: number;
   perAssetData: Record<string, PhysicalAssetData>;
 }
 
@@ -152,11 +180,15 @@ export interface PhysicalAssetData {
   marketValue: number;
   loanBalance: number;
   equity: number;
+  paymentType: 'loan' | 'cash';
   appreciationForPeriod: number;
   loanPaymentForPeriod: number;
   purchaseExpenseForPeriod: number;
   saleProceedsForPeriod: number;
   capitalGainForPeriod: number;
+  interestForPeriod: number;
+  principalPaidForPeriod: number;
+  unpaidInterestForPeriod: number;
   isSold: boolean;
 }
 
@@ -259,6 +291,10 @@ export class PhysicalAsset {
     return this.ownershipStatus !== 'owned' ? 0 : Math.max(0, this.marketValue - this.loanBalance);
   }
 
+  getPaymentType(): 'loan' | 'cash' {
+    return this.paymentMethod.type;
+  }
+
   isSold(): boolean {
     return this.ownershipStatus === 'sold';
   }
@@ -286,13 +322,14 @@ export class PhysicalAsset {
     return this.loanPrincipal * ((1 + this.nominalAPR / 12) / (1 + monthlyInflationRate) - 1);
   }
 
-  getMonthlyLoanPayment(monthlyInflationRate: number): { monthlyLoanPayment: number } {
+  getMonthlyPaymentInfo(monthlyInflationRate: number): { monthlyPaymentDue: number; interestForPeriod: number } {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
-    if (this.isPaidOff()) return { monthlyLoanPayment: 0 };
+    if (this.isPaidOff()) return { monthlyPaymentDue: 0, interestForPeriod: 0 };
 
-    return {
-      monthlyLoanPayment: Math.min(this.monthlyLoanPayment, this.loanBalance + this.calculateMonthlyInterest(monthlyInflationRate)),
-    };
+    const interestForPeriod = this.calculateMonthlyInterest(monthlyInflationRate);
+    const monthlyPaymentDue = Math.min(this.monthlyLoanPayment, this.loanBalance + interestForPeriod);
+
+    return { monthlyPaymentDue, interestForPeriod };
   }
 
   applyLoanPayment(payment: number, monthlyInflationRate: number): void {

@@ -38,9 +38,12 @@ export interface CashFlowData {
   taxFreeIncome: number;
   totalExpenses: number;
   totalTaxesAndPenalties: number;
+  totalDebtPayments: number;
   surplusDeficit: number;
   amountInvested: number;
   amountLiquidated: number;
+  assetsPurchased: number;
+  assetsSold: number;
   netCashFlow: number;
 }
 
@@ -86,6 +89,18 @@ export interface HoldingsByAssetClass {
   stockHoldings: number;
   bondHoldings: number;
   cashHoldings: number;
+}
+
+export interface AssetsAndLiabilitiesData {
+  marketValue: number;
+  equity: number;
+  debt: number;
+  netWorth: number;
+  appreciation: number;
+  interest: number;
+  debtPayments: number;
+  principalPayments: number;
+  unpaidInterest: number;
 }
 
 export interface LifetimeTaxAmounts {
@@ -231,13 +246,28 @@ export class SimulationDataExtractor {
     const totalExpenses = expensesData?.totalExpenses ?? 0;
     const { totalTaxesAndPenalties } = this.getTaxAmountsByType(dp);
 
-    const surplusDeficit = totalIncome + employerMatch - totalExpenses - totalTaxesAndPenalties;
+    const totalDebtPayments = (dp.debts?.totalPaymentForPeriod ?? 0) + (dp.physicalAssets?.totalLoanPaymentForPeriod ?? 0);
+    const totalInterestPayments = (dp.debts?.totalInterestForPeriod ?? 0) + (dp.physicalAssets?.totalInterestForPeriod ?? 0);
+
+    const surplusDeficit = totalIncome + employerMatch - totalExpenses - totalTaxesAndPenalties - totalInterestPayments;
 
     const amountInvested = sumInvestments(portfolioData.contributionsForPeriod) - employerMatch;
     const amountLiquidated = sumLiquidations(portfolioData.withdrawalsForPeriod);
 
+    const assetsPurchased = dp.physicalAssets?.totalPurchaseExpenseForPeriod ?? 0;
+    const assetsSold = dp.physicalAssets?.totalSaleProceedsForPeriod ?? 0;
+
     // Round near-zero values to clean up tax convergence residuals
-    const netCashFlow = roundNearZero(totalIncome + amountLiquidated - totalExpenses - totalTaxesAndPenalties - amountInvested);
+    const netCashFlow = roundNearZero(
+      totalIncome +
+        amountLiquidated +
+        assetsSold -
+        totalExpenses -
+        totalTaxesAndPenalties -
+        totalDebtPayments -
+        amountInvested -
+        assetsPurchased
+    );
 
     return {
       totalIncome,
@@ -247,9 +277,12 @@ export class SimulationDataExtractor {
       taxFreeIncome,
       totalExpenses,
       totalTaxesAndPenalties,
+      totalDebtPayments,
       surplusDeficit,
       amountInvested,
       amountLiquidated,
+      assetsPurchased,
+      assetsSold,
       netCashFlow,
     };
   }
@@ -416,6 +449,26 @@ export class SimulationDataExtractor {
       bondHoldings: totalValue * bondsAllocation,
       cashHoldings: totalValue * cashAllocation,
     };
+  }
+
+  static getAssetsAndLiabilitiesData(dp: SimulationDataPoint): AssetsAndLiabilitiesData {
+    const portfolioData = dp.portfolio;
+    const physicalAssetsData = dp.physicalAssets;
+    const debtsData = dp.debts;
+
+    const marketValue = physicalAssetsData?.totalMarketValue ?? 0;
+    const equity = physicalAssetsData?.totalEquity ?? 0;
+    const debt = (debtsData?.totalDebtBalance ?? 0) + (physicalAssetsData?.totalLoanBalance ?? 0);
+    const netWorth = portfolioData.totalValue + marketValue - debt;
+
+    const appreciation = physicalAssetsData?.totalAppreciationForPeriod ?? 0;
+    const interest = (physicalAssetsData?.totalInterestForPeriod ?? 0) + (debtsData?.totalInterestForPeriod ?? 0);
+    const debtPayments = (physicalAssetsData?.totalLoanPaymentForPeriod ?? 0) + (debtsData?.totalPaymentForPeriod ?? 0);
+
+    const principalPayments = (physicalAssetsData?.totalPrincipalPaidForPeriod ?? 0) + (debtsData?.totalPrincipalPaidForPeriod ?? 0);
+    const unpaidInterest = (physicalAssetsData?.totalUnpaidInterestForPeriod ?? 0) + (debtsData?.totalUnpaidInterestForPeriod ?? 0);
+
+    return { marketValue, equity, debt, netWorth, appreciation, interest, debtPayments, principalPayments, unpaidInterest };
   }
 
   static getLifetimeTaxesAndPenalties(data: SimulationDataPoint[]): LifetimeTaxAmounts {

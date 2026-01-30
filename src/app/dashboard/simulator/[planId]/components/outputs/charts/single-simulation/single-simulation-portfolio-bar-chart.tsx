@@ -45,7 +45,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationPortfolioBarChartProps {
   age: number;
-  dataView: 'netChange';
+  dataView: 'netChange' | 'changeInNetWorth';
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
 }
 
@@ -106,7 +106,7 @@ export default function SingleSimulationPortfolioBarChart({ age, dataView, rawCh
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          {dataView === 'netChange' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
+          <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />
           <Bar dataKey="amount" maxBarSize={75} minPointSize={20} label={<CustomLabelListContent isSmallScreen={isSmallScreen} />}>
             {transformedChartData.map((entry, i) => (
               <Cell key={`${entry.name}-${i}`} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />
