@@ -16,7 +16,7 @@ import SingleSimulationPortfolioBarChart from '../../charts/single-simulation/si
 interface SingleSimulationPortfolioAssetTypePieChartCardProps {
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
   selectedAge: number;
-  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
+  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
   customDataID: string;
 }
 
@@ -59,7 +59,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
         ]);
       totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
       break;
-    case 'netChange':
+    case 'netPortfolioChange':
       title = 'Net Portfolio Change';
       useBarChart = true;
       break;
@@ -144,7 +144,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
       {useBarChart ? (
         <SingleSimulationPortfolioBarChart
           age={selectedAge}
-          dataView={dataView as 'netChange' | 'changeInNetWorth'}
+          dataView={dataView as 'netPortfolioChange' | 'changeInNetWorth'}
           rawChartData={rawChartData}
         />
       ) : (

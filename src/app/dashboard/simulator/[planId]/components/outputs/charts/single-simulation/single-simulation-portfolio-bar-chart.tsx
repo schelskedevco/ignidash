@@ -45,7 +45,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationPortfolioBarChartProps {
   age: number;
-  dataView: 'netChange' | 'changeInNetWorth';
+  dataView: 'netPortfolioChange' | 'changeInNetWorth';
   rawChartData: SingleSimulationPortfolioChartDataPoint[];
 }
 
@@ -54,7 +54,7 @@ export default function SingleSimulationPortfolioBarChart({ age, dataView, rawCh
   const isSmallScreen = useIsMobile();
 
   const labelConfig: Record<string, { mobile: string[]; desktop: string[] }> = {
-    netChange: {
+    netPortfolioChange: {
       mobile: ['Returns', 'Contributions', 'Withdrawals'],
       desktop: ['Annual Returns', 'Annual Contributions', 'Annual Withdrawals'],
     },
@@ -70,7 +70,7 @@ export default function SingleSimulationPortfolioBarChart({ age, dataView, rawCh
   const formatter = (value: number) => formatNumber(value, 1, '$');
 
   switch (dataView) {
-    case 'netChange': {
+    case 'netPortfolioChange': {
       const [returnsLabel, contributionsLabel, withdrawalsLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
 
       transformedChartData = chartData.flatMap(({ annualReturns, annualContributions, annualWithdrawals }) => [
