@@ -33,9 +33,10 @@ interface CustomTooltipProps {
   startAge: number;
   disabled: boolean;
   dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom';
+  customDataType: 'account' | 'asset' | 'debt' | undefined;
 }
 
-const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
+const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView, customDataType }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
   const currentYear = new Date().getFullYear();
@@ -49,77 +50,11 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   let footer = null;
   switch (dataView) {
     case 'netPortfolioChange':
-      const netPortfolioChange = payload.find((entry) => entry.dataKey === 'netPortfolioChange');
-      if (!netPortfolioChange) {
-        console.error('Net portfolio change data not found');
-        break;
-      }
-
-      body = (
-        <div className="flex flex-col gap-1">
-          {transformedPayload.map((entry) => (
-            <p
-              key={entry.dataKey}
-              style={{ backgroundColor: entry.color }}
-              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                'text-background': needsBgTextColor.includes(entry.color),
-              })}
-            >
-              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-              <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
-            </p>
-          ))}
-        </div>
-      );
-
-      footer = (
-        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
-          <span className="flex items-center gap-1">
-            <ChartLineIcon className="h-3 w-3" />
-            <span className="mr-2">Net Portfolio Change:</span>
-          </span>
-          <span className="ml-1 font-semibold">{formatNumber(netPortfolioChange.value, 3, '$')}</span>
-        </p>
-      );
-      break;
     case 'netWorth':
-      const netWorth = payload.find((entry) => entry.dataKey === 'netWorth');
-      if (!netWorth) {
-        console.error('Net worth data not found');
-        break;
-      }
-
-      body = (
-        <div className="flex flex-col gap-1">
-          {transformedPayload.map((entry) => (
-            <p
-              key={entry.dataKey}
-              style={{ backgroundColor: entry.color }}
-              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                'text-background': needsBgTextColor.includes(entry.color),
-              })}
-            >
-              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-              <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
-            </p>
-          ))}
-        </div>
-      );
-
-      footer = (
-        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
-          <span className="flex items-center gap-1">
-            <ChartLineIcon className="h-3 w-3" />
-            <span className="mr-2">Net Worth:</span>
-          </span>
-          <span className="ml-1 font-semibold">{formatNumber(netWorth.value, 3, '$')}</span>
-        </p>
-      );
-      break;
     case 'netWorthChange':
-      const netWorthChange = payload.find((entry) => entry.dataKey === 'netWorthChange');
-      if (!netWorthChange) {
-        console.error('Change in net worth data not found');
+      const lineData = payload.find((entry) => entry.dataKey === dataView);
+      if (!lineData) {
+        console.error(`${formatChartString(dataView)} data not found`);
         break;
       }
 
@@ -144,9 +79,9 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
           <span className="flex items-center gap-1">
             <ChartLineIcon className="h-3 w-3" />
-            <span className="mr-2">Net Worth Change:</span>
+            <span className="mr-2">{`${formatChartString(dataView)}:`}</span>
           </span>
-          <span className="ml-1 font-semibold">{formatNumber(netWorthChange.value, 3, '$')}</span>
+          <span className="ml-1 font-semibold">{formatNumber(lineData.value, 3, '$')}</span>
         </p>
       );
       break;
@@ -261,6 +196,8 @@ export default function SingleSimulationNetWorthAreaChart({
   const formatter = (value: number) => formatNumber(value, 1, '$');
   let stackOffset: 'sign' | undefined = undefined;
 
+  const customDataType: 'account' | 'asset' | 'debt' | undefined = undefined;
+
   switch (dataView) {
     case 'assetClass':
       areaDataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
@@ -339,6 +276,8 @@ export default function SingleSimulationNetWorthAreaChart({
           })
       );
       if (perAccountData.length > 0) {
+        customDataType = 'account';
+
         areaDataKeys.push('stockHoldings', 'bondHoldings', 'cashHoldings');
         areaColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
 
@@ -351,6 +290,7 @@ export default function SingleSimulationNetWorthAreaChart({
         perAssetData.filter((asset) => asset.id === customDataID).map((asset) => ({ age, ...asset, loanBalance: -asset.loanBalance }))
       );
       if (perAssetData.length > 0) {
+        customDataType = 'asset';
         lineDataKeys.push('equity');
 
         barDataKeys.push('marketValue', 'loanBalance');
@@ -367,6 +307,8 @@ export default function SingleSimulationNetWorthAreaChart({
         perDebtData.filter((debt) => debt.id === customDataID).map((debt) => ({ age, ...debt }))
       );
       if (perDebtData.length > 0) {
+        customDataType = 'debt';
+
         areaDataKeys.push('balance');
         areaColors.push('var(--chart-2)');
 
@@ -451,7 +393,14 @@ export default function SingleSimulationNetWorthAreaChart({
           <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[i]} />
         ))}
         <Tooltip
-          content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
+          content={
+            <CustomTooltip
+              startAge={startAge}
+              disabled={isSmallScreen && clickedOutsideChart}
+              dataView={dataView}
+              customDataType={customDataType}
+            />
+          }
           cursor={{ stroke: foregroundColor }}
         />
         {keyMetrics.retirementAge && showReferenceLines && (
