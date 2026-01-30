@@ -281,7 +281,7 @@ export default function SingleSimulationNetWorthAreaChart({
         lineDataKeys.push('equity');
 
         barDataKeys.push('marketValue', 'loanBalance');
-        barColors.push('var(--chart-1)', 'var(--chart-2)');
+        barColors.push('var(--chart-2)', 'var(--chart-3)');
 
         chartData = perAssetData;
 
@@ -297,7 +297,7 @@ export default function SingleSimulationNetWorthAreaChart({
         customDataType = 'debt';
 
         areaDataKeys.push('balance');
-        areaColors.push('var(--chart-2)');
+        areaColors.push('var(--chart-3)');
 
         chartData = perDebtData;
         break;
@@ -394,11 +394,9 @@ export default function SingleSimulationNetWorthAreaChart({
           <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
         )}
         {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
-        {keyMetrics.portfolioAtRetirement &&
-          showReferenceLines &&
-          !['netPortfolioChange', 'netWorthChange', 'custom'].includes(dataView) && (
-            <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
-          )}
+        {keyMetrics.portfolioAtRetirement && showReferenceLines && ['assetClass', 'taxCategory'].includes(dataView) && (
+          <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+        )}
       </ComposedChart>
     </div>
   );
