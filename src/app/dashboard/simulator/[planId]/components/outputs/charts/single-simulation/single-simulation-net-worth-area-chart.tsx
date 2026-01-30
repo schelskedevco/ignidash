@@ -51,7 +51,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   switch (dataView) {
     case 'netPortfolioChange':
     case 'netWorth':
-    case 'netWorthChange':
+    case 'netWorthChange': {
       const lineData = payload.find((entry) => entry.dataKey === dataView);
       if (!lineData) {
         console.error(`${formatChartString(dataView)} data not found`);
@@ -85,7 +85,48 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         </p>
       );
       break;
-    default:
+    }
+    case 'custom': {
+      const total = transformedPayload.reduce((sum, item) => sum + item.value, 0);
+
+      body = (
+        <div className="flex flex-col gap-1">
+          {transformedPayload.map((entry) => (
+            <p
+              key={entry.dataKey}
+              style={{ backgroundColor: entry.color }}
+              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
+                'text-background': needsBgTextColor.includes(entry.color),
+              })}
+            >
+              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
+              <span className="ml-1 font-semibold">{formatNumber(entry.value, 1, '$')}</span>
+            </p>
+          ))}
+        </div>
+      );
+
+      const footerConfig = {
+        account: { title: 'Account Value', icon: null },
+        asset: { title: 'Equity', icon: <ChartLineIcon className="h-3 w-3" /> },
+        debt: { title: 'Debt Balance', icon: null },
+      } as const;
+
+      const { title: footerTitle, icon: footerIcon } = footerConfig[customDataType!];
+
+      footer = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="flex items-center gap-1">
+            {footerIcon}
+            <span className="mr-2">{footerTitle}:</span>
+          </span>
+          <span className="ml-1 font-semibold">{formatNumber(total, 3, '$')}</span>
+        </p>
+      );
+
+      break;
+    }
+    default: {
       const total = transformedPayload.reduce((sum, item) => sum + item.value, 0);
 
       body = (
@@ -115,6 +156,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         </p>
       );
       break;
+    }
   }
 
   return (
@@ -231,7 +273,7 @@ export default function SingleSimulationNetWorthAreaChart({
       lineDataKeys.push('netWorthChange');
 
       barDataKeys.push('netPortfolioChange', 'assetAppreciation', 'debtPaydown');
-      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
+      barColors.push('var(--chart-1)', 'var(--chart-4)', 'var(--chart-5)');
 
       stackOffset = 'sign';
       break;
@@ -351,7 +393,7 @@ export default function SingleSimulationNetWorthAreaChart({
         {stackOffset === 'sign' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
         {areaDataKeys.map((dataKey, i) => (
           <Area
-            key={dataKey}
+            key={`area-${dataKey}-${i}`}
             type="monotone"
             dataKey={dataKey}
             stackId="1"

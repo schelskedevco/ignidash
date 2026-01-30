@@ -60,7 +60,7 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
     },
     netWorthChange: {
       mobile: ['Returns', 'Contributions', 'Withdrawals', 'Appreciation', 'Paydown'],
-      desktop: ['Annual Returns', 'Annual Contributions', 'Annual Withdrawals', 'Asset Appreciation', 'Debt Paydown'],
+      desktop: ['Annual Returns', 'Annual Contributions', 'Annual Withdrawals', 'Annual Appreciation', 'Annual Debt Paydown'],
     },
   };
 
