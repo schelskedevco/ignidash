@@ -32,12 +32,15 @@ export default function SingleSimulationNetWorthPieChartCard({
 
   let title = '';
   let chartData: { name: string; value: number }[] = [];
-  let useBarChart = false;
+  let chartType: 'pie' | 'bar' = 'pie';
+
+  let nameForTotalValue = 'Total Value';
   let totalValue = 0;
 
   switch (dataView) {
     case 'assetClass':
       title = 'By Asset Class';
+
       chartData = rawChartData
         .filter((data) => data.age === selectedAge)
         .flatMap(({ stockHoldings, bondHoldings, cashHoldings }) => [
@@ -45,10 +48,13 @@ export default function SingleSimulationNetWorthPieChartCard({
           { name: 'bondHoldings', value: bondHoldings },
           { name: 'cashHoldings', value: cashHoldings },
         ]);
+
       totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+      nameForTotalValue = 'Total Portfolio Value';
       break;
     case 'taxCategory':
       title = 'By Tax Category';
+
       chartData = rawChartData
         .filter((data) => data.age === selectedAge)
         .flatMap(({ taxableValue, taxDeferredValue, taxFreeValue, cashSavings }) => [
@@ -57,36 +63,41 @@ export default function SingleSimulationNetWorthPieChartCard({
           { name: 'taxFreeValue', value: taxFreeValue },
           { name: 'cashSavings', value: cashSavings },
         ]);
+
       totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+      nameForTotalValue = 'Total Portfolio Value';
       break;
     case 'netPortfolioChange':
       title = 'Net Portfolio Change';
-      useBarChart = true;
+      chartType = 'bar';
       break;
     case 'netWorth':
       title = 'Net Worth';
+
       chartData = rawChartData
         .filter((data) => data.age === selectedAge)
-        .flatMap(({ stockHoldings, bondHoldings, cashHoldings, assetMarketValue, debt }) => [
+        .flatMap(({ stockHoldings, bondHoldings, cashHoldings, assetValue, debtBalance }) => [
           { name: 'stockHoldings', value: stockHoldings },
           { name: 'bondHoldings', value: bondHoldings },
           { name: 'cashHoldings', value: cashHoldings },
-          { name: 'assetMarketValue', value: assetMarketValue },
-          { name: 'debt', value: debt },
+          { name: 'assetValue', value: assetValue },
+          { name: 'debtBalance', value: debtBalance },
         ]);
-      totalValue = chartData.map(({ name, value }) => (name === 'debt' ? -value : value)).reduce((sum, value) => sum + value, 0);
+
+      nameForTotalValue = 'Net Worth';
+      totalValue = chartData.map(({ name, value }) => (name === 'debtBalance' ? -value : value)).reduce((sum, value) => sum + value, 0);
       break;
     case 'netWorthChange':
       title = 'Net Worth Change';
-      useBarChart = true;
+      chartType = 'bar';
       break;
     case 'custom':
-      // Custom Account
       const perAccountData = rawChartData
         .filter((data) => data.age === selectedAge)
         .flatMap(({ perAccountData }) => perAccountData.filter((account) => account.id === customDataID));
       if (perAccountData.length > 0) {
         title = accountData ? `${accountData.name} — ${taxCategoryFromAccountTypeForDisplay(accountData.type)}` : 'Custom Account';
+
         chartData = perAccountData.flatMap((account) => {
           const balance = account.balance;
 
@@ -101,53 +112,48 @@ export default function SingleSimulationNetWorthPieChartCard({
             { name: 'cashHoldings', value: balance * cashAllocation },
           ];
         });
+
+        nameForTotalValue = 'Account Value';
         totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
         break;
       }
 
-      // Custom Physical Asset
       const perAssetData = rawChartData
         .filter((data) => data.age === selectedAge)
         .flatMap(({ perAssetData }) => perAssetData.filter((asset) => asset.id === customDataID));
       if (perAssetData.length > 0) {
         title = physicalAssetData ? `${physicalAssetData.name} — Physical Asset` : 'Custom Physical Asset';
+
         chartData = perAssetData.flatMap((asset) => [
           { name: 'equity', value: asset.equity },
           { name: 'loanBalance', value: asset.loanBalance },
         ]);
-        totalValue = chartData.map(({ name, value }) => (name === 'loanBalance' ? -value : value)).reduce((sum, value) => sum + value, 0);
+
+        nameForTotalValue = 'Market Value';
+        totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
         break;
       }
 
-      // Custom Debt
       const perDebtData = rawChartData
         .filter((data) => data.age === selectedAge)
         .flatMap(({ perDebtData }) => perDebtData.filter((debt) => debt.id === customDataID));
       if (perDebtData.length > 0) {
         title = debtData ? `${debtData.name} — Debt` : 'Custom Debt';
+
         chartData = perDebtData.flatMap((debt) => [{ name: 'balance', value: debt.balance }]);
-        totalValue = chartData.map(({ name, value }) => (name === 'balance' ? -value : value)).reduce((sum, value) => sum + value, 0);
+
+        totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+        nameForTotalValue = 'Debt Balance';
         break;
       }
 
       break;
   }
 
-  return (
-    <Card className="my-0">
-      <div className="mb-4 flex items-center justify-between">
-        <Subheading level={3}>
-          <span className="mr-2">{title}</span>
-          <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
-        </Subheading>
-      </div>
-      {useBarChart ? (
-        <SingleSimulationNetWorthBarChart
-          age={selectedAge}
-          dataView={dataView as 'netPortfolioChange' | 'netWorthChange'}
-          rawChartData={rawChartData}
-        />
-      ) : (
+  let chart = null;
+  switch (chartType) {
+    case 'pie':
+      chart = (
         <div className="divide-border/25 flex h-full items-center pb-4 sm:divide-x">
           <div className="flex-1 sm:pr-6">
             <SingleSimulationNetWorthPieChart chartData={chartData} />
@@ -161,13 +167,34 @@ export default function SingleSimulationNetWorthPieChartCard({
                     <DescriptionDetails>{`${formatNumber(value, 2, '$')} (${formatNumber((value / totalValue) * 100, 1)}%)`}</DescriptionDetails>
                   </Fragment>
                 ))}
-                <DescriptionTerm className="font-bold">Total Value</DescriptionTerm>
+                <DescriptionTerm className="font-bold">{nameForTotalValue}</DescriptionTerm>
                 <DescriptionDetails className="font-bold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
               </DescriptionList>
             </div>
           )}
         </div>
-      )}
+      );
+      break;
+    case 'bar':
+      chart = (
+        <SingleSimulationNetWorthBarChart
+          age={selectedAge}
+          dataView={dataView as 'netPortfolioChange' | 'netWorthChange'}
+          rawChartData={rawChartData}
+        />
+      );
+      break;
+  }
+
+  return (
+    <Card className="my-0">
+      <div className="mb-4 flex items-center justify-between">
+        <Subheading level={3}>
+          <span className="mr-2">{title}</span>
+          <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
+        </Subheading>
+      </div>
+      {chart}
     </Card>
   );
 }

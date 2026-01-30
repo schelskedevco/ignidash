@@ -58,6 +58,10 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
       mobile: ['Returns', 'Contributions', 'Withdrawals'],
       desktop: ['Annual Returns', 'Annual Contributions', 'Annual Withdrawals'],
     },
+    netWorthChange: {
+      mobile: ['Returns', 'Contributions', 'Withdrawals', 'Appreciation', 'Paydown'],
+      desktop: ['Annual Returns', 'Annual Contributions', 'Annual Withdrawals', 'Asset Appreciation', 'Debt Paydown'],
+    },
   };
 
   const getLabelsForScreenSize = (dataView: keyof typeof labelConfig, isSmallScreen: boolean) => {
@@ -78,6 +82,23 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
         { name: contributionsLabel, amount: annualContributions, color: 'var(--chart-2)' },
         { name: withdrawalsLabel, amount: -annualWithdrawals, color: 'var(--chart-3)' },
       ]);
+      break;
+    }
+    case 'netWorthChange': {
+      const [returnsLabel, contributionsLabel, withdrawalsLabel, appreciationLabel, paydownLabel] = getLabelsForScreenSize(
+        dataView,
+        isSmallScreen
+      );
+
+      transformedChartData = chartData.flatMap(
+        ({ annualReturns, annualContributions, annualWithdrawals, assetAppreciation, debtPaydown }) => [
+          { name: returnsLabel, amount: annualReturns, color: 'var(--chart-1)' },
+          { name: contributionsLabel, amount: annualContributions, color: 'var(--chart-2)' },
+          { name: withdrawalsLabel, amount: -annualWithdrawals, color: 'var(--chart-3)' },
+          { name: appreciationLabel, amount: assetAppreciation, color: 'var(--chart-4)' },
+          { name: paydownLabel, amount: debtPaydown, color: 'var(--chart-5)' },
+        ]
+      );
       break;
     }
   }

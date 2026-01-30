@@ -241,7 +241,6 @@ export default function SingleSimulationNetWorthAreaChart({
         break;
       }
 
-      // Custom Account
       const perAccountData = chartData.flatMap(({ age, perAccountData }) =>
         perAccountData
           .filter((account) => account.id === customDataID)
@@ -272,7 +271,6 @@ export default function SingleSimulationNetWorthAreaChart({
         break;
       }
 
-      // Custom Physical Asset
       const perAssetData = chartData.flatMap(({ age, perAssetData }) =>
         perAssetData.filter((asset) => asset.id === customDataID).map((asset) => ({ age, ...asset, loanBalance: -asset.loanBalance }))
       );
@@ -289,7 +287,6 @@ export default function SingleSimulationNetWorthAreaChart({
         break;
       }
 
-      // Custom Debt
       const perDebtData = chartData.flatMap(({ age, perDebtData }) =>
         perDebtData.filter((debt) => debt.id === customDataID).map((debt) => ({ age, ...debt }))
       );
