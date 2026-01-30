@@ -257,7 +257,7 @@ export default function SingleSimulationCashFlowBarChart({
     }
   }
 
-  transformedChartData = transformedChartData.filter((item) => item.amount !== 0).sort((a, b) => b.amount - a.amount);
+  transformedChartData = transformedChartData.filter((item) => item.amount !== 0);
   if (transformedChartData.length === 0) {
     return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
   }
