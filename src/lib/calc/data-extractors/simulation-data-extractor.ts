@@ -39,6 +39,7 @@ export interface CashFlowData {
   totalExpenses: number;
   totalTaxesAndPenalties: number;
   totalDebtPayments: number;
+  totalInterestPayments: number;
   surplusDeficit: number;
   amountInvested: number;
   amountLiquidated: number;
@@ -279,6 +280,7 @@ export class SimulationDataExtractor {
       totalExpenses,
       totalTaxesAndPenalties,
       totalDebtPayments,
+      totalInterestPayments,
       surplusDeficit,
       amountInvested,
       amountLiquidated,

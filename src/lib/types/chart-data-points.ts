@@ -52,6 +52,7 @@ export interface SingleSimulationCashFlowChartDataPoint {
   taxesAndPenalties: number;
   expenses: number;
   debtPayments: number;
+  interestPayments: number;
   surplusDeficit: number;
   savingsRate: number | null;
   amountInvested: number;

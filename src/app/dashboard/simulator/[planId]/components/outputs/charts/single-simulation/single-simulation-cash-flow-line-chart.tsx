@@ -213,14 +213,14 @@ export default function SingleSimulationCashFlowLineChart({
       lineDataKeys.push('surplusDeficit');
       strokeColors.push(LINE_COLOR);
 
-      barDataKeys.push('income', 'employerMatch', 'expenses', 'taxesAndPenalties', 'debtPayments');
-      barColors.push('var(--chart-1)', 'var(--chart-4)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-8)');
+      barDataKeys.push('income', 'employerMatch', 'expenses', 'taxesAndPenalties', 'interestPayments');
+      barColors.push('var(--chart-1)', 'var(--chart-4)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-5)');
 
       chartData = chartData.map((entry) => ({
         ...entry,
         expenses: -entry.expenses,
         taxesAndPenalties: -entry.taxesAndPenalties,
-        debtPayments: -entry.debtPayments,
+        interestPayments: -entry.interestPayments,
       }));
 
       stackOffset = 'sign';
@@ -295,7 +295,6 @@ export default function SingleSimulationCashFlowLineChart({
 
       formatter = (value: number) => formatNumber(value, 1, '$');
 
-      // Custom Income
       const perIncomeData = chartData.flatMap(({ age, perIncomeData }) =>
         perIncomeData.filter((income) => income.id === customDataID && income.income !== 0).map((income) => ({ age, ...income }))
       );
@@ -307,7 +306,6 @@ export default function SingleSimulationCashFlowLineChart({
         break;
       }
 
-      // Custom Expense
       const perExpenseData = chartData.flatMap(({ age, perExpenseData }) =>
         perExpenseData.filter((expense) => expense.id === customDataID && expense.expense !== 0).map((expense) => ({ age, ...expense }))
       );
@@ -319,7 +317,6 @@ export default function SingleSimulationCashFlowLineChart({
         break;
       }
 
-      // Custom Physical Asset
       const perAssetData = chartData.flatMap(({ age, perAssetData }) =>
         perAssetData.filter((asset) => asset.id === customDataID && asset.loanPaymentForPeriod !== 0).map((asset) => ({ age, ...asset }))
       );
@@ -331,7 +328,6 @@ export default function SingleSimulationCashFlowLineChart({
         break;
       }
 
-      // Custom Debt
       const perDebtData = chartData.flatMap(({ age, perDebtData }) =>
         perDebtData.filter((debt) => debt.id === customDataID && debt.paymentForPeriod !== 0).map((debt) => ({ age, ...debt }))
       );
@@ -399,9 +395,7 @@ export default function SingleSimulationCashFlowLineChart({
         <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
         <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
         <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {(dataView === 'surplusDeficit' || dataView === 'cashFlow') && (
-          <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />
-        )}
+        {stackOffset === 'sign' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
         {lineDataKeys.map((dataKey, i) => (
           <Line
             key={`line-${dataKey}-${i}`}
