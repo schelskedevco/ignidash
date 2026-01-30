@@ -196,7 +196,7 @@ export default function SingleSimulationNetWorthAreaChart({
   const formatter = (value: number) => formatNumber(value, 1, '$');
   let stackOffset: 'sign' | undefined = undefined;
 
-  const customDataType: 'account' | 'asset' | 'debt' | undefined = undefined;
+  let customDataType: 'account' | 'asset' | 'debt' | undefined = undefined;
 
   switch (dataView) {
     case 'assetClass':
