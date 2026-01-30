@@ -32,7 +32,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
+  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
 }
 
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -48,7 +48,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   let body = null;
   let footer = null;
   switch (dataView) {
-    case 'netChange':
+    case 'netPortfolioChange':
       const netPortfolioChange = payload.find((entry) => entry.dataKey === 'netPortfolioChange');
       if (!netPortfolioChange) {
         console.error('Net portfolio change data not found');
@@ -203,7 +203,7 @@ interface SingleSimulationPortfolioAreaChartProps {
   startAge: number;
   keyMetrics: KeyMetrics;
   showReferenceLines: boolean;
-  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
+  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
   customDataID: string;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
@@ -270,7 +270,7 @@ export default function SingleSimulationPortfolioAreaChart({
       areaDataKeys.push('taxableValue', 'taxDeferredValue', 'taxFreeValue', 'cashSavings');
       areaColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
       break;
-    case 'netChange':
+    case 'netPortfolioChange':
       lineDataKeys.push('netPortfolioChange');
 
       barDataKeys.push('annualReturns', 'annualContributions', 'annualWithdrawals');

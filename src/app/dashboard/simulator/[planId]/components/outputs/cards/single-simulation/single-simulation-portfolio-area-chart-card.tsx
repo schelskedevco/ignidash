@@ -17,8 +17,8 @@ interface SingleSimulationPortfolioAreaChartCardProps {
   keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth' | 'custom') => void;
-  dataView: 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
+  setDataView: (view: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom') => void;
+  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
   setCustomDataID: (name: string) => void;
   customDataID: string;
   startAge: number;
@@ -72,21 +72,21 @@ export default function SingleSimulationPortfolioAreaChartCard({
               const isCustomSelection =
                 e.target.value !== 'assetClass' &&
                 e.target.value !== 'taxCategory' &&
-                e.target.value !== 'netChange' &&
+                e.target.value !== 'netPortfolioChange' &&
                 e.target.value !== 'netWorth' &&
                 e.target.value !== 'changeInNetWorth';
               if (isCustomSelection) {
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'assetClass' | 'taxCategory' | 'netChange' | 'netWorth' | 'changeInNetWorth');
+                setDataView(e.target.value as 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth');
                 setCustomDataID('');
               }
             }}
           >
             <option value="assetClass">Asset Class</option>
             <option value="taxCategory">Tax Category</option>
-            <option value="netChange">Net Portfolio Change</option>
+            <option value="netPortfolioChange">Net Portfolio Change</option>
             <option value="netWorth">Net Worth</option>
             <option value="changeInNetWorth">Change in NW</option>
             <optgroup label="By Account">
