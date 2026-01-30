@@ -2,7 +2,7 @@
 
 import { Fragment } from 'react';
 
-import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
+import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-data-points';
 import Card from '@/components/ui/card';
 import { Subheading } from '@/components/catalyst/heading';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
@@ -10,22 +10,22 @@ import { formatChartString, formatNumber } from '@/lib/utils';
 import { useAccountData, usePhysicalAssetData, useDebtData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 
-import SingleSimulationPortfolioPieChart from '../../charts/single-simulation/single-simulation-portfolio-pie-chart';
-import SingleSimulationPortfolioBarChart from '../../charts/single-simulation/single-simulation-portfolio-bar-chart';
+import SingleSimulationNetWorthPieChart from '../../charts/single-simulation/single-simulation-net-worth-pie-chart';
+import SingleSimulationNetWorthBarChart from '../../charts/single-simulation/single-simulation-net-worth-bar-chart';
 
-interface SingleSimulationPortfolioAssetTypePieChartCardProps {
-  rawChartData: SingleSimulationPortfolioChartDataPoint[];
+interface SingleSimulationNetWorthPieChartCardProps {
+  rawChartData: SingleSimulationNetWorthChartDataPoint[];
   selectedAge: number;
   dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
   customDataID: string;
 }
 
-export default function SingleSimulationPortfolioAssetTypePieChartCard({
+export default function SingleSimulationNetWorthPieChartCard({
   rawChartData,
   selectedAge,
   dataView,
   customDataID,
-}: SingleSimulationPortfolioAssetTypePieChartCardProps) {
+}: SingleSimulationNetWorthPieChartCardProps) {
   const accountData = useAccountData(customDataID !== '' ? customDataID : null);
   const physicalAssetData = usePhysicalAssetData(customDataID !== '' ? customDataID : null);
   const debtData = useDebtData(customDataID !== '' ? customDataID : null);
@@ -142,7 +142,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
         </Subheading>
       </div>
       {useBarChart ? (
-        <SingleSimulationPortfolioBarChart
+        <SingleSimulationNetWorthBarChart
           age={selectedAge}
           dataView={dataView as 'netPortfolioChange' | 'changeInNetWorth'}
           rawChartData={rawChartData}
@@ -150,7 +150,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
       ) : (
         <div className="divide-border/25 flex h-full items-center pb-4 sm:divide-x">
           <div className="flex-1 sm:pr-6">
-            <SingleSimulationPortfolioPieChart chartData={chartData} />
+            <SingleSimulationNetWorthPieChart chartData={chartData} />
           </div>
           {totalValue > 0 && (
             <div className="hidden flex-1 sm:block sm:pl-6">
@@ -161,7 +161,7 @@ export default function SingleSimulationPortfolioAssetTypePieChartCard({
                     <DescriptionDetails>{`${formatNumber(value, 2, '$')} (${formatNumber((value / totalValue) * 100, 1)}%)`}</DescriptionDetails>
                   </Fragment>
                 ))}
-                <DescriptionTerm className="font-bold">Total Portfolio Value</DescriptionTerm>
+                <DescriptionTerm className="font-bold">Total Value</DescriptionTerm>
                 <DescriptionDetails className="font-bold">{formatNumber(totalValue, 2, '$')}</DescriptionDetails>
               </DescriptionList>
             </div>

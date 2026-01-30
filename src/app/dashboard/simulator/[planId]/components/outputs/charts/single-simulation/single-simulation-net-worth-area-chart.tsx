@@ -6,7 +6,7 @@ import { ComposedChart, Area, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, R
 import { ChartLineIcon } from 'lucide-react';
 
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
+import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-data-points';
 import type { AccountDataWithTransactions } from '@/lib/calc/account';
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { DebtData } from '@/lib/calc/debts';
@@ -22,9 +22,9 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof SingleSimulationPortfolioChartDataPoint | keyof AccountDataWithTransactions | keyof PhysicalAssetData | keyof DebtData;
+    dataKey: keyof SingleSimulationNetWorthChartDataPoint | keyof AccountDataWithTransactions | keyof PhysicalAssetData | keyof DebtData;
     payload:
-      | SingleSimulationPortfolioChartDataPoint
+      | SingleSimulationNetWorthChartDataPoint
       | ({ age: number; stockHoldings: number; bondHoldings: number; cashHoldings: number } & AccountDataWithTransactions)
       | ({ age: number } & PhysicalAssetData)
       | ({ age: number } & DebtData);
@@ -198,8 +198,8 @@ CustomTooltip.displayName = 'CustomTooltip';
 
 const LINE_COLOR = 'var(--foreground)';
 
-interface SingleSimulationPortfolioAreaChartProps {
-  rawChartData: SingleSimulationPortfolioChartDataPoint[];
+interface SingleSimulationNetWorthAreaChartProps {
+  rawChartData: SingleSimulationNetWorthChartDataPoint[];
   startAge: number;
   keyMetrics: KeyMetrics;
   showReferenceLines: boolean;
@@ -209,7 +209,7 @@ interface SingleSimulationPortfolioAreaChartProps {
   selectedAge: number;
 }
 
-export default function SingleSimulationPortfolioAreaChart({
+export default function SingleSimulationNetWorthAreaChart({
   rawChartData,
   startAge,
   keyMetrics,
@@ -218,7 +218,7 @@ export default function SingleSimulationPortfolioAreaChart({
   customDataID,
   onAgeSelect,
   selectedAge,
-}: SingleSimulationPortfolioAreaChartProps) {
+}: SingleSimulationNetWorthAreaChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
   const { resolvedTheme } = useTheme();
@@ -230,13 +230,13 @@ export default function SingleSimulationPortfolioAreaChart({
   );
 
   let chartData:
-    | SingleSimulationPortfolioChartDataPoint[]
+    | SingleSimulationNetWorthChartDataPoint[]
     | Array<{ age: number; stockHoldings: number; bondHoldings: number; cashHoldings: number } & AccountDataWithTransactions>
     | Array<{ age: number } & PhysicalAssetData>
     | Array<{ age: number } & DebtData> = useChartDataSlice(rawChartData, 'single');
 
   const areaDataKeys: (
-    | keyof SingleSimulationPortfolioChartDataPoint
+    | keyof SingleSimulationNetWorthChartDataPoint
     | keyof AccountDataWithTransactions
     | keyof PhysicalAssetData
     | keyof DebtData
@@ -244,14 +244,14 @@ export default function SingleSimulationPortfolioAreaChart({
   const areaColors: string[] = [];
 
   const lineDataKeys: (
-    | keyof SingleSimulationPortfolioChartDataPoint
+    | keyof SingleSimulationNetWorthChartDataPoint
     | keyof AccountDataWithTransactions
     | keyof PhysicalAssetData
     | keyof DebtData
   )[] = [];
 
   const barDataKeys: (
-    | keyof SingleSimulationPortfolioChartDataPoint
+    | keyof SingleSimulationNetWorthChartDataPoint
     | keyof AccountDataWithTransactions
     | keyof PhysicalAssetData
     | keyof DebtData

@@ -6,14 +6,14 @@ import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
-import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
+import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
 
-import SingleSimulationPortfolioAreaChart from '../../charts/single-simulation/single-simulation-portfolio-area-chart';
+import SingleSimulationNetWorthAreaChart from '../../charts/single-simulation/single-simulation-net-worth-area-chart';
 import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 
-interface SingleSimulationPortfolioAreaChartCardProps {
-  rawChartData: SingleSimulationPortfolioChartDataPoint[];
+interface SingleSimulationNetWorthAreaChartCardProps {
+  rawChartData: SingleSimulationNetWorthChartDataPoint[];
   keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
@@ -24,7 +24,7 @@ interface SingleSimulationPortfolioAreaChartCardProps {
   startAge: number;
 }
 
-export default function SingleSimulationPortfolioAreaChartCard({
+export default function SingleSimulationNetWorthAreaChartCard({
   rawChartData,
   keyMetrics,
   onAgeSelect,
@@ -34,7 +34,7 @@ export default function SingleSimulationPortfolioAreaChartCard({
   setCustomDataID,
   customDataID,
   startAge,
-}: SingleSimulationPortfolioAreaChartCardProps) {
+}: SingleSimulationNetWorthAreaChartCardProps) {
   const showReferenceLines = useShowReferenceLines();
 
   const getUniqueItems = useCallback((items: Array<{ id: string; name: string }>) => {
@@ -58,15 +58,15 @@ export default function SingleSimulationPortfolioAreaChartCard({
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
         <Subheading level={3} className="truncate">
-          <span className="mr-2">Portfolio</span>
+          <span className="mr-2">Net Worth</span>
           <span className="text-muted-foreground hidden sm:inline">Time Series</span>
         </Subheading>
         <div className="flex shrink-0 items-center gap-2">
           <Select
-            aria-label="Portfolio data view options"
+            aria-label="Net worth data view options"
             className="max-w-48 sm:max-w-64"
-            id="portfolio-data-view"
-            name="portfolio-data-view"
+            id="net-worth-data-view"
+            name="net-worth-data-view"
             value={dataView === 'custom' ? customDataID : dataView}
             onChange={(e) => {
               const isCustomSelection =
@@ -118,7 +118,7 @@ export default function SingleSimulationPortfolioAreaChartCard({
           <ChartTimeFrameDropdown timeFrameType="single" />
         </div>
       </div>
-      <SingleSimulationPortfolioAreaChart
+      <SingleSimulationNetWorthAreaChart
         rawChartData={rawChartData}
         startAge={startAge}
         keyMetrics={keyMetrics}

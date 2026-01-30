@@ -2,7 +2,7 @@
 
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import type {
-  SingleSimulationPortfolioTableRow,
+  SingleSimulationNetWorthTableRow,
   SingleSimulationCashFlowTableRow,
   SingleSimulationReturnsTableRow,
   SingleSimulationTaxesTableRow,
@@ -11,7 +11,7 @@ import type {
 } from '@/lib/schemas/tables/single-simulation-table-schema';
 import { SingleSimulationCategory } from '@/lib/types/simulation-category';
 import {
-  useSingleSimulationPortfolioTableData,
+  useSingleSimulationNetWorthTableData,
   useSingleSimulationCashFlowTableData,
   useSingleSimulationReturnsTableData,
   useSingleSimulationTaxesTableData,
@@ -20,7 +20,7 @@ import {
   useSingleSimulationCategory,
 } from '@/lib/stores/simulator-store';
 import {
-  generatePortfolioTableColumns,
+  generateNetWorthTableColumns,
   generateCashFlowTableColumns,
   generateReturnsTableColumns,
   generateTaxesTableColumns,
@@ -34,15 +34,15 @@ interface TableCategoryProps {
   simulation: SimulationResult;
 }
 
-function PortfolioTable({ simulation }: TableCategoryProps) {
-  const tableData = useSingleSimulationPortfolioTableData(simulation);
+function NetWorthTable({ simulation }: TableCategoryProps) {
+  const tableData = useSingleSimulationNetWorthTableData(simulation);
 
   return (
-    <Table<SingleSimulationPortfolioTableRow>
-      columns={generatePortfolioTableColumns()}
+    <Table<SingleSimulationNetWorthTableRow>
+      columns={generateNetWorthTableColumns()}
       data={tableData}
       keyField="year"
-      exportFilename="portfolio-data.csv"
+      exportFilename="net-worth-data.csv"
     />
   );
 }
@@ -122,8 +122,8 @@ export default function SingleSimulationDataTable({ simulation }: SingleSimulati
   const props: TableCategoryProps = { simulation };
 
   switch (resultsCategory) {
-    case SingleSimulationCategory.Portfolio:
-      return <PortfolioTable {...props} />;
+    case SingleSimulationCategory.NetWorth:
+      return <NetWorthTable {...props} />;
     case SingleSimulationCategory.CashFlow:
       return <CashFlowTable {...props} />;
     case SingleSimulationCategory.Returns:

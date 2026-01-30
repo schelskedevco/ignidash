@@ -9,7 +9,7 @@ const taxBracketValidator = v.object({
 export const simulationDataPointValidator = v.object({
   age: v.number(),
 
-  // Portfolio
+  // Net Worth
   stockHoldings: v.number(),
   bondHoldings: v.number(),
   cashHoldings: v.number(),

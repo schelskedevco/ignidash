@@ -1,8 +1,8 @@
 import type { TableColumn } from '@/lib/types/table';
 import type { ColumnFormat } from '@/lib/types/column-format';
 import {
-  type SingleSimulationPortfolioTableRow,
-  SIMULATION_PORTFOLIO_TABLE_CONFIG,
+  type SingleSimulationNetWorthTableRow,
+  SIMULATION_NET_WORTH_TABLE_CONFIG,
   type SingleSimulationCashFlowTableRow,
   SIMULATION_CASH_FLOW_TABLE_CONFIG,
   type SingleSimulationReturnsTableRow,
@@ -59,11 +59,11 @@ const formatHistoricalRanges = (ranges: Array<{ startYear: number; endYear: numb
     .join(', ');
 };
 
-export const generatePortfolioTableColumns = (): TableColumn<SingleSimulationPortfolioTableRow>[] => {
-  return Object.entries(SIMULATION_PORTFOLIO_TABLE_CONFIG).map(([key, config]) => ({
-    key: key as keyof SingleSimulationPortfolioTableRow,
+export const generateNetWorthTableColumns = (): TableColumn<SingleSimulationNetWorthTableRow>[] => {
+  return Object.entries(SIMULATION_NET_WORTH_TABLE_CONFIG).map(([key, config]) => ({
+    key: key as keyof SingleSimulationNetWorthTableRow,
     title: config.title,
-    format: (value: SingleSimulationPortfolioTableRow[keyof SingleSimulationPortfolioTableRow]) => formatValue(value, config.format),
+    format: (value: SingleSimulationNetWorthTableRow[keyof SingleSimulationNetWorthTableRow]) => formatValue(value, config.format),
   }));
 };
 

@@ -5,7 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer, 
 
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-import type { SingleSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
+import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-data-points';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomLabelListContent = (props: any) => {
@@ -43,13 +43,13 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
   );
 };
 
-interface SingleSimulationPortfolioBarChartProps {
+interface SingleSimulationNetWorthBarChartProps {
   age: number;
   dataView: 'netPortfolioChange' | 'changeInNetWorth';
-  rawChartData: SingleSimulationPortfolioChartDataPoint[];
+  rawChartData: SingleSimulationNetWorthChartDataPoint[];
 }
 
-export default function SingleSimulationPortfolioBarChart({ age, dataView, rawChartData }: SingleSimulationPortfolioBarChartProps) {
+export default function SingleSimulationNetWorthBarChart({ age, dataView, rawChartData }: SingleSimulationNetWorthBarChartProps) {
   const { resolvedTheme } = useTheme();
   const isSmallScreen = useIsMobile();
 

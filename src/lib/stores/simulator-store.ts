@@ -20,7 +20,7 @@ import { TableDataExtractor } from '@/lib/calc/data-extractors/table-data-extrac
 import { createWorkerPool, releaseWorkerPool } from '@/lib/workers/simulation-worker-api';
 import { getMergeWorker } from '@/lib/workers/merge-worker-api';
 import type {
-  SingleSimulationPortfolioTableRow,
+  SingleSimulationNetWorthTableRow,
   SingleSimulationCashFlowTableRow,
   SingleSimulationReturnsTableRow,
   SingleSimulationTaxesTableRow,
@@ -30,7 +30,7 @@ import type {
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/tables/multi-simulation-table-schema';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type {
-  SingleSimulationPortfolioChartDataPoint,
+  SingleSimulationNetWorthChartDataPoint,
   SingleSimulationCashFlowChartDataPoint,
   SingleSimulationTaxesChartDataPoint,
   SingleSimulationReturnsChartDataPoint,
@@ -142,7 +142,7 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
     selectedSeedFromTable: null,
     selectedSeedFromQuickPercentile: null,
     simulationStatus: 'none',
-    singleSimulationCategory: SingleSimulationCategory.Portfolio,
+    singleSimulationCategory: SingleSimulationCategory.NetWorth,
     multiSimulationCategory: MultiSimulationCategory.Portfolio,
     monteCarloSortMode: 'finalPortfolioValue',
     chartTimeFrameToShow: 'twentyYears',
@@ -467,9 +467,9 @@ export const useKeyMetrics = (simulationResult: SimulationResult | null | undefi
  * Single Simulation Chart Hooks
  * These hooks provide access to single simulation chart data
  */
-export const useSingleSimulationPortfolioChartData = (simulation: SimulationResult): SingleSimulationPortfolioChartDataPoint[] => {
+export const useSingleSimulationNetWorthChartData = (simulation: SimulationResult): SingleSimulationNetWorthChartDataPoint[] => {
   return useMemo(() => {
-    return ChartDataExtractor.extractSingleSimulationPortfolioData(simulation);
+    return ChartDataExtractor.extractSingleSimulationNetWorthData(simulation);
   }, [simulation]);
 };
 
@@ -507,9 +507,9 @@ export const useSingleSimulationWithdrawalsChartData = (simulation: SimulationRe
  * Table Hooks
  * These hooks provide access to simulation table data
  */
-export const useSingleSimulationPortfolioTableData = (simulation: SimulationResult): SingleSimulationPortfolioTableRow[] => {
+export const useSingleSimulationNetWorthTableData = (simulation: SimulationResult): SingleSimulationNetWorthTableRow[] => {
   return useMemo(() => {
-    return TableDataExtractor.extractSingleSimulationPortfolioData(simulation);
+    return TableDataExtractor.extractSingleSimulationNetWorthData(simulation);
   }, [simulation]);
 };
 

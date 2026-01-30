@@ -7,7 +7,7 @@ import type { CapitalGainsTaxBracket } from '@/lib/calc/tax-data/capital-gains-t
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { DebtData } from '@/lib/calc/debts';
 
-export interface SingleSimulationPortfolioChartDataPoint {
+export interface SingleSimulationNetWorthChartDataPoint {
   age: number;
   stockHoldings: number;
   bondHoldings: number;

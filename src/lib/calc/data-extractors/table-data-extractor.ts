@@ -1,5 +1,5 @@
 import type {
-  SingleSimulationPortfolioTableRow,
+  SingleSimulationNetWorthTableRow,
   SingleSimulationCashFlowTableRow,
   SingleSimulationTaxesTableRow,
   SingleSimulationReturnsTableRow,
@@ -19,7 +19,7 @@ export abstract class TableDataExtractor {
   // SINGLE SIMULATION DATA EXTRACTION
   // ================================
 
-  static extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationPortfolioTableRow[] {
+  static extractSingleSimulationNetWorthData(simulation: SimulationResult): SingleSimulationNetWorthTableRow[] {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
     return simulation.data.map((data, idx) => {

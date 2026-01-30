@@ -1,5 +1,5 @@
 import type {
-  SingleSimulationPortfolioChartDataPoint,
+  SingleSimulationNetWorthChartDataPoint,
   SingleSimulationCashFlowChartDataPoint,
   SingleSimulationTaxesChartDataPoint,
   SingleSimulationReturnsChartDataPoint,
@@ -19,7 +19,7 @@ export abstract class ChartDataExtractor {
   // SINGLE SIMULATION DATA EXTRACTION
   // ================================
 
-  static extractSingleSimulationPortfolioData(simulation: SimulationResult): SingleSimulationPortfolioChartDataPoint[] {
+  static extractSingleSimulationNetWorthData(simulation: SimulationResult): SingleSimulationNetWorthChartDataPoint[] {
     return simulation.data.map((data) => {
       const age = Math.floor(data.age);
 

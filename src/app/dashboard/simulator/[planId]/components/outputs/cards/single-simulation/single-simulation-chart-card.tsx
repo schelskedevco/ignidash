@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import {
-  useSingleSimulationPortfolioChartData,
+  useSingleSimulationNetWorthChartData,
   useSingleSimulationCashFlowChartData,
   useSingleSimulationReturnsChartData,
   useSingleSimulationTaxesChartData,
@@ -15,8 +15,8 @@ import {
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import { SingleSimulationCategory } from '@/lib/types/simulation-category';
 
-import SingleSimulationPortfolioAreaChartCard from './single-simulation-portfolio-area-chart-card';
-import SingleSimulationPortfolioPieChartCard from './single-simulation-portfolio-pie-chart-card';
+import SingleSimulationNetWorthAreaChartCard from './single-simulation-net-worth-area-chart-card';
+import SingleSimulationNetWorthPieChartCard from './single-simulation-net-worth-pie-chart-card';
 import SingleSimulationCashFlowLineChartCard from './single-simulation-cash-flow-line-chart-card';
 import SingleSimulationCashFlowBarChartCard from './single-simulation-cash-flow-bar-chart-card';
 import SingleSimulationReturnsLineChartCard from './single-simulation-returns-line-chart-card';
@@ -36,8 +36,8 @@ interface ChartsCategoryProps {
   selectedAge: number;
 }
 
-function PortfolioCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
-  const rawChartData = useSingleSimulationPortfolioChartData(simulation);
+function NetWorthCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
+  const rawChartData = useSingleSimulationNetWorthChartData(simulation);
 
   const [dataView, setDataView] = useState<
     'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom'
@@ -46,7 +46,7 @@ function PortfolioCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, sta
 
   return (
     <>
-      <SingleSimulationPortfolioAreaChartCard
+      <SingleSimulationNetWorthAreaChartCard
         onAgeSelect={onAgeSelect}
         selectedAge={selectedAge}
         keyMetrics={keyMetrics}
@@ -57,7 +57,7 @@ function PortfolioCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, sta
         rawChartData={rawChartData}
         startAge={startAge}
       />
-      <SingleSimulationPortfolioPieChartCard
+      <SingleSimulationNetWorthPieChartCard
         rawChartData={rawChartData}
         selectedAge={selectedAge}
         dataView={dataView}
@@ -264,8 +264,8 @@ export default function SingleSimulationChartCard({ simulation, keyMetrics, onAg
   const props: ChartsCategoryProps = { simulation, keyMetrics, onAgeSelect, selectedAge, startAge };
 
   switch (resultsCategory) {
-    case SingleSimulationCategory.Portfolio:
-      return <PortfolioCharts {...props} />;
+    case SingleSimulationCategory.NetWorth:
+      return <NetWorthCharts {...props} />;
     case SingleSimulationCategory.CashFlow:
       return <CashFlowCharts {...props} />;
     case SingleSimulationCategory.Taxes:

@@ -457,26 +457,26 @@ export function glidePathToConvex(glidePath: GlidePathInputs): NonNullable<Doc<'
  * Transforms TypeScript SimulationResult to Convex SimulationResult format
  */
 export function simulationResultToConvex(simulation: SimulationResult): ConvexSimulationResult {
-  const portfolioData = ChartDataExtractor.extractSingleSimulationPortfolioData(simulation).slice(1);
+  const netWorthData = ChartDataExtractor.extractSingleSimulationNetWorthData(simulation).slice(1);
   const cashFlowData = ChartDataExtractor.extractSingleSimulationCashFlowData(simulation);
   const taxesData = ChartDataExtractor.extractSingleSimulationTaxesData(simulation);
   const contributionsData = ChartDataExtractor.extractSingleSimulationContributionsData(simulation);
   const withdrawalsData = ChartDataExtractor.extractSingleSimulationWithdrawalsData(simulation);
 
   const simulationResult: ConvexSimulationResult['simulationResult'] = [];
-  for (let i = 0; i < portfolioData.length; i++) {
+  for (let i = 0; i < netWorthData.length; i++) {
     simulationResult.push({
-      age: portfolioData[i].age,
+      age: netWorthData[i].age,
 
-      // Portfolio
-      stockHoldings: portfolioData[i].stockHoldings,
-      bondHoldings: portfolioData[i].bondHoldings,
-      cashHoldings: portfolioData[i].cashHoldings,
-      taxableValue: portfolioData[i].taxableValue,
-      taxDeferredValue: portfolioData[i].taxDeferredValue,
-      taxFreeValue: portfolioData[i].taxFreeValue,
-      cashSavings: portfolioData[i].cashSavings,
-      totalValue: portfolioData[i].stockHoldings + portfolioData[i].bondHoldings + portfolioData[i].cashHoldings,
+      // Net Worth
+      stockHoldings: netWorthData[i].stockHoldings,
+      bondHoldings: netWorthData[i].bondHoldings,
+      cashHoldings: netWorthData[i].cashHoldings,
+      taxableValue: netWorthData[i].taxableValue,
+      taxDeferredValue: netWorthData[i].taxDeferredValue,
+      taxFreeValue: netWorthData[i].taxFreeValue,
+      cashSavings: netWorthData[i].cashSavings,
+      totalValue: netWorthData[i].stockHoldings + netWorthData[i].bondHoldings + netWorthData[i].cashHoldings,
 
       // Cash Flow
       earnedIncome: cashFlowData[i].earnedIncome,

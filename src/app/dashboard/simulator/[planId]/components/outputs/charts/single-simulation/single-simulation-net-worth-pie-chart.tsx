@@ -65,11 +65,11 @@ const renderActiveShape = (props: unknown) => {
   );
 };
 
-interface SingleSimulationPortfolioPieChartProps {
+interface SingleSimulationNetWorthPieChartProps {
   chartData: { name: string; value: number }[];
 }
 
-export default function SingleSimulationPortfolioPieChart({ chartData }: SingleSimulationPortfolioPieChartProps) {
+export default function SingleSimulationNetWorthPieChart({ chartData }: SingleSimulationNetWorthPieChartProps) {
   if (chartData.reduce((sum, item) => sum + item.value, 0) === 0) {
     return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
   }

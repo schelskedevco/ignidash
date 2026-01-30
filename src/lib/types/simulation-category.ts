@@ -1,5 +1,5 @@
 export enum SingleSimulationCategory {
-  Portfolio = 'Portfolio',
+  NetWorth = 'Net Worth',
   CashFlow = 'Cash Flow',
   Taxes = 'Taxes',
   Returns = 'Returns',

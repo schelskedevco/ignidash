@@ -120,7 +120,7 @@ interface DataListCardProps {
   selectedAge: number;
 }
 
-function PortfolioDataListCard({ dp, selectedAge }: DataListCardProps) {
+function NetWorthDataListCard({ dp, selectedAge }: DataListCardProps) {
   const returnsData = dp.returns;
 
   const {
@@ -374,10 +374,10 @@ function SingleSimulationDataListSection({ simulation, selectedAge }: SingleSimu
 
   const props: DataListCardProps = { dp, selectedAge };
   switch (resultsCategory) {
-    case SingleSimulationCategory.Portfolio:
+    case SingleSimulationCategory.NetWorth:
       return (
         <div className="grid grid-cols-1 gap-2">
-          <PortfolioDataListCard {...props} />
+          <NetWorthDataListCard {...props} />
         </div>
       );
     case SingleSimulationCategory.CashFlow:
