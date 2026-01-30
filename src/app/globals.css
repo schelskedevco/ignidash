@@ -17,9 +17,9 @@
   --chart-3: hsl(346 55% 50%);
   --chart-4: hsl(346 55% 30%);
   --chart-5: hsl(12 55% 80%);
-  --chart-6: hsl(12 55% 50%);
-  --chart-7: hsl(12 55% 20%);
-  --chart-8: hsl(0 0% 0%);
+  --chart-6: hsl(12 55% 60%);
+  --chart-7: hsl(12 55% 40%);
+  --chart-8: hsl(12 55% 20%);
 }
 
 @theme inline {
@@ -47,9 +47,9 @@
   --chart-3: hsl(346 55% 60%);
   --chart-4: hsl(346 55% 80%);
   --chart-5: hsl(12 55% 20%);
-  --chart-6: hsl(12 55% 50%);
-  --chart-7: hsl(12 55% 80%);
-  --chart-8: hsl(0 0% 100%);
+  --chart-6: hsl(12 55% 40%);
+  --chart-7: hsl(12 55% 60%);
+  --chart-8: hsl(12 55% 80%);
 }
 
 html {

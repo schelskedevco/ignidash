@@ -105,6 +105,7 @@ export default function SingleSimulationCashFlowBarChart({
   const chartData = rawChartData.filter((item) => item.age === age);
 
   let transformedChartData: { name: string; amount: number; color: string }[] = [];
+  let showReferenceLineAtZero = false;
   const formatter = (value: number) => formatNumber(value, 1, '$');
 
   switch (dataView) {
@@ -124,12 +125,14 @@ export default function SingleSimulationCashFlowBarChart({
           { name: earnedIncomeLabel, amount: earnedIncome, color: 'var(--chart-1)' },
           { name: socialSecurityIncomeLabel, amount: socialSecurityIncome, color: 'var(--chart-1)' },
           { name: taxFreeIncomeLabel, amount: taxFreeIncome, color: 'var(--chart-1)' },
-          { name: employerMatchLabel, amount: employerMatch, color: 'var(--chart-4)' },
-          { name: expensesLabel, amount: -expenses, color: 'var(--chart-2)' },
-          { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-3)' },
+          { name: employerMatchLabel, amount: employerMatch, color: 'var(--chart-2)' },
+          { name: expensesLabel, amount: -expenses, color: 'var(--chart-3)' },
+          { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-4)' },
           { name: interestPaymentsLabel, amount: -interestPayments, color: 'var(--chart-5)' },
         ]
       );
+
+      showReferenceLineAtZero = true;
       break;
     }
     case 'cashFlow': {
@@ -162,15 +165,17 @@ export default function SingleSimulationCashFlowBarChart({
           { name: earnedIncomeLabel, amount: earnedIncome, color: 'var(--chart-1)' },
           { name: socialSecurityIncomeLabel, amount: socialSecurityIncome, color: 'var(--chart-1)' },
           { name: taxFreeIncomeLabel, amount: taxFreeIncome, color: 'var(--chart-1)' },
-          { name: amountLiquidatedLabel, amount: amountLiquidated, color: 'var(--chart-4)' },
-          { name: assetsSoldLabel, amount: assetsSold, color: 'var(--chart-6)' },
-          { name: expensesLabel, amount: -expenses, color: 'var(--chart-2)' },
-          { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-3)' },
-          { name: debtPaymentsLabel, amount: -debtPayments, color: 'var(--chart-8)' },
-          { name: amountInvestedLabel, amount: -amountInvested, color: 'var(--chart-5)' },
-          { name: assetsPurchasedLabel, amount: -assetsPurchased, color: 'var(--chart-7)' },
+          { name: amountLiquidatedLabel, amount: amountLiquidated, color: 'var(--chart-2)' },
+          { name: assetsSoldLabel, amount: assetsSold, color: 'var(--chart-3)' },
+          { name: expensesLabel, amount: -expenses, color: 'var(--chart-4)' },
+          { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-5)' },
+          { name: debtPaymentsLabel, amount: -debtPayments, color: 'var(--chart-6)' },
+          { name: amountInvestedLabel, amount: -amountInvested, color: 'var(--chart-7)' },
+          { name: assetsPurchasedLabel, amount: -assetsPurchased, color: 'var(--chart-8)' },
         ]
       );
+
+      showReferenceLineAtZero = true;
       break;
     }
     case 'incomes': {
@@ -196,13 +201,13 @@ export default function SingleSimulationCashFlowBarChart({
       transformedChartData = chartData.flatMap(
         ({ perExpenseData, perAssetData, perDebtData, incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties }) => [
           ...perExpenseData.map(({ name, expense }) => ({ name, amount: expense, color: 'var(--chart-1)' })),
-          ...perAssetData.map(({ name, loanPaymentForPeriod }) => ({ name, amount: loanPaymentForPeriod, color: 'var(--chart-8)' })),
-          ...perDebtData.map(({ name, paymentForPeriod }) => ({ name, amount: paymentForPeriod, color: 'var(--chart-8)' })),
           { name: incomeTaxLabel, amount: incomeTax, color: 'var(--chart-2)' },
           { name: ficaTaxLabel, amount: ficaTax, color: 'var(--chart-3)' },
           { name: capGainsTaxLabel, amount: capGainsTax, color: 'var(--chart-4)' },
           { name: niitLabel, amount: niit, color: 'var(--chart-5)' },
           { name: earlyWithdrawalPenaltiesLabel, amount: earlyWithdrawalPenalties, color: 'var(--chart-6)' },
+          ...perAssetData.map(({ name, interestForPeriod }) => ({ name, amount: interestForPeriod, color: 'var(--chart-7)' })),
+          ...perDebtData.map(({ name, interestForPeriod }) => ({ name, amount: interestForPeriod, color: 'var(--chart-7)' })),
         ]
       );
       break;
@@ -225,11 +230,11 @@ export default function SingleSimulationCashFlowBarChart({
         ...chartData
           .flatMap(({ perAssetData }) => perAssetData)
           .filter(({ id }) => id === customDataID)
-          .map(({ name, loanPaymentForPeriod }) => ({ name, amount: loanPaymentForPeriod, color: 'var(--chart-8)' })),
+          .map(({ name, loanPaymentForPeriod }) => ({ name, amount: loanPaymentForPeriod, color: 'var(--chart-7)' })),
         ...chartData
           .flatMap(({ perDebtData }) => perDebtData)
           .filter(({ id }) => id === customDataID)
-          .map(({ name, paymentForPeriod }) => ({ name, amount: paymentForPeriod, color: 'var(--chart-8)' })),
+          .map(({ name, paymentForPeriod }) => ({ name, amount: paymentForPeriod, color: 'var(--chart-7)' })),
       ];
       break;
     }
@@ -263,9 +268,7 @@ export default function SingleSimulationCashFlowBarChart({
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          {(dataView === 'surplusDeficit' || dataView === 'cashFlow') && (
-            <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />
-          )}
+          {showReferenceLineAtZero && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
           <Bar dataKey="amount" maxBarSize={75} minPointSize={20} label={<CustomLabelListContent isSmallScreen={isSmallScreen} />}>
             {transformedChartData.map((entry, i) => (
               <Cell key={`${entry.name}-${i}`} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />
