@@ -34,7 +34,7 @@ export default function SingleSimulationCashFlowBarChartCard({
       title = 'Cash Flow';
       break;
     case 'incomes':
-      title = 'Income Sources';
+      title = 'Incomes';
       break;
     case 'expenses':
       title = 'Expenses & Taxes';

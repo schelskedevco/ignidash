@@ -214,7 +214,7 @@ export default function SingleSimulationCashFlowLineChart({
       strokeColors.push(LINE_COLOR);
 
       barDataKeys.push('income', 'employerMatch', 'expenses', 'taxesAndPenalties', 'interestPayments');
-      barColors.push('var(--chart-1)', 'var(--chart-4)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-5)');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
 
       chartData = chartData.map((entry) => ({
         ...entry,
@@ -244,13 +244,13 @@ export default function SingleSimulationCashFlowLineChart({
       );
       barColors.push(
         'var(--chart-1)',
-        'var(--chart-4)',
-        'var(--chart-6)',
         'var(--chart-2)',
         'var(--chart-3)',
-        'var(--chart-8)',
+        'var(--chart-4)',
         'var(--chart-5)',
-        'var(--chart-7)'
+        'var(--chart-6)',
+        'var(--chart-7)',
+        'var(--chart-8)'
       );
 
       chartData = chartData.map((entry) => ({
@@ -275,7 +275,7 @@ export default function SingleSimulationCashFlowLineChart({
     case 'expenses': {
       formatter = (value: number) => formatNumber(value, 1, '$');
 
-      barDataKeys.push('expenses', 'incomeTax', 'ficaTax', 'capGainsTax', 'niit', 'earlyWithdrawalPenalties', 'debtPayments');
+      barDataKeys.push('expenses', 'incomeTax', 'ficaTax', 'capGainsTax', 'niit', 'earlyWithdrawalPenalties', 'interestPayments');
       barColors.push(
         'var(--chart-1)',
         'var(--chart-2)',
@@ -283,7 +283,7 @@ export default function SingleSimulationCashFlowLineChart({
         'var(--chart-4)',
         'var(--chart-5)',
         'var(--chart-6)',
-        'var(--chart-8)'
+        'var(--chart-7)'
       );
       break;
     }
@@ -322,7 +322,7 @@ export default function SingleSimulationCashFlowLineChart({
       );
       if (perAssetData.length > 0) {
         lineDataKeys.push('loanPaymentForPeriod');
-        strokeColors.push('var(--chart-8)');
+        strokeColors.push('var(--chart-7)');
 
         chartData = perAssetData;
         break;
@@ -333,7 +333,7 @@ export default function SingleSimulationCashFlowLineChart({
       );
       if (perDebtData.length > 0) {
         lineDataKeys.push('paymentForPeriod');
-        strokeColors.push('var(--chart-8)');
+        strokeColors.push('var(--chart-7)');
 
         chartData = perDebtData;
         break;
