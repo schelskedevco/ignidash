@@ -236,11 +236,10 @@ describe('PhysicalAsset Class', () => {
       );
 
       const initialBalance = asset.getLoanBalance();
-      const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
-      const interest = initialBalance * (apr / 100 / 12); // Monthly interest
-      const principal = monthlyPaymentDue - interest;
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const principal = monthlyPaymentDue - interestForPeriod;
 
-      asset.applyLoanPayment(monthlyPaymentDue, ZERO_INFLATION);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
 
       expect(asset.getLoanBalance()).toBeCloseTo(initialBalance - principal);
     });
@@ -261,8 +260,8 @@ describe('PhysicalAsset Class', () => {
 
       // Apply 10 payments to pay off the loan
       for (let i = 0; i < 10; i++) {
-        const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
-        asset.applyLoanPayment(monthlyPaymentDue, ZERO_INFLATION);
+        const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
+        asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
       }
 
       expect(asset.getLoanBalance()).toBe(0);
@@ -301,8 +300,8 @@ describe('PhysicalAsset Class', () => {
       // Apply some appreciation
       for (let i = 0; i < 24; i++) {
         asset.applyMonthlyAppreciation();
-        const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
-        asset.applyLoanPayment(monthlyPaymentDue, ZERO_INFLATION);
+        const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
+        asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
       }
 
       const marketValueBeforeSale = asset.getMarketValue();
@@ -695,9 +694,9 @@ describe('PhysicalAssetsProcessor', () => {
     expect(result.perAssetData['selling'].isSold).toBe(true);
   });
 
-  it('unpaidInterest tracks interest not covered by loan payment', () => {
-    // When payment < interest, the unpaid portion gets added to loan balance
-    // unpaidInterest = max(0, interest - payment)
+  it('unpaidInterest is raw (can be negative when payment > interest)', () => {
+    // unpaidInterest = interest - payment (raw, not capped)
+    // Invariant: unpaidInterest = -principalPaid
 
     const assets = new PhysicalAssets([
       createFinancedAssetInput({
@@ -708,7 +707,7 @@ describe('PhysicalAssetsProcessor', () => {
           downPayment: 100000,
           loanBalance: 100000,
           apr: 6, // interest = 100000 * 0.06 / 12 = 500
-          monthlyPayment: 1000, // payment > interest, so unpaidInterest = 0
+          monthlyPayment: 1000, // payment > interest, so unpaidInterest = 500 - 1000 = -500
         },
       }),
       createFinancedAssetInput({
@@ -719,7 +718,7 @@ describe('PhysicalAssetsProcessor', () => {
           downPayment: 100000,
           loanBalance: 100000,
           apr: 100, // interest = 100000 * 1.00 / 12 = 8333.33
-          monthlyPayment: 100, // payment < interest, so unpaidInterest = 8233.33
+          monthlyPayment: 100, // payment < interest, so unpaidInterest = 8333.33 - 100 = 8233.33
         },
       }),
     ]);
@@ -733,32 +732,29 @@ describe('PhysicalAssetsProcessor', () => {
     const normalLoan = result.perAssetData['normal-loan'];
     const underwaterLoan = result.perAssetData['underwater-loan'];
 
-    expect(normalLoan.unpaidInterestForPeriod).toBe(0);
+    // Normal loan: payment > interest → negative unpaidInterest (interest surplus)
+    expect(normalLoan.unpaidInterestForPeriod).toBeCloseTo(-500, 0);
+    // Underwater loan: payment < interest → positive unpaidInterest
     expect(underwaterLoan.unpaidInterestForPeriod).toBeCloseTo(8233.33, 0);
 
-    // Total unpaid interest should be sum of individual values
-    expect(result.totalUnpaidInterestForPeriod).toBeCloseTo(8233.33, 0);
+    // Total unpaid interest = sum of raw values = -500 + 8233.33 = 7733.33
+    expect(result.totalUnpaidInterestForPeriod).toBeCloseTo(7733.33, 0);
 
-    // Verify the relationship: principalPaid - unpaidInterest = payment - interest
-    const totalPayment = result.totalLoanPaymentForPeriod;
-    const totalInterest = result.totalInterestForPeriod;
-    const totalPrincipalPaid = result.totalPrincipalPaidForPeriod;
-    const totalUnpaidInterest = result.totalUnpaidInterestForPeriod;
-
-    expect(totalPrincipalPaid - totalUnpaidInterest).toBeCloseTo(totalPayment - totalInterest, 0);
+    // Invariant: unpaidInterest = -principalPaid (for each loan and total)
+    expect(normalLoan.unpaidInterestForPeriod).toBeCloseTo(-normalLoan.principalPaidForPeriod, 2);
+    expect(underwaterLoan.unpaidInterestForPeriod).toBeCloseTo(-underwaterLoan.principalPaidForPeriod, 2);
+    expect(result.totalUnpaidInterestForPeriod).toBeCloseTo(-result.totalPrincipalPaidForPeriod, 0);
   });
 
-  it('totalPrincipalPaid sums individual values (not derived from totals)', () => {
-    // This test verifies the fix for calculating totalPrincipalPaidForPeriod.
-    // The WRONG way: Math.max(0, totalLoanPayment - totalInterest)
-    // The RIGHT way: sum of individual Math.max(0, payment_i - interest_i)
+  it('principalPaid uses raw values (not capped per-loan)', () => {
+    // principalPaid is now calculated as raw (payment - interest) for each loan
+    // This allows net worth tracking to correctly reflect balance changes
     //
-    // With multiple assets where one has payment < interest:
-    // - Asset 1: payment = 1000, interest = 500 → principal = 500
-    // - Asset 2: payment = 100, interest = 833 → principal = 0 (clamped, not -733)
+    // With multiple loans where one has payment < interest:
+    // - Loan 1: payment = 1000, interest = 500 → principal = 500
+    // - Loan 2: payment = 100, interest = 8333.33 → principal = -8233.33 (raw, not capped)
     //
-    // Correct total principal = 500 + 0 = 500
-    // Wrong calculation: max(0, 1100 - 1333) = 0  ← This is what the old code would produce
+    // Total principal = 500 + (-8233.33) = -7733.33
 
     const assets = new PhysicalAssets([
       createFinancedAssetInput({
@@ -780,7 +776,7 @@ describe('PhysicalAssetsProcessor', () => {
           downPayment: 100000,
           loanBalance: 100000,
           apr: 100, // interest = 100000 * 1.00 / 12 = 8333.33
-          monthlyPayment: 100, // payment < interest, so principal = 0 (not negative)
+          monthlyPayment: 100, // payment < interest, so principal = -8233.33 (raw)
         },
       }),
     ]);
@@ -798,15 +794,15 @@ describe('PhysicalAssetsProcessor', () => {
     expect(normalLoan.principalPaidForPeriod).toBeCloseTo(500, 0);
 
     expect(underwaterLoan.interestForPeriod).toBeCloseTo(8333.33, 0);
-    expect(underwaterLoan.principalPaidForPeriod).toBe(0); // Clamped to 0, not negative
+    // Raw value: 100 - 8333.33 = -8233.33
+    expect(underwaterLoan.principalPaidForPeriod).toBeCloseTo(-8233.33, 0);
 
-    // The key assertion: total principal should be sum of individual values
-    // NOT derived from (totalLoanPayment - totalInterest)
-    expect(result.totalPrincipalPaidForPeriod).toBeCloseTo(500, 0);
+    // Total principal = sum of raw values
+    // 500 + (-8233.33) = -7733.33
+    expect(result.totalPrincipalPaidForPeriod).toBeCloseTo(-7733.33, 0);
 
-    // If the old broken code were used, it would calculate:
-    // max(0, (1000 + 100) - (500 + 8333.33)) = max(0, 1100 - 8833.33) = 0
-    // which would fail this assertion
+    // Verify the relationship: principalPaid = payment - interest (raw sum)
+    expect(result.totalPrincipalPaidForPeriod).toBeCloseTo(result.totalLoanPaymentForPeriod - result.totalInterestForPeriod, 0);
   });
 
   it('getAnnualData aggregates monthly data', () => {
@@ -1206,10 +1202,10 @@ describe('Full Amortization Tests', () => {
     // Apply all payments
     let totalPayments = 0;
     for (let i = 0; i < termMonths; i++) {
-      const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
       if (monthlyPaymentDue === 0) break;
 
-      asset.applyLoanPayment(monthlyPaymentDue, ZERO_INFLATION);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
       totalPayments += monthlyPaymentDue;
     }
 
@@ -1243,10 +1239,10 @@ describe('Full Amortization Tests', () => {
     // Apply all payments
     let totalPayments = 0;
     for (let i = 0; i < termMonths; i++) {
-      const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
       expect(monthlyPaymentDue).toBeCloseTo(expectedPayment, 2);
 
-      asset.applyLoanPayment(monthlyPaymentDue, ZERO_INFLATION);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
       totalPayments += monthlyPaymentDue;
     }
 
@@ -1277,7 +1273,7 @@ describe('Full Amortization Tests', () => {
 
     for (let i = 0; i < termMonths; i++) {
       const balanceBefore = asset.getLoanBalance();
-      const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
       if (monthlyPaymentDue === 0) break;
 
       const interestThisMonth = balanceBefore * monthlyRate;
@@ -1286,7 +1282,7 @@ describe('Full Amortization Tests', () => {
       totalInterest += interestThisMonth;
       totalPrincipal += principalThisMonth;
 
-      asset.applyLoanPayment(monthlyPaymentDue, ZERO_INFLATION);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
     }
 
     // Total principal should equal original loan balance
@@ -1356,8 +1352,8 @@ describe('Capital Loss Scenarios', () => {
     // Apply 12 months of depreciation and payments
     for (let i = 0; i < 12; i++) {
       asset.applyMonthlyAppreciation();
-      const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
-      asset.applyLoanPayment(monthlyPaymentDue, ZERO_INFLATION);
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
     }
 
     const marketValueBeforeSale = asset.getMarketValue();
@@ -1455,8 +1451,8 @@ describe('Edge Cases', () => {
     // Apply 24 months of depreciation
     for (let i = 0; i < 24; i++) {
       asset.applyMonthlyAppreciation();
-      const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
-      asset.applyLoanPayment(monthlyPaymentDue, ZERO_INFLATION);
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
     }
 
     // Asset should be underwater (loan > value)
@@ -1499,8 +1495,8 @@ describe('Edge Cases', () => {
 
     // Pay off the loan
     for (let i = 0; i < 15; i++) {
-      const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
-      asset.applyLoanPayment(monthlyPaymentDue, ZERO_INFLATION);
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(ZERO_INFLATION);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
     }
 
     // Balance should be exactly 0, not negative
@@ -1547,8 +1543,8 @@ describe('Inflation Adjustment', () => {
       let realMonths = 0;
       while (!asset.isPaidOff() && realMonths < 400) {
         asset.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(monthlyInflation);
-        asset.applyLoanPayment(monthlyPaymentDue, monthlyInflation);
+        const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(monthlyInflation);
+        asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
         realMonths++;
       }
 
@@ -1596,8 +1592,8 @@ describe('Inflation Adjustment', () => {
 
       // Get payment info which uses real interest rate internally
       const balanceBefore = asset.getLoanBalance();
-      const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(monthlyInflation);
-      asset.applyLoanPayment(monthlyPaymentDue, monthlyInflation);
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(monthlyInflation);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
       const balanceAfter = asset.getLoanBalance();
 
       // Real monthly rate = (1 + 0.07/12) / (1 + monthlyInflation) - 1
@@ -1623,7 +1619,8 @@ describe('Inflation Adjustment', () => {
 
       const balanceBefore = asset.getLoanBalance();
       // Apply zero payment to see interest effect only
-      asset.applyLoanPayment(0, monthlyInflation);
+      const { interestForPeriod } = asset.getMonthlyPaymentInfo(monthlyInflation);
+      asset.applyLoanPayment(0, interestForPeriod);
       const balanceAfter = asset.getLoanBalance();
 
       // Real rate should be negative, so balance should decrease (debt erodes)
@@ -1692,13 +1689,13 @@ describe('Inflation Adjustment', () => {
       for (let i = 0; i < 12; i++) {
         // Physical asset
         asset.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue: assetPayment } = asset.getMonthlyPaymentInfo(monthlyInflation);
-        asset.applyLoanPayment(assetPayment, monthlyInflation);
+        const { monthlyPaymentDue: assetPayment, interestForPeriod: assetInterest } = asset.getMonthlyPaymentInfo(monthlyInflation);
+        asset.applyLoanPayment(assetPayment, assetInterest);
 
         // Standalone debt
         debt.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue: debtPayment, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
-        debt.applyPayment(debtPayment, interestForPeriod);
+        const { monthlyPaymentDue: debtPayment, interestForPeriod: debtInterest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(debtPayment, debtInterest);
       }
 
       // Both should have same remaining balance
@@ -1733,13 +1730,13 @@ describe('Inflation Adjustment', () => {
       for (let i = 0; i < 60; i++) {
         // Physical asset
         asset.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue: assetPayment } = asset.getMonthlyPaymentInfo(monthlyInflation);
-        asset.applyLoanPayment(assetPayment, monthlyInflation);
+        const { monthlyPaymentDue: assetPayment, interestForPeriod: assetInterest } = asset.getMonthlyPaymentInfo(monthlyInflation);
+        asset.applyLoanPayment(assetPayment, assetInterest);
 
         // Standalone debt
         debt.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue: debtPayment, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
-        debt.applyPayment(debtPayment, interestForPeriod);
+        const { monthlyPaymentDue: debtPayment, interestForPeriod: debtInterest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(debtPayment, debtInterest);
       }
 
       // Balances should match
@@ -1771,8 +1768,8 @@ describe('Inflation Adjustment', () => {
       // Run 120 months (10 years)
       for (let i = 0; i < 120; i++) {
         asset.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(monthlyInflation);
-        asset.applyLoanPayment(monthlyPaymentDue, monthlyInflation);
+        const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(monthlyInflation);
+        asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
       }
 
       // Real balance should be approximately half of initial
@@ -1805,8 +1802,8 @@ describe('Inflation Adjustment', () => {
       // Run 120 months
       for (let i = 0; i < 120; i++) {
         asset.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(monthlyInflation);
-        asset.applyLoanPayment(monthlyPaymentDue, monthlyInflation);
+        const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(monthlyInflation);
+        asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
       }
 
       // Real balance should stay approximately at $1M (within ~2% after 10 years)
@@ -1833,8 +1830,8 @@ describe('Inflation Adjustment', () => {
       // Run 120 months
       for (let i = 0; i < 120; i++) {
         asset.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(monthlyInflation);
-        asset.applyLoanPayment(monthlyPaymentDue, monthlyInflation);
+        const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(monthlyInflation);
+        asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
       }
 
       // Real rate ≈ (1.05/1.10) - 1 ≈ -4.5% annually
@@ -1858,8 +1855,8 @@ describe('Inflation Adjustment', () => {
 
       // Should not throw
       asset.applyMonthlyInflation(monthlyInflation);
-      const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(monthlyInflation);
-      asset.applyLoanPayment(monthlyPaymentDue, monthlyInflation);
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(monthlyInflation);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
 
       // With 50% inflation > 5% APR, real rate is deeply negative
       // Loan balance should decrease even with small payment
@@ -1878,8 +1875,8 @@ describe('Inflation Adjustment', () => {
       );
 
       // With zero inflation, real rate = nominal rate
-      const { monthlyPaymentDue } = asset.getMonthlyPaymentInfo(0);
-      asset.applyLoanPayment(monthlyPaymentDue, 0);
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(0);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
 
       // Expected: interest = 10000 * (0.07 / 12) ≈ 58.33
       // Principal = 500 - 58.33 = 441.67
@@ -1888,6 +1885,163 @@ describe('Inflation Adjustment', () => {
       const expectedNewBalance = loanBalance - (500 - expectedInterest);
 
       expect(asset.getLoanBalance()).toBeCloseTo(expectedNewBalance, 2);
+    });
+  });
+});
+
+// ============================================================================
+// Negative Interest Reporting (High Inflation Fix)
+// ============================================================================
+
+describe('Negative Interest Reporting (High Inflation Fix)', () => {
+  const HIGH_INFLATION_MONTHLY = Math.pow(1.1, 1 / 12) - 1;
+
+  describe('getMonthlyPaymentInfo', () => {
+    it('should NOT cap monthlyPaymentDue at 0 - allows raw value for accurate tracking', () => {
+      const asset = new PhysicalAsset(
+        createFinancedAssetInput({
+          purchasePrice: 100000,
+          paymentMethod: {
+            type: 'loan',
+            loanBalance: 100, // Small balance
+            apr: 3, // Low APR
+            monthlyPayment: 500, // Larger than balance + interest
+            downPayment: 0,
+          },
+        })
+      );
+
+      const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(HIGH_INFLATION_MONTHLY);
+
+      // Interest is negative (inflation > APR)
+      expect(interestForPeriod).toBeLessThan(0);
+
+      // Payment = min(500, balance + interest) = balance + interest
+      // Without Math.max(0, ...), the raw value flows through
+      expect(monthlyPaymentDue).toBeCloseTo(100 + interestForPeriod, 2);
+
+      // Payment is less than original balance because of negative interest adjustment
+      expect(monthlyPaymentDue).toBeLessThan(100);
+    });
+
+    it('should return raw interestForPeriod for internal balance calculations', () => {
+      const asset = new PhysicalAsset(
+        createFinancedAssetInput({
+          purchasePrice: 400000,
+          paymentMethod: {
+            type: 'loan',
+            loanBalance: 320000,
+            apr: 5, // 5% APR < 10% inflation
+            monthlyPayment: 1918,
+            downPayment: 80000,
+          },
+        })
+      );
+
+      const { interestForPeriod } = asset.getMonthlyPaymentInfo(HIGH_INFLATION_MONTHLY);
+
+      // Raw interest should be negative for internal calculations
+      expect(interestForPeriod).toBeLessThan(0);
+    });
+  });
+
+  describe('PhysicalAssetsProcessor.process - Raw Values for Net Worth Tracking', () => {
+    it('should pass through raw totalInterestForPeriod (can be negative)', () => {
+      const assets = new PhysicalAssets([
+        createFinancedAssetInput({
+          paymentMethod: {
+            type: 'loan',
+            loanBalance: 320000,
+            apr: 5,
+            monthlyPayment: 1918,
+            downPayment: 80000,
+          },
+        }),
+      ]);
+      const state = createSimulationState();
+      const processor = new PhysicalAssetsProcessor(state, assets);
+
+      const result = processor.process(HIGH_INFLATION_MONTHLY);
+
+      // Raw interest should be negative when inflation > APR
+      expect(result.totalInterestForPeriod).toBeLessThan(0);
+      expect(result.perAssetData['asset-1'].interestForPeriod).toBeLessThan(0);
+    });
+
+    it('should still erode loan balance with raw reporting', () => {
+      const assets = new PhysicalAssets([
+        createFinancedAssetInput({
+          paymentMethod: {
+            type: 'loan',
+            loanBalance: 100000,
+            apr: 5,
+            monthlyPayment: 0, // No payment
+            downPayment: 0,
+          },
+        }),
+      ]);
+      const state = createSimulationState();
+      const processor = new PhysicalAssetsProcessor(state, assets);
+
+      const result = processor.process(HIGH_INFLATION_MONTHLY);
+
+      // Balance should erode (internal works)
+      expect(result.totalLoanBalance).toBeLessThan(100000);
+
+      // Raw interest is negative (reflects balance erosion economically)
+      expect(result.totalInterestForPeriod).toBeLessThan(0);
+    });
+
+    it('should pass through raw totalLoanPaymentForPeriod (equals balance + interest when that is less than monthlyPayment)', () => {
+      const assets = new PhysicalAssets([
+        createFinancedAssetInput({
+          paymentMethod: {
+            type: 'loan',
+            loanBalance: 100, // Small balance
+            apr: 3,
+            monthlyPayment: 500, // Larger than balance + interest
+            downPayment: 0,
+          },
+        }),
+      ]);
+      const state = createSimulationState();
+      const processor = new PhysicalAssetsProcessor(state, assets);
+
+      const result = processor.process(HIGH_INFLATION_MONTHLY);
+
+      // With negative interest, balance + interest < balance
+      // Payment = min(500, balance + interest) = balance + interest
+      const expectedPayment = 100 + result.totalInterestForPeriod;
+      expect(result.totalLoanPaymentForPeriod).toBeCloseTo(expectedPayment, 2);
+
+      // Interest is negative (inflation > APR)
+      expect(result.totalInterestForPeriod).toBeLessThan(0);
+
+      // Payment is less than original balance because of negative interest adjustment
+      expect(result.totalLoanPaymentForPeriod).toBeLessThan(100);
+    });
+
+    it('should calculate principalPaid as payment minus raw interest', () => {
+      const assets = new PhysicalAssets([
+        createFinancedAssetInput({
+          paymentMethod: {
+            type: 'loan',
+            loanBalance: 100000,
+            apr: 5,
+            monthlyPayment: 1000,
+            downPayment: 0,
+          },
+        }),
+      ]);
+      const state = createSimulationState();
+      const processor = new PhysicalAssetsProcessor(state, assets);
+
+      const result = processor.process(HIGH_INFLATION_MONTHLY);
+
+      // With negative raw interest, principalPaid = payment - interest > payment
+      // This correctly reflects that more principal is "paid" due to balance erosion
+      expect(result.totalPrincipalPaidForPeriod).toBeGreaterThan(result.totalLoanPaymentForPeriod);
+      expect(result.totalPrincipalPaidForPeriod).toBeCloseTo(result.totalLoanPaymentForPeriod - result.totalInterestForPeriod, 2);
     });
   });
 });

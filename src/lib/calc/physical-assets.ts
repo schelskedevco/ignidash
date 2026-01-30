@@ -41,10 +41,10 @@ export class PhysicalAssetsProcessor {
       const { monthlyAppreciation: appreciationForPeriod } = asset.applyMonthlyAppreciation();
 
       const { monthlyPaymentDue, interestForPeriod } = asset.getMonthlyPaymentInfo(monthlyInflationRate);
-      asset.applyLoanPayment(monthlyPaymentDue, monthlyInflationRate);
+      asset.applyLoanPayment(monthlyPaymentDue, interestForPeriod);
 
-      const principalPaidForPeriod = Math.max(0, monthlyPaymentDue - interestForPeriod);
-      const unpaidInterestForPeriod = Math.max(0, interestForPeriod - monthlyPaymentDue);
+      const principalPaidForPeriod = monthlyPaymentDue - interestForPeriod;
+      const unpaidInterestForPeriod = interestForPeriod - monthlyPaymentDue;
 
       const assetData: PhysicalAssetData = {
         id: asset.getId(),
@@ -332,11 +332,9 @@ export class PhysicalAsset {
     return { monthlyPaymentDue, interestForPeriod };
   }
 
-  applyLoanPayment(payment: number, monthlyInflationRate: number): void {
+  applyLoanPayment(payment: number, interestForPeriod: number): void {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
     if (this.isPaidOff()) return;
-
-    const interestForPeriod = this.calculateMonthlyInterest(monthlyInflationRate);
 
     const unpaidPrevInterest = Math.max(0, this.loanBalance - this.loanPrincipal);
     let remainingPayment = payment;

@@ -100,8 +100,6 @@ export interface AssetsAndLiabilitiesData {
   appreciation: number;
   interest: number;
   debtPayments: number;
-  principalPayments: number;
-  unpaidInterest: number;
   debtPaydown: number;
 }
 
@@ -248,8 +246,8 @@ export class SimulationDataExtractor {
     const totalExpenses = expensesData?.totalExpenses ?? 0;
     const { totalTaxesAndPenalties } = this.getTaxAmountsByType(dp);
 
-    const totalDebtPayments = (dp.debts?.totalPaymentForPeriod ?? 0) + (dp.physicalAssets?.totalLoanPaymentForPeriod ?? 0);
-    const totalInterestPayments = (dp.debts?.totalInterestForPeriod ?? 0) + (dp.physicalAssets?.totalInterestForPeriod ?? 0);
+    const totalDebtPayments = Math.max(0, (dp.debts?.totalPaymentForPeriod ?? 0) + (dp.physicalAssets?.totalLoanPaymentForPeriod ?? 0));
+    const totalInterestPayments = Math.max(0, (dp.debts?.totalInterestForPeriod ?? 0) + (dp.physicalAssets?.totalInterestForPeriod ?? 0));
 
     const surplusDeficit = totalIncome + employerMatch - totalExpenses - totalTaxesAndPenalties - totalInterestPayments;
 
@@ -468,9 +466,7 @@ export class SimulationDataExtractor {
     const interest = (physicalAssetsData?.totalInterestForPeriod ?? 0) + (debtsData?.totalInterestForPeriod ?? 0);
     const debtPayments = (physicalAssetsData?.totalLoanPaymentForPeriod ?? 0) + (debtsData?.totalPaymentForPeriod ?? 0);
 
-    const principalPayments = (physicalAssetsData?.totalPrincipalPaidForPeriod ?? 0) + (debtsData?.totalPrincipalPaidForPeriod ?? 0);
-    const unpaidInterest = (physicalAssetsData?.totalUnpaidInterestForPeriod ?? 0) + (debtsData?.totalUnpaidInterestForPeriod ?? 0);
-    const debtPaydown = principalPayments - unpaidInterest;
+    const debtPaydown = debtPayments - interest;
 
     return {
       marketValue,
@@ -480,8 +476,6 @@ export class SimulationDataExtractor {
       appreciation,
       interest,
       debtPayments,
-      principalPayments,
-      unpaidInterest,
       debtPaydown,
     };
   }

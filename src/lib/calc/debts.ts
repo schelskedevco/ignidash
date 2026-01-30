@@ -25,8 +25,8 @@ export class DebtsProcessor {
       const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflationRate);
       debt.applyPayment(monthlyPaymentDue, interestForPeriod);
 
-      const principalPaidForPeriod = Math.max(0, monthlyPaymentDue - interestForPeriod);
-      const unpaidInterestForPeriod = Math.max(0, interestForPeriod - monthlyPaymentDue);
+      const principalPaidForPeriod = monthlyPaymentDue - interestForPeriod;
+      const unpaidInterestForPeriod = interestForPeriod - monthlyPaymentDue;
 
       const debtData: DebtData = {
         id: debt.getId(),
