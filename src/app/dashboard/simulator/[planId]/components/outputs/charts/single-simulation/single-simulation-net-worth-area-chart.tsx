@@ -86,7 +86,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       );
       break;
     default:
-      const total = payload.reduce((sum, item) => sum + item.value, 0);
+      const total = transformedPayload.reduce((sum, item) => sum + item.value, 0);
 
       body = (
         <div className="flex flex-col gap-1">
@@ -364,7 +364,7 @@ export default function SingleSimulationNetWorthAreaChart({
         <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
         <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
         <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {stackOffset !== undefined && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
+        {stackOffset === 'sign' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
         {areaDataKeys.map((dataKey, i) => (
           <Area
             key={dataKey}
