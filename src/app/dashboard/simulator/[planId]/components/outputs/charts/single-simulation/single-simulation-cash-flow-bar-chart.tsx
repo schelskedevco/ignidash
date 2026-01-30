@@ -202,12 +202,12 @@ export default function SingleSimulationCashFlowBarChart({
         ({ perExpenseData, perAssetData, perDebtData, incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties }) => [
           ...perExpenseData.map(({ name, expense }) => ({ name, amount: expense, color: 'var(--chart-1)' })),
           { name: incomeTaxLabel, amount: incomeTax, color: 'var(--chart-2)' },
-          { name: ficaTaxLabel, amount: ficaTax, color: 'var(--chart-3)' },
-          { name: capGainsTaxLabel, amount: capGainsTax, color: 'var(--chart-4)' },
-          { name: niitLabel, amount: niit, color: 'var(--chart-5)' },
-          { name: earlyWithdrawalPenaltiesLabel, amount: earlyWithdrawalPenalties, color: 'var(--chart-6)' },
-          ...perAssetData.map(({ name, interest }) => ({ name, amount: interest, color: 'var(--chart-7)' })),
-          ...perDebtData.map(({ name, interest }) => ({ name, amount: interest, color: 'var(--chart-7)' })),
+          { name: ficaTaxLabel, amount: ficaTax, color: 'var(--chart-2)' },
+          { name: capGainsTaxLabel, amount: capGainsTax, color: 'var(--chart-2)' },
+          { name: niitLabel, amount: niit, color: 'var(--chart-2)' },
+          { name: earlyWithdrawalPenaltiesLabel, amount: earlyWithdrawalPenalties, color: 'var(--chart-2)' },
+          ...perAssetData.map(({ name, interest }) => ({ name: `${name} (interest)`, amount: interest, color: 'var(--chart-3)' })),
+          ...perDebtData.map(({ name, interest }) => ({ name: `${name} (interest)`, amount: interest, color: 'var(--chart-3)' })),
         ]
       );
       break;
@@ -232,13 +232,21 @@ export default function SingleSimulationCashFlowBarChart({
 
       const perAssetData = chartData.flatMap(({ perAssetData }) => perAssetData).filter(({ id }) => id === customDataID);
       if (perAssetData.length > 0) {
-        transformedChartData = perAssetData.map(({ name, loanPayment }) => ({ name, amount: loanPayment, color: 'var(--chart-7)' }));
+        transformedChartData = perAssetData.map(({ name, loanPayment }) => ({
+          name: `${name} (loan payment)`,
+          amount: loanPayment,
+          color: 'var(--chart-7)',
+        }));
         break;
       }
 
       const perDebtData = chartData.flatMap(({ perDebtData }) => perDebtData).filter(({ id }) => id === customDataID);
       if (perDebtData.length > 0) {
-        transformedChartData = perDebtData.map(({ name, payment }) => ({ name, amount: payment, color: 'var(--chart-7)' }));
+        transformedChartData = perDebtData.map(({ name, payment }) => ({
+          name: `${name} (debt payment)`,
+          amount: payment,
+          color: 'var(--chart-7)',
+        }));
         break;
       }
 
