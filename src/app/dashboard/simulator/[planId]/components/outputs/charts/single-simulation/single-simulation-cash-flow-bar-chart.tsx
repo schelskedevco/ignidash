@@ -206,8 +206,8 @@ export default function SingleSimulationCashFlowBarChart({
           { name: capGainsTaxLabel, amount: capGainsTax, color: 'var(--chart-4)' },
           { name: niitLabel, amount: niit, color: 'var(--chart-5)' },
           { name: earlyWithdrawalPenaltiesLabel, amount: earlyWithdrawalPenalties, color: 'var(--chart-6)' },
-          ...perAssetData.map(({ name, interestForPeriod }) => ({ name, amount: interestForPeriod, color: 'var(--chart-7)' })),
-          ...perDebtData.map(({ name, interestForPeriod }) => ({ name, amount: interestForPeriod, color: 'var(--chart-7)' })),
+          ...perAssetData.map(({ name, interest }) => ({ name, amount: interest, color: 'var(--chart-7)' })),
+          ...perDebtData.map(({ name, interest }) => ({ name, amount: interest, color: 'var(--chart-7)' })),
         ]
       );
       break;
@@ -218,24 +218,30 @@ export default function SingleSimulationCashFlowBarChart({
         break;
       }
 
-      transformedChartData = [
-        ...chartData
-          .flatMap(({ perIncomeData }) => perIncomeData)
-          .filter(({ id }) => id === customDataID)
-          .map(({ name, income }) => ({ name, amount: income, color: 'var(--chart-2)' })),
-        ...chartData
-          .flatMap(({ perExpenseData }) => perExpenseData)
-          .filter(({ id }) => id === customDataID)
-          .map(({ name, expense }) => ({ name, amount: expense, color: 'var(--chart-4)' })),
-        ...chartData
-          .flatMap(({ perAssetData }) => perAssetData)
-          .filter(({ id }) => id === customDataID)
-          .map(({ name, loanPaymentForPeriod }) => ({ name, amount: loanPaymentForPeriod, color: 'var(--chart-7)' })),
-        ...chartData
-          .flatMap(({ perDebtData }) => perDebtData)
-          .filter(({ id }) => id === customDataID)
-          .map(({ name, paymentForPeriod }) => ({ name, amount: paymentForPeriod, color: 'var(--chart-7)' })),
-      ];
+      const perIncomeData = chartData.flatMap(({ perIncomeData }) => perIncomeData).filter(({ id }) => id === customDataID);
+      if (perIncomeData.length > 0) {
+        transformedChartData = perIncomeData.map(({ name, income }) => ({ name, amount: income, color: 'var(--chart-2)' }));
+        break;
+      }
+
+      const perExpenseData = chartData.flatMap(({ perExpenseData }) => perExpenseData).filter(({ id }) => id === customDataID);
+      if (perExpenseData.length > 0) {
+        transformedChartData = perExpenseData.map(({ name, expense }) => ({ name, amount: expense, color: 'var(--chart-4)' }));
+        break;
+      }
+
+      const perAssetData = chartData.flatMap(({ perAssetData }) => perAssetData).filter(({ id }) => id === customDataID);
+      if (perAssetData.length > 0) {
+        transformedChartData = perAssetData.map(({ name, loanPayment }) => ({ name, amount: loanPayment, color: 'var(--chart-7)' }));
+        break;
+      }
+
+      const perDebtData = chartData.flatMap(({ perDebtData }) => perDebtData).filter(({ id }) => id === customDataID);
+      if (perDebtData.length > 0) {
+        transformedChartData = perDebtData.map(({ name, payment }) => ({ name, amount: payment, color: 'var(--chart-7)' }));
+        break;
+      }
+
       break;
     }
     case 'savingsRate': {

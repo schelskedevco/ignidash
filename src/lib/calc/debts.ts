@@ -22,36 +22,38 @@ export class DebtsProcessor {
 
     const activeDebts = this.debts.getActiveDebts(this.simulationState);
     for (const debt of activeDebts) {
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflationRate);
-      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflationRate);
+      debt.applyPayment(monthlyPaymentDue, interest);
 
-      const principalPaidForPeriod = monthlyPaymentDue - interestForPeriod;
-      const unpaidInterestForPeriod = interestForPeriod - monthlyPaymentDue;
+      // Raw values (can be negative). Invariant: unpaidInterest = -principalPaid.
+      // Capping for display happens downstream (cash flow, portfolio).
+      const principalPaid = monthlyPaymentDue - interest;
+      const unpaidInterest = interest - monthlyPaymentDue;
 
       const debtData: DebtData = {
         id: debt.getId(),
         name: debt.getName(),
         balance: debt.getBalance(),
-        paymentForPeriod: monthlyPaymentDue,
-        interestForPeriod,
-        principalPaidForPeriod,
-        unpaidInterestForPeriod,
+        payment: monthlyPaymentDue,
+        interest,
+        principalPaid,
+        unpaidInterest,
         isPaidOff: debt.isPaidOff(),
       };
 
       perDebtData[debt.getId()] = debtData;
       totalPayment += monthlyPaymentDue;
-      totalInterest += interestForPeriod;
-      totalPrincipalPaid += principalPaidForPeriod;
-      totalUnpaidInterest += unpaidInterestForPeriod;
+      totalInterest += interest;
+      totalPrincipalPaid += principalPaid;
+      totalUnpaidInterest += unpaidInterest;
     }
 
     const result: DebtsData = {
       totalDebtBalance: this.debts.getTotalBalance(),
-      totalPaymentForPeriod: totalPayment,
-      totalInterestForPeriod: totalInterest,
-      totalPrincipalPaidForPeriod: totalPrincipalPaid,
-      totalUnpaidInterestForPeriod: totalUnpaidInterest,
+      totalPayment: totalPayment,
+      totalInterest: totalInterest,
+      totalPrincipalPaid: totalPrincipalPaid,
+      totalUnpaidInterest: totalUnpaidInterest,
       perDebtData,
     };
 
@@ -66,18 +68,18 @@ export class DebtsProcessor {
   getAnnualData(): DebtsData {
     return this.monthlyData.reduce(
       (acc, curr) => {
-        acc.totalPaymentForPeriod += curr.totalPaymentForPeriod;
-        acc.totalInterestForPeriod += curr.totalInterestForPeriod;
-        acc.totalPrincipalPaidForPeriod += curr.totalPrincipalPaidForPeriod;
-        acc.totalUnpaidInterestForPeriod += curr.totalUnpaidInterestForPeriod;
+        acc.totalPayment += curr.totalPayment;
+        acc.totalInterest += curr.totalInterest;
+        acc.totalPrincipalPaid += curr.totalPrincipalPaid;
+        acc.totalUnpaidInterest += curr.totalUnpaidInterest;
 
         Object.entries(curr.perDebtData).forEach(([debtID, debtData]) => {
           acc.perDebtData[debtID] = {
             ...debtData,
-            paymentForPeriod: (acc.perDebtData[debtID]?.paymentForPeriod ?? 0) + debtData.paymentForPeriod,
-            interestForPeriod: (acc.perDebtData[debtID]?.interestForPeriod ?? 0) + debtData.interestForPeriod,
-            principalPaidForPeriod: (acc.perDebtData[debtID]?.principalPaidForPeriod ?? 0) + debtData.principalPaidForPeriod,
-            unpaidInterestForPeriod: (acc.perDebtData[debtID]?.unpaidInterestForPeriod ?? 0) + debtData.unpaidInterestForPeriod,
+            payment: (acc.perDebtData[debtID]?.payment ?? 0) + debtData.payment,
+            interest: (acc.perDebtData[debtID]?.interest ?? 0) + debtData.interest,
+            principalPaid: (acc.perDebtData[debtID]?.principalPaid ?? 0) + debtData.principalPaid,
+            unpaidInterest: (acc.perDebtData[debtID]?.unpaidInterest ?? 0) + debtData.unpaidInterest,
           };
         });
 
@@ -85,10 +87,10 @@ export class DebtsProcessor {
       },
       {
         totalDebtBalance: this.monthlyData[this.monthlyData.length - 1]?.totalDebtBalance ?? 0,
-        totalPaymentForPeriod: 0,
-        totalInterestForPeriod: 0,
-        totalPrincipalPaidForPeriod: 0,
-        totalUnpaidInterestForPeriod: 0,
+        totalPayment: 0,
+        totalInterest: 0,
+        totalPrincipalPaid: 0,
+        totalUnpaidInterest: 0,
         perDebtData: {},
       }
     );
@@ -97,10 +99,10 @@ export class DebtsProcessor {
 
 export interface DebtsData {
   totalDebtBalance: number;
-  totalPaymentForPeriod: number;
-  totalInterestForPeriod: number;
-  totalPrincipalPaidForPeriod: number;
-  totalUnpaidInterestForPeriod: number;
+  totalPayment: number;
+  totalInterest: number;
+  totalPrincipalPaid: number;
+  totalUnpaidInterest: number;
   perDebtData: Record<string, DebtData>;
 }
 
@@ -108,10 +110,10 @@ export interface DebtData {
   id: string;
   name: string;
   balance: number;
-  paymentForPeriod: number;
-  interestForPeriod: number;
-  principalPaidForPeriod: number;
-  unpaidInterestForPeriod: number;
+  payment: number;
+  interest: number;
+  principalPaid: number;
+  unpaidInterest: number;
   isPaidOff: boolean;
 }
 
@@ -178,24 +180,26 @@ export class Debt {
     return this.balance <= 0;
   }
 
-  getMonthlyPaymentInfo(monthlyInflationRate: number): { monthlyPaymentDue: number; interestForPeriod: number } {
-    if (this.isPaidOff()) return { monthlyPaymentDue: 0, interestForPeriod: 0 };
+  getMonthlyPaymentInfo(monthlyInflationRate: number): { monthlyPaymentDue: number; interest: number } {
+    if (this.isPaidOff()) return { monthlyPaymentDue: 0, interest: 0 };
 
-    const interestForPeriod = this.calculateMonthlyInterest(monthlyInflationRate);
-    const monthlyPaymentDue = Math.min(this.monthlyPayment, this.balance + interestForPeriod);
+    // Interest can be negative when inflation > APR (real rate is negative).
+    const interest = this.calculateMonthlyInterest(monthlyInflationRate);
+    // Raw value (not capped at 0) to preserve accounting identity: payment = principal + interest.
+    const monthlyPaymentDue = Math.min(this.monthlyPayment, this.balance + interest);
 
-    return { monthlyPaymentDue, interestForPeriod };
+    return { monthlyPaymentDue, interest };
   }
 
-  applyPayment(payment: number, interestForPeriod: number): void {
+  applyPayment(payment: number, interest: number): void {
     switch (this.interestType) {
       case 'simple':
         const unpaidPrevInterest = Math.max(0, this.balance - this.principal);
         let remainingPayment = payment;
 
-        const paidCurrInterest = Math.min(remainingPayment, interestForPeriod);
+        const paidCurrInterest = Math.min(remainingPayment, interest);
         remainingPayment -= paidCurrInterest;
-        const unpaidCurrInterest = interestForPeriod - paidCurrInterest;
+        const unpaidCurrInterest = interest - paidCurrInterest;
 
         const paidPrevInterest = Math.min(remainingPayment, unpaidPrevInterest);
         remainingPayment -= paidPrevInterest;
@@ -204,11 +208,11 @@ export class Debt {
         this.balance = this.principal + (unpaidPrevInterest - paidPrevInterest) + unpaidCurrInterest;
         break;
       case 'compound':
-        if (payment >= interestForPeriod) {
-          const principalPayment = payment - interestForPeriod;
+        if (payment >= interest) {
+          const principalPayment = payment - interest;
           this.balance = Math.max(0, this.balance - principalPayment);
         } else {
-          const unpaidInterest = interestForPeriod - payment;
+          const unpaidInterest = interest - payment;
           this.balance += unpaidInterest;
         }
         break;

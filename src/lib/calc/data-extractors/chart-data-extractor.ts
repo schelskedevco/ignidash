@@ -241,7 +241,7 @@ export abstract class ChartDataExtractor {
 
       const physicalAssetsData = data.physicalAssets!;
 
-      const annualAssetAppreciation = physicalAssetsData.totalAppreciationForPeriod;
+      const annualAssetAppreciation = physicalAssetsData.totalAppreciation;
       cumulativeAssetAppreciation += annualAssetAppreciation;
 
       return {

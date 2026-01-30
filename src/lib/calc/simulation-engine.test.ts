@@ -672,7 +672,7 @@ describe('Debts Integration', () => {
 
     // Verify debt data is tracked
     expect(resultWithDebt.data[1].debts).not.toBeNull();
-    expect(resultWithDebt.data[1].debts!.totalPaymentForPeriod).toBeGreaterThan(0);
+    expect(resultWithDebt.data[1].debts!.totalPayment).toBeGreaterThan(0);
   });
 
   it('should stop payments after debt is paid off', () => {
@@ -699,11 +699,11 @@ describe('Debts Integration', () => {
     const result = new FinancialSimulationEngine(inputs).runSimulation(new FixedReturnsProvider(inputs), inputs.timeline!);
 
     // Year 1: Debt should have payments and be paid off by end of year
-    expect(result.data[1].debts!.totalPaymentForPeriod).toBeGreaterThan(0);
+    expect(result.data[1].debts!.totalPayment).toBeGreaterThan(0);
     expect(result.data[1].debts!.perDebtData['debt-1'].balance).toBe(0);
 
     // Year 2: Debt is paid off, no more payments
-    expect(result.data[2].debts!.totalPaymentForPeriod).toBe(0);
+    expect(result.data[2].debts!.totalPayment).toBe(0);
   });
 
   it('should respect debt start date timepoints', () => {
@@ -734,10 +734,10 @@ describe('Debts Integration', () => {
     const yearAfter40 = result.data.find((d) => Math.floor(d.age) === 41);
 
     // Before age 40: No debt payments
-    expect(yearBefore40?.debts?.totalPaymentForPeriod ?? 0).toBe(0);
+    expect(yearBefore40?.debts?.totalPayment ?? 0).toBe(0);
 
     // After age 40: Debt payments should be happening
-    expect(yearAfter40?.debts?.totalPaymentForPeriod).toBeGreaterThan(0);
+    expect(yearAfter40?.debts?.totalPayment).toBeGreaterThan(0);
   });
 });
 
@@ -790,11 +790,11 @@ describe('Physical Assets Integration', () => {
     );
 
     // Find the year when the sale occurs by checking physicalAssets data
-    const saleYearData = resultWithSale.data.find((d) => (d.physicalAssets?.totalSaleProceedsForPeriod ?? 0) > 0);
+    const saleYearData = resultWithSale.data.find((d) => (d.physicalAssets?.totalSaleProceeds ?? 0) > 0);
 
     // Verify sale proceeds are tracked
     expect(saleYearData).toBeDefined();
-    expect(saleYearData!.physicalAssets!.totalSaleProceedsForPeriod).toBe(100000);
+    expect(saleYearData!.physicalAssets!.totalSaleProceeds).toBe(100000);
 
     // At the sale year, the portfolio with sale should have gained the sale proceeds
     const saleYearIndex = resultWithSale.data.indexOf(saleYearData!);
@@ -855,14 +855,14 @@ describe('Physical Assets Integration', () => {
     );
 
     // Find the year when purchase happens by checking physicalAssets data
-    const purchaseYearData = resultWithPurchase.data.find((d) => (d.physicalAssets?.totalPurchaseExpenseForPeriod ?? 0) > 0);
+    const purchaseYearData = resultWithPurchase.data.find((d) => (d.physicalAssets?.totalPurchaseExpense ?? 0) > 0);
 
     // Verify purchase expense is tracked
     expect(purchaseYearData).toBeDefined();
-    expect(purchaseYearData!.physicalAssets!.totalPurchaseExpenseForPeriod).toBe(60000);
+    expect(purchaseYearData!.physicalAssets!.totalPurchaseExpense).toBe(60000);
 
     // After purchase, portfolio with down payment should have less liquid assets
-    const yearAfterPurchase = resultWithPurchase.data.findIndex((d) => (d.physicalAssets?.totalPurchaseExpenseForPeriod ?? 0) > 0);
+    const yearAfterPurchase = resultWithPurchase.data.findIndex((d) => (d.physicalAssets?.totalPurchaseExpense ?? 0) > 0);
     if (yearAfterPurchase >= 0 && yearAfterPurchase < resultWithoutPurchase.data.length) {
       const portfolioWithPurchase = resultWithPurchase.data[yearAfterPurchase].portfolio.totalValue;
       const portfolioWithoutPurchase = resultWithoutPurchase.data[yearAfterPurchase].portfolio.totalValue;
@@ -895,11 +895,11 @@ describe('Physical Assets Integration', () => {
     const result = new FinancialSimulationEngine(inputs).runSimulation(new FixedReturnsProvider(inputs), inputs.timeline!);
 
     // Find year when sale occurs by checking physicalAssets data
-    const saleYearData = result.data.find((d) => (d.physicalAssets?.totalSaleProceedsForPeriod ?? 0) > 0);
+    const saleYearData = result.data.find((d) => (d.physicalAssets?.totalSaleProceeds ?? 0) > 0);
 
     // Verify capital gain is tracked
     expect(saleYearData).toBeDefined();
-    expect(saleYearData!.physicalAssets!.totalCapitalGainForPeriod).toBeCloseTo(150000, 0); // 350000 - 200000
+    expect(saleYearData!.physicalAssets!.totalCapitalGain).toBeCloseTo(150000, 0); // 350000 - 200000
 
     // Verify taxes include the capital gain (uses incomeSources, not incomeBreakdown)
     expect(saleYearData!.taxes).not.toBeNull();
@@ -980,7 +980,7 @@ describe('Physical Assets Integration', () => {
     expect(saleYearData).toBeDefined();
 
     // Capital gain should be negative (a loss) since marketValue < purchasePrice
-    expect(saleYearData!.physicalAssets!.totalCapitalGainForPeriod).toBeLessThan(0);
+    expect(saleYearData!.physicalAssets!.totalCapitalGain).toBeLessThan(0);
 
     // Realized gains should be 0 (losses don't create taxable gains)
     expect(saleYearData!.taxes!.incomeSources.realizedGains).toBe(0);
@@ -1031,7 +1031,7 @@ describe('Physical Assets Integration', () => {
     // After ~1 year at -50%: marketValue ~= 500,000 * 0.5 = 250,000
     // Loan balance after 1 year is still ~490,000 (mostly interest early in loan)
     // saleProceeds = marketValue - loanBalance = 250,000 - 490,000 = -240,000 (approximately)
-    expect(saleYearData!.physicalAssets!.totalSaleProceedsForPeriod).toBeLessThan(0);
+    expect(saleYearData!.physicalAssets!.totalSaleProceeds).toBeLessThan(0);
 
     // Verify the simulation continues and handles the deficit
     // The negative proceeds reduce surplus, requiring withdrawals or reducing contributions

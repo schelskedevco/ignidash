@@ -65,9 +65,9 @@ describe('Debt Class', () => {
       );
 
       // Formula: balance * (apr / 12) = 10000 * (0.18 / 12) = 150
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
-      expect(interestForPeriod).toBeCloseTo(150);
+      expect(interest).toBeCloseTo(150);
     });
 
     it('calculates compound interest (monthly): balance * ((1 + apr/12)^1 - 1)', () => {
@@ -84,9 +84,9 @@ describe('Debt Class', () => {
       // Formula: balance * ((1 + apr/periodsPerYear)^periodsPerMonth - 1)
       // = 10000 * ((1 + 0.18/12)^1 - 1) = 10000 * (0.015) = 150
       const expectedInterest = 10000 * (Math.pow(1 + 0.18 / 12, 1) - 1);
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
-      expect(interestForPeriod).toBeCloseTo(expectedInterest);
+      expect(interest).toBeCloseTo(expectedInterest);
     });
 
     it('calculates compound interest (daily): balance * ((1 + apr/365)^(365/12) - 1)', () => {
@@ -103,9 +103,9 @@ describe('Debt Class', () => {
       // Formula: balance * ((1 + apr/periodsPerYear)^periodsPerMonth - 1)
       const periodsPerMonth = 365 / 12;
       const expectedInterest = 10000 * (Math.pow(1 + 0.18 / 365, periodsPerMonth) - 1);
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
-      expect(interestForPeriod).toBeCloseTo(expectedInterest);
+      expect(interest).toBeCloseTo(expectedInterest);
     });
 
     it('zero APR returns 0 interest', () => {
@@ -117,9 +117,9 @@ describe('Debt Class', () => {
         })
       );
 
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
-      expect(interestForPeriod).toBe(0);
+      expect(interest).toBe(0);
     });
   });
 
@@ -135,12 +135,12 @@ describe('Debt Class', () => {
       );
 
       const initialBalance = debt.getBalance();
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
       // Payment = 500, Interest = 150, Principal = 350
-      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      debt.applyPayment(monthlyPaymentDue, interest);
 
-      const expectedBalance = initialBalance - (monthlyPaymentDue - interestForPeriod);
+      const expectedBalance = initialBalance - (monthlyPaymentDue - interest);
       expect(debt.getBalance()).toBeCloseTo(expectedBalance);
       expect(debt.getBalance()).toBeCloseTo(10000 - 350);
     });
@@ -156,12 +156,12 @@ describe('Debt Class', () => {
       );
 
       const initialBalance = debt.getBalance();
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
       // Interest = 150, payment = 150, principal = 0
-      expect(monthlyPaymentDue).toBeCloseTo(interestForPeriod);
+      expect(monthlyPaymentDue).toBeCloseTo(interest);
 
-      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      debt.applyPayment(monthlyPaymentDue, interest);
 
       // Balance should remain unchanged
       expect(debt.getBalance()).toBeCloseTo(initialBalance);
@@ -180,21 +180,21 @@ describe('Debt Class', () => {
       const initialBalance = debt.getBalance();
 
       // Month 1
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
       // Interest = 150, payment = 100, unpaid interest = 50
-      expect(interestForPeriod).toBeCloseTo(150);
+      expect(interest).toBeCloseTo(150);
       expect(monthlyPaymentDue).toBe(100);
 
-      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      debt.applyPayment(monthlyPaymentDue, interest);
 
       // Balance should increase by unpaid interest
-      const expectedBalance = initialBalance + (interestForPeriod - monthlyPaymentDue);
+      const expectedBalance = initialBalance + (interest - monthlyPaymentDue);
       expect(debt.getBalance()).toBeCloseTo(expectedBalance);
       expect(debt.getBalance()).toBeCloseTo(10050);
 
       // Month 2 - interest should STILL be $150 (simple interest calculates on principal, not balance)
-      const { interestForPeriod: interestMonth2 } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { interest: interestMonth2 } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
       expect(interestMonth2).toBeCloseTo(150); // NOT 150.75 (which would be compound)
     });
 
@@ -210,12 +210,12 @@ describe('Debt Class', () => {
       );
 
       // Month 1
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
-      expect(interestForPeriod).toBeCloseTo(150);
-      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      expect(interest).toBeCloseTo(150);
+      debt.applyPayment(monthlyPaymentDue, interest);
 
       // Month 2 - interest SHOULD be higher (compound interest adds unpaid interest to balance)
-      const { interestForPeriod: interestMonth2 } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      const { interest: interestMonth2 } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
       expect(interestMonth2).toBeGreaterThan(150); // Should be ~150.75
       expect(interestMonth2).toBeCloseTo(150.75, 1);
     });
@@ -232,8 +232,8 @@ describe('Debt Class', () => {
 
       // Pay off the loan in 10 payments
       for (let i = 0; i < 10; i++) {
-        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
-        debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+        const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+        debt.applyPayment(monthlyPaymentDue, interest);
       }
 
       expect(debt.getBalance()).toBe(0);
@@ -253,7 +253,7 @@ describe('Debt Class', () => {
       // First payment pays it off
       const firstPayment = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
       expect(firstPayment.monthlyPaymentDue).toBe(100); // Capped at balance
-      debt.applyPayment(firstPayment.monthlyPaymentDue, firstPayment.interestForPeriod);
+      debt.applyPayment(firstPayment.monthlyPaymentDue, firstPayment.interest);
 
       expect(debt.isPaidOff()).toBe(true);
 
@@ -355,8 +355,8 @@ describe('Debt Class', () => {
       expect(debt.getIsActive(simState)).toBe(true);
 
       // Pay off
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
-      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+      debt.applyPayment(monthlyPaymentDue, interest);
 
       // After payoff - not active
       expect(debt.getIsActive(simState)).toBe(false);
@@ -448,9 +448,9 @@ describe('DebtsProcessor', () => {
 
     // Interest = 10000 * 0.18 / 12 = 150
     // Principal = 500 - 150 = 350
-    expect(result.totalInterestForPeriod).toBeCloseTo(150);
-    expect(result.totalPaymentForPeriod).toBe(500);
-    expect(result.totalPrincipalPaidForPeriod).toBeCloseTo(350);
+    expect(result.totalInterest).toBeCloseTo(150);
+    expect(result.totalPayment).toBe(500);
+    expect(result.totalPrincipalPaid).toBeCloseTo(350);
     expect(result.perDebtData['card']).toBeDefined();
     expect(result.perDebtData['card'].balance).toBeCloseTo(9650);
   });
@@ -484,8 +484,8 @@ describe('DebtsProcessor', () => {
     // Card 2: interest = 8000 * 0.15 / 12 = 100
     // Total interest = 183.33
     // Total payment = 500
-    expect(result.totalInterestForPeriod).toBeCloseTo(183.33, 1);
-    expect(result.totalPaymentForPeriod).toBe(500);
+    expect(result.totalInterest).toBeCloseTo(183.33, 1);
+    expect(result.totalPayment).toBe(500);
     expect(result.perDebtData['card1']).toBeDefined();
     expect(result.perDebtData['card2']).toBeDefined();
   });
@@ -513,9 +513,9 @@ describe('DebtsProcessor', () => {
     const annualData = processor.getAnnualData();
 
     // Total payments should be 10 * 1000 = 10000 (paid off in 10 months)
-    expect(annualData.totalPaymentForPeriod).toBe(10000);
-    expect(annualData.totalInterestForPeriod).toBe(0);
-    expect(annualData.totalPrincipalPaidForPeriod).toBe(10000);
+    expect(annualData.totalPayment).toBe(10000);
+    expect(annualData.totalInterest).toBe(0);
+    expect(annualData.totalPrincipalPaid).toBe(10000);
 
     // Final balance should be 0
     expect(annualData.totalDebtBalance).toBe(0);
@@ -540,15 +540,15 @@ describe('DebtsProcessor', () => {
     processor.process(ZERO_INFLATION);
 
     let annualData = processor.getAnnualData();
-    expect(annualData.totalPaymentForPeriod).toBeGreaterThan(0);
+    expect(annualData.totalPayment).toBeGreaterThan(0);
 
     // Reset
     processor.resetMonthlyData();
 
     annualData = processor.getAnnualData();
-    expect(annualData.totalPaymentForPeriod).toBe(0);
-    expect(annualData.totalInterestForPeriod).toBe(0);
-    expect(annualData.totalPrincipalPaidForPeriod).toBe(0);
+    expect(annualData.totalPayment).toBe(0);
+    expect(annualData.totalInterest).toBe(0);
+    expect(annualData.totalPrincipalPaid).toBe(0);
   });
 
   it('unpaidInterest is raw (can be negative when payment > interest)', () => {
@@ -584,17 +584,17 @@ describe('DebtsProcessor', () => {
     const underwaterDebt = result.perDebtData['underwater-debt'];
 
     // Normal debt: payment > interest → negative unpaidInterest (interest surplus)
-    expect(normalDebt.unpaidInterestForPeriod).toBeCloseTo(-116.67, 0);
+    expect(normalDebt.unpaidInterest).toBeCloseTo(-116.67, 0);
     // Underwater debt: payment < interest → positive unpaidInterest
-    expect(underwaterDebt.unpaidInterestForPeriod).toBeCloseTo(1616.67, 0);
+    expect(underwaterDebt.unpaidInterest).toBeCloseTo(1616.67, 0);
 
     // Total unpaid interest = sum of raw values = -116.67 + 1616.67 = 1500
-    expect(result.totalUnpaidInterestForPeriod).toBeCloseTo(1500, 0);
+    expect(result.totalUnpaidInterest).toBeCloseTo(1500, 0);
 
     // Invariant: unpaidInterest = -principalPaid (for each debt and total)
-    expect(normalDebt.unpaidInterestForPeriod).toBeCloseTo(-normalDebt.principalPaidForPeriod, 2);
-    expect(underwaterDebt.unpaidInterestForPeriod).toBeCloseTo(-underwaterDebt.principalPaidForPeriod, 2);
-    expect(result.totalUnpaidInterestForPeriod).toBeCloseTo(-result.totalPrincipalPaidForPeriod, 1);
+    expect(normalDebt.unpaidInterest).toBeCloseTo(-normalDebt.principalPaid, 2);
+    expect(underwaterDebt.unpaidInterest).toBeCloseTo(-underwaterDebt.principalPaid, 2);
+    expect(result.totalUnpaidInterest).toBeCloseTo(-result.totalPrincipalPaid, 1);
   });
 
   it('principalPaid uses raw values (not capped per-debt)', () => {
@@ -635,19 +635,19 @@ describe('DebtsProcessor', () => {
     const normalDebt = result.perDebtData['normal-debt'];
     const underwaterDebt = result.perDebtData['underwater-debt'];
 
-    expect(normalDebt.interestForPeriod).toBeCloseTo(83.33, 1);
-    expect(normalDebt.principalPaidForPeriod).toBeCloseTo(116.67, 1);
+    expect(normalDebt.interest).toBeCloseTo(83.33, 1);
+    expect(normalDebt.principalPaid).toBeCloseTo(116.67, 1);
 
-    expect(underwaterDebt.interestForPeriod).toBeCloseTo(1666.67, 0);
+    expect(underwaterDebt.interest).toBeCloseTo(1666.67, 0);
     // Raw value: 50 - 1666.67 = -1616.67
-    expect(underwaterDebt.principalPaidForPeriod).toBeCloseTo(-1616.67, 0);
+    expect(underwaterDebt.principalPaid).toBeCloseTo(-1616.67, 0);
 
     // Total principal = sum of raw values
     // 116.67 + (-1616.67) = -1500
-    expect(result.totalPrincipalPaidForPeriod).toBeCloseTo(-1500, 0);
+    expect(result.totalPrincipalPaid).toBeCloseTo(-1500, 0);
 
     // Verify the relationship: principalPaid = payment - interest (raw sum)
-    expect(result.totalPrincipalPaidForPeriod).toBeCloseTo(result.totalPaymentForPeriod - result.totalInterestForPeriod, 1);
+    expect(result.totalPrincipalPaid).toBeCloseTo(result.totalPayment - result.totalInterest, 1);
   });
 
   it('process() handles debt that becomes paid off mid-simulation', () => {
@@ -680,7 +680,7 @@ describe('DebtsProcessor', () => {
 
     // Month 4: no more payments
     result = processor.process(ZERO_INFLATION);
-    expect(result.totalPaymentForPeriod).toBe(0);
+    expect(result.totalPayment).toBe(0);
   });
 });
 
@@ -700,13 +700,13 @@ describe('Edge Cases', () => {
     );
 
     // Interest = 500 * 4.00 / 12 = 166.67
-    const { interestForPeriod, monthlyPaymentDue } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+    const { interest, monthlyPaymentDue } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
-    expect(interestForPeriod).toBeCloseTo(166.67, 1);
+    expect(interest).toBeCloseTo(166.67, 1);
     expect(monthlyPaymentDue).toBe(100); // Capped at payment amount
 
     // Payment < interest, so balance should increase
-    debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+    debt.applyPayment(monthlyPaymentDue, interest);
     expect(debt.getBalance()).toBeGreaterThan(500);
     expect(debt.getBalance()).toBeCloseTo(566.67, 1);
   });
@@ -734,12 +734,12 @@ describe('Edge Cases', () => {
       })
     );
 
-    const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
+    const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(ZERO_INFLATION);
 
     // Payment should be capped at balance + interest
     expect(monthlyPaymentDue).toBeLessThan(1);
 
-    debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+    debt.applyPayment(monthlyPaymentDue, interest);
     expect(debt.getBalance()).toBe(0);
   });
 
@@ -790,8 +790,8 @@ describe('Edge Cases', () => {
       })
     );
 
-    const dailyInterest = dailyDebt.getMonthlyPaymentInfo(ZERO_INFLATION).interestForPeriod;
-    const monthlyInterest = monthlyDebt.getMonthlyPaymentInfo(ZERO_INFLATION).interestForPeriod;
+    const dailyInterest = dailyDebt.getMonthlyPaymentInfo(ZERO_INFLATION).interest;
+    const monthlyInterest = monthlyDebt.getMonthlyPaymentInfo(ZERO_INFLATION).interest;
 
     // Daily compounding should yield slightly higher interest
     expect(dailyInterest).toBeGreaterThan(monthlyInterest);
@@ -817,8 +817,8 @@ describe('Extreme Inflation Edge Cases', () => {
     const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
 
     // Should not throw, real rate should be negative
-    const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
-    expect(interestForPeriod).toBeLessThan(0);
+    const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+    expect(interest).toBeLessThan(0);
   });
 
   it('should handle zero inflation without division issues', () => {
@@ -830,9 +830,9 @@ describe('Extreme Inflation Edge Cases', () => {
       })
     );
 
-    const { interestForPeriod } = debt.getMonthlyPaymentInfo(0);
+    const { interest } = debt.getMonthlyPaymentInfo(0);
     // With zero inflation, real rate = nominal rate
-    expect(interestForPeriod).toBeCloseTo(10000 * (0.07 / 12));
+    expect(interest).toBeCloseTo(10000 * (0.07 / 12));
   });
 
   it('should handle very high inflation (50% annual) with compound interest', () => {
@@ -850,8 +850,8 @@ describe('Extreme Inflation Edge Cases', () => {
     const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
 
     // Should not throw, real rate should be negative
-    const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
-    expect(interestForPeriod).toBeLessThan(0);
+    const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+    expect(interest).toBeLessThan(0);
   });
 });
 
@@ -874,7 +874,7 @@ describe('Compound Interest with Inflation', () => {
     const annualInflation = 0.03;
     const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
 
-    const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+    const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
 
     // For monthly compounding: periodsPerMonth = 1
     // periodicInflationRate = monthlyInflation
@@ -882,7 +882,7 @@ describe('Compound Interest with Inflation', () => {
     const realRate = (1 + 0.12 / 12) / (1 + monthlyInflation) - 1;
     const expected = 10000 * realRate;
 
-    expect(interestForPeriod).toBeCloseTo(expected, 2);
+    expect(interest).toBeCloseTo(expected, 2);
   });
 
   it('should apply Fisher equation correctly for daily compounding', () => {
@@ -899,7 +899,7 @@ describe('Compound Interest with Inflation', () => {
     const annualInflation = 0.03;
     const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
 
-    const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+    const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
 
     // For daily compounding: periodsPerMonth = 365/12
     const periodsPerMonth = 365 / 12;
@@ -907,7 +907,7 @@ describe('Compound Interest with Inflation', () => {
     const periodicRate = (1 + 0.12 / 365) / (1 + periodicInflation) - 1;
     const expected = 10000 * (Math.pow(1 + periodicRate, periodsPerMonth) - 1);
 
-    expect(interestForPeriod).toBeCloseTo(expected, 2);
+    expect(interest).toBeCloseTo(expected, 2);
   });
 
   it('daily compounding with inflation should still be higher than monthly', () => {
@@ -931,8 +931,8 @@ describe('Compound Interest with Inflation', () => {
 
     const monthlyInflation = Math.pow(1.03, 1 / 12) - 1;
 
-    const dailyInterest = dailyDebt.getMonthlyPaymentInfo(monthlyInflation).interestForPeriod;
-    const monthlyInterest = monthlyDebt.getMonthlyPaymentInfo(monthlyInflation).interestForPeriod;
+    const dailyInterest = dailyDebt.getMonthlyPaymentInfo(monthlyInflation).interest;
+    const monthlyInterest = monthlyDebt.getMonthlyPaymentInfo(monthlyInflation).interest;
 
     expect(dailyInterest).toBeGreaterThan(monthlyInterest);
   });
@@ -957,8 +957,8 @@ describe('Compound Interest with Inflation', () => {
     // Run 12 months
     for (let i = 0; i < 12; i++) {
       debt.applyMonthlyInflation(monthlyInflation);
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
-      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+      debt.applyPayment(monthlyPaymentDue, interest);
     }
 
     // Balance should decrease due to negative real interest rate
@@ -1002,8 +1002,8 @@ describe('Inflation Adjustment', () => {
       let realMonths = 0;
       while (!debt.isPaidOff() && realMonths < 400) {
         debt.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
-        debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+        const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(monthlyPaymentDue, interest);
         realMonths++;
       }
 
@@ -1052,14 +1052,14 @@ describe('Inflation Adjustment', () => {
       const annualInflation = 0.03;
       const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
 
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+      const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
 
       // Real monthly rate = (1 + 0.07/12) / (1 + monthlyInflation) - 1
       const nominalMonthlyRate = 0.07 / 12;
       const realMonthlyRate = (1 + nominalMonthlyRate) / (1 + monthlyInflation) - 1;
       const expectedInterest = 10000 * realMonthlyRate;
 
-      expect(interestForPeriod).toBeCloseTo(expectedInterest, 2);
+      expect(interest).toBeCloseTo(expectedInterest, 2);
     });
 
     it('should correctly handle negative real interest rates', () => {
@@ -1076,14 +1076,14 @@ describe('Inflation Adjustment', () => {
       const annualInflation = 0.1;
       const monthlyInflation = Math.pow(1 + annualInflation, 1 / 12) - 1;
 
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
+      const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
 
       // Real rate should be negative, so interest should be negative (debt erodes)
       const nominalMonthlyRate = 0.07 / 12;
       const realMonthlyRate = (1 + nominalMonthlyRate) / (1 + monthlyInflation) - 1;
 
       expect(realMonthlyRate).toBeLessThan(0);
-      expect(interestForPeriod).toBeLessThan(0);
+      expect(interest).toBeLessThan(0);
     });
   });
 
@@ -1111,8 +1111,8 @@ describe('Inflation Adjustment', () => {
       const result2 = processor.process(monthlyInflation);
 
       // Both should have payments (less than original 200 due to inflation)
-      expect(result1.totalPaymentForPeriod).toBeLessThan(200);
-      expect(result2.totalPaymentForPeriod).toBeLessThan(result1.totalPaymentForPeriod);
+      expect(result1.totalPayment).toBeLessThan(200);
+      expect(result2.totalPayment).toBeLessThan(result1.totalPayment);
     });
   });
 
@@ -1143,8 +1143,8 @@ describe('Inflation Adjustment', () => {
       // Run 120 months (10 years)
       for (let i = 0; i < 120; i++) {
         debt.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
-        debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+        const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(monthlyPaymentDue, interest);
       }
 
       // Real balance should be approximately half of initial
@@ -1179,8 +1179,8 @@ describe('Inflation Adjustment', () => {
       // Run 120 months
       for (let i = 0; i < 120; i++) {
         debt.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
-        debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+        const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(monthlyPaymentDue, interest);
       }
 
       // Real balance should stay approximately at $1M (within ~2% after 10 years)
@@ -1214,8 +1214,8 @@ describe('Inflation Adjustment', () => {
       // Run 120 months
       for (let i = 0; i < 120; i++) {
         debt.applyMonthlyInflation(monthlyInflation);
-        const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(monthlyInflation);
-        debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+        const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(monthlyPaymentDue, interest);
       }
 
       // Real rate ≈ (1.05/1.10) - 1 ≈ -4.5% annually
@@ -1260,14 +1260,14 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
       // To get negative: need even smaller balance or more months
       // After erosion, balance drops below zero threshold
 
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(EXTREME_INFLATION_MONTHLY);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(EXTREME_INFLATION_MONTHLY);
 
       // Interest is negative due to extreme inflation
-      expect(interestForPeriod).toBeLessThan(0);
+      expect(interest).toBeLessThan(0);
 
       // The payment is min(monthlyPayment, balance + interest) without capping at 0
       // In this case balance + interest is still positive, so it equals balance + interest
-      expect(monthlyPaymentDue).toBeCloseTo(100 + interestForPeriod, 2);
+      expect(monthlyPaymentDue).toBeCloseTo(100 + interest, 2);
     });
 
     it('should return negative payment when balance + interest is negative (eroded to zero scenario)', () => {
@@ -1288,17 +1288,17 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
       // Interest = 1 * (-0.14) ≈ -0.14
       // balance + interest = 1 + (-0.14) = 0.86 (still positive, but much smaller)
 
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(HYPER_INFLATION_MONTHLY);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(HYPER_INFLATION_MONTHLY);
 
       // Interest is negative
-      expect(interestForPeriod).toBeLessThan(0);
+      expect(interest).toBeLessThan(0);
 
       // Payment equals min(1000, balance + interest) = balance + interest
       // Without Math.max(0, ...), this can approach 0 or go slightly negative
-      expect(monthlyPaymentDue).toBeCloseTo(1 + interestForPeriod, 2);
+      expect(monthlyPaymentDue).toBeCloseTo(1 + interest, 2);
     });
 
-    it('should return raw interestForPeriod for internal balance calculations', () => {
+    it('should return raw interest for internal balance calculations', () => {
       const debt = new Debt(
         createDebtInput({
           balance: 10000,
@@ -1309,16 +1309,16 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
       );
 
       // 10% inflation > 5% APR = negative real interest
-      const { interestForPeriod } = debt.getMonthlyPaymentInfo(HIGH_INFLATION_MONTHLY);
+      const { interest } = debt.getMonthlyPaymentInfo(HIGH_INFLATION_MONTHLY);
 
       // Raw interest should be negative (for internal calculations)
       // This ensures balance erosion still works correctly
-      expect(interestForPeriod).toBeLessThan(0);
+      expect(interest).toBeLessThan(0);
     });
   });
 
   describe('DebtsProcessor.process - Raw Values for Net Worth Tracking', () => {
-    it('should pass through raw interestForPeriod (can be negative)', () => {
+    it('should pass through raw interest (can be negative)', () => {
       const debts = new Debts([
         createDebtInput({
           balance: 10000,
@@ -1333,11 +1333,11 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
       const result = processor.process(HIGH_INFLATION_MONTHLY);
 
       // Raw interest should be negative when inflation > APR
-      expect(result.totalInterestForPeriod).toBeLessThan(0);
-      expect(result.perDebtData['debt-1'].interestForPeriod).toBeLessThan(0);
+      expect(result.totalInterest).toBeLessThan(0);
+      expect(result.perDebtData['debt-1'].interest).toBeLessThan(0);
     });
 
-    it('should pass through raw totalPaymentForPeriod (equals balance + interest when that is less than monthlyPayment)', () => {
+    it('should pass through raw totalPayment (equals balance + interest when that is less than monthlyPayment)', () => {
       const debts = new Debts([
         createDebtInput({
           balance: 100, // Small balance
@@ -1353,14 +1353,14 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
 
       // With negative interest, balance + interest < balance
       // Payment = min(500, balance + interest) = balance + interest
-      const expectedPayment = 100 + result.totalInterestForPeriod;
-      expect(result.totalPaymentForPeriod).toBeCloseTo(expectedPayment, 2);
+      const expectedPayment = 100 + result.totalInterest;
+      expect(result.totalPayment).toBeCloseTo(expectedPayment, 2);
 
       // Interest is negative (inflation > APR)
-      expect(result.totalInterestForPeriod).toBeLessThan(0);
+      expect(result.totalInterest).toBeLessThan(0);
 
       // Payment is less than original balance because of negative interest adjustment
-      expect(result.totalPaymentForPeriod).toBeLessThan(100);
+      expect(result.totalPayment).toBeLessThan(100);
     });
 
     it('should still correctly erode balance with raw reporting', () => {
@@ -1382,7 +1382,7 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
       expect(result.totalDebtBalance).toBeLessThan(initialBalance);
 
       // Raw interest is negative (reflects balance erosion economically)
-      expect(result.totalInterestForPeriod).toBeLessThan(0);
+      expect(result.totalInterest).toBeLessThan(0);
     });
 
     it('should calculate principalPaid as payment minus raw interest', () => {
@@ -1401,8 +1401,8 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
 
       // With negative raw interest, principalPaid = payment - interest > payment
       // This correctly reflects that more principal is "paid" due to balance erosion
-      expect(result.totalPrincipalPaidForPeriod).toBeGreaterThan(result.totalPaymentForPeriod);
-      expect(result.totalPrincipalPaidForPeriod).toBeCloseTo(result.totalPaymentForPeriod - result.totalInterestForPeriod, 2);
+      expect(result.totalPrincipalPaid).toBeGreaterThan(result.totalPayment);
+      expect(result.totalPrincipalPaid).toBeCloseTo(result.totalPayment - result.totalInterest, 2);
     });
 
     it('principalPaid should equal actual balance reduction, not exceed initial balance', () => {
@@ -1420,12 +1420,12 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
 
       const initialBalance = debt.getBalance();
 
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(HIGH_INFLATION_MONTHLY);
-      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(HIGH_INFLATION_MONTHLY);
+      debt.applyPayment(monthlyPaymentDue, interest);
 
       const finalBalance = debt.getBalance();
       const actualPrincipalReduced = initialBalance - finalBalance;
-      const reportedPrincipalPaid = monthlyPaymentDue - interestForPeriod;
+      const reportedPrincipalPaid = monthlyPaymentDue - interest;
 
       // Principal paid should match actual balance reduction
       expect(reportedPrincipalPaid).toBeCloseTo(actualPrincipalReduced, 2);
@@ -1448,23 +1448,23 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
       );
 
       const initialBalance = debt.getBalance();
-      const { monthlyPaymentDue, interestForPeriod } = debt.getMonthlyPaymentInfo(EXTREME_INFLATION);
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(EXTREME_INFLATION);
 
       // Interest is negative (inflation > APR)
-      expect(interestForPeriod).toBeLessThan(0);
+      expect(interest).toBeLessThan(0);
 
       // Payment = min(250, balance + interest) = balance + interest (since balance + interest < 250)
-      expect(monthlyPaymentDue).toBeCloseTo(initialBalance + interestForPeriod, 2);
+      expect(monthlyPaymentDue).toBeCloseTo(initialBalance + interest, 2);
 
       // Calculate derived values
-      const principalPaid = monthlyPaymentDue - interestForPeriod;
-      const unpaidInterest = interestForPeriod - monthlyPaymentDue;
+      const principalPaid = monthlyPaymentDue - interest;
+      const unpaidInterest = interest - monthlyPaymentDue;
 
       // INVARIANT 1: unpaidInterest = -principalPaid
       expect(unpaidInterest).toBeCloseTo(-principalPaid, 10);
 
       // Apply payment
-      debt.applyPayment(monthlyPaymentDue, interestForPeriod);
+      debt.applyPayment(monthlyPaymentDue, interest);
 
       // Balance should go to 0
       expect(debt.getBalance()).toBe(0);

@@ -83,10 +83,10 @@ export class PortfolioProcessor {
     debtsData: DebtsData,
     physicalAssetsData: PhysicalAssetsData
   ): { portfolioData: PortfolioData; discretionaryExpense: number } {
-    const debtAndLoanPayments = Math.max(0, debtsData.totalPaymentForPeriod + physicalAssetsData.totalLoanPaymentForPeriod);
+    const debtAndLoanPayments = Math.max(0, debtsData.totalPayment + physicalAssetsData.totalLoanPayment);
 
-    const physicalAssetPurchaseExpenses = physicalAssetsData.totalPurchaseExpenseForPeriod;
-    const physicalAssetSaleProceeds = physicalAssetsData.totalSaleProceedsForPeriod;
+    const physicalAssetPurchaseExpenses = physicalAssetsData.totalPurchaseExpense;
+    const physicalAssetSaleProceeds = physicalAssetsData.totalSaleProceeds;
 
     const surplusDeficitAfterPayrollDeductions =
       incomesData.totalIncomeAfterPayrollDeductions +

@@ -729,7 +729,7 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 0 });
       const expenses = createEmptyExpensesData({ totalExpenses: 0 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalPurchaseExpenseForPeriod: 50000, // Cash purchase
+        totalPurchaseExpense: 50000, // Cash purchase
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), physicalAssetsData);
@@ -746,8 +746,8 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 0 });
       const expenses = createEmptyExpensesData({ totalExpenses: 0 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalPurchaseExpenseForPeriod: 80000, // Down payment only
-        totalLoanPaymentForPeriod: 1500, // Monthly loan payment
+        totalPurchaseExpense: 80000, // Down payment only
+        totalLoanPayment: 1500, // Monthly loan payment
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), physicalAssetsData);
@@ -768,7 +768,7 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 0 });
       const expenses = createEmptyExpensesData({ totalExpenses: 0 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalSaleProceedsForPeriod: 200000, // Sale proceeds
+        totalSaleProceeds: 200000, // Sale proceeds
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), physicalAssetsData);
@@ -786,8 +786,8 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 0 });
       const expenses = createEmptyExpensesData({ totalExpenses: 0 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalPurchaseExpenseForPeriod: 100000, // Buying new house
-        totalSaleProceedsForPeriod: 200000, // Selling old house
+        totalPurchaseExpense: 100000, // Buying new house
+        totalSaleProceeds: 200000, // Selling old house
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), physicalAssetsData);
@@ -806,7 +806,7 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 0 });
       const expenses = createEmptyExpensesData({ totalExpenses: 0 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalPurchaseExpenseForPeriod: 100000, // Need 100k but only have 50k
+        totalPurchaseExpense: 100000, // Need 100k but only have 50k
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), physicalAssetsData);
@@ -824,8 +824,8 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 5000 });
       const expenses = createEmptyExpensesData({ totalExpenses: 3000 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalPurchaseExpenseForPeriod: 50000, // Down payment
-        totalSaleProceedsForPeriod: 100000, // Sale proceeds
+        totalPurchaseExpense: 50000, // Down payment
+        totalSaleProceeds: 100000, // Sale proceeds
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), physicalAssetsData);
@@ -844,7 +844,7 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 5000 });
       const expenses = createEmptyExpensesData({ totalExpenses: 3000 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalLoanPaymentForPeriod: 2000, // Monthly mortgage
+        totalLoanPayment: 2000, // Monthly mortgage
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), physicalAssetsData);
@@ -874,7 +874,7 @@ describe('PortfolioProcessor', () => {
 
       // Simulate negative debt payment (would happen when inflation > APR causes negative real interest)
       const debtsData = createEmptyDebtsData({
-        totalPaymentForPeriod: -500, // Negative payment due to negative real interest
+        totalPayment: -500, // Negative payment due to negative real interest
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, debtsData, createEmptyPhysicalAssetsData());
@@ -896,7 +896,7 @@ describe('PortfolioProcessor', () => {
 
       // Simulate negative loan payment from physical asset
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalLoanPaymentForPeriod: -300, // Negative payment due to negative real interest
+        totalLoanPayment: -300, // Negative payment due to negative real interest
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), physicalAssetsData);
@@ -915,10 +915,10 @@ describe('PortfolioProcessor', () => {
 
       // Both debt and loan payments are negative
       const debtsData = createEmptyDebtsData({
-        totalPaymentForPeriod: -200,
+        totalPayment: -200,
       });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalLoanPaymentForPeriod: -300,
+        totalLoanPayment: -300,
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, debtsData, physicalAssetsData);
@@ -937,10 +937,10 @@ describe('PortfolioProcessor', () => {
 
       // Positive debt payment, negative loan payment, but sum is still positive
       const debtsData = createEmptyDebtsData({
-        totalPaymentForPeriod: 1000,
+        totalPayment: 1000,
       });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalLoanPaymentForPeriod: -300,
+        totalLoanPayment: -300,
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, debtsData, physicalAssetsData);

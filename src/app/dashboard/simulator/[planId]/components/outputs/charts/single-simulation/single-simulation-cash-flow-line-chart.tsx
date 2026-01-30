@@ -318,10 +318,10 @@ export default function SingleSimulationCashFlowLineChart({
       }
 
       const perAssetData = chartData.flatMap(({ age, perAssetData }) =>
-        perAssetData.filter((asset) => asset.id === customDataID && asset.loanPaymentForPeriod !== 0).map((asset) => ({ age, ...asset }))
+        perAssetData.filter((asset) => asset.id === customDataID && asset.loanPayment !== 0).map((asset) => ({ age, ...asset }))
       );
       if (perAssetData.length > 0) {
-        lineDataKeys.push('loanPaymentForPeriod');
+        lineDataKeys.push('loanPayment');
         strokeColors.push('var(--chart-7)');
 
         chartData = perAssetData;
@@ -329,10 +329,10 @@ export default function SingleSimulationCashFlowLineChart({
       }
 
       const perDebtData = chartData.flatMap(({ age, perDebtData }) =>
-        perDebtData.filter((debt) => debt.id === customDataID && debt.paymentForPeriod !== 0).map((debt) => ({ age, ...debt }))
+        perDebtData.filter((debt) => debt.id === customDataID && debt.payment !== 0).map((debt) => ({ age, ...debt }))
       );
       if (perDebtData.length > 0) {
-        lineDataKeys.push('paymentForPeriod');
+        lineDataKeys.push('payment');
         strokeColors.push('var(--chart-7)');
 
         chartData = perDebtData;

@@ -775,10 +775,10 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
       }),
       debts: {
         totalDebtBalance: 10000,
-        totalPaymentForPeriod: 500,
-        totalInterestForPeriod: -100, // Negative raw interest
-        totalPrincipalPaidForPeriod: 600, // payment - interest = 500 - (-100) = 600
-        totalUnpaidInterestForPeriod: 0,
+        totalPayment: 500,
+        totalInterest: -100, // Negative raw interest
+        totalPrincipalPaid: 600, // payment - interest = 500 - (-100) = 600
+        totalUnpaidInterest: 0,
         perDebtData: {},
       },
       physicalAssets: null,
@@ -802,10 +802,10 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
       }),
       debts: {
         totalDebtBalance: 10000,
-        totalPaymentForPeriod: 500,
-        totalInterestForPeriod: -100, // Negative raw interest (inflation > APR)
-        totalPrincipalPaidForPeriod: 600,
-        totalUnpaidInterestForPeriod: 0,
+        totalPayment: 500,
+        totalInterest: -100, // Negative raw interest (inflation > APR)
+        totalPrincipalPaid: 600,
+        totalUnpaidInterest: 0,
         perDebtData: {},
       },
       physicalAssets: null,
@@ -828,10 +828,10 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
       }),
       debts: {
         totalDebtBalance: 10000,
-        totalPaymentForPeriod: 0,
-        totalInterestForPeriod: -100, // Negative raw interest
-        totalPrincipalPaidForPeriod: 100, // 0 - (-100) = 100
-        totalUnpaidInterestForPeriod: 0,
+        totalPayment: 0,
+        totalInterest: -100, // Negative raw interest
+        totalPrincipalPaid: 100, // 0 - (-100) = 100
+        totalUnpaidInterest: 0,
         perDebtData: {},
       },
       physicalAssets: null,
@@ -854,8 +854,8 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
     portfolioValue: number;
     debtBalance?: number;
     debtPayment?: number;
-    interestForPeriod?: number;
-    principalPaidForPeriod?: number;
+    interest?: number;
+    principalPaid?: number;
     unpaidInterest?: number;
   }): SimulationDataPoint => ({
     date: '2024-01-01',
@@ -886,10 +886,10 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
       options.debtBalance !== undefined
         ? {
             totalDebtBalance: options.debtBalance,
-            totalPaymentForPeriod: options.debtPayment ?? 0,
-            totalInterestForPeriod: options.interestForPeriod ?? 0,
-            totalPrincipalPaidForPeriod: options.principalPaidForPeriod ?? 0,
-            totalUnpaidInterestForPeriod: options.unpaidInterest ?? 0,
+            totalPayment: options.debtPayment ?? 0,
+            totalInterest: options.interest ?? 0,
+            totalPrincipalPaid: options.principalPaid ?? 0,
+            totalUnpaidInterest: options.unpaidInterest ?? 0,
             perDebtData: {},
           }
         : null,
@@ -908,8 +908,8 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
       portfolioValue: 1000000,
       debtBalance: 10000,
       debtPayment: 0,
-      interestForPeriod: -100, // Negative raw interest (inflation > APR)
-      principalPaidForPeriod: 100, // payment (0) - interest (-100) = 100
+      interest: -100, // Negative raw interest (inflation > APR)
+      principalPaid: 100, // payment (0) - interest (-100) = 100
       unpaidInterest: 0,
     });
 
@@ -927,8 +927,8 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
       portfolioValue: 1000000,
       debtBalance: 10000,
       debtPayment: 500,
-      interestForPeriod: 50, // Positive interest (normal scenario)
-      principalPaidForPeriod: 450, // payment (500) - interest (50) = 450
+      interest: 50, // Positive interest (normal scenario)
+      principalPaid: 450, // payment (500) - interest (50) = 450
       unpaidInterest: 0,
     });
 
@@ -956,8 +956,8 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
       portfolioValue: 1000000,
       debtBalance: 10000,
       debtPayment: 100,
-      interestForPeriod: 200, // Large interest
-      principalPaidForPeriod: -100, // payment (100) - interest (200) = -100
+      interest: 200, // Large interest
+      principalPaid: -100, // payment (100) - interest (200) = -100
       unpaidInterest: 100, // max(0, 200 - 100) = 100
     });
 
@@ -989,8 +989,8 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
       portfolioValue: 1000000,
       debtBalance: 10000,
       debtPayment: 500,
-      interestForPeriod: -100, // Negative interest (inflation > APR)
-      principalPaidForPeriod: 600, // payment (500) - interest (-100) = 600
+      interest: -100, // Negative interest (inflation > APR)
+      principalPaid: 600, // payment (500) - interest (-100) = 600
       unpaidInterest: 0, // max(0, -100 - 500) = 0
     });
 

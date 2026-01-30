@@ -340,9 +340,7 @@ export class TaxProcessor {
     capitalLossDeduction: number;
   } {
     const realizedGainsAfterCarryover =
-      annualPortfolioDataBeforeTaxes.realizedGainsForPeriod +
-      annualPhysicalAssetsData.totalCapitalGainForPeriod +
-      this.capitalLossCarryover;
+      annualPortfolioDataBeforeTaxes.realizedGainsForPeriod + annualPhysicalAssetsData.totalCapitalGain + this.capitalLossCarryover;
 
     if (realizedGainsAfterCarryover >= 0) {
       this.capitalLossCarryover = 0;

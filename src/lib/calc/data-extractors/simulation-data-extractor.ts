@@ -246,16 +246,17 @@ export class SimulationDataExtractor {
     const totalExpenses = expensesData?.totalExpenses ?? 0;
     const { totalTaxesAndPenalties } = this.getTaxAmountsByType(dp);
 
-    const totalDebtPayments = Math.max(0, (dp.debts?.totalPaymentForPeriod ?? 0) + (dp.physicalAssets?.totalLoanPaymentForPeriod ?? 0));
-    const totalInterestPayments = Math.max(0, (dp.debts?.totalInterestForPeriod ?? 0) + (dp.physicalAssets?.totalInterestForPeriod ?? 0));
+    // Capped at 0 for cash flow display (raw values from processors can be negative with high inflation).
+    const totalDebtPayments = Math.max(0, (dp.debts?.totalPayment ?? 0) + (dp.physicalAssets?.totalLoanPayment ?? 0));
+    const totalInterestPayments = Math.max(0, (dp.debts?.totalInterest ?? 0) + (dp.physicalAssets?.totalInterest ?? 0));
 
     const surplusDeficit = totalIncome + employerMatch - totalExpenses - totalTaxesAndPenalties - totalInterestPayments;
 
     const amountInvested = sumInvestments(portfolioData.contributionsForPeriod) - employerMatch;
     const amountLiquidated = sumLiquidations(portfolioData.withdrawalsForPeriod);
 
-    const assetsPurchased = dp.physicalAssets?.totalPurchaseExpenseForPeriod ?? 0;
-    const assetsSold = dp.physicalAssets?.totalSaleProceedsForPeriod ?? 0;
+    const assetsPurchased = dp.physicalAssets?.totalPurchaseExpense ?? 0;
+    const assetsSold = dp.physicalAssets?.totalSaleProceeds ?? 0;
 
     // Round near-zero values to clean up tax convergence residuals
     const netCashFlow = roundNearZero(
@@ -462,10 +463,11 @@ export class SimulationDataExtractor {
     const debt = (debtsData?.totalDebtBalance ?? 0) + (physicalAssetsData?.totalLoanBalance ?? 0);
     const netWorth = portfolioData.totalValue + marketValue - debt;
 
-    const appreciation = physicalAssetsData?.totalAppreciationForPeriod ?? 0;
-    const interest = (physicalAssetsData?.totalInterestForPeriod ?? 0) + (debtsData?.totalInterestForPeriod ?? 0);
-    const debtPayments = (physicalAssetsData?.totalLoanPaymentForPeriod ?? 0) + (debtsData?.totalPaymentForPeriod ?? 0);
+    const appreciation = physicalAssetsData?.totalAppreciation ?? 0;
+    const interest = (physicalAssetsData?.totalInterest ?? 0) + (debtsData?.totalInterest ?? 0);
+    const debtPayments = (physicalAssetsData?.totalLoanPayment ?? 0) + (debtsData?.totalPayment ?? 0);
 
+    // Net change in debt balance (positive = debt reduced). Works with raw (possibly negative) values.
     const debtPaydown = debtPayments - interest;
 
     return {
