@@ -51,13 +51,13 @@ const ACCOUNT_COLOR_MAP: Record<TaxCategory, string> = {
   cashSavings: 'bg-[var(--chart-4)]',
 } as const;
 
-interface PortfolioSectionProps {
+interface NetWorthSectionProps {
   toggleDisclosure: (newDisclosure: DisclosureState) => void;
   disclosureButtonRef: RefObject<HTMLButtonElement | null>;
   disclosureKey: string;
 }
 
-export default function PortfolioSection(props: PortfolioSectionProps) {
+export default function NetWorthSection(props: NetWorthSectionProps) {
   const planId = useSelectedPlanId();
 
   const [accountDialogOpen, setAccountDialogOpen] = useState(false);
@@ -132,7 +132,7 @@ export default function PortfolioSection(props: PortfolioSectionProps) {
 
   return (
     <>
-      <DisclosureSection title="Portfolio" icon={LandmarkIcon} centerPanelContent={!hasData} {...props}>
+      <DisclosureSection title="Net Worth" icon={LandmarkIcon} centerPanelContent={!hasData} {...props}>
         <div className="flex h-full flex-col gap-2">
           {hasData && (
             <>
