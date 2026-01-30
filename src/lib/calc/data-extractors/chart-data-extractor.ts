@@ -41,9 +41,6 @@ export abstract class ChartDataExtractor {
 
       const netPortfolioChange = stockAmount + bondAmount + cashAmount + annualContributions - annualWithdrawals;
 
-      const physicalAssetsData = data.physicalAssets;
-      const debtsData = data.debts;
-
       const {
         marketValue: assetMarketValue,
         equity,
@@ -78,8 +75,8 @@ export abstract class ChartDataExtractor {
         unpaidInterest,
         changeInNetWorth,
         perAccountData: Object.values(portfolioData.perAccountData),
-        perAssetData: Object.values(physicalAssetsData?.perAssetData ?? {}),
-        perDebtData: Object.values(debtsData?.perDebtData ?? {}),
+        perAssetData: Object.values(data.physicalAssets?.perAssetData ?? {}),
+        perDebtData: Object.values(data.debts?.perDebtData ?? {}),
       };
     });
   }
