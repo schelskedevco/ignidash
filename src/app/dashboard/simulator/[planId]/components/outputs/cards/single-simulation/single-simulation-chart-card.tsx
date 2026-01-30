@@ -39,9 +39,9 @@ interface ChartsCategoryProps {
 function NetWorthCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationNetWorthChartData(simulation);
 
-  const [dataView, setDataView] = useState<
-    'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom'
-  >('taxCategory');
+  const [dataView, setDataView] = useState<'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom'>(
+    'taxCategory'
+  );
   const [customDataID, setCustomDataID] = useState<string>('');
 
   return (

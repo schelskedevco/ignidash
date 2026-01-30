@@ -45,7 +45,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationNetWorthBarChartProps {
   age: number;
-  dataView: 'netPortfolioChange' | 'changeInNetWorth';
+  dataView: 'netPortfolioChange' | 'netWorthChange';
   rawChartData: SingleSimulationNetWorthChartDataPoint[];
 }
 

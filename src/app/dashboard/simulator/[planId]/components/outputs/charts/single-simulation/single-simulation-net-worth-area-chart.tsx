@@ -32,7 +32,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
+  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom';
 }
 
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -116,9 +116,9 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         </p>
       );
       break;
-    case 'changeInNetWorth':
-      const changeInNetWorth = payload.find((entry) => entry.dataKey === 'changeInNetWorth');
-      if (!changeInNetWorth) {
+    case 'netWorthChange':
+      const netWorthChange = payload.find((entry) => entry.dataKey === 'netWorthChange');
+      if (!netWorthChange) {
         console.error('Change in net worth data not found');
         break;
       }
@@ -144,9 +144,9 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
           <span className="flex items-center gap-1">
             <ChartLineIcon className="h-3 w-3" />
-            <span className="mr-2">Change in NW:</span>
+            <span className="mr-2">Net Worth Change:</span>
           </span>
-          <span className="ml-1 font-semibold">{formatNumber(changeInNetWorth.value, 3, '$')}</span>
+          <span className="ml-1 font-semibold">{formatNumber(netWorthChange.value, 3, '$')}</span>
         </p>
       );
       break;
@@ -203,7 +203,7 @@ interface SingleSimulationNetWorthAreaChartProps {
   startAge: number;
   keyMetrics: KeyMetrics;
   showReferenceLines: boolean;
-  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
+  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom';
   customDataID: string;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
@@ -290,8 +290,8 @@ export default function SingleSimulationNetWorthAreaChart({
 
       stackOffset = 'sign';
       break;
-    case 'changeInNetWorth':
-      lineDataKeys.push('changeInNetWorth');
+    case 'netWorthChange':
+      lineDataKeys.push('netWorthChange');
 
       barDataKeys.push(
         'annualReturns',

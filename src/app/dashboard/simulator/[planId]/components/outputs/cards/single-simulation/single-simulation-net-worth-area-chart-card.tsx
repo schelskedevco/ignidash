@@ -17,8 +17,8 @@ interface SingleSimulationNetWorthAreaChartCardProps {
   keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom') => void;
-  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
+  setDataView: (view: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom') => void;
+  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom';
   setCustomDataID: (name: string) => void;
   customDataID: string;
   startAge: number;
@@ -74,21 +74,23 @@ export default function SingleSimulationNetWorthAreaChartCard({
                 e.target.value !== 'taxCategory' &&
                 e.target.value !== 'netPortfolioChange' &&
                 e.target.value !== 'netWorth' &&
-                e.target.value !== 'changeInNetWorth';
+                e.target.value !== 'netWorthChange';
               if (isCustomSelection) {
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth');
+                setDataView(e.target.value as 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange');
                 setCustomDataID('');
               }
             }}
           >
-            <option value="assetClass">Asset Class</option>
-            <option value="taxCategory">Tax Category</option>
-            <option value="netPortfolioChange">Net Portfolio Change</option>
             <option value="netWorth">Net Worth</option>
-            <option value="changeInNetWorth">Change in NW</option>
+            <option value="netWorthChange">Net Worth Change</option>
+            <optgroup label="Investment Portfolio">
+              <option value="assetClass">Asset Class</option>
+              <option value="taxCategory">Tax Category</option>
+              <option value="netPortfolioChange">Net Portfolio Change</option>
+            </optgroup>
             <optgroup label="By Account">
               {uniqueAccounts.map((account) => (
                 <option key={account.id} value={account.id}>

@@ -51,7 +51,7 @@ export abstract class ChartDataExtractor {
         unpaidInterest,
       } = SimulationDataExtractor.getAssetsAndLiabilitiesData(data);
 
-      const changeInNetWorth = netPortfolioChange + assetAppreciation + principalPayments - unpaidInterest;
+      const netWorthChange = netPortfolioChange + assetAppreciation + principalPayments - unpaidInterest;
 
       return {
         age,
@@ -73,7 +73,7 @@ export abstract class ChartDataExtractor {
         netWorth,
         principalPayments,
         unpaidInterest,
-        changeInNetWorth,
+        netWorthChange,
         perAccountData: Object.values(portfolioData.perAccountData),
         perAssetData: Object.values(data.physicalAssets?.perAssetData ?? {}),
         perDebtData: Object.values(data.debts?.perDebtData ?? {}),

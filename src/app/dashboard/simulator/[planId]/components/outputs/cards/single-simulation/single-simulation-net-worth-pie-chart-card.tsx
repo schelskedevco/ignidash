@@ -16,7 +16,7 @@ import SingleSimulationNetWorthBarChart from '../../charts/single-simulation/sin
 interface SingleSimulationNetWorthPieChartCardProps {
   rawChartData: SingleSimulationNetWorthChartDataPoint[];
   selectedAge: number;
-  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'changeInNetWorth' | 'custom';
+  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom';
   customDataID: string;
 }
 
@@ -76,8 +76,8 @@ export default function SingleSimulationNetWorthPieChartCard({
         ]);
       totalValue = chartData.map(({ name, value }) => (name === 'debt' ? -value : value)).reduce((sum, value) => sum + value, 0);
       break;
-    case 'changeInNetWorth':
-      title = 'Change in NW';
+    case 'netWorthChange':
+      title = 'Net Worth Change';
       useBarChart = true;
       break;
     case 'custom':
@@ -144,7 +144,7 @@ export default function SingleSimulationNetWorthPieChartCard({
       {useBarChart ? (
         <SingleSimulationNetWorthBarChart
           age={selectedAge}
-          dataView={dataView as 'netPortfolioChange' | 'changeInNetWorth'}
+          dataView={dataView as 'netPortfolioChange' | 'netWorthChange'}
           rawChartData={rawChartData}
         />
       ) : (
