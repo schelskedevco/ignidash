@@ -14,6 +14,7 @@ import { Button } from '@/components/catalyst/button';
 import { formatNumber } from '@/lib/utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
+import { estimatePayoffMonths, formatPayoffEstimate } from '@/lib/utils/payoff-estimator';
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import type { DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
@@ -37,12 +38,17 @@ function getExpenseDesc(expense: ExpenseInputs) {
 }
 
 function getDebtDesc(debt: DebtInputs) {
+  const payoffMonths = estimatePayoffMonths(debt);
+
   return (
     <>
       <p>
         {formatNumber(debt.monthlyPayment, 2, '$')} monthly | {formatNumber(debt.apr, 1)}% APR
       </p>
-      <p>{timeFrameForDisplay(debt.startDate)}</p>
+      <p>
+        {timeFrameForDisplay(debt.startDate)}
+        {payoffMonths !== null && ` → ${formatPayoffEstimate(payoffMonths)} (est.)`}
+      </p>
     </>
   );
 }
