@@ -43,7 +43,7 @@ function getDebtDesc(debt: DebtInputs) {
   return (
     <>
       <p>
-        {formatNumber(debt.monthlyPayment, 2, '$')} monthly | {formatNumber(debt.apr, 1)}% APR
+        {formatNumber(debt.monthlyPayment, 2, '$')} monthly | {formatNumber(debt.balance, 2, '$')} owed
       </p>
       <p>
         {timeFrameForDisplay(debt.startDate)}
