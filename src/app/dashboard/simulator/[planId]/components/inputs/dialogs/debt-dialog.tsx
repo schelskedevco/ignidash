@@ -252,8 +252,8 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
                     {errors.compoundingFrequency && <ErrorMessage>{errors.compoundingFrequency?.message}</ErrorMessage>}
                   </Field>
                 )}
+                <PayoffEstimate months={payoffMonths} className="col-span-2" />
               </div>
-              <PayoffEstimate months={payoffMonths} />
               <Disclosure as="div" className="border-border/25 border-t pt-4">
                 {({ open, close }) => (
                   <>
