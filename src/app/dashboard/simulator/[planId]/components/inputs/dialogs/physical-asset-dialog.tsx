@@ -85,11 +85,14 @@ export default function PhysicalAssetDialog({
   const [saveError, setSaveError] = useState<string | null>(null);
 
   const onSubmit = async (data: PhysicalAssetInputs) => {
-    const assetId = data.id === '' ? uuidv4() : data.id;
+    const processedData = { ...data };
+    processedData.marketValue ??= data.purchasePrice;
+
+    const assetId = processedData.id === '' ? uuidv4() : processedData.id;
     try {
       setSaveError(null);
       posthog.capture('save_physical_asset', { plan_id: planId, save_mode: selectedPhysicalAsset ? 'edit' : 'create' });
-      await m({ physicalAsset: physicalAssetToConvex({ ...data, id: assetId }), planId });
+      await m({ physicalAsset: physicalAssetToConvex({ ...processedData, id: assetId }), planId });
       onClose();
     } catch (error) {
       setSaveError(error instanceof ConvexError ? error.message : 'Failed to save physical asset.');
