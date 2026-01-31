@@ -37,7 +37,7 @@ function createNetWorthTestDataPoint(options: {
   marketValue?: number;
   loanBalance?: number;
   appreciation?: number;
-  purchaseExpense?: number;
+  purchaseOutlay?: number;
   saleProceeds?: number;
   loanPayment?: number;
   loanInterest?: number;
@@ -106,7 +106,7 @@ function createNetWorthTestDataPoint(options: {
           totalInterest: options.loanInterest ?? 0,
           totalPrincipalPaid: (options.loanPayment ?? 0) - (options.loanInterest ?? 0),
           totalUnpaidInterest: 0,
-          totalPurchaseExpense: options.purchaseExpense ?? 0,
+          totalPurchaseOutlay: options.purchaseOutlay ?? 0,
           totalSaleProceeds: options.saleProceeds ?? 0,
           totalCapitalGain: 0,
           perAssetData: {},
@@ -272,7 +272,7 @@ describe('ChartDataExtractor - netWorthChange Invariant', () => {
         withdrawals: { stocks: 48000, bonds: 24000, cash: 8000 }, // 80000 total
         marketValue: 400000,
         loanBalance: 320000,
-        purchaseExpense: 80000, // down payment
+        purchaseOutlay: 80000, // down payment
       }),
     ];
 
@@ -646,7 +646,7 @@ describe('ChartDataExtractor - netWorthChange Invariant', () => {
         withdrawals: { stocks: 48000, bonds: 24000, cash: 8000 }, // 80000 for down payment
         marketValue: 400000,
         loanBalance: 320000,
-        purchaseExpense: 80000,
+        purchaseOutlay: 80000,
       }),
     ];
 
@@ -656,7 +656,7 @@ describe('ChartDataExtractor - netWorthChange Invariant', () => {
     expect(result[0].netWorth).toBe(200000);
     expect(result[1].netWorth).toBe(200000);
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualAssetsPurchased).toBe(80000);
+    expect(result[1].annualAssetPurchaseOutlay).toBe(80000);
   });
 
   it('verifies invariant for financed asset with ongoing appreciation and payments', () => {
@@ -849,7 +849,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(150000); // 100k + 200k - 150k
     expect(result[1].netWorth).toBe(150000); // 150k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualAssetsSold).toBe(50000); // Net proceeds
+    expect(result[1].annualAssetSaleProceeds).toBe(50000); // Net proceeds
     expect(result[1].netPortfolioChange).toBeCloseTo(50000, 2);
   });
 
@@ -899,7 +899,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(100000); // 100k + 200k - 200k
     expect(result[1].netWorth).toBe(100000); // 100k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualAssetsSold).toBe(0);
+    expect(result[1].annualAssetSaleProceeds).toBe(0);
     expect(result[1].netPortfolioChange).toBeCloseTo(0, 2);
   });
 
@@ -952,7 +952,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(70000); // 100k + 150k - 180k
     expect(result[1].netWorth).toBe(70000); // 70k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualAssetsSold).toBe(-30000); // Negative proceeds
+    expect(result[1].annualAssetSaleProceeds).toBe(-30000); // Negative proceeds
     expect(result[1].netPortfolioChange).toBeCloseTo(-30000, 2);
   });
 
@@ -979,7 +979,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
         withdrawals: { stocks: 48000, bonds: 24000, cash: 8000 }, // 80000 for down payment
         marketValue: 400000,
         loanBalance: 320000,
-        purchaseExpense: 80000,
+        purchaseOutlay: 80000,
       }),
       // Year 2: Appreciation and loan paydown
       createNetWorthTestDataPoint({
@@ -1011,7 +1011,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     // Year 1: netWorth = 120k + 400k - 320k = 200k (purchase is neutral)
     expect(result[1].netWorth).toBe(200000);
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualAssetsPurchased).toBe(80000);
+    expect(result[1].annualAssetPurchaseOutlay).toBe(80000);
 
     // Year 2: netWorth = 120k + 412k - 310k = 222k
     // Change = 22k (12k appreciation + 10k loan paydown)
@@ -1023,7 +1023,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     // Year 3: netWorth = 222k + 0 - 0 = 222k (sale is neutral)
     expect(result[3].netWorth).toBe(222000);
     expect(result[3].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[3].annualAssetsSold).toBe(102000);
+    expect(result[3].annualAssetSaleProceeds).toBe(102000);
     expect(result[3].netPortfolioChange).toBeCloseTo(102000, 2);
   });
 
@@ -1068,7 +1068,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(250000); // 50k + 450k - 250k
     expect(result[1].netWorth).toBe(250000); // 250k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualAssetsSold).toBe(200000);
+    expect(result[1].annualAssetSaleProceeds).toBe(200000);
   });
 
   it('verifies invariant when selling financed asset with appreciation in same year', () => {
@@ -1121,7 +1121,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[1].netWorth).toBe(215000); // 215k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(15000, 2);
     expect(result[1].annualAssetAppreciation).toBe(15000);
-    expect(result[1].annualAssetsSold).toBe(115000);
+    expect(result[1].annualAssetSaleProceeds).toBe(115000);
   });
 });
 
@@ -1223,7 +1223,7 @@ describe('ChartDataExtractor - Mid-Simulation Events', () => {
         withdrawals: { stocks: 48000, bonds: 24000, cash: 8000 }, // 80000 for down payment
         marketValue: 400000,
         loanBalance: 320000,
-        purchaseExpense: 80000, // down payment
+        purchaseOutlay: 80000, // down payment
       }),
     ];
 
@@ -1242,7 +1242,7 @@ describe('ChartDataExtractor - Mid-Simulation Events', () => {
     expect(result[2].netWorth).toBe(228980);
     // Change = 228980 - 214000 = 14980 (the year's returns)
     expect(result[2].netWorthChange).toBeCloseTo(14980, 2);
-    expect(result[2].annualAssetsPurchased).toBe(80000);
+    expect(result[2].annualAssetPurchaseOutlay).toBe(80000);
   });
 
   it('verifies invariant with multiple mid-simulation events across years', () => {
@@ -1287,7 +1287,7 @@ describe('ChartDataExtractor - Mid-Simulation Events', () => {
         debtBalance: 20000, // Unchanged
         marketValue: 400000,
         loanBalance: 320000,
-        purchaseExpense: 80000,
+        purchaseOutlay: 80000,
       }),
       // Year 4: Asset appreciates, loan paydown, credit card paydown
       createNetWorthTestDataPoint({
@@ -1325,7 +1325,7 @@ describe('ChartDataExtractor - Mid-Simulation Events', () => {
     // change = 347513 - 323470 = 24043 (returns for the year)
     expect(result[3].netWorth).toBe(347513);
     expect(result[3].netWorthChange).toBeCloseTo(24043, 2);
-    expect(result[3].annualAssetsPurchased).toBe(80000);
+    expect(result[3].annualAssetPurchaseOutlay).toBe(80000);
 
     // Year 4: netWorth = 307639 + 412000 - 310000 - 15000 = 394639
     // change = 394639 - 347513 = 47126
@@ -1352,7 +1352,7 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
      *         Portfolio: $214,000 + $14,980 returns - $100,000 purchase = $128,980
      *
      * When purchasing with cash:
-     * - purchaseExpense = $100,000 (full price, no loan)
+     * - purchaseOutlay = $100,000 (full price, no loan)
      * - No loan is created
      * - Asset marketValue = $100,000
      *
@@ -1387,7 +1387,7 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
         withdrawals: { stocks: 60000, bonds: 30000, cash: 10000 }, // 100000 for cash purchase
         marketValue: 100000,
         loanBalance: 0, // No loan - cash purchase
-        purchaseExpense: 100000, // Full cash payment
+        purchaseOutlay: 100000, // Full cash payment
       }),
     ];
 
@@ -1406,7 +1406,7 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
     expect(result[2].netWorth).toBe(228980);
     // Change = 228980 - 214000 = 14980 (only portfolio returns)
     expect(result[2].netWorthChange).toBeCloseTo(14980, 2);
-    expect(result[2].annualAssetsPurchased).toBe(100000);
+    expect(result[2].annualAssetPurchaseOutlay).toBe(100000);
     // Net portfolio change = returns - withdrawal = 14980 - 100000 = -85020
     expect(result[2].netPortfolioChange).toBeCloseTo(-85020, 2);
   });
@@ -1488,7 +1488,7 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
     expect(result[3].netWorth).toBe(334670);
     expect(result[3].netWorthChange).toBeCloseTo(8000, 2);
     // Sale is net-worth neutral: +212180 to portfolio, -212180 asset sold
-    expect(result[3].annualAssetsSold).toBe(212180);
+    expect(result[3].annualAssetSaleProceeds).toBe(212180);
   });
 
   it('verifies invariant when debt balance increases (payment < positive interest)', () => {
@@ -1582,7 +1582,7 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
         marketValue: 150000, // New car
         loanBalance: 0, // Car paid in cash
         saleProceeds: 100000, // Net proceeds from house (200k - 100k loan)
-        purchaseExpense: 150000, // Car purchase (full cash)
+        purchaseOutlay: 150000, // Car purchase (full cash)
       }),
     ];
 
@@ -1597,8 +1597,8 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
 
     // Both components are non-zero
-    expect(result[1].annualAssetsPurchased).toBe(150000);
-    expect(result[1].annualAssetsSold).toBe(100000);
+    expect(result[1].annualAssetPurchaseOutlay).toBe(150000);
+    expect(result[1].annualAssetSaleProceeds).toBe(100000);
     // Net portfolio change = 100k sale - 150k purchase = -50k
     expect(result[1].netPortfolioChange).toBeCloseTo(-50000, 2);
   });

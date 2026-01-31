@@ -59,15 +59,15 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
       desktop: ['Annual Returns', 'Annual Contributions', 'Annual Withdrawals'],
     },
     netWorthChange: {
-      mobile: ['Returns', 'Contributions', 'Withdrawals', 'Appreciation', 'Paydown', 'Purchased', 'Sold'],
+      mobile: ['Returns', 'Contributions', 'Withdrawals', 'Appreciation', 'Paydown', 'Purchase Outlay', 'Sale Proceeds'],
       desktop: [
         'Annual Returns',
         'Annual Contributions',
         'Annual Withdrawals',
         'Annual Appreciation',
         'Annual Debt Paydown',
-        'Annual Assets Purchased',
-        'Annual Assets Sold',
+        'Annual Purchase Outlay',
+        'Annual Sale Proceeds',
       ],
     },
   };
@@ -93,7 +93,7 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
       break;
     }
     case 'netWorthChange': {
-      const [returnsLabel, contributionsLabel, withdrawalsLabel, appreciationLabel, paydownLabel, purchasedLabel, soldLabel] =
+      const [returnsLabel, contributionsLabel, withdrawalsLabel, appreciationLabel, paydownLabel, purchaseOutlayLabel, saleProceedsLabel] =
         getLabelsForScreenSize(dataView, isSmallScreen);
 
       transformedChartData = chartData.flatMap(
@@ -103,16 +103,16 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
           annualWithdrawals,
           annualAssetAppreciation,
           annualDebtPaydown,
-          annualAssetsPurchased,
-          annualAssetsSold,
+          annualAssetPurchaseOutlay,
+          annualAssetSaleProceeds,
         }) => [
           { name: returnsLabel, amount: annualReturns, color: 'var(--chart-1)' },
           { name: contributionsLabel, amount: annualContributions, color: 'var(--chart-1)' },
           { name: withdrawalsLabel, amount: -annualWithdrawals, color: 'var(--chart-1)' },
           { name: appreciationLabel, amount: annualAssetAppreciation, color: 'var(--chart-2)' },
           { name: paydownLabel, amount: annualDebtPaydown, color: 'var(--chart-3)' },
-          { name: purchasedLabel, amount: annualAssetsPurchased, color: 'var(--chart-4)' },
-          { name: soldLabel, amount: -annualAssetsSold, color: 'var(--chart-5)' },
+          { name: purchaseOutlayLabel, amount: annualAssetPurchaseOutlay, color: 'var(--chart-4)' },
+          { name: saleProceedsLabel, amount: -annualAssetSaleProceeds, color: 'var(--chart-5)' },
         ]
       );
       break;

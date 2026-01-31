@@ -235,12 +235,12 @@ export default function SingleSimulationCashFlowLineChart({
       barDataKeys.push(
         'income',
         'amountLiquidated',
-        'assetsSold',
+        'assetSaleProceeds',
         'expenses',
         'taxesAndPenalties',
         'debtPayments',
         'amountInvested',
-        'assetsPurchased'
+        'assetPurchaseOutlay'
       );
       barColors.push(
         'var(--chart-1)',
@@ -259,7 +259,7 @@ export default function SingleSimulationCashFlowLineChart({
         taxesAndPenalties: -entry.taxesAndPenalties,
         debtPayments: -entry.debtPayments,
         amountInvested: -entry.amountInvested,
-        assetsPurchased: -entry.assetsPurchased,
+        assetPurchaseOutlay: -entry.assetPurchaseOutlay,
       }));
 
       stackOffset = 'sign';

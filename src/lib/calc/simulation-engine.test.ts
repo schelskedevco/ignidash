@@ -855,14 +855,14 @@ describe('Physical Assets Integration', () => {
     );
 
     // Find the year when purchase happens by checking physicalAssets data
-    const purchaseYearData = resultWithPurchase.data.find((d) => (d.physicalAssets?.totalPurchaseExpense ?? 0) > 0);
+    const purchaseYearData = resultWithPurchase.data.find((d) => (d.physicalAssets?.totalPurchaseOutlay ?? 0) > 0);
 
     // Verify purchase expense is tracked
     expect(purchaseYearData).toBeDefined();
-    expect(purchaseYearData!.physicalAssets!.totalPurchaseExpense).toBe(60000);
+    expect(purchaseYearData!.physicalAssets!.totalPurchaseOutlay).toBe(60000);
 
     // After purchase, portfolio with down payment should have less liquid assets
-    const yearAfterPurchase = resultWithPurchase.data.findIndex((d) => (d.physicalAssets?.totalPurchaseExpense ?? 0) > 0);
+    const yearAfterPurchase = resultWithPurchase.data.findIndex((d) => (d.physicalAssets?.totalPurchaseOutlay ?? 0) > 0);
     if (yearAfterPurchase >= 0 && yearAfterPurchase < resultWithoutPurchase.data.length) {
       const portfolioWithPurchase = resultWithPurchase.data[yearAfterPurchase].portfolio.totalValue;
       const portfolioWithoutPurchase = resultWithoutPurchase.data[yearAfterPurchase].portfolio.totalValue;

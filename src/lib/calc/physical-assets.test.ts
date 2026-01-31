@@ -919,9 +919,9 @@ describe('Purchase Expense Tracking', () => {
       );
 
       expect(asset.getOwnershipStatus()).toBe('pending');
-      const { purchaseExpense } = asset.purchase();
+      const { purchaseOutlay } = asset.purchase();
 
-      expect(purchaseExpense).toBe(400000);
+      expect(purchaseOutlay).toBe(400000);
       expect(asset.getOwnershipStatus()).toBe('owned');
     });
 
@@ -934,9 +934,9 @@ describe('Purchase Expense Tracking', () => {
         })
       );
 
-      const { purchaseExpense } = asset.purchase();
+      const { purchaseOutlay } = asset.purchase();
 
-      expect(purchaseExpense).toBe(80000);
+      expect(purchaseOutlay).toBe(80000);
       expect(asset.getOwnershipStatus()).toBe('owned');
     });
 
@@ -956,9 +956,9 @@ describe('Purchase Expense Tracking', () => {
         })
       );
 
-      const { purchaseExpense } = asset.purchase();
+      const { purchaseOutlay } = asset.purchase();
 
-      expect(purchaseExpense).toBe(0);
+      expect(purchaseOutlay).toBe(0);
       expect(asset.getOwnershipStatus()).toBe('owned');
     });
 
@@ -983,8 +983,8 @@ describe('Purchase Expense Tracking', () => {
         })
       );
 
-      const { purchaseExpense } = asset.purchase();
-      expect(purchaseExpense).toBe(400000);
+      const { purchaseOutlay } = asset.purchase();
+      expect(purchaseOutlay).toBe(400000);
 
       // Second purchase throws
       expect(() => asset.purchase()).toThrow('Asset is not pending');
@@ -1051,8 +1051,8 @@ describe('Purchase Expense Tracking', () => {
 
       const result = processor.process(ZERO_INFLATION);
 
-      expect(result.totalPurchaseExpense).toBe(0);
-      expect(result.perAssetData['existing-house'].purchaseExpense).toBe(0);
+      expect(result.totalPurchaseOutlay).toBe(0);
+      expect(result.perAssetData['existing-house'].purchaseOutlay).toBe(0);
     });
 
     it('future cash purchase charges full purchase price when date arrives', () => {
@@ -1070,7 +1070,7 @@ describe('Purchase Expense Tracking', () => {
       const simStateBefore = createSimulationState({ time: { age: 39, year: 2028, month: 1, date: new Date(2028, 0, 1) } });
       const processorBefore = new PhysicalAssetsProcessor(simStateBefore, assets);
       const resultBefore = processorBefore.process(ZERO_INFLATION);
-      expect(resultBefore.totalPurchaseExpense).toBe(0);
+      expect(resultBefore.totalPurchaseOutlay).toBe(0);
 
       // At purchase age - need new processor since assets state changed
       const assets2 = new PhysicalAssets([
@@ -1086,8 +1086,8 @@ describe('Purchase Expense Tracking', () => {
       const processorAt = new PhysicalAssetsProcessor(simStateAt, assets2);
       const resultAt = processorAt.process(ZERO_INFLATION);
 
-      expect(resultAt.totalPurchaseExpense).toBe(500000);
-      expect(resultAt.perAssetData['future-house'].purchaseExpense).toBe(500000);
+      expect(resultAt.totalPurchaseOutlay).toBe(500000);
+      expect(resultAt.perAssetData['future-house'].purchaseOutlay).toBe(500000);
     });
 
     it('future financed purchase charges only down payment when date arrives', () => {
@@ -1105,8 +1105,8 @@ describe('Purchase Expense Tracking', () => {
       const processor = new PhysicalAssetsProcessor(simState, assets);
       const result = processor.process(ZERO_INFLATION);
 
-      expect(result.totalPurchaseExpense).toBe(80000);
-      expect(result.perAssetData['future-house'].purchaseExpense).toBe(80000);
+      expect(result.totalPurchaseOutlay).toBe(80000);
+      expect(result.perAssetData['future-house'].purchaseOutlay).toBe(80000);
     });
 
     it('purchase expense is charged only once, not every month', () => {
@@ -1124,7 +1124,7 @@ describe('Purchase Expense Tracking', () => {
 
       // First month - should have purchase expense
       const result1 = processor.process(ZERO_INFLATION);
-      expect(result1.totalPurchaseExpense).toBe(500000);
+      expect(result1.totalPurchaseOutlay).toBe(500000);
 
       // Advance to next month
       simState.time.month = 2;
@@ -1132,11 +1132,11 @@ describe('Purchase Expense Tracking', () => {
 
       // Second month - no purchase expense
       const result2 = processor.process(ZERO_INFLATION);
-      expect(result2.totalPurchaseExpense).toBe(0);
+      expect(result2.totalPurchaseOutlay).toBe(0);
 
       // Annual data should show total purchase expense
       const annualData = processor.getAnnualData();
-      expect(annualData.totalPurchaseExpense).toBe(500000);
+      expect(annualData.totalPurchaseOutlay).toBe(500000);
     });
 
     it('atRetirement purchase charges expense when retirement starts', () => {
@@ -1153,7 +1153,7 @@ describe('Purchase Expense Tracking', () => {
       const simStateAccum = createSimulationState({ phase: { name: 'accumulation' } });
       const processorAccum = new PhysicalAssetsProcessor(simStateAccum, assets);
       const resultAccum = processorAccum.process(ZERO_INFLATION);
-      expect(resultAccum.totalPurchaseExpense).toBe(0);
+      expect(resultAccum.totalPurchaseOutlay).toBe(0);
 
       // At retirement - new assets instance
       const assets2 = new PhysicalAssets([
@@ -1168,7 +1168,7 @@ describe('Purchase Expense Tracking', () => {
       const processorRetire = new PhysicalAssetsProcessor(simStateRetire, assets2);
       const resultRetire = processorRetire.process(ZERO_INFLATION);
 
-      expect(resultRetire.totalPurchaseExpense).toBe(300000);
+      expect(resultRetire.totalPurchaseOutlay).toBe(300000);
     });
   });
 });

@@ -26,8 +26,8 @@ export interface SingleSimulationNetWorthChartDataPoint {
   equity: number;
   debtBalance: number;
   netWorth: number;
-  annualAssetsPurchased: number;
-  annualAssetsSold: number;
+  annualAssetPurchaseOutlay: number;
+  annualAssetSaleProceeds: number;
   annualDebtPaydown: number;
   annualUnsecuredDebtIncurred: number;
   netWorthChange: number;
@@ -60,8 +60,8 @@ export interface SingleSimulationCashFlowChartDataPoint {
   savingsRate: number | null;
   amountInvested: number;
   amountLiquidated: number;
-  assetsPurchased: number;
-  assetsSold: number;
+  assetPurchaseOutlay: number;
+  assetSaleProceeds: number;
   netCashFlow: number;
 }
 
