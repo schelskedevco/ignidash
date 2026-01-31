@@ -47,11 +47,13 @@ export abstract class ChartDataExtractor {
         equity,
         debt: debtBalance,
         netWorth,
+        assetsPurchased: annualAssetsPurchased,
+        assetsSold: annualAssetsSold,
         appreciation: annualAssetAppreciation,
         debtPaydown: annualDebtPaydown,
       } = SimulationDataExtractor.getAssetsAndLiabilitiesData(data);
 
-      const netWorthChange = netPortfolioChange + annualAssetAppreciation + annualDebtPaydown;
+      const netWorthChange = netPortfolioChange + annualAssetAppreciation + annualDebtPaydown + annualAssetsPurchased - annualAssetsSold;
 
       return {
         age,
@@ -72,6 +74,8 @@ export abstract class ChartDataExtractor {
         equity,
         debtBalance,
         netWorth,
+        annualAssetsPurchased,
+        annualAssetsSold,
         annualDebtPaydown,
         netWorthChange,
         perAccountData: Object.values(portfolioData.perAccountData),

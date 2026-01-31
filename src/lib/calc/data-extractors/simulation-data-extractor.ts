@@ -97,6 +97,8 @@ export interface AssetsAndLiabilitiesData {
   equity: number;
   debt: number;
   netWorth: number;
+  assetsPurchased: number;
+  assetsSold: number;
   appreciation: number;
   interest: number;
   debtPayments: number;
@@ -246,17 +248,20 @@ export class SimulationDataExtractor {
     const totalExpenses = expensesData?.totalExpenses ?? 0;
     const { totalTaxesAndPenalties } = this.getTaxAmountsByType(dp);
 
+    const debtsData = dp.debts;
+    const physicalAssetsData = dp.physicalAssets;
+
     // Capped at 0 for cash flow display (raw values from processors can be negative with high inflation).
-    const totalDebtPayments = Math.max(0, (dp.debts?.totalPayment ?? 0) + (dp.physicalAssets?.totalLoanPayment ?? 0));
-    const totalInterestPayments = Math.max(0, (dp.debts?.totalInterest ?? 0) + (dp.physicalAssets?.totalInterest ?? 0));
+    const totalDebtPayments = Math.max(0, (debtsData?.totalPayment ?? 0) + (physicalAssetsData?.totalLoanPayment ?? 0));
+    const totalInterestPayments = Math.max(0, (debtsData?.totalInterest ?? 0) + (physicalAssetsData?.totalInterest ?? 0));
 
     const surplusDeficit = totalIncome + employerMatch - totalExpenses - totalTaxesAndPenalties - totalInterestPayments;
 
     const amountInvested = sumInvestments(portfolioData.contributionsForPeriod) - employerMatch;
     const amountLiquidated = sumLiquidations(portfolioData.withdrawalsForPeriod);
 
-    const assetsPurchased = dp.physicalAssets?.totalPurchaseExpense ?? 0;
-    const assetsSold = dp.physicalAssets?.totalSaleProceeds ?? 0;
+    const assetsPurchased = physicalAssetsData?.totalPurchaseExpense ?? 0;
+    const assetsSold = physicalAssetsData?.totalSaleProceeds ?? 0;
 
     // Round near-zero values to clean up tax convergence residuals
     const netCashFlow = roundNearZero(
@@ -463,6 +468,9 @@ export class SimulationDataExtractor {
     const debt = (debtsData?.totalDebtBalance ?? 0) + (physicalAssetsData?.totalLoanBalance ?? 0);
     const netWorth = portfolioData.totalValue + marketValue - debt;
 
+    const assetsPurchased = physicalAssetsData?.totalPurchaseExpense ?? 0;
+    const assetsSold = physicalAssetsData?.totalSaleProceeds ?? 0;
+
     const appreciation = physicalAssetsData?.totalAppreciation ?? 0;
     const interest = (physicalAssetsData?.totalInterest ?? 0) + (debtsData?.totalInterest ?? 0);
     const debtPayments = (physicalAssetsData?.totalLoanPayment ?? 0) + (debtsData?.totalPayment ?? 0);
@@ -475,6 +483,8 @@ export class SimulationDataExtractor {
       equity,
       debt,
       netWorth,
+      assetsPurchased,
+      assetsSold,
       appreciation,
       interest,
       debtPayments,

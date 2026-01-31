@@ -59,8 +59,16 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
       desktop: ['Annual Returns', 'Annual Contributions', 'Annual Withdrawals'],
     },
     netWorthChange: {
-      mobile: ['Returns', 'Contributions', 'Withdrawals', 'Appreciation', 'Paydown'],
-      desktop: ['Annual Returns', 'Annual Contributions', 'Annual Withdrawals', 'Annual Appreciation', 'Annual Debt Paydown'],
+      mobile: ['Returns', 'Contributions', 'Withdrawals', 'Appreciation', 'Paydown', 'Purchased', 'Sold'],
+      desktop: [
+        'Annual Returns',
+        'Annual Contributions',
+        'Annual Withdrawals',
+        'Annual Appreciation',
+        'Annual Debt Paydown',
+        'Annual Assets Purchased',
+        'Annual Assets Sold',
+      ],
     },
   };
 
@@ -85,18 +93,26 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
       break;
     }
     case 'netWorthChange': {
-      const [returnsLabel, contributionsLabel, withdrawalsLabel, appreciationLabel, paydownLabel] = getLabelsForScreenSize(
-        dataView,
-        isSmallScreen
-      );
+      const [returnsLabel, contributionsLabel, withdrawalsLabel, appreciationLabel, paydownLabel, purchasedLabel, soldLabel] =
+        getLabelsForScreenSize(dataView, isSmallScreen);
 
       transformedChartData = chartData.flatMap(
-        ({ annualReturns, annualContributions, annualWithdrawals, annualAssetAppreciation, annualDebtPaydown }) => [
+        ({
+          annualReturns,
+          annualContributions,
+          annualWithdrawals,
+          annualAssetAppreciation,
+          annualDebtPaydown,
+          annualAssetsPurchased,
+          annualAssetsSold,
+        }) => [
           { name: returnsLabel, amount: annualReturns, color: 'var(--chart-1)' },
-          { name: contributionsLabel, amount: annualContributions, color: 'var(--chart-2)' },
-          { name: withdrawalsLabel, amount: -annualWithdrawals, color: 'var(--chart-3)' },
-          { name: appreciationLabel, amount: annualAssetAppreciation, color: 'var(--chart-4)' },
-          { name: paydownLabel, amount: annualDebtPaydown, color: 'var(--chart-5)' },
+          { name: contributionsLabel, amount: annualContributions, color: 'var(--chart-1)' },
+          { name: withdrawalsLabel, amount: -annualWithdrawals, color: 'var(--chart-1)' },
+          { name: appreciationLabel, amount: annualAssetAppreciation, color: 'var(--chart-2)' },
+          { name: paydownLabel, amount: annualDebtPaydown, color: 'var(--chart-3)' },
+          { name: purchasedLabel, amount: annualAssetsPurchased, color: 'var(--chart-4)' },
+          { name: soldLabel, amount: -annualAssetsSold, color: 'var(--chart-5)' },
         ]
       );
       break;

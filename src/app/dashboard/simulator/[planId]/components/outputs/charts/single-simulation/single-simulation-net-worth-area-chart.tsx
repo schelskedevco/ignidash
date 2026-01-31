@@ -272,10 +272,10 @@ export default function SingleSimulationNetWorthAreaChart({
     case 'netWorthChange':
       lineDataKeys.push('netWorthChange');
 
-      barDataKeys.push('annualReturns', 'annualContributions', 'annualWithdrawals', 'annualAssetAppreciation', 'annualDebtPaydown');
+      barDataKeys.push('netPortfolioChange', 'annualAssetAppreciation', 'annualDebtPaydown', 'annualAssetsPurchased', 'annualAssetsSold');
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
 
-      chartData = chartData.map((entry) => ({ ...entry, annualWithdrawals: -entry.annualWithdrawals }));
+      chartData = chartData.map((entry) => ({ ...entry, annualAssetsSold: -entry.annualAssetsSold }));
 
       stackOffset = 'sign';
       break;

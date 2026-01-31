@@ -26,6 +26,8 @@ export interface SingleSimulationNetWorthChartDataPoint {
   equity: number;
   debtBalance: number;
   netWorth: number;
+  annualAssetsPurchased: number;
+  annualAssetsSold: number;
   annualDebtPaydown: number;
   netWorthChange: number;
   perAccountData: AccountDataWithTransactions[];
