@@ -779,6 +779,7 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
         totalInterest: -100, // Negative raw interest
         totalPrincipalPaid: 600, // payment - interest = 500 - (-100) = 600
         totalUnpaidInterest: 0,
+        totalUnsecuredDebtIncurred: 0,
         perDebtData: {},
       },
       physicalAssets: null,
@@ -806,6 +807,7 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
         totalInterest: -100, // Negative raw interest (inflation > APR)
         totalPrincipalPaid: 600,
         totalUnpaidInterest: 0,
+        totalUnsecuredDebtIncurred: 0,
         perDebtData: {},
       },
       physicalAssets: null,
@@ -832,6 +834,7 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
         totalInterest: -100, // Negative raw interest
         totalPrincipalPaid: 100, // 0 - (-100) = 100
         totalUnpaidInterest: 0,
+        totalUnsecuredDebtIncurred: 0,
         perDebtData: {},
       },
       physicalAssets: null,
@@ -890,6 +893,7 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
             totalInterest: options.interest ?? 0,
             totalPrincipalPaid: options.principalPaid ?? 0,
             totalUnpaidInterest: options.unpaidInterest ?? 0,
+            totalUnsecuredDebtIncurred: 0,
             perDebtData: {},
           }
         : null,

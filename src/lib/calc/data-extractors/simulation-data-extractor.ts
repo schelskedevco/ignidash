@@ -103,6 +103,7 @@ export interface AssetsAndLiabilitiesData {
   interest: number;
   debtPayments: number;
   debtPaydown: number;
+  unsecuredDebtIncurred: number;
 }
 
 export interface LifetimeTaxAmounts {
@@ -474,6 +475,7 @@ export class SimulationDataExtractor {
     const appreciation = physicalAssetsData?.totalAppreciation ?? 0;
     const interest = (physicalAssetsData?.totalInterest ?? 0) + (debtsData?.totalInterest ?? 0);
     const debtPayments = (physicalAssetsData?.totalLoanPayment ?? 0) + (debtsData?.totalPayment ?? 0);
+    const unsecuredDebtIncurred = debtsData?.totalUnsecuredDebtIncurred ?? 0;
 
     // Net change in debt balance (positive = debt reduced). Works with raw (possibly negative) values.
     const debtPaydown = debtPayments - interest;
@@ -489,6 +491,7 @@ export class SimulationDataExtractor {
       interest,
       debtPayments,
       debtPaydown,
+      unsecuredDebtIncurred,
     };
   }
 

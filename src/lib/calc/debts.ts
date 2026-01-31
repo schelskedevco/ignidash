@@ -18,10 +18,13 @@ export class DebtsProcessor {
     let totalInterest = 0;
     let totalPrincipalPaid = 0;
     let totalUnpaidInterest = 0;
+    let totalUnsecuredDebtIncurred = 0;
     const perDebtData: Record<string, DebtData> = {};
 
     const activeDebts = this.debts.getActiveDebts(this.simulationState);
     for (const debt of activeDebts) {
+      totalUnsecuredDebtIncurred += debt.incurDebt();
+
       const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflationRate);
       debt.applyPayment(monthlyPaymentDue, interest);
 
@@ -50,10 +53,11 @@ export class DebtsProcessor {
 
     const result: DebtsData = {
       totalDebtBalance: this.debts.getTotalBalance(),
-      totalPayment: totalPayment,
-      totalInterest: totalInterest,
-      totalPrincipalPaid: totalPrincipalPaid,
-      totalUnpaidInterest: totalUnpaidInterest,
+      totalPayment,
+      totalInterest,
+      totalPrincipalPaid,
+      totalUnpaidInterest,
+      totalUnsecuredDebtIncurred,
       perDebtData,
     };
 
@@ -72,6 +76,7 @@ export class DebtsProcessor {
         acc.totalInterest += curr.totalInterest;
         acc.totalPrincipalPaid += curr.totalPrincipalPaid;
         acc.totalUnpaidInterest += curr.totalUnpaidInterest;
+        acc.totalUnsecuredDebtIncurred += curr.totalUnsecuredDebtIncurred;
 
         Object.entries(curr.perDebtData).forEach(([debtID, debtData]) => {
           acc.perDebtData[debtID] = {
@@ -91,6 +96,7 @@ export class DebtsProcessor {
         totalInterest: 0,
         totalPrincipalPaid: 0,
         totalUnpaidInterest: 0,
+        totalUnsecuredDebtIncurred: 0,
         perDebtData: {},
       }
     );
@@ -103,6 +109,7 @@ export interface DebtsData {
   totalInterest: number;
   totalPrincipalPaid: number;
   totalUnpaidInterest: number;
+  totalUnsecuredDebtIncurred: number;
   perDebtData: Record<string, DebtData>;
 }
 
@@ -147,6 +154,7 @@ export class Debt {
   private compoundingFrequency: CompoundingFrequency | undefined;
   private startDate: TimePoint;
   private monthlyPayment: number; // Mutable, deflates over time
+  private hasBeenIncurred: boolean;
 
   constructor(data: DebtInputs) {
     this.id = data.id;
@@ -158,6 +166,13 @@ export class Debt {
     this.compoundingFrequency = data.compoundingFrequency;
     this.startDate = data.startDate;
     this.monthlyPayment = data.monthlyPayment;
+    this.hasBeenIncurred = data.startDate.type === 'now';
+  }
+
+  incurDebt(): number {
+    if (this.hasBeenIncurred) return 0;
+    this.hasBeenIncurred = true;
+    return this.balance;
   }
 
   applyMonthlyInflation(monthlyInflationRate: number): void {

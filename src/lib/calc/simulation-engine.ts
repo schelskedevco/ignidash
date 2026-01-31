@@ -305,6 +305,7 @@ export class FinancialSimulationEngine {
       totalInterest: 0,
       totalPrincipalPaid: 0,
       totalUnpaidInterest: 0,
+      totalUnsecuredDebtIncurred: 0,
       perDebtData,
     };
 

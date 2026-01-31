@@ -442,6 +442,7 @@ export const createEmptyDebtsData = (overrides?: Partial<DebtsData>): DebtsData 
   totalInterest: overrides?.totalInterest ?? 0,
   totalPrincipalPaid: overrides?.totalPrincipalPaid ?? 0,
   totalUnpaidInterest: overrides?.totalUnpaidInterest ?? 0,
+  totalUnsecuredDebtIncurred: overrides?.totalUnsecuredDebtIncurred ?? 0,
   perDebtData: overrides?.perDebtData ?? {},
 });
 
