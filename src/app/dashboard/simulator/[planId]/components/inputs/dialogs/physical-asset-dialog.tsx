@@ -13,6 +13,7 @@ import { useForm, useWatch, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
+import { usePayoffEstimate } from '@/hooks/use-payoff-estimate';
 import { physicalAssetToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { physicalAssetFormSchema, type PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
@@ -29,6 +30,8 @@ import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Divider } from '@/components/catalyst/divider';
+
+import { PayoffEstimate } from './payoff-estimate';
 
 interface PhysicalAssetDialogProps {
   onClose: () => void;
@@ -103,6 +106,20 @@ export default function PhysicalAssetDialog({
 
   const paymentMethod = useWatch({ control, name: 'paymentMethod' });
   const paymentMethodType = paymentMethod.type;
+
+  const loanPayoffMonths = usePayoffEstimate(
+    paymentMethodType === 'loan' &&
+      !isNaN(Number(paymentMethod.loanBalance)) &&
+      !isNaN(Number(paymentMethod.monthlyPayment)) &&
+      !isNaN(Number(paymentMethod.apr))
+      ? {
+          balance: Number(paymentMethod.loanBalance),
+          monthlyPayment: Number(paymentMethod.monthlyPayment),
+          apr: Number(paymentMethod.apr),
+          interestType: 'simple',
+        }
+      : null
+  );
 
   useEffect(() => {
     if (purchaseDateType !== 'customDate') {
@@ -578,6 +595,7 @@ export default function PhysicalAssetDialog({
                                 {downPaymentError && <ErrorMessage>{downPaymentError.message}</ErrorMessage>}
                               </Field>
                             )}
+                            <PayoffEstimate months={loanPayoffMonths} className="col-span-2" />
                           </>
                         )}
                       </div>

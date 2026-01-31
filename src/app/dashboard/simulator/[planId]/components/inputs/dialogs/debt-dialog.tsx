@@ -13,6 +13,7 @@ import { useForm, useWatch, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
+import { usePayoffEstimate } from '@/hooks/use-payoff-estimate';
 import { debtToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { debtFormSchema, type DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
@@ -29,6 +30,8 @@ import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Divider } from '@/components/catalyst/divider';
+
+import { PayoffEstimate } from './payoff-estimate';
 
 interface DebtDialogProps {
   onClose: () => void;
@@ -84,7 +87,15 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
     }
   };
 
+  const balance = Number(useWatch({ control, name: 'balance' }));
+  const monthlyPayment = Number(useWatch({ control, name: 'monthlyPayment' }));
+  const apr = Number(useWatch({ control, name: 'apr' }));
   const interestType = useWatch({ control, name: 'interestType' });
+  const compoundingFrequency = useWatch({ control, name: 'compoundingFrequency' });
+
+  const payoffMonths = usePayoffEstimate(
+    !isNaN(balance) && !isNaN(monthlyPayment) && !isNaN(apr) ? { balance, monthlyPayment, apr, interestType, compoundingFrequency } : null
+  );
 
   const startTimePoint = useWatch({ control, name: 'startDate' });
   const startType = startTimePoint.type;
@@ -230,7 +241,10 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
                 </Field>
                 {interestType === 'compound' && (
                   <Field>
-                    <Label htmlFor="compoundingFrequency">Compounding Frequency</Label>
+                    <Label htmlFor="compoundingFrequency">
+                      <span className="sm:hidden">Compound Freq.</span>
+                      <span className="hidden sm:inline">Compounding Frequency</span>
+                    </Label>
                     <Select {...register('compoundingFrequency')} id="compoundingFrequency" name="compoundingFrequency">
                       <option value="daily">Daily</option>
                       <option value="monthly">Monthly</option>
@@ -239,6 +253,7 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
                   </Field>
                 )}
               </div>
+              <PayoffEstimate months={payoffMonths} />
               <Disclosure as="div" className="border-border/25 border-t pt-4">
                 {({ open, close }) => (
                   <>
