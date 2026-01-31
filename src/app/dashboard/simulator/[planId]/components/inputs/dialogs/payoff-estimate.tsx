@@ -11,7 +11,9 @@ export function PayoffEstimate({ months, className }: PayoffEstimateProps) {
 
   return (
     <div className={cn('text-center text-sm/6 font-medium', className)}>
-      <span className="text-muted-foreground mr-1 text-xs tracking-wide uppercase underline underline-offset-2">Payoff Estimate</span>{' '}
+      <span className="text-muted-foreground mr-1 text-xs tracking-wide uppercase">
+        <span className="underline underline-offset-2">Payoff Estimate</span>:
+      </span>{' '}
       {formatPayoffEstimate(months)}
     </div>
   );
