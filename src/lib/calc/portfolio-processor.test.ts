@@ -729,7 +729,7 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 0 });
       const expenses = createEmptyExpensesData({ totalExpenses: 0 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalPurchaseExpense: 50000, // Cash purchase
+        totalPurchaseOutlay: 50000, // Cash purchase
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), physicalAssetsData);
@@ -746,7 +746,7 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 0 });
       const expenses = createEmptyExpensesData({ totalExpenses: 0 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalPurchaseExpense: 80000, // Down payment only
+        totalPurchaseOutlay: 80000, // Down payment only
         totalLoanPayment: 1500, // Monthly loan payment
       });
 
@@ -786,7 +786,7 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 0 });
       const expenses = createEmptyExpensesData({ totalExpenses: 0 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalPurchaseExpense: 100000, // Buying new house
+        totalPurchaseOutlay: 100000, // Buying new house
         totalSaleProceeds: 200000, // Selling old house
       });
 
@@ -806,7 +806,7 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 0 });
       const expenses = createEmptyExpensesData({ totalExpenses: 0 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalPurchaseExpense: 100000, // Need 100k but only have 50k
+        totalPurchaseOutlay: 100000, // Need 100k but only have 50k
       });
 
       const result = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), physicalAssetsData);
@@ -824,7 +824,7 @@ describe('PortfolioProcessor', () => {
       const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 5000 });
       const expenses = createEmptyExpensesData({ totalExpenses: 3000 });
       const physicalAssetsData = createEmptyPhysicalAssetsData({
-        totalPurchaseExpense: 50000, // Down payment
+        totalPurchaseOutlay: 50000, // Down payment
         totalSaleProceeds: 100000, // Sale proceeds
       });
 

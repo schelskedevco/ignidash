@@ -74,18 +74,18 @@ export default function SingleSimulationCashFlowBarChart({
       ],
     },
     cashFlow: {
-      mobile: ['Earned', 'Soc. Sec.', 'Tax-Free', 'Liquidated', 'Sold', 'Expenses', 'Taxes', 'Debt', 'Invested', 'Purchased'],
+      mobile: ['Earned', 'Soc. Sec.', 'Tax-Free', 'Liquidated', 'Proceeds', 'Expenses', 'Taxes', 'Debt', 'Invested', 'Outlay'],
       desktop: [
         'Earned Income',
         'Social Security',
         'Tax-Free Income',
         'Amount Liquidated',
-        'Assets Sold',
+        'Asset Sale Proceeds',
         'Expenses',
         'Taxes & Penalties',
         'Debt Payments',
         'Amount Invested',
-        'Assets Purchased',
+        'Asset Purchase Outlay',
       ],
     },
     incomes: {
@@ -141,12 +141,12 @@ export default function SingleSimulationCashFlowBarChart({
         socialSecurityIncomeLabel,
         taxFreeIncomeLabel,
         amountLiquidatedLabel,
-        assetsSoldLabel,
+        assetSaleProceedsLabel,
         expensesLabel,
         taxesAndPenaltiesLabel,
         debtPaymentsLabel,
         amountInvestedLabel,
-        assetsPurchasedLabel,
+        assetPurchaseOutlayLabel,
       ] = getLabelsForScreenSize(dataView, isSmallScreen);
 
       transformedChartData = chartData.flatMap(
@@ -155,23 +155,23 @@ export default function SingleSimulationCashFlowBarChart({
           socialSecurityIncome,
           taxFreeIncome,
           amountLiquidated,
-          assetsSold,
+          assetSaleProceeds,
           expenses,
           taxesAndPenalties,
           debtPayments,
           amountInvested,
-          assetsPurchased,
+          assetPurchaseOutlay,
         }) => [
           { name: earnedIncomeLabel, amount: earnedIncome, color: 'var(--chart-1)' },
           { name: socialSecurityIncomeLabel, amount: socialSecurityIncome, color: 'var(--chart-1)' },
           { name: taxFreeIncomeLabel, amount: taxFreeIncome, color: 'var(--chart-1)' },
           { name: amountLiquidatedLabel, amount: amountLiquidated, color: 'var(--chart-2)' },
-          { name: assetsSoldLabel, amount: assetsSold, color: 'var(--chart-3)' },
+          { name: assetSaleProceedsLabel, amount: assetSaleProceeds, color: 'var(--chart-3)' },
           { name: expensesLabel, amount: -expenses, color: 'var(--chart-4)' },
           { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-5)' },
           { name: debtPaymentsLabel, amount: -debtPayments, color: 'var(--chart-6)' },
           { name: amountInvestedLabel, amount: -amountInvested, color: 'var(--chart-7)' },
-          { name: assetsPurchasedLabel, amount: -assetsPurchased, color: 'var(--chart-8)' },
+          { name: assetPurchaseOutlayLabel, amount: -assetPurchaseOutlay, color: 'var(--chart-8)' },
         ]
       );
 

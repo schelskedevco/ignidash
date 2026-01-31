@@ -430,7 +430,7 @@ export const createEmptyPhysicalAssetsData = (overrides?: Partial<PhysicalAssets
   totalInterest: overrides?.totalInterest ?? 0,
   totalPrincipalPaid: overrides?.totalPrincipalPaid ?? 0,
   totalUnpaidInterest: overrides?.totalUnpaidInterest ?? 0,
-  totalPurchaseExpense: overrides?.totalPurchaseExpense ?? 0,
+  totalPurchaseOutlay: overrides?.totalPurchaseOutlay ?? 0,
   totalSaleProceeds: overrides?.totalSaleProceeds ?? 0,
   totalCapitalGain: overrides?.totalCapitalGain ?? 0,
   perAssetData: overrides?.perAssetData ?? {},

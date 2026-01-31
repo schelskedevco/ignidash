@@ -16,15 +16,15 @@ export class PhysicalAssetsProcessor {
   process(monthlyInflationRate: number): PhysicalAssetsData {
     this.physicalAssets.applyMonthlyInflation(monthlyInflationRate);
 
-    let totalPurchaseExpense = 0;
-    const purchaseExpenseByAsset: Record<string, number> = {};
+    let totalPurchaseOutlay = 0;
+    const purchaseOutlayByAsset: Record<string, number> = {};
 
     const assetsToPurchase = this.physicalAssets.getAssetsToPurchaseThisPeriod(this.simulationState);
     for (const asset of assetsToPurchase) {
-      const { purchaseExpense } = asset.purchase();
+      const { purchaseOutlay } = asset.purchase();
 
-      purchaseExpenseByAsset[asset.getId()] = purchaseExpense;
-      totalPurchaseExpense += purchaseExpense;
+      purchaseOutlayByAsset[asset.getId()] = purchaseOutlay;
+      totalPurchaseOutlay += purchaseOutlay;
     }
 
     let totalAppreciation = 0;
@@ -60,7 +60,7 @@ export class PhysicalAssetsProcessor {
         interest,
         principalPaid,
         unpaidInterest,
-        purchaseExpense: purchaseExpenseByAsset[asset.getId()] ?? 0,
+        purchaseOutlay: purchaseOutlayByAsset[asset.getId()] ?? 0,
         saleProceeds: 0,
         capitalGain: 0,
         isSold: asset.isSold(),
@@ -101,7 +101,7 @@ export class PhysicalAssetsProcessor {
       totalInterest,
       totalPrincipalPaid,
       totalUnpaidInterest,
-      totalPurchaseExpense,
+      totalPurchaseOutlay,
       totalSaleProceeds,
       totalCapitalGain,
       perAssetData,
@@ -123,7 +123,7 @@ export class PhysicalAssetsProcessor {
         acc.totalInterest += curr.totalInterest;
         acc.totalPrincipalPaid += curr.totalPrincipalPaid;
         acc.totalUnpaidInterest += curr.totalUnpaidInterest;
-        acc.totalPurchaseExpense += curr.totalPurchaseExpense;
+        acc.totalPurchaseOutlay += curr.totalPurchaseOutlay;
         acc.totalSaleProceeds += curr.totalSaleProceeds;
         acc.totalCapitalGain += curr.totalCapitalGain;
 
@@ -135,7 +135,7 @@ export class PhysicalAssetsProcessor {
             interest: (acc.perAssetData[assetID]?.interest ?? 0) + assetData.interest,
             principalPaid: (acc.perAssetData[assetID]?.principalPaid ?? 0) + assetData.principalPaid,
             unpaidInterest: (acc.perAssetData[assetID]?.unpaidInterest ?? 0) + assetData.unpaidInterest,
-            purchaseExpense: (acc.perAssetData[assetID]?.purchaseExpense ?? 0) + assetData.purchaseExpense,
+            purchaseOutlay: (acc.perAssetData[assetID]?.purchaseOutlay ?? 0) + assetData.purchaseOutlay,
             saleProceeds: (acc.perAssetData[assetID]?.saleProceeds ?? 0) + assetData.saleProceeds,
             capitalGain: (acc.perAssetData[assetID]?.capitalGain ?? 0) + assetData.capitalGain,
           };
@@ -152,7 +152,7 @@ export class PhysicalAssetsProcessor {
         totalInterest: 0,
         totalPrincipalPaid: 0,
         totalUnpaidInterest: 0,
-        totalPurchaseExpense: 0,
+        totalPurchaseOutlay: 0,
         totalSaleProceeds: 0,
         totalCapitalGain: 0,
         perAssetData: {},
@@ -167,7 +167,7 @@ export interface PhysicalAssetsData {
   totalEquity: number;
   totalAppreciation: number;
   totalLoanPayment: number;
-  totalPurchaseExpense: number;
+  totalPurchaseOutlay: number;
   totalSaleProceeds: number;
   totalCapitalGain: number;
   totalInterest: number;
@@ -185,7 +185,7 @@ export interface PhysicalAssetData {
   paymentType: 'loan' | 'cash';
   appreciation: number;
   loanPayment: number;
-  purchaseExpense: number;
+  purchaseOutlay: number;
   saleProceeds: number;
   capitalGain: number;
   interest: number;
@@ -375,12 +375,12 @@ export class PhysicalAsset {
     return this.getIsSimTimeAtOrAfterTimePoint(simulationState, this.purchaseDate);
   }
 
-  purchase(): { purchaseExpense: number } {
+  purchase(): { purchaseOutlay: number } {
     if (this.ownershipStatus !== 'pending') throw new Error('Asset is not pending');
 
     this.ownershipStatus = 'owned';
 
-    return { purchaseExpense: this.paymentMethod.type === 'loan' ? (this.paymentMethod.downPayment ?? 0) : this.purchasePrice };
+    return { purchaseOutlay: this.paymentMethod.type === 'loan' ? (this.paymentMethod.downPayment ?? 0) : this.purchasePrice };
   }
 
   private getIsSimTimeAtOrAfterTimePoint(simulationState: SimulationState, timePoint: TimePoint): boolean {

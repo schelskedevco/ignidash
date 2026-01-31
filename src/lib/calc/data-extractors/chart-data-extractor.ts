@@ -47,8 +47,8 @@ export abstract class ChartDataExtractor {
         equity,
         debt: debtBalance,
         netWorth,
-        assetsPurchased: annualAssetsPurchased,
-        assetsSold: annualAssetsSold,
+        assetPurchaseOutlay: annualAssetPurchaseOutlay,
+        assetSaleProceeds: annualAssetSaleProceeds,
         appreciation: annualAssetAppreciation,
         debtPaydown: annualDebtPaydown,
         unsecuredDebtIncurred: annualUnsecuredDebtIncurred,
@@ -58,8 +58,8 @@ export abstract class ChartDataExtractor {
         netPortfolioChange +
         annualAssetAppreciation +
         annualDebtPaydown +
-        annualAssetsPurchased -
-        annualAssetsSold -
+        annualAssetPurchaseOutlay -
+        annualAssetSaleProceeds -
         annualUnsecuredDebtIncurred;
 
       return {
@@ -81,8 +81,8 @@ export abstract class ChartDataExtractor {
         equity,
         debtBalance,
         netWorth,
-        annualAssetsPurchased,
-        annualAssetsSold,
+        annualAssetPurchaseOutlay,
+        annualAssetSaleProceeds,
         annualDebtPaydown,
         annualUnsecuredDebtIncurred,
         netWorthChange,
@@ -117,8 +117,8 @@ export abstract class ChartDataExtractor {
         surplusDeficit,
         amountInvested,
         amountLiquidated,
-        assetsPurchased,
-        assetsSold,
+        assetPurchaseOutlay,
+        assetSaleProceeds,
         netCashFlow,
       } = SimulationDataExtractor.getCashFlowData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
@@ -147,8 +147,8 @@ export abstract class ChartDataExtractor {
         savingsRate,
         amountInvested,
         amountLiquidated,
-        assetsPurchased,
-        assetsSold,
+        assetPurchaseOutlay,
+        assetSaleProceeds,
         netCashFlow,
       };
     });
