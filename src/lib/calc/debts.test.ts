@@ -362,6 +362,55 @@ describe('Debt Class', () => {
       expect(debt.getIsActive(simState)).toBe(false);
     });
   });
+
+  describe('incurDebt()', () => {
+    it('returns 0 for pre-existing debt (startDate.type === now)', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 10000,
+          startDate: { type: 'now' },
+        })
+      );
+
+      // Pre-existing debts are already incurred
+      expect(debt.incurDebt()).toBe(0);
+    });
+
+    it('returns balance on first call for future debt', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 25000,
+          startDate: { type: 'customAge', age: 40 },
+        })
+      );
+
+      // First call returns the balance
+      expect(debt.incurDebt()).toBe(25000);
+    });
+
+    it('returns 0 on second call (already incurred)', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 25000,
+          startDate: { type: 'customAge', age: 40 },
+        })
+      );
+
+      expect(debt.incurDebt()).toBe(25000); // First call
+      expect(debt.incurDebt()).toBe(0); // Second call
+    });
+
+    it('returns 0 for debt with $0 balance', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 0,
+          startDate: { type: 'customAge', age: 40 },
+        })
+      );
+
+      expect(debt.incurDebt()).toBe(0);
+    });
+  });
 });
 
 // ============================================================================
@@ -681,6 +730,120 @@ describe('DebtsProcessor', () => {
     // Month 4: no more payments
     result = processor.process(ZERO_INFLATION);
     expect(result.totalPayment).toBe(0);
+  });
+
+  it('totalUnsecuredDebtIncurred is 0 for pre-existing debts', () => {
+    const debts = new Debts([
+      createDebtInput({
+        id: 'existing',
+        balance: 10000,
+        startDate: { type: 'now' },
+      }),
+    ]);
+
+    const simState = createSimulationState();
+    const processor = new DebtsProcessor(simState, debts);
+
+    const result = processor.process(ZERO_INFLATION);
+    expect(result.totalUnsecuredDebtIncurred).toBe(0);
+
+    // Second month should also be 0
+    const result2 = processor.process(ZERO_INFLATION);
+    expect(result2.totalUnsecuredDebtIncurred).toBe(0);
+  });
+
+  it('totalUnsecuredDebtIncurred captures debt when it becomes active', () => {
+    const debts = new Debts([
+      createDebtInput({
+        id: 'future-debt',
+        balance: 15000,
+        startDate: { type: 'customAge', age: 40 },
+      }),
+    ]);
+
+    // Before debt is active (age 35)
+    let simState = createSimulationState({ time: { age: 35, year: 2024, month: 1, date: new Date(2024, 0, 1) } });
+    let processor = new DebtsProcessor(simState, debts);
+    let result = processor.process(ZERO_INFLATION);
+    expect(result.totalUnsecuredDebtIncurred).toBe(0);
+
+    // When debt becomes active (age 40)
+    simState = createSimulationState({ time: { age: 40, year: 2029, month: 1, date: new Date(2029, 0, 1) } });
+    processor = new DebtsProcessor(simState, debts);
+    result = processor.process(ZERO_INFLATION);
+    expect(result.totalUnsecuredDebtIncurred).toBe(15000);
+
+    // Subsequent months should be 0 (already incurred)
+    result = processor.process(ZERO_INFLATION);
+    expect(result.totalUnsecuredDebtIncurred).toBe(0);
+  });
+
+  it('totalUnsecuredDebtIncurred sums multiple debts incurred in same period', () => {
+    const debts = new Debts([
+      createDebtInput({
+        id: 'debt1',
+        balance: 5000,
+        startDate: { type: 'customAge', age: 40 },
+      }),
+      createDebtInput({
+        id: 'debt2',
+        balance: 8000,
+        startDate: { type: 'customAge', age: 40 },
+      }),
+    ]);
+
+    const simState = createSimulationState({ time: { age: 40, year: 2029, month: 1, date: new Date(2029, 0, 1) } });
+    const processor = new DebtsProcessor(simState, debts);
+
+    const result = processor.process(ZERO_INFLATION);
+    expect(result.totalUnsecuredDebtIncurred).toBe(13000); // 5000 + 8000
+  });
+
+  it('totalUnsecuredDebtIncurred captures debt at retirement when startDate is atRetirement', () => {
+    const debts = new Debts([
+      createDebtInput({
+        id: 'retirement-debt',
+        balance: 20000,
+        startDate: { type: 'atRetirement' },
+      }),
+    ]);
+
+    // Accumulation phase - not active
+    let simState = createSimulationState({ phase: { name: 'accumulation' } });
+    let processor = new DebtsProcessor(simState, debts);
+    let result = processor.process(ZERO_INFLATION);
+    expect(result.totalUnsecuredDebtIncurred).toBe(0);
+
+    // Retirement phase - becomes active
+    simState = createSimulationState({ phase: { name: 'retirement' } });
+    processor = new DebtsProcessor(simState, debts);
+    result = processor.process(ZERO_INFLATION);
+    expect(result.totalUnsecuredDebtIncurred).toBe(20000);
+  });
+
+  it('getAnnualData() accumulates totalUnsecuredDebtIncurred across months', () => {
+    const debts = new Debts([
+      createDebtInput({
+        id: 'debt',
+        balance: 12000,
+        apr: 0,
+        monthlyPayment: 1000,
+        startDate: { type: 'customAge', age: 40 },
+      }),
+    ]);
+
+    const simState = createSimulationState({ time: { age: 40, year: 2029, month: 1, date: new Date(2029, 0, 1) } });
+    const processor = new DebtsProcessor(simState, debts);
+
+    // Process 12 months
+    for (let i = 0; i < 12; i++) {
+      processor.process(ZERO_INFLATION);
+    }
+
+    const annualData = processor.getAnnualData();
+
+    // Debt was incurred once in the first month
+    expect(annualData.totalUnsecuredDebtIncurred).toBe(12000);
   });
 });
 

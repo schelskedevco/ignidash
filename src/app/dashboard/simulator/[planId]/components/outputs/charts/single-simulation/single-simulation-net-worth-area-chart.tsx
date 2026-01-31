@@ -272,10 +272,21 @@ export default function SingleSimulationNetWorthAreaChart({
     case 'netWorthChange':
       lineDataKeys.push('netWorthChange');
 
-      barDataKeys.push('netPortfolioChange', 'annualAssetAppreciation', 'annualDebtPaydown', 'annualAssetsPurchased', 'annualAssetsSold');
-      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
+      barDataKeys.push(
+        'netPortfolioChange',
+        'annualAssetAppreciation',
+        'annualDebtPaydown',
+        'annualAssetsPurchased',
+        'annualAssetsSold',
+        'annualUnsecuredDebtIncurred'
+      );
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)', 'var(--chart-6)');
 
-      chartData = chartData.map((entry) => ({ ...entry, annualAssetsSold: -entry.annualAssetsSold }));
+      chartData = chartData.map((entry) => ({
+        ...entry,
+        annualAssetsSold: -entry.annualAssetsSold,
+        annualUnsecuredDebtIncurred: -entry.annualUnsecuredDebtIncurred,
+      }));
 
       stackOffset = 'sign';
       break;
