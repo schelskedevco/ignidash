@@ -11,6 +11,8 @@ import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { formatNumber } from '@/lib/utils';
+import { physicalAssetTimeFrameForDisplay } from '@/lib/utils/data-display-formatters';
+import { estimatePayoffMonths, formatPayoffEstimate } from '@/lib/utils/payoff-estimator';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { accountTypeForDisplay, taxCategoryFromAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import type { TaxCategory } from '@/lib/calc/asset';
@@ -37,11 +39,32 @@ function getAccountDesc(account: AccountInputs) {
 }
 
 function getPhysicalAssetDesc(asset: PhysicalAssetInputs) {
-  return (
-    <p>
-      {formatNumber(asset.marketValue ?? asset.purchasePrice, 2, '$')} | {formatNumber(asset.appreciationRate, 1)}% appreciation
-    </p>
-  );
+  const value = formatNumber(asset.marketValue ?? asset.purchasePrice, 2, '$');
+
+  switch (asset.paymentMethod.type) {
+    case 'cash':
+      return (
+        <>
+          <p>{value} | No monthly payment</p>
+          <p>{physicalAssetTimeFrameForDisplay(asset.purchaseDate, asset.saleDate)}</p>
+        </>
+      );
+    case 'loan': {
+      const { loanBalance: balance, monthlyPayment, apr } = asset.paymentMethod;
+      const payoffMonths = estimatePayoffMonths({ balance, monthlyPayment, apr, interestType: 'simple' });
+      return (
+        <>
+          <p>
+            {value} | {formatNumber(monthlyPayment, 2, '$')} / mo
+          </p>
+          <p>
+            {physicalAssetTimeFrameForDisplay(asset.purchaseDate)}
+            {payoffMonths !== null && ` → ${formatPayoffEstimate(payoffMonths)} (est.)`}
+          </p>
+        </>
+      );
+    }
+  }
 }
 
 const ACCOUNT_COLOR_MAP: Record<TaxCategory, string> = {
@@ -162,7 +185,7 @@ export default function NetWorthSection(props: NetWorthSectionProps) {
                       leftAddOn={<HomeIcon className="size-8" />}
                       onDropdownClickEdit={() => handlePhysicalAssetDropdownClickEdit(asset)}
                       onDropdownClickDelete={() => setPhysicalAssetToDelete({ id, name: asset.name })}
-                      colorClassName="bg-[var(--chart-7)]"
+                      colorClassName="bg-[var(--chart-8)]"
                     />
                   ))}
               </ul>

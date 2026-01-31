@@ -77,17 +77,17 @@ export const growthForDisplay = (growthRate: Growth['growthRate'], growthLimit: 
 export const frequencyForDisplay = (frequency: Frequency) => {
   switch (frequency) {
     case 'yearly':
-      return 'yearly';
+      return '/ yr';
     case 'oneTime':
       return 'one-time';
     case 'quarterly':
       return 'quarterly';
     case 'monthly':
-      return 'monthly';
+      return '/ mo';
     case 'biweekly':
       return 'biweekly';
     case 'weekly':
-      return 'weekly';
+      return '/ wk';
   }
 };
 
