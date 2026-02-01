@@ -23,7 +23,7 @@ export class DebtsProcessor {
 
     const activeDebts = this.debts.getActiveDebts(this.simulationState);
     for (const debt of activeDebts) {
-      totalUnsecuredDebtIncurred += debt.incurDebt();
+      totalUnsecuredDebtIncurred += debt.incurUnsecuredDebt();
 
       const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflationRate);
       debt.applyPayment(monthlyPaymentDue, interest);
@@ -169,7 +169,7 @@ export class Debt {
     this.hasBeenIncurred = data.startDate.type === 'now';
   }
 
-  incurDebt(): number {
+  incurUnsecuredDebt(): number {
     if (this.hasBeenIncurred) return 0;
     this.hasBeenIncurred = true;
     return this.balance;

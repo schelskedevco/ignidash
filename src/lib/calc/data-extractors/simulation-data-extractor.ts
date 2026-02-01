@@ -95,15 +95,16 @@ export interface HoldingsByAssetClass {
 export interface AssetsAndLiabilitiesData {
   marketValue: number;
   equity: number;
-  debt: number;
+  debtBalance: number;
   netWorth: number;
-  assetPurchaseOutlay: number;
-  assetSaleProceeds: number;
   appreciation: number;
-  interest: number;
-  debtPayments: number;
-  debtPaydown: number;
-  unsecuredDebtIncurred: number;
+  debtIncurred: number;
+  principalPaid: number;
+  purchaseMarketValue: number;
+  saleMarketValue: number;
+  securedDebtPaidAtSale: number;
+  netAssetChange: number;
+  netDebtReduction: number;
 }
 
 export interface LifetimeTaxAmounts {
@@ -466,32 +467,33 @@ export class SimulationDataExtractor {
 
     const marketValue = physicalAssetsData?.totalMarketValue ?? 0;
     const equity = physicalAssetsData?.totalEquity ?? 0;
-    const debt = (debtsData?.totalDebtBalance ?? 0) + (physicalAssetsData?.totalLoanBalance ?? 0);
-    const netWorth = portfolioData.totalValue + marketValue - debt;
+    const debtBalance = (debtsData?.totalDebtBalance ?? 0) + (physicalAssetsData?.totalLoanBalance ?? 0);
+    const netWorth = portfolioData.totalValue + marketValue - debtBalance;
 
-    const assetPurchaseOutlay = physicalAssetsData?.totalPurchaseOutlay ?? 0;
-    const assetSaleProceeds = physicalAssetsData?.totalSaleProceeds ?? 0;
+    const debtIncurred = (physicalAssetsData?.totalSecuredDebtIncurred ?? 0) + (debtsData?.totalUnsecuredDebtIncurred ?? 0);
+    const principalPaid = (physicalAssetsData?.totalPrincipalPaid ?? 0) + (debtsData?.totalPrincipalPaid ?? 0);
 
     const appreciation = physicalAssetsData?.totalAppreciation ?? 0;
-    const interest = (physicalAssetsData?.totalInterest ?? 0) + (debtsData?.totalInterest ?? 0);
-    const debtPayments = (physicalAssetsData?.totalLoanPayment ?? 0) + (debtsData?.totalPayment ?? 0);
-    const unsecuredDebtIncurred = debtsData?.totalUnsecuredDebtIncurred ?? 0;
+    const purchaseMarketValue = physicalAssetsData?.totalPurchaseMarketValue ?? 0;
+    const saleMarketValue = physicalAssetsData?.totalSaleMarketValue ?? 0;
+    const securedDebtPaidAtSale = physicalAssetsData?.totalSecuredDebtPaidAtSale ?? 0;
 
-    // Net change in debt balance (positive = debt reduced). Works with raw (possibly negative) values.
-    const debtPaydown = debtPayments - interest;
+    const netAssetChange = appreciation + purchaseMarketValue - saleMarketValue;
+    const netDebtReduction = principalPaid + securedDebtPaidAtSale - debtIncurred;
 
     return {
       marketValue,
       equity,
-      debt,
+      debtBalance,
       netWorth,
-      assetPurchaseOutlay,
-      assetSaleProceeds,
       appreciation,
-      interest,
-      debtPayments,
-      debtPaydown,
-      unsecuredDebtIncurred,
+      debtIncurred,
+      principalPaid,
+      purchaseMarketValue,
+      saleMarketValue,
+      securedDebtPaidAtSale,
+      netAssetChange,
+      netDebtReduction,
     };
   }
 

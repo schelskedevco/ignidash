@@ -373,7 +373,7 @@ describe('Debt Class', () => {
       );
 
       // Pre-existing debts are already incurred
-      expect(debt.incurDebt()).toBe(0);
+      expect(debt.incurUnsecuredDebt()).toBe(0);
     });
 
     it('returns balance on first call for future debt', () => {
@@ -385,7 +385,7 @@ describe('Debt Class', () => {
       );
 
       // First call returns the balance
-      expect(debt.incurDebt()).toBe(25000);
+      expect(debt.incurUnsecuredDebt()).toBe(25000);
     });
 
     it('returns 0 on second call (already incurred)', () => {
@@ -396,8 +396,8 @@ describe('Debt Class', () => {
         })
       );
 
-      expect(debt.incurDebt()).toBe(25000); // First call
-      expect(debt.incurDebt()).toBe(0); // Second call
+      expect(debt.incurUnsecuredDebt()).toBe(25000); // First call
+      expect(debt.incurUnsecuredDebt()).toBe(0); // Second call
     });
 
     it('returns 0 for debt with $0 balance', () => {
@@ -408,7 +408,7 @@ describe('Debt Class', () => {
         })
       );
 
-      expect(debt.incurDebt()).toBe(0);
+      expect(debt.incurUnsecuredDebt()).toBe(0);
     });
   });
 });

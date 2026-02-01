@@ -1027,11 +1027,26 @@ describe('Physical Assets Integration', () => {
     const saleYearData = result.data.find((d) => d.physicalAssets?.perAssetData['asset-1']?.isSold === true);
     expect(saleYearData).toBeDefined();
 
+    const physicalAssetsData = saleYearData!.physicalAssets!;
+
     // Sale proceeds should be negative (underwater: marketValue < loanBalance)
     // After ~1 year at -50%: marketValue ~= 500,000 * 0.5 = 250,000
     // Loan balance after 1 year is still ~490,000 (mostly interest early in loan)
     // saleProceeds = marketValue - loanBalance = 250,000 - 490,000 = -240,000 (approximately)
-    expect(saleYearData!.physicalAssets!.totalSaleProceeds).toBeLessThan(0);
+    expect(physicalAssetsData.totalSaleProceeds).toBeLessThan(0);
+
+    // Verify the new fields for underwater sales are correctly populated:
+    // saleMarketValue should be positive (the actual market value at sale)
+    expect(physicalAssetsData.totalSaleMarketValue).toBeGreaterThan(0);
+    // securedDebtPaidAtSale should be the loan balance that was paid off
+    expect(physicalAssetsData.totalSecuredDebtPaidAtSale).toBeGreaterThan(0);
+    // securedDebtPaidAtSale > saleMarketValue for underwater sales
+    expect(physicalAssetsData.totalSecuredDebtPaidAtSale).toBeGreaterThan(physicalAssetsData.totalSaleMarketValue);
+    // Verify the relationship: saleProceeds = saleMarketValue - securedDebtPaidAtSale
+    expect(physicalAssetsData.totalSaleProceeds).toBeCloseTo(
+      physicalAssetsData.totalSaleMarketValue - physicalAssetsData.totalSecuredDebtPaidAtSale,
+      0
+    );
 
     // Verify the simulation continues and handles the deficit
     // The negative proceeds reduce surplus, requiring withdrawals or reducing contributions

@@ -431,8 +431,12 @@ export const createEmptyPhysicalAssetsData = (overrides?: Partial<PhysicalAssets
   totalPrincipalPaid: overrides?.totalPrincipalPaid ?? 0,
   totalUnpaidInterest: overrides?.totalUnpaidInterest ?? 0,
   totalPurchaseOutlay: overrides?.totalPurchaseOutlay ?? 0,
+  totalPurchaseMarketValue: overrides?.totalPurchaseMarketValue ?? 0,
   totalSaleProceeds: overrides?.totalSaleProceeds ?? 0,
+  totalSaleMarketValue: overrides?.totalSaleMarketValue ?? 0,
   totalCapitalGain: overrides?.totalCapitalGain ?? 0,
+  totalSecuredDebtIncurred: overrides?.totalSecuredDebtIncurred ?? 0,
+  totalSecuredDebtPaidAtSale: overrides?.totalSecuredDebtPaidAtSale ?? 0,
   perAssetData: overrides?.perAssetData ?? {},
 });
 

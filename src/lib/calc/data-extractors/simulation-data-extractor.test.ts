@@ -903,10 +903,10 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
     phase: { name: 'accumulation' },
   });
 
-  it('calculates debtPaydown as payments minus interest (works with negative interest)', () => {
+  it('calculates principalPaid as payments minus interest (works with negative interest)', () => {
     // When inflation > APR:
     // - Raw interest is negative (e.g., -100)
-    // - debtPaydown = payment - interest = 0 - (-100) = 100
+    // - principalPaid = payment - interest = 0 - (-100) = 100
     // - This correctly reflects debt eroding due to inflation
     const dp = createAssetLiabilityDataPoint({
       portfolioValue: 1000000,
@@ -919,14 +919,11 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
 
     const data = SimulationDataExtractor.getAssetsAndLiabilitiesData(dp);
 
-    // interest should be raw (can be negative)
-    expect(data.interest).toBe(-100);
-
-    // debtPaydown = payments - interest = 0 - (-100) = 100
-    expect(data.debtPaydown).toBe(100);
+    // principalPaid = payments - interest = 0 - (-100) = 100
+    expect(data.principalPaid).toBe(100);
   });
 
-  it('correctly calculates debtPaydown with positive interest (normal scenario)', () => {
+  it('correctly calculates principalPaid with positive interest (normal scenario)', () => {
     const dp = createAssetLiabilityDataPoint({
       portfolioValue: 1000000,
       debtBalance: 10000,
@@ -938,22 +935,13 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
 
     const data = SimulationDataExtractor.getAssetsAndLiabilitiesData(dp);
 
-    expect(data.interest).toBe(50);
-    // debtPaydown = payments - interest = 500 - 50 = 450
-    expect(data.debtPaydown).toBe(450);
+    // principalPaid = payments - interest = 500 - 50 = 450
+    expect(data.principalPaid).toBe(450);
   });
 
-  it('correctly calculates debtPaydown with underpayment (payment < interest) - regression test', () => {
-    // REGRESSION TEST: This scenario catches the bug where debtPaydown was calculated as
-    // `principalPayments - unpaidInterest` instead of `payments - interest`.
-    //
-    // With the OLD (broken) formula:
-    //   principalPaid = 100 - 200 = -100 (raw)
-    //   unpaidInterest = max(0, 200 - 100) = 100 (capped at 0)
-    //   debtPaydown = -100 - 100 = -200  ❌ WRONG!
-    //
-    // With the NEW (correct) formula:
-    //   debtPaydown = payments - interest = 100 - 200 = -100  ✓ CORRECT
+  it('correctly calculates principalPaid with underpayment (payment < interest) - regression test', () => {
+    // REGRESSION TEST: This scenario catches the bug where principalPaid was calculated
+    // incorrectly. When payment < interest, principalPaid should be negative.
     //
     // The debt balance only increases by 100 (the unpaid interest), not 200.
     const dp = createAssetLiabilityDataPoint({
@@ -967,28 +955,18 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
 
     const data = SimulationDataExtractor.getAssetsAndLiabilitiesData(dp);
 
-    // debtPaydown = payments - interest = 100 - 200 = -100
+    // principalPaid = payments - interest = 100 - 200 = -100
     // This correctly represents the debt balance increasing by 100
-    expect(data.debtPaydown).toBe(-100);
-
-    // If the old broken formula were used, this would be -200 and fail:
-    // expect(data.debtPaydown).toBe(-200); // WRONG - would pass with old formula
+    expect(data.principalPaid).toBe(-100);
   });
 
-  it('correctly calculates debtPaydown with negative interest AND payment - regression test', () => {
+  it('correctly calculates principalPaid with negative interest AND payment - regression test', () => {
     // This tests the combined scenario: inflation > APR with an active payment
     // The debt should decrease by payment + |negative interest|
     //
-    // With the OLD (broken) formula:
-    //   principalPaid = 500 - (-100) = 600 (raw)
-    //   unpaidInterest = max(0, -100 - 500) = 0 (capped at 0)
-    //   debtPaydown = 600 - 0 = 600  ✓ (happens to be correct in this case!)
+    // principalPaid = payments - interest = 500 - (-100) = 600
     //
-    // With the NEW (correct) formula:
-    //   debtPaydown = payments - interest = 500 - (-100) = 600  ✓
-    //
-    // Both formulas give the same answer here, but having this test ensures
-    // the formula continues to work correctly for this scenario.
+    // Having this test ensures the formula works correctly for this scenario.
     const dp = createAssetLiabilityDataPoint({
       portfolioValue: 1000000,
       debtBalance: 10000,
@@ -1000,9 +978,9 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
 
     const data = SimulationDataExtractor.getAssetsAndLiabilitiesData(dp);
 
-    // debtPaydown = payments - interest = 500 - (-100) = 600
+    // principalPaid = payments - interest = 500 - (-100) = 600
     // Debt decreased by 600 (500 from payment + 100 from inflation erosion)
-    expect(data.debtPaydown).toBe(600);
+    expect(data.principalPaid).toBe(600);
   });
 });
 

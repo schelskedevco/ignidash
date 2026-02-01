@@ -59,16 +59,8 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
       desktop: ['Annual Returns', 'Annual Contributions', 'Annual Withdrawals'],
     },
     netWorthChange: {
-      mobile: ['Returns', 'Contributions', 'Withdrawals', 'Appreciation', 'Paydown', 'Purchase Outlay', 'Sale Proceeds'],
-      desktop: [
-        'Annual Returns',
-        'Annual Contributions',
-        'Annual Withdrawals',
-        'Annual Appreciation',
-        'Annual Debt Paydown',
-        'Annual Purchase Outlay',
-        'Annual Sale Proceeds',
-      ],
+      mobile: ['Portfolio Change', 'Asset Change', 'Debt Reduction'],
+      desktop: ['Net Portfolio Change', 'Net Asset Change', 'Net Debt Reduction'],
     },
   };
 
@@ -93,28 +85,13 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
       break;
     }
     case 'netWorthChange': {
-      const [returnsLabel, contributionsLabel, withdrawalsLabel, appreciationLabel, paydownLabel, purchaseOutlayLabel, saleProceedsLabel] =
-        getLabelsForScreenSize(dataView, isSmallScreen);
+      const [portfolioChangeLabel, assetChangeLabel, debtReductionLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
 
-      transformedChartData = chartData.flatMap(
-        ({
-          annualReturns,
-          annualContributions,
-          annualWithdrawals,
-          annualAssetAppreciation,
-          annualDebtPaydown,
-          annualAssetPurchaseOutlay,
-          annualAssetSaleProceeds,
-        }) => [
-          { name: returnsLabel, amount: annualReturns, color: 'var(--chart-1)' },
-          { name: contributionsLabel, amount: annualContributions, color: 'var(--chart-1)' },
-          { name: withdrawalsLabel, amount: -annualWithdrawals, color: 'var(--chart-1)' },
-          { name: appreciationLabel, amount: annualAssetAppreciation, color: 'var(--chart-2)' },
-          { name: paydownLabel, amount: annualDebtPaydown, color: 'var(--chart-3)' },
-          { name: purchaseOutlayLabel, amount: annualAssetPurchaseOutlay, color: 'var(--chart-4)' },
-          { name: saleProceedsLabel, amount: -annualAssetSaleProceeds, color: 'var(--chart-5)' },
-        ]
-      );
+      transformedChartData = chartData.flatMap(({ netPortfolioChange, netAssetChange, netDebtReduction }) => [
+        { name: portfolioChangeLabel, amount: netPortfolioChange, color: 'var(--chart-1)' },
+        { name: assetChangeLabel, amount: netAssetChange, color: 'var(--chart-2)' },
+        { name: debtReductionLabel, amount: netDebtReduction, color: 'var(--chart-3)' },
+      ]);
       break;
     }
   }
