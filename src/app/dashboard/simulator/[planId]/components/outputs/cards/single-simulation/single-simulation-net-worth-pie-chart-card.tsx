@@ -36,6 +36,7 @@ export default function SingleSimulationNetWorthPieChartCard({
 
   let nameForTotalValue = 'Total Value';
   let totalValue = 0;
+  let totalAbsoluteValue = 0;
 
   switch (dataView) {
     case 'assetClass':
@@ -51,6 +52,7 @@ export default function SingleSimulationNetWorthPieChartCard({
 
       nameForTotalValue = 'Total Portfolio Value';
       totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+      totalAbsoluteValue = totalValue;
       break;
     case 'taxCategory':
       title = 'By Tax Category';
@@ -66,6 +68,7 @@ export default function SingleSimulationNetWorthPieChartCard({
 
       nameForTotalValue = 'Total Portfolio Value';
       totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+      totalAbsoluteValue = totalValue;
       break;
     case 'netPortfolioChange':
       title = 'Net Portfolio Change';
@@ -86,6 +89,7 @@ export default function SingleSimulationNetWorthPieChartCard({
 
       nameForTotalValue = 'Net Worth';
       totalValue = chartData.map(({ name, value }) => (name === 'debtBalance' ? -value : value)).reduce((sum, value) => sum + value, 0);
+      totalAbsoluteValue = chartData.reduce((sum, item) => sum + item.value, 0);
       break;
     case 'netWorthChange':
       title = 'Net Worth Change';
@@ -115,6 +119,7 @@ export default function SingleSimulationNetWorthPieChartCard({
 
         nameForTotalValue = 'Account Value';
         totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+        totalAbsoluteValue = totalValue;
         break;
       }
 
@@ -131,6 +136,7 @@ export default function SingleSimulationNetWorthPieChartCard({
 
         nameForTotalValue = 'Market Value';
         totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+        totalAbsoluteValue = totalValue;
         break;
       }
 
@@ -144,6 +150,7 @@ export default function SingleSimulationNetWorthPieChartCard({
 
         nameForTotalValue = 'Debt Balance';
         totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+        totalAbsoluteValue = totalValue;
         break;
       }
 
@@ -158,13 +165,13 @@ export default function SingleSimulationNetWorthPieChartCard({
           <div className="flex-1 sm:pr-6">
             <SingleSimulationNetWorthPieChart chartData={chartData} />
           </div>
-          {totalValue > 0 && (
+          {totalAbsoluteValue > 0 && (
             <div className="hidden flex-1 sm:block sm:pl-6">
               <DescriptionList>
                 {chartData.map(({ name, value }) => (
                   <Fragment key={name}>
                     <DescriptionTerm>{formatChartString(name)}</DescriptionTerm>
-                    <DescriptionDetails>{`${formatNumber(value, 2, '$')} (${formatNumber((value / totalValue) * 100, 1)}%)`}</DescriptionDetails>
+                    <DescriptionDetails>{`${formatNumber(value, 2, '$')} (${formatNumber((value / totalAbsoluteValue) * 100, 1)}%)`}</DescriptionDetails>
                   </Fragment>
                 ))}
                 <DescriptionTerm className="font-bold">{nameForTotalValue}</DescriptionTerm>
