@@ -99,9 +99,9 @@ export interface AssetsAndLiabilitiesData {
   netWorth: number;
   appreciation: number;
   debtIncurred: number;
-  principalPaid: number;
-  purchaseMarketValue: number;
-  saleMarketValue: number;
+  debtPaydown: number;
+  purchasedAssetsValue: number;
+  soldAssetsValue: number;
   securedDebtPaidAtSale: number;
   netAssetChange: number;
   netDebtReduction: number;
@@ -219,21 +219,6 @@ export class SimulationDataExtractor {
     };
   }
 
-  static getTaxAmountsByType(dp: SimulationDataPoint): TaxAmountsByType {
-    const taxesData = dp.taxes;
-    const incomesData = dp.incomes;
-
-    const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
-    const ficaTax = incomesData?.totalFicaTax ?? 0;
-    const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
-    const niit = taxesData?.niit.niitAmount ?? 0;
-    const totalTaxes = incomeTax + ficaTax + capGainsTax + niit;
-    const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
-    const totalTaxesAndPenalties = totalTaxes + earlyWithdrawalPenalties;
-
-    return { incomeTax, ficaTax, capGainsTax, niit, totalTaxes, earlyWithdrawalPenalties, totalTaxesAndPenalties };
-  }
-
   static getCashFlowData(dp: SimulationDataPoint): CashFlowData {
     const incomesData = dp.incomes;
     const expensesData = dp.expenses;
@@ -253,7 +238,7 @@ export class SimulationDataExtractor {
     const debtsData = dp.debts;
     const physicalAssetsData = dp.physicalAssets;
 
-    // Capped at 0 for cash flow display (raw values from processors can be negative with high inflation).
+    // Capped at 0 for cash flow display (raw values from processors can be negative with high inflation)
     const totalDebtPayments = Math.max(0, (debtsData?.totalPayment ?? 0) + (physicalAssetsData?.totalLoanPayment ?? 0));
     const totalInterestPayments = Math.max(0, (debtsData?.totalInterest ?? 0) + (physicalAssetsData?.totalInterest ?? 0));
 
@@ -294,6 +279,22 @@ export class SimulationDataExtractor {
       assetSaleProceeds,
       netCashFlow,
     };
+  }
+
+  static getTaxAmountsByType(dp: SimulationDataPoint): TaxAmountsByType {
+    const incomesData = dp.incomes;
+    const ficaTax = incomesData?.totalFicaTax ?? 0;
+
+    const taxesData = dp.taxes;
+    const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
+    const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+    const niit = taxesData?.niit.niitAmount ?? 0;
+    const totalTaxes = incomeTax + capGainsTax + niit + ficaTax;
+
+    const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
+    const totalTaxesAndPenalties = totalTaxes + earlyWithdrawalPenalties;
+
+    return { incomeTax, ficaTax, capGainsTax, niit, totalTaxes, earlyWithdrawalPenalties, totalTaxesAndPenalties };
   }
 
   static getContributionsByTaxCategory(dp: SimulationDataPoint): ContributionsByTaxCategory {
@@ -462,8 +463,8 @@ export class SimulationDataExtractor {
 
   static getAssetsAndLiabilitiesData(dp: SimulationDataPoint): AssetsAndLiabilitiesData {
     const portfolioData = dp.portfolio;
-    const physicalAssetsData = dp.physicalAssets;
     const debtsData = dp.debts;
+    const physicalAssetsData = dp.physicalAssets;
 
     const marketValue = physicalAssetsData?.totalMarketValue ?? 0;
     const equity = physicalAssetsData?.totalEquity ?? 0;
@@ -471,15 +472,15 @@ export class SimulationDataExtractor {
     const netWorth = portfolioData.totalValue + marketValue - debtBalance;
 
     const debtIncurred = (physicalAssetsData?.totalSecuredDebtIncurred ?? 0) + (debtsData?.totalUnsecuredDebtIncurred ?? 0);
-    const principalPaid = (physicalAssetsData?.totalPrincipalPaid ?? 0) + (debtsData?.totalPrincipalPaid ?? 0);
+    const debtPaydown = (physicalAssetsData?.totalDebtPaydown ?? 0) + (debtsData?.totalDebtPaydown ?? 0);
 
     const appreciation = physicalAssetsData?.totalAppreciation ?? 0;
-    const purchaseMarketValue = physicalAssetsData?.totalPurchaseMarketValue ?? 0;
-    const saleMarketValue = physicalAssetsData?.totalSaleMarketValue ?? 0;
+    const purchasedAssetsValue = physicalAssetsData?.totalPurchaseMarketValue ?? 0;
+    const soldAssetsValue = physicalAssetsData?.totalSaleMarketValue ?? 0;
     const securedDebtPaidAtSale = physicalAssetsData?.totalSecuredDebtPaidAtSale ?? 0;
 
-    const netAssetChange = appreciation + purchaseMarketValue - saleMarketValue;
-    const netDebtReduction = principalPaid + securedDebtPaidAtSale - debtIncurred;
+    const netAssetChange = appreciation + purchasedAssetsValue - soldAssetsValue;
+    const netDebtReduction = debtPaydown + securedDebtPaidAtSale - debtIncurred;
 
     return {
       marketValue,
@@ -488,9 +489,9 @@ export class SimulationDataExtractor {
       netWorth,
       appreciation,
       debtIncurred,
-      principalPaid,
-      purchaseMarketValue,
-      saleMarketValue,
+      debtPaydown,
+      purchasedAssetsValue,
+      soldAssetsValue,
       securedDebtPaidAtSale,
       netAssetChange,
       netDebtReduction,

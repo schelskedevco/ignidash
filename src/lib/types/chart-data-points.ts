@@ -26,11 +26,11 @@ export interface SingleSimulationNetWorthChartDataPoint {
   debtBalance: number;
   netWorth: number;
   annualAssetAppreciation: number;
-  annualPurchaseMarketValue: number;
-  annualSaleMarketValue: number;
+  annualPurchasedAssetsValue: number;
+  annualSoldAssetsValue: number;
   netAssetChange: number;
   annualDebtIncurred: number;
-  annualPrincipalPaid: number;
+  annualDebtPaydown: number;
   annualSecuredDebtPaidAtSale: number;
   netDebtReduction: number;
   netWorthChange: number;

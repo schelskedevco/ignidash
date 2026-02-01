@@ -121,8 +121,9 @@ function createNetWorthTestDataPoint(options: {
           totalAppreciation: options.appreciation ?? 0,
           totalLoanPayment: options.loanPayment ?? 0,
           totalInterest: options.loanInterest ?? 0,
-          totalPrincipalPaid: (options.loanPayment ?? 0) - (options.loanInterest ?? 0),
+          totalPrincipalPaid: Math.max(0, (options.loanPayment ?? 0) - (options.loanInterest ?? 0)),
           totalUnpaidInterest: 0,
+          totalDebtPaydown: (options.loanPayment ?? 0) - (options.loanInterest ?? 0),
           totalPurchaseOutlay: options.purchaseOutlay ?? 0,
           totalPurchaseMarketValue: purchaseMarketValue,
           totalSaleProceeds: options.saleProceeds ?? 0,
@@ -140,8 +141,9 @@ function createNetWorthTestDataPoint(options: {
           totalDebtBalance: options.debtBalance,
           totalPayment: options.debtPayment ?? 0,
           totalInterest: options.debtInterest ?? 0,
-          totalPrincipalPaid: (options.debtPayment ?? 0) - (options.debtInterest ?? 0),
+          totalPrincipalPaid: Math.max(0, (options.debtPayment ?? 0) - (options.debtInterest ?? 0)),
           totalUnpaidInterest: 0,
+          totalDebtPaydown: (options.debtPayment ?? 0) - (options.debtInterest ?? 0),
           totalUnsecuredDebtIncurred: options.unsecuredDebtIncurred ?? 0,
           perDebtData: {},
         }
@@ -342,7 +344,7 @@ describe('ChartDataExtractor - netWorthChange Invariant', () => {
     expect(result[1].netWorth).toBe(232000);
     expect(result[1].netWorthChange).toBeCloseTo(32000, 2);
     expect(result[1].annualAssetAppreciation).toBe(12000);
-    expect(result[1].annualPrincipalPaid).toBe(20000);
+    expect(result[1].annualDebtPaydown).toBe(20000);
   });
 
   it('verifies invariant when selling a cash-purchased asset (no loan)', () => {
@@ -548,7 +550,7 @@ describe('ChartDataExtractor - netWorthChange Invariant', () => {
     expect(result[0].netWorth).toBe(50000);
     expect(result[1].netWorth).toBe(51000);
     expect(result[1].netWorthChange).toBeCloseTo(1000, 2);
-    expect(result[1].annualPrincipalPaid).toBe(1000);
+    expect(result[1].annualDebtPaydown).toBe(1000);
   });
 
   it('verifies invariant across multiple years', () => {
@@ -677,7 +679,7 @@ describe('ChartDataExtractor - netWorthChange Invariant', () => {
     expect(result[0].netWorth).toBe(200000);
     expect(result[1].netWorth).toBe(200000);
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualPurchaseMarketValue).toBe(400000);
+    expect(result[1].annualPurchasedAssetsValue).toBe(400000);
   });
 
   it('verifies invariant for financed asset with ongoing appreciation and payments', () => {
@@ -723,7 +725,7 @@ describe('ChartDataExtractor - netWorthChange Invariant', () => {
     expect(result[1].netWorth).toBe(224000);
     expect(result[1].netWorthChange).toBeCloseTo(24000, 2);
     expect(result[1].annualAssetAppreciation).toBe(12000);
-    expect(result[1].annualPrincipalPaid).toBe(12000);
+    expect(result[1].annualDebtPaydown).toBe(12000);
   });
 
   it('verifies invariant when paying off debt with negative interest (high inflation)', () => {
@@ -762,7 +764,7 @@ describe('ChartDataExtractor - netWorthChange Invariant', () => {
     expect(result[0].netWorth).toBe(0);
     expect(result[1].netWorth).toBe(8000);
     expect(result[1].netWorthChange).toBeCloseTo(8000, 2);
-    expect(result[1].annualPrincipalPaid).toBe(8000); // 6000 - (-2000) = 8000
+    expect(result[1].annualDebtPaydown).toBe(8000); // 6000 - (-2000) = 8000
   });
 
   it('verifies invariant with combined secured and unsecured debt', () => {
@@ -809,7 +811,7 @@ describe('ChartDataExtractor - netWorthChange Invariant', () => {
     expect(result[0].netWorth).toBe(190000);
     expect(result[1].netWorth).toBe(197000);
     expect(result[1].netWorthChange).toBeCloseTo(7000, 2);
-    expect(result[1].annualPrincipalPaid).toBe(12000); // Mortgage 10k + CC 2k
+    expect(result[1].annualDebtPaydown).toBe(12000); // Mortgage 10k + CC 2k
     expect(result[1].annualDebtIncurred).toBe(5000);
   });
 });
@@ -870,7 +872,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(150000); // 100k + 200k - 150k
     expect(result[1].netWorth).toBe(150000); // 150k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualSaleMarketValue - result[1].annualSecuredDebtPaidAtSale).toBe(50000); // Net proceeds
+    expect(result[1].annualSoldAssetsValue - result[1].annualSecuredDebtPaidAtSale).toBe(50000); // Net proceeds
     expect(result[1].netPortfolioChange).toBeCloseTo(50000, 2);
   });
 
@@ -920,7 +922,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(100000); // 100k + 200k - 200k
     expect(result[1].netWorth).toBe(100000); // 100k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualSaleMarketValue - result[1].annualSecuredDebtPaidAtSale).toBe(0);
+    expect(result[1].annualSoldAssetsValue - result[1].annualSecuredDebtPaidAtSale).toBe(0);
     expect(result[1].netPortfolioChange).toBeCloseTo(0, 2);
   });
 
@@ -976,7 +978,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(70000); // 100k + 150k - 180k
     expect(result[1].netWorth).toBe(70000); // 70k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualSaleMarketValue - result[1].annualSecuredDebtPaidAtSale).toBe(-30000); // Negative proceeds
+    expect(result[1].annualSoldAssetsValue - result[1].annualSecuredDebtPaidAtSale).toBe(-30000); // Negative proceeds
     expect(result[1].netPortfolioChange).toBeCloseTo(-30000, 2);
 
     // Verify component values are meaningful for charting
@@ -1039,19 +1041,19 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     // Year 1: netWorth = 120k + 400k - 320k = 200k (purchase is neutral)
     expect(result[1].netWorth).toBe(200000);
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualPurchaseMarketValue).toBe(400000);
+    expect(result[1].annualPurchasedAssetsValue).toBe(400000);
 
     // Year 2: netWorth = 120k + 412k - 310k = 222k
     // Change = 22k (12k appreciation + 10k loan paydown)
     expect(result[2].netWorth).toBe(222000);
     expect(result[2].netWorthChange).toBeCloseTo(22000, 2);
     expect(result[2].annualAssetAppreciation).toBe(12000);
-    expect(result[2].annualPrincipalPaid).toBe(10000);
+    expect(result[2].annualDebtPaydown).toBe(10000);
 
     // Year 3: netWorth = 222k + 0 - 0 = 222k (sale is neutral)
     expect(result[3].netWorth).toBe(222000);
     expect(result[3].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[3].annualSaleMarketValue - result[3].annualSecuredDebtPaidAtSale).toBe(102000);
+    expect(result[3].annualSoldAssetsValue - result[3].annualSecuredDebtPaidAtSale).toBe(102000);
     expect(result[3].netPortfolioChange).toBeCloseTo(102000, 2);
   });
 
@@ -1096,7 +1098,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(250000); // 50k + 450k - 250k
     expect(result[1].netWorth).toBe(250000); // 250k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualSaleMarketValue - result[1].annualSecuredDebtPaidAtSale).toBe(200000);
+    expect(result[1].annualSoldAssetsValue - result[1].annualSecuredDebtPaidAtSale).toBe(200000);
   });
 
   it('verifies invariant when selling financed asset with appreciation in same year', () => {
@@ -1149,7 +1151,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[1].netWorth).toBe(215000); // 215k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(15000, 2);
     expect(result[1].annualAssetAppreciation).toBe(15000);
-    expect(result[1].annualSaleMarketValue - result[1].annualSecuredDebtPaidAtSale).toBe(115000);
+    expect(result[1].annualSoldAssetsValue - result[1].annualSecuredDebtPaidAtSale).toBe(115000);
   });
 });
 
@@ -1270,7 +1272,7 @@ describe('ChartDataExtractor - Mid-Simulation Events', () => {
     expect(result[2].netWorth).toBe(228980);
     // Change = 228980 - 214000 = 14980 (the year's returns)
     expect(result[2].netWorthChange).toBeCloseTo(14980, 2);
-    expect(result[2].annualPurchaseMarketValue).toBe(400000);
+    expect(result[2].annualPurchasedAssetsValue).toBe(400000);
   });
 
   it('verifies invariant with multiple mid-simulation events across years', () => {
@@ -1353,7 +1355,7 @@ describe('ChartDataExtractor - Mid-Simulation Events', () => {
     // change = 347513 - 323470 = 24043 (returns for the year)
     expect(result[3].netWorth).toBe(347513);
     expect(result[3].netWorthChange).toBeCloseTo(24043, 2);
-    expect(result[3].annualPurchaseMarketValue).toBe(400000);
+    expect(result[3].annualPurchasedAssetsValue).toBe(400000);
 
     // Year 4: netWorth = 307639 + 412000 - 310000 - 15000 = 394639
     // change = 394639 - 347513 = 47126
@@ -1361,7 +1363,7 @@ describe('ChartDataExtractor - Mid-Simulation Events', () => {
     expect(result[4].netWorth).toBe(394639);
     expect(result[4].netWorthChange).toBeCloseTo(47126, 2);
     expect(result[4].annualAssetAppreciation).toBe(12000);
-    expect(result[4].annualPrincipalPaid).toBe(15000); // 10000 loan + 5000 credit card
+    expect(result[4].annualDebtPaydown).toBe(15000); // 10000 loan + 5000 credit card
   });
 });
 
@@ -1434,7 +1436,7 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
     expect(result[2].netWorth).toBe(228980);
     // Change = 228980 - 214000 = 14980 (only portfolio returns)
     expect(result[2].netWorthChange).toBeCloseTo(14980, 2);
-    expect(result[2].annualPurchaseMarketValue).toBe(100000);
+    expect(result[2].annualPurchasedAssetsValue).toBe(100000);
     // Net portfolio change = returns - withdrawal = 14980 - 100000 = -85020
     expect(result[2].netPortfolioChange).toBeCloseTo(-85020, 2);
   });
@@ -1516,7 +1518,7 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
     expect(result[3].netWorth).toBe(334670);
     expect(result[3].netWorthChange).toBeCloseTo(8000, 2);
     // Sale is net-worth neutral: +212180 to portfolio, -212180 asset sold
-    expect(result[3].annualSaleMarketValue - result[3].annualSecuredDebtPaidAtSale).toBe(212180);
+    expect(result[3].annualSoldAssetsValue - result[3].annualSecuredDebtPaidAtSale).toBe(212180);
   });
 
   it('verifies invariant when debt balance increases (payment < positive interest)', () => {
@@ -1561,7 +1563,7 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
     expect(result[1].netWorth).toBe(42000); // 100000 - 58000
     expect(result[1].netWorthChange).toBeCloseTo(-8000, 2);
     // Principal paid is NEGATIVE because debt grew
-    expect(result[1].annualPrincipalPaid).toBe(-8000); // 1000 - 9000
+    expect(result[1].annualDebtPaydown).toBe(-8000); // 1000 - 9000
   });
 
   it('verifies invariant when purchasing one asset and selling another in same year', () => {
@@ -1625,8 +1627,8 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
 
     // Both components are non-zero
-    expect(result[1].annualPurchaseMarketValue).toBe(150000);
-    expect(result[1].annualSaleMarketValue - result[1].annualSecuredDebtPaidAtSale).toBe(100000);
+    expect(result[1].annualPurchasedAssetsValue).toBe(150000);
+    expect(result[1].annualSoldAssetsValue - result[1].annualSecuredDebtPaidAtSale).toBe(100000);
     // Net portfolio change = 100k sale - 150k purchase = -50k
     expect(result[1].netPortfolioChange).toBeCloseTo(-50000, 2);
   });

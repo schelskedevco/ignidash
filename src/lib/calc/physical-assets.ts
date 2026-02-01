@@ -34,6 +34,7 @@ export class PhysicalAssetsProcessor {
     let totalInterest = 0;
     let totalPrincipalPaid = 0;
     let totalUnpaidInterest = 0;
+    let totalDebtPaydown = 0;
     let totalSaleProceeds = 0;
     let totalSaleMarketValue = 0;
     let totalCapitalGain = 0;
@@ -51,10 +52,9 @@ export class PhysicalAssetsProcessor {
       const { monthlyPaymentDue, interest } = asset.getMonthlyPaymentInfo(monthlyInflationRate);
       asset.applyLoanPayment(monthlyPaymentDue, interest);
 
-      // Raw values (can be negative). Invariant: unpaidInterest = -principalPaid.
-      // Capping for display happens downstream (cash flow, portfolio).
-      const principalPaid = monthlyPaymentDue - interest;
-      const unpaidInterest = interest - monthlyPaymentDue;
+      const principalPaid = Math.max(0, monthlyPaymentDue - interest);
+      const unpaidInterest = Math.max(0, interest - monthlyPaymentDue);
+      const debtPaydown = monthlyPaymentDue - interest;
 
       const purchaseData = purchaseDataByAsset[asset.getId()];
 
@@ -70,6 +70,7 @@ export class PhysicalAssetsProcessor {
         interest,
         principalPaid,
         unpaidInterest,
+        debtPaydown,
         purchaseOutlay: purchaseData?.purchaseOutlay ?? 0,
         purchaseMarketValue: purchaseData?.purchaseMarketValue ?? 0,
         saleProceeds: 0,
@@ -86,6 +87,7 @@ export class PhysicalAssetsProcessor {
       totalInterest += interest;
       totalPrincipalPaid += principalPaid;
       totalUnpaidInterest += unpaidInterest;
+      totalDebtPaydown += debtPaydown;
     }
 
     const assetsToSell = this.physicalAssets.getAssetsToSellThisPeriod(this.simulationState);
@@ -119,6 +121,7 @@ export class PhysicalAssetsProcessor {
       totalInterest,
       totalPrincipalPaid,
       totalUnpaidInterest,
+      totalDebtPaydown,
       totalPurchaseOutlay,
       totalPurchaseMarketValue,
       totalSaleProceeds,
@@ -145,6 +148,7 @@ export class PhysicalAssetsProcessor {
         acc.totalInterest += curr.totalInterest;
         acc.totalPrincipalPaid += curr.totalPrincipalPaid;
         acc.totalUnpaidInterest += curr.totalUnpaidInterest;
+        acc.totalDebtPaydown += curr.totalDebtPaydown;
         acc.totalPurchaseOutlay += curr.totalPurchaseOutlay;
         acc.totalPurchaseMarketValue += curr.totalPurchaseMarketValue;
         acc.totalSaleProceeds += curr.totalSaleProceeds;
@@ -161,6 +165,7 @@ export class PhysicalAssetsProcessor {
             interest: (acc.perAssetData[assetID]?.interest ?? 0) + assetData.interest,
             principalPaid: (acc.perAssetData[assetID]?.principalPaid ?? 0) + assetData.principalPaid,
             unpaidInterest: (acc.perAssetData[assetID]?.unpaidInterest ?? 0) + assetData.unpaidInterest,
+            debtPaydown: (acc.perAssetData[assetID]?.debtPaydown ?? 0) + assetData.debtPaydown,
             purchaseOutlay: (acc.perAssetData[assetID]?.purchaseOutlay ?? 0) + assetData.purchaseOutlay,
             purchaseMarketValue: (acc.perAssetData[assetID]?.purchaseMarketValue ?? 0) + assetData.purchaseMarketValue,
             saleProceeds: (acc.perAssetData[assetID]?.saleProceeds ?? 0) + assetData.saleProceeds,
@@ -182,6 +187,7 @@ export class PhysicalAssetsProcessor {
         totalInterest: 0,
         totalPrincipalPaid: 0,
         totalUnpaidInterest: 0,
+        totalDebtPaydown: 0,
         totalPurchaseOutlay: 0,
         totalPurchaseMarketValue: 0,
         totalSaleProceeds: 0,
@@ -209,6 +215,7 @@ export interface PhysicalAssetsData {
   totalInterest: number;
   totalPrincipalPaid: number;
   totalUnpaidInterest: number;
+  totalDebtPaydown: number;
   totalSecuredDebtIncurred: number;
   totalSecuredDebtPaidAtSale: number;
   perAssetData: Record<string, PhysicalAssetData>;
@@ -231,6 +238,7 @@ export interface PhysicalAssetData {
   interest: number;
   principalPaid: number;
   unpaidInterest: number;
+  debtPaydown: number;
   securedDebtIncurred: number;
   securedDebtPaidAtSale: number;
   isSold: boolean;

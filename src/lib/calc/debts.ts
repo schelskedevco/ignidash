@@ -18,6 +18,7 @@ export class DebtsProcessor {
     let totalInterest = 0;
     let totalPrincipalPaid = 0;
     let totalUnpaidInterest = 0;
+    let totalDebtPaydown = 0;
     let totalUnsecuredDebtIncurred = 0;
     const perDebtData: Record<string, DebtData> = {};
 
@@ -28,10 +29,9 @@ export class DebtsProcessor {
       const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflationRate);
       debt.applyPayment(monthlyPaymentDue, interest);
 
-      // Raw values (can be negative). Invariant: unpaidInterest = -principalPaid.
-      // Capping for display happens downstream (cash flow, portfolio).
-      const principalPaid = monthlyPaymentDue - interest;
-      const unpaidInterest = interest - monthlyPaymentDue;
+      const principalPaid = Math.max(0, monthlyPaymentDue - interest);
+      const unpaidInterest = Math.max(0, interest - monthlyPaymentDue);
+      const debtPaydown = monthlyPaymentDue - interest;
 
       const debtData: DebtData = {
         id: debt.getId(),
@@ -41,6 +41,7 @@ export class DebtsProcessor {
         interest,
         principalPaid,
         unpaidInterest,
+        debtPaydown,
         isPaidOff: debt.isPaidOff(),
       };
 
@@ -49,6 +50,7 @@ export class DebtsProcessor {
       totalInterest += interest;
       totalPrincipalPaid += principalPaid;
       totalUnpaidInterest += unpaidInterest;
+      totalDebtPaydown += debtPaydown;
     }
 
     const result: DebtsData = {
@@ -57,6 +59,7 @@ export class DebtsProcessor {
       totalInterest,
       totalPrincipalPaid,
       totalUnpaidInterest,
+      totalDebtPaydown,
       totalUnsecuredDebtIncurred,
       perDebtData,
     };
@@ -76,6 +79,7 @@ export class DebtsProcessor {
         acc.totalInterest += curr.totalInterest;
         acc.totalPrincipalPaid += curr.totalPrincipalPaid;
         acc.totalUnpaidInterest += curr.totalUnpaidInterest;
+        acc.totalDebtPaydown += curr.totalDebtPaydown;
         acc.totalUnsecuredDebtIncurred += curr.totalUnsecuredDebtIncurred;
 
         Object.entries(curr.perDebtData).forEach(([debtID, debtData]) => {
@@ -85,6 +89,7 @@ export class DebtsProcessor {
             interest: (acc.perDebtData[debtID]?.interest ?? 0) + debtData.interest,
             principalPaid: (acc.perDebtData[debtID]?.principalPaid ?? 0) + debtData.principalPaid,
             unpaidInterest: (acc.perDebtData[debtID]?.unpaidInterest ?? 0) + debtData.unpaidInterest,
+            debtPaydown: (acc.perDebtData[debtID]?.debtPaydown ?? 0) + debtData.debtPaydown,
           };
         });
 
@@ -96,6 +101,7 @@ export class DebtsProcessor {
         totalInterest: 0,
         totalPrincipalPaid: 0,
         totalUnpaidInterest: 0,
+        totalDebtPaydown: 0,
         totalUnsecuredDebtIncurred: 0,
         perDebtData: {},
       }
@@ -109,6 +115,7 @@ export interface DebtsData {
   totalInterest: number;
   totalPrincipalPaid: number;
   totalUnpaidInterest: number;
+  totalDebtPaydown: number;
   totalUnsecuredDebtIncurred: number;
   perDebtData: Record<string, DebtData>;
 }
@@ -121,6 +128,7 @@ export interface DebtData {
   interest: number;
   principalPaid: number;
   unpaidInterest: number;
+  debtPaydown: number;
   isPaidOff: boolean;
 }
 

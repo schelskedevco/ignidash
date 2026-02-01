@@ -600,9 +600,11 @@ describe('DebtsProcessor', () => {
     expect(annualData.totalPrincipalPaid).toBe(0);
   });
 
-  it('unpaidInterest is raw (can be negative when payment > interest)', () => {
-    // unpaidInterest = interest - payment (raw, not capped)
-    // Invariant: unpaidInterest = -principalPaid
+  it('unpaidInterest and principalPaid are capped at 0, debtPaydown is raw', () => {
+    // NEW SEMANTICS:
+    // - principalPaid = max(0, payment - interest) - capped, for display
+    // - unpaidInterest = max(0, interest - payment) - capped, for display
+    // - debtPaydown = payment - interest - raw, for net worth tracking
 
     const debts = new Debts([
       createDebtInput({
@@ -610,7 +612,7 @@ describe('DebtsProcessor', () => {
         name: 'Normal Debt',
         balance: 5000,
         apr: 20, // interest = 5000 * 0.20 / 12 = 83.33
-        monthlyPayment: 200, // payment > interest, so unpaidInterest = 83.33 - 200 = -116.67
+        monthlyPayment: 200, // payment > interest
         interestType: 'simple',
       }),
       createDebtInput({
@@ -618,7 +620,7 @@ describe('DebtsProcessor', () => {
         name: 'Underwater Debt',
         balance: 10000,
         apr: 200, // interest = 10000 * 2.00 / 12 = 1666.67
-        monthlyPayment: 50, // payment < interest, so unpaidInterest = 1666.67 - 50 = 1616.67
+        monthlyPayment: 50, // payment < interest
         interestType: 'simple',
       }),
     ]);
@@ -632,29 +634,41 @@ describe('DebtsProcessor', () => {
     const normalDebt = result.perDebtData['normal-debt'];
     const underwaterDebt = result.perDebtData['underwater-debt'];
 
-    // Normal debt: payment > interest → negative unpaidInterest (interest surplus)
-    expect(normalDebt.unpaidInterest).toBeCloseTo(-116.67, 0);
-    // Underwater debt: payment < interest → positive unpaidInterest
+    // Normal debt: payment > interest
+    // principalPaid = max(0, 200 - 83.33) = 116.67
+    // unpaidInterest = max(0, 83.33 - 200) = 0
+    // debtPaydown = 200 - 83.33 = 116.67
+    expect(normalDebt.principalPaid).toBeCloseTo(116.67, 0);
+    expect(normalDebt.unpaidInterest).toBe(0);
+    expect(normalDebt.debtPaydown).toBeCloseTo(116.67, 0);
+
+    // Underwater debt: payment < interest
+    // principalPaid = max(0, 50 - 1666.67) = 0
+    // unpaidInterest = max(0, 1666.67 - 50) = 1616.67
+    // debtPaydown = 50 - 1666.67 = -1616.67
+    expect(underwaterDebt.principalPaid).toBe(0);
     expect(underwaterDebt.unpaidInterest).toBeCloseTo(1616.67, 0);
+    expect(underwaterDebt.debtPaydown).toBeCloseTo(-1616.67, 0);
 
-    // Total unpaid interest = sum of raw values = -116.67 + 1616.67 = 1500
-    expect(result.totalUnpaidInterest).toBeCloseTo(1500, 0);
+    // Total unpaid interest = sum of capped values = 0 + 1616.67 = 1616.67
+    expect(result.totalUnpaidInterest).toBeCloseTo(1616.67, 0);
 
-    // Invariant: unpaidInterest = -principalPaid (for each debt and total)
-    expect(normalDebt.unpaidInterest).toBeCloseTo(-normalDebt.principalPaid, 2);
-    expect(underwaterDebt.unpaidInterest).toBeCloseTo(-underwaterDebt.principalPaid, 2);
-    expect(result.totalUnpaidInterest).toBeCloseTo(-result.totalPrincipalPaid, 1);
+    // Total principalPaid = sum of capped values = 116.67 + 0 = 116.67
+    expect(result.totalPrincipalPaid).toBeCloseTo(116.67, 0);
+
+    // Total debtPaydown = sum of raw values = 116.67 + (-1616.67) = -1500
+    expect(result.totalDebtPaydown).toBeCloseTo(-1500, 0);
   });
 
-  it('principalPaid uses raw values (not capped per-debt)', () => {
-    // principalPaid is now calculated as raw (payment - interest) for each debt
-    // This allows net worth tracking to correctly reflect balance changes
+  it('debtPaydown tracks raw balance changes for net worth calculations', () => {
+    // debtPaydown is used for net worth tracking and should equal payment - interest
+    // This allows correct aggregation across multiple debts for the net worth change formula
     //
     // With multiple debts where one has payment < interest:
-    // - Debt 1: payment = 200, interest = 83.33 → principal = 116.67
-    // - Debt 2: payment = 50, interest = 1666.67 → principal = -1616.67 (raw, not capped)
+    // - Debt 1: payment = 200, interest = 83.33 → debtPaydown = 116.67
+    // - Debt 2: payment = 50, interest = 1666.67 → debtPaydown = -1616.67
     //
-    // Total principal = 116.67 + (-1616.67) = -1500
+    // Total debtPaydown = 116.67 + (-1616.67) = -1500
 
     const debts = new Debts([
       createDebtInput({
@@ -662,7 +676,7 @@ describe('DebtsProcessor', () => {
         name: 'Normal Debt',
         balance: 5000,
         apr: 20, // interest = 5000 * 0.20 / 12 = 83.33
-        monthlyPayment: 200, // payment > interest, so principal = 116.67
+        monthlyPayment: 200, // payment > interest
         interestType: 'simple',
       }),
       createDebtInput({
@@ -670,7 +684,7 @@ describe('DebtsProcessor', () => {
         name: 'Underwater Debt',
         balance: 10000,
         apr: 200, // interest = 10000 * 2.00 / 12 = 1666.67
-        monthlyPayment: 50, // payment < interest, so principal = -1616.67 (raw)
+        monthlyPayment: 50, // payment < interest
         interestType: 'simple',
       }),
     ]);
@@ -685,18 +699,18 @@ describe('DebtsProcessor', () => {
     const underwaterDebt = result.perDebtData['underwater-debt'];
 
     expect(normalDebt.interest).toBeCloseTo(83.33, 1);
-    expect(normalDebt.principalPaid).toBeCloseTo(116.67, 1);
+    expect(normalDebt.debtPaydown).toBeCloseTo(116.67, 1);
 
     expect(underwaterDebt.interest).toBeCloseTo(1666.67, 0);
     // Raw value: 50 - 1666.67 = -1616.67
-    expect(underwaterDebt.principalPaid).toBeCloseTo(-1616.67, 0);
+    expect(underwaterDebt.debtPaydown).toBeCloseTo(-1616.67, 0);
 
-    // Total principal = sum of raw values
+    // Total debtPaydown = sum of raw values
     // 116.67 + (-1616.67) = -1500
-    expect(result.totalPrincipalPaid).toBeCloseTo(-1500, 0);
+    expect(result.totalDebtPaydown).toBeCloseTo(-1500, 0);
 
-    // Verify the relationship: principalPaid = payment - interest (raw sum)
-    expect(result.totalPrincipalPaid).toBeCloseTo(result.totalPayment - result.totalInterest, 1);
+    // Verify the relationship: debtPaydown = payment - interest (raw sum)
+    expect(result.totalDebtPaydown).toBeCloseTo(result.totalPayment - result.totalInterest, 1);
   });
 
   it('process() handles debt that becomes paid off mid-simulation', () => {

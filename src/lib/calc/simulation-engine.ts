@@ -294,6 +294,7 @@ export class FinancialSimulationEngine {
           interest: 0,
           principalPaid: 0,
           unpaidInterest: 0,
+          debtPaydown: 0,
           isPaidOff: debt.isPaidOff(),
         },
       ])
@@ -305,6 +306,7 @@ export class FinancialSimulationEngine {
       totalInterest: 0,
       totalPrincipalPaid: 0,
       totalUnpaidInterest: 0,
+      totalDebtPaydown: 0,
       totalUnsecuredDebtIncurred: 0,
       perDebtData,
     };
@@ -330,6 +332,7 @@ export class FinancialSimulationEngine {
           interest: 0,
           principalPaid: 0,
           unpaidInterest: 0,
+          debtPaydown: 0,
           securedDebtIncurred: 0,
           securedDebtPaidAtSale: 0,
           isSold: asset.isSold(),
@@ -351,6 +354,7 @@ export class FinancialSimulationEngine {
       totalInterest: 0,
       totalPrincipalPaid: 0,
       totalUnpaidInterest: 0,
+      totalDebtPaydown: 0,
       totalSecuredDebtIncurred: 0,
       totalSecuredDebtPaidAtSale: 0,
       perAssetData,

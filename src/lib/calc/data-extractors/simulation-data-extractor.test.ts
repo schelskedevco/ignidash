@@ -777,8 +777,9 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
         totalDebtBalance: 10000,
         totalPayment: 500,
         totalInterest: -100, // Negative raw interest
-        totalPrincipalPaid: 600, // payment - interest = 500 - (-100) = 600
+        totalPrincipalPaid: 600, // payment - interest = 500 - (-100) = 600 (capped)
         totalUnpaidInterest: 0,
+        totalDebtPaydown: 600, // raw: 500 - (-100) = 600
         totalUnsecuredDebtIncurred: 0,
         perDebtData: {},
       },
@@ -807,6 +808,7 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
         totalInterest: -100, // Negative raw interest (inflation > APR)
         totalPrincipalPaid: 600,
         totalUnpaidInterest: 0,
+        totalDebtPaydown: 600,
         totalUnsecuredDebtIncurred: 0,
         perDebtData: {},
       },
@@ -832,8 +834,9 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
         totalDebtBalance: 10000,
         totalPayment: 0,
         totalInterest: -100, // Negative raw interest
-        totalPrincipalPaid: 100, // 0 - (-100) = 100
+        totalPrincipalPaid: 100, // capped: max(0, 0 - (-100)) = 100
         totalUnpaidInterest: 0,
+        totalDebtPaydown: 100, // raw: 0 - (-100) = 100
         totalUnsecuredDebtIncurred: 0,
         perDebtData: {},
       },
@@ -860,6 +863,7 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
     interest?: number;
     principalPaid?: number;
     unpaidInterest?: number;
+    debtPaydown?: number;
   }): SimulationDataPoint => ({
     date: '2024-01-01',
     age: 40,
@@ -893,6 +897,7 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
             totalInterest: options.interest ?? 0,
             totalPrincipalPaid: options.principalPaid ?? 0,
             totalUnpaidInterest: options.unpaidInterest ?? 0,
+            totalDebtPaydown: options.debtPaydown ?? 0,
             totalUnsecuredDebtIncurred: 0,
             perDebtData: {},
           }
@@ -903,45 +908,47 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
     phase: { name: 'accumulation' },
   });
 
-  it('calculates principalPaid as payments minus interest (works with negative interest)', () => {
+  it('calculates debtPaydown as payments minus interest (works with negative interest)', () => {
     // When inflation > APR:
     // - Raw interest is negative (e.g., -100)
-    // - principalPaid = payment - interest = 0 - (-100) = 100
+    // - debtPaydown = payment - interest = 0 - (-100) = 100
     // - This correctly reflects debt eroding due to inflation
     const dp = createAssetLiabilityDataPoint({
       portfolioValue: 1000000,
       debtBalance: 10000,
       debtPayment: 0,
       interest: -100, // Negative raw interest (inflation > APR)
-      principalPaid: 100, // payment (0) - interest (-100) = 100
+      principalPaid: 100, // capped: max(0, 0 - (-100)) = 100
+      debtPaydown: 100, // raw: 0 - (-100) = 100
       unpaidInterest: 0,
     });
 
     const data = SimulationDataExtractor.getAssetsAndLiabilitiesData(dp);
 
-    // principalPaid = payments - interest = 0 - (-100) = 100
-    expect(data.principalPaid).toBe(100);
+    // debtPaydown = payments - interest = 0 - (-100) = 100
+    expect(data.debtPaydown).toBe(100);
   });
 
-  it('correctly calculates principalPaid with positive interest (normal scenario)', () => {
+  it('correctly calculates debtPaydown with positive interest (normal scenario)', () => {
     const dp = createAssetLiabilityDataPoint({
       portfolioValue: 1000000,
       debtBalance: 10000,
       debtPayment: 500,
       interest: 50, // Positive interest (normal scenario)
-      principalPaid: 450, // payment (500) - interest (50) = 450
+      principalPaid: 450, // capped: max(0, 500 - 50) = 450
+      debtPaydown: 450, // raw: 500 - 50 = 450
       unpaidInterest: 0,
     });
 
     const data = SimulationDataExtractor.getAssetsAndLiabilitiesData(dp);
 
-    // principalPaid = payments - interest = 500 - 50 = 450
-    expect(data.principalPaid).toBe(450);
+    // debtPaydown = payments - interest = 500 - 50 = 450
+    expect(data.debtPaydown).toBe(450);
   });
 
-  it('correctly calculates principalPaid with underpayment (payment < interest) - regression test', () => {
-    // REGRESSION TEST: This scenario catches the bug where principalPaid was calculated
-    // incorrectly. When payment < interest, principalPaid should be negative.
+  it('correctly calculates debtPaydown with underpayment (payment < interest) - regression test', () => {
+    // REGRESSION TEST: This scenario catches the bug where debtPaydown was calculated
+    // incorrectly. When payment < interest, debtPaydown should be negative.
     //
     // The debt balance only increases by 100 (the unpaid interest), not 200.
     const dp = createAssetLiabilityDataPoint({
@@ -949,22 +956,23 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
       debtBalance: 10000,
       debtPayment: 100,
       interest: 200, // Large interest
-      principalPaid: -100, // payment (100) - interest (200) = -100
+      principalPaid: 0, // capped: max(0, 100 - 200) = 0
+      debtPaydown: -100, // raw: 100 - 200 = -100
       unpaidInterest: 100, // max(0, 200 - 100) = 100
     });
 
     const data = SimulationDataExtractor.getAssetsAndLiabilitiesData(dp);
 
-    // principalPaid = payments - interest = 100 - 200 = -100
+    // debtPaydown = payments - interest = 100 - 200 = -100
     // This correctly represents the debt balance increasing by 100
-    expect(data.principalPaid).toBe(-100);
+    expect(data.debtPaydown).toBe(-100);
   });
 
-  it('correctly calculates principalPaid with negative interest AND payment - regression test', () => {
+  it('correctly calculates debtPaydown with negative interest AND payment - regression test', () => {
     // This tests the combined scenario: inflation > APR with an active payment
     // The debt should decrease by payment + |negative interest|
     //
-    // principalPaid = payments - interest = 500 - (-100) = 600
+    // debtPaydown = payments - interest = 500 - (-100) = 600
     //
     // Having this test ensures the formula works correctly for this scenario.
     const dp = createAssetLiabilityDataPoint({
@@ -972,15 +980,16 @@ describe('SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values', () 
       debtBalance: 10000,
       debtPayment: 500,
       interest: -100, // Negative interest (inflation > APR)
-      principalPaid: 600, // payment (500) - interest (-100) = 600
+      principalPaid: 600, // capped: max(0, 500 - (-100)) = 600
+      debtPaydown: 600, // raw: 500 - (-100) = 600
       unpaidInterest: 0, // max(0, -100 - 500) = 0
     });
 
     const data = SimulationDataExtractor.getAssetsAndLiabilitiesData(dp);
 
-    // principalPaid = payments - interest = 500 - (-100) = 600
+    // debtPaydown = payments - interest = 500 - (-100) = 600
     // Debt decreased by 600 (500 from payment + 100 from inflation erosion)
-    expect(data.principalPaid).toBe(600);
+    expect(data.debtPaydown).toBe(600);
   });
 });
 
