@@ -239,7 +239,7 @@ export class SimulationDataExtractor {
     const debtsData = dp.debts;
     const physicalAssetsData = dp.physicalAssets;
 
-    const totalDebtPayments = Math.max(0, (debtsData?.totalPayment ?? 0) + (physicalAssetsData?.totalLoanPayment ?? 0));
+    const totalDebtPayments = (debtsData?.totalPayment ?? 0) + (physicalAssetsData?.totalLoanPayment ?? 0);
 
     const surplusDeficit = totalIncome - totalExpenses - totalTaxesAndPenalties - totalDebtPayments;
 
