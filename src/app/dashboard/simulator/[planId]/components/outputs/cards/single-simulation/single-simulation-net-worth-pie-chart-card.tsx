@@ -89,10 +89,8 @@ export default function SingleSimulationNetWorthPieChartCard({
 
       chartData = rawChartData
         .filter((data) => data.age === selectedAge)
-        .flatMap(({ stockHoldings, bondHoldings, cashHoldings, assetValue, debtBalance }) => [
-          { name: 'stockHoldings', value: stockHoldings },
-          { name: 'bondHoldings', value: bondHoldings },
-          { name: 'cashHoldings', value: cashHoldings },
+        .flatMap(({ portfolioValue, assetValue, debtBalance }) => [
+          { name: 'portfolioValue', value: portfolioValue },
           { name: 'assetValue', value: assetValue },
           { name: 'debtBalance', value: debtBalance },
         ]);
