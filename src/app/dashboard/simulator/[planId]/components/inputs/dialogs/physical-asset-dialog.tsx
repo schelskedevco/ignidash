@@ -53,7 +53,7 @@ export default function PhysicalAssetDialog({
         id: '',
         name: 'Asset ' + (numPhysicalAssets + 1),
         purchaseDate: { type: 'now' },
-        appreciationRate: 4,
+        appreciationRate: 1,
         saleDate: { type: 'atLifeExpectancy' },
         paymentMethod: { type: 'cash' },
       }) as const satisfies Partial<PhysicalAssetInputs>,
@@ -286,7 +286,7 @@ export default function PhysicalAssetDialog({
                     control={control}
                     id="appreciationRate"
                     inputMode="decimal"
-                    placeholder="3%"
+                    placeholder="1%"
                     suffix="%"
                   />
                   {errors.appreciationRate && <ErrorMessage>{errors.appreciationRate?.message}</ErrorMessage>}

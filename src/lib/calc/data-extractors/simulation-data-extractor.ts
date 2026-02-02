@@ -95,13 +95,15 @@ export interface HoldingsByAssetClass {
 export interface AssetsAndLiabilitiesData {
   marketValue: number;
   equity: number;
+  unsecuredDebtBalance: number;
+  securedDebtBalance: number;
   debtBalance: number;
   netWorth: number;
   appreciation: number;
   debtIncurred: number;
   debtPaydown: number;
-  purchasedAssetsValue: number;
-  soldAssetsValue: number;
+  purchasedAssetValue: number;
+  soldAssetValue: number;
   securedDebtPaidAtSale: number;
   netAssetChange: number;
   netDebtReduction: number;
@@ -468,30 +470,36 @@ export class SimulationDataExtractor {
 
     const marketValue = physicalAssetsData?.totalMarketValue ?? 0;
     const equity = physicalAssetsData?.totalEquity ?? 0;
-    const debtBalance = (debtsData?.totalDebtBalance ?? 0) + (physicalAssetsData?.totalLoanBalance ?? 0);
+
+    const unsecuredDebtBalance = debtsData?.totalDebtBalance ?? 0;
+    const securedDebtBalance = physicalAssetsData?.totalLoanBalance ?? 0;
+    const debtBalance = unsecuredDebtBalance + securedDebtBalance;
+
     const netWorth = portfolioData.totalValue + marketValue - debtBalance;
 
     const debtIncurred = (physicalAssetsData?.totalSecuredDebtIncurred ?? 0) + (debtsData?.totalUnsecuredDebtIncurred ?? 0);
     const debtPaydown = (physicalAssetsData?.totalDebtPaydown ?? 0) + (debtsData?.totalDebtPaydown ?? 0);
 
     const appreciation = physicalAssetsData?.totalAppreciation ?? 0;
-    const purchasedAssetsValue = physicalAssetsData?.totalPurchaseMarketValue ?? 0;
-    const soldAssetsValue = physicalAssetsData?.totalSaleMarketValue ?? 0;
+    const purchasedAssetValue = physicalAssetsData?.totalPurchaseMarketValue ?? 0;
+    const soldAssetValue = physicalAssetsData?.totalSaleMarketValue ?? 0;
     const securedDebtPaidAtSale = physicalAssetsData?.totalSecuredDebtPaidAtSale ?? 0;
 
-    const netAssetChange = appreciation + purchasedAssetsValue - soldAssetsValue;
+    const netAssetChange = appreciation + purchasedAssetValue - soldAssetValue;
     const netDebtReduction = debtPaydown + securedDebtPaidAtSale - debtIncurred;
 
     return {
       marketValue,
       equity,
+      unsecuredDebtBalance,
+      securedDebtBalance,
       debtBalance,
       netWorth,
       appreciation,
       debtIncurred,
       debtPaydown,
-      purchasedAssetsValue,
-      soldAssetsValue,
+      purchasedAssetValue,
+      soldAssetValue,
       securedDebtPaidAtSale,
       netAssetChange,
       netDebtReduction,
