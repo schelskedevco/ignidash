@@ -213,14 +213,14 @@ export default function SingleSimulationCashFlowLineChart({
       lineDataKeys.push('surplusDeficit');
       strokeColors.push(LINE_COLOR);
 
-      barDataKeys.push('income', 'employerMatch', 'expenses', 'taxesAndPenalties', 'interestPayments');
-      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
+      barDataKeys.push('income', 'expenses', 'taxesAndPenalties', 'debtPayments');
+      barColors.push('var(--chart-1)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
 
       chartData = chartData.map((entry) => ({
         ...entry,
         expenses: -entry.expenses,
         taxesAndPenalties: -entry.taxesAndPenalties,
-        interestPayments: -entry.interestPayments,
+        debtPayments: -entry.debtPayments,
       }));
 
       stackOffset = 'sign';
@@ -275,7 +275,7 @@ export default function SingleSimulationCashFlowLineChart({
     case 'expenses': {
       formatter = (value: number) => formatNumber(value, 1, '$');
 
-      barDataKeys.push('expenses', 'taxesAndPenalties', 'interestPayments');
+      barDataKeys.push('expenses', 'taxesAndPenalties', 'debtPayments');
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
       break;
     }

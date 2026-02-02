@@ -684,7 +684,7 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
     expect(data.surplusDeficit).toBe(30000);
   });
 
-  it('includes employer match in total income', () => {
+  it('excludes employer match from surplus/deficit (employer match is tracked separately)', () => {
     const dp = createCashFlowDataPoint({
       totalIncome: 100000,
       employerMatch: 5000,
@@ -697,8 +697,8 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
     // totalIncome = income from incomes = 100000
     expect(data.totalIncome).toBe(100000);
     expect(data.employerMatch).toBe(5000);
-    // surplusDeficit = 100000 + 5000 - 50000 - 20000 = 35000
-    expect(data.surplusDeficit).toBe(35000);
+    // surplusDeficit = 100000 - 50000 - 20000 = 30000 (employer match excluded)
+    expect(data.surplusDeficit).toBe(30000);
   });
 
   it('separates Social Security income correctly', () => {
@@ -793,37 +793,8 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
     expect(data.totalDebtPayments).toBe(500);
   });
 
-  it('caps totalInterestPayments at 0 for cash flow display (negative interest scenario)', () => {
-    // When inflation > APR, raw interest can be negative
-    // Cash flow display should cap at 0
-    const dp: SimulationDataPoint = {
-      ...createCashFlowDataPoint({
-        totalIncome: 100000,
-        totalExpenses: 50000,
-        totalTaxesAndPenalties: 15000,
-      }),
-      debts: {
-        totalDebtBalance: 10000,
-        totalPayment: 500,
-        totalInterest: -100, // Negative raw interest (inflation > APR)
-        totalPrincipalPaid: 600,
-        totalUnpaidInterest: 0,
-        totalDebtPaydown: 600,
-        totalUnsecuredDebtIncurred: 0,
-        perDebtData: {},
-      },
-      physicalAssets: null,
-    };
-
-    const data = SimulationDataExtractor.getCashFlowData(dp);
-
-    // totalInterestPayments should be capped at 0, not negative
-    expect(data.totalInterestPayments).toBeGreaterThanOrEqual(0);
-    expect(data.totalInterestPayments).toBe(0);
-  });
-
-  it('does not affect surplusDeficit calculation when interest is negative', () => {
-    // surplusDeficit uses capped totalInterestPayments (0 when negative)
+  it('does not affect surplusDeficit calculation when debt payments are zero', () => {
+    // surplusDeficit uses capped totalDebtPayments (0 when negative)
     const dp: SimulationDataPoint = {
       ...createCashFlowDataPoint({
         totalIncome: 100000,
@@ -845,8 +816,37 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
 
     const data = SimulationDataExtractor.getCashFlowData(dp);
 
-    // surplusDeficit = 100000 + 0 (employerMatch) - 50000 - 15000 - 0 (capped interest) = 35000
+    // surplusDeficit = 100000 + 0 (employerMatch) - 50000 - 15000 - 0 (capped debtPayments) = 35000
     expect(data.surplusDeficit).toBe(35000);
+  });
+
+  it('includes full debt payments (principal + interest) in surplusDeficit', () => {
+    // surplusDeficit uses totalDebtPayments (principal + interest), not just interest
+    const dp: SimulationDataPoint = {
+      ...createCashFlowDataPoint({
+        totalIncome: 100000,
+        totalExpenses: 40000,
+        totalTaxesAndPenalties: 15000,
+      }),
+      debts: {
+        totalDebtBalance: 100000,
+        totalPayment: 12000, // $1000/month mortgage = $12000/year
+        totalInterest: 5000, // $5000 interest portion
+        totalPrincipalPaid: 7000, // $7000 principal portion
+        totalUnpaidInterest: 0,
+        totalDebtPaydown: 7000,
+        totalUnsecuredDebtIncurred: 0,
+        perDebtData: {},
+      },
+      physicalAssets: null,
+    };
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    // surplusDeficit = 100000 + 0 - 40000 - 15000 - 12000 = 33000
+    // The full $12000 debt payment is subtracted, not just the $5000 interest
+    expect(data.surplusDeficit).toBe(33000);
+    expect(data.totalDebtPayments).toBe(12000);
   });
 });
 
@@ -1905,5 +1905,128 @@ describe('SimulationDataExtractor.getCashFlowData - netCashFlow invariant', () =
     const data = SimulationDataExtractor.getCashFlowData(dp);
     // netCashFlow = cashContributions - cashWithdrawals = 15K - 5K = 10K
     expect(data.netCashFlow).toBe(10000);
+  });
+});
+
+/**
+ * Tests for SimulationDataExtractor.getSavingsRate
+ *
+ * The savings rate formula:
+ *   savingsRate = (surplusDeficit + employerMatch) / (totalIncome + employerMatch - totalTaxesAndPenalties)
+ *
+ * Key insight: Employer match is included in BOTH numerator and denominator:
+ * - Numerator: surplus (cash you save) + match (employer's contribution = additional savings)
+ * - Denominator: total compensation (income + match) minus taxes
+ *
+ * This gives a more accurate "total savings rate" that reflects all money being saved for retirement,
+ * not just what comes out of your paycheck.
+ */
+
+describe('SimulationDataExtractor.getSavingsRate', () => {
+  it('calculates savings rate correctly without employer match', () => {
+    // Income: $100K, Expenses: $50K, Taxes: $20K
+    // surplusDeficit = 100K - 50K - 20K = 30K
+    // savingsRate = 30K / (100K - 20K) = 30K / 80K = 37.5%
+    const dp = createCashFlowDataPoint({
+      totalIncome: 100000,
+      totalExpenses: 50000,
+      totalTaxesAndPenalties: 20000,
+    });
+
+    const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
+
+    expect(savingsRate).toBeCloseTo(0.375, 4);
+  });
+
+  it('includes employer match in both numerator and denominator', () => {
+    // Income: $100K, Match: $5K, Expenses: $50K, Taxes: $20K
+    // surplusDeficit = 100K - 50K - 20K = 30K (excludes match)
+    // savingsRate = (30K + 5K) / (100K + 5K - 20K) = 35K / 85K ≈ 41.2%
+    const dp = createCashFlowDataPoint({
+      totalIncome: 100000,
+      employerMatch: 5000,
+      totalExpenses: 50000,
+      totalTaxesAndPenalties: 20000,
+    });
+
+    const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
+
+    expect(savingsRate).toBeCloseTo(35000 / 85000, 4);
+  });
+
+  it('returns null when total compensation minus taxes is zero or negative', () => {
+    // Edge case: No income, no match
+    const dp = createCashFlowDataPoint({
+      totalIncome: 0,
+      totalExpenses: 0,
+      totalTaxesAndPenalties: 0,
+    });
+
+    const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
+
+    expect(savingsRate).toBeNull();
+  });
+
+  it('returns null when taxes exceed income plus match', () => {
+    // Edge case: Taxes > income + match (shouldn't happen in practice but edge case)
+    const dp = createCashFlowDataPoint({
+      totalIncome: 10000,
+      employerMatch: 1000,
+      totalExpenses: 0,
+      totalTaxesAndPenalties: 15000,
+    });
+
+    const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
+
+    expect(savingsRate).toBeNull();
+  });
+
+  it('returns zero (clamped) when surplus is negative and match is small', () => {
+    // surplusDeficit = 50K - 60K - 10K = -20K (deficit)
+    // savingsRate = (-20K + 2K) / (50K + 2K - 10K) = -18K / 42K ≈ -42.9%
+    // Clamped to 0 (can't have negative savings rate in display)
+    const dp = createCashFlowDataPoint({
+      totalIncome: 50000,
+      employerMatch: 2000,
+      totalExpenses: 60000,
+      totalTaxesAndPenalties: 10000,
+    });
+
+    const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
+
+    expect(savingsRate).toBe(0);
+  });
+
+  it('handles scenario where employer match offsets negative surplus', () => {
+    // surplusDeficit = 50K - 50K - 10K = -10K (deficit)
+    // With $15K match: savingsRate = (-10K + 15K) / (50K + 15K - 10K) = 5K / 55K ≈ 9.1%
+    const dp = createCashFlowDataPoint({
+      totalIncome: 50000,
+      employerMatch: 15000,
+      totalExpenses: 50000,
+      totalTaxesAndPenalties: 10000,
+    });
+
+    const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
+
+    expect(savingsRate).toBeCloseTo(5000 / 55000, 4);
+  });
+
+  it('savings rate is less than or equal to 1 in typical scenarios', () => {
+    // Realistic scenario: person saves 50% of after-tax income
+    // Income: $100K, Match: $5K, Expenses: $35K (35%), Taxes: $25K
+    // surplusDeficit = 100K - 35K - 25K = 40K
+    // savingsRate = (40K + 5K) / (100K + 5K - 25K) = 45K / 80K = 56.25%
+    const dp = createCashFlowDataPoint({
+      totalIncome: 100000,
+      employerMatch: 5000,
+      totalExpenses: 35000,
+      totalTaxesAndPenalties: 25000,
+    });
+
+    const savingsRate = SimulationDataExtractor.getSavingsRate(dp);
+
+    expect(savingsRate).toBeLessThanOrEqual(1);
+    expect(savingsRate).toBeCloseTo(0.5625, 4);
   });
 });

@@ -62,16 +62,8 @@ export default function SingleSimulationCashFlowBarChart({
 
   const labelConfig: Record<string, { mobile: string[]; desktop: string[] }> = {
     surplusDeficit: {
-      mobile: ['Earned', 'Soc. Sec.', 'Tax-Free', 'Match', 'Expenses', 'Taxes', 'Interest'],
-      desktop: [
-        'Earned Income',
-        'Social Security',
-        'Tax-Free Income',
-        'Employer Match',
-        'Expenses',
-        'Taxes & Penalties',
-        'Interest Payments',
-      ],
+      mobile: ['Earned', 'Soc. Sec.', 'Tax-Free', 'Expenses', 'Taxes', 'Debt'],
+      desktop: ['Earned Income', 'Social Security', 'Tax-Free Income', 'Expenses', 'Taxes & Penalties', 'Debt Payments'],
     },
     cashFlow: {
       mobile: ['Earned', 'Soc. Sec.', 'Tax-Free', 'Liquidated', 'Proceeds', 'Expenses', 'Taxes', 'Debt', 'Invested', 'Outlay'],
@@ -110,25 +102,17 @@ export default function SingleSimulationCashFlowBarChart({
 
   switch (dataView) {
     case 'surplusDeficit': {
-      const [
-        earnedIncomeLabel,
-        socialSecurityIncomeLabel,
-        taxFreeIncomeLabel,
-        employerMatchLabel,
-        expensesLabel,
-        taxesAndPenaltiesLabel,
-        interestPaymentsLabel,
-      ] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [earnedIncomeLabel, socialSecurityIncomeLabel, taxFreeIncomeLabel, expensesLabel, taxesAndPenaltiesLabel, debtPaymentsLabel] =
+        getLabelsForScreenSize(dataView, isSmallScreen);
 
       transformedChartData = chartData.flatMap(
-        ({ earnedIncome, socialSecurityIncome, taxFreeIncome, employerMatch, expenses, taxesAndPenalties, interestPayments }) => [
+        ({ earnedIncome, socialSecurityIncome, taxFreeIncome, expenses, taxesAndPenalties, debtPayments }) => [
           { name: earnedIncomeLabel, amount: earnedIncome, color: 'var(--chart-1)' },
           { name: socialSecurityIncomeLabel, amount: socialSecurityIncome, color: 'var(--chart-1)' },
           { name: taxFreeIncomeLabel, amount: taxFreeIncome, color: 'var(--chart-1)' },
-          { name: employerMatchLabel, amount: employerMatch, color: 'var(--chart-2)' },
           { name: expensesLabel, amount: -expenses, color: 'var(--chart-3)' },
           { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-4)' },
-          { name: interestPaymentsLabel, amount: -interestPayments, color: 'var(--chart-5)' },
+          { name: debtPaymentsLabel, amount: -debtPayments, color: 'var(--chart-5)' },
         ]
       );
 
@@ -206,8 +190,8 @@ export default function SingleSimulationCashFlowBarChart({
           { name: capGainsTaxLabel, amount: capGainsTax, color: 'var(--chart-2)' },
           { name: niitLabel, amount: niit, color: 'var(--chart-2)' },
           { name: earlyWithdrawalPenaltiesLabel, amount: earlyWithdrawalPenalties, color: 'var(--chart-2)' },
-          ...perAssetData.map(({ name, interest }) => ({ name: `${name} (interest)`, amount: interest, color: 'var(--chart-3)' })),
-          ...perDebtData.map(({ name, interest }) => ({ name: `${name} (interest)`, amount: interest, color: 'var(--chart-3)' })),
+          ...perAssetData.map(({ name, loanPayment }) => ({ name, amount: loanPayment, color: 'var(--chart-3)' })),
+          ...perDebtData.map(({ name, payment }) => ({ name, amount: payment, color: 'var(--chart-3)' })),
         ]
       );
       break;

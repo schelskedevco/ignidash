@@ -34,11 +34,12 @@ function SurplusDeficitTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>Your income (wages, employer match, tax-free income, and Social Security) minus taxes and expenses.</p>
+        <p>Cash remaining after taxes, expenses, and debt payments.</p>
         <p>
-          <strong>Positive</strong> = saving money. <strong>Negative</strong> = portfolio withdrawals needed to cover the gap.
+          <strong>Positive</strong> = cash available to save or invest. <strong>Negative</strong> = portfolio withdrawals needed to cover
+          the gap.
         </p>
-        <p>Dividends and interest are excluded because they&apos;re automatically reinvested.</p>
+        <p>Employer match, dividends, and interest are excluded as they don&apos;t flow through your cash.</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -51,8 +52,8 @@ function SavingsRateTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>The percentage of after-tax income that you save rather than spend.</p>
-        <p>Calculated with the same income sources as Surplus/Deficit.</p>
+        <p>The percentage of your total after-tax compensation (including employer match) that you save.</p>
+        <p>Calculated as: (Surplus + Employer Match) / (Income + Employer Match - Taxes)</p>
       </TooltipContent>
     </Tooltip>
   );

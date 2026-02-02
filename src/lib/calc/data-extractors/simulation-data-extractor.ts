@@ -39,7 +39,6 @@ export interface CashFlowData {
   totalExpenses: number;
   totalTaxesAndPenalties: number;
   totalDebtPayments: number;
-  totalInterestPayments: number;
   surplusDeficit: number;
   amountInvested: number;
   amountLiquidated: number;
@@ -242,9 +241,8 @@ export class SimulationDataExtractor {
 
     // Capped at 0 for cash flow display (raw values from processors can be negative with high inflation)
     const totalDebtPayments = Math.max(0, (debtsData?.totalPayment ?? 0) + (physicalAssetsData?.totalLoanPayment ?? 0));
-    const totalInterestPayments = Math.max(0, (debtsData?.totalInterest ?? 0) + (physicalAssetsData?.totalInterest ?? 0));
 
-    const surplusDeficit = totalIncome + employerMatch - totalExpenses - totalTaxesAndPenalties - totalInterestPayments;
+    const surplusDeficit = totalIncome - totalExpenses - totalTaxesAndPenalties - totalDebtPayments;
 
     const amountInvested = sumInvestments(portfolioData.contributionsForPeriod) - employerMatch;
     const amountLiquidated = sumLiquidations(portfolioData.withdrawalsForPeriod);
@@ -273,7 +271,6 @@ export class SimulationDataExtractor {
       totalExpenses,
       totalTaxesAndPenalties,
       totalDebtPayments,
-      totalInterestPayments,
       surplusDeficit,
       amountInvested,
       amountLiquidated,
@@ -542,12 +539,12 @@ export class SimulationDataExtractor {
   }
 
   static getSavingsRate(dp: SimulationDataPoint): number | null {
-    const { totalIncome, totalTaxesAndPenalties, surplusDeficit } = this.getCashFlowData(dp);
+    const { totalIncome, totalTaxesAndPenalties, surplusDeficit, employerMatch } = this.getCashFlowData(dp);
 
-    const totalIncomeMinusTaxes = totalIncome - totalTaxesAndPenalties;
-    if (totalIncomeMinusTaxes <= 0) return null;
+    const totalCompMinusTaxes = totalIncome + employerMatch - totalTaxesAndPenalties;
+    if (totalCompMinusTaxes <= 0) return null;
 
-    return Math.max(0, surplusDeficit / totalIncomeMinusTaxes);
+    return Math.max(0, (surplusDeficit + employerMatch) / totalCompMinusTaxes);
   }
 
   static getWithdrawalRate(dp: SimulationDataPoint): number | null {
