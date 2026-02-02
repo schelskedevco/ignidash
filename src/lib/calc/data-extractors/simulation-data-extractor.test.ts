@@ -1506,3 +1506,404 @@ describe('SimulationDataExtractor.getPercentInPhaseForYear', () => {
     expect(data.numberBankrupt).toBe(0);
   });
 });
+
+/**
+ * Tests for SimulationDataExtractor.getCashFlowData - netCashFlow Invariant
+ *
+ * The key invariant being verified:
+ *   netCashFlow === portfolio.contributionsForPeriod.cash - portfolio.withdrawalsForPeriod.cash
+ *
+ * Why this invariant holds:
+ * - The netCashFlow formula excludes cash from amountInvested and amountLiquidated
+ *   (see asset.ts: sumInvestments and sumLiquidations only sum stocks + bonds)
+ * - Therefore, after all inflows and outflows are accounted for:
+ *   - If netCashFlow > 0: the surplus flows to contributions.cash (savings)
+ *   - If netCashFlow < 0: the deficit is covered by withdrawals.cash (liquidation)
+ *
+ * This invariant ensures the simulation correctly tracks cash flow through the system.
+ */
+
+// Helper to create a data point for netCashFlow invariant testing
+const createCashFlowInvariantDataPoint = (options: {
+  // Income
+  totalIncome?: number;
+  // Expenses
+  totalExpenses?: number;
+  // Taxes
+  totalTaxes?: number;
+  // Portfolio contributions/withdrawals (including cash)
+  contributions: { stocks: number; bonds: number; cash: number };
+  withdrawals: { stocks: number; bonds: number; cash: number };
+  employerMatch?: number;
+  // Physical assets
+  assetSaleProceeds?: number;
+  assetPurchaseOutlay?: number;
+  loanPayment?: number;
+  loanInterest?: number;
+  // Unsecured debts
+  debtPayment?: number;
+  debtInterest?: number;
+}): SimulationDataPoint => ({
+  date: '2024-01-01',
+  age: 40,
+  portfolio: {
+    totalValue: 1000000,
+    assetAllocation: { stocks: 0.6, bonds: 0.3, cash: 0.1 },
+    contributionsForPeriod: options.contributions,
+    withdrawalsForPeriod: options.withdrawals,
+    cumulativeContributions: options.contributions,
+    cumulativeWithdrawals: options.withdrawals,
+    employerMatchForPeriod: options.employerMatch ?? 0,
+    cumulativeEmployerMatch: 0,
+    realizedGainsForPeriod: 0,
+    cumulativeRealizedGains: 0,
+    rmdsForPeriod: 0,
+    cumulativeRmds: 0,
+    earningsWithdrawnForPeriod: 0,
+    cumulativeEarningsWithdrawn: 0,
+    shortfallForPeriod: 0,
+    shortfallRepaidForPeriod: 0,
+    outstandingShortfall: 0,
+    perAccountData: {},
+  },
+  incomes: {
+    totalIncome: options.totalIncome ?? 0,
+    totalAmountWithheld: 0,
+    totalFicaTax: 0,
+    totalIncomeAfterPayrollDeductions: options.totalIncome ?? 0,
+    totalSocialSecurityIncome: 0,
+    totalTaxFreeIncome: 0,
+    perIncomeData: {},
+  },
+  expenses: {
+    totalExpenses: options.totalExpenses ?? 0,
+    perExpenseData: {},
+  },
+  debts:
+    options.debtPayment !== undefined || options.debtInterest !== undefined
+      ? {
+          totalDebtBalance: 10000,
+          totalPayment: options.debtPayment ?? 0,
+          totalInterest: options.debtInterest ?? 0,
+          totalPrincipalPaid: Math.max(0, (options.debtPayment ?? 0) - (options.debtInterest ?? 0)),
+          totalUnpaidInterest: 0,
+          totalDebtPaydown: (options.debtPayment ?? 0) - (options.debtInterest ?? 0),
+          totalUnsecuredDebtIncurred: 0,
+          perDebtData: {},
+        }
+      : null,
+  physicalAssets:
+    options.assetSaleProceeds !== undefined || options.assetPurchaseOutlay !== undefined || options.loanPayment !== undefined
+      ? {
+          totalMarketValue: 500000,
+          totalLoanBalance: 200000,
+          totalEquity: 300000,
+          totalAppreciation: 0,
+          totalLoanPayment: options.loanPayment ?? 0,
+          totalInterest: options.loanInterest ?? 0,
+          totalPrincipalPaid: Math.max(0, (options.loanPayment ?? 0) - (options.loanInterest ?? 0)),
+          totalUnpaidInterest: 0,
+          totalDebtPaydown: (options.loanPayment ?? 0) - (options.loanInterest ?? 0),
+          totalPurchaseOutlay: options.assetPurchaseOutlay ?? 0,
+          totalPurchaseMarketValue: 0,
+          totalSaleProceeds: options.assetSaleProceeds ?? 0,
+          totalSaleMarketValue: 0,
+          totalCapitalGain: 0,
+          totalSecuredDebtIncurred: 0,
+          totalSecuredDebtPaidAtSale: 0,
+          perAssetData: {},
+        }
+      : null,
+  taxes: {
+    incomeTaxes: {
+      taxableIncomeTaxedAsOrdinary: 0,
+      incomeTaxBrackets: [],
+      incomeTaxAmount: options.totalTaxes ?? 0,
+      effectiveIncomeTaxRate: 0,
+      topMarginalIncomeTaxRate: 0,
+    },
+    capitalGainsTaxes: {
+      taxableIncomeTaxedAsCapGains: 0,
+      capitalGainsTaxBrackets: [],
+      capitalGainsTaxAmount: 0,
+      effectiveCapitalGainsTaxRate: 0,
+      topMarginalCapitalGainsTaxRate: 0,
+    },
+    niit: {
+      netInvestmentIncome: 0,
+      incomeSubjectToNiit: 0,
+      niitAmount: 0,
+      threshold: 200000,
+    },
+    socialSecurityTaxes: {
+      taxableSocialSecurityIncome: 0,
+      maxTaxablePercentage: 0.85,
+      actualTaxablePercentage: 0,
+      provisionalIncome: 0,
+    },
+    earlyWithdrawalPenalties: {
+      taxDeferredPenaltyAmount: 0,
+      taxFreePenaltyAmount: 0,
+      totalPenaltyAmount: 0,
+    },
+    totalTaxesDue: options.totalTaxes ?? 0,
+    totalTaxesRefund: 0,
+    totalTaxableIncome: 0,
+    adjustments: {},
+    deductions: {},
+    incomeSources: {
+      realizedGains: 0,
+      capitalLossDeduction: 0,
+      taxDeferredWithdrawals: 0,
+      taxableRetirementDistributions: 0,
+      taxableDividendIncome: 0,
+      taxableInterestIncome: 0,
+      earnedIncome: 0,
+      socialSecurityIncome: 0,
+      taxableSocialSecurityIncome: 0,
+      maxTaxableSocialSecurityPercentage: 0.85,
+      provisionalIncome: 0,
+      taxFreeIncome: 0,
+      grossIncome: 0,
+      incomeTaxedAsOrdinary: 0,
+      incomeTaxedAsLtcg: 0,
+      taxDeductibleContributions: 0,
+      adjustedGrossIncome: 0,
+      adjustedIncomeTaxedAsOrdinary: 0,
+      adjustedIncomeTaxedAsCapGains: 0,
+      totalIncome: 0,
+      earlyWithdrawals: { rothEarnings: 0, '401kAndIra': 0, hsa: 0 },
+    },
+  },
+  returns: null,
+  phase: { name: 'accumulation' },
+});
+
+describe('SimulationDataExtractor.getCashFlowData - netCashFlow invariant', () => {
+  /**
+   * Verifies the invariant:
+   *   netCashFlow === cashContributions - cashWithdrawals
+   *
+   * This ensures that the net cash flow correctly equals the net cash movement
+   * into/out of the portfolio's cash bucket.
+   */
+  function verifyNetCashFlowInvariant(dp: SimulationDataPoint) {
+    const cashFlowData = SimulationDataExtractor.getCashFlowData(dp);
+    const cashContributions = dp.portfolio.contributionsForPeriod.cash;
+    const cashWithdrawals = dp.portfolio.withdrawalsForPeriod.cash;
+
+    const expectedNetCashFlow = cashContributions - cashWithdrawals;
+    expect(cashFlowData.netCashFlow).toBeCloseTo(expectedNetCashFlow, 2);
+  }
+
+  it('invariant holds for accumulation with surplus (income > expenses + taxes)', () => {
+    // Scenario: Working year with income $100K, expenses $50K, taxes $20K
+    // Surplus of $30K flows to investments (stocks + bonds) and possibly cash
+    // Net cash flow should equal cash contributions minus cash withdrawals
+    const dp = createCashFlowInvariantDataPoint({
+      totalIncome: 100000,
+      totalExpenses: 50000,
+      totalTaxes: 20000,
+      contributions: { stocks: 20000, bonds: 10000, cash: 0 }, // 30K surplus to investments
+      withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    expect(data.netCashFlow).toBe(0); // All surplus invested, no net cash change
+  });
+
+  it('invariant holds when surplus flows to cash savings', () => {
+    // Scenario: Income surplus goes to cash savings instead of investments
+    const dp = createCashFlowInvariantDataPoint({
+      totalIncome: 100000,
+      totalExpenses: 50000,
+      totalTaxes: 20000,
+      contributions: { stocks: 10000, bonds: 5000, cash: 15000 }, // 15K to cash
+      withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    expect(data.netCashFlow).toBe(15000); // Cash surplus
+  });
+
+  it('invariant holds for retirement with deficit (expenses > income)', () => {
+    // Scenario: Retired, no income, expenses $60K, taxes $10K
+    // Deficit covered by liquidating portfolio
+    const dp = createCashFlowInvariantDataPoint({
+      totalIncome: 0,
+      totalExpenses: 60000,
+      totalTaxes: 10000,
+      contributions: { stocks: 0, bonds: 0, cash: 0 },
+      withdrawals: { stocks: 45000, bonds: 25000, cash: 0 }, // 70K liquidation
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    expect(data.netCashFlow).toBe(0); // All deficit covered by stock/bond liquidation
+  });
+
+  it('invariant holds when deficit requires cash withdrawal', () => {
+    // Scenario: Deficit partially covered by cash withdrawal
+    const dp = createCashFlowInvariantDataPoint({
+      totalIncome: 20000,
+      totalExpenses: 60000,
+      totalTaxes: 10000,
+      contributions: { stocks: 0, bonds: 0, cash: 0 },
+      withdrawals: { stocks: 30000, bonds: 10000, cash: 10000 }, // 10K from cash
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    expect(data.netCashFlow).toBe(-10000); // Cash deficit
+  });
+
+  it('invariant holds with physical asset sale', () => {
+    // Scenario: Sell house for $300K net proceeds, flows to cash
+    const dp = createCashFlowInvariantDataPoint({
+      totalIncome: 0,
+      totalExpenses: 0,
+      totalTaxes: 0,
+      contributions: { stocks: 0, bonds: 0, cash: 300000 }, // Sale proceeds to cash
+      withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+      assetSaleProceeds: 300000,
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    expect(data.netCashFlow).toBe(300000); // All proceeds to cash
+  });
+
+  it('invariant holds with physical asset purchase (down payment)', () => {
+    // Scenario: Buy house with $80K down payment from portfolio
+    const dp = createCashFlowInvariantDataPoint({
+      totalIncome: 0,
+      totalExpenses: 0,
+      totalTaxes: 0,
+      contributions: { stocks: 0, bonds: 0, cash: 0 },
+      withdrawals: { stocks: 50000, bonds: 20000, cash: 10000 }, // 80K for down payment
+      assetPurchaseOutlay: 80000,
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    expect(data.netCashFlow).toBe(-10000); // Cash portion of down payment
+  });
+
+  it('invariant holds with employer match', () => {
+    // Scenario: Employer match reduces effective investment amount
+    // Income $100K, expenses $50K, taxes $20K
+    // Total contributions $35K but $5K is employer match (not from income)
+    const dp = createCashFlowInvariantDataPoint({
+      totalIncome: 100000,
+      totalExpenses: 50000,
+      totalTaxes: 20000,
+      contributions: { stocks: 25000, bonds: 10000, cash: 0 }, // 35K total
+      withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+      employerMatch: 5000, // 5K employer match
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    // amountInvested = (25K + 10K) - 5K = 30K
+    // netCashFlow = 100K - 50K - 20K - 30K = 0
+    expect(data.netCashFlow).toBe(0);
+    expect(data.amountInvested).toBe(30000);
+  });
+
+  it('invariant holds with debt payments', () => {
+    // Scenario: Income with debt payments
+    const dp = createCashFlowInvariantDataPoint({
+      totalIncome: 100000,
+      totalExpenses: 50000,
+      totalTaxes: 15000,
+      contributions: { stocks: 10000, bonds: 5000, cash: 8000 },
+      withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+      debtPayment: 12000,
+      debtInterest: 2000,
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    // netCashFlow = 100K - 50K - 15K - 12K (debt) - 15K (invest) = 8K
+    expect(data.netCashFlow).toBe(8000);
+  });
+
+  it('invariant holds with mixed scenario (all cash flow components)', () => {
+    // Scenario: Complex year with income, expenses, investments, liquidations,
+    // asset sale/purchase, and debt payments
+    //
+    // netCashFlow = totalIncome + amountLiquidated + assetSaleProceeds
+    //             - totalExpenses - totalTaxesAndPenalties - totalDebtPayments
+    //             - amountInvested - assetPurchaseOutlay
+    // = 80K + 7K (stocks+bonds liq) + 50K - 40K - 15K - 15K (12K+3K) - 15K (10K+5K) - 20K
+    // = 137K - 105K = 32K
+    //
+    // For the invariant to hold, cash contributions must equal 32K
+    const dp = createCashFlowInvariantDataPoint({
+      totalIncome: 80000,
+      totalExpenses: 40000,
+      totalTaxes: 15000,
+      contributions: { stocks: 10000, bonds: 5000, cash: 32000 }, // 32K to cash (matches netCashFlow)
+      withdrawals: { stocks: 5000, bonds: 2000, cash: 0 },
+      assetSaleProceeds: 50000,
+      assetPurchaseOutlay: 20000,
+      loanPayment: 12000,
+      loanInterest: 5000,
+      debtPayment: 3000,
+      debtInterest: 500,
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    expect(data.netCashFlow).toBe(32000);
+    expect(data.totalIncome).toBe(80000);
+    expect(data.amountLiquidated).toBe(7000); // stocks + bonds only
+    expect(data.assetSaleProceeds).toBe(50000);
+    expect(data.totalExpenses).toBe(40000);
+    expect(data.totalTaxesAndPenalties).toBe(15000);
+    expect(data.totalDebtPayments).toBe(15000); // loan + unsecured
+    expect(data.amountInvested).toBe(15000); // stocks + bonds only
+    expect(data.assetPurchaseOutlay).toBe(20000);
+  });
+
+  it('invariant holds with zero values', () => {
+    // Scenario: No activity
+    const dp = createCashFlowInvariantDataPoint({
+      contributions: { stocks: 0, bonds: 0, cash: 0 },
+      withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    expect(data.netCashFlow).toBe(0);
+  });
+
+  it('invariant holds with both cash contributions and withdrawals', () => {
+    // Scenario: Both depositing and withdrawing from cash (unusual but possible)
+    const dp = createCashFlowInvariantDataPoint({
+      totalIncome: 50000,
+      totalExpenses: 30000,
+      totalTaxes: 10000,
+      contributions: { stocks: 0, bonds: 0, cash: 15000 },
+      withdrawals: { stocks: 0, bonds: 0, cash: 5000 },
+    });
+
+    verifyNetCashFlowInvariant(dp);
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+    // netCashFlow = cashContributions - cashWithdrawals = 15K - 5K = 10K
+    expect(data.netCashFlow).toBe(10000);
+  });
+});
