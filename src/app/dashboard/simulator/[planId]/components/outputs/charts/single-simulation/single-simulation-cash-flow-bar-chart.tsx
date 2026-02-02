@@ -110,9 +110,9 @@ export default function SingleSimulationCashFlowBarChart({
           { name: earnedIncomeLabel, amount: earnedIncome, color: 'var(--chart-1)' },
           { name: socialSecurityIncomeLabel, amount: socialSecurityIncome, color: 'var(--chart-1)' },
           { name: taxFreeIncomeLabel, amount: taxFreeIncome, color: 'var(--chart-1)' },
-          { name: expensesLabel, amount: -expenses, color: 'var(--chart-3)' },
-          { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-4)' },
-          { name: debtPaymentsLabel, amount: -debtPayments, color: 'var(--chart-5)' },
+          { name: expensesLabel, amount: -expenses, color: 'var(--chart-2)' },
+          { name: taxesAndPenaltiesLabel, amount: -taxesAndPenalties, color: 'var(--chart-3)' },
+          { name: debtPaymentsLabel, amount: -debtPayments, color: 'var(--chart-4)' },
         ]
       );
 
@@ -219,7 +219,7 @@ export default function SingleSimulationCashFlowBarChart({
         transformedChartData = perAssetData.map(({ name, loanPayment }) => ({
           name: `${name} (loan payment)`,
           amount: loanPayment,
-          color: 'var(--chart-7)',
+          color: 'var(--chart-6)',
         }));
         break;
       }
@@ -229,7 +229,7 @@ export default function SingleSimulationCashFlowBarChart({
         transformedChartData = perDebtData.map(({ name, payment }) => ({
           name: `${name} (debt payment)`,
           amount: payment,
-          color: 'var(--chart-7)',
+          color: 'var(--chart-6)',
         }));
         break;
       }

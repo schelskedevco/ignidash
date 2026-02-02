@@ -239,7 +239,6 @@ export class SimulationDataExtractor {
     const debtsData = dp.debts;
     const physicalAssetsData = dp.physicalAssets;
 
-    // Capped at 0 for cash flow display (raw values from processors can be negative with high inflation)
     const totalDebtPayments = Math.max(0, (debtsData?.totalPayment ?? 0) + (physicalAssetsData?.totalLoanPayment ?? 0));
 
     const surplusDeficit = totalIncome - totalExpenses - totalTaxesAndPenalties - totalDebtPayments;

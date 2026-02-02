@@ -214,7 +214,7 @@ export default function SingleSimulationCashFlowLineChart({
       strokeColors.push(LINE_COLOR);
 
       barDataKeys.push('income', 'expenses', 'taxesAndPenalties', 'debtPayments');
-      barColors.push('var(--chart-1)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
 
       chartData = chartData.map((entry) => ({
         ...entry,
@@ -314,7 +314,7 @@ export default function SingleSimulationCashFlowLineChart({
       );
       if (perAssetData.length > 0) {
         lineDataKeys.push('loanPayment');
-        strokeColors.push('var(--chart-7)');
+        strokeColors.push('var(--chart-6)');
 
         chartData = perAssetData;
         break;
@@ -325,7 +325,7 @@ export default function SingleSimulationCashFlowLineChart({
       );
       if (perDebtData.length > 0) {
         lineDataKeys.push('payment');
-        strokeColors.push('var(--chart-7)');
+        strokeColors.push('var(--chart-6)');
 
         chartData = perDebtData;
         break;
