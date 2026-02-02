@@ -136,7 +136,6 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
           <span className="ml-1 font-semibold">{formatNumber(total, 3, '$')}</span>
         </p>
       );
-
       break;
     }
     default: {
