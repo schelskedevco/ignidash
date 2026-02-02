@@ -57,8 +57,6 @@ export class PhysicalAssetsProcessor {
 
       const debtPaydown = monthlyPaymentDue - interest;
 
-      const purchaseData = purchaseDataByAsset[asset.getId()];
-
       const assetData: PhysicalAssetData = {
         id: asset.getId(),
         name: asset.getName(),
@@ -72,8 +70,8 @@ export class PhysicalAssetsProcessor {
         principalPaid,
         unpaidInterest,
         debtPaydown,
-        purchaseOutlay: purchaseData?.purchaseOutlay ?? 0,
-        purchaseMarketValue: purchaseData?.purchaseMarketValue ?? 0,
+        purchaseOutlay: purchaseDataByAsset[asset.getId()]?.purchaseOutlay ?? 0,
+        purchaseMarketValue: purchaseDataByAsset[asset.getId()]?.purchaseMarketValue ?? 0,
         saleProceeds: 0,
         saleMarketValue: 0,
         capitalGain: 0,
