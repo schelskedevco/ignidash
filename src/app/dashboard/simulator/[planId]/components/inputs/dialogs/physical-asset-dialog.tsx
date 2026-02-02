@@ -291,7 +291,6 @@ export default function PhysicalAssetDialog({
                   />
                   {errors.appreciationRate && <ErrorMessage>{errors.appreciationRate?.message}</ErrorMessage>}
                 </Field>
-                <PayoffEstimate months={loanPayoffMonths} className="col-span-2" />
               </div>
               <Disclosure as="div" className="border-border/25 border-t pt-4">
                 {({ open, close }) => (
@@ -601,6 +600,7 @@ export default function PhysicalAssetDialog({
                             )}
                           </>
                         )}
+                        <PayoffEstimate months={loanPayoffMonths} className="col-span-2" />
                       </div>
                     </DisclosurePanel>
                   </>

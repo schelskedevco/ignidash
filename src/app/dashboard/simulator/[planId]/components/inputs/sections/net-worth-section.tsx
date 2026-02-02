@@ -50,16 +50,25 @@ function getPhysicalAssetDesc(asset: PhysicalAssetInputs) {
         </>
       );
     case 'loan': {
+      const { type: saleDateType } = asset.saleDate;
+
       const { loanBalance: balance, monthlyPayment, apr } = asset.paymentMethod;
       const payoffMonths = estimatePayoffMonths({ balance, monthlyPayment, apr, interestType: 'simple' });
+
       return (
         <>
           <p>
             {value} | {formatNumber(monthlyPayment, 2, '$')} / mo
           </p>
           <p>
-            {physicalAssetTimeFrameForDisplay(asset.purchaseDate)}
-            {payoffMonths !== null && ` → ${formatPayoffEstimate(payoffMonths)} (est.)`}
+            {saleDateType !== 'atLifeExpectancy' ? (
+              physicalAssetTimeFrameForDisplay(asset.purchaseDate, asset.saleDate)
+            ) : (
+              <>
+                {physicalAssetTimeFrameForDisplay(asset.purchaseDate)}
+                {payoffMonths !== null && ` → ${formatPayoffEstimate(payoffMonths)} (est.)`}
+              </>
+            )}
           </p>
         </>
       );
