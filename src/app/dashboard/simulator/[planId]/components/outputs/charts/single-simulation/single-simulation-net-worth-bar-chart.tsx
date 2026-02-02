@@ -45,7 +45,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationNetWorthBarChartProps {
   age: number;
-  dataView: 'netPortfolioChange' | 'netWorthChange';
+  dataView: 'netPortfolioChange' | 'netAssetChange' | 'netDebtReduction' | 'netWorthChange';
   rawChartData: SingleSimulationNetWorthChartDataPoint[];
 }
 
@@ -57,6 +57,14 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
     netPortfolioChange: {
       mobile: ['Returns', 'Contributions', 'Withdrawals'],
       desktop: ['Annual Returns', 'Annual Contributions', 'Annual Withdrawals'],
+    },
+    netAssetChange: {
+      mobile: ['Appreciation', 'Purchased Value', 'Sold Value'],
+      desktop: ['Annual Asset Appreciation', 'Annual Purchased Asset Value', 'Annual Sold Asset Value'],
+    },
+    netDebtReduction: {
+      mobile: ['Debt Paydown', 'Paid at Sale', 'Debt Incurred'],
+      desktop: ['Annual Debt Paydown', 'Annual Debt Paid at Sale', 'Annual Debt Incurred'],
     },
     netWorthChange: {
       mobile: ['Portfolio Change', 'Asset Change', 'Debt Reduction'],
@@ -81,6 +89,26 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
         { name: returnsLabel, amount: annualReturns, color: 'var(--chart-1)' },
         { name: contributionsLabel, amount: annualContributions, color: 'var(--chart-2)' },
         { name: withdrawalsLabel, amount: -annualWithdrawals, color: 'var(--chart-3)' },
+      ]);
+      break;
+    }
+    case 'netAssetChange': {
+      const [assetAppreciationLabel, purchasedAssetValueLabel, soldAssetValueLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+
+      transformedChartData = chartData.flatMap(({ annualAssetAppreciation, annualPurchasedAssetValue, annualSoldAssetValue }) => [
+        { name: assetAppreciationLabel, amount: annualAssetAppreciation, color: 'var(--chart-1)' },
+        { name: purchasedAssetValueLabel, amount: annualPurchasedAssetValue, color: 'var(--chart-2)' },
+        { name: soldAssetValueLabel, amount: -annualSoldAssetValue, color: 'var(--chart-3)' },
+      ]);
+      break;
+    }
+    case 'netDebtReduction': {
+      const [debtPaydownLabel, debtPaidAtSaleLabel, debtIncurredLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+
+      transformedChartData = chartData.flatMap(({ annualDebtPaydown, annualDebtPaidAtSale, annualDebtIncurred }) => [
+        { name: debtPaydownLabel, amount: annualDebtPaydown, color: 'var(--chart-1)' },
+        { name: debtPaidAtSaleLabel, amount: annualDebtPaidAtSale, color: 'var(--chart-2)' },
+        { name: debtIncurredLabel, amount: -annualDebtIncurred, color: 'var(--chart-3)' },
       ]);
       break;
     }

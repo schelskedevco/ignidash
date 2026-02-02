@@ -17,8 +17,30 @@ interface SingleSimulationNetWorthAreaChartCardProps {
   keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom') => void;
-  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom';
+  setDataView: (
+    view:
+      | 'assetClass'
+      | 'taxCategory'
+      | 'netPortfolioChange'
+      | 'netWorth'
+      | 'netWorthChange'
+      | 'assetEquity'
+      | 'netAssetChange'
+      | 'debts'
+      | 'netDebtReduction'
+      | 'custom'
+  ) => void;
+  dataView:
+    | 'assetClass'
+    | 'taxCategory'
+    | 'netPortfolioChange'
+    | 'netWorth'
+    | 'netWorthChange'
+    | 'assetEquity'
+    | 'netAssetChange'
+    | 'debts'
+    | 'netDebtReduction'
+    | 'custom';
   setCustomDataID: (name: string) => void;
   customDataID: string;
   startAge: number;
@@ -74,12 +96,27 @@ export default function SingleSimulationNetWorthAreaChartCard({
                 e.target.value !== 'taxCategory' &&
                 e.target.value !== 'netPortfolioChange' &&
                 e.target.value !== 'netWorth' &&
-                e.target.value !== 'netWorthChange';
+                e.target.value !== 'netWorthChange' &&
+                e.target.value !== 'assetEquity' &&
+                e.target.value !== 'netAssetChange' &&
+                e.target.value !== 'debts' &&
+                e.target.value !== 'netDebtReduction';
               if (isCustomSelection) {
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange');
+                setDataView(
+                  e.target.value as
+                    | 'assetClass'
+                    | 'taxCategory'
+                    | 'netPortfolioChange'
+                    | 'netWorth'
+                    | 'netWorthChange'
+                    | 'assetEquity'
+                    | 'netAssetChange'
+                    | 'debts'
+                    | 'netDebtReduction'
+                );
                 setCustomDataID('');
               }
             }}
@@ -90,6 +127,14 @@ export default function SingleSimulationNetWorthAreaChartCard({
               <option value="assetClass">Asset Class</option>
               <option value="taxCategory">Tax Category</option>
               <option value="netPortfolioChange">Net Portfolio Change</option>
+            </optgroup>
+            <optgroup label="Physical Assets">
+              <option value="assetEquity">Asset Equity</option>
+              <option value="netAssetChange">Net Asset Change</option>
+            </optgroup>
+            <optgroup label="Debts">
+              <option value="debts">Debt Balance</option>
+              <option value="netDebtReduction">Net Debt Reduction</option>
             </optgroup>
             <optgroup label="By Account">
               {uniqueAccounts.map((account) => (

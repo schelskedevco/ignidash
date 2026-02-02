@@ -16,7 +16,17 @@ import SingleSimulationNetWorthBarChart from '../../charts/single-simulation/sin
 interface SingleSimulationNetWorthPieChartCardProps {
   rawChartData: SingleSimulationNetWorthChartDataPoint[];
   selectedAge: number;
-  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom';
+  dataView:
+    | 'assetClass'
+    | 'taxCategory'
+    | 'netPortfolioChange'
+    | 'netWorth'
+    | 'netWorthChange'
+    | 'assetEquity'
+    | 'netAssetChange'
+    | 'debts'
+    | 'netDebtReduction'
+    | 'custom';
   customDataID: string;
 }
 
@@ -93,6 +103,42 @@ export default function SingleSimulationNetWorthPieChartCard({
       break;
     case 'netWorthChange':
       title = 'Net Worth Change';
+      chartType = 'bar';
+      break;
+    case 'assetEquity':
+      title = 'Asset Equity';
+
+      chartData = rawChartData
+        .filter((data) => data.age === selectedAge)
+        .flatMap(({ assetEquity, securedDebtBalance }) => [
+          { name: 'assetEquity', value: assetEquity },
+          { name: 'securedDebtBalance', value: securedDebtBalance },
+        ]);
+
+      nameForTotalValue = 'Total Market Value';
+      totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+      totalAbsoluteValue = totalValue;
+      break;
+    case 'netAssetChange':
+      title = 'Net Asset Change';
+      chartType = 'bar';
+      break;
+    case 'debts':
+      title = 'Debt Balance';
+
+      chartData = rawChartData
+        .filter((data) => data.age === selectedAge)
+        .flatMap(({ unsecuredDebtBalance, securedDebtBalance }) => [
+          { name: 'unsecuredDebtBalance', value: unsecuredDebtBalance },
+          { name: 'securedDebtBalance', value: securedDebtBalance },
+        ]);
+
+      nameForTotalValue = 'Total Debt Balance';
+      totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
+      totalAbsoluteValue = totalValue;
+      break;
+    case 'netDebtReduction':
+      title = 'Net Debt Reduction';
       chartType = 'bar';
       break;
     case 'custom':
@@ -186,7 +232,7 @@ export default function SingleSimulationNetWorthPieChartCard({
       chart = (
         <SingleSimulationNetWorthBarChart
           age={selectedAge}
-          dataView={dataView as 'netPortfolioChange' | 'netWorthChange'}
+          dataView={dataView as 'netPortfolioChange' | 'netAssetChange' | 'netDebtReduction' | 'netWorthChange'}
           rawChartData={rawChartData}
         />
       );

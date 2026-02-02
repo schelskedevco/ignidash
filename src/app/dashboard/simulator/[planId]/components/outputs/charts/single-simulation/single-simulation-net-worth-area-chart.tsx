@@ -32,7 +32,17 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom';
+  dataView:
+    | 'assetClass'
+    | 'taxCategory'
+    | 'netPortfolioChange'
+    | 'netWorth'
+    | 'netWorthChange'
+    | 'assetEquity'
+    | 'netAssetChange'
+    | 'debts'
+    | 'netDebtReduction'
+    | 'custom';
   customDataType: 'account' | 'asset' | 'debt' | undefined;
 }
 
@@ -51,7 +61,10 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   switch (dataView) {
     case 'netPortfolioChange':
     case 'netWorth':
-    case 'netWorthChange': {
+    case 'netWorthChange':
+    case 'assetEquity':
+    case 'netAssetChange':
+    case 'netDebtReduction': {
       const lineData = payload.find((entry) => entry.dataKey === dataView);
       if (!lineData) {
         console.error(`${formatChartString(dataView)} data not found`);
@@ -180,7 +193,17 @@ interface SingleSimulationNetWorthAreaChartProps {
   startAge: number;
   keyMetrics: KeyMetrics;
   showReferenceLines: boolean;
-  dataView: 'assetClass' | 'taxCategory' | 'netPortfolioChange' | 'netWorth' | 'netWorthChange' | 'custom';
+  dataView:
+    | 'assetClass'
+    | 'taxCategory'
+    | 'netPortfolioChange'
+    | 'netWorth'
+    | 'netWorthChange'
+    | 'assetEquity'
+    | 'netAssetChange'
+    | 'debts'
+    | 'netDebtReduction'
+    | 'custom';
   customDataID: string;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
@@ -277,6 +300,40 @@ export default function SingleSimulationNetWorthAreaChart({
 
       stackOffset = 'sign';
       break;
+    case 'assetEquity':
+      lineDataKeys.push('assetEquity');
+
+      barDataKeys.push('assetValue', 'securedDebtBalance');
+      barColors.push('var(--chart-1)', 'var(--chart-2)');
+
+      chartData = chartData.map((entry) => ({ ...entry, securedDebtBalance: -entry.securedDebtBalance }));
+
+      stackOffset = 'sign';
+      break;
+    case 'netAssetChange':
+      lineDataKeys.push('netAssetChange');
+
+      barDataKeys.push('annualAssetAppreciation', 'annualPurchasedAssetValue', 'annualSoldAssetValue');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
+
+      chartData = chartData.map((entry) => ({ ...entry, annualSoldAssetValue: -entry.annualSoldAssetValue }));
+
+      stackOffset = 'sign';
+      break;
+    case 'debts':
+      areaDataKeys.push('unsecuredDebtBalance', 'securedDebtBalance');
+      areaColors.push('var(--chart-1)', 'var(--chart-2)');
+      break;
+    case 'netDebtReduction':
+      lineDataKeys.push('netDebtReduction');
+
+      barDataKeys.push('annualDebtPaydown', 'annualDebtPaidAtSale', 'annualDebtIncurred');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
+
+      chartData = chartData.map((entry) => ({ ...entry, annualDebtIncurred: -entry.annualDebtIncurred }));
+
+      stackOffset = 'sign';
+      break;
     case 'custom':
       if (!customDataID) {
         console.warn('Custom data name is required for custom data view');
@@ -320,7 +377,7 @@ export default function SingleSimulationNetWorthAreaChart({
         customDataType = 'asset';
         lineDataKeys.push('equity');
 
-        barDataKeys.push('loanBalance', 'marketValue');
+        barDataKeys.push('marketValue', 'loanBalance');
         barColors.push('var(--chart-1)', 'var(--chart-2)');
 
         chartData = perAssetData;
