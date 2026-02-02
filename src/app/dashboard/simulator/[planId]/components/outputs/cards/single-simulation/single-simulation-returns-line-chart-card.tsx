@@ -15,8 +15,8 @@ import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 interface SingleSimulationReturnsLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom') => void;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
+  setDataView: (view: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom') => void;
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
   rawChartData: SingleSimulationReturnsChartDataPoint[];
   keyMetrics: KeyMetrics;
   startAge: number;
@@ -45,6 +45,10 @@ export default function SingleSimulationReturnsLineChartCard({
     () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAccountData)),
     [getUniqueItems, rawChartData]
   );
+  const uniquePhysicalAssets = useMemo(
+    () => getUniqueItems(rawChartData.flatMap((dataPoint) => dataPoint.perAssetData)),
+    [getUniqueItems, rawChartData]
+  );
 
   return (
     <Card className="my-0">
@@ -65,12 +69,13 @@ export default function SingleSimulationReturnsLineChartCard({
                 e.target.value !== 'rates' &&
                 e.target.value !== 'annualAmounts' &&
                 e.target.value !== 'cumulativeAmounts' &&
-                e.target.value !== 'taxCategory';
+                e.target.value !== 'taxCategory' &&
+                e.target.value !== 'appreciation';
               if (isCustomSelection) {
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory');
+                setDataView(e.target.value as 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation');
                 setCustomDataID('');
               }
             }}
@@ -83,6 +88,9 @@ export default function SingleSimulationReturnsLineChartCard({
               <option value="cumulativeAmounts">Cumulative Gains</option>
               <option value="taxCategory">Tax Category</option>
             </optgroup>
+            <optgroup label="Appreciation Amounts">
+              <option value="appreciation">Asset Appreciation</option>
+            </optgroup>
             <optgroup label="By Account">
               {uniqueAccounts.map((account) => (
                 <option key={account.id} value={account.id}>
@@ -90,6 +98,15 @@ export default function SingleSimulationReturnsLineChartCard({
                 </option>
               ))}
             </optgroup>
+            {uniquePhysicalAssets.length > 0 && (
+              <optgroup label="By Physical Asset">
+                {uniquePhysicalAssets.map((physicalAsset) => (
+                  <option key={physicalAsset.id} value={physicalAsset.id}>
+                    {physicalAsset.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </Select>
           <ChartTimeFrameDropdown timeFrameType="single" />
         </div>

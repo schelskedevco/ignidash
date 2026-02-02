@@ -374,6 +374,7 @@ export default function SingleSimulationNetWorthAreaChart({
       );
       if (perAssetData.length > 0) {
         customDataType = 'asset';
+
         lineDataKeys.push('equity');
 
         barDataKeys.push('marketValue', 'loanBalance');

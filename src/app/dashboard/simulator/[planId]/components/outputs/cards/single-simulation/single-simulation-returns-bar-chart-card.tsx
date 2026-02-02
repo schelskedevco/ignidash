@@ -3,7 +3,7 @@
 import Card from '@/components/ui/card';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 import { Subheading } from '@/components/catalyst/heading';
-import { useAccountData } from '@/hooks/use-convex-data';
+import { useAccountData, usePhysicalAssetData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 
 import SingleSimulationReturnsBarChart from '../../charts/single-simulation/single-simulation-returns-bar-chart';
@@ -11,7 +11,7 @@ import SingleSimulationReturnsBarChart from '../../charts/single-simulation/sing
 interface SingleSimulationReturnsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationReturnsChartDataPoint[];
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
   customDataID: string;
 }
 
@@ -22,6 +22,7 @@ export default function SingleSimulationReturnsBarChartCard({
   customDataID,
 }: SingleSimulationReturnsBarChartCardProps) {
   const accountData = useAccountData(customDataID !== '' ? customDataID : null);
+  const physicalAssetData = usePhysicalAssetData(customDataID !== '' ? customDataID : null);
 
   let title;
   switch (dataView) {
@@ -37,8 +38,17 @@ export default function SingleSimulationReturnsBarChartCard({
     case 'taxCategory':
       title = 'By Tax Category';
       break;
+    case 'appreciation':
+      title = 'Asset Appreciation';
+      break;
     case 'custom':
-      title = accountData ? `${accountData.name} — ${taxCategoryFromAccountTypeForDisplay(accountData.type)}` : 'Custom Account';
+      if (accountData) {
+        title = `${accountData.name} — ${taxCategoryFromAccountTypeForDisplay(accountData.type)}`;
+      } else if (physicalAssetData) {
+        title = `${physicalAssetData.name} — Physical Asset`;
+      } else {
+        title = 'Custom';
+      }
       break;
   }
 

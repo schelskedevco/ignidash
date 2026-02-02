@@ -11,6 +11,7 @@ import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { AccountDataWithReturns } from '@/lib/calc/returns';
+import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 
@@ -20,7 +21,7 @@ interface CustomTooltipProps {
     value: number;
     name: string;
     color: string;
-    dataKey: keyof SingleSimulationReturnsChartDataPoint;
+    dataKey: keyof SingleSimulationReturnsChartDataPoint | keyof PhysicalAssetData;
     payload:
       | SingleSimulationReturnsChartDataPoint
       | ({
@@ -29,15 +30,17 @@ interface CustomTooltipProps {
           annualBondGain: number;
           annualCashGain: number;
           totalAnnualGains: number;
-        } & AccountDataWithReturns);
+        } & AccountDataWithReturns)
+      | ({ age: number } & PhysicalAssetData);
   }>;
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
+  customDataType: 'account' | 'asset' | undefined;
 }
 
-const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
+const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView, customDataType }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
   const currentYear = new Date().getFullYear();
@@ -45,13 +48,17 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
 
-  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom') => {
+  const formatValue = (
+    value: number,
+    mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom'
+  ) => {
     switch (mode) {
       case 'rates':
         return `${(value * 100).toFixed(1)}%`;
       case 'annualAmounts':
       case 'cumulativeAmounts':
       case 'taxCategory':
+      case 'appreciation':
       case 'custom':
         return formatNumber(value, 1, '$');
       default:
@@ -64,11 +71,11 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   let footer = null;
   switch (dataView) {
     case 'rates':
+    case 'appreciation':
       break;
     case 'annualAmounts':
     case 'cumulativeAmounts':
-    case 'taxCategory':
-    case 'custom':
+    case 'taxCategory': {
       const lineEntry = payload.find((entry) => entry.color === LINE_COLOR);
       if (!lineEntry) {
         console.error('Line entry data not found');
@@ -85,6 +92,27 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         </p>
       );
       break;
+    }
+    case 'custom': {
+      if (customDataType !== 'account') break;
+
+      const lineEntry = payload.find((entry) => entry.color === LINE_COLOR);
+      if (!lineEntry) {
+        console.error('Line entry data not found');
+        break;
+      }
+
+      footer = (
+        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
+          <span className="flex items-center gap-1">
+            <ChartLineIcon className="h-3 w-3" />
+            <span className="mr-2">{formatChartString(lineEntry.name)}:</span>
+          </span>
+          <span className="ml-1 font-semibold">{formatNumber(lineEntry.value, 3, '$')}</span>
+        </p>
+      );
+      break;
+    }
   }
 
   return (
@@ -122,7 +150,7 @@ interface SingleSimulationReturnsLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
   customDataID: string;
   startAge: number;
 }
@@ -157,15 +185,19 @@ export default function SingleSimulationReturnsLineChart({
           annualCashGain: number;
           totalAnnualGains: number;
         } & AccountDataWithReturns
-      > = useChartDataSlice(rawChartData, 'single');
+      >
+    | Array<{ age: number } & PhysicalAssetData> = useChartDataSlice(rawChartData, 'single');
 
-  const lineDataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
+  const lineDataKeys: (keyof SingleSimulationReturnsChartDataPoint | keyof PhysicalAssetData)[] = [];
   const strokeColors: string[] = [];
 
-  const barDataKeys: (keyof SingleSimulationReturnsChartDataPoint)[] = [];
+  const barDataKeys: (keyof SingleSimulationReturnsChartDataPoint | keyof PhysicalAssetData)[] = [];
   const barColors: string[] = [];
 
   let formatter = undefined;
+  let stackId: string | undefined = 'stack';
+
+  let customDataType: 'account' | 'asset' | undefined = undefined;
 
   switch (dataView) {
     case 'rates':
@@ -201,6 +233,14 @@ export default function SingleSimulationReturnsLineChart({
       barDataKeys.push('taxableGains', 'taxDeferredGains', 'taxFreeGains', 'cashSavingsGains');
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
       break;
+    case 'appreciation':
+      formatter = (value: number) => formatNumber(value, 1, '$');
+
+      barDataKeys.push('annualAssetAppreciation', 'cumulativeAssetAppreciation');
+      barColors.push('var(--chart-2)', 'var(--chart-4)');
+
+      stackId = undefined;
+      break;
     case 'custom':
       if (!customDataID) {
         console.warn('Custom data name is required for custom data view');
@@ -209,7 +249,7 @@ export default function SingleSimulationReturnsLineChart({
 
       formatter = (value: number) => formatNumber(value, 1, '$');
 
-      chartData = chartData.flatMap(({ age, perAccountData }) =>
+      const perAccountData = chartData.flatMap(({ age, perAccountData }) =>
         perAccountData
           .filter((account) => account.id === customDataID)
           .map((account) => ({
@@ -222,12 +262,32 @@ export default function SingleSimulationReturnsLineChart({
               account.returnAmountsForPeriod.stocks + account.returnAmountsForPeriod.bonds + account.returnAmountsForPeriod.cash,
           }))
       );
+      if (perAccountData.length > 0) {
+        customDataType = 'account';
 
-      lineDataKeys.push('totalAnnualGains');
-      strokeColors.push(LINE_COLOR);
+        lineDataKeys.push('totalAnnualGains');
+        strokeColors.push(LINE_COLOR);
 
-      barDataKeys.push('annualStockGain', 'annualBondGain', 'annualCashGain');
-      barColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
+        barDataKeys.push('annualStockGain', 'annualBondGain', 'annualCashGain');
+        barColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
+
+        chartData = perAccountData;
+        break;
+      }
+
+      const perAssetData = chartData.flatMap(({ age, perAssetData }) =>
+        perAssetData.filter((asset) => asset.id === customDataID).map((asset) => ({ age, ...asset }))
+      );
+      if (perAssetData.length > 0) {
+        customDataType = 'asset';
+
+        barDataKeys.push('appreciation');
+        barColors.push('var(--chart-2)');
+
+        chartData = perAssetData;
+        break;
+      }
+
       break;
   }
 
@@ -290,10 +350,17 @@ export default function SingleSimulationReturnsLineChart({
           />
         ))}
         {barDataKeys.map((dataKey, i) => (
-          <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[i]} />
+          <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId={stackId} fill={barColors[i]} />
         ))}
         <Tooltip
-          content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
+          content={
+            <CustomTooltip
+              startAge={startAge}
+              disabled={isSmallScreen && clickedOutsideChart}
+              dataView={dataView}
+              customDataType={customDataType}
+            />
+          }
           cursor={{ stroke: foregroundColor }}
         />
         {keyMetrics.retirementAge && showReferenceLines && (

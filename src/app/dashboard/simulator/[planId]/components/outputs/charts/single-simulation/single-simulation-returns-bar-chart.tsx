@@ -14,13 +14,17 @@ const CustomLabelListContent = (props: any) => {
     return null;
   }
 
-  const formatValue = (value: number, mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom') => {
+  const formatValue = (
+    value: number,
+    mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom'
+  ) => {
     switch (mode) {
       case 'rates':
         return `${(value * 100).toFixed(1)}%`;
       case 'annualAmounts':
       case 'cumulativeAmounts':
       case 'taxCategory':
+      case 'appreciation':
       case 'custom':
         return formatNumber(value, 1, '$');
       default:
@@ -59,7 +63,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationReturnsBarChartProps {
   age: number;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom';
+  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
   rawChartData: SingleSimulationReturnsChartDataPoint[];
   customDataID: string;
 }
@@ -152,6 +156,15 @@ export default function SingleSimulationReturnsBarChart({
       ]);
       break;
     }
+    case 'appreciation': {
+      formatter = (value: number) => formatNumber(value, 1, '$');
+
+      transformedChartData = chartData.flatMap((item) => [
+        { name: 'Annual Appreciation', amount: item.annualAssetAppreciation, color: 'var(--chart-2)' },
+        { name: 'Cumul. Appreciation', amount: item.cumulativeAssetAppreciation, color: 'var(--chart-4)' },
+      ]);
+      break;
+    }
     case 'custom': {
       if (!customDataID) {
         console.warn('Custom data name is required for custom data view');
@@ -160,15 +173,23 @@ export default function SingleSimulationReturnsBarChart({
 
       formatter = (value: number) => formatNumber(value, 1, '$');
 
-      const [stockLabel, bondLabel, cashLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
-      transformedChartData = chartData
-        .flatMap(({ perAccountData }) => perAccountData)
-        .filter(({ id }) => id === customDataID)
-        .flatMap(({ returnAmountsForPeriod }) => [
+      const perAccountData = chartData.flatMap(({ perAccountData }) => perAccountData).filter(({ id }) => id === customDataID);
+      if (perAccountData.length > 0) {
+        const [stockLabel, bondLabel, cashLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+        transformedChartData = perAccountData.flatMap(({ returnAmountsForPeriod }) => [
           { name: stockLabel, amount: returnAmountsForPeriod.stocks, color: 'var(--chart-2)' },
           { name: bondLabel, amount: returnAmountsForPeriod.bonds, color: 'var(--chart-3)' },
           { name: cashLabel, amount: returnAmountsForPeriod.cash, color: 'var(--chart-4)' },
         ]);
+        break;
+      }
+
+      const perAssetData = chartData.flatMap(({ perAssetData }) => perAssetData).filter(({ id }) => id === customDataID);
+      if (perAssetData.length > 0) {
+        transformedChartData = perAssetData.map(({ name, appreciation }) => ({ name, amount: appreciation, color: 'var(--chart-2)' }));
+        break;
+      }
+
       break;
     }
   }

@@ -163,7 +163,9 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
 function ReturnsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationReturnsChartData(simulation);
 
-  const [dataView, setDataView] = useState<'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom'>('rates');
+  const [dataView, setDataView] = useState<'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom'>(
+    'rates'
+  );
   const [customDataID, setCustomDataID] = useState<string>('');
 
   return (

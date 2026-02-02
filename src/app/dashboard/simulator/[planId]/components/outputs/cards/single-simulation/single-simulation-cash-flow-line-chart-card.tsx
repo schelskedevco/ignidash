@@ -106,13 +106,15 @@ export default function SingleSimulationCashFlowLineChartCard({
                 </option>
               ))}
             </optgroup>
-            <optgroup label="By Debt">
-              {uniqueDebtsAndLoans.map((debt) => (
-                <option key={debt.id} value={debt.id}>
-                  {debt.name}
-                </option>
-              ))}
-            </optgroup>
+            {uniqueDebtsAndLoans.length > 0 && (
+              <optgroup label="By Debt">
+                {uniqueDebtsAndLoans.map((debt) => (
+                  <option key={debt.id} value={debt.id}>
+                    {debt.name}
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </Select>
           <ChartTimeFrameDropdown timeFrameType="single" />
         </div>
