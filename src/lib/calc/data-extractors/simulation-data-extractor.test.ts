@@ -851,6 +851,413 @@ describe('SimulationDataExtractor.getCashFlowData', () => {
 });
 
 /**
+ * Tests for SimulationDataExtractor.getCashFlowData - netCashFlow calculation
+ *
+ * The netCashFlow formula:
+ *   netCashFlow = totalIncome + amountLiquidated + assetSaleProceeds
+ *               - totalExpenses - totalTaxesAndPenalties - totalDebtPayments
+ *               - amountInvested - assetPurchaseOutlay
+ *
+ * Key insight: Asset sales with loans are handled correctly because:
+ * - assetSaleProceeds = NET proceeds (market value - loan payoff at sale)
+ * - totalDebtPayments = only MONTHLY loan payments, NOT loan payoff at sale
+ * This prevents double-counting the loan payoff.
+ */
+
+// Helper to create a comprehensive data point for netCashFlow testing
+const createNetCashFlowDataPoint = (options: {
+  // Income
+  totalIncome?: number;
+  // Expenses
+  totalExpenses?: number;
+  // Taxes (simplified - all goes to income tax)
+  totalTaxes?: number;
+  // Portfolio contributions (stocks, bonds, cash separately)
+  contributions?: { stocks: number; bonds: number; cash: number };
+  employerMatch?: number;
+  // Portfolio withdrawals (stocks, bonds, cash separately)
+  withdrawals?: { stocks: number; bonds: number; cash: number };
+  // Physical assets
+  assetSaleProceeds?: number;
+  assetPurchaseOutlay?: number;
+  loanPayment?: number;
+  loanInterest?: number;
+  // Unsecured debts
+  debtPayment?: number;
+  debtInterest?: number;
+}): SimulationDataPoint => ({
+  date: '2024-01-01',
+  age: 40,
+  portfolio: {
+    totalValue: 1000000,
+    assetAllocation: { stocks: 0.6, bonds: 0.3, cash: 0.1 },
+    contributionsForPeriod: options.contributions ?? { stocks: 0, bonds: 0, cash: 0 },
+    withdrawalsForPeriod: options.withdrawals ?? { stocks: 0, bonds: 0, cash: 0 },
+    cumulativeContributions: { stocks: 0, bonds: 0, cash: 0 },
+    cumulativeWithdrawals: { stocks: 0, bonds: 0, cash: 0 },
+    employerMatchForPeriod: options.employerMatch ?? 0,
+    cumulativeEmployerMatch: 0,
+    realizedGainsForPeriod: 0,
+    cumulativeRealizedGains: 0,
+    rmdsForPeriod: 0,
+    cumulativeRmds: 0,
+    earningsWithdrawnForPeriod: 0,
+    cumulativeEarningsWithdrawn: 0,
+    shortfallForPeriod: 0,
+    shortfallRepaidForPeriod: 0,
+    outstandingShortfall: 0,
+    perAccountData: {},
+  },
+  incomes: {
+    totalIncome: options.totalIncome ?? 0,
+    totalAmountWithheld: 0,
+    totalFicaTax: 0,
+    totalIncomeAfterPayrollDeductions: options.totalIncome ?? 0,
+    totalSocialSecurityIncome: 0,
+    totalTaxFreeIncome: 0,
+    perIncomeData: {},
+  },
+  expenses: {
+    totalExpenses: options.totalExpenses ?? 0,
+    perExpenseData: {},
+  },
+  debts:
+    options.debtPayment !== undefined || options.debtInterest !== undefined
+      ? {
+          totalDebtBalance: 10000,
+          totalPayment: options.debtPayment ?? 0,
+          totalInterest: options.debtInterest ?? 0,
+          totalPrincipalPaid: Math.max(0, (options.debtPayment ?? 0) - (options.debtInterest ?? 0)),
+          totalUnpaidInterest: 0,
+          totalDebtPaydown: (options.debtPayment ?? 0) - (options.debtInterest ?? 0),
+          totalUnsecuredDebtIncurred: 0,
+          perDebtData: {},
+        }
+      : null,
+  physicalAssets:
+    options.assetSaleProceeds !== undefined || options.assetPurchaseOutlay !== undefined || options.loanPayment !== undefined
+      ? {
+          totalMarketValue: 500000,
+          totalLoanBalance: 200000,
+          totalEquity: 300000,
+          totalAppreciation: 0,
+          totalLoanPayment: options.loanPayment ?? 0,
+          totalInterest: options.loanInterest ?? 0,
+          totalPrincipalPaid: Math.max(0, (options.loanPayment ?? 0) - (options.loanInterest ?? 0)),
+          totalUnpaidInterest: 0,
+          totalDebtPaydown: (options.loanPayment ?? 0) - (options.loanInterest ?? 0),
+          totalPurchaseOutlay: options.assetPurchaseOutlay ?? 0,
+          totalPurchaseMarketValue: 0,
+          totalSaleProceeds: options.assetSaleProceeds ?? 0,
+          totalSaleMarketValue: 0,
+          totalCapitalGain: 0,
+          totalSecuredDebtIncurred: 0,
+          totalSecuredDebtPaidAtSale: 0,
+          perAssetData: {},
+        }
+      : null,
+  taxes: {
+    incomeTaxes: {
+      taxableIncomeTaxedAsOrdinary: 0,
+      incomeTaxBrackets: [],
+      incomeTaxAmount: options.totalTaxes ?? 0,
+      effectiveIncomeTaxRate: 0,
+      topMarginalIncomeTaxRate: 0,
+    },
+    capitalGainsTaxes: {
+      taxableIncomeTaxedAsCapGains: 0,
+      capitalGainsTaxBrackets: [],
+      capitalGainsTaxAmount: 0,
+      effectiveCapitalGainsTaxRate: 0,
+      topMarginalCapitalGainsTaxRate: 0,
+    },
+    niit: {
+      netInvestmentIncome: 0,
+      incomeSubjectToNiit: 0,
+      niitAmount: 0,
+      threshold: 200000,
+    },
+    socialSecurityTaxes: {
+      taxableSocialSecurityIncome: 0,
+      maxTaxablePercentage: 0.85,
+      actualTaxablePercentage: 0,
+      provisionalIncome: 0,
+    },
+    earlyWithdrawalPenalties: {
+      taxDeferredPenaltyAmount: 0,
+      taxFreePenaltyAmount: 0,
+      totalPenaltyAmount: 0,
+    },
+    totalTaxesDue: options.totalTaxes ?? 0,
+    totalTaxesRefund: 0,
+    totalTaxableIncome: 0,
+    adjustments: {},
+    deductions: {},
+    incomeSources: {
+      realizedGains: 0,
+      capitalLossDeduction: 0,
+      taxDeferredWithdrawals: 0,
+      taxableRetirementDistributions: 0,
+      taxableDividendIncome: 0,
+      taxableInterestIncome: 0,
+      earnedIncome: 0,
+      socialSecurityIncome: 0,
+      taxableSocialSecurityIncome: 0,
+      maxTaxableSocialSecurityPercentage: 0.85,
+      provisionalIncome: 0,
+      taxFreeIncome: 0,
+      grossIncome: 0,
+      incomeTaxedAsOrdinary: 0,
+      incomeTaxedAsLtcg: 0,
+      taxDeductibleContributions: 0,
+      adjustedGrossIncome: 0,
+      adjustedIncomeTaxedAsOrdinary: 0,
+      adjustedIncomeTaxedAsCapGains: 0,
+      totalIncome: 0,
+      earlyWithdrawals: { rothEarnings: 0, '401kAndIra': 0, hsa: 0 },
+    },
+  },
+  returns: null,
+  phase: { name: 'accumulation' },
+});
+
+describe('SimulationDataExtractor.getCashFlowData - netCashFlow', () => {
+  it('basic accumulation: income flows to investments, netCashFlow is zero', () => {
+    // Scenario: Working year, income covers expenses + taxes + investments
+    // Income: $100K, Expenses: $50K, Taxes: $20K, Invest: $30K
+    // netCashFlow = 100K - 50K - 20K - 30K = 0
+    const dp = createNetCashFlowDataPoint({
+      totalIncome: 100000,
+      totalExpenses: 50000,
+      totalTaxes: 20000,
+      contributions: { stocks: 20000, bonds: 10000, cash: 0 },
+    });
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    expect(data.totalIncome).toBe(100000);
+    expect(data.totalExpenses).toBe(50000);
+    expect(data.totalTaxesAndPenalties).toBe(20000);
+    expect(data.amountInvested).toBe(30000); // stocks + bonds only
+    expect(data.netCashFlow).toBe(0);
+  });
+
+  it('basic liquidation: retirement withdrawal covers expenses', () => {
+    // Scenario: Retired, no income, liquidate portfolio for expenses
+    // Liquidate: $60K, Expenses: $40K, Taxes: $10K
+    // netCashFlow = 60K - 40K - 10K = $10K (excess to cash)
+    const dp = createNetCashFlowDataPoint({
+      totalIncome: 0,
+      totalExpenses: 40000,
+      totalTaxes: 10000,
+      withdrawals: { stocks: 40000, bonds: 20000, cash: 0 },
+    });
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    expect(data.amountLiquidated).toBe(60000); // stocks + bonds only
+    expect(data.netCashFlow).toBe(10000);
+  });
+
+  it('asset sale WITH loan: net proceeds correctly reflect loan payoff (critical test)', () => {
+    // This is THE critical test case for the netCashFlow formula.
+    //
+    // Scenario: Sell $500K house with $200K loan
+    // - assetSaleProceeds = $300K (NET: $500K market value - $200K loan payoff)
+    // - totalDebtPayments = $0 (loan payoff is NOT in monthly payments)
+    // - netCashFlow = $300K (all flows to cash)
+    //
+    // The formula works because assetSaleProceeds is NET proceeds, not gross.
+    // The loan payoff is "embedded" in the calculation: buyer pays $500K,
+    // you pay $200K to lender at closing, net cash received = $300K.
+    const dp = createNetCashFlowDataPoint({
+      assetSaleProceeds: 300000, // NET proceeds after loan payoff
+      loanPayment: 0, // No monthly payments (sold at start of year)
+    });
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    expect(data.assetSaleProceeds).toBe(300000);
+    expect(data.totalDebtPayments).toBe(0); // No double-counting of loan payoff
+    expect(data.netCashFlow).toBe(300000);
+  });
+
+  it('underwater asset sale: negative proceeds when loan exceeds value', () => {
+    // Scenario: Sell $250K house with $400K loan (underwater)
+    // - assetSaleProceeds = -$150K (user owes money at closing)
+    // - netCashFlow = -$150K (cash deficit - user needs to bring money to closing)
+    const dp = createNetCashFlowDataPoint({
+      assetSaleProceeds: -150000, // Negative NET proceeds
+    });
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    expect(data.assetSaleProceeds).toBe(-150000);
+    expect(data.netCashFlow).toBe(-150000);
+  });
+
+  it('asset purchase: down payment is cash outflow', () => {
+    // Scenario: Buy $400K house with $80K down payment
+    // - assetPurchaseOutlay = $80K (down payment is cash outflow)
+    // - netCashFlow = -$80K
+    const dp = createNetCashFlowDataPoint({
+      assetPurchaseOutlay: 80000,
+    });
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    expect(data.assetPurchaseOutlay).toBe(80000);
+    expect(data.netCashFlow).toBe(-80000);
+  });
+
+  it('combined scenario: all cash flow components in one year', () => {
+    // Scenario: Complex year with all flows
+    // Income: $100K
+    // Liquidation: $20K (stocks: 15K, bonds: 5K)
+    // Asset sale proceeds: $50K (net)
+    // Expenses: $60K
+    // Taxes: $25K
+    // Debt payments: $12K (loan: $10K, unsecured: $2K)
+    // Investments: $30K (stocks: 20K, bonds: 10K)
+    // Asset purchase outlay: $15K
+    //
+    // netCashFlow = (100K + 20K + 50K) - (60K + 25K + 12K + 30K + 15K)
+    //             = 170K - 142K = 28K
+    const dp = createNetCashFlowDataPoint({
+      totalIncome: 100000,
+      withdrawals: { stocks: 15000, bonds: 5000, cash: 0 },
+      assetSaleProceeds: 50000,
+      totalExpenses: 60000,
+      totalTaxes: 25000,
+      loanPayment: 10000,
+      loanInterest: 5000,
+      debtPayment: 2000,
+      debtInterest: 500,
+      contributions: { stocks: 20000, bonds: 10000, cash: 0 },
+      assetPurchaseOutlay: 15000,
+    });
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    expect(data.totalIncome).toBe(100000);
+    expect(data.amountLiquidated).toBe(20000);
+    expect(data.assetSaleProceeds).toBe(50000);
+    expect(data.totalExpenses).toBe(60000);
+    expect(data.totalTaxesAndPenalties).toBe(25000);
+    expect(data.totalDebtPayments).toBe(12000); // loan + unsecured
+    expect(data.amountInvested).toBe(30000);
+    expect(data.assetPurchaseOutlay).toBe(15000);
+    expect(data.netCashFlow).toBe(28000);
+  });
+
+  it('cash contributions are excluded from amountInvested', () => {
+    // The sumInvestments function only sums stocks + bonds, not cash.
+    // This is intentional because cash stays liquid and doesn't need to be
+    // "invested" in the traditional sense.
+    //
+    // contributions: { stocks: 10K, bonds: 10K, cash: 5K }
+    // amountInvested = 20K (NOT 25K - cash excluded)
+    const dp = createNetCashFlowDataPoint({
+      totalIncome: 50000,
+      totalExpenses: 25000,
+      contributions: { stocks: 10000, bonds: 10000, cash: 5000 },
+    });
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    // amountInvested should be stocks + bonds only
+    expect(data.amountInvested).toBe(20000);
+    // netCashFlow = 50K - 25K - 0 (taxes) - 20K (invested) = 5K
+    // The 5K cash contribution is NOT subtracted from netCashFlow
+    expect(data.netCashFlow).toBe(5000);
+  });
+
+  it('employer match is subtracted from amountInvested', () => {
+    // The employer match is "free money" that doesn't come from the user's income,
+    // so it should be subtracted from amountInvested to reflect actual user outflow.
+    //
+    // contributions: { stocks: 15K, bonds: 5K, cash: 0 } = 20K
+    // employerMatch: $5K
+    // amountInvested = 20K - 5K = 15K
+    const dp = createNetCashFlowDataPoint({
+      totalIncome: 100000,
+      totalExpenses: 50000,
+      totalTaxes: 20000,
+      contributions: { stocks: 15000, bonds: 5000, cash: 0 },
+      employerMatch: 5000,
+    });
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    expect(data.employerMatch).toBe(5000);
+    expect(data.amountInvested).toBe(15000); // 20K contributions - 5K match
+    // netCashFlow = 100K - 50K - 20K - 15K = 15K
+    expect(data.netCashFlow).toBe(15000);
+  });
+
+  it('monthly loan payments are included in totalDebtPayments (not sale)', () => {
+    // Regular monthly mortgage payments should be included in totalDebtPayments.
+    // This is different from loan payoff at sale (which is in assetSaleProceeds).
+    //
+    // Monthly loan payments: $1200/year
+    // totalDebtPayments = 1200
+    const dp = createNetCashFlowDataPoint({
+      totalIncome: 100000,
+      totalExpenses: 50000,
+      totalTaxes: 20000,
+      loanPayment: 12000,
+      loanInterest: 6000,
+    });
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    expect(data.totalDebtPayments).toBe(12000);
+    // netCashFlow = 100K - 50K - 20K - 12K = 18K
+    expect(data.netCashFlow).toBe(18000);
+  });
+
+  it('high inflation scenario: negative interest is capped at 0 for totalDebtPayments', () => {
+    // When inflation > APR, raw interest can be negative in real terms.
+    // However, totalDebtPayments is capped at 0 (can't have negative payments).
+    //
+    // debtPayment: 0, interest: -100 (inflation eroding debt)
+    // totalDebtPayments = max(0, 0 + 0) = 0 (capped)
+    //
+    // Note: The loan payment + unsecured payment are both 0, and the capping
+    // happens at the sum level, not the interest level.
+    const dp = createNetCashFlowDataPoint({
+      totalIncome: 50000,
+      totalExpenses: 30000,
+      debtPayment: 0,
+      debtInterest: -100, // Negative interest (inflation > APR)
+    });
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    // totalDebtPayments is capped at 0
+    expect(data.totalDebtPayments).toBe(0);
+    // netCashFlow = 50K - 30K - 0 = 20K
+    expect(data.netCashFlow).toBe(20000);
+  });
+
+  it('zero values: all components at zero result in zero netCashFlow', () => {
+    const dp = createNetCashFlowDataPoint({});
+
+    const data = SimulationDataExtractor.getCashFlowData(dp);
+
+    expect(data.totalIncome).toBe(0);
+    expect(data.amountLiquidated).toBe(0);
+    expect(data.assetSaleProceeds).toBe(0);
+    expect(data.totalExpenses).toBe(0);
+    expect(data.totalTaxesAndPenalties).toBe(0);
+    expect(data.totalDebtPayments).toBe(0);
+    expect(data.amountInvested).toBe(0);
+    expect(data.assetPurchaseOutlay).toBe(0);
+    expect(data.netCashFlow).toBe(0);
+  });
+});
+
+/**
  * Tests for SimulationDataExtractor.getAssetsAndLiabilitiesData - Raw Values for Net Worth
  */
 
