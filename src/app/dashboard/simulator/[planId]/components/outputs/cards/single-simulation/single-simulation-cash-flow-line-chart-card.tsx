@@ -90,7 +90,7 @@ export default function SingleSimulationCashFlowLineChartCard({
             <option value="cashFlow">Cash Flow</option>
             <option value="surplusDeficit">Surplus/Deficit</option>
             <option value="incomes">Incomes</option>
-            <option value="expenses">Expenses &amp; Taxes</option>
+            <option value="expenses">Expenses</option>
             <option value="savingsRate">Savings Rate</option>
             <optgroup label="By Income">
               {uniqueIncomes.map((income) => (

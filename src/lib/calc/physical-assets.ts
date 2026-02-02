@@ -54,6 +54,7 @@ export class PhysicalAssetsProcessor {
 
       const principalPaid = Math.max(0, monthlyPaymentDue - interest);
       const unpaidInterest = Math.max(0, interest - monthlyPaymentDue);
+
       const debtPaydown = monthlyPaymentDue - interest;
 
       const purchaseData = purchaseDataByAsset[asset.getId()];
@@ -380,9 +381,8 @@ export class PhysicalAsset {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
     if (this.isPaidOff()) return { monthlyPaymentDue: 0, interest: 0 };
 
-    // Interest can be negative when inflation > APR (real rate is negative).
+    // Interest can be negative when inflation > APR (real rate is negative)
     const interest = this.calculateMonthlyInterest(monthlyInflationRate);
-    // Raw value (not capped at 0) to preserve accounting identity: payment = principal + interest.
     const monthlyPaymentDue = Math.min(this.monthlyLoanPayment, this.loanBalance + interest);
 
     return { monthlyPaymentDue, interest };

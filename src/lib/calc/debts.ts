@@ -31,6 +31,7 @@ export class DebtsProcessor {
 
       const principalPaid = Math.max(0, monthlyPaymentDue - interest);
       const unpaidInterest = Math.max(0, interest - monthlyPaymentDue);
+
       const debtPaydown = monthlyPaymentDue - interest;
 
       const debtData: DebtData = {
@@ -206,9 +207,8 @@ export class Debt {
   getMonthlyPaymentInfo(monthlyInflationRate: number): { monthlyPaymentDue: number; interest: number } {
     if (this.isPaidOff()) return { monthlyPaymentDue: 0, interest: 0 };
 
-    // Interest can be negative when inflation > APR (real rate is negative).
+    // Interest can be negative when inflation > APR (real rate is negative)
     const interest = this.calculateMonthlyInterest(monthlyInflationRate);
-    // Raw value (not capped at 0) to preserve accounting identity: payment = principal + interest.
     const monthlyPaymentDue = Math.min(this.monthlyPayment, this.balance + interest);
 
     return { monthlyPaymentDue, interest };

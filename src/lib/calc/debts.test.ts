@@ -1030,6 +1030,167 @@ describe('Extreme Inflation Edge Cases', () => {
     const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
     expect(interest).toBeLessThan(0);
   });
+
+  describe('Real Rate Mathematical Bounds', () => {
+    it('should have real rate > -100% even with extreme inflation (simple interest)', () => {
+      // APR = 0% (minimum allowed)
+      // Inflation = 10,000% annual (extreme hyperinflation)
+      const debt = new Debt(
+        createDebtInput({
+          balance: 100_000,
+          apr: 0,
+          monthlyPayment: 1000,
+          interestType: 'simple',
+        })
+      );
+
+      const extremeAnnualInflation = 100; // 10,000%
+      const monthlyInflation = Math.pow(1 + extremeAnnualInflation, 1 / 12) - 1;
+
+      const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+      // Real rate = (1 + 0) / (1 + monthlyInflation) - 1
+      // With 10,000% annual inflation, monthly ≈ 46.8%
+      // Real rate ≈ 1/1.468 - 1 ≈ -31.9%
+      // Interest should be negative but |interest| < principal
+      expect(interest).toBeLessThan(0);
+      expect(Math.abs(interest)).toBeLessThan(100_000); // |interest| < balance
+    });
+
+    it('should have real rate > -100% with compound interest and extreme inflation', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 100_000,
+          apr: 0,
+          monthlyPayment: 1000,
+          interestType: 'compound',
+          compoundingFrequency: 'daily',
+        })
+      );
+
+      const extremeAnnualInflation = 100; // 10,000%
+      const monthlyInflation = Math.pow(1 + extremeAnnualInflation, 1 / 12) - 1;
+
+      const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+      expect(interest).toBeLessThan(0);
+      expect(Math.abs(interest)).toBeLessThan(100_000);
+    });
+  });
+
+  describe('Monthly Payment Due Non-Negativity', () => {
+    it('should always have non-negative monthlyPaymentDue even with extreme inflation', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 100,
+          apr: 0, // Worst case for negative interest
+          monthlyPayment: 1000,
+          interestType: 'simple',
+        })
+      );
+
+      // Even with 10,000% annual inflation
+      const extremeAnnualInflation = 100;
+      const monthlyInflation = Math.pow(1 + extremeAnnualInflation, 1 / 12) - 1;
+
+      const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+      // Interest is negative
+      expect(interest).toBeLessThan(0);
+      // But balance + interest > 0, so monthlyPaymentDue >= 0
+      expect(monthlyPaymentDue).toBeGreaterThanOrEqual(0);
+      // Specifically: monthlyPaymentDue = balance + interest (since that's less than monthlyPayment)
+      expect(monthlyPaymentDue).toBeCloseTo(100 + interest, 2);
+    });
+
+    it('should maintain non-negative payments through multiple months of extreme inflation', () => {
+      const debt = new Debt(
+        createDebtInput({
+          balance: 10_000,
+          apr: 5, // 5% APR
+          monthlyPayment: 500,
+          interestType: 'simple',
+        })
+      );
+
+      const extremeAnnualInflation = 10; // 1,000% annual
+      const monthlyInflation = Math.pow(1 + extremeAnnualInflation, 1 / 12) - 1;
+
+      // Run for 60 months
+      for (let i = 0; i < 60 && !debt.isPaidOff(); i++) {
+        debt.applyMonthlyInflation(monthlyInflation);
+        const { monthlyPaymentDue } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+        // Every single month, payment should be non-negative
+        expect(monthlyPaymentDue).toBeGreaterThanOrEqual(0);
+
+        const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+        debt.applyPayment(monthlyPaymentDue, interest);
+      }
+
+      // Debt should be paid off
+      expect(debt.isPaidOff()).toBe(true);
+    });
+  });
+
+  describe('Balance Plus Interest Invariant', () => {
+    it('should always have balance + interest > 0 (simple interest)', () => {
+      // This invariant holds because:
+      // interest = principal * realRate
+      // realRate > -1 (proven above)
+      // So |interest| < principal <= balance
+      // Therefore balance + interest > 0
+
+      const testCases = [
+        { apr: 0, inflation: 0.5 }, // 50% annual
+        { apr: 0, inflation: 1 }, // 100% annual
+        { apr: 0, inflation: 10 }, // 1,000% annual
+        { apr: 0, inflation: 100 }, // 10,000% annual
+        { apr: 40, inflation: 100 }, // Max APR, extreme inflation
+      ];
+
+      for (const { apr, inflation } of testCases) {
+        const debt = new Debt(
+          createDebtInput({
+            balance: 1000,
+            apr,
+            monthlyPayment: 100,
+            interestType: 'simple',
+          })
+        );
+
+        const monthlyInflation = Math.pow(1 + inflation, 1 / 12) - 1;
+        const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+        expect(debt.getBalance() + interest).toBeGreaterThan(0);
+      }
+    });
+
+    it('should always have balance + interest > 0 (compound interest)', () => {
+      const testCases = [
+        { apr: 0, inflation: 100, compounding: 'daily' as const },
+        { apr: 0, inflation: 100, compounding: 'monthly' as const },
+        { apr: 40, inflation: 100, compounding: 'daily' as const },
+      ];
+
+      for (const { apr, inflation, compounding } of testCases) {
+        const debt = new Debt(
+          createDebtInput({
+            balance: 1000,
+            apr,
+            monthlyPayment: 100,
+            interestType: 'compound',
+            compoundingFrequency: compounding,
+          })
+        );
+
+        const monthlyInflation = Math.pow(1 + inflation, 1 / 12) - 1;
+        const { interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+
+        expect(debt.getBalance() + interest).toBeGreaterThan(0);
+      }
+    });
+  });
 });
 
 // ============================================================================

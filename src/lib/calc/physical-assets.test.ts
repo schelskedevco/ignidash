@@ -1900,6 +1900,131 @@ describe('Inflation Adjustment', () => {
 
       expect(asset.getLoanBalance()).toBeCloseTo(expectedNewBalance, 2);
     });
+
+    describe('Real Rate Mathematical Bounds', () => {
+      it('should have real rate > -100% even with extreme inflation', () => {
+        // APR = 0% (minimum allowed)
+        // Inflation = 10,000% annual (extreme hyperinflation)
+        const asset = new PhysicalAsset(
+          createFinancedAssetInput({
+            purchasePrice: 200_000,
+            paymentMethod: { type: 'loan', downPayment: 100_000, loanBalance: 100_000, apr: 0, monthlyPayment: 1000 },
+          })
+        );
+
+        const extremeAnnualInflation = 100; // 10,000%
+        const monthlyInflation = Math.pow(1 + extremeAnnualInflation, 1 / 12) - 1;
+
+        const { interest } = asset.getMonthlyPaymentInfo(monthlyInflation);
+
+        // Real rate = (1 + 0) / (1 + monthlyInflation) - 1
+        // With 10,000% annual inflation, monthly ≈ 46.8%
+        // Real rate ≈ 1/1.468 - 1 ≈ -31.9%
+        // Interest should be negative but |interest| < principal
+        expect(interest).toBeLessThan(0);
+        expect(Math.abs(interest)).toBeLessThan(100_000); // |interest| < balance
+      });
+    });
+
+    describe('Monthly Payment Due Non-Negativity', () => {
+      it('should always have non-negative monthlyPaymentDue even with extreme inflation', () => {
+        const asset = new PhysicalAsset(
+          createFinancedAssetInput({
+            purchasePrice: 200,
+            paymentMethod: {
+              type: 'loan',
+              downPayment: 100,
+              loanBalance: 100,
+              apr: 0, // Worst case for negative interest
+              monthlyPayment: 1000,
+            },
+          })
+        );
+
+        // Even with 10,000% annual inflation
+        const extremeAnnualInflation = 100;
+        const monthlyInflation = Math.pow(1 + extremeAnnualInflation, 1 / 12) - 1;
+
+        const { monthlyPaymentDue, interest } = asset.getMonthlyPaymentInfo(monthlyInflation);
+
+        // Interest is negative
+        expect(interest).toBeLessThan(0);
+        // But balance + interest > 0, so monthlyPaymentDue >= 0
+        expect(monthlyPaymentDue).toBeGreaterThanOrEqual(0);
+        // Specifically: monthlyPaymentDue = balance + interest (since that's less than monthlyPayment)
+        expect(monthlyPaymentDue).toBeCloseTo(100 + interest, 2);
+      });
+
+      it('should maintain non-negative loan payments through multiple months of extreme inflation', () => {
+        const asset = new PhysicalAsset(
+          createFinancedAssetInput({
+            purchasePrice: 20_000,
+            paymentMethod: {
+              type: 'loan',
+              downPayment: 10_000,
+              loanBalance: 10_000,
+              apr: 5, // 5% APR
+              monthlyPayment: 500,
+            },
+          })
+        );
+
+        const extremeAnnualInflation = 10; // 1,000% annual
+        const monthlyInflation = Math.pow(1 + extremeAnnualInflation, 1 / 12) - 1;
+
+        // Run for 60 months
+        for (let i = 0; i < 60 && !asset.isPaidOff(); i++) {
+          asset.applyMonthlyInflation(monthlyInflation);
+          const { monthlyPaymentDue, interest } = asset.getMonthlyPaymentInfo(monthlyInflation);
+
+          // Every single month, payment should be non-negative
+          expect(monthlyPaymentDue).toBeGreaterThanOrEqual(0);
+
+          asset.applyLoanPayment(monthlyPaymentDue, interest);
+        }
+
+        // Loan should be paid off
+        expect(asset.isPaidOff()).toBe(true);
+      });
+    });
+
+    describe('Balance Plus Interest Invariant', () => {
+      it('should always have balance + interest > 0 for physical asset loans', () => {
+        // This invariant holds because:
+        // interest = principal * realRate
+        // realRate > -1 (proven above)
+        // So |interest| < principal <= balance
+        // Therefore balance + interest > 0
+
+        const testCases = [
+          { apr: 0, inflation: 0.5 }, // 50% annual
+          { apr: 0, inflation: 1 }, // 100% annual
+          { apr: 0, inflation: 10 }, // 1,000% annual
+          { apr: 0, inflation: 100 }, // 10,000% annual
+          { apr: 40, inflation: 100 }, // Max APR, extreme inflation
+        ];
+
+        for (const { apr, inflation } of testCases) {
+          const asset = new PhysicalAsset(
+            createFinancedAssetInput({
+              purchasePrice: 2000,
+              paymentMethod: {
+                type: 'loan',
+                downPayment: 1000,
+                loanBalance: 1000,
+                apr,
+                monthlyPayment: 100,
+              },
+            })
+          );
+
+          const monthlyInflation = Math.pow(1 + inflation, 1 / 12) - 1;
+          const { interest } = asset.getMonthlyPaymentInfo(monthlyInflation);
+
+          expect(asset.getLoanBalance() + interest).toBeGreaterThan(0);
+        }
+      });
+    });
   });
 });
 
