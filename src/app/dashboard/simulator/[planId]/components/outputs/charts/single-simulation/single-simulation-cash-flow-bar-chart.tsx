@@ -97,8 +97,8 @@ export default function SingleSimulationCashFlowBarChart({
   const chartData = rawChartData.filter((item) => item.age === age);
 
   let transformedChartData: { name: string; amount: number; color: string }[] = [];
-  let showReferenceLineAtZero = false;
   const formatter = (value: number) => formatNumber(value, 1, '$');
+  let showReferenceLineAtZero = false;
 
   switch (dataView) {
     case 'surplusDeficit': {
@@ -216,13 +216,13 @@ export default function SingleSimulationCashFlowBarChart({
 
       const perAssetData = chartData.flatMap(({ perAssetData }) => perAssetData).filter(({ id }) => id === customDataID);
       if (perAssetData.length > 0) {
-        transformedChartData = perAssetData.map(({ name, loanPayment }) => ({ name, amount: loanPayment, color: 'var(--chart-6)' }));
+        transformedChartData = perAssetData.map(({ name, loanPayment }) => ({ name, amount: loanPayment, color: 'var(--chart-8)' }));
         break;
       }
 
       const perDebtData = chartData.flatMap(({ perDebtData }) => perDebtData).filter(({ id }) => id === customDataID);
       if (perDebtData.length > 0) {
-        transformedChartData = perDebtData.map(({ name, payment }) => ({ name, amount: payment, color: 'var(--chart-6)' }));
+        transformedChartData = perDebtData.map(({ name, payment }) => ({ name, amount: payment, color: 'var(--chart-5)' }));
         break;
       }
 

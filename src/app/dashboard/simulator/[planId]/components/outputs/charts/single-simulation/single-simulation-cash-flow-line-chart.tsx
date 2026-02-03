@@ -314,7 +314,7 @@ export default function SingleSimulationCashFlowLineChart({
       );
       if (perAssetData.length > 0) {
         lineDataKeys.push('loanPayment');
-        strokeColors.push('var(--chart-6)');
+        strokeColors.push('var(--chart-8)');
 
         chartData = perAssetData;
         break;
@@ -325,7 +325,7 @@ export default function SingleSimulationCashFlowLineChart({
       );
       if (perDebtData.length > 0) {
         lineDataKeys.push('payment');
-        strokeColors.push('var(--chart-6)');
+        strokeColors.push('var(--chart-5)');
 
         chartData = perDebtData;
         break;

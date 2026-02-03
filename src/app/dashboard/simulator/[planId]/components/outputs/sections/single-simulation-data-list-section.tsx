@@ -21,7 +21,8 @@ function NetPortfolioChangeTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>Calculated as annual returns plus contributions, minus withdrawals.</p>
+        <p>The net annual change in value of your investments and savings.</p>
+        <p>Calculated as annual returns plus contributions minus withdrawals.</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -39,7 +40,7 @@ function SurplusDeficitTooltip() {
           <strong>Positive</strong> = cash available to save or invest. <strong>Negative</strong> = portfolio withdrawals needed to cover
           the gap.
         </p>
-        <p>Like Net Cash Flow, but excludes buying or selling of investments and assets.</p>
+        <p>Like Net Cash Flow, but excludes all buying or selling of investments and assets.</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -65,7 +66,7 @@ function NetCashFlowTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>The net change in your cash position from all inflows and outflows.</p>
+        <p>The net annual change in your cash position from all inflows and outflows.</p>
         <p>
           <strong>Positive</strong> = cash accumulating. <strong>Negative</strong> = depleting cash reserves.
         </p>
@@ -82,7 +83,8 @@ function GrossIncomeTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>All taxable income before adjustments and deductions.</p>
+        <p>All taxable income before any adjustments or deductions.</p>
+        <p>View the Income Sources charts under Taxes for what&apos;s included.</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -108,8 +110,7 @@ function WithdrawalRateTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>The percentage of your investment portfolio that you withdraw annually.</p>
-        <p>This rate helps assess the sustainability of your withdrawals over time.</p>
+        <p>The percentage of your investment portfolio withdrawn each year to cover expenses.</p>
       </TooltipContent>
     </Tooltip>
   );
