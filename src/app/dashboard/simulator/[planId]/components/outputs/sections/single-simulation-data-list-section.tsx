@@ -82,8 +82,7 @@ function GrossIncomeTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>Total taxable income before adjustments and deductions.</p>
-        <p>Includes earned income, Social Security, retirement distributions, interest, dividends, and realized capital gains.</p>
+        <p>All taxable income before adjustments and deductions.</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -109,7 +108,7 @@ function WithdrawalRateTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>The percentage of your total portfolio value that you withdraw annually.</p>
+        <p>The percentage of your investment portfolio that you withdraw annually.</p>
         <p>This rate helps assess the sustainability of your withdrawals over time.</p>
       </TooltipContent>
     </Tooltip>
