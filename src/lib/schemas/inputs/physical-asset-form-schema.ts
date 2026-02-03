@@ -40,6 +40,21 @@ export const physicalAssetFormSchema = z
       path: ['paymentMethod', 'downPayment'],
       message: 'Down payment is required when financing a future purchase',
     }
+  )
+  .refine(
+    (data) => {
+      if (data.paymentMethod.type === 'loan' && data.purchaseDate.type !== 'now') {
+        const downPayment = data.paymentMethod.downPayment ?? 0;
+        const loanBalance = data.paymentMethod.loanBalance;
+
+        return Math.abs(downPayment + loanBalance - data.purchasePrice) < 0.01;
+      }
+      return true;
+    },
+    {
+      path: ['paymentMethod', 'loanBalance'],
+      message: 'Down payment + loan balance must equal purchase price',
+    }
   );
 
 export type PhysicalAssetInputs = z.infer<typeof physicalAssetFormSchema>;
