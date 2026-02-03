@@ -46,7 +46,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - Math.floor(startAge));
 
-  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
+  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--chart-8)', 'var(--foreground)'];
 
   const formatValue = (
     value: number,
@@ -66,7 +66,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
     }
   };
 
-  const transformedPayload = dataView !== 'rates' ? payload.filter((entry) => entry.color !== LINE_COLOR) : [...payload];
+  const transformedPayload = payload.filter((entry) => entry.color !== LINE_COLOR);
 
   let footer = null;
   switch (dataView) {
@@ -75,26 +75,9 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       break;
     case 'annualAmounts':
     case 'cumulativeAmounts':
-    case 'taxCategory': {
-      const lineEntry = payload.find((entry) => entry.color === LINE_COLOR);
-      if (!lineEntry) {
-        console.error('Line entry data not found');
-        break;
-      }
-
-      footer = (
-        <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
-          <span className="flex items-center gap-1">
-            <ChartLineIcon className="h-3 w-3" />
-            <span className="mr-2">{formatChartString(lineEntry.name)}:</span>
-          </span>
-          <span className="ml-1 font-semibold">{formatNumber(lineEntry.value, 3, '$')}</span>
-        </p>
-      );
-      break;
-    }
+    case 'taxCategory':
     case 'custom': {
-      if (customDataType !== 'account') break;
+      if (customDataType === 'asset') break;
 
       const lineEntry = payload.find((entry) => entry.color === LINE_COLOR);
       if (!lineEntry) {
@@ -196,6 +179,7 @@ export default function SingleSimulationReturnsLineChart({
 
   let formatter = undefined;
   let stackId: string | undefined = 'stack';
+  let showReferenceLineAtZero = true;
 
   let customDataType: 'account' | 'asset' | undefined = undefined;
 
@@ -204,7 +188,9 @@ export default function SingleSimulationReturnsLineChart({
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
 
       lineDataKeys.push('realStockReturnRate', 'realBondReturnRate', 'realCashReturnRate', 'inflationRate');
-      strokeColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--foreground)');
+      strokeColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-8)');
+
+      showReferenceLineAtZero = false;
       break;
     case 'annualAmounts':
       formatter = (value: number) => formatNumber(value, 1, '$');
@@ -336,7 +322,7 @@ export default function SingleSimulationReturnsLineChart({
         <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
         <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
         <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {dataView !== 'rates' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
+        {showReferenceLineAtZero && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
         {lineDataKeys.map((dataKey, i) => (
           <Line
             key={`line-${dataKey}-${i}`}
