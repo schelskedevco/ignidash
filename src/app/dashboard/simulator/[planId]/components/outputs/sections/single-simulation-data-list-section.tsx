@@ -34,12 +34,12 @@ function SurplusDeficitTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>Cash remaining after taxes, expenses, and debt payments.</p>
+        <p>Income (wages, tax-free, and Social Security) minus expenses, taxes, and debt payments.</p>
         <p>
           <strong>Positive</strong> = cash available to save or invest. <strong>Negative</strong> = portfolio withdrawals needed to cover
           the gap.
         </p>
-        <p>Employer match, dividends, and interest are excluded as they don&apos;t flow through your cash.</p>
+        <p>Like Net Cash Flow, but excludes buying or selling of investments and assets.</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -52,8 +52,7 @@ function SavingsRateTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>The percentage of your total after-tax compensation (including employer match) that you save.</p>
-        <p>Calculated as: (Surplus + Employer Match) / (Income + Employer Match - Taxes)</p>
+        <p>The percentage of your total after-tax income, including employer match, that you keep.</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -66,10 +65,11 @@ function NetCashFlowTooltip() {
         <InfoIcon className="size-4 fill-white dark:fill-stone-950" />
       </TooltipTrigger>
       <TooltipContent>
-        <p>The net change in cash holdings after income, expenses, and portfolio transactions.</p>
+        <p>The net change in your cash position from all inflows and outflows.</p>
         <p>
           <strong>Positive</strong> = cash accumulating. <strong>Negative</strong> = depleting cash reserves.
         </p>
+        <p>Includes income, expenses, taxes, debt payments, and any buying or selling of investments and assets.</p>
       </TooltipContent>
     </Tooltip>
   );
