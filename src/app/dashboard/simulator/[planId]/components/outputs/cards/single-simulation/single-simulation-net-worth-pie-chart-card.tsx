@@ -118,7 +118,7 @@ export default function SingleSimulationNetWorthPieChartCard({
         .filter((data) => data.age === selectedAge)
         .flatMap(({ assetEquity, securedDebtBalance }) => [
           { name: 'assetEquity', value: assetEquity },
-          { name: 'securedDebtBalance', value: securedDebtBalance },
+          { name: 'securedDebt', value: securedDebtBalance },
         ]);
 
       nameForTotalValue = 'Total Market Value';
@@ -131,8 +131,8 @@ export default function SingleSimulationNetWorthPieChartCard({
       chartData = rawChartData
         .filter((data) => data.age === selectedAge)
         .flatMap(({ unsecuredDebtBalance, securedDebtBalance }) => [
-          { name: 'unsecuredDebtBalance', value: unsecuredDebtBalance },
-          { name: 'securedDebtBalance', value: securedDebtBalance },
+          { name: 'unsecuredDebt', value: unsecuredDebtBalance },
+          { name: 'securedDebt', value: securedDebtBalance },
         ]);
 
       nameForTotalValue = 'Total Debt Balance';
