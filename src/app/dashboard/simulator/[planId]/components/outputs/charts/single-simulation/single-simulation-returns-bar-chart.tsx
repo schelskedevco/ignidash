@@ -119,7 +119,7 @@ export default function SingleSimulationReturnsBarChart({
         { name: stockLabel, amount: item.realStockReturnRate, color: 'var(--chart-2)' },
         { name: bondLabel, amount: item.realBondReturnRate, color: 'var(--chart-3)' },
         { name: cashLabel, amount: item.realCashReturnRate, color: 'var(--chart-4)' },
-        { name: inflationLabel, amount: item.inflationRate, color: 'var(--foreground)' },
+        { name: inflationLabel, amount: item.inflationRate, color: 'var(--chart-8)' },
       ]);
       break;
     }
