@@ -584,6 +584,162 @@ describe('PhysicalAsset Class', () => {
 });
 
 // ============================================================================
+// getMarketValue/getLoanBalance/getEquity Return 0 Before Asset Is Owned
+// ============================================================================
+
+describe('getMarketValue/getLoanBalance/getEquity return 0 before asset is owned', () => {
+  it('PhysicalAsset.getMarketValue() returns 0 for pending asset', () => {
+    const asset = new PhysicalAsset(
+      createPhysicalAssetInput({
+        purchaseDate: { type: 'customAge', age: 40 },
+        purchasePrice: 400000,
+      })
+    );
+
+    // Before purchase(), market value should be 0
+    expect(asset.getOwnershipStatus()).toBe('pending');
+    expect(asset.getMarketValue()).toBe(0);
+
+    // After purchase(), market value should be actual value
+    asset.purchase();
+    expect(asset.getOwnershipStatus()).toBe('owned');
+    expect(asset.getMarketValue()).toBe(400000);
+  });
+
+  it('PhysicalAsset.getLoanBalance() returns 0 for pending financed asset', () => {
+    const asset = new PhysicalAsset(
+      createFinancedAssetInput({
+        purchaseDate: { type: 'customAge', age: 40 },
+        purchasePrice: 400000,
+        paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
+      })
+    );
+
+    // Before purchase(), loan balance should be 0
+    expect(asset.getOwnershipStatus()).toBe('pending');
+    expect(asset.getLoanBalance()).toBe(0);
+
+    // After purchase(), loan balance should be actual balance
+    asset.purchase();
+    expect(asset.getOwnershipStatus()).toBe('owned');
+    expect(asset.getLoanBalance()).toBe(320000);
+  });
+
+  it('PhysicalAsset.getEquity() returns 0 for pending asset', () => {
+    const asset = new PhysicalAsset(
+      createFinancedAssetInput({
+        purchaseDate: { type: 'customAge', age: 40 },
+        purchasePrice: 400000,
+        paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
+      })
+    );
+
+    // Before purchase(), equity should be 0
+    expect(asset.getOwnershipStatus()).toBe('pending');
+    expect(asset.getEquity()).toBe(0);
+
+    // After purchase(), equity should be market value - loan balance
+    asset.purchase();
+    expect(asset.getOwnershipStatus()).toBe('owned');
+    expect(asset.getEquity()).toBeCloseTo(80000, 0);
+  });
+
+  it('PhysicalAssets.getTotalMarketValue() excludes pending assets', () => {
+    const assets = new PhysicalAssets([
+      createPhysicalAssetInput({
+        id: 'owned',
+        name: 'Owned Home',
+        purchaseDate: { type: 'now' },
+        purchasePrice: 400000,
+      }),
+      createPhysicalAssetInput({
+        id: 'pending',
+        name: 'Future Home',
+        purchaseDate: { type: 'customAge', age: 50 },
+        purchasePrice: 600000,
+      }),
+    ]);
+
+    // Only the owned asset should be counted
+    expect(assets.getTotalMarketValue()).toBe(400000);
+  });
+
+  it('PhysicalAssets.getTotalLoanBalance() excludes pending financed assets', () => {
+    const assets = new PhysicalAssets([
+      createFinancedAssetInput({
+        id: 'owned',
+        name: 'Owned Home',
+        purchaseDate: { type: 'now' },
+        purchasePrice: 400000,
+        paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
+      }),
+      createFinancedAssetInput({
+        id: 'pending',
+        name: 'Future Home',
+        purchaseDate: { type: 'customAge', age: 50 },
+        purchasePrice: 600000,
+        paymentMethod: { type: 'loan', downPayment: 120000, loanBalance: 480000, apr: 6, monthlyPayment: 2878.0 },
+      }),
+    ]);
+
+    // Only the owned asset's loan should be counted
+    expect(assets.getTotalLoanBalance()).toBe(320000);
+  });
+
+  it('PhysicalAssets.getTotalEquity() excludes pending assets', () => {
+    const assets = new PhysicalAssets([
+      createFinancedAssetInput({
+        id: 'owned',
+        name: 'Owned Home',
+        purchaseDate: { type: 'now' },
+        purchasePrice: 400000,
+        paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: 1918.56 },
+      }),
+      createPhysicalAssetInput({
+        id: 'pending-cash',
+        name: 'Future Cash Purchase',
+        purchaseDate: { type: 'customAge', age: 50 },
+        purchasePrice: 200000,
+      }),
+    ]);
+
+    // Only the owned asset's equity should be counted (400000 - 320000 = 80000)
+    expect(assets.getTotalEquity()).toBeCloseTo(80000, 0);
+  });
+
+  it('getMarketValue/getLoanBalance/getEquity return actual values after purchase via getAssetsToPurchaseThisPeriod', () => {
+    const assets = new PhysicalAssets([
+      createFinancedAssetInput({
+        id: 'future',
+        name: 'Future Home',
+        purchaseDate: { type: 'customAge', age: 40 },
+        purchasePrice: 500000,
+        paymentMethod: { type: 'loan', downPayment: 100000, loanBalance: 400000, apr: 6, monthlyPayment: 2398.2 },
+      }),
+    ]);
+
+    // Before purchase, all totals should be 0
+    expect(assets.getTotalMarketValue()).toBe(0);
+    expect(assets.getTotalLoanBalance()).toBe(0);
+    expect(assets.getTotalEquity()).toBe(0);
+
+    // Process at age 40 when asset is scheduled for purchase
+    const simState = createSimulationState({ time: { age: 40, year: 2029, month: 1, date: new Date(2029, 0, 1) } });
+    const assetsToPurchase = assets.getAssetsToPurchaseThisPeriod(simState);
+
+    // Purchase the assets
+    for (const asset of assetsToPurchase) {
+      asset.purchase();
+    }
+
+    // Now totals should reflect the purchased asset
+    expect(assets.getTotalMarketValue()).toBe(500000);
+    expect(assets.getTotalLoanBalance()).toBe(400000);
+    expect(assets.getTotalEquity()).toBeCloseTo(100000, 0);
+  });
+});
+
+// ============================================================================
 // PhysicalAssets Collection Tests
 // ============================================================================
 

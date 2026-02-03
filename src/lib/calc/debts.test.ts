@@ -414,6 +414,87 @@ describe('Debt Class', () => {
 });
 
 // ============================================================================
+// getBalance Returns 0 Before Debt Is Incurred
+// ============================================================================
+
+describe('getBalance returns 0 before debt is incurred', () => {
+  it('Debt.getBalance() returns 0 for future debt (not yet incurred)', () => {
+    const debt = new Debt(
+      createDebtInput({
+        balance: 15000,
+        startDate: { type: 'customAge', age: 40 },
+      })
+    );
+
+    // Before incurUnsecuredDebt() is called, balance should be 0
+    expect(debt.getBalance()).toBe(0);
+
+    // After incurUnsecuredDebt() is called, balance should be actual balance
+    debt.incurUnsecuredDebt();
+    expect(debt.getBalance()).toBe(15000);
+  });
+
+  it('Debt.getBalance() returns actual balance for pre-existing debt', () => {
+    const debt = new Debt(
+      createDebtInput({
+        balance: 10000,
+        startDate: { type: 'now' },
+      })
+    );
+
+    // Pre-existing debts (startDate.type === 'now') are already incurred
+    // So getBalance() should return the actual balance immediately
+    expect(debt.getBalance()).toBe(10000);
+  });
+
+  it('Debts.getTotalBalance() excludes future debts that have not been incurred', () => {
+    const debts = new Debts([
+      createDebtInput({
+        id: 'existing',
+        name: 'Existing Debt',
+        balance: 10000,
+        startDate: { type: 'now' },
+      }),
+      createDebtInput({
+        id: 'future',
+        name: 'Future Debt',
+        balance: 25000,
+        startDate: { type: 'customAge', age: 50 },
+      }),
+    ]);
+
+    // Only the existing debt should be counted since future debt hasn't been incurred
+    expect(debts.getTotalBalance()).toBe(10000);
+  });
+
+  it('Debt.getBalance() returns actual balance after future debt is incurred via getActiveDebts', () => {
+    const debts = new Debts([
+      createDebtInput({
+        id: 'future',
+        name: 'Future Debt',
+        balance: 20000,
+        startDate: { type: 'customAge', age: 40 },
+      }),
+    ]);
+
+    // Before the debt becomes active, total balance should be 0
+    expect(debts.getTotalBalance()).toBe(0);
+
+    // Process at age 40 when debt becomes active
+    const simState = createSimulationState({ time: { age: 40, year: 2029, month: 1, date: new Date(2029, 0, 1) } });
+    const activeDebts = debts.getActiveDebts(simState);
+
+    // Incur the debt
+    for (const debt of activeDebts) {
+      debt.incurUnsecuredDebt();
+    }
+
+    // Now total balance should include the future debt
+    expect(debts.getTotalBalance()).toBe(20000);
+  });
+});
+
+// ============================================================================
 // Debts Collection Tests
 // ============================================================================
 

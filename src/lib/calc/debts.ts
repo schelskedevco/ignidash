@@ -197,7 +197,7 @@ export class Debt {
   }
 
   getBalance(): number {
-    return this.balance;
+    return this.hasBeenIncurred ? this.balance : 0;
   }
 
   isPaidOff(): boolean {
