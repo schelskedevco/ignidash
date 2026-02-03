@@ -106,6 +106,7 @@ export default function SingleSimulationReturnsBarChart({
 
   const chartData = rawChartData.filter((item) => item.age === age);
 
+  let showReferenceLineAtZero = true;
   let formatter = undefined;
   let transformedChartData: { name: string; amount: number; color: string }[] = [];
 
@@ -187,6 +188,7 @@ export default function SingleSimulationReturnsBarChart({
       const perAssetData = chartData.flatMap(({ perAssetData }) => perAssetData).filter(({ id }) => id === customDataID);
       if (perAssetData.length > 0) {
         transformedChartData = perAssetData.map(({ name, appreciation }) => ({ name, amount: appreciation, color: 'var(--chart-2)' }));
+        showReferenceLineAtZero = false;
         break;
       }
 
@@ -218,7 +220,7 @@ export default function SingleSimulationReturnsBarChart({
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />
+          {showReferenceLineAtZero && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
           <Bar
             dataKey="amount"
             maxBarSize={75}
