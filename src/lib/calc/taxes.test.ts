@@ -20,7 +20,7 @@ const createMockSimulationState = (age: number): SimulationState => ({
   time: { date: new Date(2025, 0, 1), age, year: 2025, month: 1 },
   portfolio: new Portfolio([]),
   phase: { name: 'retirement' },
-  annualData: { expenses: [] },
+  annualData: { expenses: [], debts: [], physicalAssets: [] },
 });
 
 // ============================================================================

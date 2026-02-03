@@ -282,7 +282,7 @@ describe('Incomes', () => {
     time: { date: new Date(), age, year: age - 30, month: (age - 30) * 12 },
     portfolio: new Portfolio([]),
     phase: { name: phase },
-    annualData: { expenses: [] },
+    annualData: { expenses: [], debts: [], physicalAssets: [] },
   });
 
   describe('wage income processing', () => {
@@ -334,7 +334,7 @@ describe('Expenses', () => {
     time: { date: new Date(), age, year: age - 30, month: (age - 30) * 12 },
     portfolio: new Portfolio([]),
     phase: { name: phase },
-    annualData: { expenses: [] },
+    annualData: { expenses: [], debts: [], physicalAssets: [] },
   });
 
   describe('expense processing', () => {
@@ -378,7 +378,7 @@ describe('PhaseIdentifier', () => {
     time: { date: new Date(), age, year: age - 30, month: (age - 30) * 12 },
     portfolio: new Portfolio([create401kAccount({ balance: 1000000 })]),
     phase: phase ? { name: phase } : null,
-    annualData: { expenses: [] },
+    annualData: { expenses: [], debts: [], physicalAssets: [] },
   });
 
   describe('fixed age retirement strategy', () => {

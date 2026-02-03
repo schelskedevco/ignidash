@@ -66,7 +66,7 @@ export interface SimulationState {
   time: { date: Date; age: number; year: number; month: number };
   portfolio: Portfolio;
   phase: PhaseData | null;
-  annualData: { expenses: ExpensesData[] };
+  annualData: { expenses: ExpensesData[]; debts: DebtsData[]; physicalAssets: PhysicalAssetsData[] };
 }
 
 export class FinancialSimulationEngine {
@@ -125,8 +125,12 @@ export class FinancialSimulationEngine {
         const annualPortfolioDataBeforeTaxes = portfolioProcessor.getAnnualData();
         const annualIncomesData = incomesProcessor.getAnnualData();
         const annualReturnsData = returnsProcessor.getAnnualData();
+
         const annualDebtsData = debtsProcessor.getAnnualData();
+        simulationState.annualData.debts.push(annualDebtsData);
+
         const annualPhysicalAssetsData = physicalAssetsProcessor.getAnnualData();
+        simulationState.annualData.physicalAssets.push(annualPhysicalAssetsData);
 
         // Process taxes - save carryover snapshot before first calculation
         taxProcessor.saveCarryoverSnapshot();
@@ -253,7 +257,7 @@ export class FinancialSimulationEngine {
       time: { date: new Date(startDate), age, year: 0, month: 0 },
       portfolio: new Portfolio(Object.values(this.inputs.accounts)),
       phase: null,
-      annualData: { expenses: [] },
+      annualData: { expenses: [], debts: [], physicalAssets: [] },
     };
   }
 

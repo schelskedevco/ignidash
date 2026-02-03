@@ -522,7 +522,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
         { period: { stocks: 100, bonds: 50, cash: 25 }, cumulative: { stocks: 200, bonds: 100, cash: 50 } },
       ]),
       phase: { name: 'accumulation' },
-      annualData: { expenses: [] },
+      annualData: { expenses: [], debts: [], physicalAssets: [] },
     } as SimulationState;
 
     // Provider returns different rates based on year
@@ -568,7 +568,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
         { period: { stocks: 100, bonds: 50, cash: 25 }, cumulative: { stocks: 300, bonds: 150, cash: 75 } },
       ]),
       phase: { name: 'accumulation' },
-      annualData: { expenses: [] },
+      annualData: { expenses: [], debts: [], physicalAssets: [] },
     } as SimulationState;
 
     const provider: ReturnsProvider = {
@@ -601,7 +601,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
         { period: { stocks: 120, bonds: 60, cash: 30 }, cumulative: { stocks: 330, bonds: 165, cash: 83 } },
       ]),
       phase: { name: 'accumulation' },
-      annualData: { expenses: [] },
+      annualData: { expenses: [], debts: [], physicalAssets: [] },
     } as SimulationState;
 
     const provider: ReturnsProvider = {
@@ -634,7 +634,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
         { period: { stocks: 100, bonds: 50, cash: 25 }, cumulative: { stocks: 300, bonds: 150, cash: 75 } },
       ]),
       phase: { name: 'accumulation' },
-      annualData: { expenses: [] },
+      annualData: { expenses: [], debts: [], physicalAssets: [] },
     } as SimulationState;
 
     const provider: ReturnsProvider = {
@@ -665,7 +665,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
         { period: { stocks: 120, bonds: 60, cash: 30 }, cumulative: { stocks: 330, bonds: 165, cash: 83 } },
       ]),
       phase: { name: 'accumulation' },
-      annualData: { expenses: [] },
+      annualData: { expenses: [], debts: [], physicalAssets: [] },
     } as SimulationState;
 
     const provider: ReturnsProvider = {
@@ -728,7 +728,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       time: { date: new Date(), age: 35, year: 0, month: 1 },
       portfolio: mockPortfolio,
       phase: { name: 'accumulation' },
-      annualData: { expenses: [] },
+      annualData: { expenses: [], debts: [], physicalAssets: [] },
     } as SimulationState;
 
     const provider: ReturnsProvider = {

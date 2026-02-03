@@ -26,7 +26,7 @@ const createSimulationState = (overrides: Partial<SimulationState> = {}): Simula
   },
   phase: overrides.phase !== undefined ? overrides.phase : { name: 'accumulation' },
   portfolio: {} as SimulationState['portfolio'],
-  annualData: { expenses: [] },
+  annualData: { expenses: [], debts: [], physicalAssets: [] },
 });
 
 // Helper to create income input

@@ -40,7 +40,16 @@ export class PhaseIdentifier {
             ? annualExpensesData.reduce((acc, curr) => acc + curr.totalExpenses, 0) / annualExpensesData.length
             : 0;
 
-        return { name: meanAnnualExpenses < safeWithdrawalAmount ? 'retirement' : 'accumulation' };
+        const annualDebtsData = this.simulationState.annualData.debts;
+        const annualPhysicalAssetsData = this.simulationState.annualData.physicalAssets;
+
+        const meanAnnualDebtPayments =
+          (annualDebtsData.length !== 0 ? annualDebtsData.reduce((acc, curr) => acc + curr.totalPayment, 0) / annualDebtsData.length : 0) +
+          (annualPhysicalAssetsData.length !== 0
+            ? annualPhysicalAssetsData.reduce((acc, curr) => acc + curr.totalLoanPayment, 0) / annualPhysicalAssetsData.length
+            : 0);
+
+        return { name: meanAnnualExpenses + meanAnnualDebtPayments < safeWithdrawalAmount ? 'retirement' : 'accumulation' };
     }
   }
 }

@@ -321,7 +321,7 @@ export const createSimulationState = (overrides: Partial<SimulationState> = {}):
   },
   phase: overrides.phase !== undefined ? overrides.phase : { name: 'accumulation' },
   portfolio: overrides.portfolio ?? ({} as SimulationState['portfolio']),
-  annualData: overrides.annualData ?? { expenses: [] },
+  annualData: overrides.annualData ?? { expenses: [], debts: [], physicalAssets: [] },
 });
 
 export const createMockSimulationState = (
@@ -332,7 +332,7 @@ export const createMockSimulationState = (
   time: { date: new Date(2025, 0, 1), age, year: 2025, month: 1 },
   portfolio,
   phase: { name: phase },
-  annualData: { expenses: [] },
+  annualData: { expenses: [], debts: [], physicalAssets: [] },
 });
 
 // ============================================================================
