@@ -49,6 +49,22 @@ export default function SingleSimulationNetWorthPieChartCard({
   let totalAbsoluteValue = 0;
 
   switch (dataView) {
+    case 'netPortfolioChange':
+      title = 'Net Portfolio Change';
+      chartType = 'bar';
+      break;
+    case 'netAssetChange':
+      title = 'Net Asset Change';
+      chartType = 'bar';
+      break;
+    case 'netDebtReduction':
+      title = 'Net Debt Reduction';
+      chartType = 'bar';
+      break;
+    case 'netWorthChange':
+      title = 'Net Worth Change';
+      chartType = 'bar';
+      break;
     case 'assetClass':
       title = 'By Asset Class';
 
@@ -80,10 +96,6 @@ export default function SingleSimulationNetWorthPieChartCard({
       totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
       totalAbsoluteValue = totalValue;
       break;
-    case 'netPortfolioChange':
-      title = 'Net Portfolio Change';
-      chartType = 'bar';
-      break;
     case 'netWorth':
       title = 'Net Worth';
 
@@ -99,10 +111,6 @@ export default function SingleSimulationNetWorthPieChartCard({
       totalValue = chartData.map(({ name, value }) => (name === 'debtBalance' ? -value : value)).reduce((sum, value) => sum + value, 0);
       totalAbsoluteValue = chartData.reduce((sum, item) => sum + item.value, 0);
       break;
-    case 'netWorthChange':
-      title = 'Net Worth Change';
-      chartType = 'bar';
-      break;
     case 'assetEquity':
       title = 'Asset Equity';
 
@@ -117,10 +125,6 @@ export default function SingleSimulationNetWorthPieChartCard({
       totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
       totalAbsoluteValue = totalValue;
       break;
-    case 'netAssetChange':
-      title = 'Net Asset Change';
-      chartType = 'bar';
-      break;
     case 'debts':
       title = 'Debt Balance';
 
@@ -134,10 +138,6 @@ export default function SingleSimulationNetWorthPieChartCard({
       nameForTotalValue = 'Total Debt Balance';
       totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
       totalAbsoluteValue = totalValue;
-      break;
-    case 'netDebtReduction':
-      title = 'Net Debt Reduction';
-      chartType = 'bar';
       break;
     case 'custom':
       const perAccountData = rawChartData
