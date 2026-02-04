@@ -33,7 +33,7 @@ export interface SingleSimulationNetWorthChartDataPoint {
   netAssetChange: number;
   annualDebtIncurred: number;
   annualDebtPaydown: number;
-  annualDebtPaidAtSale: number;
+  annualDebtPayoff: number;
   netDebtReduction: number;
   netWorthChange: number;
   perAccountData: AccountDataWithTransactions[];

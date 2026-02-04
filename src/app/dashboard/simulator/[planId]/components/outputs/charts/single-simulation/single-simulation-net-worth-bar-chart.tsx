@@ -63,8 +63,8 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
       desktop: ['Annual Asset Appreciation', 'Annual Purchased Asset Value', 'Annual Sold Asset Value'],
     },
     netDebtReduction: {
-      mobile: ['Debt Paydown', 'Paid at Sale', 'Debt Incurred'],
-      desktop: ['Annual Debt Paydown', 'Annual Debt Paid at Sale', 'Annual Debt Incurred'],
+      mobile: ['Debt Paydown', 'Debt Payoff', 'Debt Incurred'],
+      desktop: ['Annual Debt Paydown', 'Annual Debt Payoff', 'Annual Debt Incurred'],
     },
     netWorthChange: {
       mobile: ['Portfolio Change', 'Asset Change', 'Debt Reduction'],
@@ -103,11 +103,11 @@ export default function SingleSimulationNetWorthBarChart({ age, dataView, rawCha
       break;
     }
     case 'netDebtReduction': {
-      const [debtPaydownLabel, debtPaidAtSaleLabel, debtIncurredLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [debtPaydownLabel, debtPayoffLabel, debtIncurredLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
 
-      transformedChartData = chartData.flatMap(({ annualDebtPaydown, annualDebtPaidAtSale, annualDebtIncurred }) => [
+      transformedChartData = chartData.flatMap(({ annualDebtPaydown, annualDebtPayoff, annualDebtIncurred }) => [
         { name: debtPaydownLabel, amount: annualDebtPaydown, color: 'var(--chart-1)' },
-        { name: debtPaidAtSaleLabel, amount: annualDebtPaidAtSale, color: 'var(--chart-2)' },
+        { name: debtPayoffLabel, amount: annualDebtPayoff, color: 'var(--chart-2)' },
         { name: debtIncurredLabel, amount: -annualDebtIncurred, color: 'var(--chart-3)' },
       ]);
       break;

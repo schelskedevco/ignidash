@@ -103,7 +103,7 @@ export interface AssetsAndLiabilitiesData {
   debtPaydown: number;
   purchasedAssetValue: number;
   soldAssetValue: number;
-  securedDebtPaidAtSale: number;
+  debtPayoff: number;
   netAssetChange: number;
   netDebtReduction: number;
 }
@@ -479,10 +479,10 @@ export class SimulationDataExtractor {
     const appreciation = physicalAssetsData?.totalAppreciation ?? 0;
     const purchasedAssetValue = physicalAssetsData?.totalPurchaseMarketValue ?? 0;
     const soldAssetValue = physicalAssetsData?.totalSaleMarketValue ?? 0;
-    const securedDebtPaidAtSale = physicalAssetsData?.totalSecuredDebtPaidAtSale ?? 0;
+    const debtPayoff = physicalAssetsData?.totalDebtPayoff ?? 0;
 
     const netAssetChange = appreciation + purchasedAssetValue - soldAssetValue;
-    const netDebtReduction = debtPaydown + securedDebtPaidAtSale - debtIncurred;
+    const netDebtReduction = debtPaydown + debtPayoff - debtIncurred;
 
     return {
       marketValue,
@@ -496,7 +496,7 @@ export class SimulationDataExtractor {
       debtPaydown,
       purchasedAssetValue,
       soldAssetValue,
-      securedDebtPaidAtSale,
+      debtPayoff,
       netAssetChange,
       netDebtReduction,
     };

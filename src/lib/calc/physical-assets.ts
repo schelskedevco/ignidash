@@ -39,7 +39,7 @@ export class PhysicalAssetsProcessor {
     let totalSaleMarketValue = 0;
     let totalCapitalGain = 0;
     let totalSecuredDebtIncurred = 0;
-    let totalSecuredDebtPaidAtSale = 0;
+    let totalDebtPayoff = 0;
     const perAssetData: Record<string, PhysicalAssetData> = {};
 
     const ownedAssets = this.physicalAssets.getOwnedAssets();
@@ -76,7 +76,7 @@ export class PhysicalAssetsProcessor {
         saleMarketValue: 0,
         capitalGain: 0,
         securedDebtIncurred,
-        securedDebtPaidAtSale: 0,
+        debtPayoff: 0,
         isSold: asset.isSold(),
       };
 
@@ -91,7 +91,7 @@ export class PhysicalAssetsProcessor {
 
     const assetsToSell = this.physicalAssets.getAssetsToSellThisPeriod(this.simulationState);
     for (const asset of assetsToSell) {
-      const { saleProceeds, capitalGain, saleMarketValue, securedDebtPaidAtSale } = asset.sell();
+      const { saleProceeds, capitalGain, saleMarketValue, debtPayoff } = asset.sell();
 
       perAssetData[asset.getId()] = {
         ...perAssetData[asset.getId()],
@@ -101,14 +101,14 @@ export class PhysicalAssetsProcessor {
         saleProceeds,
         saleMarketValue,
         capitalGain,
-        securedDebtPaidAtSale,
+        debtPayoff,
         isSold: true,
       };
 
       totalSaleProceeds += saleProceeds;
       totalSaleMarketValue += saleMarketValue;
       totalCapitalGain += capitalGain;
-      totalSecuredDebtPaidAtSale += securedDebtPaidAtSale;
+      totalDebtPayoff += debtPayoff;
     }
 
     const result: PhysicalAssetsData = {
@@ -127,7 +127,7 @@ export class PhysicalAssetsProcessor {
       totalSaleMarketValue,
       totalCapitalGain,
       totalSecuredDebtIncurred,
-      totalSecuredDebtPaidAtSale,
+      totalDebtPayoff,
       perAssetData,
     };
 
@@ -154,7 +154,7 @@ export class PhysicalAssetsProcessor {
         acc.totalSaleMarketValue += curr.totalSaleMarketValue;
         acc.totalCapitalGain += curr.totalCapitalGain;
         acc.totalSecuredDebtIncurred += curr.totalSecuredDebtIncurred;
-        acc.totalSecuredDebtPaidAtSale += curr.totalSecuredDebtPaidAtSale;
+        acc.totalDebtPayoff += curr.totalDebtPayoff;
 
         Object.entries(curr.perAssetData).forEach(([assetID, assetData]) => {
           acc.perAssetData[assetID] = {
@@ -171,7 +171,7 @@ export class PhysicalAssetsProcessor {
             saleMarketValue: (acc.perAssetData[assetID]?.saleMarketValue ?? 0) + assetData.saleMarketValue,
             capitalGain: (acc.perAssetData[assetID]?.capitalGain ?? 0) + assetData.capitalGain,
             securedDebtIncurred: (acc.perAssetData[assetID]?.securedDebtIncurred ?? 0) + assetData.securedDebtIncurred,
-            securedDebtPaidAtSale: (acc.perAssetData[assetID]?.securedDebtPaidAtSale ?? 0) + assetData.securedDebtPaidAtSale,
+            debtPayoff: (acc.perAssetData[assetID]?.debtPayoff ?? 0) + assetData.debtPayoff,
           };
         });
 
@@ -193,7 +193,7 @@ export class PhysicalAssetsProcessor {
         totalSaleMarketValue: 0,
         totalCapitalGain: 0,
         totalSecuredDebtIncurred: 0,
-        totalSecuredDebtPaidAtSale: 0,
+        totalDebtPayoff: 0,
         perAssetData: {},
       }
     );
@@ -216,7 +216,7 @@ export interface PhysicalAssetsData {
   totalUnpaidInterest: number;
   totalDebtPaydown: number;
   totalSecuredDebtIncurred: number;
-  totalSecuredDebtPaidAtSale: number;
+  totalDebtPayoff: number;
   perAssetData: Record<string, PhysicalAssetData>;
 }
 
@@ -239,7 +239,7 @@ export interface PhysicalAssetData {
   unpaidInterest: number;
   debtPaydown: number;
   securedDebtIncurred: number;
-  securedDebtPaidAtSale: number;
+  debtPayoff: number;
   isSold: boolean;
 }
 
@@ -409,17 +409,17 @@ export class PhysicalAsset {
     return this.getIsSimTimeAtOrAfterTimePoint(simulationState, this.saleDate);
   }
 
-  sell(): { saleProceeds: number; capitalGain: number; saleMarketValue: number; securedDebtPaidAtSale: number } {
+  sell(): { saleProceeds: number; capitalGain: number; saleMarketValue: number; debtPayoff: number } {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
 
     const saleMarketValue = this.marketValue;
-    const securedDebtPaidAtSale = this.loanBalance;
-    const saleProceeds = saleMarketValue - securedDebtPaidAtSale;
+    const debtPayoff = this.loanBalance;
+    const saleProceeds = saleMarketValue - debtPayoff;
     const capitalGain = saleMarketValue - this.purchasePrice;
 
     this.ownershipStatus = 'sold';
 
-    return { saleProceeds, capitalGain, saleMarketValue, securedDebtPaidAtSale };
+    return { saleProceeds, capitalGain, saleMarketValue, debtPayoff };
   }
 
   shouldPurchaseThisPeriod(simulationState: SimulationState): boolean {

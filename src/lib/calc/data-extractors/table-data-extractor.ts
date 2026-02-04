@@ -48,7 +48,7 @@ export abstract class TableDataExtractor {
         netAssetChange,
         debtIncurred: annualDebtIncurred,
         debtPaydown: annualDebtPaydown,
-        securedDebtPaidAtSale: annualDebtPaidAtSale,
+        debtPayoff: annualDebtPayoff,
         netDebtReduction,
       } = SimulationDataExtractor.getAssetsAndLiabilitiesData(data);
 
@@ -81,7 +81,7 @@ export abstract class TableDataExtractor {
           netAssetChange: null,
           annualDebtIncurred: null,
           annualDebtPaydown: null,
-          annualDebtPaidAtSale: null,
+          annualDebtPayoff: null,
           netDebtReduction: null,
           netWorthChange: null,
           historicalYear,
@@ -128,7 +128,7 @@ export abstract class TableDataExtractor {
         netAssetChange,
         annualDebtIncurred,
         annualDebtPaydown,
-        annualDebtPaidAtSale,
+        annualDebtPayoff,
         netDebtReduction,
         netWorthChange: netPortfolioChange + netAssetChange + netDebtReduction,
         historicalYear,

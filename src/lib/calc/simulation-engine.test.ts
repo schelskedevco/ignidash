@@ -1038,13 +1038,13 @@ describe('Physical Assets Integration', () => {
     // Verify the new fields for underwater sales are correctly populated:
     // saleMarketValue should be positive (the actual market value at sale)
     expect(physicalAssetsData.totalSaleMarketValue).toBeGreaterThan(0);
-    // securedDebtPaidAtSale should be the loan balance that was paid off
-    expect(physicalAssetsData.totalSecuredDebtPaidAtSale).toBeGreaterThan(0);
-    // securedDebtPaidAtSale > saleMarketValue for underwater sales
-    expect(physicalAssetsData.totalSecuredDebtPaidAtSale).toBeGreaterThan(physicalAssetsData.totalSaleMarketValue);
-    // Verify the relationship: saleProceeds = saleMarketValue - securedDebtPaidAtSale
+    // debtPayoff should be the loan balance that was paid off
+    expect(physicalAssetsData.totalDebtPayoff).toBeGreaterThan(0);
+    // debtPayoff > saleMarketValue for underwater sales
+    expect(physicalAssetsData.totalDebtPayoff).toBeGreaterThan(physicalAssetsData.totalSaleMarketValue);
+    // Verify the relationship: saleProceeds = saleMarketValue - debtPayoff
     expect(physicalAssetsData.totalSaleProceeds).toBeCloseTo(
-      physicalAssetsData.totalSaleMarketValue - physicalAssetsData.totalSecuredDebtPaidAtSale,
+      physicalAssetsData.totalSaleMarketValue - physicalAssetsData.totalDebtPayoff,
       0
     );
 

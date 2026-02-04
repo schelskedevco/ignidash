@@ -48,7 +48,7 @@ function createNetWorthTestDataPoint(options: {
   debtInterest?: number;
   unsecuredDebtIncurred?: number;
   securedDebtIncurred?: number;
-  securedDebtPaidAtSale?: number;
+  debtPayoff?: number;
 }): SimulationDataPoint {
   const contributions = options.contributions ?? { stocks: 0, bonds: 0, cash: 0 };
   const withdrawals = options.withdrawals ?? { stocks: 0, bonds: 0, cash: 0 };
@@ -103,14 +103,14 @@ function createNetWorthTestDataPoint(options: {
   // - purchaseMarketValue: market value at purchase (if purchaseOutlay is set, assume it equals loanBalance + purchaseOutlay)
   // - securedDebtIncurred: loan taken at purchase (if purchaseOutlay and loanBalance are set)
   // - saleMarketValue: market value at sale (derivable from saleProceeds + any remaining loan)
-  // - securedDebtPaidAtSale: loan paid off at sale (saleMarketValue - saleProceeds)
+  // - debtPayoff: loan paid off at sale (saleMarketValue - saleProceeds)
   const purchaseMarketValue =
     options.purchaseMarketValue ?? (options.purchaseOutlay ? (options.loanBalance ?? 0) + options.purchaseOutlay : 0);
   const securedDebtIncurred = options.securedDebtIncurred ?? (options.purchaseOutlay && options.loanBalance ? options.loanBalance : 0);
   // For sales, we need the market value before the sale. If not provided, derive from saleProceeds + loan paid
   const saleMarketValue =
-    options.saleMarketValue ?? (options.saleProceeds !== undefined ? options.saleProceeds + (options.securedDebtPaidAtSale ?? 0) : 0);
-  const securedDebtPaidAtSale = options.securedDebtPaidAtSale ?? 0;
+    options.saleMarketValue ?? (options.saleProceeds !== undefined ? options.saleProceeds + (options.debtPayoff ?? 0) : 0);
+  const debtPayoff = options.debtPayoff ?? 0;
 
   const physicalAssetsData: PhysicalAssetsData | null =
     options.marketValue !== undefined
@@ -130,7 +130,7 @@ function createNetWorthTestDataPoint(options: {
           totalSaleMarketValue: saleMarketValue,
           totalCapitalGain: 0,
           totalSecuredDebtIncurred: securedDebtIncurred,
-          totalSecuredDebtPaidAtSale: securedDebtPaidAtSale,
+          totalDebtPayoff: debtPayoff,
           perAssetData: {},
         }
       : null;
@@ -872,7 +872,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(150000); // 100k + 200k - 150k
     expect(result[1].netWorth).toBe(150000); // 150k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualSoldAssetValue - result[1].annualDebtPaidAtSale).toBe(50000); // Net proceeds
+    expect(result[1].annualSoldAssetValue - result[1].annualDebtPayoff).toBe(50000); // Net proceeds
     expect(result[1].netPortfolioChange).toBeCloseTo(50000, 2);
   });
 
@@ -922,7 +922,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(100000); // 100k + 200k - 200k
     expect(result[1].netWorth).toBe(100000); // 100k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualSoldAssetValue - result[1].annualDebtPaidAtSale).toBe(0);
+    expect(result[1].annualSoldAssetValue - result[1].annualDebtPayoff).toBe(0);
     expect(result[1].netPortfolioChange).toBeCloseTo(0, 2);
   });
 
@@ -949,7 +949,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
      * Simplified formula components:
      * - netPortfolioChange = -$30,000 (withdrawal to cover shortfall)
      * - netAssetChange = 0 (appreciation) + 0 (purchaseMV) - $150,000 (saleMV) = -$150,000
-     * - netDebtReduction = 0 (principalPaid) + $180,000 (debtPaidAtSale) - 0 (debtIncurred) = $180,000
+     * - netDebtReduction = 0 (principalPaid) + $180,000 (debtPayoff) - 0 (debtIncurred) = $180,000
      *
      * Formula: -$30,000 + (-$150,000) + $180,000 = $0 ✓
      */
@@ -968,7 +968,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
         loanBalance: 0,
         saleProceeds: -30000, // NET proceeds = 150000 - 180000 (negative!)
         saleMarketValue: 150000, // Actual market value at sale
-        securedDebtPaidAtSale: 180000, // Loan paid off at sale
+        debtPayoff: 180000, // Loan paid off at sale
       }),
     ];
 
@@ -978,7 +978,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(70000); // 100k + 150k - 180k
     expect(result[1].netWorth).toBe(70000); // 70k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualSoldAssetValue - result[1].annualDebtPaidAtSale).toBe(-30000); // Negative proceeds
+    expect(result[1].annualSoldAssetValue - result[1].annualDebtPayoff).toBe(-30000); // Negative proceeds
     expect(result[1].netPortfolioChange).toBeCloseTo(-30000, 2);
 
     // Verify component values are meaningful for charting
@@ -1053,7 +1053,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     // Year 3: netWorth = 222k + 0 - 0 = 222k (sale is neutral)
     expect(result[3].netWorth).toBe(222000);
     expect(result[3].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[3].annualSoldAssetValue - result[3].annualDebtPaidAtSale).toBe(102000);
+    expect(result[3].annualSoldAssetValue - result[3].annualDebtPayoff).toBe(102000);
     expect(result[3].netPortfolioChange).toBeCloseTo(102000, 2);
   });
 
@@ -1098,7 +1098,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[0].netWorth).toBe(250000); // 50k + 450k - 250k
     expect(result[1].netWorth).toBe(250000); // 250k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(0, 2);
-    expect(result[1].annualSoldAssetValue - result[1].annualDebtPaidAtSale).toBe(200000);
+    expect(result[1].annualSoldAssetValue - result[1].annualDebtPayoff).toBe(200000);
   });
 
   it('verifies invariant when selling financed asset with appreciation in same year', () => {
@@ -1151,7 +1151,7 @@ describe('ChartDataExtractor - Selling Financed Assets with Remaining Loan', () 
     expect(result[1].netWorth).toBe(215000); // 215k + 0 - 0
     expect(result[1].netWorthChange).toBeCloseTo(15000, 2);
     expect(result[1].annualAssetAppreciation).toBe(15000);
-    expect(result[1].annualSoldAssetValue - result[1].annualDebtPaidAtSale).toBe(115000);
+    expect(result[1].annualSoldAssetValue - result[1].annualDebtPayoff).toBe(115000);
   });
 });
 
@@ -1518,7 +1518,7 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
     expect(result[3].netWorth).toBe(334670);
     expect(result[3].netWorthChange).toBeCloseTo(8000, 2);
     // Sale is net-worth neutral: +212180 to portfolio, -212180 asset sold
-    expect(result[3].annualSoldAssetValue - result[3].annualDebtPaidAtSale).toBe(212180);
+    expect(result[3].annualSoldAssetValue - result[3].annualDebtPayoff).toBe(212180);
   });
 
   it('verifies invariant when debt balance increases (payment < positive interest)', () => {
@@ -1628,7 +1628,7 @@ describe('ChartDataExtractor - Gap Coverage Tests', () => {
 
     // Both components are non-zero
     expect(result[1].annualPurchasedAssetValue).toBe(150000);
-    expect(result[1].annualSoldAssetValue - result[1].annualDebtPaidAtSale).toBe(100000);
+    expect(result[1].annualSoldAssetValue - result[1].annualDebtPayoff).toBe(100000);
     // Net portfolio change = 100k sale - 150k purchase = -50k
     expect(result[1].netPortfolioChange).toBeCloseTo(-50000, 2);
   });
