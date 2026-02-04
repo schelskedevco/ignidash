@@ -79,6 +79,8 @@ export const simulationDataPointValidator = v.object({
   securedDebtBalance: v.number(),
   debtPayments: v.number(),
   debtPaydown: v.number(),
+  debtPayoff: v.number(),
+  debtIncurred: v.number(),
 
   // Physical Assets
   assetValue: v.number(),

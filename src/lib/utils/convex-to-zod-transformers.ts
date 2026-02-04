@@ -534,6 +534,8 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       securedDebtBalance: netWorthData[i].securedDebtBalance,
       debtPayments: cashFlowData[i].debtPayments,
       debtPaydown: netWorthData[i].annualDebtPaydown,
+      debtPayoff: netWorthData[i].annualDebtPayoff,
+      debtIncurred: netWorthData[i].annualDebtIncurred,
 
       // Physical Assets
       assetValue: netWorthData[i].assetValue,

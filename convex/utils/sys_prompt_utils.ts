@@ -611,6 +611,8 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
       d.securedDebtBalance && `secured:${fmt(d.securedDebtBalance)}`,
       d.debtPayments && `payments:${fmt(d.debtPayments)}`,
       d.debtPaydown && `paydown:${fmt(d.debtPaydown)}`,
+      d.debtPayoff && `payoff:${fmt(d.debtPayoff)}`,
+      d.debtIncurred && `incurred:${fmt(d.debtIncurred)}`,
     ].filter(Boolean);
     if (debts.length) sections.push(`debts: ${debts.join(', ')}`);
 
