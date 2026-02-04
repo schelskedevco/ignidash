@@ -14,7 +14,7 @@ export default function MultiSimulationPortfolioBarChartCard({ selectedAge, rawC
     <Card className="my-0">
       <div className="mb-4 flex items-center justify-between">
         <Subheading level={3}>
-          <span className="mr-2">Total Value Percentiles</span>
+          <span className="mr-2">Portfolio Value Percentiles</span>
           <span className="text-muted-foreground hidden sm:inline">Age {selectedAge}</span>
         </Subheading>
       </div>
