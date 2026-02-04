@@ -73,6 +73,19 @@ export const simulationDataPointValidator = v.object({
   earlyWithdrawals: v.number(),
   rothEarningsWithdrawals: v.number(),
   withdrawalRate: v.nullable(v.number()),
+
+  // Debts
+  unsecuredDebtBalance: v.number(),
+  securedDebtBalance: v.number(),
+  debtPayments: v.number(),
+  debtPaydown: v.number(),
+
+  // Physical Assets
+  assetValue: v.number(),
+  assetEquity: v.number(),
+  assetPurchaseOutlay: v.number(),
+  assetSaleProceeds: v.number(),
+  assetAppreciation: v.number(),
 });
 
 export type SimulationDataPoint = Infer<typeof simulationDataPointValidator>;

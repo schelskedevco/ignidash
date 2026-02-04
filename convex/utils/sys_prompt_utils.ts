@@ -27,6 +27,30 @@ const calculateAge = (birthMonth: number, birthYear: number): number => {
   return age;
 };
 
+const timePointLabel = (tp: { type: string; month?: number; year?: number; age?: number }): string => {
+  switch (tp.type) {
+    case 'now':
+      return 'Now';
+    case 'atRetirement':
+      return 'Retirement';
+    case 'atLifeExpectancy':
+      return 'Life Expectancy';
+    case 'customDate': {
+      if (tp.month !== undefined && tp.year !== undefined) {
+        const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' });
+        return formatter.format(new Date(tp.year, tp.month - 1));
+      }
+      return 'Custom Date';
+    }
+    case 'customAge': {
+      if (tp.age !== undefined) return `Age ${tp.age}`;
+      return 'Custom Age';
+    }
+    default:
+      return tp.type;
+  }
+};
+
 const keyMetricsForDisplay = (keyMetrics: KeyMetrics) => {
   const {
     success,
@@ -107,6 +131,8 @@ const systemPrompt = (planData: string, keyMetrics: string): string => `
   - **Timeline:** Current age, life expectancy, retirement target (fixed age or SWR-based)
   - **Income:** Name, amount, frequency (one-time/recurring), start/end dates, growth rate with optional cap, tax type (wage, Social Security, tax-free), withholding percentage
   - **Expenses:** Name, amount, frequency, start/end dates, growth rate with optional cap
+  - **Debts:** Name, balance, APR, interest type (simple/compound), monthly payment, start date
+  - **Physical Assets:** Name, purchase price, market value, appreciation rate, purchase/sale dates, payment method (cash or loan with balance, APR, monthly payment)
   - **Accounts:** Savings, Taxable Brokerage, 401(k), Roth 401(k), Traditional IRA, Roth IRA, HSA—each with balance and bond allocation; taxable accounts track cost basis, Roth accounts track contribution basis
   - **Glide Path:** Enable/disable automatic rebalancing toward a target bond allocation; specify end time (custom date or custom age) and target bond percentage; prioritizes tax-advantaged accounts for rebalancing
   - **Contribution Order:** Priority-ordered rules specifying account, amount (fixed/percentage/unlimited), optional employer match, optional max balance cap
@@ -120,11 +146,12 @@ const systemPrompt = (planData: string, keyMetrics: string): string => `
   - Tax detail: AGI, taxable income, effective/marginal rates, Social Security taxation, capital gains treatment, early withdrawal penalties, standard deduction, NIIT
   - Investment returns: real returns by asset class, inflation impact, cumulative and annual growth
   - Contributions and withdrawals: amounts by tax category and asset class, RMDs, early withdrawal penalties, Roth earnings withdrawals, withdrawal rate
+  - Debt & physical assets: debt balances and payments over time, physical asset market values, loan paydown, purchase outlays, sale proceeds
   - Key metrics: success rate, retirement age, bankruptcy age, portfolio milestones, lifetime taxes
   - Monte Carlo results: percentile distributions (P10-P90), phase breakdowns, outcome probabilities
 
   **Not Modeled (but fair to discuss educationally):**
-  529/ABLE accounts, annuities, pensions, debt/mortgages, real estate, Roth conversions, backdoor Roth, self-employment income, rental/business income, state taxes, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
+  529/ABLE accounts, annuities, pensions, Roth conversions, backdoor Roth, self-employment income, rental/business income, state taxes, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
 
   If a user asks about unmodeled features, acknowledge the limitation directly—don't suggest workarounds within the app. You may explain these concepts educationally, but clarify they can't be simulated in Ignidash.
 
@@ -275,6 +302,8 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - **Timeline:** Current age, life expectancy, retirement target (fixed age or SWR-based)
   - **Income:** Name, amount, frequency (one-time/recurring), start/end dates, growth rate with optional cap, tax type (wage, Social Security, tax-free), withholding percentage
   - **Expenses:** Name, amount, frequency, start/end dates, growth rate with optional cap
+  - **Debts:** Name, balance, APR, interest type (simple/compound), monthly payment, start date
+  - **Physical Assets:** Name, purchase price, market value, appreciation rate, purchase/sale dates, payment method (cash or loan with balance, APR, monthly payment)
   - **Accounts:** Savings, Taxable Brokerage, 401(k), Roth 401(k), Traditional IRA, Roth IRA, HSA—each with balance and bond allocation; taxable accounts track cost basis, Roth accounts track contribution basis
   - **Glide Path:** Enable/disable automatic rebalancing toward a target bond allocation; specify end time (custom date or custom age) and target bond percentage; prioritizes tax-advantaged accounts for rebalancing
   - **Contribution Order:** Priority-ordered rules specifying account, amount (fixed/percentage/unlimited), optional employer match, optional max balance cap
@@ -288,11 +317,12 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - Tax detail: AGI, taxable income, effective/marginal rates, Social Security taxation, capital gains treatment, early withdrawal penalties, standard deduction, NIIT
   - Investment returns: real returns by asset class, inflation impact, cumulative and annual growth
   - Contributions and withdrawals: amounts by tax category and asset class, RMDs, early withdrawal penalties, Roth earnings withdrawals, withdrawal rate
+  - Debt & physical assets: debt balances and payments over time, physical asset market values, loan paydown, purchase outlays, sale proceeds
   - Key metrics: success rate, retirement age, bankruptcy age, portfolio milestones, lifetime taxes
   - Monte Carlo results: percentile distributions (P10-P90), phase breakdowns, outcome probabilities
 
   **Not Modeled (but fair to discuss educationally):**
-  529/ABLE accounts, annuities, pensions, debt/mortgages, real estate, Roth conversions, backdoor Roth, self-employment income, rental/business income, state taxes, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
+  529/ABLE accounts, annuities, pensions, Roth conversions, backdoor Roth, self-employment income, rental/business income, state taxes, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
 
   Do not assume unlisted features exist. When discussing topics the simulator does not model, note that Ignidash cannot simulate them directly.
 
@@ -346,6 +376,39 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
     );
   } else {
     lines.push('  - Expenses: None');
+  }
+
+  const debts = plan.debts ?? [];
+  if (debts.length > 0) {
+    lines.push(
+      `  - Debts: ${debts
+        .map(
+          (d) =>
+            `${d.name} (${formatNumber(d.balance, 0, '$')} bal, ${d.apr}% APR ${d.interestType}, ${formatNumber(d.monthlyPayment, 0, '$')}/mo, starts ${timePointLabel(d.startDate)})`
+        )
+        .join('; ')}`
+    );
+  } else {
+    lines.push('  - Debts: None');
+  }
+
+  const physicalAssets = plan.physicalAssets ?? [];
+  if (physicalAssets.length > 0) {
+    lines.push(
+      `  - Physical Assets: ${physicalAssets
+        .map((a) => {
+          const payment =
+            a.paymentMethod.type === 'cash'
+              ? 'cash'
+              : `loan: ${formatNumber(a.paymentMethod.loanBalance, 0, '$')} at ${a.paymentMethod.apr}%, ${formatNumber(a.paymentMethod.monthlyPayment, 0, '$')}/mo`;
+          const sale = a.saleDate ? `, sells ${timePointLabel(a.saleDate)}` : '';
+          const mktVal = a.marketValue !== undefined ? `, mkt ${formatNumber(a.marketValue, 0, '$')}` : '';
+          return `${a.name} (${formatNumber(a.purchasePrice, 0, '$')}${mktVal}, ${a.appreciationRate}% appr, ${payment}, bought ${timePointLabel(a.purchaseDate)}${sale})`;
+        })
+        .join('; ')}`
+    );
+  } else {
+    lines.push('  - Physical Assets: None');
   }
 
   if (plan.accounts.length > 0) {
@@ -542,6 +605,23 @@ const formatSimulationResult = (simulationResult: SimulationResult): string => {
       d.withdrawalRate && `rate:${pct(d.withdrawalRate)}`,
     ].filter(Boolean);
     if (withdrawals.length) sections.push(`withdrawals: ${withdrawals.join(', ')}`);
+
+    const debts = [
+      d.unsecuredDebtBalance && `unsecured:${fmt(d.unsecuredDebtBalance)}`,
+      d.securedDebtBalance && `secured:${fmt(d.securedDebtBalance)}`,
+      d.debtPayments && `payments:${fmt(d.debtPayments)}`,
+      d.debtPaydown && `paydown:${fmt(d.debtPaydown)}`,
+    ].filter(Boolean);
+    if (debts.length) sections.push(`debts: ${debts.join(', ')}`);
+
+    const assets = [
+      d.assetValue && `value:${fmt(d.assetValue)}`,
+      d.assetEquity && `equity:${fmt(d.assetEquity)}`,
+      d.assetPurchaseOutlay && `purchaseOutlay:${fmt(d.assetPurchaseOutlay)}`,
+      d.assetSaleProceeds && `saleProceeds:${fmt(d.assetSaleProceeds)}`,
+      d.assetAppreciation && `appr:${fmt(d.assetAppreciation)}`,
+    ].filter(Boolean);
+    if (assets.length) sections.push(`physicalAssets: ${assets.join(', ')}`);
 
     lines.push(`\n  Age ${d.age}:`);
     sections.forEach((section) => lines.push(`    ${section};`));

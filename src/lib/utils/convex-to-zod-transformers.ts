@@ -528,6 +528,19 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       earlyWithdrawals: withdrawalsData[i].annualEarlyWithdrawals,
       rothEarningsWithdrawals: withdrawalsData[i].annualRothEarningsWithdrawals,
       withdrawalRate: withdrawalsData[i].withdrawalRate,
+
+      // Debts
+      unsecuredDebtBalance: netWorthData[i].unsecuredDebtBalance,
+      securedDebtBalance: netWorthData[i].securedDebtBalance,
+      debtPayments: cashFlowData[i].debtPayments,
+      debtPaydown: netWorthData[i].annualDebtPaydown,
+
+      // Physical Assets
+      assetValue: netWorthData[i].assetValue,
+      assetEquity: netWorthData[i].assetEquity,
+      assetPurchaseOutlay: cashFlowData[i].assetPurchaseOutlay,
+      assetSaleProceeds: cashFlowData[i].assetSaleProceeds,
+      assetAppreciation: netWorthData[i].annualAssetAppreciation,
     });
   }
 

@@ -31,7 +31,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled }: Cust
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - Math.floor(startAge));
 
-  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--foreground)'];
+  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--chart-8)', 'var(--foreground)'];
 
   return (
     <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
