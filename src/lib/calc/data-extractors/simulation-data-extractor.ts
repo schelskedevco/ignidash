@@ -94,8 +94,8 @@ export interface HoldingsByAssetClass {
 export interface AssetsAndLiabilitiesData {
   marketValue: number;
   equity: number;
-  unsecuredDebtBalance: number;
   securedDebtBalance: number;
+  unsecuredDebtBalance: number;
   debtBalance: number;
   netWorth: number;
   appreciation: number;
@@ -467,9 +467,9 @@ export class SimulationDataExtractor {
     const marketValue = physicalAssetsData?.totalMarketValue ?? 0;
     const equity = physicalAssetsData?.totalEquity ?? 0;
 
-    const unsecuredDebtBalance = debtsData?.totalDebtBalance ?? 0;
     const securedDebtBalance = physicalAssetsData?.totalLoanBalance ?? 0;
-    const debtBalance = unsecuredDebtBalance + securedDebtBalance;
+    const unsecuredDebtBalance = debtsData?.totalDebtBalance ?? 0;
+    const debtBalance = securedDebtBalance + unsecuredDebtBalance;
 
     const netWorth = portfolioData.totalValue + marketValue - debtBalance;
 
@@ -487,8 +487,8 @@ export class SimulationDataExtractor {
     return {
       marketValue,
       equity,
-      unsecuredDebtBalance,
       securedDebtBalance,
+      unsecuredDebtBalance,
       debtBalance,
       netWorth,
       appreciation,

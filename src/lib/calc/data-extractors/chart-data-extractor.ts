@@ -45,8 +45,8 @@ export abstract class ChartDataExtractor {
       const {
         marketValue: assetValue,
         equity: assetEquity,
-        unsecuredDebtBalance,
         securedDebtBalance,
+        unsecuredDebtBalance,
         debtBalance,
         netWorth,
         appreciation: annualAssetAppreciation,
@@ -77,8 +77,8 @@ export abstract class ChartDataExtractor {
         netPortfolioChange,
         assetValue,
         assetEquity,
-        unsecuredDebtBalance,
         securedDebtBalance,
+        unsecuredDebtBalance,
         debtBalance,
         netWorth,
         annualAssetAppreciation,
@@ -128,10 +128,6 @@ export abstract class ChartDataExtractor {
 
       return {
         age,
-        perIncomeData: Object.values(data.incomes!.perIncomeData),
-        perExpenseData: Object.values(data.expenses!.perExpenseData),
-        perAssetData: Object.values(data.physicalAssets!.perAssetData),
-        perDebtData: Object.values(data.debts!.perDebtData),
         earnedIncome,
         employerMatch,
         socialSecurityIncome,
@@ -152,6 +148,10 @@ export abstract class ChartDataExtractor {
         assetPurchaseOutlay,
         assetSaleProceeds,
         netCashFlow,
+        perIncomeData: Object.values(data.incomes!.perIncomeData),
+        perExpenseData: Object.values(data.expenses!.perExpenseData),
+        perAssetData: Object.values(data.physicalAssets!.perAssetData),
+        perDebtData: Object.values(data.debts!.perDebtData),
       };
     });
   }

@@ -23,8 +23,8 @@ export interface SingleSimulationNetWorthChartDataPoint {
   netPortfolioChange: number;
   assetValue: number;
   assetEquity: number;
-  unsecuredDebtBalance: number;
   securedDebtBalance: number;
+  unsecuredDebtBalance: number;
   debtBalance: number;
   netWorth: number;
   annualAssetAppreciation: number;
@@ -43,10 +43,6 @@ export interface SingleSimulationNetWorthChartDataPoint {
 
 export interface SingleSimulationCashFlowChartDataPoint {
   age: number;
-  perIncomeData: IncomeData[];
-  perExpenseData: ExpenseData[];
-  perAssetData: PhysicalAssetData[];
-  perDebtData: DebtData[];
   earnedIncome: number;
   employerMatch: number;
   socialSecurityIncome: number;
@@ -67,6 +63,10 @@ export interface SingleSimulationCashFlowChartDataPoint {
   assetPurchaseOutlay: number;
   assetSaleProceeds: number;
   netCashFlow: number;
+  perIncomeData: IncomeData[];
+  perExpenseData: ExpenseData[];
+  perAssetData: PhysicalAssetData[];
+  perDebtData: DebtData[];
 }
 
 export interface SingleSimulationTaxesChartDataPoint {
