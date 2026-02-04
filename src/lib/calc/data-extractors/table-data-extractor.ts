@@ -35,6 +35,23 @@ export abstract class TableDataExtractor {
       const { taxableValue, taxDeferredValue, taxFreeValue, cashSavings } = SimulationDataExtractor.getPortfolioValueByTaxCategory(data);
       const { stockHoldings, bondHoldings, cashHoldings } = SimulationDataExtractor.getHoldingsByAssetClass(data);
 
+      const {
+        marketValue: assetValue,
+        equity: assetEquity,
+        securedDebtBalance,
+        unsecuredDebtBalance,
+        debtBalance: totalDebtBalance,
+        netWorth,
+        appreciation: annualAssetAppreciation,
+        purchasedAssetValue: annualPurchasedAssetValue,
+        soldAssetValue: annualSoldAssetValue,
+        netAssetChange,
+        debtIncurred: annualDebtIncurred,
+        debtPaydown: annualDebtPaydown,
+        securedDebtPaidAtSale: annualDebtPaidAtSale,
+        netDebtReduction,
+      } = SimulationDataExtractor.getAssetsAndLiabilitiesData(data);
+
       if (idx === 0) {
         return {
           year: idx,
@@ -52,6 +69,21 @@ export abstract class TableDataExtractor {
           taxDeferredValue,
           taxFreeValue,
           cashSavings,
+          assetValue,
+          assetEquity,
+          securedDebtBalance,
+          unsecuredDebtBalance,
+          totalDebtBalance,
+          netWorth,
+          annualAssetAppreciation: null,
+          annualPurchasedAssetValue: null,
+          annualSoldAssetValue: null,
+          netAssetChange: null,
+          annualDebtIncurred: null,
+          annualDebtPaydown: null,
+          annualDebtPaidAtSale: null,
+          netDebtReduction: null,
+          netWorthChange: null,
           historicalYear,
         };
       }
@@ -66,6 +98,8 @@ export abstract class TableDataExtractor {
         cash: cashAmount,
       } = returnsData?.returnAmountsForPeriod ?? { stocks: 0, bonds: 0, cash: 0 };
 
+      const netPortfolioChange = stockAmount + bondAmount + cashAmount + annualContributions - annualWithdrawals;
+
       return {
         year: idx,
         age,
@@ -74,7 +108,7 @@ export abstract class TableDataExtractor {
         annualReturns: stockAmount + bondAmount + cashAmount,
         annualContributions,
         annualWithdrawals,
-        netPortfolioChange: stockAmount + bondAmount + cashAmount + annualContributions - annualWithdrawals,
+        netPortfolioChange,
         stockHoldings,
         bondHoldings,
         cashHoldings,
@@ -82,6 +116,21 @@ export abstract class TableDataExtractor {
         taxDeferredValue,
         taxFreeValue,
         cashSavings,
+        assetValue,
+        assetEquity,
+        securedDebtBalance,
+        unsecuredDebtBalance,
+        totalDebtBalance,
+        netWorth,
+        annualAssetAppreciation,
+        annualPurchasedAssetValue,
+        annualSoldAssetValue,
+        netAssetChange,
+        annualDebtIncurred,
+        annualDebtPaydown,
+        annualDebtPaidAtSale,
+        netDebtReduction,
+        netWorthChange: netPortfolioChange + netAssetChange + netDebtReduction,
         historicalYear,
       };
     });
@@ -113,10 +162,13 @@ export abstract class TableDataExtractor {
           earlyWithdrawalPenalties: null,
           totalTaxesAndPenalties: null,
           expenses: null,
+          debtPayments: null,
           surplusDeficit: null,
           savingsRate: null,
           amountInvested: null,
           amountLiquidated: null,
+          assetPurchaseOutlay: null,
+          assetSaleProceeds: null,
           netCashFlow: null,
           historicalYear,
         };
@@ -130,9 +182,12 @@ export abstract class TableDataExtractor {
         taxFreeIncome,
         employerMatch,
         totalExpenses: expenses,
+        totalDebtPayments: debtPayments,
         surplusDeficit,
         amountInvested,
         amountLiquidated,
+        assetPurchaseOutlay,
+        assetSaleProceeds,
         netCashFlow,
       } = SimulationDataExtractor.getCashFlowData(data);
       const savingsRate = SimulationDataExtractor.getSavingsRate(data);
@@ -152,10 +207,13 @@ export abstract class TableDataExtractor {
         earlyWithdrawalPenalties,
         totalTaxesAndPenalties,
         expenses,
+        debtPayments,
         surplusDeficit,
         savingsRate,
         amountInvested,
         amountLiquidated,
+        assetPurchaseOutlay,
+        assetSaleProceeds,
         netCashFlow,
         historicalYear,
       };
@@ -288,6 +346,8 @@ export abstract class TableDataExtractor {
   static extractSingleSimulationReturnsData(simulation: SimulationResult): SingleSimulationReturnsTableRow[] {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
+    let cumulativeAssetAppreciation = 0;
+
     return simulation.data.map((data, idx) => {
       const historicalYear: number | null = getHistoricalYear(historicalRanges, idx);
       const age = Math.floor(data.age);
@@ -319,6 +379,8 @@ export abstract class TableDataExtractor {
           annualCashGain: null,
           cashHoldings: null,
           inflationRate: null,
+          annualAssetAppreciation: null,
+          cumulativeAssetAppreciation: null,
           historicalYear,
         };
       }
@@ -331,6 +393,11 @@ export abstract class TableDataExtractor {
       const totalAnnualGains = sumReturnAmounts(returnsData!.returnAmountsForPeriod);
 
       const { taxableGains, taxDeferredGains, taxFreeGains, cashSavingsGains } = SimulationDataExtractor.getGainsByTaxCategory(data);
+
+      const physicalAssetsData = data.physicalAssets;
+
+      const annualAssetAppreciation = physicalAssetsData?.totalAppreciation ?? 0;
+      cumulativeAssetAppreciation += annualAssetAppreciation;
 
       return {
         year: idx,
@@ -355,6 +422,8 @@ export abstract class TableDataExtractor {
         annualCashGain: returnsData?.returnAmountsForPeriod.cash ?? null,
         cashHoldings,
         inflationRate: returnsData?.annualInflationRate ?? null,
+        annualAssetAppreciation,
+        cumulativeAssetAppreciation,
         historicalYear,
       };
     });

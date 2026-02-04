@@ -69,30 +69,6 @@ export interface SingleSimulationCashFlowChartDataPoint {
   netCashFlow: number;
 }
 
-export interface SingleSimulationReturnsChartDataPoint {
-  age: number;
-  realStockReturnRate: number;
-  realBondReturnRate: number;
-  realCashReturnRate: number;
-  inflationRate: number;
-  cumulativeStockGain: number;
-  cumulativeBondGain: number;
-  cumulativeCashGain: number;
-  totalCumulativeGains: number;
-  annualStockGain: number;
-  annualBondGain: number;
-  annualCashGain: number;
-  totalAnnualGains: number;
-  taxableGains: number;
-  taxDeferredGains: number;
-  taxFreeGains: number;
-  cashSavingsGains: number;
-  annualAssetAppreciation: number;
-  cumulativeAssetAppreciation: number;
-  perAccountData: AccountDataWithReturns[];
-  perAssetData: PhysicalAssetData[];
-}
-
 export interface SingleSimulationTaxesChartDataPoint {
   age: number;
   grossIncome: number;
@@ -160,6 +136,30 @@ export interface SingleSimulationTaxesChartDataPoint {
   taxDeductibleContributions: number;
   standardDeduction: number;
   capitalLossDeduction: number;
+}
+
+export interface SingleSimulationReturnsChartDataPoint {
+  age: number;
+  realStockReturnRate: number;
+  realBondReturnRate: number;
+  realCashReturnRate: number;
+  inflationRate: number;
+  cumulativeStockGain: number;
+  cumulativeBondGain: number;
+  cumulativeCashGain: number;
+  totalCumulativeGains: number;
+  annualStockGain: number;
+  annualBondGain: number;
+  annualCashGain: number;
+  totalAnnualGains: number;
+  taxableGains: number;
+  taxDeferredGains: number;
+  taxFreeGains: number;
+  cashSavingsGains: number;
+  annualAssetAppreciation: number;
+  cumulativeAssetAppreciation: number;
+  perAccountData: AccountDataWithReturns[];
+  perAssetData: PhysicalAssetData[];
 }
 
 export interface SingleSimulationContributionsChartDataPoint {
