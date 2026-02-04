@@ -952,7 +952,7 @@ const createNetCashFlowDataPoint = (options: {
           totalSaleMarketValue: 0,
           totalCapitalGain: 0,
           totalSecuredDebtIncurred: 0,
-          totalSecuredDebtPaidAtSale: 0,
+          totalDebtPayoff: 0,
           perAssetData: {},
         }
       : null,
@@ -1610,7 +1610,7 @@ const createCashFlowInvariantDataPoint = (options: {
           totalSaleMarketValue: 0,
           totalCapitalGain: 0,
           totalSecuredDebtIncurred: 0,
-          totalSecuredDebtPaidAtSale: 0,
+          totalDebtPayoff: 0,
           perAssetData: {},
         }
       : null,

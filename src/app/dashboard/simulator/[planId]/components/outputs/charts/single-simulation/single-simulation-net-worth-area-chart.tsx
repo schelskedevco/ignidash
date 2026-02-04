@@ -326,7 +326,7 @@ export default function SingleSimulationNetWorthAreaChart({
     case 'netDebtReduction':
       lineDataKeys.push('netDebtReduction');
 
-      barDataKeys.push('annualDebtPaydown', 'annualDebtPaidAtSale', 'annualDebtIncurred');
+      barDataKeys.push('annualDebtPaydown', 'annualDebtPayoff', 'annualDebtIncurred');
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
 
       chartData = chartData.map((entry) => ({ ...entry, annualDebtIncurred: -entry.annualDebtIncurred }));
