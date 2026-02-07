@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { HandCoinsIcon } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import posthog from 'posthog-js';
 
 import { useAccountsData, useIncomesData, useTimelineData } from '@/hooks/use-convex-data';
@@ -19,13 +19,16 @@ import {
   supportsMaxBalance,
   supportsIncomeAllocation,
   supportsEmployerMatch,
+  supportsMegaBackdoorRoth,
   getAccountTypeLimitKey,
   getAnnualContributionLimit,
+  getAnnualSection415cLimit,
 } from '@/lib/schemas/inputs/contribution-form-schema';
 import { accountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
+import { Switch, SwitchField } from '@/components/catalyst/switch';
 import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
@@ -93,6 +96,7 @@ export default function ContributionRuleDialog({
 
   const contributionType = useWatch({ control, name: 'contributionType' });
   const accountId = useWatch({ control, name: 'accountId' });
+  const enableMegaBackdoorRoth = useWatch({ control, name: 'enableMegaBackdoorRoth' });
 
   const getContributionTypeColSpan = () => {
     if (contributionType === 'dollarAmount' || contributionType === 'percentRemaining') return 'col-span-1';
@@ -106,7 +110,9 @@ export default function ContributionRuleDialog({
   const timeline = useTimelineData();
   const currentAge = timeline ? calculateAge(timeline.birthMonth, timeline.birthYear) : 18;
   const selectedAccountAnnualContributionLimit = selectedAccount
-    ? getAnnualContributionLimit(getAccountTypeLimitKey(selectedAccount.type), currentAge)
+    ? enableMegaBackdoorRoth
+      ? getAnnualSection415cLimit(currentAge)
+      : getAnnualContributionLimit(getAccountTypeLimitKey(selectedAccount.type), currentAge)
     : null;
 
   const { data: incomes } = useIncomesData();
@@ -131,6 +137,10 @@ export default function ContributionRuleDialog({
 
     if (!(selectedAccount && supportsEmployerMatch(selectedAccount.type))) {
       unregister('employerMatch');
+    }
+
+    if (!(selectedAccount && supportsMegaBackdoorRoth(selectedAccount.type))) {
+      unregister('enableMegaBackdoorRoth');
     }
   }, [contributionType, unregister, selectedAccount]);
 
@@ -173,6 +183,18 @@ export default function ContributionRuleDialog({
                   </Description>
                 )}
               </Field>
+              {selectedAccount && supportsMegaBackdoorRoth(selectedAccount.type) && (
+                <SwitchField>
+                  <Label>Enable mega-backdoor Roth</Label>
+                  <Description>Contribute after-tax dollars beyond the standard 401(k) limit, then convert to Roth.</Description>
+                  <Controller
+                    name="enableMegaBackdoorRoth"
+                    defaultValue={false}
+                    control={control}
+                    render={({ field: { onChange, value, name } }) => <Switch name={name} checked={value} onChange={onChange} />}
+                  />
+                </SwitchField>
+              )}
               {selectedAccount && supportsIncomeAllocation(selectedAccount.type) && (
                 <Field>
                   <Label htmlFor="incomeIds">With Income(s)</Label>

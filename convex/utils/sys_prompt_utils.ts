@@ -135,7 +135,7 @@ const systemPrompt = (planData: string, keyMetrics: string): string => `
   - **Physical Assets:** Name, purchase price, market value, appreciation rate, purchase/sale dates, payment method (cash or loan with balance, APR, monthly payment)
   - **Accounts:** Savings, Taxable Brokerage, 401(k), Roth 401(k), Traditional IRA, Roth IRA, HSA—each with balance and bond allocation; taxable accounts track cost basis, Roth accounts track contribution basis
   - **Glide Path:** Enable/disable automatic rebalancing toward a target bond allocation; specify end time (custom date or custom age) and target bond percentage; prioritizes tax-advantaged accounts for rebalancing
-  - **Contribution Order:** Priority-ordered rules specifying account, amount (fixed/percentage/unlimited), optional employer match, optional max balance cap
+  - **Contribution Order:** Priority-ordered rules specifying account, amount (fixed/percentage/unlimited), optional employer match, optional max balance cap, optional mega-backdoor Roth (uses Section 415c limit)
   - **Market Assumptions:** Expected returns and dividend/interest yields for stocks, bonds, and cash; inflation rate
   - **Tax Settings:** Filing status (single, married filing jointly, head of household)
   - **Simulation Mode:** Single projection (fixed, stochastic, or historical returns with custom start years) or Monte Carlo (500 runs); seed available for reproducibility
@@ -151,7 +151,7 @@ const systemPrompt = (planData: string, keyMetrics: string): string => `
   - Monte Carlo results: percentile distributions (P10-P90), phase breakdowns, outcome probabilities
 
   **Not Modeled (but fair to discuss educationally):**
-  529/ABLE accounts, annuities, pensions, Roth conversions, backdoor Roth, self-employment income, rental/business income, state taxes, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
+  529/ABLE accounts, annuities, pensions, Roth conversions, self-employment income, rental/business income, state taxes, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
 
   If a user asks about unmodeled features, acknowledge the limitation directly—don't suggest workarounds within the app. You may explain these concepts educationally, but clarify they can't be simulated in Ignidash.
 
@@ -306,7 +306,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - **Physical Assets:** Name, purchase price, market value, appreciation rate, purchase/sale dates, payment method (cash or loan with balance, APR, monthly payment)
   - **Accounts:** Savings, Taxable Brokerage, 401(k), Roth 401(k), Traditional IRA, Roth IRA, HSA—each with balance and bond allocation; taxable accounts track cost basis, Roth accounts track contribution basis
   - **Glide Path:** Enable/disable automatic rebalancing toward a target bond allocation; specify end time (custom date or custom age) and target bond percentage; prioritizes tax-advantaged accounts for rebalancing
-  - **Contribution Order:** Priority-ordered rules specifying account, amount (fixed/percentage/unlimited), optional employer match, optional max balance cap
+  - **Contribution Order:** Priority-ordered rules specifying account, amount (fixed/percentage/unlimited), optional employer match, optional max balance cap, optional mega-backdoor Roth (uses Section 415c limit)
   - **Market Assumptions:** Expected returns and dividend/interest yields for stocks, bonds, and cash; inflation rate
   - **Tax Settings:** Filing status (single, married filing jointly, head of household)
   - **Simulation Mode:** Single projection (fixed, stochastic, or historical returns with custom start years) or Monte Carlo (500 runs); seed available for reproducibility
@@ -322,7 +322,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationRe
   - Monte Carlo results: percentile distributions (P10-P90), phase breakdowns, outcome probabilities
 
   **Not Modeled (but fair to discuss educationally):**
-  529/ABLE accounts, annuities, pensions, Roth conversions, backdoor Roth, self-employment income, rental/business income, state taxes, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
+  529/ABLE accounts, annuities, pensions, Roth conversions, self-employment income, rental/business income, state taxes, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
 
   Do not assume unlisted features exist. When discussing topics the simulator does not model, note that Ignidash cannot simulate them directly.
 
@@ -446,7 +446,8 @@ const formatPlanData = (plan: Doc<'plans'>): string => {
           const account = accountNameById[r.accountId] ?? r.accountId;
           const match = r.employerMatch ? ' (has employer match)' : '';
           const cap = r.maxBalance ? ` (up to ${formatNumber(r.maxBalance, 0, '$')} balance)` : '';
-          return `${account}${match}${cap}`;
+          const mbr = r.enableMegaBackdoorRoth ? ' (mega-backdoor Roth)' : '';
+          return `${account}${match}${cap}${mbr}`;
         })
         .join(' → ')}; then ${plan.baseContributionRule.type} remainder`
     );
