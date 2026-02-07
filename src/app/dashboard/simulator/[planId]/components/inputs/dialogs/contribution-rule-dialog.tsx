@@ -183,18 +183,6 @@ export default function ContributionRuleDialog({
                   </Description>
                 )}
               </Field>
-              {selectedAccount && supportsMegaBackdoorRoth(selectedAccount.type) && (
-                <SwitchField>
-                  <Label>Enable mega-backdoor Roth</Label>
-                  <Description>Contribute after-tax dollars beyond the standard 401(k) limit, then convert to Roth.</Description>
-                  <Controller
-                    name="enableMegaBackdoorRoth"
-                    defaultValue={false}
-                    control={control}
-                    render={({ field: { onChange, value, name } }) => <Switch name={name} checked={value} onChange={onChange} />}
-                  />
-                </SwitchField>
-              )}
               {selectedAccount && supportsIncomeAllocation(selectedAccount.type) && (
                 <Field>
                   <Label htmlFor="incomeIds">With Income(s)</Label>
@@ -283,6 +271,18 @@ export default function ContributionRuleDialog({
                   {errors.employerMatch && <ErrorMessage>{errors.employerMatch?.message}</ErrorMessage>}
                   <Description>Employer will match your contributions dollar-for-dollar up to this amount.</Description>
                 </Field>
+              )}
+              {selectedAccount && supportsMegaBackdoorRoth(selectedAccount.type) && (
+                <SwitchField>
+                  <Label>Enable mega-backdoor Roth</Label>
+                  <Description>Contribute after-tax dollars beyond the standard 401(k) limit, then convert to Roth.</Description>
+                  <Controller
+                    name="enableMegaBackdoorRoth"
+                    defaultValue={false}
+                    control={control}
+                    render={({ field: { onChange, value, name } }) => <Switch name={name} checked={value} onChange={onChange} />}
+                  />
+                </SwitchField>
               )}
             </FieldGroup>
           </DialogBody>
