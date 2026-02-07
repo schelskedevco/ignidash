@@ -4,6 +4,7 @@ import {
   getAccountTypeLimitKey,
   getAnnualContributionLimit,
   getAnnualSection415cLimit,
+  supportsMegaBackdoorRoth,
 } from '@/lib/schemas/inputs/contribution-form-schema';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 
@@ -96,7 +97,7 @@ export class ContributionRule {
     const accountTypeGroup = sharedLimitAccounts[accountType];
     if (!accountTypeGroup) return Infinity;
 
-    if (this.contributionInput.enableMegaBackdoorRoth) {
+    if (this.contributionInput.enableMegaBackdoorRoth && supportsMegaBackdoorRoth(accountType)) {
       const employeeContributionsSoFar = this.getEmployeeContributionsSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
       const employerMatchSoFar = this.getEmployerMatchSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
 

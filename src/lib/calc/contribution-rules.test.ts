@@ -1291,6 +1291,54 @@ describe('ContributionRules', () => {
 
         expect(result.contributionAmount).toBe(30000);
       });
+
+      it('should ignore MBR flag on unsupported account types (traditional 401k)', () => {
+        const rule = new ContributionRule(
+          createContributionRule({
+            contributionType: 'unlimited',
+            accountId: '401k-1',
+            enableMegaBackdoorRoth: true,
+          })
+        );
+        const account = new TaxDeferredAccount(create401kAccount());
+
+        const result = rule.getContributionAmount(100000, account, [], 35);
+
+        // Traditional 401k doesn't support MBR — must use $24,500 elective deferral, NOT $72,000
+        expect(result.contributionAmount).toBe(24500);
+      });
+
+      it('should ignore MBR flag on IRA accounts', () => {
+        const rule = new ContributionRule(
+          createContributionRule({
+            contributionType: 'unlimited',
+            accountId: 'roth-ira-1',
+            enableMegaBackdoorRoth: true,
+          })
+        );
+        const account = new TaxFreeAccount(createRothIraAccount());
+
+        const result = rule.getContributionAmount(100000, account, [], 35);
+
+        // Roth IRA doesn't support MBR — must use $7,500 IRA limit, NOT $72,000
+        expect(result.contributionAmount).toBe(7500);
+      });
+
+      it('should use $80,000 at age 59 (not $83,250 super catch-up)', () => {
+        const rule = new ContributionRule(
+          createContributionRule({
+            contributionType: 'unlimited',
+            accountId: 'roth401k-1',
+            enableMegaBackdoorRoth: true,
+          })
+        );
+        const account = new TaxFreeAccount(createRoth401kAccount());
+
+        const result = rule.getContributionAmount(100000, account, [], 59);
+
+        // Age 59 gets standard catch-up ($80,000), NOT super catch-up ($83,250 is ages 60-63)
+        expect(result.contributionAmount).toBe(80000);
+      });
     });
   });
 });
