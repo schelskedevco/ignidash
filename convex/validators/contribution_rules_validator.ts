@@ -13,6 +13,7 @@ export const contributionRulesValidator = v.object({
   maxBalance: v.optional(v.number()),
   incomeIds: v.optional(v.array(v.string())),
   employerMatch: v.optional(v.number()),
+  enableMegaBackdoorRoth: v.optional(v.boolean()),
 });
 
 export const baseContributionRuleValidator = v.object({

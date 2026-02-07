@@ -17,6 +17,7 @@ const sharedContributionSchema = z.object({
   incomeIds: z.array(z.string()).optional(),
   disabled: z.boolean().optional(),
   employerMatch: currencyFieldForbidsZero('Employer match must be greater than zero').optional(),
+  enableMegaBackdoorRoth: z.boolean().optional(),
 });
 
 export const contributionFormSchema = z
@@ -75,14 +76,22 @@ export const getAccountTypeLimitKey = (accountType: AccountInputs['type']): stri
 export const getAnnualContributionLimit = (limitKey: string, age: number): number => {
   switch (limitKey) {
     case '401kCombined':
-      return age < 50 ? 23500 : 31000;
+      if (age >= 60 && age <= 63) return 35750;
+      if (age >= 50) return 32500;
+      return 24500;
     case 'iraCombined':
-      return age < 50 ? 7000 : 8000;
+      return age >= 50 ? 8600 : 7500;
     case 'hsa':
-      return age < 55 ? 4300 : 5300;
+      return age >= 55 ? 5400 : 4400;
     default:
       return Infinity;
   }
+};
+
+export const getAnnualSection415cLimit = (age: number): number => {
+  if (age >= 60 && age <= 63) return 83250;
+  if (age >= 50) return 80000;
+  return 72000;
 };
 
 export const supportsMaxBalance = (type: AccountInputs['type']): boolean => {
@@ -129,6 +138,16 @@ export const supportsEmployerMatch = (type: AccountInputs['type']): boolean => {
     case 'rothIra':
     case 'ira':
     case 'taxableBrokerage':
+      return false;
+  }
+};
+
+export const supportsMegaBackdoorRoth = (type: AccountInputs['type']): boolean => {
+  switch (type) {
+    case 'roth401k':
+    case 'roth403b':
+      return true;
+    default:
       return false;
   }
 };

@@ -3,6 +3,7 @@ import {
   sharedLimitAccounts,
   getAccountTypeLimitKey,
   getAnnualContributionLimit,
+  getAnnualSection415cLimit,
 } from '@/lib/schemas/inputs/contribution-form-schema';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 
@@ -55,9 +56,9 @@ export class ContributionRule {
       maxContribution = Math.min(maxContribution, totalEligibleIncome);
     }
 
-    const contributionsSoFar = this.getEmployeeContributionsSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
+    const employeeContributionsSoFar = this.getEmployeeContributionsSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
 
-    const desiredContribution = this.calculateDesiredContribution(remainingToContribute, contributionsSoFar);
+    const desiredContribution = this.calculateDesiredContribution(remainingToContribute, employeeContributionsSoFar);
     const contributionAmount = Math.min(desiredContribution, maxContribution);
 
     let employerMatchAmount: number = 0;
@@ -95,11 +96,20 @@ export class ContributionRule {
     const accountTypeGroup = sharedLimitAccounts[accountType];
     if (!accountTypeGroup) return Infinity;
 
+    if (this.contributionInput.enableMegaBackdoorRoth) {
+      const employeeContributionsSoFar = this.getEmployeeContributionsSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
+      const employerMatchSoFar = this.getEmployerMatchSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
+
+      const totalContributionsSoFar = employeeContributionsSoFar + employerMatchSoFar;
+
+      return Math.max(0, getAnnualSection415cLimit(age) - totalContributionsSoFar);
+    }
+
     const limit = getAnnualContributionLimit(getAccountTypeLimitKey(accountType), age);
     if (!Number.isFinite(limit)) return Infinity;
 
-    const contributionsSoFar = this.getEmployeeContributionsSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
-    return Math.max(0, limit - contributionsSoFar);
+    const employeeContributionsSoFar = this.getEmployeeContributionsSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
+    return Math.max(0, limit - employeeContributionsSoFar);
   }
 
   private getEmployeeContributionsSoFarByAccountTypes(
@@ -110,6 +120,13 @@ export class ContributionRule {
       .flatMap((data) => Object.values(data.perAccountData))
       .filter((account) => accountTypes.includes(account.type))
       .reduce((sum, account) => sum + (sumTransactions(account.contributionsForPeriod) - account.employerMatchForPeriod), 0);
+  }
+
+  private getEmployerMatchSoFarByAccountTypes(monthlyPortfolioData: PortfolioData[], accountTypes: AccountInputs['type'][]): number {
+    return monthlyPortfolioData
+      .flatMap((data) => Object.values(data.perAccountData))
+      .filter((account) => accountTypes.includes(account.type))
+      .reduce((sum, account) => sum + account.employerMatchForPeriod, 0);
   }
 
   private getEmployeeContributionsSoFarByAccountID(monthlyPortfolioData: PortfolioData[], accountID: string): number {
@@ -123,6 +140,6 @@ export class ContributionRule {
     return monthlyPortfolioData
       .flatMap((data) => Object.values(data.perAccountData))
       .filter((account) => account.id === accountID)
-      .reduce((sum, account) => sum + (account.employerMatchForPeriod || 0), 0);
+      .reduce((sum, account) => sum + account.employerMatchForPeriod, 0);
   }
 }

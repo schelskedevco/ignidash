@@ -58,6 +58,7 @@ export function contributionFromConvex(contribution: Doc<'plans'>['contributionR
     incomeIds: contribution.incomeIds,
     disabled: contribution.disabled ?? false,
     employerMatch: contribution.employerMatch,
+    enableMegaBackdoorRoth: contribution.enableMegaBackdoorRoth,
   };
 
   switch (contribution.amount.type) {
@@ -272,6 +273,7 @@ export function contributionToConvex(contribution: ContributionInputs): Doc<'pla
     maxBalance: contribution.maxBalance,
     incomeIds: contribution.incomeIds,
     employerMatch: contribution.employerMatch,
+    enableMegaBackdoorRoth: contribution.enableMegaBackdoorRoth,
   };
 
   switch (contribution.contributionType) {
