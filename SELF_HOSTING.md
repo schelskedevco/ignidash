@@ -43,15 +43,15 @@ The setup script will:
 
 Once complete, the script will display:
 
-- **Application:** http://localhost:3000
+- **Application:** http://localhost:3000/dashboard
 - **Convex Dashboard:** http://localhost:6791
 - **Dashboard credentials** (Deployment URL and Admin Key)
 
-Open your browser and navigate to http://localhost:3000. You should see the Ignidash home page.
+Open your browser and navigate to http://localhost:3000/dashboard.
 
 ### Step 5: Create Your Account
 
-The first time you run the app, create a new account:
+The first time you visit the app, create a new account:
 
 1. Click "Create an account" on the sign in page
 2. Enter your email, name, and password
@@ -73,46 +73,44 @@ The default `docker-compose.yml` uses `stable`.
 
 ## Commands
 
-| Command                           | Description                                      |
-| --------------------------------- | ------------------------------------------------ |
-| `npm run selfhost -- --init`      | First-time setup                                 |
-| `npm run selfhost`                | Rebuild and restart (uses existing `.env.local`) |
-| `npm run selfhost -- --sync-only` | Sync env vars to Convex without restart          |
-| `npm run selfhost:convex-dev`     | Hot reload for Convex functions in development   |
-| `npm run selfhost:convex-deploy`  | Deploy Convex functions to self-hosted backend   |
-| `npm run docker:build`            | Build images                                     |
-| `npm run docker:up`               | Start services                                   |
-| `npm run docker:down`             | Stop services                                    |
-| `npm run docker:logs`             | View logs                                        |
+| Command                           | Description                                                       |
+| --------------------------------- | ----------------------------------------------------------------- |
+| `npm run selfhost -- --init`      | First-time setup (creates `.env.local` from template)             |
+| `npm run selfhost`                | Rebuild, restart, regenerate admin key, sync env vars, and deploy |
+| `npm run selfhost -- --sync-only` | Sync env vars to Convex without rebuilding containers             |
+| `npm run selfhost:convex-dev`     | Hot reload for Convex functions in development                    |
+| `npm run selfhost:convex-deploy`  | Deploy Convex functions to self-hosted backend                    |
+| `npm run docker:build`            | Build images (requires build context in docker-compose.yml)       |
+| `npm run docker:up`               | Start services in background                                      |
+| `npm run docker:down`             | Stop services                                                     |
+| `npm run docker:logs`             | Stream service logs                                               |
 
 ## Upgrading
 
 ```bash
-git pull
-docker compose pull
-npm run selfhost
+git pull                 # Update app code and Convex functions
+docker compose pull      # Pull latest images (app, Convex backend, and dashboard)
+npm run selfhost         # Rebuild, sync env vars, and deploy
 ```
 
-Back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md).
+> **Note:** `npm run selfhost` regenerates the Convex admin key each run, so your Convex Dashboard credentials will change after upgrading. The new key is saved to `.env.local`.
 
-## Custom Domain
-
-To use your own domain with a reverse proxy, configure routing and update the Convex origin environment variables. See [Hosting on Own Infrastructure](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/hosting_on_own_infra.md).
+It's recommended to back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md) for more.
 
 ## Environment Variables
 
 ### Required
 
-| Variable                       | Description                                           |
-| ------------------------------ | ----------------------------------------------------- |
-| `SELF_HOSTED`                  | Set to `true` for Docker builds                       |
-| `CONVEX_SELF_HOSTED_URL`       | Convex backend URL (default: `http://127.0.0.1:3210`) |
-| `CONVEX_SELF_HOSTED_ADMIN_KEY` | Admin key for Convex CLI (auto-generated)             |
-| `NEXT_PUBLIC_CONVEX_URL`       | Public Convex URL for browser                         |
-| `NEXT_PUBLIC_CONVEX_SITE_URL`  | Public Convex Site URL                                |
-| `SITE_URL`                     | Application URL                                       |
-| `BETTER_AUTH_SECRET`           | Session encryption secret                             |
-| `CONVEX_API_SECRET`            | Internal API authentication                           |
+| Variable                       | Description                                                                    |
+| ------------------------------ | ------------------------------------------------------------------------------ |
+| `SELF_HOSTED`                  | Enables Next.js standalone output for Docker builds                            |
+| `CONVEX_SELF_HOSTED_URL`       | Convex backend URL for CLI commands (default: `http://127.0.0.1:3210`)         |
+| `CONVEX_SELF_HOSTED_ADMIN_KEY` | Admin key for Convex CLI and Dashboard (auto-generated by setup script)        |
+| `NEXT_PUBLIC_CONVEX_URL`       | Convex API URL used by the browser (default: `http://localhost:3210`)          |
+| `NEXT_PUBLIC_CONVEX_SITE_URL`  | Convex HTTP Actions URL used by the browser (default: `http://localhost:3211`) |
+| `SITE_URL`                     | Public URL of the application (default: `http://localhost:3000`)               |
+| `BETTER_AUTH_SECRET`           | Secret for encrypting auth sessions and JWKs                                   |
+| `CONVEX_API_SECRET`            | Secret for internal API authentication between services                        |
 
 ### Optional
 
@@ -122,7 +120,7 @@ See [Optional Environment Variables](./README.md#optional-environment-variables)
 
 ### "Failed to decrypt private key" error
 
-This happens when `BETTER_AUTH_SECRET` changes but the database still has keys encrypted with the old secret. Common cause: running `npm run selfhost -- --init` a second time after already logging in.
+This happens when `BETTER_AUTH_SECRET` changes, but the database still has keys encrypted with the old secret. Common cause: running `npm run selfhost -- --init` a second time after already logging in.
 
 To fix:
 
@@ -133,16 +131,35 @@ To fix:
 
 ### Services won't start
 
+Check which services are running and their health status:
+
+```bash
+docker compose ps
+```
+
+Then check the logs for the failing service:
+
 ```bash
 docker compose logs
 ```
 
-Common issues: port conflicts (3000, 3210, 3211, 6791), insufficient memory.
+A common cause is port conflicts. These are the ports each service requires:
+
+| Port | Service             |
+| ---- | ------------------- |
+| 3000 | Ignidash app        |
+| 3210 | Convex backend API  |
+| 3211 | Convex HTTP Actions |
+| 6791 | Convex Dashboard    |
+
+Other causes include insufficient memory or Docker not running.
 
 ### Missing environment variables in Convex
 
+List current Convex env vars (find the admin key in `.env.local` under `CONVEX_SELF_HOSTED_ADMIN_KEY`):
+
 ```bash
-npx convex env list --url http://127.0.0.1:3210 --admin-key YOUR_KEY
+npx convex env list --url http://127.0.0.1:3210 --admin-key <your-admin-key>
 ```
 
 Re-sync with:

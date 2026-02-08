@@ -201,7 +201,7 @@ print_next_steps() {
 
     echo -e "${GREEN}Setup complete!${NC}"
     echo ""
-    echo "Access the application at: http://localhost:3000"
+    echo "Access the application at: http://localhost:3000/dashboard"
     echo "Convex Dashboard at: http://localhost:6791"
     echo ""
     echo "Convex Dashboard credentials:"

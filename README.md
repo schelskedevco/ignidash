@@ -102,7 +102,7 @@ See [SELF_HOSTING.md](./SELF_HOSTING.md) for how to host Ignidash yourself with 
 
 ### Prerequisites
 
-- [Node.js 22+](https://nodejs.org/)
+- [Node.js](https://nodejs.org/)
 
 ### Setup
 
