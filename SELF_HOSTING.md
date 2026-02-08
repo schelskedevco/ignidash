@@ -97,6 +97,69 @@ npm run selfhost         # Rebuild, sync env vars, and deploy
 
 It's recommended to back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md) for more.
 
+## Custom Domain
+
+To expose Ignidash on your own domain, you'll need a reverse proxy, updated environment variables, and a custom app image.
+
+### 1. Configure your reverse proxy
+
+Map four subdomains (or paths) to the local services:
+
+| Service             | Internal port | Example URL                        |
+| ------------------- | ------------- | ---------------------------------- |
+| Ignidash app        | 3000          | `https://app.yourdomain.com`       |
+| Convex API          | 3210          | `https://api.yourdomain.com`       |
+| Convex HTTP Actions | 3211          | `https://site.yourdomain.com`      |
+| Convex Dashboard    | 6791          | `https://dashboard.yourdomain.com` |
+
+### 2. Update Convex backend env vars
+
+In `docker-compose.yml`, update the Convex backend environment to match your public URLs:
+
+```yaml
+environment:
+  - CONVEX_CLOUD_ORIGIN=https://api.yourdomain.com
+  - CONVEX_SITE_ORIGIN=https://site.yourdomain.com
+```
+
+### 3. Build a custom app image
+
+The pre-built image bakes in `localhost` URLs at build time (`NEXT_PUBLIC_*` vars). For a custom domain you need to build your own image:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_CONVEX_URL=https://api.yourdomain.com \
+  --build-arg NEXT_PUBLIC_CONVEX_SITE_URL=https://site.yourdomain.com \
+  -t ignidash-custom .
+```
+
+Then update `docker-compose.yml` to use your local image instead of `ghcr.io/schelskedevco/ignidash:stable`:
+
+```yaml
+app:
+  image: ignidash-custom
+```
+
+### 4. Update `.env.local`
+
+Set these values to your custom domain URLs:
+
+```
+CONVEX_SELF_HOSTED_URL=https://api.yourdomain.com
+NEXT_PUBLIC_CONVEX_URL=https://api.yourdomain.com
+NEXT_PUBLIC_CONVEX_SITE_URL=https://site.yourdomain.com
+SITE_URL=https://app.yourdomain.com
+```
+
+### 5. Re-sync and deploy
+
+```bash
+npm run selfhost -- --sync-only
+npm run selfhost:convex-deploy
+```
+
+For more details on Convex-specific configuration, see [Hosting on Own Infrastructure](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/hosting_on_own_infra.md).
+
 ## Environment Variables
 
 ### Required
