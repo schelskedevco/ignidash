@@ -73,8 +73,8 @@ Ignidash is in beta and actively under development. Planned features:
 
 **Q1 2026**
 
+- ~~Modeling debt and physical assets~~
 - Configurable drawdown order
-- Modeling debt and physical assets
 - State & local taxes, IRMAA surcharges
 - Roth conversions & SEPP
 
