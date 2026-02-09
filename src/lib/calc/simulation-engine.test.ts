@@ -773,6 +773,7 @@ describe('Physical Assets Integration', () => {
         'asset-1': {
           id: 'asset-1',
           name: 'Rental Property',
+          assetType: 'other',
           purchaseDate: { type: 'now' as const },
           purchasePrice: 100000,
           appreciationRate: 0, // No appreciation for predictable test
@@ -832,6 +833,7 @@ describe('Physical Assets Integration', () => {
         'asset-1': {
           id: 'asset-1',
           name: 'Investment Property',
+          assetType: 'other',
           purchaseDate: { type: 'customAge' as const, age: 40 },
           purchasePrice: 300000,
           appreciationRate: 0,
@@ -880,6 +882,7 @@ describe('Physical Assets Integration', () => {
         'asset-1': {
           id: 'asset-1',
           name: 'Appreciated Property',
+          assetType: 'other',
           purchaseDate: { type: 'now' as const },
           purchasePrice: 200000, // Cost basis
           marketValue: 350000, // Current value (already appreciated)
@@ -899,7 +902,7 @@ describe('Physical Assets Integration', () => {
 
     // Verify capital gain is tracked
     expect(saleYearData).toBeDefined();
-    expect(saleYearData!.physicalAssets!.totalCapitalGain).toBeCloseTo(150000, 0); // 350000 - 200000
+    expect(saleYearData!.physicalAssets!.totalRealizedGains).toBeCloseTo(150000, 0); // 350000 - 200000
 
     // Verify taxes include the capital gain (uses incomeSources, not incomeBreakdown)
     expect(saleYearData!.taxes).not.toBeNull();
@@ -916,6 +919,7 @@ describe('Physical Assets Integration', () => {
         'asset-1': {
           id: 'asset-1',
           name: 'Home',
+          assetType: 'other',
           purchaseDate: { type: 'now' as const },
           purchasePrice: 400000,
           appreciationRate: 3,
@@ -961,6 +965,7 @@ describe('Physical Assets Integration', () => {
         'asset-1': {
           id: 'asset-1',
           name: 'Depreciated Property',
+          assetType: 'other',
           purchaseDate: { type: 'now' as const },
           purchasePrice: 200000, // Cost basis
           appreciationRate: -20, // Severe depreciation
@@ -980,7 +985,7 @@ describe('Physical Assets Integration', () => {
     expect(saleYearData).toBeDefined();
 
     // Capital gain should be negative (a loss) since marketValue < purchasePrice
-    expect(saleYearData!.physicalAssets!.totalCapitalGain).toBeLessThan(0);
+    expect(saleYearData!.physicalAssets!.totalRealizedGains).toBeLessThan(0);
 
     // Realized gains should be 0 (losses don't create taxable gains)
     expect(saleYearData!.taxes!.incomeSources.realizedGains).toBe(0);
@@ -1004,6 +1009,7 @@ describe('Physical Assets Integration', () => {
         'asset-1': {
           id: 'asset-1',
           name: 'Underwater Property',
+          assetType: 'other',
           purchaseDate: { type: 'now' as const },
           purchasePrice: 500000,
           appreciationRate: -50, // Extreme depreciation (50% value loss per year)

@@ -459,6 +459,7 @@ const createTaxDataPoint = (options: {
     incomeSources: {
       realizedGains: 0,
       capitalLossDeduction: 0,
+      section121Exclusion: 0,
       taxDeferredWithdrawals: 0,
       taxableRetirementDistributions: 0,
       taxableDividendIncome: 0,
@@ -644,6 +645,7 @@ const createCashFlowDataPoint = (options: {
     incomeSources: {
       realizedGains: 0,
       capitalLossDeduction: 0,
+      section121Exclusion: 0,
       taxDeferredWithdrawals: 0,
       taxableRetirementDistributions: 0,
       taxableDividendIncome: 0,
@@ -950,7 +952,7 @@ const createNetCashFlowDataPoint = (options: {
           totalPurchaseMarketValue: 0,
           totalSaleProceeds: options.assetSaleProceeds ?? 0,
           totalSaleMarketValue: 0,
-          totalCapitalGain: 0,
+          totalRealizedGains: 0,
           totalSecuredDebtIncurred: 0,
           totalDebtPayoff: 0,
           perAssetData: {},
@@ -996,6 +998,7 @@ const createNetCashFlowDataPoint = (options: {
     incomeSources: {
       realizedGains: 0,
       capitalLossDeduction: 0,
+      section121Exclusion: 0,
       taxDeferredWithdrawals: 0,
       taxableRetirementDistributions: 0,
       taxableDividendIncome: 0,
@@ -1608,7 +1611,7 @@ const createCashFlowInvariantDataPoint = (options: {
           totalPurchaseMarketValue: 0,
           totalSaleProceeds: options.assetSaleProceeds ?? 0,
           totalSaleMarketValue: 0,
-          totalCapitalGain: 0,
+          totalRealizedGains: 0,
           totalSecuredDebtIncurred: 0,
           totalDebtPayoff: 0,
           perAssetData: {},
@@ -1654,6 +1657,7 @@ const createCashFlowInvariantDataPoint = (options: {
     incomeSources: {
       realizedGains: 0,
       capitalLossDeduction: 0,
+      section121Exclusion: 0,
       taxDeferredWithdrawals: 0,
       taxableRetirementDistributions: 0,
       taxableDividendIncome: 0,

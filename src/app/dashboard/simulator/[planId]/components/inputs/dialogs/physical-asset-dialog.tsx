@@ -7,7 +7,7 @@ import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
-import { CalendarIcon, HomeIcon, BanknoteArrowDownIcon } from 'lucide-react';
+import { CalendarIcon, HomeIcon, BanknoteArrowDownIcon, BanknoteXIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
@@ -21,7 +21,7 @@ import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import { physicalAssetTimeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import NumberInput from '@/components/ui/number-input';
-import { Field, Fieldset, FieldGroup, Label, ErrorMessage } from '@/components/catalyst/fieldset';
+import { Field, Fieldset, FieldGroup, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Combobox, ComboboxLabel, ComboboxOption } from '@/components/catalyst/combobox';
 import { Select } from '@/components/catalyst/select';
@@ -52,6 +52,7 @@ export default function PhysicalAssetDialog({
       ({
         id: '',
         name: 'Asset ' + (numPhysicalAssets + 1),
+        assetType: 'other',
         purchaseDate: { type: 'now' },
         appreciationRate: 1,
         saleDate: { type: 'atLifeExpectancy' },
@@ -107,6 +108,7 @@ export default function PhysicalAssetDialog({
   const saleTimePoint = useWatch({ control, name: 'saleDate' });
   const saleDateType = saleTimePoint?.type;
 
+  const assetType = useWatch({ control, name: 'assetType' });
   const paymentMethod = useWatch({ control, name: 'paymentMethod' });
   const paymentMethodType = paymentMethod.type;
 
@@ -193,6 +195,7 @@ export default function PhysicalAssetDialog({
 
   const timeFrameButtonRef = useRef<HTMLButtonElement>(null);
   const paymentMethodButtonRef = useRef<HTMLButtonElement>(null);
+  const taxTreatmentButtonRef = useRef<HTMLButtonElement>(null);
 
   const [activeDisclosure, setActiveDisclosure] = useState<DisclosureState | null>(null);
   const toggleDisclosure = useCallback(
@@ -205,6 +208,9 @@ export default function PhysicalAssetDialog({
             break;
           case 'paymentMethod':
             targetRef = paymentMethodButtonRef.current;
+            break;
+          case 'taxTreatment':
+            targetRef = taxTreatmentButtonRef.current;
             break;
         }
 
@@ -601,6 +607,54 @@ export default function PhysicalAssetDialog({
                           </>
                         )}
                         <PayoffEstimate months={loanPayoffMonths} className="col-span-2" />
+                      </div>
+                    </DisclosurePanel>
+                  </>
+                )}
+              </Disclosure>
+              <Disclosure as="div" className="border-border/25 border-t pt-4">
+                {({ open, close }) => (
+                  <>
+                    <DisclosureButton
+                      ref={taxTreatmentButtonRef}
+                      onClick={() => {
+                        if (!open) close();
+                        toggleDisclosure({ open, close, key: 'taxTreatment' });
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          if (!open) close();
+                          toggleDisclosure({ open, close, key: 'taxTreatment' });
+                        }
+                      }}
+                      className="group data-open:border-border/25 focus-outline flex w-full items-start justify-between text-left transition-opacity duration-150 hover:opacity-75 data-open:border-b data-open:pb-4"
+                    >
+                      <div className="flex items-center gap-2">
+                        <BanknoteXIcon className="text-primary size-5 shrink-0" aria-hidden="true" />
+                        <span className="text-base/7 font-semibold">Taxes</span>
+                        <span className="hidden sm:inline">|</span>
+                        <span className="text-muted-foreground hidden truncate sm:inline">
+                          {assetType === 'primaryResidence' ? 'Primary Residence' : 'Not Primary Residence'}
+                        </span>
+                      </div>
+                      <span className="text-muted-foreground ml-6 flex h-7 items-center">
+                        <PlusIcon aria-hidden="true" className="size-6 group-data-open:hidden" />
+                        <MinusIcon aria-hidden="true" className="size-6 group-not-data-open:hidden" />
+                      </span>
+                    </DisclosureButton>
+                    <DisclosurePanel className="pt-4">
+                      <div className="grid grid-cols-1 gap-4">
+                        <Field>
+                          <Label htmlFor="assetType">Asset Type</Label>
+                          <Select {...register('assetType')} id="assetType" name="assetType">
+                            <option value="primaryResidence">Primary Residence</option>
+                            <option value="other">Other</option>
+                          </Select>
+                          {errors.assetType && <ErrorMessage>{errors.assetType?.message}</ErrorMessage>}
+                          <Description>
+                            When sold, primary residences may qualify for the Section 121 exclusion, reducing capital gains taxes.
+                          </Description>
+                        </Field>
                       </div>
                     </DisclosurePanel>
                   </>

@@ -62,6 +62,7 @@ const createSimulationState = (overrides: Partial<SimulationState> = {}): Simula
 const createPhysicalAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}): PhysicalAssetInputs => ({
   id: overrides.id ?? 'asset-1',
   name: overrides.name ?? 'Primary Residence',
+  assetType: overrides.assetType ?? 'other',
   purchaseDate: overrides.purchaseDate ?? { type: 'now' },
   purchasePrice: overrides.purchasePrice ?? 400000,
   marketValue: overrides.marketValue,
@@ -81,6 +82,7 @@ const createFinancedAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}):
   return {
     id: overrides.id ?? 'asset-1',
     name: overrides.name ?? 'Primary Residence',
+    assetType: overrides.assetType ?? 'other',
     purchaseDate: overrides.purchaseDate ?? { type: 'now' },
     purchasePrice: overrides.purchasePrice ?? 400000,
     marketValue: overrides.marketValue,
@@ -326,10 +328,10 @@ describe('PhysicalAsset Class', () => {
       }
 
       const marketValueBeforeSale = asset.getMarketValue();
-      const { capitalGain } = asset.sell();
+      const { realizedGains } = asset.sell();
 
       // Cost basis is original purchase price
-      expect(capitalGain).toBeCloseTo(marketValueBeforeSale - 300000);
+      expect(realizedGains).toBeCloseTo(marketValueBeforeSale - 300000);
     });
 
     it('handles underwater sale (loan > value)', () => {
@@ -361,13 +363,13 @@ describe('PhysicalAsset Class', () => {
 
       const marketValueBeforeSale = asset.getMarketValue();
       const loanBalanceBeforeSale = asset.getLoanBalance();
-      const { saleProceeds, capitalGain } = asset.sell();
+      const { saleProceeds, realizedGains } = asset.sell();
 
       // Proceeds can be negative when underwater (seller owes money)
       expect(saleProceeds).toBe(marketValueBeforeSale - loanBalanceBeforeSale);
       expect(saleProceeds).toBeLessThan(0);
       // Capital gain will be negative (loss)
-      expect(capitalGain).toBeLessThan(0);
+      expect(realizedGains).toBeLessThan(0);
     });
 
     it('already sold throws error', () => {
@@ -846,7 +848,7 @@ describe('PhysicalAssetsProcessor', () => {
     const result = processor.process(ZERO_INFLATION);
 
     expect(result.totalSaleProceeds).toBe(500000);
-    expect(result.totalCapitalGain).toBe(0); // No appreciation
+    expect(result.totalRealizedGains).toBe(0); // No appreciation
     expect(result.perAssetData['selling'].isSold).toBe(true);
   });
 
@@ -1488,14 +1490,14 @@ describe('Capital Loss Scenarios', () => {
     }
 
     const marketValueBeforeSale = asset.getMarketValue();
-    const { capitalGain, saleProceeds } = asset.sell();
+    const { realizedGains, saleProceeds } = asset.sell();
 
     // Asset should have depreciated: 50000 * (0.8)^2 = 32000
     expect(marketValueBeforeSale).toBeCloseTo(purchasePrice * Math.pow(1 - 0.2, 2), -1);
 
     // Capital gain should be negative (a loss)
-    expect(capitalGain).toBeLessThan(0);
-    expect(capitalGain).toBeCloseTo(marketValueBeforeSale - purchasePrice, 0);
+    expect(realizedGains).toBeLessThan(0);
+    expect(realizedGains).toBeCloseTo(marketValueBeforeSale - purchasePrice, 0);
 
     // Sale proceeds should equal market value (no loan)
     expect(saleProceeds).toBeCloseTo(marketValueBeforeSale, 0);
@@ -1528,14 +1530,14 @@ describe('Capital Loss Scenarios', () => {
 
     const marketValueBeforeSale = asset.getMarketValue();
     const loanBalanceBeforeSale = asset.getLoanBalance();
-    const { capitalGain, saleProceeds } = asset.sell();
+    const { realizedGains, saleProceeds } = asset.sell();
 
     // Market value after 1 year: 40000 * 0.85 = 34000
     expect(marketValueBeforeSale).toBeCloseTo(purchasePrice * Math.pow(1 - 0.15, 1), -2);
 
     // Capital gain should be negative (loss)
-    expect(capitalGain).toBeLessThan(0);
-    expect(capitalGain).toBeCloseTo(marketValueBeforeSale - purchasePrice, 0);
+    expect(realizedGains).toBeLessThan(0);
+    expect(realizedGains).toBeCloseTo(marketValueBeforeSale - purchasePrice, 0);
 
     // Sale proceeds = market value - remaining loan
     expect(saleProceeds).toBeCloseTo(marketValueBeforeSale - loanBalanceBeforeSale, 0);
@@ -1549,9 +1551,9 @@ describe('Capital Loss Scenarios', () => {
       })
     );
 
-    const { capitalGain, saleProceeds } = asset.sell();
+    const { realizedGains, saleProceeds } = asset.sell();
 
-    expect(capitalGain).toBe(0);
+    expect(realizedGains).toBe(0);
     expect(saleProceeds).toBe(300000);
   });
 
@@ -1565,10 +1567,10 @@ describe('Capital Loss Scenarios', () => {
       })
     );
 
-    const { capitalGain, saleProceeds } = asset.sell();
+    const { realizedGains, saleProceeds } = asset.sell();
 
     // Capital gain uses cost basis, not current market value
-    expect(capitalGain).toBe(180000 - 200000); // -$20,000 loss
+    expect(realizedGains).toBe(180000 - 200000); // -$20,000 loss
     expect(saleProceeds).toBe(180000);
   });
 });
@@ -1598,8 +1600,8 @@ describe('Edge Cases', () => {
     expect(asset.getMarketValue()).toBe(450000);
 
     // But capital gain on sale uses original cost basis
-    const { capitalGain } = asset.sell();
-    expect(capitalGain).toBe(150000); // 450000 - 300000
+    const { realizedGains } = asset.sell();
+    expect(realizedGains).toBe(150000); // 450000 - 300000
   });
 
   it('deprecating asset becomes underwater', () => {

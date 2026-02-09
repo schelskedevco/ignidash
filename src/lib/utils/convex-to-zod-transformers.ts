@@ -138,6 +138,7 @@ export function physicalAssetFromConvex(physicalAsset: NonNullable<Doc<'plans'>[
   return {
     id: physicalAsset.id,
     name: physicalAsset.name,
+    assetType: physicalAsset.assetType ?? 'other',
     purchaseDate: { ...physicalAsset.purchaseDate },
     purchasePrice: physicalAsset.purchasePrice,
     marketValue: physicalAsset.marketValue,
@@ -353,6 +354,7 @@ export function physicalAssetToConvex(physicalAsset: PhysicalAssetInputs): NonNu
   return {
     id: physicalAsset.id,
     name: physicalAsset.name,
+    assetType: physicalAsset.assetType,
     purchaseDate: { ...physicalAsset.purchaseDate },
     purchasePrice: physicalAsset.purchasePrice,
     marketValue: physicalAsset.marketValue,

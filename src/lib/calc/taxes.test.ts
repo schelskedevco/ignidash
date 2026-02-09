@@ -8,6 +8,7 @@ import {
   STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD,
 } from './tax-data/standard-deduction';
 import { NIIT_RATE, NIIT_THRESHOLDS } from './tax-data/niit-thresholds';
+import { SECTION_121_EXCLUSION } from './tax-data/section-121-exclusion';
 import {
   createEmptyPortfolioData,
   createEmptyIncomesData,
@@ -15,6 +16,7 @@ import {
   createEmptyPhysicalAssetsData,
 } from './__tests__/test-utils';
 import type { SimulationState } from './simulation-engine';
+import type { PhysicalAssetData } from './physical-assets';
 
 const createMockSimulationState = (age: number): SimulationState => ({
   time: { date: new Date(2025, 0, 1), age, year: 2025, month: 1 },
@@ -861,6 +863,419 @@ describe('TaxProcessor', () => {
 
       expect(result.totalTaxesDue).toBeGreaterThan(0);
       expect(result.totalTaxesRefund).toBe(0);
+    });
+  });
+
+  // ============================================================================
+  // Section 121 Primary Residence Exclusion Tests
+  // ============================================================================
+
+  describe('Section 121 primary residence exclusion', () => {
+    const createPhysicalAssetData = (overrides: Partial<PhysicalAssetData> & { id: string }): PhysicalAssetData => ({
+      name: overrides.name ?? 'Asset',
+      assetType: overrides.assetType ?? 'primaryResidence',
+      marketValue: overrides.marketValue ?? 0,
+      loanBalance: overrides.loanBalance ?? 0,
+      equity: overrides.equity ?? 0,
+      paymentType: overrides.paymentType ?? 'cash',
+      appreciation: overrides.appreciation ?? 0,
+      loanPayment: overrides.loanPayment ?? 0,
+      purchaseOutlay: overrides.purchaseOutlay ?? 0,
+      purchaseMarketValue: overrides.purchaseMarketValue ?? 0,
+      saleProceeds: overrides.saleProceeds ?? 0,
+      saleMarketValue: overrides.saleMarketValue ?? 0,
+      realizedGains: overrides.realizedGains ?? 0,
+      interest: overrides.interest ?? 0,
+      principalPaid: overrides.principalPaid ?? 0,
+      unpaidInterest: overrides.unpaidInterest ?? 0,
+      debtPaydown: overrides.debtPaydown ?? 0,
+      securedDebtIncurred: overrides.securedDebtIncurred ?? 0,
+      debtPayoff: overrides.debtPayoff ?? 0,
+      isSold: overrides.isSold ?? false,
+      ...overrides,
+    });
+
+    it('should exclude primary residence gain under cap (single)', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 200000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      expect(result.adjustments.section121Exclusion).toBe(200000);
+      expect(result.incomeSources.realizedGains).toBe(0);
+    });
+
+    it('should not exclude gains from non-primary-residence assets', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          other1: createPhysicalAssetData({ id: 'other1', assetType: 'other', realizedGains: 200000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      expect(result.adjustments.section121Exclusion).toBe(0);
+    });
+
+    it('should result in lower taxable gains for primary residence vs non-primary residence', () => {
+      const primaryProcessor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const primaryData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 200000 }),
+        },
+      });
+      const primaryResult = primaryProcessor.process(
+        createEmptyPortfolioData(),
+        createEmptyIncomesData(),
+        createEmptyReturnsData(),
+        primaryData
+      );
+
+      const otherProcessor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const otherData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          other1: createPhysicalAssetData({ id: 'other1', assetType: 'other', realizedGains: 200000 }),
+        },
+      });
+      const otherResult = otherProcessor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), otherData);
+
+      expect(primaryResult.incomeSources.realizedGains).toBeLessThan(otherResult.incomeSources.realizedGains);
+    });
+
+    it('should cap exclusion at single filing status limit ($250k)', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 400000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 400000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      expect(result.adjustments.section121Exclusion).toBe(SECTION_121_EXCLUSION.single);
+    });
+
+    it('should use $500k cap for married filing jointly', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'marriedFilingJointly');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 600000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 600000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      expect(result.adjustments.section121Exclusion).toBe(SECTION_121_EXCLUSION.marriedFilingJointly);
+    });
+
+    it('should use $250k cap for head of household', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'headOfHousehold');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 300000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 300000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      expect(result.adjustments.section121Exclusion).toBe(SECTION_121_EXCLUSION.headOfHousehold);
+    });
+
+    it('should not exclude negative gains (losses)', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: -50000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: -50000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      expect(result.adjustments.section121Exclusion).toBe(0);
+    });
+
+    it('should apply exclusion per-home for multiple primary residences (each under cap)', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 400000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 200000 }),
+          home2: createPhysicalAssetData({ id: 'home2', assetType: 'primaryResidence', realizedGains: 200000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      // Each home gets its own $250k cap: min(200k, 250k) + min(200k, 250k) = 400k
+      expect(result.adjustments.section121Exclusion).toBe(400000);
+      expect(result.incomeSources.realizedGains).toBe(0);
+    });
+
+    it('should apply per-home cap independently for multiple homes exceeding cap', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 600000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 300000 }),
+          home2: createPhysicalAssetData({ id: 'home2', assetType: 'primaryResidence', realizedGains: 300000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      // Each home capped at $250k: min(300k, 250k) + min(300k, 250k) = 500k
+      expect(result.adjustments.section121Exclusion).toBe(500000);
+    });
+
+    it('should not exclude gains for unsold asset with zero realized gains', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 0,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 0 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      expect(result.adjustments.section121Exclusion).toBe(0);
+    });
+
+    it('should exclude primary residence gains but not portfolio gains', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const portfolioData = createEmptyPortfolioData();
+      portfolioData.realizedGainsForPeriod = 50000;
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 200000 }),
+        },
+      });
+
+      const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      expect(result.adjustments.section121Exclusion).toBe(200000);
+      expect(result.incomeSources.realizedGains).toBe(50000);
+    });
+
+    it('should exclude primary residence gain but not other physical asset gain in same year', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 300000, // 200k primary + 100k other
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 200000 }),
+          shed1: createPhysicalAssetData({ id: 'shed1', assetType: 'other', realizedGains: 100000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      // Only the primary residence gain is excluded
+      expect(result.adjustments.section121Exclusion).toBe(200000);
+      // The other asset's 100k gain flows through as taxable
+      expect(result.incomeSources.realizedGains).toBe(100000);
+    });
+
+    it('should fully exclude gain exactly at single cap boundary ($250k)', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 250000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 250000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      expect(result.adjustments.section121Exclusion).toBe(250000);
+      expect(result.incomeSources.realizedGains).toBe(0);
+    });
+
+    it('should fully exclude gain exactly at MFJ cap boundary ($500k)', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'marriedFilingJointly');
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 500000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 500000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), createEmptyIncomesData(), createEmptyReturnsData(), physicalAssetsData);
+
+      expect(result.adjustments.section121Exclusion).toBe(500000);
+      expect(result.incomeSources.realizedGains).toBe(0);
+    });
+
+    it('should reduce capital gains tax amount via Section 121 exclusion', () => {
+      // With exclusion: primary residence gain excluded, no capital gains tax
+      const withExclusionProcessor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const incomes = createEmptyIncomesData();
+      incomes.totalIncome = 100000; // Enough to fill 0% cap gains bracket
+      const primaryData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 200000 }),
+        },
+      });
+      const withExclusionResult = withExclusionProcessor.process(
+        createEmptyPortfolioData(),
+        incomes,
+        createEmptyReturnsData(),
+        primaryData
+      );
+
+      // Without exclusion: same gain as non-primary, full capital gains tax
+      const withoutExclusionProcessor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const otherData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          other1: createPhysicalAssetData({ id: 'other1', assetType: 'other', realizedGains: 200000 }),
+        },
+      });
+      const withoutExclusionResult = withoutExclusionProcessor.process(
+        createEmptyPortfolioData(),
+        incomes,
+        createEmptyReturnsData(),
+        otherData
+      );
+
+      // End-to-end: the exclusion should actually reduce the capital gains tax bill
+      expect(withExclusionResult.capitalGainsTaxes.capitalGainsTaxAmount).toBe(0);
+      expect(withoutExclusionResult.capitalGainsTaxes.capitalGainsTaxAmount).toBeGreaterThan(0);
+    });
+
+    it('should reduce NIIT via Section 121 exclusion for high-income filer', () => {
+      // With exclusion: primary residence gain excluded, lower NII and NIIT
+      const withExclusionProcessor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const incomes = createEmptyIncomesData();
+      incomes.totalIncome = 200000; // At NIIT threshold
+      const primaryData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 200000 }),
+        },
+      });
+      const withExclusionResult = withExclusionProcessor.process(
+        createEmptyPortfolioData(),
+        incomes,
+        createEmptyReturnsData(),
+        primaryData
+      );
+
+      // Without exclusion: same gain as non-primary, higher NII
+      const withoutExclusionProcessor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const otherData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          other1: createPhysicalAssetData({ id: 'other1', assetType: 'other', realizedGains: 200000 }),
+        },
+      });
+      const withoutExclusionResult = withoutExclusionProcessor.process(
+        createEmptyPortfolioData(),
+        incomes,
+        createEmptyReturnsData(),
+        otherData
+      );
+
+      // Exclusion should reduce net investment income and NIIT
+      expect(withExclusionResult.niit.netInvestmentIncome).toBeLessThan(withoutExclusionResult.niit.netInvestmentIncome);
+      expect(withExclusionResult.niit.niitAmount).toBeLessThan(withoutExclusionResult.niit.niitAmount);
+    });
+
+    it('should not affect ordinary income tax via Section 121 exclusion', () => {
+      const withExclusionProcessor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const incomes = createEmptyIncomesData();
+      incomes.totalIncome = 100000;
+      const primaryData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 200000 }),
+        },
+      });
+      const withExclusionResult = withExclusionProcessor.process(
+        createEmptyPortfolioData(),
+        incomes,
+        createEmptyReturnsData(),
+        primaryData
+      );
+
+      const noGainsProcessor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const noGainsResult = noGainsProcessor.process(
+        createEmptyPortfolioData(),
+        incomes,
+        createEmptyReturnsData(),
+        createEmptyPhysicalAssetsData()
+      );
+
+      // Ordinary income tax should be identical regardless of excluded home sale gains
+      expect(withExclusionResult.incomeTaxes.incomeTaxAmount).toBe(noGainsResult.incomeTaxes.incomeTaxAmount);
+      expect(withExclusionResult.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(noGainsResult.incomeTaxes.taxableIncomeTaxedAsOrdinary);
+    });
+
+    it('should exclude gain on one primary residence while loss on another flows through', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const incomes = createEmptyIncomesData();
+      incomes.totalIncome = 50000;
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 150000, // 200k gain + (-50k loss)
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 200000 }),
+          home2: createPhysicalAssetData({ id: 'home2', assetType: 'primaryResidence', realizedGains: -50000 }),
+        },
+      });
+
+      const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), physicalAssetsData);
+
+      // Only the positive gain home gets exclusion (200k excluded)
+      // Loss home is ignored by exclusion filter (realizedGains > 0)
+      // physicalAssetRealizedGains = 150k - 200k = -50k
+      // This -50k flows into the capital loss carryover system
+      expect(result.adjustments.section121Exclusion).toBe(200000);
+      expect(result.incomeSources.realizedGains).toBe(0);
+      expect(result.incomeTaxes.capitalLossDeduction).toBe(3000);
+    });
+
+    it('should interact correctly with capital loss carryover', () => {
+      const processor = new TaxProcessor(createMockSimulationState(65), 'single');
+      const incomes = createEmptyIncomesData();
+      incomes.totalIncome = 50000;
+
+      // Year 1: Portfolio loss of $10k creates carryover
+      const portfolioDataYear1 = createEmptyPortfolioData();
+      portfolioDataYear1.realizedGainsForPeriod = -10000;
+      processor.process(portfolioDataYear1, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+      // After year 1: carryover = -(10000 - 3000) = -7000
+
+      // Year 2: Primary residence sold with $200k gain + no portfolio gains
+      const portfolioDataYear2 = createEmptyPortfolioData();
+      const physicalAssetsData = createEmptyPhysicalAssetsData({
+        totalRealizedGains: 200000,
+        perAssetData: {
+          home1: createPhysicalAssetData({ id: 'home1', assetType: 'primaryResidence', realizedGains: 200000 }),
+        },
+      });
+
+      const result2 = processor.process(portfolioDataYear2, incomes, createEmptyReturnsData(), physicalAssetsData);
+
+      // Section 121 excludes 200k, physical asset realized gains = 0
+      // Portfolio gains = 0 + physical asset realized gains (0) + carryover (-7k) = -7k
+      // Capital loss deduction of 3k, remaining carryover of 4k
+      expect(result2.adjustments.section121Exclusion).toBe(200000);
+      expect(result2.incomeSources.realizedGains).toBe(0);
+      expect(result2.incomeTaxes.capitalLossDeduction).toBe(3000);
     });
   });
 });

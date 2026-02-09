@@ -30,6 +30,7 @@ const paymentMethodValidator = v.union(cashPaymentValidator, loanPaymentValidato
 export const physicalAssetValidator = v.object({
   id: v.string(),
   name: v.string(),
+  assetType: v.optional(v.union(v.literal('primaryResidence'), v.literal('other'))),
   purchaseDate: physicalAssetTimePointValidator,
   purchasePrice: v.number(),
   marketValue: v.optional(v.number()),

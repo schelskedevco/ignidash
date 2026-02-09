@@ -113,6 +113,7 @@ const createDataPoint = (options: {
     incomeSources: {
       realizedGains: 0,
       capitalLossDeduction: 0,
+      section121Exclusion: 0,
       taxDeferredWithdrawals: 0,
       taxableRetirementDistributions: 0,
       taxableDividendIncome: 0,

@@ -31,6 +31,7 @@ import {
   SOCIAL_SECURITY_TAX_THRESHOLDS_MARRIED_FILING_JOINTLY,
   SOCIAL_SECURITY_TAX_THRESHOLDS_HEAD_OF_HOUSEHOLD,
 } from './tax-data/social-security-tax-brackets';
+import { SECTION_121_EXCLUSION } from './tax-data/section-121-exclusion';
 
 export interface CapitalGainsTaxesData {
   taxableIncomeTaxedAsCapGains: number;
@@ -86,6 +87,7 @@ export interface SocialSecurityTaxesData {
 export interface IncomeSourcesData {
   realizedGains: number;
   capitalLossDeduction: number;
+  section121Exclusion: number;
   taxDeferredWithdrawals: number;
   taxableRetirementDistributions: number;
   taxableDividendIncome: number;
@@ -204,6 +206,7 @@ export class TaxProcessor {
       adjustments: {
         taxDeductibleContributions: incomeData.taxDeductibleContributions,
         capitalLossDeduction: incomeData.capitalLossDeduction,
+        section121Exclusion: incomeData.section121Exclusion,
       },
       deductions: { standardDeduction },
     };
@@ -259,7 +262,7 @@ export class TaxProcessor {
     }
 
     const taxableRetirementDistributions = taxDeferredWithdrawals + earlyRothEarningsWithdrawals;
-    const { realizedGains, capitalLossDeduction } = this.getRealizedGainsAndCapLossDeductionData(
+    const { realizedGains, capitalLossDeduction, section121Exclusion } = this.getRealizedGainsAndCapLossDeductionData(
       annualPortfolioDataBeforeTaxes,
       annualPhysicalAssetsData
     );
@@ -306,6 +309,7 @@ export class TaxProcessor {
     return {
       realizedGains,
       capitalLossDeduction,
+      section121Exclusion,
       taxDeferredWithdrawals,
       taxableRetirementDistributions,
       taxableDividendIncome,
@@ -338,18 +342,21 @@ export class TaxProcessor {
   ): {
     realizedGains: number;
     capitalLossDeduction: number;
+    section121Exclusion: number;
   } {
+    const { section121Exclusion, physicalAssetRealizedGains } = this.getSection121Exclusion(annualPhysicalAssetsData);
+
     const realizedGainsAfterCarryover =
-      annualPortfolioDataBeforeTaxes.realizedGainsForPeriod + annualPhysicalAssetsData.totalCapitalGain + this.capitalLossCarryover;
+      annualPortfolioDataBeforeTaxes.realizedGainsForPeriod + physicalAssetRealizedGains + this.capitalLossCarryover;
 
     if (realizedGainsAfterCarryover >= 0) {
       this.capitalLossCarryover = 0;
-      return { realizedGains: realizedGainsAfterCarryover, capitalLossDeduction: 0 };
+      return { realizedGains: realizedGainsAfterCarryover, capitalLossDeduction: 0, section121Exclusion };
     }
 
     const capitalLossDeduction = -Math.max(-3000, realizedGainsAfterCarryover);
     this.capitalLossCarryover = realizedGainsAfterCarryover + capitalLossDeduction;
-    return { realizedGains: 0, capitalLossDeduction };
+    return { realizedGains: 0, capitalLossDeduction, section121Exclusion };
   }
 
   private processIncomeTaxes({ taxableIncomeTaxedAsOrdinary }: { taxableIncomeTaxedAsOrdinary: number }): {
@@ -507,5 +514,19 @@ export class TaxProcessor {
       case 'headOfHousehold':
         return SOCIAL_SECURITY_TAX_THRESHOLDS_HEAD_OF_HOUSEHOLD;
     }
+  }
+
+  private getSection121Exclusion(physicalAssetsData: PhysicalAssetsData): {
+    section121Exclusion: number;
+    physicalAssetRealizedGains: number;
+  } {
+    const maxExclusion = SECTION_121_EXCLUSION[this.filingStatus];
+
+    // Technically, there should only be one primary residence asset, but just in case...
+    const section121Exclusion = Object.values(physicalAssetsData.perAssetData)
+      .filter((asset) => asset.assetType === 'primaryResidence' && asset.realizedGains > 0)
+      .reduce((total, asset) => total + Math.min(asset.realizedGains, maxExclusion), 0);
+
+    return { section121Exclusion, physicalAssetRealizedGains: physicalAssetsData.totalRealizedGains - section121Exclusion };
   }
 }

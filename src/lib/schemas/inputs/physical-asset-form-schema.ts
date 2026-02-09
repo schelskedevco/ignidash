@@ -2,6 +2,10 @@ import { z } from 'zod';
 import { currencyFieldForbidsZero, currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-schema-utils';
 import { timePointSchema } from './income-expenses-shared-schemas';
 
+export const physicalAssetTypeSchema = z.enum(['primaryResidence', 'other']);
+
+export type PhysicalAssetType = z.infer<typeof physicalAssetTypeSchema>;
+
 const cashPaymentSchema = z.object({
   type: z.literal('cash'),
 });
@@ -22,6 +26,7 @@ export const physicalAssetFormSchema = z
   .object({
     id: z.string(),
     name: z.string().min(2, 'Name must be at least 2 characters').max(50, 'Name must be at most 50 characters'),
+    assetType: physicalAssetTypeSchema,
     purchaseDate: timePointSchema,
     purchasePrice: currencyFieldForbidsZero('Purchase price must be greater than zero'),
     marketValue: currencyFieldForbidsZero('Market value must be greater than zero').optional(),

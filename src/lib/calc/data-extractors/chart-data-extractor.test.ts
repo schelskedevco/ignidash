@@ -128,7 +128,7 @@ function createNetWorthTestDataPoint(options: {
           totalPurchaseMarketValue: purchaseMarketValue,
           totalSaleProceeds: options.saleProceeds ?? 0,
           totalSaleMarketValue: saleMarketValue,
-          totalCapitalGain: 0,
+          totalRealizedGains: 0,
           totalSecuredDebtIncurred: securedDebtIncurred,
           totalDebtPayoff: debtPayoff,
           perAssetData: {},

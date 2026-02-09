@@ -1,4 +1,4 @@
-import type { PhysicalAssetInputs, PaymentMethodInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
+import type { PhysicalAssetInputs, PaymentMethodInputs, PhysicalAssetType } from '@/lib/schemas/inputs/physical-asset-form-schema';
 import type { TimePoint } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 
 import type { SimulationState } from './simulation-engine';
@@ -37,7 +37,7 @@ export class PhysicalAssetsProcessor {
     let totalDebtPaydown = 0;
     let totalSaleProceeds = 0;
     let totalSaleMarketValue = 0;
-    let totalCapitalGain = 0;
+    let totalRealizedGains = 0;
     let totalSecuredDebtIncurred = 0;
     let totalDebtPayoff = 0;
     const perAssetData: Record<string, PhysicalAssetData> = {};
@@ -60,6 +60,7 @@ export class PhysicalAssetsProcessor {
       const assetData: PhysicalAssetData = {
         id: asset.getId(),
         name: asset.getName(),
+        assetType: asset.getAssetType(),
         marketValue: asset.getMarketValue(),
         loanBalance: asset.getLoanBalance(),
         equity: asset.getEquity(),
@@ -74,7 +75,7 @@ export class PhysicalAssetsProcessor {
         purchaseMarketValue: purchaseDataByAsset[asset.getId()]?.purchaseMarketValue ?? 0,
         saleProceeds: 0,
         saleMarketValue: 0,
-        capitalGain: 0,
+        realizedGains: 0,
         securedDebtIncurred,
         debtPayoff: 0,
         isSold: asset.isSold(),
@@ -91,7 +92,7 @@ export class PhysicalAssetsProcessor {
 
     const assetsToSell = this.physicalAssets.getAssetsToSellThisPeriod(this.simulationState);
     for (const asset of assetsToSell) {
-      const { saleProceeds, capitalGain, saleMarketValue, debtPayoff } = asset.sell();
+      const { saleProceeds, realizedGains, saleMarketValue, debtPayoff } = asset.sell();
 
       perAssetData[asset.getId()] = {
         ...perAssetData[asset.getId()],
@@ -100,14 +101,14 @@ export class PhysicalAssetsProcessor {
         equity: 0,
         saleProceeds,
         saleMarketValue,
-        capitalGain,
+        realizedGains,
         debtPayoff,
         isSold: true,
       };
 
       totalSaleProceeds += saleProceeds;
       totalSaleMarketValue += saleMarketValue;
-      totalCapitalGain += capitalGain;
+      totalRealizedGains += realizedGains;
       totalDebtPayoff += debtPayoff;
     }
 
@@ -125,7 +126,7 @@ export class PhysicalAssetsProcessor {
       totalPurchaseMarketValue,
       totalSaleProceeds,
       totalSaleMarketValue,
-      totalCapitalGain,
+      totalRealizedGains,
       totalSecuredDebtIncurred,
       totalDebtPayoff,
       perAssetData,
@@ -152,7 +153,7 @@ export class PhysicalAssetsProcessor {
         acc.totalPurchaseMarketValue += curr.totalPurchaseMarketValue;
         acc.totalSaleProceeds += curr.totalSaleProceeds;
         acc.totalSaleMarketValue += curr.totalSaleMarketValue;
-        acc.totalCapitalGain += curr.totalCapitalGain;
+        acc.totalRealizedGains += curr.totalRealizedGains;
         acc.totalSecuredDebtIncurred += curr.totalSecuredDebtIncurred;
         acc.totalDebtPayoff += curr.totalDebtPayoff;
 
@@ -169,7 +170,7 @@ export class PhysicalAssetsProcessor {
             purchaseMarketValue: (acc.perAssetData[assetID]?.purchaseMarketValue ?? 0) + assetData.purchaseMarketValue,
             saleProceeds: (acc.perAssetData[assetID]?.saleProceeds ?? 0) + assetData.saleProceeds,
             saleMarketValue: (acc.perAssetData[assetID]?.saleMarketValue ?? 0) + assetData.saleMarketValue,
-            capitalGain: (acc.perAssetData[assetID]?.capitalGain ?? 0) + assetData.capitalGain,
+            realizedGains: (acc.perAssetData[assetID]?.realizedGains ?? 0) + assetData.realizedGains,
             securedDebtIncurred: (acc.perAssetData[assetID]?.securedDebtIncurred ?? 0) + assetData.securedDebtIncurred,
             debtPayoff: (acc.perAssetData[assetID]?.debtPayoff ?? 0) + assetData.debtPayoff,
           };
@@ -191,7 +192,7 @@ export class PhysicalAssetsProcessor {
         totalPurchaseMarketValue: 0,
         totalSaleProceeds: 0,
         totalSaleMarketValue: 0,
-        totalCapitalGain: 0,
+        totalRealizedGains: 0,
         totalSecuredDebtIncurred: 0,
         totalDebtPayoff: 0,
         perAssetData: {},
@@ -210,7 +211,7 @@ export interface PhysicalAssetsData {
   totalPurchaseMarketValue: number;
   totalSaleProceeds: number;
   totalSaleMarketValue: number;
-  totalCapitalGain: number;
+  totalRealizedGains: number;
   totalInterest: number;
   totalPrincipalPaid: number;
   totalUnpaidInterest: number;
@@ -223,6 +224,7 @@ export interface PhysicalAssetsData {
 export interface PhysicalAssetData {
   id: string;
   name: string;
+  assetType: PhysicalAssetType;
   marketValue: number;
   loanBalance: number;
   equity: number;
@@ -233,7 +235,7 @@ export interface PhysicalAssetData {
   purchaseMarketValue: number;
   saleProceeds: number;
   saleMarketValue: number;
-  capitalGain: number;
+  realizedGains: number;
   interest: number;
   principalPaid: number;
   unpaidInterest: number;
@@ -282,6 +284,7 @@ export class PhysicalAssets {
 export class PhysicalAsset {
   private id: string;
   private name: string;
+  private assetType: PhysicalAssetType;
   private purchaseDate: TimePoint;
   private marketValue: number;
   private purchasePrice: number;
@@ -298,6 +301,7 @@ export class PhysicalAsset {
   constructor(data: PhysicalAssetInputs) {
     this.id = data.id;
     this.name = data.name;
+    this.assetType = data.assetType;
     this.purchaseDate = data.purchaseDate;
     this.marketValue = data.marketValue ?? data.purchasePrice;
     this.purchasePrice = data.purchasePrice;
@@ -330,6 +334,10 @@ export class PhysicalAsset {
 
   getName(): string {
     return this.name;
+  }
+
+  getAssetType(): PhysicalAssetType {
+    return this.assetType;
   }
 
   getMarketValue(): number {
@@ -409,17 +417,17 @@ export class PhysicalAsset {
     return this.getIsSimTimeAtOrAfterTimePoint(simulationState, this.saleDate);
   }
 
-  sell(): { saleProceeds: number; capitalGain: number; saleMarketValue: number; debtPayoff: number } {
+  sell(): { saleProceeds: number; realizedGains: number; saleMarketValue: number; debtPayoff: number } {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
 
     const saleMarketValue = this.marketValue;
     const debtPayoff = this.loanBalance;
     const saleProceeds = saleMarketValue - debtPayoff;
-    const capitalGain = saleMarketValue - this.purchasePrice;
+    const realizedGains = saleMarketValue - this.purchasePrice;
 
     this.ownershipStatus = 'sold';
 
-    return { saleProceeds, capitalGain, saleMarketValue, debtPayoff };
+    return { saleProceeds, realizedGains, saleMarketValue, debtPayoff };
   }
 
   shouldPurchaseThisPeriod(simulationState: SimulationState): boolean {

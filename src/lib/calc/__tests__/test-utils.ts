@@ -175,6 +175,7 @@ export const createLivingExpense = (overrides?: {
 export const createPhysicalAssetInput = (overrides?: Partial<PhysicalAssetInputs>): PhysicalAssetInputs => ({
   id: overrides?.id ?? 'asset-1',
   name: overrides?.name ?? 'Primary Residence',
+  assetType: overrides?.assetType ?? 'other',
   purchaseDate: overrides?.purchaseDate ?? { type: 'now' },
   purchasePrice: overrides?.purchasePrice ?? 400000,
   marketValue: overrides?.marketValue,
@@ -191,6 +192,7 @@ export const createFinancedAssetInput = (overrides?: Partial<PhysicalAssetInputs
   return {
     id: overrides?.id ?? 'asset-1',
     name: overrides?.name ?? 'Primary Residence',
+    assetType: overrides?.assetType ?? 'other',
     purchaseDate: overrides?.purchaseDate ?? { type: 'now' },
     purchasePrice: overrides?.purchasePrice ?? 400000,
     marketValue: overrides?.marketValue,
@@ -435,7 +437,7 @@ export const createEmptyPhysicalAssetsData = (overrides?: Partial<PhysicalAssets
   totalPurchaseMarketValue: overrides?.totalPurchaseMarketValue ?? 0,
   totalSaleProceeds: overrides?.totalSaleProceeds ?? 0,
   totalSaleMarketValue: overrides?.totalSaleMarketValue ?? 0,
-  totalCapitalGain: overrides?.totalCapitalGain ?? 0,
+  totalRealizedGains: overrides?.totalRealizedGains ?? 0,
   totalSecuredDebtIncurred: overrides?.totalSecuredDebtIncurred ?? 0,
   totalDebtPayoff: overrides?.totalDebtPayoff ?? 0,
   perAssetData: overrides?.perAssetData ?? {},
