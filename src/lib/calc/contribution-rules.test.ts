@@ -172,6 +172,49 @@ describe('ContributionRules', () => {
         expect(result.contributionAmount).toBe(5000);
       });
 
+      it('should return 0 when dollarAmount is fully exhausted by prior contributions', () => {
+        const rule = new ContributionRule(
+          createContributionRule({
+            contributionType: 'dollarAmount',
+            dollarAmount: 2000,
+            accountId: '401k-1',
+          })
+        );
+        const account = new TaxDeferredAccount(create401kAccount());
+
+        // Prior employee contributions: 2000 (fully exhausted)
+        const monthlyData: PortfolioData[] = [
+          {
+            ...createEmptyPortfolioData(),
+            perAccountData: {
+              '401k-1': {
+                id: '401k-1',
+                name: '401k',
+                type: '401k',
+                balance: 102000,
+                cumulativeContributions: { stocks: 0, bonds: 0, cash: 0 },
+                cumulativeEmployerMatch: 0,
+                cumulativeWithdrawals: { stocks: 0, bonds: 0, cash: 0 },
+                cumulativeRealizedGains: 0,
+                cumulativeEarningsWithdrawn: 0,
+                cumulativeRmds: 0,
+                assetAllocation: { stocks: 0.8, bonds: 0.2, cash: 0 },
+                contributions: { stocks: 1600, bonds: 400, cash: 0 }, // 2000 total
+                employerMatch: 0,
+                withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+                realizedGains: 0,
+                earningsWithdrawn: 0,
+                rmds: 0,
+              },
+            },
+          },
+        ];
+
+        const result = rule.getContributionAmount(5000, account, monthlyData, 35);
+
+        expect(result.contributionAmount).toBe(0);
+      });
+
       it('should track contributions so far and only contribute remaining', () => {
         const rule = new ContributionRule(
           createContributionRule({
@@ -246,6 +289,40 @@ describe('ContributionRules', () => {
         const result = rule.getContributionAmount(5000, account, [], 35);
 
         expect(result.contributionAmount).toBe(5000);
+      });
+    });
+
+    describe('zero remaining cash', () => {
+      it('should contribute 0 when no remaining cash is available (dollarAmount)', () => {
+        const rule = new ContributionRule(
+          createContributionRule({
+            contributionType: 'dollarAmount',
+            dollarAmount: 5000,
+            accountId: '401k-1',
+          })
+        );
+        const account = new TaxDeferredAccount(create401kAccount());
+
+        const result = rule.getContributionAmount(0, account, [], 35);
+
+        expect(result.contributionAmount).toBe(0);
+        expect(result.employerMatchAmount).toBe(0);
+      });
+
+      it('should contribute 0 when no remaining cash is available (unlimited with employer match)', () => {
+        const rule = new ContributionRule(
+          createContributionRule({
+            contributionType: 'unlimited',
+            accountId: '401k-1',
+            employerMatch: 5000,
+          })
+        );
+        const account = new TaxDeferredAccount(create401kAccount());
+
+        const result = rule.getContributionAmount(0, account, [], 35);
+
+        expect(result.contributionAmount).toBe(0);
+        expect(result.employerMatchAmount).toBe(0);
       });
     });
 
@@ -340,6 +417,21 @@ describe('ContributionRules', () => {
 
         expect(result.contributionAmount).toBe(4500);
       });
+
+      it('should enforce $32,500 catch-up limit at age 50 in getContributionAmount (integration)', () => {
+        const rule = new ContributionRule(
+          createContributionRule({
+            contributionType: 'unlimited',
+            accountId: '401k-1',
+          })
+        );
+        const account = new TaxDeferredAccount(create401kAccount());
+
+        // No prior contributions, age 50, remaining cash 50000
+        const result = rule.getContributionAmount(50000, account, [], 50);
+
+        expect(result.contributionAmount).toBe(32500);
+      });
     });
 
     describe('IRA limits', () => {
@@ -357,6 +449,21 @@ describe('ContributionRules', () => {
         expect(sharedLimitAccounts['ira']).toContain('rothIra');
         expect(sharedLimitAccounts['rothIra']).toContain('ira');
       });
+
+      it('should enforce $8,600 catch-up IRA limit at age 55 in getContributionAmount (integration)', () => {
+        const rule = new ContributionRule(
+          createContributionRule({
+            contributionType: 'unlimited',
+            accountId: 'roth-ira-1',
+          })
+        );
+        const account = new TaxFreeAccount(createRothIraAccount());
+
+        // No prior contributions, age 55, remaining cash 20000
+        const result = rule.getContributionAmount(20000, account, [], 55);
+
+        expect(result.contributionAmount).toBe(8600);
+      });
     });
 
     // IRS deviation: these limits use self-only coverage ($4,400). IRS Notice 2025-67
@@ -370,6 +477,55 @@ describe('ContributionRules', () => {
       it('should enforce $5,400 limit for age 55+', () => {
         expect(getAnnualContributionLimit('hsa', 55)).toBe(5400);
         expect(getAnnualContributionLimit('hsa', 65)).toBe(5400);
+      });
+
+      it('should enforce $4,400 HSA limit in getContributionAmount (integration)', () => {
+        const rule = new ContributionRule(
+          createContributionRule({
+            contributionType: 'unlimited',
+            accountId: 'hsa-1',
+          })
+        );
+        const account = new TaxDeferredAccount({
+          type: 'hsa',
+          id: 'hsa-1',
+          name: 'HSA',
+          balance: 5000,
+          percentBonds: 10,
+        });
+
+        // Prior HSA contributions: 3000
+        const monthlyData: PortfolioData[] = [
+          {
+            ...createEmptyPortfolioData(),
+            perAccountData: {
+              'hsa-1': {
+                id: 'hsa-1',
+                name: 'HSA',
+                type: 'hsa',
+                balance: 8000,
+                cumulativeContributions: { stocks: 0, bonds: 0, cash: 0 },
+                cumulativeEmployerMatch: 0,
+                cumulativeWithdrawals: { stocks: 0, bonds: 0, cash: 0 },
+                cumulativeRealizedGains: 0,
+                cumulativeEarningsWithdrawn: 0,
+                cumulativeRmds: 0,
+                assetAllocation: { stocks: 0.9, bonds: 0.1, cash: 0 },
+                contributions: { stocks: 2700, bonds: 300, cash: 0 }, // 3000 total
+                employerMatch: 0,
+                withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+                realizedGains: 0,
+                earningsWithdrawn: 0,
+                rmds: 0,
+              },
+            },
+          },
+        ];
+
+        // HSA limit at age 35 = 4400, already contributed 3000 → 1400 remaining
+        const result = rule.getContributionAmount(10000, account, monthlyData, 35);
+
+        expect(result.contributionAmount).toBe(1400);
       });
     });
 
@@ -423,6 +579,39 @@ describe('ContributionRules', () => {
       expect(result.employerMatchAmount).toBe(1000); // Limited to employee contribution
     });
 
+    it('should calculate employer match based on percentRemaining contribution', () => {
+      const rule = new ContributionRule(
+        createContributionRule({
+          contributionType: 'percentRemaining',
+          percentRemaining: 50,
+          accountId: '401k-1',
+          employerMatch: 3000,
+        })
+      );
+      const account = new TaxDeferredAccount(create401kAccount());
+
+      const result = rule.getContributionAmount(6000, account, [], 35);
+
+      expect(result.contributionAmount).toBe(3000); // 50% of 6000
+      expect(result.employerMatchAmount).toBe(3000); // min(3000 contribution, 3000 match cap)
+    });
+
+    it('should calculate employer match based on unlimited contribution', () => {
+      const rule = new ContributionRule(
+        createContributionRule({
+          contributionType: 'unlimited',
+          accountId: '401k-1',
+          employerMatch: 2000,
+        })
+      );
+      const account = new TaxDeferredAccount(create401kAccount());
+
+      const result = rule.getContributionAmount(5000, account, [], 35);
+
+      expect(result.contributionAmount).toBe(5000); // unlimited takes all remaining
+      expect(result.employerMatchAmount).toBe(2000); // min(5000 contribution, 2000 match cap)
+    });
+
     it('should track employer match separately from employee contributions', () => {
       const rule = new ContributionRule(
         createContributionRule({
@@ -471,6 +660,53 @@ describe('ContributionRules', () => {
       expect(result.contributionAmount).toBe(1000);
       // Employer match remaining is 500 (1500 - 1000 already matched)
       expect(result.employerMatchAmount).toBe(500);
+    });
+
+    it('should return 0 employer match when annual match is fully exhausted', () => {
+      const rule = new ContributionRule(
+        createContributionRule({
+          contributionType: 'dollarAmount',
+          dollarAmount: 5000,
+          accountId: '401k-1',
+          employerMatch: 2000,
+        })
+      );
+      const account = new TaxDeferredAccount(create401kAccount());
+
+      // Prior: 1000 employee + 2000 employer match = 3000 total contributions
+      const monthlyData: PortfolioData[] = [
+        {
+          ...createEmptyPortfolioData(),
+          perAccountData: {
+            '401k-1': {
+              id: '401k-1',
+              name: '401k',
+              type: '401k',
+              balance: 103000,
+              cumulativeContributions: { stocks: 0, bonds: 0, cash: 0 },
+              cumulativeEmployerMatch: 0,
+              cumulativeWithdrawals: { stocks: 0, bonds: 0, cash: 0 },
+              cumulativeRealizedGains: 0,
+              cumulativeEarningsWithdrawn: 0,
+              cumulativeRmds: 0,
+              assetAllocation: { stocks: 0.8, bonds: 0.2, cash: 0 },
+              contributions: { stocks: 2400, bonds: 600, cash: 0 }, // 3000 total (1000 employee + 2000 employer)
+              employerMatch: 2000,
+              withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+              realizedGains: 0,
+              earningsWithdrawn: 0,
+              rmds: 0,
+            },
+          },
+        },
+      ];
+
+      const result = rule.getContributionAmount(10000, account, monthlyData, 35);
+
+      // Employee: dollarAmount=5000, 1000 contributed so far → 4000 remaining
+      expect(result.contributionAmount).toBe(4000);
+      // Employer: match=2000, 2000 already matched → 0 remaining
+      expect(result.employerMatchAmount).toBe(0);
     });
 
     describe('multi-account employer match independence', () => {
@@ -709,6 +945,40 @@ describe('ContributionRules', () => {
       expect(result.contributionAmount).toBe(0);
     });
 
+    it('should cap dollarAmount contribution at maxBalance remaining room', () => {
+      const rule = new ContributionRule(
+        createContributionRule({
+          contributionType: 'dollarAmount',
+          dollarAmount: 5000,
+          accountId: 'savings-1',
+          maxBalance: 15000,
+        })
+      );
+      const account = new SavingsAccount(createSavingsAccountInput({ balance: 12000 }));
+
+      const result = rule.getContributionAmount(10000, account, [], 35);
+
+      // maxBalance room = 15000 - 12000 = 3000, which beats dollarAmount of 5000
+      expect(result.contributionAmount).toBe(3000);
+    });
+
+    it('should cap percentRemaining contribution at maxBalance remaining room', () => {
+      const rule = new ContributionRule(
+        createContributionRule({
+          contributionType: 'percentRemaining',
+          percentRemaining: 50,
+          accountId: 'savings-1',
+          maxBalance: 10000,
+        })
+      );
+      const account = new SavingsAccount(createSavingsAccountInput({ balance: 9000 }));
+
+      const result = rule.getContributionAmount(8000, account, [], 35);
+
+      // maxBalance room = 10000 - 9000 = 1000, which beats 50% of 8000 = 4000
+      expect(result.contributionAmount).toBe(1000);
+    });
+
     it('should not apply max balance limit if not set', () => {
       const rule = new ContributionRule(
         createContributionRule({
@@ -779,6 +1049,156 @@ describe('ContributionRules', () => {
       const result = rule.getContributionAmount(10000, account, [], 35, incomesData);
 
       expect(result.contributionAmount).toBe(7000);
+    });
+
+    it('should use contribution limit when it is more restrictive than eligible income', () => {
+      const rule = new ContributionRule(
+        createContributionRule({
+          contributionType: 'unlimited',
+          accountId: '401k-1',
+          incomeIds: ['income-1'],
+        })
+      );
+      const account = new TaxDeferredAccount(create401kAccount());
+
+      const incomesData = createEmptyIncomesData({
+        perIncomeData: {
+          'income-1': {
+            id: 'income-1',
+            name: 'Salary',
+            income: 3000,
+            amountWithheld: 0,
+            ficaTax: 0,
+            incomeAfterPayrollDeductions: 3000,
+            taxFreeIncome: 0,
+            socialSecurityIncome: 0,
+          },
+        },
+      });
+
+      // Prior 401k contributions: 22000 employee
+      const monthlyData: PortfolioData[] = [
+        {
+          ...createEmptyPortfolioData(),
+          perAccountData: {
+            '401k-1': {
+              id: '401k-1',
+              name: '401k',
+              type: '401k',
+              balance: 122000,
+              cumulativeContributions: { stocks: 0, bonds: 0, cash: 0 },
+              cumulativeEmployerMatch: 0,
+              cumulativeWithdrawals: { stocks: 0, bonds: 0, cash: 0 },
+              cumulativeRealizedGains: 0,
+              cumulativeEarningsWithdrawn: 0,
+              cumulativeRmds: 0,
+              assetAllocation: { stocks: 0.8, bonds: 0.2, cash: 0 },
+              contributions: { stocks: 17600, bonds: 4400, cash: 0 }, // 22k total
+              employerMatch: 0,
+              withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+              realizedGains: 0,
+              earningsWithdrawn: 0,
+              rmds: 0,
+            },
+          },
+        },
+      ];
+
+      // Contribution limit remaining = 24500 - 22000 = 2500 (binding); income = 3000
+      const result = rule.getContributionAmount(10000, account, monthlyData, 35, incomesData);
+
+      expect(result.contributionAmount).toBe(2500);
+    });
+
+    it('should use income cap when eligible income is below contribution limit remaining', () => {
+      const rule = new ContributionRule(
+        createContributionRule({
+          contributionType: 'unlimited',
+          accountId: '401k-1',
+          incomeIds: ['income-1'],
+        })
+      );
+      const account = new TaxDeferredAccount(create401kAccount());
+
+      const incomesData = createEmptyIncomesData({
+        perIncomeData: {
+          'income-1': {
+            id: 'income-1',
+            name: 'Salary',
+            income: 1500,
+            amountWithheld: 0,
+            ficaTax: 0,
+            incomeAfterPayrollDeductions: 1500,
+            taxFreeIncome: 0,
+            socialSecurityIncome: 0,
+          },
+        },
+      });
+
+      // Prior 401k contributions: 22000 employee
+      const monthlyData: PortfolioData[] = [
+        {
+          ...createEmptyPortfolioData(),
+          perAccountData: {
+            '401k-1': {
+              id: '401k-1',
+              name: '401k',
+              type: '401k',
+              balance: 122000,
+              cumulativeContributions: { stocks: 0, bonds: 0, cash: 0 },
+              cumulativeEmployerMatch: 0,
+              cumulativeWithdrawals: { stocks: 0, bonds: 0, cash: 0 },
+              cumulativeRealizedGains: 0,
+              cumulativeEarningsWithdrawn: 0,
+              cumulativeRmds: 0,
+              assetAllocation: { stocks: 0.8, bonds: 0.2, cash: 0 },
+              contributions: { stocks: 17600, bonds: 4400, cash: 0 }, // 22k total
+              employerMatch: 0,
+              withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+              realizedGains: 0,
+              earningsWithdrawn: 0,
+              rmds: 0,
+            },
+          },
+        },
+      ];
+
+      // Contribution limit remaining = 24500 - 22000 = 2500; income = 1500 (binding)
+      const result = rule.getContributionAmount(10000, account, monthlyData, 35, incomesData);
+
+      expect(result.contributionAmount).toBe(1500);
+    });
+
+    it('should cap dollarAmount at eligible income', () => {
+      const rule = new ContributionRule(
+        createContributionRule({
+          contributionType: 'dollarAmount',
+          dollarAmount: 5000,
+          accountId: '401k-1',
+          incomeIds: ['income-1'],
+        })
+      );
+      const account = new TaxDeferredAccount(create401kAccount());
+
+      const incomesData = createEmptyIncomesData({
+        perIncomeData: {
+          'income-1': {
+            id: 'income-1',
+            name: 'Salary',
+            income: 2000,
+            amountWithheld: 0,
+            ficaTax: 0,
+            incomeAfterPayrollDeductions: 2000,
+            taxFreeIncome: 0,
+            socialSecurityIncome: 0,
+          },
+        },
+      });
+
+      // No prior history, dollarAmount=5000 but eligible income=2000 (binding)
+      const result = rule.getContributionAmount(10000, account, [], 35, incomesData);
+
+      expect(result.contributionAmount).toBe(2000);
     });
 
     it('should use all income when no income IDs specified', () => {
@@ -1502,6 +1922,85 @@ describe('ContributionRules', () => {
         // Age 59 gets standard catch-up ($80,000), NOT super catch-up ($83,250 is ages 60-63)
         expect(result.contributionAmount).toBe(80000);
       });
+    });
+  });
+
+  // ============================================================================
+  // Multiple Constraints Active Simultaneously
+  // ============================================================================
+
+  describe('multiple constraints active simultaneously', () => {
+    it('should apply the most restrictive constraint when dollarAmount, maxBalance, employer match, and contribution limit are all active', () => {
+      const rule = new ContributionRule(
+        createContributionRule({
+          contributionType: 'dollarAmount',
+          dollarAmount: 5000,
+          accountId: '401k-1',
+          maxBalance: 100000,
+          employerMatch: 5000,
+        })
+      );
+      const account = new TaxDeferredAccount(create401kAccount({ balance: 98500 }));
+
+      // Two 401k accounts contributing to shared limit:
+      // '401k-1': 2000 employee contributions (employee by ID = 2000)
+      // '401k-2': 22000 employee contributions
+      // Combined by account types = 24000
+      const monthlyData: PortfolioData[] = [
+        {
+          ...createEmptyPortfolioData(),
+          perAccountData: {
+            '401k-1': {
+              id: '401k-1',
+              name: '401k',
+              type: '401k',
+              balance: 98500,
+              cumulativeContributions: { stocks: 0, bonds: 0, cash: 0 },
+              cumulativeEmployerMatch: 0,
+              cumulativeWithdrawals: { stocks: 0, bonds: 0, cash: 0 },
+              cumulativeRealizedGains: 0,
+              cumulativeEarningsWithdrawn: 0,
+              cumulativeRmds: 0,
+              assetAllocation: { stocks: 0.8, bonds: 0.2, cash: 0 },
+              contributions: { stocks: 1600, bonds: 400, cash: 0 }, // 2000 total employee
+              employerMatch: 0,
+              withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+              realizedGains: 0,
+              earningsWithdrawn: 0,
+              rmds: 0,
+            },
+            '401k-2': {
+              id: '401k-2',
+              name: '401k #2',
+              type: '401k',
+              balance: 50000,
+              cumulativeContributions: { stocks: 0, bonds: 0, cash: 0 },
+              cumulativeEmployerMatch: 0,
+              cumulativeWithdrawals: { stocks: 0, bonds: 0, cash: 0 },
+              cumulativeRealizedGains: 0,
+              cumulativeEarningsWithdrawn: 0,
+              cumulativeRmds: 0,
+              assetAllocation: { stocks: 0.8, bonds: 0.2, cash: 0 },
+              contributions: { stocks: 17600, bonds: 4400, cash: 0 }, // 22000 total employee
+              employerMatch: 0,
+              withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+              realizedGains: 0,
+              earningsWithdrawn: 0,
+              rmds: 0,
+            },
+          },
+        },
+      ];
+
+      // Constraints at age 35:
+      // - dollarAmount remaining by ID: 5000 - 2000 = 3000
+      // - maxBalance room: 100000 - 98500 = 1500
+      // - contribution limit remaining: 24500 - 24000 = 500 (most restrictive, binding)
+      // - cash: 10000
+      const result = rule.getContributionAmount(10000, account, monthlyData, 35);
+
+      expect(result.contributionAmount).toBe(500);
+      expect(result.employerMatchAmount).toBe(500); // min(500 contribution, 5000 match cap)
     });
   });
 });
