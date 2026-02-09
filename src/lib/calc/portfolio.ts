@@ -123,13 +123,13 @@ export class PortfolioProcessor {
     }
 
     const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
-      {}, // baseAccountData
+      {},
       contributionsByAccount,
       employerMatchByAccount,
       withdrawalsByAccount,
       realizedGainsByAccount,
       earningsWithdrawnByAccount,
-      {} // rmdsByAccount
+      {}
     );
 
     const portfolioData = this.buildPortfolioData(
@@ -200,7 +200,7 @@ export class PortfolioProcessor {
       withdrawalsByAccount,
       realizedGainsByAccount,
       earningsWithdrawnByAccount,
-      {} // rmdsByAccount
+      {}
     );
 
     const portfolioData = this.buildPortfolioData(
@@ -451,9 +451,9 @@ export class PortfolioProcessor {
     contributionsByAccount[this.rmdSavingsAccount.getAccountID()] = { ...contributedAssets };
 
     const perAccountData: Record<string, AccountDataWithTransactions> = this.buildPerAccountData(
-      {}, // baseAccountData
+      {},
       contributionsByAccount,
-      {}, // employerMatchByAccount
+      {},
       withdrawalsByAccount,
       realizedGainsByAccount,
       earningsWithdrawnByAccount,
