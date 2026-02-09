@@ -17,6 +17,13 @@ import {
 } from '@/lib/utils/convex-to-zod-transformers';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
+// Plan Name
+export const usePlanName = () => {
+  const planId = useSelectedPlanId();
+  const q = useQuery(api.plans.getPlanName, { planId });
+  return { name: q ?? null, isLoading: q === undefined };
+};
+
 // Simulator Plan
 export const usePlanData = () => {
   const planId = useSelectedPlanId();

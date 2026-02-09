@@ -48,6 +48,15 @@ export const getPlan = query({
   },
 });
 
+export const getPlanName = query({
+  args: { planId: v.id('plans') },
+  handler: async (ctx, { planId }) => {
+    const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
+
+    return plan.name;
+  },
+});
+
 export const getDefaultPlanId = query({
   args: {},
   handler: async (ctx) => {

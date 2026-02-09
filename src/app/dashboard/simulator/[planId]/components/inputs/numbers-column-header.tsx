@@ -7,7 +7,8 @@ import IconButton from '@/components/ui/icon-button';
 import PageLoading from '@/components/ui/page-loading';
 import Drawer from '@/components/ui/drawer';
 import ColumnHeader from '@/components/ui/column-header';
-import { useMarketAssumptionsData, useTaxSettingsData, useTimelineData } from '@/hooks/use-convex-data';
+import { Skeleton } from '@/components/ui/skeleton';
+import { usePlanName, useMarketAssumptionsData, useTaxSettingsData, useTimelineData } from '@/hooks/use-convex-data';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { useHasOpenedTaxSettings, useUpdateHasOpenedTaxSettings } from '@/lib/stores/simulator-store';
 
@@ -17,6 +18,7 @@ const TimelineDrawer = lazy(() => import('./drawers/timeline-drawer'));
 
 export default function NumbersColumnHeader() {
   const planId = useSelectedPlanId();
+  const { name: planName, isLoading: isPlanNameLoading } = usePlanName();
 
   const [expectedReturnsOpen, setExpectedReturnsOpen] = useState(false);
   const [taxSettingsOpen, setTaxSettingsOpen] = useState(false);
@@ -51,7 +53,7 @@ export default function NumbersColumnHeader() {
   return (
     <>
       <ColumnHeader
-        title="Numbers"
+        title={isPlanNameLoading ? <Skeleton className="bg-background h-8 w-32" /> : (planName ?? 'Numbers')}
         icon={CalculatorIcon}
         iconButton={
           <div className="flex items-center gap-x-1">
