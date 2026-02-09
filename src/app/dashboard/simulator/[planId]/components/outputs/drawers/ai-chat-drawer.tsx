@@ -19,7 +19,12 @@ import posthog from 'posthog-js';
 import { Button } from '@/components/catalyst/button';
 import { Textarea } from '@/components/catalyst/textarea';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
-import { useCachedKeyMetrics, useSelectedConversationId, useUpdateSelectedConversationId } from '@/lib/stores/simulator-store';
+import {
+  useCachedKeyMetrics,
+  useSelectedConversationId,
+  useUpdateSelectedConversationId,
+  useClearSelectedConversationId,
+} from '@/lib/stores/simulator-store';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu, DropdownLabel, DropdownDescription } from '@/components/catalyst/dropdown';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -175,14 +180,20 @@ function ChatMessage({ message, image }: ChatMessageProps) {
 interface ConversationListItemProps {
   conversation: Doc<'conversations'>;
   selectedConversationId: Id<'conversations'> | undefined;
-  setSelectedConversationId: (id: Id<'conversations'> | undefined) => void;
+  setSelectedConversationId: (id: Id<'conversations'>) => void;
+  clearSelectedConversationId: () => void;
 }
 
-function ConversationListItem({ conversation, selectedConversationId, setSelectedConversationId }: ConversationListItemProps) {
+function ConversationListItem({
+  conversation,
+  selectedConversationId,
+  setSelectedConversationId,
+  clearSelectedConversationId,
+}: ConversationListItemProps) {
   const deleteConversation = useMutation(api.conversations.deleteConversation);
 
   const handleDelete = async () => {
-    if (conversation._id === selectedConversationId) setSelectedConversationId(undefined);
+    if (conversation._id === selectedConversationId) clearSelectedConversationId();
     posthog.capture('delete_conversation');
     await deleteConversation({ conversationId: conversation._id });
   };
@@ -255,8 +266,9 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const prevScrollHeightRef = useRef<number>(0);
 
-  const selectedConversationId = useSelectedConversationId();
+  const selectedConversationId = useSelectedConversationId(planId);
   const updateSelectedConversationId = useUpdateSelectedConversationId();
+  const clearSelectedConversationId = useClearSelectedConversationId();
 
   const [chatState, setChatState] = useState<Record<string, { chatMessage: string; errorMessage: string }>>({});
 
@@ -310,7 +322,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
       posthog.capture('send_ai_message');
       const { conversationId } = await m({ conversationId: selectedConversationId, planId, content: chatMessage, keyMetrics });
       updateChatState({ chatMessage: '' });
-      updateSelectedConversationId(conversationId);
+      updateSelectedConversationId(planId, conversationId);
     } catch (error) {
       updateChatState({ errorMessage: error instanceof ConvexError ? error.message : 'Failed to send message.' });
     }
@@ -344,7 +356,8 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                   key={conversation._id}
                   conversation={conversation}
                   selectedConversationId={selectedConversationId}
-                  setSelectedConversationId={updateSelectedConversationId}
+                  setSelectedConversationId={(id) => updateSelectedConversationId(planId, id)}
+                  clearSelectedConversationId={() => clearSelectedConversationId(planId)}
                 />
               ))
             ) : (
@@ -361,7 +374,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
               className="w-full"
               onClick={() => {
                 posthog.capture('create_new_chat', { location: 'drawer' });
-                updateSelectedConversationId(undefined);
+                clearSelectedConversationId(planId);
               }}
             >
               New chat
@@ -378,7 +391,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                 outline
                 onClick={() => {
                   posthog.capture('create_new_chat', { location: 'header' });
-                  updateSelectedConversationId(undefined);
+                  clearSelectedConversationId(planId);
                 }}
               >
                 <PlusIcon />

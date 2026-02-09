@@ -20,6 +20,7 @@ import {
   useIsCalculationReady,
   useInsightsSelectedPlan,
   useUpdateInsightsSelectedPlan,
+  useClearSelectedConversationId,
 } from '@/lib/stores/simulator-store';
 import { simulatorFromConvex } from '@/lib/utils/convex-to-zod-transformers';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
@@ -159,17 +160,19 @@ export default function PlanList({ preloadedPlans, preloadedAssets, preloadedLia
 
   const insightsSelectedPlan = useInsightsSelectedPlan();
   const updateInsightsSelectedPlan = useUpdateInsightsSelectedPlan();
+  const clearSelectedConversationId = useClearSelectedConversationId();
 
   const [planToDelete, setPlanToDelete] = useState<{ id: string; name: string } | null>(null);
   const deleteMutation = useMutation(api.plans.deletePlan);
   const deletePlan = useCallback(
     async (planId: string) => {
       if (insightsSelectedPlan?.id === planId) updateInsightsSelectedPlan(undefined);
+      clearSelectedConversationId(planId as Id<'plans'>);
 
       posthog.capture('delete_plan', { planId });
       await deleteMutation({ planId: planId as Id<'plans'> });
     },
-    [deleteMutation, insightsSelectedPlan, updateInsightsSelectedPlan]
+    [deleteMutation, insightsSelectedPlan, updateInsightsSelectedPlan, clearSelectedConversationId]
   );
 
   const setAsDefaultMutation = useMutation(api.plans.setPlanAsDefault);

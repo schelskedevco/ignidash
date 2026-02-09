@@ -89,7 +89,7 @@ interface SimulatorState {
   };
 
   chat: {
-    selectedConversationId: Id<'conversations'> | undefined;
+    selectedConversationId: Record<string, Id<'conversations'>>;
   };
 
   insights: {
@@ -121,7 +121,8 @@ interface SimulatorState {
     updateSidebarCollapsed: (value: boolean) => void;
 
     /* Chat */
-    updateSelectedConversationId: (id: Id<'conversations'> | undefined) => void;
+    updateSelectedConversationId: (planId: Id<'plans'>, id: Id<'conversations'>) => void;
+    clearSelectedConversationId: (planId: Id<'plans'>) => void;
 
     /* Insights */
     updateInsightsSelectedPlan: (
@@ -154,7 +155,7 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
     sidebarCollapsed: false,
   },
   chat: {
-    selectedConversationId: undefined,
+    selectedConversationId: {},
   },
   insights: {
     selectedPlan: undefined,
@@ -226,9 +227,13 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               state.preferences.sidebarCollapsed = value;
             }),
-          updateSelectedConversationId: (id) =>
+          updateSelectedConversationId: (planId, id) =>
             set((state) => {
-              state.chat.selectedConversationId = id;
+              state.chat.selectedConversationId[planId] = id;
+            }),
+          clearSelectedConversationId: (planId) =>
+            set((state) => {
+              delete state.chat.selectedConversationId[planId];
             }),
           updateInsightsSelectedPlan: (plan) =>
             set((state) => {
@@ -242,7 +247,7 @@ export const useSimulatorStore = create<SimulatorState>()(
       })),
       {
         name: 'quick-plan-storage',
-        version: 12,
+        version: 13,
         migrate: () => ({ ...defaultState }),
         partialize: (state) => {
           const baseResult = { preferences: state.preferences, nux: state.nux };
@@ -278,7 +283,7 @@ export const useMonteCarloSortMode = () => useSimulatorStore((state) => state.re
 export const useChartTimeFrameToShow = () => useSimulatorStore((state) => state.results.chartTimeFrameToShow);
 export const useMonteCarloTimeFrameToShow = () => useSimulatorStore((state) => state.results.monteCarloTimeFrameToShow);
 export const useCachedKeyMetrics = () => useSimulatorStore((state) => state.results.cachedKeyMetrics);
-export const useSelectedConversationId = () => useSimulatorStore((state) => state.chat.selectedConversationId);
+export const useSelectedConversationId = (planId: Id<'plans'>) => useSimulatorStore((state) => state.chat.selectedConversationId[planId]);
 export const useInsightsSelectedPlan = () => useSimulatorStore((state) => state.insights.selectedPlan);
 export const useShowAIChatPulse = () => useSimulatorStore((state) => state.nux.showAIChatPulse);
 
@@ -301,6 +306,7 @@ export const useUpdateChartTimeFrameToShow = () => useSimulatorStore((state) => 
 export const useUpdateMonteCarloTimeFrameToShow = () => useSimulatorStore((state) => state.actions.updateMonteCarloTimeFrameToShow);
 export const useUpdateCachedKeyMetrics = () => useSimulatorStore((state) => state.actions.updateCachedKeyMetrics);
 export const useUpdateSelectedConversationId = () => useSimulatorStore((state) => state.actions.updateSelectedConversationId);
+export const useClearSelectedConversationId = () => useSimulatorStore((state) => state.actions.clearSelectedConversationId);
 export const useUpdateInsightsSelectedPlan = () => useSimulatorStore((state) => state.actions.updateInsightsSelectedPlan);
 export const useUpdateShowAIChatPulse = () => useSimulatorStore((state) => state.actions.updateShowAIChatPulse);
 
