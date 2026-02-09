@@ -1,10 +1,20 @@
+/**
+ * Physical asset processing for the simulation engine
+ *
+ * Handles real estate and other physical assets with appreciation, secured loans,
+ * purchase/sale lifecycle, and realized gains tracking. Assets transition through
+ * pending -> owned -> sold states based on user-specified dates.
+ */
+
 import type { PhysicalAssetInputs, PaymentMethodInputs, PhysicalAssetType } from '@/lib/schemas/inputs/physical-asset-form-schema';
 import type { TimePoint } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 
 import type { SimulationState } from './simulation-engine';
 
+/** Lifecycle state of a physical asset */
 export type OwnershipStatus = 'pending' | 'owned' | 'sold';
 
+/** Processes all physical assets each month including purchases, appreciation, loans, and sales */
 export class PhysicalAssetsProcessor {
   private monthlyData: PhysicalAssetsData[] = [];
 
@@ -245,6 +255,7 @@ export interface PhysicalAssetData {
   isSold: boolean;
 }
 
+/** Collection of physical assets with lifecycle management */
 export class PhysicalAssets {
   private readonly assets: PhysicalAsset[];
 
@@ -281,6 +292,7 @@ export class PhysicalAssets {
   }
 }
 
+/** A single physical asset with appreciation, optional loan, and purchase/sale lifecycle */
 export class PhysicalAsset {
   private id: string;
   private name: string;
@@ -368,6 +380,7 @@ export class PhysicalAsset {
     return this.ownershipStatus;
   }
 
+  /** Applies monthly appreciation to the asset's market value */
   applyMonthlyAppreciation(): { monthlyAppreciation: number } {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
 
@@ -394,6 +407,7 @@ export class PhysicalAsset {
     return { monthlyPaymentDue, interest };
   }
 
+  /** Applies a loan payment, allocating to interest then principal (simple interest) */
   applyLoanPayment(payment: number, interest: number): void {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
     if (this.isPaidOff()) return;
@@ -417,6 +431,10 @@ export class PhysicalAsset {
     return this.getIsSimTimeAtOrAfterTimePoint(simulationState, this.saleDate);
   }
 
+  /**
+   * Sells the asset, paying off remaining loan and realizing gains
+   * @returns Sale proceeds (net of loan), realized gains, market value, and debt paid off
+   */
   sell(): { saleProceeds: number; realizedGains: number; saleMarketValue: number; debtPayoff: number } {
     if (this.ownershipStatus !== 'owned') throw new Error('Asset is not owned');
 
@@ -435,6 +453,10 @@ export class PhysicalAsset {
     return this.getIsSimTimeAtOrAfterTimePoint(simulationState, this.purchaseDate);
   }
 
+  /**
+   * Purchases the asset, transitioning from pending to owned
+   * @returns Cash outlay (down payment or full price) and market value at purchase
+   */
   purchase(): { purchaseOutlay: number; purchaseMarketValue: number } {
     if (this.ownershipStatus !== 'pending') throw new Error('Asset is not pending');
 

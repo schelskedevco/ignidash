@@ -1,3 +1,12 @@
+/**
+ * Financial simulation engine
+ *
+ * Core engine that runs month-by-month financial simulations with annual tax
+ * reconciliation. Supports fixed returns, Monte Carlo (stochastic), and
+ * historical backtest (LCG) simulation modes. Produces time-series data
+ * for charts, tables, and key metrics extraction.
+ */
+
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 import { type TimelineInputs, type RetirementStrategyInputs, calculatePreciseAge } from '@/lib/schemas/inputs/timeline-form-schema';
 
@@ -25,6 +34,7 @@ export const TAX_CONVERGENCE_THRESHOLD = 1;
 
 type ISODateString = string;
 
+/** A single year's output data from the simulation */
 export interface SimulationDataPoint {
   date: ISODateString;
   age: number;
@@ -38,6 +48,7 @@ export interface SimulationDataPoint {
   returns: ReturnsData | null;
 }
 
+/** Complete output from a single simulation run */
 export interface SimulationResult {
   data: Array<SimulationDataPoint>;
   context: {
@@ -52,6 +63,7 @@ export interface SimulationResult {
   };
 }
 
+/** Immutable simulation parameters derived from user inputs */
 export interface SimulationContext {
   readonly startAge: number;
   readonly endAge: number;
@@ -62,6 +74,7 @@ export interface SimulationContext {
   readonly rmdAge: number;
 }
 
+/** Mutable simulation state that evolves each month */
 export interface SimulationState {
   time: { date: Date; age: number; year: number; month: number };
   portfolio: Portfolio;
@@ -69,9 +82,16 @@ export interface SimulationState {
   annualData: { expenses: ExpensesData[]; debts: DebtsData[]; physicalAssets: PhysicalAssetsData[] };
 }
 
+/** Base simulation engine that runs a month-by-month simulation with annual tax reconciliation */
 export class FinancialSimulationEngine {
   constructor(protected readonly inputs: SimulatorInputs) {}
 
+  /**
+   * Runs a complete financial simulation from start to end date
+   * @param returnsProvider - Strategy for generating investment returns each year
+   * @param timeline - User's timeline inputs (birth date, retirement, life expectancy)
+   * @returns Complete simulation result with time-series data and context
+   */
   runSimulation(returnsProvider: ReturnsProvider, timeline: TimelineInputs): SimulationResult {
     // Init context and state
     const simulationContext: SimulationContext = this.initSimulationContext(timeline);
@@ -101,7 +121,7 @@ export class FinancialSimulationEngine {
     while (simulationState.time.date < simulationContext.endDate) {
       this.incrementSimulationTime(simulationState, simulationContext);
 
-      // Handle RMDs at start of year, before any other processing
+      // Process RMDs at the start of each year before other transactions
       if (simulationState.time.age >= simulationContext.rmdAge && simulationState.time.month % 12 === 1)
         portfolioProcessor.processRequiredMinimumDistributions();
 
@@ -148,7 +168,7 @@ export class FinancialSimulationEngine {
         let { portfolioData: annualPortfolioDataAfterTaxes } = processTaxesResult;
         const { discretionaryExpense: annualDiscretionaryExpense } = processTaxesResult;
 
-        // Iteratively reconcile taxes until convergence
+        // Tax convergence loop: withdrawals to pay taxes generate additional taxable gains
         let totalTaxesPaid = totalTaxesDue;
         for (let i = 0; i < 10 && totalTaxesDue > 0; i++) {
           // Restore carryover to start-of-year state before each iteration
@@ -399,10 +419,12 @@ export class FinancialSimulationEngine {
   }
 }
 
+/** Result set from running multiple simulations (Monte Carlo or historical backtest) */
 export interface MultiSimulationResult {
   simulations: Array<[number /* seed */, SimulationResult]>;
 }
 
+/** Runs multiple simulations with stochastic (randomly generated) returns */
 export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
   constructor(
     inputs: SimulatorInputs,
@@ -420,6 +442,12 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
     return this.runSimulation(returnsProvider, timeline);
   }
 
+  /**
+   * Runs N simulations with different random seeds for Monte Carlo analysis
+   * @param numSimulations - Number of simulation runs
+   * @param onProgress - Optional callback invoked after each simulation completes
+   * @returns Collection of all simulation results keyed by seed
+   */
   runMonteCarloSimulation(numSimulations: number, onProgress?: () => void): MultiSimulationResult {
     const timeline = this.inputs.timeline;
     if (!timeline) throw new Error('Must have timeline data for simulation');
@@ -439,6 +467,7 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
   }
 }
 
+/** Runs multiple simulations using historical market data with LCG-seeded random start years */
 export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEngine {
   constructor(
     inputs: SimulatorInputs,
@@ -469,6 +498,12 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
     };
   }
 
+  /**
+   * Runs N simulations with different historical start years for backtesting
+   * @param numSimulations - Number of simulation runs
+   * @param onProgress - Optional callback invoked after each simulation completes
+   * @returns Collection of all simulation results with historical year ranges
+   */
   runLcgHistoricalBacktest(numSimulations: number, onProgress?: () => void): MultiSimulationResult {
     const timeline = this.inputs.timeline;
     if (!timeline) throw new Error('Must have timeline data for simulation');

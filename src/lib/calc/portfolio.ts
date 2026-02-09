@@ -1,3 +1,11 @@
+/**
+ * Portfolio management and transaction processing
+ *
+ * Orchestrates contributions, withdrawals, RMDs, rebalancing, and tax settlement
+ * across all investment accounts. Implements the contribution waterfall (priority-ordered
+ * rules with IRS limits) and withdrawal ordering (tax-optimized account sequencing).
+ */
+
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-form-schema';
 
@@ -48,6 +56,7 @@ const addFlows = (a: AssetFlows, b: AssetFlows): AssetFlows => ({
   cash: a.cash + b.cash,
 });
 
+/** Manages monthly portfolio transactions including contributions, withdrawals, RMDs, taxes, and rebalancing */
 export class PortfolioProcessor {
   private initialAssetAllocation: AssetAllocation | null;
   private extraSavingsAccount: SavingsAccount;
@@ -74,6 +83,14 @@ export class PortfolioProcessor {
     return new SavingsAccount({ type: 'savings' as const, id: 'd7288042-1f83-4e50-9a6a-b1ef7a6191cc', name: 'RMD Savings', balance: 0 });
   }
 
+  /**
+   * Processes monthly contributions or withdrawals based on net cash flow
+   * @param incomesData - Monthly income data
+   * @param expensesData - Monthly expense data
+   * @param debtsData - Monthly debt payment data
+   * @param physicalAssetsData - Monthly physical asset data
+   * @returns Portfolio data and any discretionary expense from surplus
+   */
   processContributionsAndWithdrawals(
     incomesData: IncomesData,
     expensesData: ExpensesData,
@@ -147,6 +164,12 @@ export class PortfolioProcessor {
     return { portfolioData, discretionaryExpense };
   }
 
+  /**
+   * Settles annual tax obligations by withdrawing (tax due) or contributing (refund)
+   * @param annualPortfolioDataBeforeTaxes - Portfolio state before tax settlement
+   * @param taxesData - Tax amounts due or refundable
+   * @returns Updated portfolio data and any discretionary expense from refund
+   */
   processTaxes(
     annualPortfolioDataBeforeTaxes: PortfolioData,
     taxesData: { totalTaxesDue: number; totalTaxesRefund: number }
@@ -387,6 +410,7 @@ export class PortfolioProcessor {
 
     const total = Object.values(byAccount).reduce((acc, curr) => addFlows(acc, curr), zeroFlows());
 
+    // Any remaining amount that couldn't be withdrawn is recorded as a shortfall
     const shortfall = remainingToWithdraw;
     this.outstandingShortfall += shortfall;
 
@@ -401,6 +425,13 @@ export class PortfolioProcessor {
     };
   }
 
+  /**
+   * Processes Required Minimum Distributions for accounts subject to RMDs
+   *
+   * Calculates RMD amount using the IRS Uniform Lifetime Table, withdraws from
+   * each eligible account, and deposits proceeds into a dedicated RMD savings account.
+   * @returns Portfolio data reflecting RMD withdrawals and deposits
+   */
   processRequiredMinimumDistributions(): PortfolioData {
     const age = this.simulationState.time.age;
     if (age < this.simulationContext.rmdAge)
@@ -551,6 +582,12 @@ export class PortfolioProcessor {
     };
   }
 
+  /**
+   * Returns the tax-optimized withdrawal order based on age
+   *
+   * Before 59.5: savings -> taxable -> Roth contributions -> tax-deferred -> Roth earnings -> HSA
+   * After 59.5: savings -> tax-deferred -> taxable -> Roth -> HSA
+   */
   private getWithdrawalOrder(): Array<WithdrawalOrderItem> {
     const age = this.simulationState.time.age;
     const regularQualifiedWithdrawalAge = 59.5;
@@ -634,6 +671,7 @@ export class PortfolioProcessor {
     };
   }
 
+  /** Rebalances portfolio toward glide path target allocation if enabled */
   private processRebalance(): {
     rebalanceOccurred: boolean;
     realizedGainsFromRebalance: number;
@@ -690,6 +728,12 @@ export class PortfolioProcessor {
     return { rebalanceOccurred: true, realizedGainsFromRebalance, realizedGainsByAccountFromRebalance };
   }
 
+  /**
+   * Calculates the current target asset allocation based on glide path progress
+   *
+   * Linearly interpolates between the initial allocation and the target allocation
+   * based on time elapsed toward the glide path end point.
+   */
   private getTargetAssetAllocation(): AssetAllocation {
     if (!this.initialAssetAllocation) console.warn('No initial asset allocation available; using default 60/40');
 
@@ -787,6 +831,7 @@ export class PortfolioProcessor {
   }
 }
 
+/** Snapshot of portfolio state for a single period */
 export interface PortfolioData {
   totalValue: number;
   cumulativeWithdrawals: AssetFlows;
@@ -808,6 +853,7 @@ export interface PortfolioData {
   assetAllocation: AssetAllocation | null;
 }
 
+/** Container for all investment accounts with aggregate operations */
 export class Portfolio {
   private accounts: Account[];
 
@@ -921,6 +967,11 @@ export class Portfolio {
     return this.accounts.find((account) => account.getAccountID() === accountID);
   }
 
+  /**
+   * Applies return rates to all accounts and aggregates results
+   * @param returnRates - Monthly return rates by asset class
+   * @returns Total and per-account return amounts
+   */
   applyReturns(returnRates: AssetReturnRates): {
     returnAmounts: AssetReturnAmounts;
     cumulativeReturnAmounts: AssetReturnAmounts;
@@ -956,6 +1007,11 @@ export class Portfolio {
     return { returnAmounts, cumulativeReturnAmounts, byAccount };
   }
 
+  /**
+   * Applies yield rates to all accounts and aggregates by tax category
+   * @param yieldRates - Monthly yield rates by asset class
+   * @returns Total and per-account yield amounts grouped by tax category
+   */
   applyYields(yieldRates: AssetYieldRates): {
     yieldAmounts: Record<TaxCategory, AssetYieldAmounts>;
     cumulativeYieldAmounts: Record<TaxCategory, AssetYieldAmounts>;

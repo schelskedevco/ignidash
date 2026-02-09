@@ -1,3 +1,11 @@
+/**
+ * Investment account types and transaction logic
+ *
+ * Implements savings, taxable brokerage, tax-deferred (401k/IRA/HSA), and
+ * tax-free (Roth) accounts with distinct deposit/withdrawal/return behaviors.
+ * Tracks cost basis for taxable and contribution basis for Roth accounts.
+ */
+
 import type { AccountInputs, InvestmentAccountType } from '@/lib/schemas/inputs/account-form-schema';
 
 import type {
@@ -13,6 +21,7 @@ import type {
 type WithdrawalType = 'rmd' | 'regular';
 type ContributionType = 'self' | 'employer';
 
+/** Snapshot of account state including cumulative flow totals */
 export interface AccountData {
   balance: number;
   cumulativeContributions: AssetFlows;
@@ -27,6 +36,7 @@ export interface AccountData {
   assetAllocation: AssetAllocation;
 }
 
+/** Account snapshot with current-period flow data */
 export interface AccountDataWithFlows extends AccountData {
   contributions: AssetFlows;
   employerMatch: number;
@@ -36,6 +46,7 @@ export interface AccountDataWithFlows extends AccountData {
   rmds: number;
 }
 
+/** Base class for all account types with shared cumulative tracking */
 export abstract class Account {
   abstract readonly taxCategory: TaxCategory;
 
@@ -114,6 +125,7 @@ export abstract class Account {
   ): AssetFlows & { realizedGains: number; earningsWithdrawn: number };
 }
 
+/** Cash-only account with no investment returns, no RMDs, no realized gains */
 export class SavingsAccount extends Account {
   readonly taxCategory: TaxCategory = 'cashSavings';
 
@@ -208,6 +220,7 @@ export class SavingsAccount extends Account {
   }
 }
 
+/** Base class for stock/bond investment accounts with asset allocation tracking */
 export abstract class InvestmentAccount extends Account {
   private currPercentBonds: number;
 
@@ -374,6 +387,12 @@ export abstract class InvestmentAccount extends Account {
   }
 }
 
+/**
+ * Taxable brokerage account with cost basis tracking
+ *
+ * Withdrawals realize capital gains proportional to the gain/basis ratio.
+ * Rebalancing also triggers proportional realized gains.
+ */
 export class TaxableBrokerageAccount extends InvestmentAccount {
   readonly taxCategory: TaxCategory = 'taxable';
 
@@ -399,6 +418,7 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
     type: WithdrawalType,
     withdrawalAllocation: AssetAllocation
   ): AssetFlows & { realizedGains: number; earningsWithdrawn: number } {
+    // Pro-rata cost basis: withdrawals realize gains proportional to unrealized gain ratio
     const basisProportion = this.costBasis / this.balance;
     const basisWithdrawn = Math.min(amount * basisProportion, this.costBasis);
     this.costBasis -= basisWithdrawn;
@@ -427,6 +447,7 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
   }
 }
 
+/** Tax-deferred account (401k, 403b, IRA, HSA) — all withdrawals taxed as ordinary income */
 export class TaxDeferredAccount extends InvestmentAccount {
   readonly taxCategory: TaxCategory = 'taxDeferred';
 
@@ -448,6 +469,12 @@ export class TaxDeferredAccount extends InvestmentAccount {
   }
 }
 
+/**
+ * Tax-free (Roth) account with contribution basis tracking
+ *
+ * Withdrawals first draw from contribution basis (tax/penalty-free),
+ * then from earnings (potentially subject to early withdrawal penalties).
+ */
 export class TaxFreeAccount extends InvestmentAccount {
   readonly taxCategory: TaxCategory = 'taxFree';
 
@@ -473,6 +500,7 @@ export class TaxFreeAccount extends InvestmentAccount {
     type: WithdrawalType,
     withdrawalAllocation: AssetAllocation
   ): AssetFlows & { realizedGains: number; earningsWithdrawn: number } {
+    // Roth ordering: contributions withdrawn first (tax-free), then earnings
     const contributionWithdrawn = Math.min(amount, this.contributionBasis);
     this.contributionBasis -= contributionWithdrawn;
 

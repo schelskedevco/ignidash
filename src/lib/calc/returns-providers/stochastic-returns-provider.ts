@@ -1,3 +1,11 @@
+/**
+ * Stochastic returns provider for Monte Carlo simulations
+ *
+ * Generates correlated random returns using Cholesky decomposition of a
+ * historical correlation matrix. Stock returns use log-normal distribution;
+ * bonds, cash, and inflation use normal distribution.
+ */
+
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 
 import { ReturnsProvider, type ReturnsProviderData } from './returns-provider';
@@ -83,10 +91,15 @@ function computeCholeskyDecomposition(matrix: number[][]): number[][] {
  */
 const CHOLESKY_MATRIX = computeCholeskyDecomposition(MODERN_CORRELATION_MATRIX);
 
+/** Generates correlated random returns from user expectations and historical volatility */
 export class StochasticReturnsProvider implements ReturnsProvider {
   private rng: SeededRandom;
   private volatility: MarketVolatility;
 
+  /**
+   * @param inputs - Simulator inputs containing expected return assumptions
+   * @param seed - Seed for reproducible random number generation
+   */
   constructor(
     private inputs: SimulatorInputs,
     private seed: number
@@ -95,6 +108,11 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     this.volatility = DEFAULT_VOLATILITY;
   }
 
+  /**
+   * Generates correlated stochastic returns for a simulation year
+   * @param phaseData - Current simulation phase (unused for stochastic returns)
+   * @returns Randomly generated real returns, nominal yields, and inflation
+   */
   getReturns(phaseData: PhaseData | null): ReturnsProviderData {
     // Generate independent standard normal random variables
     const independentRandoms = Array(6)

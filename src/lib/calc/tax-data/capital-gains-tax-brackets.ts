@@ -1,3 +1,10 @@
+/**
+ * Federal long-term capital gains tax brackets by filing status
+ *
+ * Tax year 2025. Source: IRS Revenue Procedure 2024-40.
+ */
+
+/** Progressive bracket for long-term capital gains taxation */
 export type CapitalGainsTaxBracket = { min: number; max: number; rate: number };
 
 export const CAPITAL_GAINS_TAX_BRACKETS_SINGLE: CapitalGainsTaxBracket[] = [

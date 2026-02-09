@@ -1,3 +1,11 @@
+/**
+ * Core data extraction utilities for simulation results
+ *
+ * Provides static methods to extract structured financial data (cash flows, taxes,
+ * contributions, withdrawals, portfolio breakdowns) from raw simulation data points.
+ * Used by chart and table extractors to transform simulation output into display-ready data.
+ */
+
 import {
   type MultiSimulationResult,
   type SimulationDataPoint,
@@ -126,7 +134,14 @@ export interface PercentInPhaseForYear {
   numberBankrupt: number;
 }
 
+/** Extracts structured financial data from raw simulation data points */
 export class SimulationDataExtractor {
+  /**
+   * Extracts retirement and bankruptcy milestone ages from simulation data
+   * @param data - Time-series simulation data points
+   * @param startAge - User's age at simulation start
+   * @returns Milestone ages and years-to-milestone values
+   */
   static getMilestonesData(data: SimulationDataPoint[], startAge: number): MilestonesData {
     let yearsToRetirement: number | null = null;
     let retirementAge: number | null = null;
@@ -139,6 +154,7 @@ export class SimulationDataExtractor {
         yearsToRetirement = retirementAge - Math.floor(startAge);
       }
 
+      // Portfolio below $0.10 is treated as bankrupt (accounts for floating-point residuals)
       if (dp.portfolio.totalValue <= 0.1 && bankruptcyAge === null) {
         bankruptcyAge = Math.floor(dp.age);
         yearsToBankruptcy = bankruptcyAge - Math.floor(startAge);
@@ -148,6 +164,12 @@ export class SimulationDataExtractor {
     return { yearsToRetirement, retirementAge, yearsToBankruptcy, bankruptcyAge };
   }
 
+  /**
+   * Computes geometric mean return rates and min/max stock returns across the simulation
+   * @param result - A single simulation result
+   * @param retirementAge - Retirement age for early-retirement return calculation, or null
+   * @returns Annualized geometric mean returns and stock return extremes
+   */
   static getMeanReturnsData(result: SimulationResult, retirementAge: number | null): ReturnsStatsData {
     const { data } = result;
 
@@ -220,6 +242,11 @@ export class SimulationDataExtractor {
     };
   }
 
+  /**
+   * Extracts annual cash flow data from a single simulation year
+   * @param dp - A single simulation data point
+   * @returns Income, expense, tax, investment, and net cash flow amounts
+   */
   static getCashFlowData(dp: SimulationDataPoint): CashFlowData {
     const incomesData = dp.incomes;
     const expensesData = dp.expenses;
@@ -279,6 +306,11 @@ export class SimulationDataExtractor {
     };
   }
 
+  /**
+   * Extracts tax amounts broken down by type (income, FICA, cap gains, NIIT, penalties)
+   * @param dp - A single simulation data point
+   * @returns Individual and total tax amounts for the year
+   */
   static getTaxAmountsByType(dp: SimulationDataPoint): TaxAmountsByType {
     const incomesData = dp.incomes;
     const ficaTax = incomesData?.totalFicaTax ?? 0;
@@ -295,6 +327,11 @@ export class SimulationDataExtractor {
     return { incomeTax, ficaTax, capGainsTax, niit, totalTaxes, earlyWithdrawalPenalties, totalTaxesAndPenalties };
   }
 
+  /**
+   * Aggregates contributions by tax category (taxable, tax-deferred, tax-free, cash)
+   * @param dp - A single simulation data point
+   * @returns Contribution amounts grouped by tax treatment
+   */
   static getContributionsByTaxCategory(dp: SimulationDataPoint): ContributionsByTaxCategory {
     const portfolioData = dp.portfolio;
 
@@ -328,6 +365,12 @@ export class SimulationDataExtractor {
     return { cashSavingsContributions, taxableContributions, taxDeferredContributions, taxFreeContributions };
   }
 
+  /**
+   * Aggregates withdrawals by tax category (taxable, tax-deferred, tax-free, cash)
+   * @param dp - A single simulation data point
+   * @param age - Current age of the user
+   * @returns Withdrawal amounts grouped by tax treatment
+   */
   static getWithdrawalsByTaxCategory(dp: SimulationDataPoint, age: number): WithdrawalsByTaxCategory {
     const portfolioData = dp.portfolio;
 
@@ -363,6 +406,12 @@ export class SimulationDataExtractor {
     return { cashSavingsWithdrawals, taxableWithdrawals, taxDeferredWithdrawals, taxFreeWithdrawals };
   }
 
+  /**
+   * Sums early withdrawal amounts subject to 10% penalty
+   * @param dp - A single simulation data point
+   * @param age - Current age of the user
+   * @returns Total early withdrawal amount
+   */
   static getEarlyWithdrawals(dp: SimulationDataPoint, age: number): number {
     const taxesData = dp.taxes;
     if (!taxesData) return 0;
@@ -374,6 +423,11 @@ export class SimulationDataExtractor {
     );
   }
 
+  /**
+   * Aggregates portfolio balances by tax category
+   * @param dp - A single simulation data point
+   * @returns Account balances grouped by tax treatment
+   */
   static getPortfolioValueByTaxCategory(dp: SimulationDataPoint): PortfolioValueByTaxCategory {
     const portfolioData = dp.portfolio;
 
@@ -407,6 +461,11 @@ export class SimulationDataExtractor {
     return { cashSavings, taxableValue, taxDeferredValue, taxFreeValue };
   }
 
+  /**
+   * Aggregates investment gains by tax category
+   * @param dp - A single simulation data point
+   * @returns Gain amounts grouped by tax treatment
+   */
   static getGainsByTaxCategory(dp: SimulationDataPoint): GainsByTaxCategory {
     const returnsData = dp.returns;
 
@@ -443,6 +502,11 @@ export class SimulationDataExtractor {
     return { taxableGains, taxDeferredGains, taxFreeGains, cashSavingsGains };
   }
 
+  /**
+   * Computes dollar holdings by asset class from portfolio allocation percentages
+   * @param dp - A single simulation data point
+   * @returns Dollar amounts held in stocks, bonds, and cash
+   */
   static getHoldingsByAssetClass(dp: SimulationDataPoint): HoldingsByAssetClass {
     const portfolioData = dp.portfolio;
     const totalValue = portfolioData.totalValue;
@@ -459,6 +523,11 @@ export class SimulationDataExtractor {
     };
   }
 
+  /**
+   * Extracts physical asset values, debt balances, and net worth data
+   * @param dp - A single simulation data point
+   * @returns Market values, equity, debt balances, and net worth
+   */
   static getAssetsAndLiabilitiesData(dp: SimulationDataPoint): AssetsAndLiabilitiesData {
     const portfolioData = dp.portfolio;
     const debtsData = dp.debts;
@@ -502,6 +571,11 @@ export class SimulationDataExtractor {
     };
   }
 
+  /**
+   * Sums all taxes and penalties across the entire simulation lifetime
+   * @param data - Time-series simulation data points
+   * @returns Cumulative lifetime tax amounts by type
+   */
   static getLifetimeTaxesAndPenalties(data: SimulationDataPoint[]): LifetimeTaxAmounts {
     const { lifetimeIncomeTax, lifetimeFicaTax, lifetimeCapGainsTax, lifetimeNiit, lifetimeEarlyWithdrawalPenalties } = data.reduce(
       (acc, dp) => {
@@ -537,6 +611,11 @@ export class SimulationDataExtractor {
     };
   }
 
+  /**
+   * Computes savings rate as surplus / (income + employer match - taxes)
+   * @param dp - A single simulation data point
+   * @returns Savings rate as a decimal, or null if income is non-positive
+   */
   static getSavingsRate(dp: SimulationDataPoint): number | null {
     const { totalIncome, totalTaxesAndPenalties, surplusDeficit, employerMatch } = this.getCashFlowData(dp);
 
@@ -546,6 +625,11 @@ export class SimulationDataExtractor {
     return Math.max(0, (surplusDeficit + employerMatch) / totalCompMinusTaxes);
   }
 
+  /**
+   * Computes annual withdrawal rate as withdrawals / (portfolio value + withdrawals)
+   * @param dp - A single simulation data point
+   * @returns Withdrawal rate as a decimal, or null if portfolio is empty
+   */
   static getWithdrawalRate(dp: SimulationDataPoint): number | null {
     const portfolioData = dp.portfolio;
 
@@ -555,6 +639,12 @@ export class SimulationDataExtractor {
     return totalValue + annualWithdrawals > 0 ? annualWithdrawals / (totalValue + annualWithdrawals) : null;
   }
 
+  /**
+   * Computes the percentage of simulations in each phase (accumulation, retirement, bankrupt) for a given year
+   * @param simulations - Multi-simulation result set
+   * @param year - Year index into each simulation's data array
+   * @returns Phase distribution counts and percentages
+   */
   static getPercentInPhaseForYear(simulations: MultiSimulationResult, year: number): PercentInPhaseForYear {
     const numSimulations = simulations.simulations.length;
 

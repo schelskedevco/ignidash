@@ -1,9 +1,17 @@
+/**
+ * Returns processing for the simulation engine
+ *
+ * Converts annual return rates from the returns provider to monthly rates,
+ * applies them to portfolio accounts, and tracks cumulative return/yield data.
+ */
+
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 
 import type { SimulationState } from './simulation-engine';
 import { ReturnsProvider } from './returns-providers/returns-provider';
 import type { AssetReturnRates, AssetReturnAmounts, AssetYieldAmounts, AssetYieldRates, TaxCategory } from './asset';
 
+/** Per-account return amounts for data extraction */
 export interface AccountDataWithReturns {
   name: string;
   id: string;
@@ -28,6 +36,7 @@ export interface ReturnsData {
 
 const TAX_CATEGORIES: TaxCategory[] = ['taxable', 'taxDeferred', 'taxFree', 'cashSavings'];
 
+/** Converts annual returns to monthly, applies to portfolio, and aggregates results */
 export class ReturnsProcessor {
   private cachedAnnualReturnRates: AssetReturnRates;
   private cachedAnnualInflationRate: number;
@@ -53,6 +62,10 @@ export class ReturnsProcessor {
     this.lastYear = this.simulationState.time.year;
   }
 
+  /**
+   * Processes monthly returns: converts annual rates to monthly and applies to portfolio
+   * @returns Monthly return data including rates, amounts, and per-account breakdowns
+   */
   process(): ReturnsData {
     const currentYear = this.simulationState.time.year;
     if (currentYear > this.lastYear + 1) {
@@ -70,6 +83,7 @@ export class ReturnsProcessor {
       this.lastYear = Math.floor(currentYear);
     }
 
+    // Convert annual rates to monthly: (1 + annual)^(1/12) - 1
     const returnRates: AssetReturnRates = {
       stocks: Math.pow(1 + this.cachedAnnualReturnRates.stocks, 1 / 12) - 1,
       bonds: Math.pow(1 + this.cachedAnnualReturnRates.bonds, 1 / 12) - 1,

@@ -1,3 +1,11 @@
+/**
+ * Contribution rules for investment account funding
+ *
+ * Enforces IRS contribution limits, employer match calculations, and Mega Backdoor
+ * Roth (Section 415(c)) limits. Rules are ranked by priority and applied in order
+ * during the portfolio contribution waterfall.
+ */
+
 import {
   type ContributionInputs,
   sharedLimitAccounts,
@@ -13,6 +21,7 @@ import { Account } from './account';
 import type { IncomesData } from './incomes';
 import { sumFlows } from './asset';
 
+/** Collection of contribution rules with a base strategy (spend or save surplus) */
 export class ContributionRules {
   private readonly contributionRules: ContributionRule[];
 
@@ -32,9 +41,19 @@ export class ContributionRules {
   }
 }
 
+/** A single contribution rule targeting a specific account with amount/limit logic */
 export class ContributionRule {
   constructor(private contributionInput: ContributionInputs) {}
 
+  /**
+   * Calculates the contribution and employer match for this rule
+   * @param remainingToContribute - Remaining surplus available for contributions
+   * @param account - Target investment account
+   * @param monthlyPortfolioData - Year-to-date monthly portfolio data for limit tracking
+   * @param age - Current age (for catch-up contribution eligibility)
+   * @param incomesData - Income data for income-linked contribution limits
+   * @returns Employee contribution and employer match amounts
+   */
   getContributionAmount(
     remainingToContribute: number,
     account: Account,

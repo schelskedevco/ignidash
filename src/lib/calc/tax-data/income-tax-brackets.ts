@@ -1,3 +1,10 @@
+/**
+ * Federal income tax brackets by filing status
+ *
+ * Tax year 2025. Source: IRS Revenue Procedure 2024-40.
+ */
+
+/** Progressive bracket for ordinary income taxation */
 export type IncomeTaxBracket = { min: number; max: number; rate: number };
 
 export const INCOME_TAX_BRACKETS_SINGLE: IncomeTaxBracket[] = [

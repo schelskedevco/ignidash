@@ -1,8 +1,17 @@
+/**
+ * Income processing for the simulation engine
+ *
+ * Handles multiple income sources with varying frequencies, time frames,
+ * growth rates, and tax treatments (wage, exempt, Social Security).
+ * Processes FICA tax (7.65%) and withholding at the income level.
+ */
+
 import type { IncomeInputs, IncomeType } from '@/lib/schemas/inputs/income-form-schema';
 import type { TimePoint } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 
 import type { SimulationState } from './simulation-engine';
 
+/** Processes all active incomes each month and aggregates annual totals */
 export class IncomesProcessor {
   private monthlyData: IncomesData[] = [];
 
@@ -11,6 +20,10 @@ export class IncomesProcessor {
     private incomes: Incomes
   ) {}
 
+  /**
+   * Processes all active incomes for the current month
+   * @returns Aggregated income data with per-income breakdowns
+   */
   process(): IncomesData {
     const activeIncomes = this.incomes.getActiveIncomesByTimeFrame(this.simulationState);
 
@@ -95,6 +108,7 @@ export interface IncomesData {
   perIncomeData: Record<string, IncomeData>;
 }
 
+/** Collection of income sources that filters by active time frame */
 export class Incomes {
   private readonly incomes: Income[];
 
@@ -118,6 +132,7 @@ export interface IncomeData {
   socialSecurityIncome: number;
 }
 
+/** A single income source with frequency, growth, time frame, and tax treatment */
 export class Income {
   private hasOneTimeIncomeOccurred: boolean;
   private id: string;
@@ -146,6 +161,11 @@ export class Income {
     this.withholdingRate = data.taxes.withholding ?? 0;
   }
 
+  /**
+   * Calculates this income's monthly amount with growth, withholding, and FICA
+   * @param year - Current simulation year (fractional)
+   * @returns Income data including gross, withholding, and FICA amounts
+   */
   processMonthlyAmount(year: number): IncomeData {
     const rawAmount = this.amount;
 
@@ -194,7 +214,7 @@ export class Income {
     switch (this.incomeType) {
       case 'wage':
         amountWithheld = income * (this.withholdingRate / 100);
-        ficaTax = income * 0.0765;
+        ficaTax = income * 0.0765; // FICA: 6.2% Social Security + 1.45% Medicare
         break;
       case 'exempt':
         taxFreeIncome = income;

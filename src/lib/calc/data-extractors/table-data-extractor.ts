@@ -1,3 +1,11 @@
+/**
+ * Table data extraction for year-by-year data tables
+ *
+ * Transforms raw simulation results into table row arrays for display in
+ * the simulator's data tables. Supports single simulation detailed breakdowns
+ * and multi-simulation summary/aggregate views.
+ */
+
 import type {
   SingleSimulationNetWorthTableRow,
   SingleSimulationCashFlowTableRow,
@@ -14,11 +22,17 @@ import type { SimulationResult, MultiSimulationResult } from '../simulation-engi
 import { SimulationDataExtractor } from './simulation-data-extractor';
 import { getHistoricalYear } from './get-historical-year';
 
+/** Transforms simulation results into table row arrays for data tables */
 export abstract class TableDataExtractor {
   // ================================
   // SINGLE SIMULATION DATA EXTRACTION
   // ================================
 
+  /**
+   * Extracts year-by-year net worth table data
+   * @param simulation - A single simulation result
+   * @returns Array of table rows with portfolio, asset, and debt values per year
+   */
   static extractSingleSimulationNetWorthData(simulation: SimulationResult): SingleSimulationNetWorthTableRow[] {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
@@ -132,6 +146,11 @@ export abstract class TableDataExtractor {
     });
   }
 
+  /**
+   * Extracts year-by-year cash flow table data
+   * @param simulation - A single simulation result
+   * @returns Array of table rows with income, expenses, taxes, and savings per year
+   */
   static extractSingleSimulationCashFlowData(simulation: SimulationResult): SingleSimulationCashFlowTableRow[] {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
@@ -216,6 +235,11 @@ export abstract class TableDataExtractor {
     });
   }
 
+  /**
+   * Extracts year-by-year tax table data with income sources and bracket details
+   * @param simulation - A single simulation result
+   * @returns Array of table rows with detailed tax breakdowns per year
+   */
   static extractSingleSimulationTaxesData(simulation: SimulationResult): SingleSimulationTaxesTableRow[] {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
@@ -339,6 +363,11 @@ export abstract class TableDataExtractor {
     });
   }
 
+  /**
+   * Extracts year-by-year returns table data with gains by asset class and tax category
+   * @param simulation - A single simulation result
+   * @returns Array of table rows with return rates and gain amounts per year
+   */
   static extractSingleSimulationReturnsData(simulation: SimulationResult): SingleSimulationReturnsTableRow[] {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
@@ -425,6 +454,11 @@ export abstract class TableDataExtractor {
     });
   }
 
+  /**
+   * Extracts year-by-year contributions table data
+   * @param simulation - A single simulation result
+   * @returns Array of table rows with contribution amounts by tax category per year
+   */
   static extractSingleSimulationContributionsData(simulation: SimulationResult): SingleSimulationContributionsTableRow[] {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
@@ -496,6 +530,11 @@ export abstract class TableDataExtractor {
     });
   }
 
+  /**
+   * Extracts year-by-year withdrawals table data
+   * @param simulation - A single simulation result
+   * @returns Array of table rows with withdrawal amounts, RMDs, and shortfalls per year
+   */
   static extractSingleSimulationWithdrawalsData(simulation: SimulationResult): SingleSimulationWithdrawalsTableRow[] {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
@@ -588,6 +627,11 @@ export abstract class TableDataExtractor {
   // MULTI SIMULATION DATA EXTRACTION
   // ================================
 
+  /**
+   * Extracts per-simulation summary rows for multi-simulation results
+   * @param simulations - Multi-simulation result set
+   * @returns Array of summary rows with one row per simulation run
+   */
   static extractMultiSimulationData(simulations: MultiSimulationResult): MultiSimulationTableRow[] {
     return simulations.simulations.map(([seed, result]) => {
       const { data, context } = result;
@@ -657,6 +701,11 @@ export abstract class TableDataExtractor {
     });
   }
 
+  /**
+   * Extracts year-by-year aggregate data with percentile bands across all simulations
+   * @param simulations - Multi-simulation result set
+   * @returns Array of aggregate rows with phase distributions and portfolio percentiles per year
+   */
   static extractMultiSimulationYearlyAggregateData(simulations: MultiSimulationResult): YearlyAggregateTableRow[] {
     const res: YearlyAggregateTableRow[] = [];
 

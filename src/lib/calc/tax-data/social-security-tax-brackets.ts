@@ -1,3 +1,12 @@
+/**
+ * Social Security benefit taxation thresholds by filing status
+ *
+ * Determines what percentage of Social Security benefits are subject to income tax
+ * based on combined income (AGI + nontaxable interest + half of SS benefits).
+ * Source: IRS Publication 915.
+ */
+
+/** Threshold determining taxable percentage of Social Security benefits */
 export type SocialSecurityTaxThreshold = { min: number; max: number; taxablePercentage: number };
 
 export const SOCIAL_SECURITY_TAX_THRESHOLDS_SINGLE: SocialSecurityTaxThreshold[] = [

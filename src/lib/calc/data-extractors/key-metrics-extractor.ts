@@ -1,10 +1,23 @@
+/**
+ * Key metrics extraction for simulation results
+ *
+ * Computes summary metrics (success rate, retirement age, lifetime taxes, etc.)
+ * from single or multi-simulation results for display in the dashboard.
+ */
+
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { SimulationDataExtractor } from '@/lib/calc/data-extractors/simulation-data-extractor';
 import { StatsUtils } from '@/lib/utils/stats-utils';
 
 import type { SimulationResult, MultiSimulationResult } from '../simulation-engine';
 
+/** Computes summary metrics from single or multi-simulation results */
 export abstract class KeyMetricsExtractor {
+  /**
+   * Extracts key metrics from a single simulation run
+   * @param simulation - A single simulation result
+   * @returns Key metrics including success, retirement age, and lifetime taxes
+   */
   static extractSingleSimulationMetrics(simulation: SimulationResult): KeyMetrics {
     const { data, context } = simulation;
 
@@ -56,6 +69,7 @@ export abstract class KeyMetricsExtractor {
     }
 
     const shortfallOccurred = data.some((dp) => dp.portfolio.shortfall > 0);
+    // Success requires: reaching retirement, portfolio above $0.10 at end, and no shortfalls
     const success = Number(retirementAge !== null && finalPortfolio > 0.1 && !shortfallOccurred);
 
     const { lifetimeTaxesAndPenalties } = SimulationDataExtractor.getLifetimeTaxesAndPenalties(data);
@@ -74,6 +88,11 @@ export abstract class KeyMetricsExtractor {
     };
   }
 
+  /**
+   * Aggregates key metrics across multiple simulation runs using means
+   * @param simulations - Multi-simulation result set (e.g., Monte Carlo)
+   * @returns Averaged key metrics with success rate as proportion of successful runs
+   */
   static extractMultiSimulationMetrics(simulations: MultiSimulationResult): KeyMetrics {
     const keyMetricsList: KeyMetrics[] = simulations.simulations.map(([, sim]) => this.extractSingleSimulationMetrics(sim));
 

@@ -1,3 +1,11 @@
+/**
+ * Federal tax calculation engine
+ *
+ * Computes income tax, capital gains tax, NIIT, Social Security taxation,
+ * and early withdrawal penalties. Handles progressive bracket stacking,
+ * capital loss carryover, and Section 121 primary residence exclusion.
+ */
+
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import type { FilingStatus } from '@/lib/schemas/inputs/tax-settings-form-schema';
 
@@ -113,6 +121,7 @@ export interface IncomeSourcesData {
   };
 }
 
+/** Computes annual federal taxes across all tax types for a simulation year */
 export class TaxProcessor {
   private capitalLossCarryover = 0;
   private capitalLossCarryoverSnapshot: number | null = null;
@@ -134,6 +143,14 @@ export class TaxProcessor {
     }
   }
 
+  /**
+   * Calculates all federal taxes for one simulation year
+   * @param annualPortfolioDataBeforeTaxes - Portfolio data before tax withdrawals
+   * @param annualIncomesData - Aggregated annual income data
+   * @param annualReturnsData - Annual investment return data
+   * @param annualPhysicalAssetsData - Annual physical asset data
+   * @returns Complete tax breakdown including income, capital gains, NIIT, and penalties
+   */
   process(
     annualPortfolioDataBeforeTaxes: PortfolioData,
     annualIncomesData: IncomesData,
@@ -212,6 +229,7 @@ export class TaxProcessor {
     };
   }
 
+  /** Assembles all income sources and computes adjusted gross income */
   private getTaxableIncomeData(
     annualPortfolioDataBeforeTaxes: PortfolioData,
     annualIncomesData: IncomesData,
@@ -335,6 +353,11 @@ export class TaxProcessor {
     };
   }
 
+  /**
+   * Applies capital loss carryover and computes the $3,000 annual capital loss deduction
+   *
+   * Losses exceeding $3,000 are carried forward to future years.
+   */
   private getRealizedGainsAndCapLossDeductionData(
     annualPortfolioDataBeforeTaxes: PortfolioData,
     annualPhysicalAssetsData: PhysicalAssetsData
@@ -353,11 +376,13 @@ export class TaxProcessor {
       return { realizedGains: realizedGainsAfterCarryover, capitalLossDeduction: 0, section121Exclusion };
     }
 
+    // Annual capital loss deduction capped at $3,000
     const capitalLossDeduction = -Math.max(-3000, realizedGainsAfterCarryover);
     this.capitalLossCarryover = realizedGainsAfterCarryover + capitalLossDeduction;
     return { realizedGains: 0, capitalLossDeduction, section121Exclusion };
   }
 
+  /** Calculates progressive income tax across ordinary income brackets */
   private processIncomeTaxes({ taxableIncomeTaxedAsOrdinary }: { taxableIncomeTaxedAsOrdinary: number }): {
     incomeTaxAmount: number;
     topMarginalIncomeTaxRate: number;
@@ -378,6 +403,12 @@ export class TaxProcessor {
     return { incomeTaxAmount, topMarginalIncomeTaxRate, incomeTaxBrackets };
   }
 
+  /**
+   * Calculates capital gains tax with bracket stacking
+   *
+   * Capital gains are stacked on top of ordinary income to determine
+   * the applicable bracket, then only the gains portion is taxed.
+   */
   private processCapitalGainsTaxes({
     taxableIncomeTaxedAsCapGains,
     taxableIncomeTaxedAsOrdinary,
@@ -399,6 +430,7 @@ export class TaxProcessor {
       if (totalTaxableIncome <= bracket.min) break;
 
       const incomeInBracket = Math.min(totalTaxableIncome, bracket.max) - bracket.min;
+      // Bracket stacking: ordinary income fills brackets first, gains taxed on the remainder
       const ordinaryIncomeInBracket = Math.max(0, Math.min(taxableIncomeTaxedAsOrdinary, bracket.max) - bracket.min);
       const capitalGainsInBracket = incomeInBracket - ordinaryIncomeInBracket;
 
@@ -409,6 +441,7 @@ export class TaxProcessor {
     return { capitalGainsTaxAmount, topMarginalCapitalGainsTaxRate, capitalGainsTaxBrackets };
   }
 
+  /** Calculates Net Investment Income Tax (3.8% surtax on investment income above threshold) */
   private processNIIT(incomeData: IncomeSourcesData): NIITData {
     const threshold = NIIT_THRESHOLDS[this.filingStatus];
 
@@ -424,6 +457,7 @@ export class TaxProcessor {
     return { netInvestmentIncome, incomeSubjectToNiit, niitAmount, threshold };
   }
 
+  /** Calculates 10% early withdrawal penalty for 401k/IRA and 20% for HSA */
   private processEarlyWithdrawalPenalties(earlyWithdrawalsData: IncomeSourcesData['earlyWithdrawals']): EarlyWithdrawalPenaltyData {
     const taxDeferredPenaltyAmount = earlyWithdrawalsData['401kAndIra'] * 0.1 + earlyWithdrawalsData.hsa * 0.2;
     const taxFreePenaltyAmount = earlyWithdrawalsData.rothEarnings * 0.1;
@@ -431,6 +465,12 @@ export class TaxProcessor {
     return { taxDeferredPenaltyAmount, taxFreePenaltyAmount, totalPenaltyAmount: taxDeferredPenaltyAmount + taxFreePenaltyAmount };
   }
 
+  /**
+   * Determines taxable portion of Social Security benefits
+   *
+   * Uses provisional income to determine 0%, 50%, or up to 85% taxable.
+   * Maximum 85% of benefits can be taxed regardless of income level.
+   */
   private getTaxablePortionOfSocialSecurityIncome({
     provisionalIncome,
     socialSecurityIncome,
@@ -515,6 +555,7 @@ export class TaxProcessor {
     }
   }
 
+  /** Applies Section 121 exclusion for primary residence sale gains */
   private getSection121Exclusion(physicalAssetsData: PhysicalAssetsData): {
     section121Exclusion: number;
     physicalAssetRealizedGains: number;

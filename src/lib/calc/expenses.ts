@@ -1,8 +1,16 @@
+/**
+ * Expense processing for the simulation engine
+ *
+ * Handles multiple expense sources with varying frequencies, time frames,
+ * and real growth rates. Includes discretionary (surplus) spending.
+ */
+
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import type { TimePoint } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 
 import type { SimulationState } from './simulation-engine';
 
+/** Processes all active expenses each month and aggregates annual totals */
 export class ExpensesProcessor {
   private monthlyData: ExpensesData[] = [];
 
@@ -11,6 +19,10 @@ export class ExpensesProcessor {
     private expenses: Expenses
   ) {}
 
+  /**
+   * Processes all active expenses for the current month
+   * @returns Aggregated expense data with per-expense breakdowns
+   */
   process(): ExpensesData {
     const activeExpenses = this.expenses.getActiveExpensesByTimeFrame(this.simulationState);
 
@@ -31,6 +43,11 @@ export class ExpensesProcessor {
     return result;
   }
 
+  /**
+   * Adds a discretionary (surplus) expense to the current month's data
+   * @param expense - Dollar amount of discretionary spending
+   * @returns Updated expense data including the discretionary amount
+   */
   processDiscretionaryExpense(expense: number): ExpensesData {
     const discretionaryExpense: ExpenseData = {
       id: '4ad31cac-7e17-47c4-af4e-784e080c05dd',
@@ -90,6 +107,7 @@ export interface ExpensesData {
   perExpenseData: Record<string, ExpenseData>;
 }
 
+/** Collection of expense sources that filters by active time frame */
 export class Expenses {
   private readonly expenses: Expense[];
 
@@ -108,6 +126,7 @@ export interface ExpenseData {
   expense: number;
 }
 
+/** A single expense source with frequency, growth, and time frame */
 export class Expense {
   private hasOneTimeExpenseOccurred: boolean;
   private id: string;

@@ -1,3 +1,11 @@
+/**
+ * Chart data extraction for Recharts visualizations
+ *
+ * Transforms raw simulation results into chart-ready data point arrays for
+ * net worth, cash flow, taxes, returns, contributions, and withdrawals charts.
+ * Supports both single and multi-simulation (Monte Carlo) result formats.
+ */
+
 import type {
   SingleSimulationNetWorthChartDataPoint,
   SingleSimulationCashFlowChartDataPoint,
@@ -14,11 +22,17 @@ import { sumFlows, sumReturnAmounts } from '@/lib/calc/asset';
 import type { SimulationResult, MultiSimulationResult } from '../simulation-engine';
 import { SimulationDataExtractor } from './simulation-data-extractor';
 
+/** Transforms simulation results into chart-ready data point arrays */
 export abstract class ChartDataExtractor {
   // ================================
   // SINGLE SIMULATION DATA EXTRACTION
   // ================================
 
+  /**
+   * Extracts net worth chart data including portfolio, assets, debts, and holdings breakdowns
+   * @param simulation - A single simulation result
+   * @returns Array of data points indexed by age
+   */
   static extractSingleSimulationNetWorthData(simulation: SimulationResult): SingleSimulationNetWorthChartDataPoint[] {
     return simulation.data.map((data) => {
       const age = Math.floor(data.age);
@@ -93,6 +107,11 @@ export abstract class ChartDataExtractor {
     });
   }
 
+  /**
+   * Extracts cash flow chart data including income, expenses, taxes, and savings rate
+   * @param simulation - A single simulation result
+   * @returns Array of data points indexed by age (excludes year 0)
+   */
   static extractSingleSimulationCashFlowData(simulation: SimulationResult): SingleSimulationCashFlowChartDataPoint[] {
     return simulation.data.slice(1).map((data) => {
       const age = Math.floor(data.age);
@@ -152,6 +171,11 @@ export abstract class ChartDataExtractor {
     });
   }
 
+  /**
+   * Extracts tax chart data with annual and cumulative breakdowns by tax type
+   * @param simulation - A single simulation result
+   * @returns Array of data points indexed by age (excludes year 0)
+   */
   static extractSingleSimulationTaxesData(simulation: SimulationResult): SingleSimulationTaxesChartDataPoint[] {
     let cumulativeIncomeTax = 0;
     let cumulativeFicaTax = 0;
@@ -234,6 +258,11 @@ export abstract class ChartDataExtractor {
     });
   }
 
+  /**
+   * Extracts returns chart data with annual/cumulative gains by asset class and tax category
+   * @param simulation - A single simulation result
+   * @returns Array of data points indexed by age (excludes year 0)
+   */
   static extractSingleSimulationReturnsData(simulation: SimulationResult): SingleSimulationReturnsChartDataPoint[] {
     let cumulativeAssetAppreciation = 0;
 
@@ -278,6 +307,11 @@ export abstract class ChartDataExtractor {
     });
   }
 
+  /**
+   * Extracts contributions chart data with annual/cumulative amounts by asset class and tax category
+   * @param simulation - A single simulation result
+   * @returns Array of data points indexed by age (excludes year 0)
+   */
   static extractSingleSimulationContributionsData(simulation: SimulationResult): SingleSimulationContributionsChartDataPoint[] {
     return simulation.data.slice(1).map((data) => {
       const age = Math.floor(data.age);
@@ -312,6 +346,11 @@ export abstract class ChartDataExtractor {
     });
   }
 
+  /**
+   * Extracts withdrawals chart data with annual/cumulative amounts, RMDs, and withdrawal rate
+   * @param simulation - A single simulation result
+   * @returns Array of data points indexed by age (excludes year 0)
+   */
   static extractSingleSimulationWithdrawalsData(simulation: SimulationResult): SingleSimulationWithdrawalsChartDataPoint[] {
     let cumulativeEarlyWithdrawals = 0;
 
@@ -365,6 +404,11 @@ export abstract class ChartDataExtractor {
   // MULTI SIMULATION DATA EXTRACTION
   // ================================
 
+  /**
+   * Extracts portfolio value percentile bands across all simulations for fan charts
+   * @param simulations - Multi-simulation result set
+   * @returns Array of percentile data points (p10-p90) indexed by age
+   */
   static extractMultiSimulationPortfolioData(simulations: MultiSimulationResult): MultiSimulationPortfolioChartDataPoint[] {
     const res: MultiSimulationPortfolioChartDataPoint[] = [];
 
@@ -398,6 +442,11 @@ export abstract class ChartDataExtractor {
     return res;
   }
 
+  /**
+   * Extracts phase distribution data (accumulation/retirement/bankrupt) across all simulations
+   * @param simulations - Multi-simulation result set
+   * @returns Array of phase percentage data points indexed by age
+   */
   static extractMultiSimulationPhasesData(simulations: MultiSimulationResult): MultiSimulationPhasesChartDataPoint[] {
     const res: MultiSimulationPhasesChartDataPoint[] = [];
 

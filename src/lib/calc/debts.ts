@@ -1,8 +1,17 @@
+/**
+ * Debt processing for the simulation engine
+ *
+ * Handles unsecured debts (credit cards, personal loans) with simple or compound
+ * interest. Tracks principal, interest, and payoff status. Payments deflate over
+ * time with inflation (real dollar terms).
+ */
+
 import type { DebtInputs, CompoundingFrequency } from '@/lib/schemas/inputs/debt-form-schema';
 import type { TimePoint } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 
 import type { SimulationState } from './simulation-engine';
 
+/** Processes all active debts each month and aggregates annual totals */
 export class DebtsProcessor {
   private monthlyData: DebtsData[] = [];
 
@@ -133,6 +142,7 @@ export interface DebtData {
   isPaidOff: boolean;
 }
 
+/** Collection of debt obligations that filters by active status */
 export class Debts {
   private readonly debts: Debt[];
 
@@ -153,6 +163,7 @@ export class Debts {
   }
 }
 
+/** A single debt with simple or compound interest and monthly payment tracking */
 export class Debt {
   private id: string;
   private name: string;
@@ -204,6 +215,11 @@ export class Debt {
     return this.balance <= 0;
   }
 
+  /**
+   * Calculates monthly payment and interest, capped at remaining balance
+   * @param monthlyInflationRate - Monthly inflation for real interest calculation
+   * @returns Payment due and interest component
+   */
   getMonthlyPaymentInfo(monthlyInflationRate: number): { monthlyPaymentDue: number; interest: number } {
     if (this.isPaidOff()) return { monthlyPaymentDue: 0, interest: 0 };
 
@@ -214,6 +230,14 @@ export class Debt {
     return { monthlyPaymentDue, interest };
   }
 
+  /**
+   * Applies a payment to the debt, handling simple vs compound interest differently
+   *
+   * Simple interest: payment covers current interest, then unpaid prior interest, then principal.
+   * Compound interest: unpaid interest capitalizes into the balance.
+   * @param payment - Payment amount applied
+   * @param interest - Interest accrued this period
+   */
   applyPayment(payment: number, interest: number): void {
     switch (this.interestType) {
       case 'simple':
