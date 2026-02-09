@@ -6,7 +6,18 @@ Run Ignidash on your own infrastructure using Docker, including a self-hosted Co
 
 Follow the steps below to get your app running.
 
-### Step 1: Install Docker
+### Step 1: Install Prerequisites
+
+#### Node.js
+
+1. Install Node.js from the [official website](https://nodejs.org/)
+2. Verify Node.js is installed:
+
+```bash
+node --version
+```
+
+#### Docker
 
 1. Install Docker Engine by following [the official guide](https://docs.docker.com/get-docker/)
 2. Start the Docker service on your machine
