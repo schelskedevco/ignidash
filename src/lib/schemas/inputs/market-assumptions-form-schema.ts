@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { percentageField } from '@/lib/utils/zod-schema-utils';
 
-export const marketAssumptionsSchema = z
+export const marketAssumptionsFormSchema = z
   .object({
     stockReturn: percentageField(0, 20, 'Stock return'),
     stockYield: percentageField(0, 10, 'Stock yield'),
@@ -20,4 +20,4 @@ export const marketAssumptionsSchema = z
     path: ['bondYield'],
   });
 
-export type MarketAssumptionsInputs = z.infer<typeof marketAssumptionsSchema>;
+export type MarketAssumptionsInputs = z.infer<typeof marketAssumptionsFormSchema>;

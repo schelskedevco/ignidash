@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 import posthog from 'posthog-js';
 
 import { taxSettingsToConvex } from '@/lib/utils/convex-to-zod-transformers';
-import { type TaxSettingsInputs, taxSettingsSchema } from '@/lib/schemas/inputs/tax-settings-schema';
+import { type TaxSettingsInputs, taxSettingsFormSchema } from '@/lib/schemas/inputs/tax-settings-form-schema';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';
 import Card from '@/components/ui/card';
@@ -38,7 +38,7 @@ export default function TaxSettingsDrawer({ setOpen, taxSettings }: TaxSettingsD
     reset,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(taxSettingsSchema),
+    resolver: zodResolver(taxSettingsFormSchema),
     defaultValues,
   });
 

@@ -6,7 +6,7 @@ import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import type { ContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
 import type { TimelineInputs } from '@/lib/schemas/inputs/timeline-form-schema';
-import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assumptions-schema';
+import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assumptions-form-schema';
 
 import {
   FinancialSimulationEngine,

@@ -1,5 +1,5 @@
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
-import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-schema';
+import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-form-schema';
 
 import {
   type Account,

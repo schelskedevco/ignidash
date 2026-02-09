@@ -4,8 +4,8 @@ const filingStatus = z.enum(['single', 'marriedFilingJointly', 'headOfHousehold'
 
 export type FilingStatus = z.infer<typeof filingStatus>;
 
-export const taxSettingsSchema = z.object({
+export const taxSettingsFormSchema = z.object({
   filingStatus,
 });
 
-export type TaxSettingsInputs = z.infer<typeof taxSettingsSchema>;
+export type TaxSettingsInputs = z.infer<typeof taxSettingsFormSchema>;

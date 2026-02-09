@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-schema';
+import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-form-schema';
 
 import { Portfolio, PortfolioProcessor } from './portfolio';
 import { ContributionRules } from './contribution-rules';

@@ -8,15 +8,15 @@ import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import type { DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
 import type { PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
-import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assumptions-schema';
+import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assumptions-form-schema';
 import type { TimelineInputs } from '@/lib/schemas/inputs/timeline-form-schema';
-import type { TaxSettingsInputs } from '@/lib/schemas/inputs/tax-settings-schema';
-import type { PrivacySettingsInputs } from '@/lib/schemas/inputs/privacy-settings-schema';
+import type { TaxSettingsInputs } from '@/lib/schemas/inputs/tax-settings-form-schema';
+import type { PrivacySettingsInputs } from '@/lib/schemas/inputs/privacy-settings-form-schema';
 import type { SimulationSettingsInputs } from '@/lib/schemas/simulation-settings-schema';
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 import type { AssetInputs } from '@/lib/schemas/finances/asset-schema';
 import type { LiabilityInputs } from '@/lib/schemas/finances/liability-schema';
-import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-schema';
+import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-form-schema';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 
 // ============================================================================

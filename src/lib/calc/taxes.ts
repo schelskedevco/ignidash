@@ -1,5 +1,5 @@
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
-import type { FilingStatus } from '@/lib/schemas/inputs/tax-settings-schema';
+import type { FilingStatus } from '@/lib/schemas/inputs/tax-settings-form-schema';
 
 import type { SimulationState } from './simulation-engine';
 import type { IncomesData } from './incomes';

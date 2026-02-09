@@ -15,7 +15,7 @@ import { formatNumber } from '@/lib/utils';
 import { glidePathToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
-import { glidePathSchema, type GlidePathInputs } from '@/lib/schemas/inputs/glide-path-schema';
+import { glidePathFormSchema, type GlidePathInputs } from '@/lib/schemas/inputs/glide-path-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage, Description } from '@/components/catalyst/fieldset';
@@ -77,7 +77,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm({
-    resolver: zodResolver(glidePathSchema),
+    resolver: zodResolver(glidePathFormSchema),
     defaultValues,
   });
 

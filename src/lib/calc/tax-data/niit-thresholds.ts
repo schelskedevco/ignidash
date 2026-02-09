@@ -1,4 +1,4 @@
-import type { FilingStatus } from '@/lib/schemas/inputs/tax-settings-schema';
+import type { FilingStatus } from '@/lib/schemas/inputs/tax-settings-form-schema';
 
 export const NIIT_RATE = 0.038;
 
