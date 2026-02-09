@@ -16,10 +16,11 @@ const CustomLabelListContent = (props: any) => {
 
   const formatValue = (
     value: number,
-    mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom'
+    mode: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom'
   ) => {
     switch (mode) {
       case 'rates':
+      case 'cagr':
         return `${(value * 100).toFixed(1)}%`;
       case 'annualAmounts':
       case 'cumulativeAmounts':
@@ -63,7 +64,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationReturnsBarChartProps {
   age: number;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
+  dataView: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
   rawChartData: SingleSimulationReturnsChartDataPoint[];
   customDataID: string;
 }
@@ -81,6 +82,10 @@ export default function SingleSimulationReturnsBarChart({
     rates: {
       mobile: ['Stock Rate', 'Bond Rate', 'Cash Rate', 'Inflation Rate'],
       desktop: ['Real Stock Rate', 'Real Bond Rate', 'Real Cash Rate', 'Inflation Rate'],
+    },
+    cagr: {
+      mobile: ['Stock CAGR', 'Bond CAGR', 'Cash CAGR'],
+      desktop: ['Real Stock CAGR', 'Real Bond CAGR', 'Real Cash CAGR'],
     },
     annualAmounts: {
       mobile: ['Stock Gain', 'Bond Gain', 'Cash Gain'],
@@ -120,6 +125,17 @@ export default function SingleSimulationReturnsBarChart({
         { name: bondLabel, amount: item.realBondReturnRate, color: 'var(--chart-3)' },
         { name: cashLabel, amount: item.realCashReturnRate, color: 'var(--chart-4)' },
         { name: inflationLabel, amount: item.inflationRate, color: 'var(--chart-8)' },
+      ]);
+      break;
+    }
+    case 'cagr': {
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+
+      const [stockLabel, bondLabel, cashLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      transformedChartData = chartData.flatMap((item) => [
+        { name: stockLabel, amount: item.realStockCagr, color: 'var(--chart-2)' },
+        { name: bondLabel, amount: item.realBondCagr, color: 'var(--chart-3)' },
+        { name: cashLabel, amount: item.realCashCagr, color: 'var(--chart-4)' },
       ]);
       break;
     }

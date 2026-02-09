@@ -11,7 +11,7 @@ import SingleSimulationReturnsBarChart from '../../charts/single-simulation/sing
 interface SingleSimulationReturnsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationReturnsChartDataPoint[];
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
+  dataView: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
   customDataID: string;
 }
 
@@ -28,6 +28,9 @@ export default function SingleSimulationReturnsBarChartCard({
   switch (dataView) {
     case 'rates':
       title = 'Real Returns';
+      break;
+    case 'cagr':
+      title = 'Real CAGR';
       break;
     case 'annualAmounts':
       title = 'Annual Growth';
