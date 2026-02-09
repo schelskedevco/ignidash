@@ -174,8 +174,8 @@ export class SimulationDataExtractor {
     const { data } = result;
 
     const {
-      stocksProduct,
-      bondsProduct,
+      stockProduct,
+      bondProduct,
       cashProduct,
       inflationProduct,
       count,
@@ -188,6 +188,7 @@ export class SimulationDataExtractor {
         const age = Math.floor(dp.age);
 
         const returnsData = dp.returns!;
+
         const stockReturn = returnsData.annualReturnRates.stocks;
         const bondReturn = returnsData.annualReturnRates.bonds;
         const cashReturn = returnsData.annualReturnRates.cash;
@@ -201,8 +202,8 @@ export class SimulationDataExtractor {
         }
 
         return {
-          stocksProduct: acc.stocksProduct * (1 + stockReturn),
-          bondsProduct: acc.bondsProduct * (1 + bondReturn),
+          stockProduct: acc.stockProduct * (1 + stockReturn),
+          bondProduct: acc.bondProduct * (1 + bondReturn),
           cashProduct: acc.cashProduct * (1 + cashReturn),
           inflationProduct: acc.inflationProduct * (1 + inflationReturn),
           count: acc.count + 1,
@@ -213,8 +214,8 @@ export class SimulationDataExtractor {
         };
       },
       {
-        stocksProduct: 1,
-        bondsProduct: 1,
+        stockProduct: 1,
+        bondProduct: 1,
         cashProduct: 1,
         inflationProduct: 1,
         count: 0,
@@ -232,8 +233,8 @@ export class SimulationDataExtractor {
     };
 
     return {
-      meanStockReturn: geometricMean(stocksProduct, count),
-      meanBondReturn: geometricMean(bondsProduct, count),
+      meanStockReturn: geometricMean(stockProduct, count),
+      meanBondReturn: geometricMean(bondProduct, count),
       meanCashReturn: geometricMean(cashProduct, count),
       meanInflationRate: geometricMean(inflationProduct, count),
       minStockReturn,

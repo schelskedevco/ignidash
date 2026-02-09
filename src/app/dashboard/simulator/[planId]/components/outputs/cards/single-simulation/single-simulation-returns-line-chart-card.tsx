@@ -15,8 +15,8 @@ import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 interface SingleSimulationReturnsLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom') => void;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
+  setDataView: (view: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom') => void;
+  dataView: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
   rawChartData: SingleSimulationReturnsChartDataPoint[];
   keyMetrics: KeyMetrics;
   startAge: number;
@@ -67,6 +67,7 @@ export default function SingleSimulationReturnsLineChartCard({
             onChange={(e) => {
               const isCustomSelection =
                 e.target.value !== 'rates' &&
+                e.target.value !== 'cagr' &&
                 e.target.value !== 'annualAmounts' &&
                 e.target.value !== 'cumulativeAmounts' &&
                 e.target.value !== 'taxCategory' &&
@@ -75,13 +76,14 @@ export default function SingleSimulationReturnsLineChartCard({
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation');
+                setDataView(e.target.value as 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation');
                 setCustomDataID('');
               }
             }}
           >
             <optgroup label="Return Rates">
               <option value="rates">Real Annual Rates</option>
+              <option value="cagr">Real CAGR</option>
             </optgroup>
             <optgroup label="Return Amounts">
               <option value="annualAmounts">Annual Gains</option>

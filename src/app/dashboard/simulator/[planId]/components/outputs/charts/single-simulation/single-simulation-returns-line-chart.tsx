@@ -36,7 +36,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
+  dataView: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
   customDataType: 'account' | 'asset' | undefined;
 }
 
@@ -50,10 +50,11 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   const formatValue = (
     value: number,
-    mode: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom'
+    mode: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom'
   ) => {
     switch (mode) {
       case 'rates':
+      case 'cagr':
         return `${(value * 100).toFixed(1)}%`;
       case 'annualAmounts':
       case 'cumulativeAmounts':
@@ -71,6 +72,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   let footer = null;
   switch (dataView) {
     case 'rates':
+    case 'cagr':
     case 'appreciation':
       break;
     case 'annualAmounts':
@@ -133,7 +135,7 @@ interface SingleSimulationReturnsLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'rates' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
+  dataView: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
   customDataID: string;
   startAge: number;
 }
@@ -189,6 +191,14 @@ export default function SingleSimulationReturnsLineChart({
 
       lineDataKeys.push('realStockReturnRate', 'realBondReturnRate', 'realCashReturnRate', 'inflationRate');
       strokeColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-8)');
+
+      showReferenceLineAtZero = false;
+      break;
+    case 'cagr':
+      formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
+
+      lineDataKeys.push('realStockCagr', 'realBondCagr', 'realCashCagr');
+      strokeColors.push('var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
 
       showReferenceLineAtZero = false;
       break;
@@ -270,6 +280,7 @@ export default function SingleSimulationReturnsLineChart({
         barColors.push('var(--chart-2)');
 
         chartData = perAssetData;
+        showReferenceLineAtZero = false;
         break;
       }
 

@@ -35,6 +35,7 @@ export function formatChartString(input: string): string {
     ['Required Minimum Distributions', 'RMDs'],
     ['Early Withdrawal Penalties', 'EW Penalties'],
     ['Percentage', '%'],
+    ['Cagr', 'CAGR'],
   ];
 
   for (const [search, replace] of replacements) {

@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 
 import { SimulationDataExtractor } from './simulation-data-extractor';
+import { ChartDataExtractor } from './chart-data-extractor';
+import { TableDataExtractor } from './table-data-extractor';
 import type { SimulationResult, SimulationDataPoint } from '../simulation-engine';
 import type { ReturnsData } from '../returns';
 
@@ -2032,5 +2034,440 @@ describe('SimulationDataExtractor.getSavingsRate', () => {
 
     expect(savingsRate).toBeLessThanOrEqual(1);
     expect(savingsRate).toBeCloseTo(0.5625, 4);
+  });
+});
+
+/**
+ * Integration tests verifying that ChartDataExtractor and TableDataExtractor
+ * both compute CAGR correctly from a SimulationResult using running products.
+ */
+describe('CAGR integration — chart and table extractors agree', () => {
+  const stockRates = [0.1, -0.05, 0.2]; // 10%, -5%, 20%
+  const bondRates = [0.04, 0.03, 0.05];
+  const cashRates = [0.01, 0.02, 0.015];
+
+  const zeroAmounts = { stocks: 0, bonds: 0, cash: 0 };
+  const zeroYieldsByCategory = {
+    taxable: zeroAmounts,
+    taxDeferred: zeroAmounts,
+    taxFree: zeroAmounts,
+    cashSavings: zeroAmounts,
+  };
+
+  const zeroPhysicalAssets = {
+    totalMarketValue: 0,
+    totalLoanBalance: 0,
+    totalEquity: 0,
+    totalAppreciation: 0,
+    totalLoanPayment: 0,
+    totalInterest: 0,
+    totalPrincipalPaid: 0,
+    totalUnpaidInterest: 0,
+    totalDebtPaydown: 0,
+    totalPurchaseOutlay: 0,
+    totalPurchaseMarketValue: 0,
+    totalSaleProceeds: 0,
+    totalSaleMarketValue: 0,
+    totalRealizedGains: 0,
+    totalSecuredDebtIncurred: 0,
+    totalDebtPayoff: 0,
+    perAssetData: {},
+  };
+
+  function makeReturnsData(stockRate: number, bondRate: number, cashRate: number): ReturnsData {
+    return {
+      annualReturnRates: { stocks: stockRate, bonds: bondRate, cash: cashRate },
+      annualYieldRates: zeroAmounts,
+      annualInflationRate: 0,
+      returnAmounts: zeroAmounts,
+      returnRates: zeroAmounts,
+      cumulativeReturnAmounts: zeroAmounts,
+      yieldAmounts: zeroYieldsByCategory,
+      yieldRates: zeroAmounts,
+      cumulativeYieldAmounts: zeroYieldsByCategory,
+      inflationRate: 0,
+      perAccountData: {},
+    };
+  }
+
+  function makeDataPoint(age: number, returns: ReturnsData | null): SimulationDataPoint {
+    return {
+      date: '2024-01-01',
+      age,
+      portfolio: {
+        totalValue: 100000,
+        assetAllocation: { stocks: 0.6, bonds: 0.3, cash: 0.1 },
+        contributions: zeroAmounts,
+        withdrawals: zeroAmounts,
+        cumulativeContributions: zeroAmounts,
+        cumulativeWithdrawals: zeroAmounts,
+        employerMatch: 0,
+        cumulativeEmployerMatch: 0,
+        realizedGains: 0,
+        cumulativeRealizedGains: 0,
+        rmds: 0,
+        cumulativeRmds: 0,
+        earningsWithdrawn: 0,
+        cumulativeEarningsWithdrawn: 0,
+        shortfall: 0,
+        shortfallRepaid: 0,
+        outstandingShortfall: 0,
+        perAccountData: {},
+      },
+      incomes: null,
+      expenses: null,
+      debts: null,
+      physicalAssets: zeroPhysicalAssets,
+      phase: { name: 'accumulation' },
+      taxes: null,
+      returns,
+    };
+  }
+
+  // Year 0 (initial state, no returns), then 3 years with returns
+  const simulation: SimulationResult = {
+    data: [
+      makeDataPoint(30, null),
+      makeDataPoint(31, makeReturnsData(stockRates[0], bondRates[0], cashRates[0])),
+      makeDataPoint(32, makeReturnsData(stockRates[1], bondRates[1], cashRates[1])),
+      makeDataPoint(33, makeReturnsData(stockRates[2], bondRates[2], cashRates[2])),
+    ],
+    context: {
+      startAge: 30,
+      endAge: 33,
+      yearsToSimulate: 3,
+      startDate: '2024-01-01',
+      endDate: '2027-01-01',
+      retirementStrategy: { type: 'fixedAge', retirementAge: 65 },
+      rmdAge: 73,
+    },
+  };
+
+  // Manually compute expected CAGR at each year
+  const expectedStockCagrs = [
+    Math.pow(1.1, 1 / 1) - 1, // year 1: just 10%
+    Math.pow(1.1 * 0.95, 1 / 2) - 1, // year 2: 10% then -5%
+    Math.pow(1.1 * 0.95 * 1.2, 1 / 3) - 1, // year 3: 10%, -5%, 20%
+  ];
+
+  it('chart extractor computes correct stockCagr for each year', () => {
+    const chartData = ChartDataExtractor.extractSingleSimulationReturnsData(simulation);
+
+    expect(chartData).toHaveLength(3); // slice(1) → 3 data points
+    for (let i = 0; i < 3; i++) {
+      expect(chartData[i].realStockCagr).toBeCloseTo(expectedStockCagrs[i], 10);
+    }
+  });
+
+  it('table extractor computes correct stockCagr for each year', () => {
+    const tableData = TableDataExtractor.extractSingleSimulationReturnsData(simulation);
+
+    expect(tableData).toHaveLength(4); // includes year 0
+    expect(tableData[0].stockCagr).toBeNull(); // year 0 has no CAGR
+    for (let i = 1; i <= 3; i++) {
+      expect(tableData[i].stockCagr).toBeCloseTo(expectedStockCagrs[i - 1], 10);
+    }
+  });
+
+  it('chart and table extractors produce identical CAGR values', () => {
+    const chartData = ChartDataExtractor.extractSingleSimulationReturnsData(simulation);
+    const tableData = TableDataExtractor.extractSingleSimulationReturnsData(simulation);
+
+    for (let i = 0; i < 3; i++) {
+      expect(chartData[i].realStockCagr).toBeCloseTo(tableData[i + 1].stockCagr!, 10);
+      expect(chartData[i].realBondCagr).toBeCloseTo(tableData[i + 1].bondCagr!, 10);
+      expect(chartData[i].realCashCagr).toBeCloseTo(tableData[i + 1].cashCagr!, 10);
+    }
+  });
+});
+
+describe('CAGR edge cases and full asset class verification', () => {
+  const zeroAmounts = { stocks: 0, bonds: 0, cash: 0 };
+  const zeroYieldsByCategory = {
+    taxable: zeroAmounts,
+    taxDeferred: zeroAmounts,
+    taxFree: zeroAmounts,
+    cashSavings: zeroAmounts,
+  };
+
+  const zeroPhysicalAssets = {
+    totalMarketValue: 0,
+    totalLoanBalance: 0,
+    totalEquity: 0,
+    totalAppreciation: 0,
+    totalLoanPayment: 0,
+    totalInterest: 0,
+    totalPrincipalPaid: 0,
+    totalUnpaidInterest: 0,
+    totalDebtPaydown: 0,
+    totalPurchaseOutlay: 0,
+    totalPurchaseMarketValue: 0,
+    totalSaleProceeds: 0,
+    totalSaleMarketValue: 0,
+    totalRealizedGains: 0,
+    totalSecuredDebtIncurred: 0,
+    totalDebtPayoff: 0,
+    perAssetData: {},
+  };
+
+  function makeReturnsData(stockRate: number, bondRate: number, cashRate: number): ReturnsData {
+    return {
+      annualReturnRates: { stocks: stockRate, bonds: bondRate, cash: cashRate },
+      annualYieldRates: zeroAmounts,
+      annualInflationRate: 0,
+      returnAmounts: zeroAmounts,
+      returnRates: zeroAmounts,
+      cumulativeReturnAmounts: zeroAmounts,
+      yieldAmounts: zeroYieldsByCategory,
+      yieldRates: zeroAmounts,
+      cumulativeYieldAmounts: zeroYieldsByCategory,
+      inflationRate: 0,
+      perAccountData: {},
+    };
+  }
+
+  function makeDataPoint(age: number, returns: ReturnsData | null): SimulationDataPoint {
+    return {
+      date: '2024-01-01',
+      age,
+      portfolio: {
+        totalValue: 100000,
+        assetAllocation: { stocks: 0.6, bonds: 0.3, cash: 0.1 },
+        contributions: zeroAmounts,
+        withdrawals: zeroAmounts,
+        cumulativeContributions: zeroAmounts,
+        cumulativeWithdrawals: zeroAmounts,
+        employerMatch: 0,
+        cumulativeEmployerMatch: 0,
+        realizedGains: 0,
+        cumulativeRealizedGains: 0,
+        rmds: 0,
+        cumulativeRmds: 0,
+        earningsWithdrawn: 0,
+        cumulativeEarningsWithdrawn: 0,
+        shortfall: 0,
+        shortfallRepaid: 0,
+        outstandingShortfall: 0,
+        perAccountData: {},
+      },
+      incomes: null,
+      expenses: null,
+      debts: null,
+      physicalAssets: zeroPhysicalAssets,
+      phase: { name: 'accumulation' },
+      taxes: null,
+      returns,
+    };
+  }
+
+  function buildSimulation(rates: { stock: number; bond: number; cash: number }[], startAge: number = 30): SimulationResult {
+    const data: SimulationDataPoint[] = [makeDataPoint(startAge, null)];
+    for (let i = 0; i < rates.length; i++) {
+      data.push(makeDataPoint(startAge + i + 1, makeReturnsData(rates[i].stock, rates[i].bond, rates[i].cash)));
+    }
+    return {
+      data,
+      context: {
+        startAge,
+        endAge: startAge + rates.length,
+        yearsToSimulate: rates.length,
+        startDate: '2024-01-01',
+        endDate: `${2024 + rates.length}-01-01`,
+        retirementStrategy: { type: 'fixedAge', retirementAge: 65 },
+        rmdAge: 73,
+      },
+    };
+  }
+
+  it('verifies bond and cash CAGR against manual calculations', () => {
+    const rates = [
+      { stock: 0.1, bond: 0.04, cash: 0.01 },
+      { stock: -0.05, bond: 0.03, cash: 0.02 },
+      { stock: 0.2, bond: 0.05, cash: 0.015 },
+    ];
+    const sim = buildSimulation(rates);
+
+    const chartData = ChartDataExtractor.extractSingleSimulationReturnsData(sim);
+    const tableData = TableDataExtractor.extractSingleSimulationReturnsData(sim);
+
+    // Manually compute bond and cash CAGRs
+    let bondProduct = 1;
+    let cashProduct = 1;
+    for (let i = 0; i < 3; i++) {
+      bondProduct *= 1 + rates[i].bond;
+      cashProduct *= 1 + rates[i].cash;
+      const n = i + 1;
+      const expectedBondCagr = Math.pow(bondProduct, 1 / n) - 1;
+      const expectedCashCagr = Math.pow(cashProduct, 1 / n) - 1;
+
+      expect(chartData[i].realBondCagr).toBeCloseTo(expectedBondCagr, 10);
+      expect(chartData[i].realCashCagr).toBeCloseTo(expectedCashCagr, 10);
+
+      // Cross-check table matches chart
+      expect(tableData[i + 1].bondCagr).toBeCloseTo(chartData[i].realBondCagr, 10);
+      expect(tableData[i + 1].cashCagr).toBeCloseTo(chartData[i].realCashCagr, 10);
+    }
+  });
+
+  it('single-year simulation returns the annual rate as CAGR', () => {
+    const rates = [{ stock: 0.12, bond: 0.03, cash: 0.005 }];
+    const sim = buildSimulation(rates);
+
+    const chartData = ChartDataExtractor.extractSingleSimulationReturnsData(sim);
+    const tableData = TableDataExtractor.extractSingleSimulationReturnsData(sim);
+
+    expect(chartData).toHaveLength(1);
+    expect(chartData[0].realStockCagr).toBeCloseTo(0.12, 10);
+    expect(chartData[0].realBondCagr).toBeCloseTo(0.03, 10);
+    expect(chartData[0].realCashCagr).toBeCloseTo(0.005, 10);
+
+    expect(tableData).toHaveLength(2);
+    // Year 0 has null for ALL three CAGR fields
+    expect(tableData[0].stockCagr).toBeNull();
+    expect(tableData[0].bondCagr).toBeNull();
+    expect(tableData[0].cashCagr).toBeNull();
+    // Year 1 matches chart
+    expect(tableData[1].stockCagr).toBeCloseTo(0.12, 10);
+    expect(tableData[1].bondCagr).toBeCloseTo(0.03, 10);
+    expect(tableData[1].cashCagr).toBeCloseTo(0.005, 10);
+  });
+
+  it('constant return rate produces CAGR equal to that constant', () => {
+    const constantRates = { stock: 0.08, bond: 0.035, cash: 0.02 };
+    const rates = Array.from({ length: 5 }, () => constantRates);
+    const sim = buildSimulation(rates);
+
+    const chartData = ChartDataExtractor.extractSingleSimulationReturnsData(sim);
+    const tableData = TableDataExtractor.extractSingleSimulationReturnsData(sim);
+
+    for (let i = 0; i < 5; i++) {
+      expect(chartData[i].realStockCagr).toBeCloseTo(0.08, 10);
+      expect(chartData[i].realBondCagr).toBeCloseTo(0.035, 10);
+      expect(chartData[i].realCashCagr).toBeCloseTo(0.02, 10);
+
+      expect(tableData[i + 1].stockCagr).toBeCloseTo(0.08, 10);
+      expect(tableData[i + 1].bondCagr).toBeCloseTo(0.035, 10);
+      expect(tableData[i + 1].cashCagr).toBeCloseTo(0.02, 10);
+    }
+  });
+
+  it('all-zero returns produce CAGR of zero', () => {
+    const rates = Array.from({ length: 3 }, () => ({ stock: 0, bond: 0, cash: 0 }));
+    const sim = buildSimulation(rates);
+
+    const chartData = ChartDataExtractor.extractSingleSimulationReturnsData(sim);
+    const tableData = TableDataExtractor.extractSingleSimulationReturnsData(sim);
+
+    expect(tableData[0].stockCagr).toBeNull();
+    expect(tableData[0].bondCagr).toBeNull();
+    expect(tableData[0].cashCagr).toBeNull();
+
+    for (let i = 0; i < 3; i++) {
+      expect(chartData[i].realStockCagr).toBe(0);
+      expect(chartData[i].realBondCagr).toBe(0);
+      expect(chartData[i].realCashCagr).toBe(0);
+    }
+  });
+
+  it('negative returns produce correct negative CAGR', () => {
+    const rates = [
+      { stock: -0.1, bond: -0.02, cash: 0.0 },
+      { stock: -0.15, bond: -0.01, cash: -0.005 },
+      { stock: -0.05, bond: -0.03, cash: 0.0 },
+    ];
+    const sim = buildSimulation(rates);
+
+    const chartData = ChartDataExtractor.extractSingleSimulationReturnsData(sim);
+    const tableData = TableDataExtractor.extractSingleSimulationReturnsData(sim);
+
+    // Compute expected final-year CAGRs manually
+    let stockProduct = 1;
+    let bondProduct = 1;
+    let cashProduct = 1;
+    for (const r of rates) {
+      stockProduct *= 1 + r.stock;
+      bondProduct *= 1 + r.bond;
+      cashProduct *= 1 + r.cash;
+    }
+    const expectedStockCagr = Math.pow(stockProduct, 1 / 3) - 1;
+    const expectedBondCagr = Math.pow(bondProduct, 1 / 3) - 1;
+    const expectedCashCagr = Math.pow(cashProduct, 1 / 3) - 1;
+
+    expect(chartData[2].realStockCagr).toBeCloseTo(expectedStockCagr, 10);
+    expect(chartData[2].realBondCagr).toBeCloseTo(expectedBondCagr, 10);
+    expect(chartData[2].realCashCagr).toBeCloseTo(expectedCashCagr, 10);
+
+    // All final CAGRs should be negative
+    expect(chartData[2].realStockCagr).toBeLessThan(0);
+    expect(chartData[2].realBondCagr).toBeLessThan(0);
+    expect(chartData[2].realCashCagr).toBeLessThan(0);
+
+    // Cross-extractor agreement
+    expect(tableData[3].stockCagr).toBeCloseTo(chartData[2].realStockCagr, 10);
+    expect(tableData[3].bondCagr).toBeCloseTo(chartData[2].realBondCagr, 10);
+    expect(tableData[3].cashCagr).toBeCloseTo(chartData[2].realCashCagr, 10);
+  });
+
+  it('chart and table arrays have correct lengths and age alignment (slice(1) vs no-slice)', () => {
+    const rates = Array.from({ length: 4 }, () => ({ stock: 0.05, bond: 0.03, cash: 0.01 }));
+    const sim = buildSimulation(rates, 25);
+
+    const chartData = ChartDataExtractor.extractSingleSimulationReturnsData(sim);
+    const tableData = TableDataExtractor.extractSingleSimulationReturnsData(sim);
+
+    // Length assertions
+    expect(chartData).toHaveLength(4);
+    expect(tableData).toHaveLength(5);
+
+    // Chart starts at age 26 (skipped year 0 at age 25)
+    expect(chartData[0].age).toBe(26);
+    // Table starts at age 25
+    expect(tableData[0].age).toBe(25);
+
+    // Age alignment: chartData[i] corresponds to tableData[i+1]
+    for (let i = 0; i < 4; i++) {
+      expect(chartData[i].age).toBe(tableData[i + 1].age);
+    }
+
+    // Table year fields go 0, 1, 2, 3, 4
+    for (let i = 0; i <= 4; i++) {
+      expect(tableData[i].year).toBe(i);
+    }
+  });
+
+  it('longer horizon (20 years) maintains precision and cross-extractor agreement', () => {
+    const rates = Array.from({ length: 20 }, (_, i) => ({
+      stock: 0.06 + 0.01 * Math.sin(i),
+      bond: 0.03 + 0.005 * Math.cos(i),
+      cash: 0.015,
+    }));
+    const sim = buildSimulation(rates);
+
+    const chartData = ChartDataExtractor.extractSingleSimulationReturnsData(sim);
+    const tableData = TableDataExtractor.extractSingleSimulationReturnsData(sim);
+
+    // Length assertions
+    expect(chartData).toHaveLength(20);
+    expect(tableData).toHaveLength(21);
+
+    // All 20 years: cross-extractor agreement within 10 decimal places
+    for (let i = 0; i < 20; i++) {
+      expect(chartData[i].realStockCagr).toBeCloseTo(tableData[i + 1].stockCagr!, 10);
+      expect(chartData[i].realBondCagr).toBeCloseTo(tableData[i + 1].bondCagr!, 10);
+      expect(chartData[i].realCashCagr).toBeCloseTo(tableData[i + 1].cashCagr!, 10);
+    }
+
+    // Final year stock CAGR matches manually computed running product
+    let stockProduct = 1;
+    for (let i = 0; i < 20; i++) {
+      stockProduct *= 1 + rates[i].stock;
+    }
+    const expectedFinalStockCagr = Math.pow(stockProduct, 1 / 20) - 1;
+    expect(chartData[19].realStockCagr).toBeCloseTo(expectedFinalStockCagr, 10);
+
+    // Cash CAGR is 0.015 at every year (constant rate invariant)
+    for (let i = 0; i < 20; i++) {
+      expect(chartData[i].realCashCagr).toBeCloseTo(0.015, 10);
+    }
   });
 });

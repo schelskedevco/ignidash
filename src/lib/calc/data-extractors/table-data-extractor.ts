@@ -317,47 +317,47 @@ export abstract class TableDataExtractor {
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeTotalTaxesAndPenalties += annualTotalTaxesAndPenalties;
 
-      const taxesData = data.taxes;
+      const taxesData = data.taxes!;
 
       return {
         year: idx,
         age,
         phaseName: formattedPhaseName,
-        grossIncome: taxesData?.incomeSources.grossIncome ?? 0,
-        adjustedGrossIncome: taxesData?.incomeSources.adjustedGrossIncome ?? 0,
-        taxableIncome: taxesData?.totalTaxableIncome ?? 0,
-        earnedIncome: taxesData?.incomeSources.earnedIncome ?? 0,
-        taxableRetirementDistributions: taxesData?.incomeSources.taxableRetirementDistributions ?? 0,
-        taxableInterestIncome: taxesData?.incomeSources.taxableInterestIncome ?? 0,
+        grossIncome: taxesData.incomeSources.grossIncome,
+        adjustedGrossIncome: taxesData.incomeSources.adjustedGrossIncome,
+        taxableIncome: taxesData.totalTaxableIncome,
+        earnedIncome: taxesData.incomeSources.earnedIncome,
+        taxableRetirementDistributions: taxesData.incomeSources.taxableRetirementDistributions,
+        taxableInterestIncome: taxesData.incomeSources.taxableInterestIncome,
         annualIncomeTax,
         cumulativeIncomeTax,
         annualFicaTax,
         cumulativeFicaTax,
-        effectiveIncomeTaxRate: taxesData?.incomeTaxes.effectiveIncomeTaxRate ?? 0,
-        topMarginalIncomeTaxRate: taxesData?.incomeTaxes.topMarginalIncomeTaxRate ?? 0,
-        socialSecurityIncome: taxesData?.incomeSources.socialSecurityIncome ?? 0,
-        taxableSocialSecurityIncome: taxesData?.socialSecurityTaxes.taxableSocialSecurityIncome ?? 0,
-        provisionalIncome: taxesData?.socialSecurityTaxes.provisionalIncome ?? 0,
-        maxTaxablePercentage: taxesData?.socialSecurityTaxes.maxTaxablePercentage ?? 0,
-        actualTaxablePercentage: taxesData?.socialSecurityTaxes.actualTaxablePercentage ?? 0,
-        realizedGains: taxesData?.incomeSources.realizedGains ?? 0,
-        taxableDividendIncome: taxesData?.incomeSources.taxableDividendIncome ?? 0,
+        effectiveIncomeTaxRate: taxesData.incomeTaxes.effectiveIncomeTaxRate,
+        topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalIncomeTaxRate,
+        socialSecurityIncome: taxesData.incomeSources.socialSecurityIncome,
+        taxableSocialSecurityIncome: taxesData.socialSecurityTaxes.taxableSocialSecurityIncome,
+        provisionalIncome: taxesData.socialSecurityTaxes.provisionalIncome,
+        maxTaxablePercentage: taxesData.socialSecurityTaxes.maxTaxablePercentage,
+        actualTaxablePercentage: taxesData.socialSecurityTaxes.actualTaxablePercentage,
+        realizedGains: taxesData.incomeSources.realizedGains,
+        taxableDividendIncome: taxesData.incomeSources.taxableDividendIncome,
         annualCapGainsTax,
         cumulativeCapGainsTax,
-        effectiveCapGainsTaxRate: taxesData?.capitalGainsTaxes.effectiveCapitalGainsTaxRate ?? 0,
-        topMarginalCapGainsTaxRate: taxesData?.capitalGainsTaxes.topMarginalCapitalGainsTaxRate ?? 0,
-        netInvestmentIncome: taxesData?.niit.netInvestmentIncome ?? 0,
-        incomeSubjectToNiit: taxesData?.niit.incomeSubjectToNiit ?? 0,
+        effectiveCapGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
+        topMarginalCapGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
+        netInvestmentIncome: taxesData.niit.netInvestmentIncome,
+        incomeSubjectToNiit: taxesData.niit.incomeSubjectToNiit,
         annualNiit,
         cumulativeNiit,
         annualEarlyWithdrawalPenalties,
         cumulativeEarlyWithdrawalPenalties,
         annualTotalTaxesAndPenalties,
         cumulativeTotalTaxesAndPenalties,
-        taxFreeIncome: taxesData?.incomeSources.taxFreeIncome ?? 0,
-        taxDeductibleContributions: taxesData?.adjustments.taxDeductibleContributions ?? null,
-        standardDeduction: taxesData?.deductions.standardDeduction ?? null,
-        capitalLossDeduction: taxesData?.incomeTaxes.capitalLossDeduction ?? null,
+        taxFreeIncome: taxesData.incomeSources.taxFreeIncome,
+        taxDeductibleContributions: taxesData.adjustments.taxDeductibleContributions,
+        standardDeduction: taxesData.deductions.standardDeduction,
+        capitalLossDeduction: taxesData.incomeTaxes.capitalLossDeduction ?? null,
         historicalYear,
       };
     });
@@ -372,6 +372,10 @@ export abstract class TableDataExtractor {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
     let cumulativeAssetAppreciation = 0;
+
+    let stockProduct = 1;
+    let bondProduct = 1;
+    let cashProduct = 1;
 
     return simulation.data.map((data, idx) => {
       const historicalYear: number | null = getHistoricalYear(historicalRanges, idx);
@@ -392,14 +396,17 @@ export abstract class TableDataExtractor {
           taxFreeGains: null,
           cashSavingsGains: null,
           stockReturnRate: null,
+          stockCagr: null,
           cumulativeStockGain: null,
           annualStockGain: null,
           stockHoldings: null,
           bondReturnRate: null,
+          bondCagr: null,
           cumulativeBondGain: null,
           annualBondGain: null,
           bondHoldings: null,
           cashReturnRate: null,
+          cashCagr: null,
           cumulativeCashGain: null,
           annualCashGain: null,
           cashHoldings: null,
@@ -412,17 +419,22 @@ export abstract class TableDataExtractor {
 
       const { stockHoldings, bondHoldings, cashHoldings } = SimulationDataExtractor.getHoldingsByAssetClass(data);
 
-      const returnsData = data.returns;
+      const returnsData = data.returns!;
 
-      const totalCumulativeGains = sumReturnAmounts(returnsData!.cumulativeReturnAmounts);
-      const totalAnnualGains = sumReturnAmounts(returnsData!.returnAmounts);
+      const totalCumulativeGains = sumReturnAmounts(returnsData.cumulativeReturnAmounts);
+      const totalAnnualGains = sumReturnAmounts(returnsData.returnAmounts);
 
       const { taxableGains, taxDeferredGains, taxFreeGains, cashSavingsGains } = SimulationDataExtractor.getGainsByTaxCategory(data);
 
-      const physicalAssetsData = data.physicalAssets;
+      const physicalAssetsData = data.physicalAssets!;
 
-      const annualAssetAppreciation = physicalAssetsData?.totalAppreciation ?? 0;
+      const annualAssetAppreciation = physicalAssetsData.totalAppreciation;
       cumulativeAssetAppreciation += annualAssetAppreciation;
+
+      stockProduct *= 1 + returnsData.annualReturnRates.stocks;
+      bondProduct *= 1 + returnsData.annualReturnRates.bonds;
+      cashProduct *= 1 + returnsData.annualReturnRates.cash;
+      const n = idx;
 
       return {
         year: idx,
@@ -436,14 +448,17 @@ export abstract class TableDataExtractor {
         cashSavingsGains,
         stockReturnRate: returnsData?.annualReturnRates.stocks ?? null,
         cumulativeStockGain: returnsData?.cumulativeReturnAmounts.stocks ?? null,
+        stockCagr: Math.pow(stockProduct, 1 / n) - 1,
         annualStockGain: returnsData?.returnAmounts.stocks ?? null,
         stockHoldings,
         bondReturnRate: returnsData?.annualReturnRates.bonds ?? null,
         cumulativeBondGain: returnsData?.cumulativeReturnAmounts.bonds ?? null,
+        bondCagr: Math.pow(bondProduct, 1 / n) - 1,
         annualBondGain: returnsData?.returnAmounts.bonds ?? null,
         bondHoldings,
         cashReturnRate: returnsData?.annualReturnRates.cash ?? null,
         cumulativeCashGain: returnsData?.cumulativeReturnAmounts.cash ?? null,
+        cashCagr: Math.pow(cashProduct, 1 / n) - 1,
         annualCashGain: returnsData?.returnAmounts.cash ?? null,
         cashHoldings,
         inflationRate: returnsData?.annualInflationRate ?? null,

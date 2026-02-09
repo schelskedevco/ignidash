@@ -154,6 +154,9 @@ export interface SingleSimulationReturnsChartDataPoint {
   taxDeferredGains: number;
   taxFreeGains: number;
   cashSavingsGains: number;
+  realStockCagr: number;
+  realBondCagr: number;
+  realCashCagr: number;
   annualAssetAppreciation: number;
   cumulativeAssetAppreciation: number;
   perAccountData: AccountDataWithReturns[];

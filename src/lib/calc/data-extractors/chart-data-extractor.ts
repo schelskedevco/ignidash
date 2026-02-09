@@ -266,7 +266,11 @@ export abstract class ChartDataExtractor {
   static extractSingleSimulationReturnsData(simulation: SimulationResult): SingleSimulationReturnsChartDataPoint[] {
     let cumulativeAssetAppreciation = 0;
 
-    return simulation.data.slice(1).map((data) => {
+    let stockProduct = 1;
+    let bondProduct = 1;
+    let cashProduct = 1;
+
+    return simulation.data.slice(1).map((data, index) => {
       const age = Math.floor(data.age);
 
       const returnsData = data.returns!;
@@ -280,6 +284,11 @@ export abstract class ChartDataExtractor {
 
       const annualAssetAppreciation = physicalAssetsData.totalAppreciation;
       cumulativeAssetAppreciation += annualAssetAppreciation;
+
+      stockProduct *= 1 + returnsData.annualReturnRates.stocks;
+      bondProduct *= 1 + returnsData.annualReturnRates.bonds;
+      cashProduct *= 1 + returnsData.annualReturnRates.cash;
+      const n = index + 1;
 
       return {
         age,
@@ -295,6 +304,9 @@ export abstract class ChartDataExtractor {
         annualBondGain: returnsData.returnAmounts.bonds,
         annualCashGain: returnsData.returnAmounts.cash,
         totalAnnualGains,
+        realStockCagr: Math.pow(stockProduct, 1 / n) - 1,
+        realBondCagr: Math.pow(bondProduct, 1 / n) - 1,
+        realCashCagr: Math.pow(cashProduct, 1 / n) - 1,
         taxableGains,
         taxDeferredGains,
         taxFreeGains,
