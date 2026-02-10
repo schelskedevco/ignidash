@@ -10,6 +10,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { ReturnsDataView } from '@/lib/types/chart-data-views';
 import type { AccountDataWithReturns } from '@/lib/calc/returns';
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
@@ -36,7 +37,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
+  dataView: ReturnsDataView;
   customDataType: 'account' | 'asset' | undefined;
 }
 
@@ -48,10 +49,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--chart-8)', 'var(--foreground)'];
 
-  const formatValue = (
-    value: number,
-    mode: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom'
-  ) => {
+  const formatValue = (value: number, mode: ReturnsDataView) => {
     switch (mode) {
       case 'rates':
       case 'cagr':
@@ -135,7 +133,7 @@ interface SingleSimulationReturnsLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
+  dataView: ReturnsDataView;
   customDataID: string;
   startAge: number;
 }

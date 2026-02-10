@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, 
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { ReturnsDataView } from '@/lib/types/chart-data-views';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomLabelListContent = (props: any) => {
@@ -14,10 +15,7 @@ const CustomLabelListContent = (props: any) => {
     return null;
   }
 
-  const formatValue = (
-    value: number,
-    mode: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom'
-  ) => {
+  const formatValue = (value: number, mode: ReturnsDataView) => {
     switch (mode) {
       case 'rates':
       case 'cagr':
@@ -64,7 +62,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationReturnsBarChartProps {
   age: number;
-  dataView: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
+  dataView: ReturnsDataView;
   rawChartData: SingleSimulationReturnsChartDataPoint[];
   customDataID: string;
 }

@@ -9,6 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { WithdrawalsDataView } from '@/lib/types/chart-data-views';
 import type { AccountDataWithFlows } from '@/lib/calc/account';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { uniformLifetimeMap } from '@/lib/calc/historical-data/rmds-table';
@@ -33,16 +34,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView:
-    | 'annualAmounts'
-    | 'cumulativeAmounts'
-    | 'taxCategory'
-    | 'realizedGains'
-    | 'requiredMinimumDistributions'
-    | 'earlyWithdrawals'
-    | 'shortfall'
-    | 'withdrawalRate'
-    | 'custom';
+  dataView: WithdrawalsDataView;
 }
 
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -150,16 +142,7 @@ interface SingleSimulationWithdrawalsLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView:
-    | 'annualAmounts'
-    | 'cumulativeAmounts'
-    | 'taxCategory'
-    | 'realizedGains'
-    | 'requiredMinimumDistributions'
-    | 'earlyWithdrawals'
-    | 'shortfall'
-    | 'withdrawalRate'
-    | 'custom';
+  dataView: WithdrawalsDataView;
   customDataID: string;
   startAge: number;
 }

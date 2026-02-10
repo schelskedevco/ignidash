@@ -2,6 +2,7 @@
 
 import Card from '@/components/ui/card';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { WithdrawalsDataView } from '@/lib/types/chart-data-views';
 import { Subheading } from '@/components/catalyst/heading';
 import { useAccountData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
@@ -11,16 +12,7 @@ import SingleSimulationWithdrawalsBarChart from '../../charts/single-simulation/
 interface SingleSimulationWithdrawalsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
-  dataView:
-    | 'annualAmounts'
-    | 'cumulativeAmounts'
-    | 'taxCategory'
-    | 'realizedGains'
-    | 'requiredMinimumDistributions'
-    | 'earlyWithdrawals'
-    | 'shortfall'
-    | 'withdrawalRate'
-    | 'custom';
+  dataView: WithdrawalsDataView;
   customDataID: string;
 }
 

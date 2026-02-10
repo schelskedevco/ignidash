@@ -7,6 +7,7 @@ import { ChartLineIcon } from 'lucide-react';
 
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-data-points';
+import type { NetWorthDataView } from '@/lib/types/chart-data-views';
 import type { AccountDataWithFlows } from '@/lib/calc/account';
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { DebtData } from '@/lib/calc/debts';
@@ -32,17 +33,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView:
-    | 'assetClass'
-    | 'taxCategory'
-    | 'netPortfolioChange'
-    | 'netWorth'
-    | 'netWorthChange'
-    | 'assetEquity'
-    | 'netAssetChange'
-    | 'debts'
-    | 'netDebtReduction'
-    | 'custom';
+  dataView: NetWorthDataView;
   customDataType: 'account' | 'asset' | 'debt' | undefined;
 }
 
@@ -192,17 +183,7 @@ interface SingleSimulationNetWorthAreaChartProps {
   startAge: number;
   keyMetrics: KeyMetrics;
   showReferenceLines: boolean;
-  dataView:
-    | 'assetClass'
-    | 'taxCategory'
-    | 'netPortfolioChange'
-    | 'netWorth'
-    | 'netWorthChange'
-    | 'assetEquity'
-    | 'netAssetChange'
-    | 'debts'
-    | 'netDebtReduction'
-    | 'custom';
+  dataView: NetWorthDataView;
   customDataID: string;
   onAgeSelect: (age: number) => void;
   selectedAge: number;

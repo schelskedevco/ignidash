@@ -5,6 +5,7 @@ import { EyeIcon, CheckIcon } from 'lucide-react';
 import { cn, formatChartString } from '@/lib/utils';
 import Card from '@/components/ui/card';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
+import type { TaxesDataView } from '@/lib/types/chart-data-views';
 import { Subheading } from '@/components/catalyst/heading';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu, DropdownLabel } from '@/components/catalyst/dropdown';
 
@@ -13,22 +14,7 @@ import SingleSimulationTaxesBarChart from '../../charts/single-simulation/single
 interface SingleSimulationTaxesBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationTaxesChartDataPoint[];
-  dataView:
-    | 'marginalRates'
-    | 'effectiveRates'
-    | 'annualAmounts'
-    | 'cumulativeAmounts'
-    | 'taxableIncome'
-    | 'adjustedGrossIncome'
-    | 'investmentIncome'
-    | 'retirementDistributions'
-    | 'taxFreeIncome'
-    | 'ordinaryIncome'
-    | 'capGainsAndDividends'
-    | 'earlyWithdrawalPenalties'
-    | 'adjustmentsAndDeductions'
-    | 'socialSecurityIncome'
-    | 'socialSecurityTaxablePercentage';
+  dataView: TaxesDataView;
   setReferenceLineMode: (mode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates') => void;
   referenceLineMode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates';
   referenceLineModes: readonly ('hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates')[];

@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell }
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { WithdrawalsDataView } from '@/lib/types/chart-data-views';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const CustomLabelListContent = (props: any) => {
@@ -45,16 +46,7 @@ const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
 
 interface SingleSimulationWithdrawalsBarChartProps {
   age: number;
-  dataView:
-    | 'annualAmounts'
-    | 'cumulativeAmounts'
-    | 'taxCategory'
-    | 'realizedGains'
-    | 'requiredMinimumDistributions'
-    | 'earlyWithdrawals'
-    | 'shortfall'
-    | 'withdrawalRate'
-    | 'custom';
+  dataView: WithdrawalsDataView;
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
   customDataID: string;
 }

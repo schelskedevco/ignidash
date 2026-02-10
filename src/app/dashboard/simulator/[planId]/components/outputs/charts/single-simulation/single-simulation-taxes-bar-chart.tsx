@@ -9,6 +9,7 @@ import type { IncomeTaxBracket } from '@/lib/calc/tax-data/income-tax-brackets';
 import type { CapitalGainsTaxBracket } from '@/lib/calc/tax-data/capital-gains-tax-brackets';
 import { NIIT_RATE } from '@/lib/calc/tax-data/niit-thresholds';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
+import type { TaxesDataView } from '@/lib/types/chart-data-views';
 
 const getTaxBrackets = (
   chartData: SingleSimulationTaxesChartDataPoint[]
@@ -161,22 +162,7 @@ const normalizeChartData = (data: BarChartData[]) => {
 
 interface SingleSimulationTaxesBarChartProps {
   age: number;
-  dataView:
-    | 'marginalRates'
-    | 'effectiveRates'
-    | 'annualAmounts'
-    | 'cumulativeAmounts'
-    | 'taxableIncome'
-    | 'adjustedGrossIncome'
-    | 'investmentIncome'
-    | 'retirementDistributions'
-    | 'taxFreeIncome'
-    | 'ordinaryIncome'
-    | 'capGainsAndDividends'
-    | 'earlyWithdrawalPenalties'
-    | 'adjustmentsAndDeductions'
-    | 'socialSecurityIncome'
-    | 'socialSecurityTaxablePercentage';
+  dataView: TaxesDataView;
   rawChartData: SingleSimulationTaxesChartDataPoint[];
   referenceLineMode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates' | null;
   agiReferenceLineMode: 'hideReferenceLines' | 'niitThreshold' | null;

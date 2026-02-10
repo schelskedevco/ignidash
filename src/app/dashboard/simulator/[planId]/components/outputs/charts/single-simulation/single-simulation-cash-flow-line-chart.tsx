@@ -10,6 +10,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
+import type { CashFlowDataView } from '@/lib/types/chart-data-views';
 import type { IncomeData } from '@/lib/calc/incomes';
 import type { ExpenseData } from '@/lib/calc/expenses';
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
@@ -34,7 +35,7 @@ interface CustomTooltipProps {
   label?: number;
   startAge: number;
   disabled: boolean;
-  dataView: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  dataView: CashFlowDataView;
 }
 
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
@@ -45,7 +46,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--chart-8)', 'var(--foreground)'];
 
-  const formatValue = (value: number, mode: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => {
+  const formatValue = (value: number, mode: CashFlowDataView) => {
     switch (mode) {
       case 'savingsRate':
         return `${(value * 100).toFixed(1)}%`;
@@ -154,7 +155,7 @@ interface SingleSimulationCashFlowLineChartProps {
   showReferenceLines: boolean;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  dataView: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  dataView: CashFlowDataView;
   customDataID?: string;
 }
 

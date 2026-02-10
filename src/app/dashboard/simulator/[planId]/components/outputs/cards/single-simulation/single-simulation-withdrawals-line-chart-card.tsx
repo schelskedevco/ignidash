@@ -5,6 +5,7 @@ import { useMemo, useCallback } from 'react';
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { WithdrawalsDataView } from '@/lib/types/chart-data-views';
 import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Subheading } from '@/components/catalyst/heading';
@@ -15,28 +16,8 @@ import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 interface SingleSimulationWithdrawalsLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (
-    view:
-      | 'annualAmounts'
-      | 'cumulativeAmounts'
-      | 'taxCategory'
-      | 'realizedGains'
-      | 'requiredMinimumDistributions'
-      | 'earlyWithdrawals'
-      | 'shortfall'
-      | 'withdrawalRate'
-      | 'custom'
-  ) => void;
-  dataView:
-    | 'annualAmounts'
-    | 'cumulativeAmounts'
-    | 'taxCategory'
-    | 'realizedGains'
-    | 'requiredMinimumDistributions'
-    | 'earlyWithdrawals'
-    | 'shortfall'
-    | 'withdrawalRate'
-    | 'custom';
+  setDataView: (view: WithdrawalsDataView) => void;
+  dataView: WithdrawalsDataView;
   setCustomDataID: (name: string) => void;
   customDataID: string;
   rawChartData: SingleSimulationWithdrawalsChartDataPoint[];
@@ -94,17 +75,7 @@ export default function SingleSimulationWithdrawalsLineChartCard({
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(
-                  e.target.value as
-                    | 'annualAmounts'
-                    | 'cumulativeAmounts'
-                    | 'taxCategory'
-                    | 'realizedGains'
-                    | 'requiredMinimumDistributions'
-                    | 'earlyWithdrawals'
-                    | 'shortfall'
-                    | 'withdrawalRate'
-                );
+                setDataView(e.target.value as WithdrawalsDataView);
                 setCustomDataID('');
               }
             }}
