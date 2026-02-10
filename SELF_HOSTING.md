@@ -42,15 +42,6 @@ cd ignidash
 npm run selfhost -- --init
 ```
 
-The setup script will:
-
-1. Ask how you'll access Ignidash (localhost, LAN IP, or domain with reverse proxy)
-2. Create `.env.local` from the template with generated secrets
-3. Start Docker containers (Convex backend, dashboard, and app)
-4. Generate and save the Convex admin key
-5. Sync environment variables to Convex
-6. Deploy Convex functions
-
 ### Step 4: Create Your Account
 
 Once complete, the script will display URLs for your app and Convex Dashboard.
@@ -97,7 +88,7 @@ npm run selfhost         # Rebuild, sync env vars, and deploy
 
 It's recommended to back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md) for more.
 
-## Access Configuration
+## Change Access Method
 
 To change your access method after setup, edit these three variables in `.env.local` and re-run `npm run selfhost` to rebuild the containers with the new URLs:
 
