@@ -1,10 +1,10 @@
 'use client';
 
-import { useTheme } from 'next-themes';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from 'recharts';
 
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { MultiSimulationPhasesChartDataPoint } from '@/lib/types/chart-data-points';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,7 +49,7 @@ interface MultiSimulationPhasesBarChartProps {
 }
 
 export default function MultiSimulationPhasesBarChart({ age, rawChartData }: MultiSimulationPhasesBarChartProps) {
-  const { resolvedTheme } = useTheme();
+  const { gridColor, foregroundMutedColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
   const formatter = (value: number) => formatNumber(value, 0);
@@ -64,9 +64,6 @@ export default function MultiSimulationPhasesBarChart({ age, rawChartData }: Mul
   if (chartData.length === 0) {
     return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
   }
-
-  const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
-  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
 
   const shouldUseCustomTick = chartData.length > 3 || (isSmallScreen && chartData.length > 1);
   const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };

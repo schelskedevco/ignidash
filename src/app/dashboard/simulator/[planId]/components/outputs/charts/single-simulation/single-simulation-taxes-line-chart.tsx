@@ -1,19 +1,22 @@
 'use client';
 
-import { useTheme } from 'next-themes';
 import { useState, useCallback, memo } from 'react';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import { ChartLineIcon } from 'lucide-react';
 
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
+import { useChartInterval } from '@/hooks/use-chart-interval';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
 import type { TaxesDataView } from '@/lib/types/chart-data-views';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Divider } from '@/components/catalyst/divider';
 import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
+
+import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -35,8 +38,6 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
 
   const currentYear = new Date().getFullYear();
   const yearForAge = currentYear + (label! - Math.floor(startAge));
-
-  const needsBgTextColor = ['var(--chart-3)', 'var(--chart-4)', 'var(--chart-6)', 'var(--chart-7)', 'var(--chart-8)', 'var(--foreground)'];
 
   const formatValue = (
     value: number,
@@ -170,7 +171,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
                 key={entry.dataKey}
                 style={{ backgroundColor: entry.color }}
                 className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                  'text-background': needsBgTextColor.includes(entry.color),
+                  'text-background': NEEDS_BG_TEXT_COLORS.includes(entry.color),
                 })}
               >
                 <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
@@ -187,7 +188,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
                 key={entry.dataKey}
                 style={{ backgroundColor: entry.color }}
                 className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                  'text-background': needsBgTextColor.includes(entry.color),
+                  'text-background': NEEDS_BG_TEXT_COLORS.includes(entry.color),
                 })}
               >
                 <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
@@ -227,7 +228,7 @@ export default function SingleSimulationTaxesLineChart({
 }: SingleSimulationTaxesLineChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
-  const { resolvedTheme } = useTheme();
+  const { gridColor, foregroundColor, backgroundColor, foregroundMutedColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
   const chartRef = useClickDetection<HTMLDivElement>(
@@ -377,16 +378,7 @@ export default function SingleSimulationTaxesLineChart({
       break;
   }
 
-  const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
-  const foregroundColor = resolvedTheme === 'dark' ? '#f5f5f4' : '#1c1917'; // stone-100 : stone-900
-  const backgroundColor = resolvedTheme === 'dark' ? '#292524' : '#ffffff'; // stone-800 : white
-  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
-
-  const calculateInterval = useCallback((dataLength: number, desiredTicks = 12) => {
-    if (dataLength <= desiredTicks) return 0;
-    return Math.ceil(dataLength / desiredTicks) - 1;
-  }, []);
-  const interval = calculateInterval(chartData.length);
+  const interval = useChartInterval(chartData.length);
 
   const onClick = useCallback(
     (data: { activeLabel: string | number | undefined }) => {

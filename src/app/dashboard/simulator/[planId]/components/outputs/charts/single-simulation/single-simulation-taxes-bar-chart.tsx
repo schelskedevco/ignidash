@@ -1,10 +1,10 @@
 'use client';
 
-import { useTheme } from 'next-themes';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, ReferenceLine, LabelList } from 'recharts';
 
 import { formatNumber } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { IncomeTaxBracket } from '@/lib/calc/tax-data/income-tax-brackets';
 import type { CapitalGainsTaxBracket } from '@/lib/calc/tax-data/capital-gains-tax-brackets';
 import { NIIT_RATE } from '@/lib/calc/tax-data/niit-thresholds';
@@ -175,7 +175,7 @@ export default function SingleSimulationTaxesBarChart({
   referenceLineMode,
   agiReferenceLineMode,
 }: SingleSimulationTaxesBarChartProps) {
-  const { resolvedTheme } = useTheme();
+  const { gridColor, foregroundColor, foregroundMutedColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
   const labelConfig: Record<string, { mobile: string[]; desktop: string[] }> = {
@@ -425,10 +425,6 @@ export default function SingleSimulationTaxesBarChart({
   if (transformedChartData.length === 0) {
     return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
   }
-
-  const gridColor = resolvedTheme === 'dark' ? '#44403c' : '#d6d3d1'; // stone-700 : stone-300
-  const foregroundColor = resolvedTheme === 'dark' ? '#f5f5f4' : '#1c1917'; // stone-100 : stone-900
-  const foregroundMutedColor = resolvedTheme === 'dark' ? '#d6d3d1' : '#57534e'; // stone-300 : stone-600
 
   const shouldUseCustomTick = transformedChartData.length > 3 || (isSmallScreen && transformedChartData.length > 1);
   const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
