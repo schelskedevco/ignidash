@@ -2,6 +2,7 @@
 
 import Card from '@/components/ui/card';
 import type { SingleSimulationContributionsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { ContributionsDataView } from '@/lib/types/chart-data-views';
 import { Subheading } from '@/components/catalyst/heading';
 import { useAccountData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
@@ -11,7 +12,7 @@ import SingleSimulationContributionsBarChart from '../../charts/single-simulatio
 interface SingleSimulationContributionsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationContributionsChartDataPoint[];
-  dataView: 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch' | 'shortfall';
+  dataView: ContributionsDataView;
   customDataID: string;
 }
 

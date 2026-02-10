@@ -3,6 +3,14 @@
 import { useState } from 'react';
 
 import type { KeyMetrics } from '@/lib/types/key-metrics';
+import type {
+  NetWorthDataView,
+  CashFlowDataView,
+  TaxesDataView,
+  ReturnsDataView,
+  ContributionsDataView,
+  WithdrawalsDataView,
+} from '@/lib/types/chart-data-views';
 import {
   useSingleSimulationNetWorthChartData,
   useSingleSimulationCashFlowChartData,
@@ -39,18 +47,7 @@ interface ChartsCategoryProps {
 function NetWorthCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationNetWorthChartData(simulation);
 
-  const [dataView, setDataView] = useState<
-    | 'assetClass'
-    | 'taxCategory'
-    | 'netPortfolioChange'
-    | 'netWorth'
-    | 'netWorthChange'
-    | 'assetEquity'
-    | 'netAssetChange'
-    | 'debts'
-    | 'netDebtReduction'
-    | 'custom'
-  >('taxCategory');
+  const [dataView, setDataView] = useState<NetWorthDataView>('taxCategory');
   const [customDataID, setCustomDataID] = useState<string>('');
 
   return (
@@ -79,9 +76,7 @@ function NetWorthCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, star
 function CashFlowCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationCashFlowChartData(simulation);
 
-  const [dataView, setDataView] = useState<'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate'>(
-    'surplusDeficit'
-  );
+  const [dataView, setDataView] = useState<CashFlowDataView>('surplusDeficit');
   const [customDataID, setCustomDataID] = useState<string>('');
 
   return (
@@ -110,23 +105,7 @@ function CashFlowCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, star
 function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationTaxesChartData(simulation);
 
-  const [dataView, setDataView] = useState<
-    | 'marginalRates'
-    | 'effectiveRates'
-    | 'annualAmounts'
-    | 'cumulativeAmounts'
-    | 'taxableIncome'
-    | 'adjustedGrossIncome'
-    | 'investmentIncome'
-    | 'retirementDistributions'
-    | 'taxFreeIncome'
-    | 'ordinaryIncome'
-    | 'capGainsAndDividends'
-    | 'earlyWithdrawalPenalties'
-    | 'adjustmentsAndDeductions'
-    | 'socialSecurityIncome'
-    | 'socialSecurityTaxablePercentage'
-  >('annualAmounts');
+  const [dataView, setDataView] = useState<TaxesDataView>('annualAmounts');
 
   const referenceLineModes = ['marginalIncomeTaxRates', 'marginalCapGainsTaxRates', 'hideReferenceLines'] as const;
   const [referenceLineMode, setReferenceLineMode] = useState<(typeof referenceLineModes)[number]>(referenceLineModes[0]);
@@ -163,9 +142,7 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
 function ReturnsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationReturnsChartData(simulation);
 
-  const [dataView, setDataView] = useState<
-    'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom'
-  >('rates');
+  const [dataView, setDataView] = useState<ReturnsDataView>('rates');
   const [customDataID, setCustomDataID] = useState<string>('');
 
   return (
@@ -194,9 +171,7 @@ function ReturnsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, start
 function ContributionsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationContributionsChartData(simulation);
 
-  const [dataView, setDataView] = useState<
-    'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'custom' | 'employerMatch' | 'shortfall'
-  >('taxCategory');
+  const [dataView, setDataView] = useState<ContributionsDataView>('taxCategory');
   const [customDataID, setCustomDataID] = useState<string>('');
 
   return (
@@ -225,17 +200,7 @@ function ContributionsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge,
 function WithdrawalsCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAge }: ChartsCategoryProps) {
   const rawChartData = useSingleSimulationWithdrawalsChartData(simulation);
 
-  const [dataView, setDataView] = useState<
-    | 'annualAmounts'
-    | 'cumulativeAmounts'
-    | 'taxCategory'
-    | 'realizedGains'
-    | 'requiredMinimumDistributions'
-    | 'earlyWithdrawals'
-    | 'shortfall'
-    | 'withdrawalRate'
-    | 'custom'
-  >('taxCategory');
+  const [dataView, setDataView] = useState<WithdrawalsDataView>('taxCategory');
   const [customDataID, setCustomDataID] = useState<string>('');
 
   return (

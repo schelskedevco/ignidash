@@ -7,6 +7,7 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationCashFlowChartDataPoint } from '@/lib/types/chart-data-points';
+import type { CashFlowDataView } from '@/lib/types/chart-data-views';
 import { Subheading } from '@/components/catalyst/heading';
 
 import SingleSimulationCashFlowLineChart from '../../charts/single-simulation/single-simulation-cash-flow-line-chart';
@@ -15,8 +16,8 @@ import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 interface SingleSimulationCashFlowLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (view: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate') => void;
-  dataView: 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'custom' | 'savingsRate';
+  setDataView: (view: CashFlowDataView) => void;
+  dataView: CashFlowDataView;
   setCustomDataID: (name: string) => void;
   customDataID: string;
   rawChartData: SingleSimulationCashFlowChartDataPoint[];
@@ -82,7 +83,7 @@ export default function SingleSimulationCashFlowLineChartCard({
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(e.target.value as 'surplusDeficit' | 'cashFlow' | 'incomes' | 'expenses' | 'savingsRate');
+                setDataView(e.target.value as CashFlowDataView);
                 setCustomDataID('');
               }
             }}

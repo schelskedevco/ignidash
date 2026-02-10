@@ -3,6 +3,7 @@
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
+import type { TaxesDataView } from '@/lib/types/chart-data-views';
 import { useShowReferenceLines } from '@/lib/stores/simulator-store';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Subheading } from '@/components/catalyst/heading';
@@ -13,40 +14,8 @@ import ChartTimeFrameDropdown from '../../chart-time-frame-dropdown';
 interface SingleSimulationTaxesLineChartCardProps {
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (
-    view:
-      | 'marginalRates'
-      | 'effectiveRates'
-      | 'annualAmounts'
-      | 'cumulativeAmounts'
-      | 'taxableIncome'
-      | 'adjustedGrossIncome'
-      | 'investmentIncome'
-      | 'retirementDistributions'
-      | 'taxFreeIncome'
-      | 'ordinaryIncome'
-      | 'capGainsAndDividends'
-      | 'earlyWithdrawalPenalties'
-      | 'adjustmentsAndDeductions'
-      | 'socialSecurityIncome'
-      | 'socialSecurityTaxablePercentage'
-  ) => void;
-  dataView:
-    | 'marginalRates'
-    | 'effectiveRates'
-    | 'annualAmounts'
-    | 'cumulativeAmounts'
-    | 'taxableIncome'
-    | 'adjustedGrossIncome'
-    | 'investmentIncome'
-    | 'retirementDistributions'
-    | 'taxFreeIncome'
-    | 'ordinaryIncome'
-    | 'capGainsAndDividends'
-    | 'earlyWithdrawalPenalties'
-    | 'adjustmentsAndDeductions'
-    | 'socialSecurityIncome'
-    | 'socialSecurityTaxablePercentage';
+  setDataView: (view: TaxesDataView) => void;
+  dataView: TaxesDataView;
   rawChartData: SingleSimulationTaxesChartDataPoint[];
   keyMetrics: KeyMetrics;
   startAge: number;
@@ -77,26 +46,7 @@ export default function SingleSimulationTaxesLineChartCard({
             id="taxes-data-view"
             name="taxes-data-view"
             value={dataView}
-            onChange={(e) =>
-              setDataView(
-                e.target.value as
-                  | 'marginalRates'
-                  | 'effectiveRates'
-                  | 'annualAmounts'
-                  | 'cumulativeAmounts'
-                  | 'taxableIncome'
-                  | 'adjustedGrossIncome'
-                  | 'investmentIncome'
-                  | 'retirementDistributions'
-                  | 'taxFreeIncome'
-                  | 'ordinaryIncome'
-                  | 'capGainsAndDividends'
-                  | 'earlyWithdrawalPenalties'
-                  | 'adjustmentsAndDeductions'
-                  | 'socialSecurityIncome'
-                  | 'socialSecurityTaxablePercentage'
-              )
-            }
+            onChange={(e) => setDataView(e.target.value as TaxesDataView)}
           >
             <optgroup label="Tax Amounts">
               <option value="annualAmounts">Annual Taxes</option>

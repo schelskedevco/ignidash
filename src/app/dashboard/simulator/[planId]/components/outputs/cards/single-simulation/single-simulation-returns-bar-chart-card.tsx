@@ -2,6 +2,7 @@
 
 import Card from '@/components/ui/card';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
+import type { ReturnsDataView } from '@/lib/types/chart-data-views';
 import { Subheading } from '@/components/catalyst/heading';
 import { useAccountData, usePhysicalAssetData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
@@ -11,7 +12,7 @@ import SingleSimulationReturnsBarChart from '../../charts/single-simulation/sing
 interface SingleSimulationReturnsBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationReturnsChartDataPoint[];
-  dataView: 'rates' | 'cagr' | 'annualAmounts' | 'cumulativeAmounts' | 'taxCategory' | 'appreciation' | 'custom';
+  dataView: ReturnsDataView;
   customDataID: string;
 }
 

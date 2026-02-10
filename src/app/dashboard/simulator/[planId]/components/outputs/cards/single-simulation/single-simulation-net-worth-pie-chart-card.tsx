@@ -3,6 +3,7 @@
 import { Fragment } from 'react';
 
 import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-data-points';
+import type { NetWorthDataView } from '@/lib/types/chart-data-views';
 import Card from '@/components/ui/card';
 import { Subheading } from '@/components/catalyst/heading';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
@@ -16,17 +17,7 @@ import SingleSimulationNetWorthBarChart from '../../charts/single-simulation/sin
 interface SingleSimulationNetWorthPieChartCardProps {
   rawChartData: SingleSimulationNetWorthChartDataPoint[];
   selectedAge: number;
-  dataView:
-    | 'assetClass'
-    | 'taxCategory'
-    | 'netPortfolioChange'
-    | 'netWorth'
-    | 'netWorthChange'
-    | 'assetEquity'
-    | 'netAssetChange'
-    | 'debts'
-    | 'netDebtReduction'
-    | 'custom';
+  dataView: NetWorthDataView;
   customDataID: string;
 }
 

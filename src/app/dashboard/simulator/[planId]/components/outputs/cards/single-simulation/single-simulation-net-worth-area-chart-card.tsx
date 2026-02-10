@@ -7,6 +7,7 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import type { SingleSimulationNetWorthChartDataPoint } from '@/lib/types/chart-data-points';
+import type { NetWorthDataView } from '@/lib/types/chart-data-views';
 import { Subheading } from '@/components/catalyst/heading';
 
 import SingleSimulationNetWorthAreaChart from '../../charts/single-simulation/single-simulation-net-worth-area-chart';
@@ -17,30 +18,8 @@ interface SingleSimulationNetWorthAreaChartCardProps {
   keyMetrics: KeyMetrics;
   onAgeSelect: (age: number) => void;
   selectedAge: number;
-  setDataView: (
-    view:
-      | 'assetClass'
-      | 'taxCategory'
-      | 'netPortfolioChange'
-      | 'netWorth'
-      | 'netWorthChange'
-      | 'assetEquity'
-      | 'netAssetChange'
-      | 'debts'
-      | 'netDebtReduction'
-      | 'custom'
-  ) => void;
-  dataView:
-    | 'assetClass'
-    | 'taxCategory'
-    | 'netPortfolioChange'
-    | 'netWorth'
-    | 'netWorthChange'
-    | 'assetEquity'
-    | 'netAssetChange'
-    | 'debts'
-    | 'netDebtReduction'
-    | 'custom';
+  setDataView: (view: NetWorthDataView) => void;
+  dataView: NetWorthDataView;
   setCustomDataID: (name: string) => void;
   customDataID: string;
   startAge: number;
@@ -105,18 +84,7 @@ export default function SingleSimulationNetWorthAreaChartCard({
                 setDataView('custom');
                 setCustomDataID(e.target.value);
               } else {
-                setDataView(
-                  e.target.value as
-                    | 'assetClass'
-                    | 'taxCategory'
-                    | 'netPortfolioChange'
-                    | 'netWorth'
-                    | 'netWorthChange'
-                    | 'assetEquity'
-                    | 'netAssetChange'
-                    | 'debts'
-                    | 'netDebtReduction'
-                );
+                setDataView(e.target.value as NetWorthDataView);
                 setCustomDataID('');
               }
             }}
