@@ -12,7 +12,7 @@ import {
   type SimulationResult,
   TAX_CONVERGENCE_THRESHOLD,
 } from '@/lib/calc/simulation-engine';
-import { sumFlows, sumInvestments, sumLiquidations } from '@/lib/calc/asset';
+import { sumFlows, sumInvestments, sumLiquidations, sumReturnAmounts } from '@/lib/calc/asset';
 
 /**
  * Rounds values within the tax convergence threshold to zero.
@@ -627,17 +627,21 @@ export class SimulationDataExtractor {
   }
 
   /**
-   * Computes annual withdrawal rate as withdrawals / (portfolio value + withdrawals)
+   * Computes annual withdrawal rate as withdrawals / beginning-of-year portfolio value.
+   * Beginning value is reconstructed: endValue - (returns + contributions - withdrawals)
    * @param dp - A single simulation data point
-   * @returns Withdrawal rate as a decimal, or null if portfolio is empty
+   * @returns Withdrawal rate as a decimal, or null if beginning-of-year portfolio is zero or negative
    */
   static getWithdrawalRate(dp: SimulationDataPoint): number | null {
     const portfolioData = dp.portfolio;
 
-    const totalValue = portfolioData.totalValue;
     const annualWithdrawals = sumFlows(portfolioData.withdrawals);
+    const annualContributions = sumFlows(portfolioData.contributions);
+    const annualReturns = dp.returns ? sumReturnAmounts(dp.returns.returnAmounts) : 0;
 
-    return totalValue + annualWithdrawals > 0 ? annualWithdrawals / (totalValue + annualWithdrawals) : null;
+    const beginningValue = portfolioData.totalValue - (annualReturns + annualContributions - annualWithdrawals);
+
+    return beginningValue > 0 ? annualWithdrawals / beginningValue : null;
   }
 
   /**
