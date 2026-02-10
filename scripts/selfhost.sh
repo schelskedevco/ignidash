@@ -13,6 +13,22 @@ echo "Ignidash Self-Hosted Setup"
 echo "=========================="
 echo ""
 
+# Cross-platform sed -i (macOS requires '' argument, Linux does not)
+portable_sed() {
+    local pattern="$1"
+    local file="$2"
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        sed -i '' "$pattern" "$file"
+    else
+        sed -i "$pattern" "$file"
+    fi
+}
+
+# Ensure .env symlink exists so Docker Compose picks up variables automatically
+ensure_env_symlink() {
+    ln -sf .env.local .env
+}
+
 # Check prerequisites
 check_prerequisites() {
     echo "Checking prerequisites..."
@@ -53,26 +69,62 @@ setup_env_file() {
         read -p "Overwrite? (y/N): " overwrite
         if [ "$overwrite" != "y" ] && [ "$overwrite" != "Y" ]; then
             echo "Keeping existing .env.local"
+            ensure_env_symlink
             return
         fi
     fi
 
     cp .env.selfhost.example .env.local
 
+    # Prompt for access method
+    echo "How will you access Ignidash?"
+    echo "  1) localhost (default)"
+    echo "  2) LAN IP or hostname (e.g., 192.168.1.100)"
+    echo "  3) Domain with reverse proxy (e.g., mydomain.com)"
+    read -p "Choice [1]: " ACCESS_CHOICE
+
+    case "$ACCESS_CHOICE" in
+        2)
+            read -p "IP or hostname: " CUSTOM_HOST
+            if [ -z "$CUSTOM_HOST" ]; then
+                echo -e "${RED}Error: IP or hostname is required${NC}"
+                exit 1
+            fi
+            echo "Configuring for host: $CUSTOM_HOST"
+            portable_sed "s|^NEXT_PUBLIC_CONVEX_URL=.*|NEXT_PUBLIC_CONVEX_URL=http://$CUSTOM_HOST:3210|" .env.local
+            portable_sed "s|^NEXT_PUBLIC_CONVEX_SITE_URL=.*|NEXT_PUBLIC_CONVEX_SITE_URL=http://$CUSTOM_HOST:3211|" .env.local
+            portable_sed "s|^SITE_URL=.*|SITE_URL=http://$CUSTOM_HOST:3000|" .env.local
+            ;;
+        3)
+            read -p "Domain (e.g., mydomain.com): " CUSTOM_DOMAIN
+            if [ -z "$CUSTOM_DOMAIN" ]; then
+                echo -e "${RED}Error: Domain is required${NC}"
+                exit 1
+            fi
+            echo "Configuring for domain: $CUSTOM_DOMAIN"
+            echo "  App:     https://$CUSTOM_DOMAIN"
+            echo "  API:     https://api.$CUSTOM_DOMAIN"
+            echo "  Actions: https://actions.$CUSTOM_DOMAIN"
+            portable_sed "s|^NEXT_PUBLIC_CONVEX_URL=.*|NEXT_PUBLIC_CONVEX_URL=https://api.$CUSTOM_DOMAIN|" .env.local
+            portable_sed "s|^NEXT_PUBLIC_CONVEX_SITE_URL=.*|NEXT_PUBLIC_CONVEX_SITE_URL=https://actions.$CUSTOM_DOMAIN|" .env.local
+            portable_sed "s|^SITE_URL=.*|SITE_URL=https://$CUSTOM_DOMAIN|" .env.local
+            ;;
+        *)
+            # Default: localhost, no changes needed
+            ;;
+    esac
+
     # Generate secrets
     BETTER_AUTH_SECRET=$(openssl rand -base64 32)
     CONVEX_API_SECRET=$(openssl rand -base64 32)
 
-    # Update .env.local with generated secrets (macOS vs Linux sed)
+    # Update .env.local with generated secrets
     # Use | as delimiter since base64 can contain /
     # Wrap in quotes since base64 can contain =, /, +
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        sed -i '' "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=\"$BETTER_AUTH_SECRET\"|" .env.local
-        sed -i '' "s|^CONVEX_API_SECRET=.*|CONVEX_API_SECRET=\"$CONVEX_API_SECRET\"|" .env.local
-    else
-        sed -i "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=\"$BETTER_AUTH_SECRET\"|" .env.local
-        sed -i "s|^CONVEX_API_SECRET=.*|CONVEX_API_SECRET=\"$CONVEX_API_SECRET\"|" .env.local
-    fi
+    portable_sed "s|^BETTER_AUTH_SECRET=.*|BETTER_AUTH_SECRET=\"$BETTER_AUTH_SECRET\"|" .env.local
+    portable_sed "s|^CONVEX_API_SECRET=.*|CONVEX_API_SECRET=\"$CONVEX_API_SECRET\"|" .env.local
+
+    ensure_env_symlink
 
     echo -e "${GREEN}Created .env.local with generated secrets${NC}"
     echo ""
@@ -199,10 +251,27 @@ print_next_steps() {
     source .env.local
     set +a
 
+    local APP_URL="${SITE_URL:-http://localhost:3000}"
+    local CONVEX_URL="${NEXT_PUBLIC_CONVEX_URL:-http://localhost:3210}"
+    local HOST
+    HOST=$(echo "$APP_URL" | sed -E 's|(https?://[^:/]+).*|\1|')
+
+    # Determine dashboard URL based on whether we're using a reverse proxy (no port in CONVEX_URL)
+    local DASHBOARD_URL
+    if echo "$CONVEX_URL" | grep -qE ':[0-9]+$'; then
+        # Port-based access (localhost or LAN IP)
+        DASHBOARD_URL="$HOST:6791"
+    else
+        # Reverse proxy — derive dashboard subdomain from app domain
+        local DOMAIN
+        DOMAIN=$(echo "$APP_URL" | sed -E 's|https?://||')
+        DASHBOARD_URL="https://dashboard.$DOMAIN"
+    fi
+
     echo -e "${GREEN}Setup complete!${NC}"
     echo ""
-    echo "Access the application at: http://localhost:3000/dashboard"
-    echo "Convex Dashboard at: http://localhost:6791"
+    echo "Access the application at: $APP_URL/signup"
+    echo "Convex Dashboard at: $DASHBOARD_URL"
     echo ""
     echo "Convex Dashboard credentials:"
     echo "  Deployment URL: $CONVEX_SELF_HOSTED_URL"
@@ -233,6 +302,7 @@ require_env_file() {
         echo "Run with --init to create a new .env.local from template"
         exit 1
     fi
+    ensure_env_symlink
 }
 
 # Main (default - requires existing .env.local)
@@ -263,9 +333,14 @@ case "$1" in
         main_init
         ;;
     --sync-only)
+        require_env_file
         set -a
         source .env.local
         set +a
+        if ! curl -sf http://127.0.0.1:3210 > /dev/null 2>&1; then
+            echo -e "${RED}Error: Convex backend is not reachable at http://127.0.0.1:3210${NC}"
+            exit 1
+        fi
         sync_convex_env
         exit 0
         ;;

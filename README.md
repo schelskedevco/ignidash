@@ -138,7 +138,7 @@ openssl rand -base64 32  # For CONVEX_API_SECRET
 After updating `.env.local`, sync your environment variables to Convex:
 
 ```bash
-npm run sync-env
+npm run selfhost -- --sync-only
 ```
 
 ### Running Locally

@@ -10,8 +10,8 @@ services:
     environment:
       - RUST_LOG=info
       - RUST_BACKTRACE=1
-      - CONVEX_CLOUD_ORIGIN=http://localhost:3210
-      - CONVEX_SITE_ORIGIN=http://localhost:3211
+      - CONVEX_CLOUD_ORIGIN=${NEXT_PUBLIC_CONVEX_URL:-http://localhost:3210}
+      - CONVEX_SITE_ORIGIN=${NEXT_PUBLIC_CONVEX_SITE_URL:-http://localhost:3211}
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://127.0.0.1:3210/version']
       interval: 5s
@@ -30,6 +30,7 @@ services:
         condition: service_healthy
     environment:
       - CONVEX_BACKEND_URL=http://convex-backend:3210
+      - NEXT_PUBLIC_DEPLOYMENT_URL=${NEXT_PUBLIC_CONVEX_URL:-http://localhost:3210}
     stop_signal: SIGINT
     stop_grace_period: 10s
 
@@ -45,8 +46,6 @@ services:
       - .env.local
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_CONVEX_URL=http://convex-backend:3210
-      - NEXT_PUBLIC_CONVEX_SITE_URL=http://convex-backend:3211
       - SELF_HOSTED_CONVEX_URL=http://convex-backend:3210
       - SELF_HOSTED_CONVEX_SITE_URL=http://convex-backend:3211
       - SITE_URL=${SITE_URL:-http://localhost:3000}

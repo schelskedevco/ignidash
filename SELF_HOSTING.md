@@ -44,31 +44,20 @@ npm run selfhost -- --init
 
 The setup script will:
 
-1. Create `.env.local` from the template with generated secrets
-2. Start Docker containers (Convex backend, dashboard, and app)
-3. Generate and save the Convex admin key
-4. Sync environment variables to Convex
-5. Deploy Convex functions
+1. Ask how you'll access Ignidash (localhost, LAN IP, or domain with reverse proxy)
+2. Create `.env.local` from the template with generated secrets
+3. Start Docker containers (Convex backend, dashboard, and app)
+4. Generate and save the Convex admin key
+5. Sync environment variables to Convex
+6. Deploy Convex functions
 
-### Step 4: Access Your App
+### Step 4: Create Your Account
 
-Once complete, the script will display:
+Once complete, the script will display URLs for your app and Convex Dashboard.
 
-- **Application:** http://localhost:3000/dashboard
-- **Convex Dashboard:** http://localhost:6791
-- **Dashboard credentials** (Deployment URL and Admin Key)
+Open the app URL (default: http://localhost:3000/signup), create an account, and you're in.
 
-Open your browser and navigate to http://localhost:3000/dashboard.
-
-### Step 5: Create Your Account
-
-The first time you visit the app, create a new account:
-
-1. Click "Create an account" on the sign in page
-2. Enter your email, name, and password
-3. You're in!
-
-### Step 6: Enjoy!
+### Step 5: Enjoy!
 
 Your self-hosted Ignidash is now running. If you find bugs or have feature requests, join our [Discord](https://discord.gg/AVNg9JCNUr) or open a [GitHub Issue](https://github.com/schelskedevco/ignidash/issues).
 
@@ -96,6 +85,8 @@ The default `docker-compose.yml` uses `stable`.
 | `npm run docker:down`             | Stop services                                                     |
 | `npm run docker:logs`             | Stream service logs                                               |
 
+> **Note:** `npm run selfhost` generates a new Convex admin key each run. Your Convex Dashboard credentials will change. The new key is saved to `.env.local`.
+
 ## Upgrading
 
 ```bash
@@ -104,9 +95,36 @@ docker compose pull      # Pull latest images (app, Convex backend, and dashboar
 npm run selfhost         # Rebuild, sync env vars, and deploy
 ```
 
-> **Note:** `npm run selfhost` regenerates the Convex admin key each run, so your Convex Dashboard credentials will change after upgrading. The new key is saved to `.env.local`.
-
 It's recommended to back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md) for more.
+
+## Access Configuration
+
+To change your access method after setup, edit these three variables in `.env.local` and re-run `npm run selfhost` to rebuild the containers with the new URLs:
+
+- `SITE_URL` — where the app is reachable (e.g., `http://192.168.1.100:3000` or `https://mydomain.com`)
+- `NEXT_PUBLIC_CONVEX_URL` — Convex API (e.g., `http://192.168.1.100:3210` or `https://api.mydomain.com`)
+- `NEXT_PUBLIC_CONVEX_SITE_URL` — Convex HTTP Actions (e.g., `http://192.168.1.100:3211` or `https://actions.mydomain.com`)
+
+Always keep `CONVEX_SELF_HOSTED_URL=http://127.0.0.1:3210` — the Convex CLI runs on the host machine.
+
+### LAN / IP Access
+
+> **Firewall:** Ports 3000, 3210, 3211, and 6791 must be reachable from client machines. If you're running on a homelab (e.g., Proxmox, TrueNAS), check that your host firewall and any network-level rules allow traffic on these ports.
+
+### Reverse Proxy / Custom Domain
+
+The setup script uses `api.` and `actions.` subdomains by default. If you use different subdomains, edit the URLs above in `.env.local` after setup.
+
+Configure your reverse proxy to forward requests to the local ports:
+
+| Public URL                       | Target           | Notes                                |
+| -------------------------------- | ---------------- | ------------------------------------ |
+| `https://mydomain.com`           | `localhost:3000` | Ignidash app                         |
+| `https://api.mydomain.com`       | `localhost:3210` | Convex API (needs WebSocket support) |
+| `https://actions.mydomain.com`   | `localhost:3211` | Convex HTTP Actions                  |
+| `https://dashboard.mydomain.com` | `localhost:6791` | Convex Dashboard                     |
+
+> **Important:** The Convex API proxy (`api.mydomain.com` -> `localhost:3210`) **must** support WebSocket connections. Ensure your reverse proxy is configured for WebSocket upgrades (Nginx: `proxy_set_header Upgrade $http_upgrade` + `proxy_set_header Connection "upgrade"`, Caddy: automatic, Traefik: automatic).
 
 ## Environment Variables
 
