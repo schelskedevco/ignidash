@@ -1,13 +1,11 @@
 #!/bin/sh
 set -e
 
-# Patch baked-in localhost URLs with internal Docker URLs in server bundles.
-# Next.js bakes NEXT_PUBLIC_* vars at build time, so we need to patch
-# the server-side bundles to use the internal Docker network URLs.
+# Patch baked-in localhost URLs at container start.
+# Next.js bakes NEXT_PUBLIC_* vars at build time, so we patch the bundles
+# to use the correct URLs for the deployment environment.
 
-PATCH_MARKER="/tmp/.patched"
-
-if [ -n "$SELF_HOSTED_CONVEX_URL" ] && [ ! -f "$PATCH_MARKER" ]; then
+if [ -n "$SELF_HOSTED_CONVEX_URL" ]; then
   echo "Patching server bundles..."
 
   # Patch Convex backend URLs
@@ -39,7 +37,6 @@ if [ -n "$SELF_HOSTED_CONVEX_URL" ] && [ ! -f "$PATCH_MARKER" ]; then
       -e "s|http://127.0.0.1:3211|$NEXT_PUBLIC_CONVEX_SITE_URL|g" {} +
   fi
 
-  touch "$PATCH_MARKER"
   echo "Patching complete"
 fi
 
