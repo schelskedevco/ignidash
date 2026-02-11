@@ -392,6 +392,62 @@ describe('Income Type Tax Handling', () => {
     expect(result.incomeAfterPayrollDeductions).toBe(3000);
   });
 
+  it('zero withholding rate on wage income still applies FICA', () => {
+    const income = new Income(
+      createIncomeInput({
+        amount: 10000,
+        frequency: 'monthly',
+        taxes: { incomeType: 'wage', withholding: 0 },
+      })
+    );
+
+    const result = income.processMonthlyAmount(2024);
+
+    expect(result.income).toBe(10000);
+    expect(result.amountWithheld).toBe(0);
+    expect(result.ficaTax).toBeCloseTo(765); // 7.65% FICA
+    expect(result.incomeAfterPayrollDeductions).toBeCloseTo(9235); // 10000 - 0 - 765
+  });
+
+  it('mixed income types produce correct aggregate deductions', () => {
+    const incomes = new Incomes([
+      createIncomeInput({
+        id: 'wage',
+        name: 'Wage',
+        amount: 10000,
+        frequency: 'monthly',
+        taxes: { incomeType: 'wage', withholding: 22 },
+      }),
+      createIncomeInput({
+        id: 'ss',
+        name: 'Social Security',
+        amount: 2500,
+        frequency: 'monthly',
+        taxes: { incomeType: 'socialSecurity', withholding: 10 },
+      }),
+      createIncomeInput({
+        id: 'exempt',
+        name: 'Tax Free',
+        amount: 3000,
+        frequency: 'monthly',
+        taxes: { incomeType: 'exempt' },
+      }),
+    ]);
+
+    const simState = createSimulationState();
+    const processor = new IncomesProcessor(simState, incomes);
+    const result = processor.process();
+
+    // Gross: 10000 + 2500 + 3000 = 15500
+    expect(result.totalIncome).toBeCloseTo(15500);
+    // Withheld: 10000*0.22 + 2500*0.10 = 2200 + 250 = 2450
+    expect(result.totalAmountWithheld).toBeCloseTo(2450);
+    // FICA: only on wage = 10000*0.0765 = 765
+    expect(result.totalFicaTax).toBeCloseTo(765);
+    // Net: 15500 - 2450 - 765 = 12285
+    expect(result.totalIncomeAfterPayrollDeductions).toBeCloseTo(12285);
+  });
+
   it('pension income: standard income (no special handling)', () => {
     const income = new Income(
       createIncomeInput({
@@ -616,5 +672,7 @@ describe('IncomesProcessor Tests', () => {
     expect(annualData.totalIncome).toBeCloseTo(120000);
     expect(annualData.totalAmountWithheld).toBeCloseTo(26400); // 22% of $120k
     expect(annualData.totalFicaTax).toBeCloseTo(9180); // 7.65% of $120k
+    // Net: 120000 - 26400 - 9180 = 84420
+    expect(annualData.totalIncomeAfterPayrollDeductions).toBeCloseTo(84420);
   });
 });

@@ -28,6 +28,103 @@ const createMockSimulationContext = createSimulationContext;
 // ============================================================================
 
 describe('PortfolioProcessor', () => {
+  // ============================================================================
+  // Payroll Deductions in Cash Flow Tests
+  // ============================================================================
+
+  describe('payroll deductions in cash flow', () => {
+    it('contributions are based on post-deduction income, not gross', () => {
+      const portfolio = new Portfolio([create401kAccount({ id: '401k-1', balance: 50000 })]);
+      const state = createMockSimulationState(portfolio, 35, 'accumulation');
+      const processor = new PortfolioProcessor(
+        state,
+        createMockSimulationContext(),
+        new ContributionRules([createContributionRule({ accountId: '401k-1' })], { type: 'spend' })
+      );
+
+      // Gross 10000, net after deductions 7035 (e.g. 22% withholding + 7.65% FICA)
+      const incomes = createEmptyIncomesData({
+        totalIncome: 10000,
+        totalIncomeAfterPayrollDeductions: 7035,
+        totalAmountWithheld: 2200,
+        totalFicaTax: 765,
+      });
+      const expenses = createEmptyExpensesData({ totalExpenses: 5000 });
+
+      const result = processor.processContributionsAndWithdrawals(
+        incomes,
+        expenses,
+        createEmptyDebtsData(),
+        createEmptyPhysicalAssetsData()
+      );
+
+      // Contribution should be 7035 - 5000 = 2035 (based on net, not 10000 - 5000 = 5000)
+      const totalContributions =
+        result.portfolioData.contributions.stocks + result.portfolioData.contributions.bonds + result.portfolioData.contributions.cash;
+      expect(totalContributions).toBeCloseTo(2035, 0);
+    });
+
+    it('deductions can turn positive gross income into a withdrawal scenario', () => {
+      const portfolio = new Portfolio([createSavingsAccount({ balance: 50000 })]);
+      const state = createMockSimulationState(portfolio, 65);
+      const processor = new PortfolioProcessor(state, createMockSimulationContext(), new ContributionRules([], { type: 'spend' }));
+
+      // Gross 6000, but after deductions only 3000 available
+      const incomes = createEmptyIncomesData({
+        totalIncome: 6000,
+        totalIncomeAfterPayrollDeductions: 3000,
+        totalAmountWithheld: 2541,
+        totalFicaTax: 459,
+      });
+      const expenses = createEmptyExpensesData({ totalExpenses: 5000 });
+
+      const result = processor.processContributionsAndWithdrawals(
+        incomes,
+        expenses,
+        createEmptyDebtsData(),
+        createEmptyPhysicalAssetsData()
+      );
+
+      // Net cash flow: 3000 - 5000 = -2000 -> should withdraw 2000
+      const totalWithdrawals =
+        result.portfolioData.withdrawals.stocks + result.portfolioData.withdrawals.bonds + result.portfolioData.withdrawals.cash;
+      expect(totalWithdrawals).toBeCloseTo(2000, 0);
+    });
+
+    it('withholding refund is contributed back to portfolio during tax settlement', () => {
+      const portfolio = new Portfolio([createSavingsAccount({ balance: 50000 })]);
+      const state = createMockSimulationState(portfolio, 65);
+      const processor = new PortfolioProcessor(
+        state,
+        createMockSimulationContext(),
+        new ContributionRules([], { type: 'save' }) // Save refund surplus
+      );
+
+      // Process a month with income that had withholding
+      const incomes = createEmptyIncomesData({
+        totalIncome: 10000,
+        totalIncomeAfterPayrollDeductions: 7035,
+        totalAmountWithheld: 2200,
+        totalFicaTax: 765,
+      });
+      const expenses = createEmptyExpensesData({ totalExpenses: 7035 });
+      processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), createEmptyPhysicalAssetsData());
+
+      // Get pre-tax annual data
+      const annualDataBeforeTaxes = processor.getAnnualData();
+
+      // Simulate a tax refund (withholding exceeded actual tax liability)
+      const taxResult = processor.processTaxes(annualDataBeforeTaxes, {
+        totalTaxesDue: 0,
+        totalTaxesRefund: 1000,
+      });
+
+      // Refund should be contributed to extra savings
+      const extraSavingsId = '54593a0d-7b4f-489d-a5bd-42500afba532';
+      expect(taxResult.portfolioData.perAccountData[extraSavingsId].contributions.cash).toBe(1000);
+    });
+  });
+
   describe('withdrawal ordering by age', () => {
     it('should withdraw from savings first before age 59.5', () => {
       const portfolio = new Portfolio([
