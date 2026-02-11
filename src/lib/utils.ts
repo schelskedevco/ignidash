@@ -12,6 +12,7 @@ export function formatNumber(num: number, fractionDigits: number = 2): string {
   if (absNum >= 1000000000) return sign + (absNum / 1000000000).toFixed(2) + 'B';
   if (absNum >= 1000000) return sign + (absNum / 1000000).toFixed(2) + 'M';
   if (absNum >= 1000) return sign + (absNum / 1000).toFixed(1) + 'k';
+
   return sign + absNum.toFixed(fractionDigits);
 }
 

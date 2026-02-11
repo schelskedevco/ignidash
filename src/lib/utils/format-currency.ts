@@ -33,6 +33,7 @@ export function formatCompactCurrency(amount: number, fractionDigits: number = 2
   if (absNum >= 1000000000) return sign + symbol + (absNum / 1000000000).toFixed(2) + 'B';
   if (absNum >= 1000000) return sign + symbol + (absNum / 1000000).toFixed(2) + 'M';
   if (absNum >= 1000) return sign + symbol + (absNum / 1000).toFixed(1) + 'k';
+
   return sign + symbol + absNum.toFixed(fractionDigits);
 }
 
