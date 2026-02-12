@@ -38,7 +38,7 @@ export const Select = forwardRef(function Select(
           // Options (multi-select)
           '[&_optgroup]:font-semibold',
           // Typography
-          'text-base/6 text-stone-950 placeholder:text-stone-500 sm:text-sm/6 dark:text-white',
+          'text-base/6 text-stone-950 placeholder:text-stone-500 sm:text-sm/6 dark:text-white dark:[&>option]:text-[revert]',
           // Border
           'border border-stone-950/25 data-hover:border-stone-950/50 dark:border-white/25 dark:data-hover:border-white/50',
           // Background color
