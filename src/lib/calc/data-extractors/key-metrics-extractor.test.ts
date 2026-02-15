@@ -318,8 +318,11 @@ describe('KeyMetricsExtractor', () => {
 
         const metrics = KeyMetricsExtractor.extractSingleSimulationMetrics(simulation);
 
-        // Progress = startAge / retirementAge = 50 / 65 ≈ 0.769
-        expect(metrics.progressToRetirement).toBeCloseTo(50 / 65, 3);
+        // Progress = initialPortfolio / portfolioAtRetirement
+        // Initial portfolio = 500000 (at age 50, i=0)
+        // Portfolio at retirement (age 65, i=15) = 500000 + 15*50000 = 1250000
+        // Progress = 500000 / 1250000 = 0.4
+        expect(metrics.progressToRetirement).toBeCloseTo(0.4, 3);
       });
 
       it('caps progress at 1 when already past retirement age', () => {

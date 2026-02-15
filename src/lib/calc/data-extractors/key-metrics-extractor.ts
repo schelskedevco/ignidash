@@ -40,8 +40,6 @@ export abstract class KeyMetricsExtractor {
         retirementAge = retirementStrategy.retirementAge;
         yearsToRetirement = retirementAge - Math.floor(startAge);
 
-        progressToRetirement = Math.min(startAge / retirementAge, 1);
-
         for (const dp of data) {
           const phase = dp.phase;
           if (phase?.name === 'retirement') {
@@ -61,12 +59,10 @@ export abstract class KeyMetricsExtractor {
           }
         }
 
-        if (portfolioAtRetirement !== null) {
-          progressToRetirement = Math.min(initialPortfolio / portfolioAtRetirement, 1);
-        }
-
         break;
     }
+
+    if (portfolioAtRetirement !== null) progressToRetirement = Math.min(initialPortfolio / portfolioAtRetirement, 1);
 
     const shortfallOccurred = data.some((dp) => dp.portfolio.shortfall > 0);
     // Success requires: reaching retirement, portfolio above $0.10 at end, and no shortfalls
