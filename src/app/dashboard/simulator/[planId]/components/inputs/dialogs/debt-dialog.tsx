@@ -36,8 +36,9 @@ import { Divider } from '@/components/catalyst/divider';
 import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/format-currency';
 
 import SyncWithNetWorthTrackerSelect from './sync-with-nw-tracker-select';
-
 import { PayoffEstimate } from './payoff-estimate';
+
+const LINKABLE_UNSECURED_DEBT_TYPES: LiabilityInputs['type'][] = ['creditCard', 'medicalDebt', 'studentLoan', 'personalLoan', 'other'];
 
 interface DebtDialogProps {
   onClose: () => void;
@@ -87,7 +88,7 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, debts
   const isSynced = !!syncedFinanceId;
 
   const alreadySyncedIds = useAlreadySyncedIds(debts, 'syncedFinanceId', selectedDebt?.id);
-  const linkableLiabilities = useLinkableFinances(nwLiabilities, alreadySyncedIds);
+  const linkableLiabilities = useLinkableFinances(nwLiabilities, alreadySyncedIds, LINKABLE_UNSECURED_DEBT_TYPES);
 
   const handleSyncChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const liabilityId = e.target.value;
