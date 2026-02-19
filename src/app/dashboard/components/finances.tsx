@@ -156,7 +156,7 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
               </TooltipTrigger>
               <TooltipContent>
                 <p>Add assets and liabilities to track your net worth.</p>
-                <p>Note: entries are not connected to Simulator plans.</p>
+                <p>Entries can be synced to Simulator plans.</p>
               </TooltipContent>
             </Tooltip>
             <span className="text-muted-foreground text-2xl/8 font-normal sm:text-xl/8">{formatCompactCurrency(netWorth, 2)}</span>
