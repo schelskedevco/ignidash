@@ -115,7 +115,7 @@ export default function LiabilityDialog({ onClose, selectedLiability: _selectedL
               </Field>
               <Field>
                 <Label htmlFor="type">Liability Type</Label>
-                <Select {...register('type')} id="type" name="type">
+                <Select {...register('type')} id="type" name="type" disabled={!!selectedLiability}>
                   <option value="mortgage">Mortgage</option>
                   <option value="autoLoan">Auto Loan</option>
                   <option value="studentLoan">Student Loan</option>
