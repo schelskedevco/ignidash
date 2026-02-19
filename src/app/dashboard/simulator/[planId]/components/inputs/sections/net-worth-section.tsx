@@ -185,6 +185,7 @@ export default function NetWorthSection(props: NetWorthSectionProps) {
                       onDropdownClickEdit={() => handleAccountDropdownClickEdit(account)}
                       onDropdownClickDelete={() => setAccountToDelete({ id, name: account.name })}
                       colorClassName={ACCOUNT_COLOR_MAP[taxCategoryFromAccountType(account.type)]}
+                      syncedWithNWTracker={!!account.syncedFinanceId}
                     />
                   ))}
                 {numPhysicalAssets > 0 &&
@@ -199,6 +200,7 @@ export default function NetWorthSection(props: NetWorthSectionProps) {
                       onDropdownClickEdit={() => handlePhysicalAssetDropdownClickEdit(asset)}
                       onDropdownClickDelete={() => setPhysicalAssetToDelete({ id, name: asset.name })}
                       colorClassName="bg-[var(--chart-8)]"
+                      syncedWithNWTracker={!!asset.syncedAssetId || !!asset.syncedLiabilityId}
                     />
                   ))}
               </ul>

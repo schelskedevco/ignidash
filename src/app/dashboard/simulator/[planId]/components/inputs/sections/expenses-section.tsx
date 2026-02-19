@@ -196,6 +196,7 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
                       onDropdownClickDelete={() => setDebtToDelete({ id, name: debt.name })}
                       onDropdownClickDisable={async () => await disableDebt(id)}
                       colorClassName="bg-[var(--chart-5)]"
+                      syncedWithNWTracker={!!debt.syncedFinanceId}
                     />
                   ))}
               </ul>
