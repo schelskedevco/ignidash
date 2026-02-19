@@ -115,7 +115,7 @@ export default function AssetDialog({ onClose, selectedAsset: _selectedAsset, nu
               </Field>
               <Field>
                 <Label htmlFor="type">Asset Type</Label>
-                <Select {...register('type')} id="type" name="type">
+                <Select {...register('type')} id="type" name="type" disabled={!!selectedAsset}>
                   <optgroup label="Bank Accounts">
                     <option value="savings">Savings</option>
                     <option value="checking">Checking</option>
