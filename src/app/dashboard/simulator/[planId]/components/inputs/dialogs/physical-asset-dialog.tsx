@@ -39,7 +39,8 @@ import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/format
 import SyncWithNetWorthTrackerSelect from './sync-with-nw-tracker-select';
 import { PayoffEstimate } from './payoff-estimate';
 
-const LINKABLE_PHYSICAL_TYPES: AssetInputs['type'][] = ['realEstate', 'vehicle', 'preciousMetals', 'other'];
+const LINKABLE_PHYSICAL_ASSET_TYPES: AssetInputs['type'][] = ['realEstate', 'vehicle', 'preciousMetals', 'other'];
+const LINKABLE_SECURED_DEBT_TYPES: LiabilityInputs['type'][] = ['mortgage', 'autoLoan', 'other'];
 
 interface PhysicalAssetDialogProps {
   onClose: () => void;
@@ -130,7 +131,7 @@ export default function PhysicalAssetDialog({
   const isAssetSynced = !!syncedAssetId;
 
   const alreadySyncedAssetIds = useAlreadySyncedIds(physicalAssets, 'syncedAssetId', selectedPhysicalAsset?.id);
-  const linkableAssets = useLinkableFinances(nwAssets, alreadySyncedAssetIds, LINKABLE_PHYSICAL_TYPES);
+  const linkableAssets = useLinkableFinances(nwAssets, alreadySyncedAssetIds, LINKABLE_PHYSICAL_ASSET_TYPES);
 
   const handleAssetSyncChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const assetId = e.target.value;
@@ -151,7 +152,7 @@ export default function PhysicalAssetDialog({
   const isLiabilitySynced = !!syncedLiabilityId;
 
   const alreadySyncedLiabilityIds = useAlreadySyncedIds(physicalAssets, 'syncedLiabilityId', selectedPhysicalAsset?.id);
-  const linkableLiabilities = useLinkableFinances(nwLiabilities, alreadySyncedLiabilityIds);
+  const linkableLiabilities = useLinkableFinances(nwLiabilities, alreadySyncedLiabilityIds, LINKABLE_SECURED_DEBT_TYPES);
 
   const handleLiabilitySyncChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const liabilityId = e.target.value;

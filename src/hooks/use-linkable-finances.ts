@@ -12,13 +12,13 @@ interface FinanceItem {
 export function useLinkableFinances<T extends FinanceItem>(
   items: T[] | null | undefined,
   alreadySyncedIds: Set<string>,
-  typeFilter?: string[]
+  typeFilter: string[]
 ): T[] {
   return useMemo(
     () =>
       items?.filter((item) => {
         if (alreadySyncedIds.has(item.id)) return false;
-        if (typeFilter && !typeFilter.includes(item.type)) return false;
+        if (!typeFilter.includes(item.type)) return false;
         return true;
       }) ?? [],
     [items, alreadySyncedIds, typeFilter]
