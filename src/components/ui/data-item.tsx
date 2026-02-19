@@ -1,5 +1,5 @@
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
-import { GripVerticalIcon } from 'lucide-react';
+import { GripVerticalIcon, LinkIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
@@ -18,6 +18,7 @@ interface DataItemProps {
   style?: React.CSSProperties;
   showDragHandle?: boolean;
   colorClassName?: string;
+  syncedWithNWTracker?: boolean;
 }
 
 export default function DataItem({
@@ -34,6 +35,7 @@ export default function DataItem({
   style,
   showDragHandle,
   colorClassName,
+  syncedWithNWTracker,
   ...otherProps
 }: DataItemProps) {
   return (
@@ -53,14 +55,17 @@ export default function DataItem({
       </div>
       <div className="bg-emphasized-background border-border/50 flex flex-1 items-center justify-between truncate border-t border-r border-b">
         <div className="flex-1 truncate px-4 py-2">
-          <h4
-            className={cn(
-              'text-base font-medium text-stone-900 hover:text-stone-600 dark:text-white dark:hover:text-stone-200',
-              disabled && 'line-through'
-            )}
-          >
-            {name}
-          </h4>
+          <div className="flex items-center gap-1.5">
+            <h4
+              className={cn(
+                'text-base font-medium text-stone-900 hover:text-stone-600 dark:text-white dark:hover:text-stone-200',
+                disabled && 'line-through'
+              )}
+            >
+              {name}
+            </h4>
+            {syncedWithNWTracker && <LinkIcon className="text-muted-foreground size-3.5 shrink-0" />}
+          </div>
           <div className="text-muted-foreground text-sm">{desc}</div>
         </div>
         <div className="shrink-0 pr-2">
