@@ -13,6 +13,7 @@ import posthog from 'posthog-js';
 import { accountToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs, isRothAccount, type RothAccountType } from '@/lib/schemas/inputs/account-form-schema';
+import { assetTypeForDisplay, type AssetInputs } from '@/lib/schemas/finances/asset-schema';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';
@@ -20,19 +21,36 @@ import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
+import { useAlreadySyncedIds } from '@/hooks/use-already-synced-ids';
+import { useLinkableFinances } from '@/hooks/use-linkable-finances';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/format-currency';
 
+import SyncWithNetWorthTrackerSelect from './sync-with-nw-tracker-select';
+
+const LINKABLE_INVESTMENT_TYPES: AssetInputs['type'][] = [
+  'taxableBrokerage',
+  '401k',
+  '403b',
+  'ira',
+  'roth401k',
+  'roth403b',
+  'rothIra',
+  'hsa',
+];
+
 interface AccountDialogProps {
   onClose: () => void;
   selectedAccount: AccountInputs | null;
-  numAccounts: number;
+  accounts: Record<string, AccountInputs>;
+  nwAssets: AssetInputs[] | null;
 }
 
-export default function AccountDialog({ onClose, selectedAccount: _selectedAccount, numAccounts }: AccountDialogProps) {
+export default function AccountDialog({ onClose, selectedAccount: _selectedAccount, accounts, nwAssets }: AccountDialogProps) {
   const planId = useSelectedPlanId();
   const [selectedAccount] = useState(_selectedAccount);
+  const numAccounts = Object.keys(accounts).length;
 
   const newAccountDefaultValues = useMemo(
     () =>
@@ -53,6 +71,7 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
     control,
     handleSubmit,
     getFieldState,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(accountFormSchema),
@@ -90,6 +109,27 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
   };
 
   const type = useWatch({ control, name: 'type' });
+  const syncedFinanceId = useWatch({ control, name: 'syncedFinanceId' });
+  const isSynced = !!syncedFinanceId;
+
+  const alreadySyncedIds = useAlreadySyncedIds(accounts, 'syncedFinanceId', selectedAccount?.id);
+  const linkableAssets = useLinkableFinances(nwAssets, alreadySyncedIds, LINKABLE_INVESTMENT_TYPES);
+
+  const handleSyncChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const assetId = e.target.value;
+    if (!assetId) {
+      setValue('syncedFinanceId', undefined);
+      return;
+    }
+
+    const asset = linkableAssets.find((a) => a.id === assetId);
+    if (!asset) return;
+
+    setValue('syncedFinanceId', asset.id);
+    setValue('type', asset.type as AccountInputs['type']);
+    setValue('balance', asset.value);
+    setValue('name', asset.name);
+  };
 
   useEffect(() => {
     if (!isRothAccount(type)) {
@@ -104,6 +144,11 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
   const getBalanceColSpan = () => {
     if (type === 'taxableBrokerage' || isRothAccount(type)) return 'col-span-1';
     return 'col-span-2';
+  };
+
+  const getNameColSpan = () => {
+    if (linkableAssets.length === 0) return 'col-span-2';
+    return 'col-span-1';
   };
 
   const { error: costBasisError } = getFieldState('costBasis');
@@ -124,7 +169,7 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
             <FieldGroup>
               {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <div className="grid grid-cols-2 gap-4">
-                <Field className="col-span-2">
+                <Field className={getNameColSpan()}>
                   <Label htmlFor="name">Name</Label>
                   <Input
                     {...register('name')}
@@ -135,12 +180,19 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
                     inputMode="text"
                     invalid={!!errors.name}
                     aria-invalid={!!errors.name}
+                    readOnly={isSynced}
                   />
                   {errors.name && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
                 </Field>
+                <SyncWithNetWorthTrackerSelect
+                  fieldId="syncedFinanceId"
+                  options={linkableAssets.map((a) => ({ id: a.id, label: `${a.name} | ${assetTypeForDisplay(a.type)}` }))}
+                  value={syncedFinanceId}
+                  onChange={handleSyncChange}
+                />
                 <Field className="col-span-2">
                   <Label htmlFor="type">Account Type</Label>
-                  <Select {...register('type')} id="type" name="type">
+                  <Select {...register('type')} id="type" name="type" disabled={isSynced}>
                     <optgroup label="Taxable Accounts">
                       <option value="taxableBrokerage">Taxable Brokerage</option>
                     </optgroup>
@@ -168,6 +220,7 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
                     placeholder={formatCurrencyPlaceholder(15000)}
                     prefix={getCurrencySymbol()}
                     autoFocus
+                    readOnly={isSynced}
                   />
                   {errors.balance && <ErrorMessage>{errors.balance?.message}</ErrorMessage>}
                 </Field>

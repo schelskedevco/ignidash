@@ -8,4 +8,7 @@ export default defineConfig({
       '@/convex': resolve(__dirname, './convex'),
     },
   },
+  test: {
+    server: { deps: { inline: ['convex-test'] } },
+  },
 });

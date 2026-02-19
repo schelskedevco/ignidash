@@ -23,4 +23,5 @@ export const debtValidator = v.object({
   startDate: debtTimePointValidator,
   monthlyPayment: v.number(),
   disabled: v.optional(v.boolean()),
+  syncedFinanceId: v.optional(v.string()),
 });

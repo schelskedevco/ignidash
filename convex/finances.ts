@@ -5,6 +5,14 @@ import { assetValidator } from './validators/asset_validator';
 import { liabilityValidator } from './validators/liability_validator';
 import { getUserIdOrThrow } from './utils/auth_utils';
 import { getFinancesForUser } from './utils/finances_utils';
+import {
+  syncAssetToPlans,
+  unsyncAssetFromPlans,
+  unsyncAllAssetsFromPlans,
+  syncLiabilityToPlans,
+  unsyncLiabilityFromPlans,
+  unsyncAllLiabilitiesFromPlans,
+} from './utils/finance_sync_utils';
 
 function validateUrl(url: string | undefined): void {
   if (!url) return;
@@ -66,7 +74,7 @@ export const upsertAsset = mutation({
     const updatedAssets =
       existingIndex !== -1 ? finances.assets.map((a, index) => (index === existingIndex ? asset : a)) : [...finances.assets, asset];
 
-    await ctx.db.patch(finances._id, { assets: updatedAssets });
+    await Promise.all([ctx.db.patch(finances._id, { assets: updatedAssets }), syncAssetToPlans(ctx, userId, asset)]);
   },
 });
 
@@ -95,7 +103,7 @@ export const upsertLiability = mutation({
         ? finances.liabilities.map((l, index) => (index === existingIndex ? liability : l))
         : [...finances.liabilities, liability];
 
-    await ctx.db.patch(finances._id, { liabilities: updatedLiabilities });
+    await Promise.all([ctx.db.patch(finances._id, { liabilities: updatedLiabilities }), syncLiabilityToPlans(ctx, userId, liability)]);
   },
 });
 
@@ -105,7 +113,9 @@ export const deleteAllFinances = mutation({
 
     const finances = await getFinancesForUser(ctx, userId);
 
-    if (finances) await ctx.db.delete(finances._id);
+    if (finances) {
+      await Promise.all([ctx.db.delete(finances._id), unsyncAllAssetsFromPlans(ctx, userId), unsyncAllLiabilitiesFromPlans(ctx, userId)]);
+    }
   },
 });
 
@@ -115,7 +125,9 @@ export const deleteAllAssets = mutation({
 
     const finances = await getFinancesForUser(ctx, userId);
 
-    if (finances) await ctx.db.patch(finances._id, { assets: [] });
+    if (finances) {
+      await Promise.all([ctx.db.patch(finances._id, { assets: [] }), unsyncAllAssetsFromPlans(ctx, userId)]);
+    }
   },
 });
 
@@ -125,7 +137,9 @@ export const deleteAllLiabilities = mutation({
 
     const finances = await getFinancesForUser(ctx, userId);
 
-    if (finances) await ctx.db.patch(finances._id, { liabilities: [] });
+    if (finances) {
+      await Promise.all([ctx.db.patch(finances._id, { liabilities: [] }), unsyncAllLiabilitiesFromPlans(ctx, userId)]);
+    }
   },
 });
 
@@ -141,7 +155,7 @@ export const deleteAsset = mutation({
 
     const updatedAssets = finances.assets.filter((a) => a.id !== assetId);
 
-    await ctx.db.patch(finances._id, { assets: updatedAssets });
+    await Promise.all([ctx.db.patch(finances._id, { assets: updatedAssets }), unsyncAssetFromPlans(ctx, userId, assetId)]);
   },
 });
 
@@ -157,6 +171,9 @@ export const deleteLiability = mutation({
 
     const updatedLiabilities = finances.liabilities.filter((l) => l.id !== liabilityId);
 
-    await ctx.db.patch(finances._id, { liabilities: updatedLiabilities });
+    await Promise.all([
+      ctx.db.patch(finances._id, { liabilities: updatedLiabilities }),
+      unsyncLiabilityFromPlans(ctx, userId, liabilityId),
+    ]);
   },
 });

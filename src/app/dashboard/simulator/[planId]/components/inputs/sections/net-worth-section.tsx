@@ -6,7 +6,7 @@ import { useState, RefObject, useCallback } from 'react';
 import { LandmarkIcon, PiggyBankIcon, TrendingUpIcon, RouteIcon, HomeIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
-import { useAccountsData, useGlidePathData, usePhysicalAssetsData } from '@/hooks/use-convex-data';
+import { useAccountsData, useAssetData, useLiabilityData, useGlidePathData, usePhysicalAssetsData } from '@/hooks/use-convex-data';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
@@ -112,6 +112,9 @@ export default function NetWorthSection(props: NetWorthSectionProps) {
   const numPhysicalAssets = Object.keys(physicalAssets).length;
 
   const { data: glidePath } = useGlidePathData();
+
+  const nwAssets = useAssetData();
+  const nwLiabilities = useLiabilityData();
 
   const isLoading = accountsLoading || physicalAssetsLoading;
   const hasData = numAccounts > 0 || numPhysicalAssets > 0;
@@ -247,10 +250,10 @@ export default function NetWorthSection(props: NetWorthSectionProps) {
         </div>
       </DisclosureSection>
       <Dialog size="xl" open={accountDialogOpen} onClose={handleAccountDialogClose}>
-        <AccountDialog selectedAccount={selectedAccount} numAccounts={numAccounts} onClose={handleAccountDialogClose} />
+        <AccountDialog selectedAccount={selectedAccount} accounts={accounts} nwAssets={nwAssets} onClose={handleAccountDialogClose} />
       </Dialog>
       <Dialog size="xl" open={savingsDialogOpen} onClose={handleSavingsDialogClose}>
-        <SavingsDialog selectedAccount={selectedSavings} numAccounts={numAccounts} onClose={handleSavingsDialogClose} />
+        <SavingsDialog selectedAccount={selectedSavings} accounts={accounts} nwAssets={nwAssets} onClose={handleSavingsDialogClose} />
       </Dialog>
       <Dialog size="xl" open={glidePathDialogOpen} onClose={handleGlidePathDialogClose}>
         <GlidePathDialog glidePath={glidePath} accounts={Object.values(accounts)} onClose={handleGlidePathDialogClose} />
@@ -258,7 +261,9 @@ export default function NetWorthSection(props: NetWorthSectionProps) {
       <Dialog size="xl" open={physicalAssetDialogOpen} onClose={handlePhysicalAssetDialogClose}>
         <PhysicalAssetDialog
           selectedPhysicalAsset={selectedPhysicalAsset}
-          numPhysicalAssets={numPhysicalAssets}
+          physicalAssets={physicalAssets}
+          nwAssets={nwAssets}
+          nwLiabilities={nwLiabilities}
           onClose={handlePhysicalAssetDialogClose}
         />
       </Dialog>

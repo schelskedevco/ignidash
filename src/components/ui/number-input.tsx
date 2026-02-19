@@ -14,6 +14,7 @@ interface NumberInputProps {
   max?: number;
   autoFocus?: boolean;
   disableThousandsSeparator?: boolean;
+  readOnly?: boolean;
 }
 
 export default function NumberInput<
@@ -31,6 +32,7 @@ export default function NumberInput<
   max,
   autoFocus,
   disableThousandsSeparator,
+  readOnly,
   name,
   rules,
   shouldUnregister,
@@ -92,6 +94,7 @@ export default function NumberInput<
       allowLeadingZeros={false}
       customInput={Input}
       disabled={disabled}
+      readOnly={readOnly}
       aria-invalid={!!error}
       invalid={!!error}
       isAllowed={({ value }) => value.length <= 12}

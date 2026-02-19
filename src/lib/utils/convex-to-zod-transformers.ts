@@ -27,7 +27,7 @@ import type { SimulationResult } from '@/lib/calc/simulation-engine';
  * Transforms a Convex account to Zod AccountInputs format
  */
 export function accountFromConvex(account: Doc<'plans'>['accounts'][number]): AccountInputs {
-  const base = { id: account.id, name: account.name, balance: account.balance };
+  const base = { id: account.id, name: account.name, balance: account.balance, syncedFinanceId: account.syncedFinanceId };
 
   switch (account.type) {
     case 'savings':
@@ -128,6 +128,7 @@ export function debtFromConvex(debt: NonNullable<Doc<'plans'>['debts']>[number])
     startDate: { ...debt.startDate },
     monthlyPayment: debt.monthlyPayment,
     disabled: debt.disabled ?? false,
+    syncedFinanceId: debt.syncedFinanceId,
   };
 }
 
@@ -145,6 +146,8 @@ export function physicalAssetFromConvex(physicalAsset: NonNullable<Doc<'plans'>[
     appreciationRate: physicalAsset.appreciationRate,
     saleDate: physicalAsset.saleDate ? { ...physicalAsset.saleDate } : { type: 'atLifeExpectancy' },
     paymentMethod: physicalAsset.paymentMethod,
+    syncedAssetId: physicalAsset.syncedAssetId,
+    syncedLiabilityId: physicalAsset.syncedLiabilityId,
   };
 }
 
@@ -243,7 +246,7 @@ export function glidePathFromConvex(glidePath: Doc<'plans'>['glidePath']): Glide
  * Transforms Zod AccountInputs to Convex account format
  */
 export function accountToConvex(account: AccountInputs): Doc<'plans'>['accounts'][number] {
-  const base = { id: account.id, name: account.name, balance: account.balance };
+  const base = { id: account.id, name: account.name, balance: account.balance, syncedFinanceId: account.syncedFinanceId };
 
   switch (account.type) {
     case 'savings':
@@ -344,6 +347,7 @@ export function debtToConvex(debt: DebtInputs): NonNullable<Doc<'plans'>['debts'
     startDate: { ...debt.startDate },
     monthlyPayment: debt.monthlyPayment,
     disabled: debt.disabled ?? false,
+    syncedFinanceId: debt.syncedFinanceId,
   };
 }
 
@@ -361,6 +365,8 @@ export function physicalAssetToConvex(physicalAsset: PhysicalAssetInputs): NonNu
     appreciationRate: physicalAsset.appreciationRate,
     saleDate: physicalAsset.saleDate ? { ...physicalAsset.saleDate } : undefined,
     paymentMethod: physicalAsset.paymentMethod,
+    syncedAssetId: physicalAsset.syncedAssetId,
+    syncedLiabilityId: physicalAsset.syncedLiabilityId,
   };
 }
 
