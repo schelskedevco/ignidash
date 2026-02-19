@@ -17,6 +17,7 @@ export const debtFormSchema = z
     startDate: timePointSchema,
     monthlyPayment: currencyFieldForbidsZero('Monthly payment must be greater than zero'),
     disabled: z.boolean().optional(),
+    syncedFinanceId: z.string().optional(),
   })
   .refine(
     (data) => {

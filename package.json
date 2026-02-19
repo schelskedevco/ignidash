@@ -13,6 +13,9 @@
     "format": "prettier --write .",
     "prepare": "husky",
     "test": "vitest",
+    "test:once": "vitest run",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text",
     "create-demo": "tsx scripts/convert-inputs-json-to-demo-inputs.ts",
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d",
@@ -79,6 +82,7 @@
     "!convex/_generated/**": "echo 'Ignoring generated files'"
   },
   "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
     "@next/bundle-analyzer": "16.0.10",
     "@recharts/devtools": "^0.0.5",
     "@tailwindcss/postcss": "^4",
@@ -86,6 +90,8 @@
     "@types/node": "^20",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
+    "@vitest/coverage-v8": "^4.0.16",
+    "convex-test": "^0.0.41",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "eslint-config-prettier": "^10.1.5",

@@ -39,6 +39,7 @@ import type * as user_feedback from "../user_feedback.js";
 import type * as utils_ai_utils from "../utils/ai_utils.js";
 import type * as utils_auth_utils from "../utils/auth_utils.js";
 import type * as utils_conversation_utils from "../utils/conversation_utils.js";
+import type * as utils_finance_sync_utils from "../utils/finance_sync_utils.js";
 import type * as utils_finances_utils from "../utils/finances_utils.js";
 import type * as utils_insights_utils from "../utils/insights_utils.js";
 import type * as utils_plan_utils from "../utils/plan_utils.js";
@@ -99,6 +100,7 @@ declare const fullApi: ApiFromModules<{
   "utils/ai_utils": typeof utils_ai_utils;
   "utils/auth_utils": typeof utils_auth_utils;
   "utils/conversation_utils": typeof utils_conversation_utils;
+  "utils/finance_sync_utils": typeof utils_finance_sync_utils;
   "utils/finances_utils": typeof utils_finances_utils;
   "utils/insights_utils": typeof utils_insights_utils;
   "utils/plan_utils": typeof utils_plan_utils;

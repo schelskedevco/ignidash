@@ -13,10 +13,13 @@ import { useForm, useWatch, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
+import { useAlreadySyncedIds } from '@/hooks/use-already-synced-ids';
+import { useLinkableFinances } from '@/hooks/use-linkable-finances';
 import { usePayoffEstimate } from '@/hooks/use-payoff-estimate';
 import { debtToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { debtFormSchema, type DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
+import { liabilityTypeForDisplay, type LiabilityInputs } from '@/lib/schemas/finances/liability-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import { timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -32,17 +35,21 @@ import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Divider } from '@/components/catalyst/divider';
 import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/format-currency';
 
+import SyncWithNetWorthTrackerSelect from './sync-with-nw-tracker-select';
+
 import { PayoffEstimate } from './payoff-estimate';
 
 interface DebtDialogProps {
   onClose: () => void;
   selectedDebt: DebtInputs | null;
-  numDebts: number;
+  debts: Record<string, DebtInputs>;
+  nwLiabilities: LiabilityInputs[] | null;
 }
 
-export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDebts }: DebtDialogProps) {
+export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, debts, nwLiabilities }: DebtDialogProps) {
   const planId = useSelectedPlanId();
   const [selectedDebt] = useState(_selectedDebt);
+  const numDebts = Object.keys(debts).length;
 
   const newDebtDefaultValues = useMemo(
     () =>
@@ -64,6 +71,7 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
     unregister,
     control,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(debtFormSchema),
@@ -74,6 +82,27 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
 
   const m = useMutation(api.debt.upsertDebt);
   const [saveError, setSaveError] = useState<string | null>(null);
+
+  const syncedFinanceId = useWatch({ control, name: 'syncedFinanceId' });
+  const isSynced = !!syncedFinanceId;
+
+  const alreadySyncedIds = useAlreadySyncedIds(debts, 'syncedFinanceId', selectedDebt?.id);
+  const linkableLiabilities = useLinkableFinances(nwLiabilities, alreadySyncedIds);
+
+  const handleSyncChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const liabilityId = e.target.value;
+    if (!liabilityId) {
+      setValue('syncedFinanceId', undefined);
+      return;
+    }
+
+    const liability = linkableLiabilities.find((l) => l.id === liabilityId);
+    if (!liability) return;
+
+    setValue('syncedFinanceId', liability.id);
+    setValue('balance', liability.balance);
+    setValue('name', liability.name);
+  };
 
   const onSubmit = async (data: DebtInputs) => {
     const debtId = data.id === '' ? uuidv4() : data.id;
@@ -124,6 +153,11 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
 
   const getInterestTypeColSpan = () => {
     if (interestType === 'simple') return 'col-span-2';
+    return 'col-span-1';
+  };
+
+  const getNameColSpan = () => {
+    if (linkableLiabilities.length === 0) return 'col-span-2';
     return 'col-span-1';
   };
 
@@ -188,7 +222,7 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
               {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <Divider soft className="hidden sm:block" />
               <div className="grid grid-cols-2 gap-4">
-                <Field className="col-span-2">
+                <Field className={getNameColSpan()}>
                   <Label htmlFor="name">Name</Label>
                   <Input
                     {...register('name')}
@@ -199,9 +233,16 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
                     inputMode="text"
                     invalid={!!errors.name}
                     aria-invalid={!!errors.name}
+                    readOnly={isSynced}
                   />
                   {errors.name && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
                 </Field>
+                <SyncWithNetWorthTrackerSelect
+                  fieldId="syncedFinanceId"
+                  options={linkableLiabilities.map((l) => ({ id: l.id, label: `${l.name} | ${liabilityTypeForDisplay(l.type)}` }))}
+                  value={syncedFinanceId}
+                  onChange={handleSyncChange}
+                />
                 <Field>
                   <Label htmlFor="balance">Balance</Label>
                   <NumberInput
@@ -212,6 +253,7 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, numDe
                     placeholder={formatCurrencyPlaceholder(7500)}
                     prefix={getCurrencySymbol()}
                     autoFocus
+                    readOnly={isSynced}
                   />
                   {errors.balance && <ErrorMessage>{errors.balance?.message}</ErrorMessage>}
                 </Field>

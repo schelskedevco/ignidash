@@ -37,4 +37,6 @@ export const physicalAssetValidator = v.object({
   appreciationRate: v.number(),
   saleDate: v.optional(physicalAssetTimePointValidator),
   paymentMethod: paymentMethodValidator,
+  syncedAssetId: v.optional(v.string()),
+  syncedLiabilityId: v.optional(v.string()),
 });

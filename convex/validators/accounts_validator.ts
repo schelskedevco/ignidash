@@ -18,4 +18,5 @@ export const accountValidator = v.object({
   percentBonds: v.optional(v.number()),
   costBasis: v.optional(v.number()),
   contributionBasis: v.optional(v.number()),
+  syncedFinanceId: v.optional(v.string()),
 });

@@ -6,7 +6,7 @@ import { useState, RefObject, useCallback } from 'react';
 import { BanknoteArrowDownIcon, CreditCardIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
-import { useExpensesData, useDebtsData } from '@/hooks/use-convex-data';
+import { useExpensesData, useDebtsData, useLiabilityData } from '@/hooks/use-convex-data';
 import { expenseToConvex, debtToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
@@ -77,6 +77,8 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
 
   const { data: debts, isLoading: debtsLoading } = useDebtsData();
   const numDebts = Object.keys(debts).length;
+
+  const nwLiabilities = useLiabilityData();
 
   const isLoading = expensesLoading || debtsLoading;
   const hasData = numExpenses > 0 || numDebts > 0;
@@ -233,7 +235,7 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
         <ExpenseDialog selectedExpense={selectedExpense} numExpenses={numExpenses} onClose={handleExpenseClose} />
       </Dialog>
       <Dialog size="xl" open={debtDialogOpen} onClose={handleDebtClose}>
-        <DebtDialog selectedDebt={selectedDebt} numDebts={numDebts} onClose={handleDebtClose} />
+        <DebtDialog selectedDebt={selectedDebt} debts={debts} nwLiabilities={nwLiabilities} onClose={handleDebtClose} />
       </Dialog>
       <DeleteDataItemAlert dataToDelete={expenseToDelete} setDataToDelete={setExpenseToDelete} deleteData={deleteExpense} />
       <DeleteDataItemAlert dataToDelete={debtToDelete} setDataToDelete={setDebtToDelete} deleteData={deleteDebt} />

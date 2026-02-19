@@ -33,6 +33,8 @@ export const physicalAssetFormSchema = z
     appreciationRate: percentageField(-30, 20, 'Annual appreciation rate'),
     saleDate: timePointSchema,
     paymentMethod: paymentMethodSchema,
+    syncedAssetId: z.string().optional(),
+    syncedLiabilityId: z.string().optional(),
   })
   .refine(
     (data) => {

@@ -13,10 +13,14 @@ import { useForm, useWatch, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
+import { useAlreadySyncedIds } from '@/hooks/use-already-synced-ids';
+import { useLinkableFinances } from '@/hooks/use-linkable-finances';
 import { usePayoffEstimate } from '@/hooks/use-payoff-estimate';
 import { physicalAssetToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { physicalAssetFormSchema, type PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
+import { assetTypeForDisplay, type AssetInputs } from '@/lib/schemas/finances/asset-schema';
+import { liabilityTypeForDisplay, type LiabilityInputs } from '@/lib/schemas/finances/liability-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import { physicalAssetTimeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
@@ -32,21 +36,29 @@ import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Divider } from '@/components/catalyst/divider';
 import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/format-currency';
 
+import SyncWithNetWorthTrackerSelect from './sync-with-nw-tracker-select';
 import { PayoffEstimate } from './payoff-estimate';
+
+const LINKABLE_PHYSICAL_TYPES: AssetInputs['type'][] = ['realEstate', 'vehicle', 'preciousMetals', 'other'];
 
 interface PhysicalAssetDialogProps {
   onClose: () => void;
   selectedPhysicalAsset: PhysicalAssetInputs | null;
-  numPhysicalAssets: number;
+  physicalAssets: Record<string, PhysicalAssetInputs>;
+  nwAssets: AssetInputs[] | null;
+  nwLiabilities: LiabilityInputs[] | null;
 }
 
 export default function PhysicalAssetDialog({
   onClose,
   selectedPhysicalAsset: _selectedPhysicalAsset,
-  numPhysicalAssets,
+  physicalAssets,
+  nwAssets,
+  nwLiabilities,
 }: PhysicalAssetDialogProps) {
   const planId = useSelectedPlanId();
   const [selectedPhysicalAsset] = useState(_selectedPhysicalAsset);
+  const numPhysicalAssets = Object.keys(physicalAssets).length;
 
   const newAssetDefaultValues = useMemo(
     () =>
@@ -70,6 +82,7 @@ export default function PhysicalAssetDialog({
     control,
     handleSubmit,
     getFieldState,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(physicalAssetFormSchema),
@@ -113,6 +126,47 @@ export default function PhysicalAssetDialog({
   const paymentMethod = useWatch({ control, name: 'paymentMethod' });
   const paymentMethodType = paymentMethod.type;
 
+  const syncedAssetId = useWatch({ control, name: 'syncedAssetId' });
+  const isAssetSynced = !!syncedAssetId;
+
+  const alreadySyncedAssetIds = useAlreadySyncedIds(physicalAssets, 'syncedAssetId', selectedPhysicalAsset?.id);
+  const linkableAssets = useLinkableFinances(nwAssets, alreadySyncedAssetIds, LINKABLE_PHYSICAL_TYPES);
+
+  const handleAssetSyncChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const assetId = e.target.value;
+    if (!assetId) {
+      setValue('syncedAssetId', undefined);
+      return;
+    }
+
+    const asset = linkableAssets.find((a) => a.id === assetId);
+    if (!asset) return;
+
+    setValue('syncedAssetId', asset.id);
+    setValue('name', asset.name);
+    setValue('marketValue', asset.value);
+  };
+
+  const syncedLiabilityId = useWatch({ control, name: 'syncedLiabilityId' });
+  const isLiabilitySynced = !!syncedLiabilityId;
+
+  const alreadySyncedLiabilityIds = useAlreadySyncedIds(physicalAssets, 'syncedLiabilityId', selectedPhysicalAsset?.id);
+  const linkableLiabilities = useLinkableFinances(nwLiabilities, alreadySyncedLiabilityIds);
+
+  const handleLiabilitySyncChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const liabilityId = e.target.value;
+    if (!liabilityId) {
+      setValue('syncedLiabilityId', undefined);
+      return;
+    }
+
+    const liability = linkableLiabilities.find((l) => l.id === liabilityId);
+    if (!liability) return;
+
+    setValue('syncedLiabilityId', liability.id);
+    setValue('paymentMethod.loanBalance', liability.balance);
+  };
+
   const loanPayoffMonths = usePayoffEstimate(
     paymentMethodType === 'loan' &&
       !isNaN(Number(paymentMethod.loanBalance)) &&
@@ -147,6 +201,7 @@ export default function PhysicalAssetDialog({
     }
 
     if (paymentMethodType !== 'loan') {
+      unregister('syncedLiabilityId');
       unregister('paymentMethod.downPayment');
       unregister('paymentMethod.loanBalance');
       unregister('paymentMethod.apr');
@@ -167,6 +222,16 @@ export default function PhysicalAssetDialog({
   const getAPRColSpan = () => {
     if (showDownPaymentField) return 'col-span-1';
     return 'col-span-2';
+  };
+
+  const getNameColSpan = () => {
+    if (linkableAssets.length === 0) return 'col-span-2';
+    return 'col-span-1';
+  };
+
+  const getPaymentMethodColSpan = () => {
+    if (paymentMethodType !== 'loan' || linkableLiabilities.length === 0) return 'col-span-2';
+    return 'col-span-1';
   };
 
   const months = [
@@ -244,7 +309,7 @@ export default function PhysicalAssetDialog({
               {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
               <Divider soft className="hidden sm:block" />
               <div className="grid grid-cols-2 gap-4">
-                <Field className="col-span-2">
+                <Field className={getNameColSpan()}>
                   <Label htmlFor="name">Name</Label>
                   <Input
                     {...register('name')}
@@ -255,9 +320,16 @@ export default function PhysicalAssetDialog({
                     inputMode="text"
                     invalid={!!errors.name}
                     aria-invalid={!!errors.name}
+                    readOnly={isAssetSynced}
                   />
                   {errors.name && <ErrorMessage>{errors.name?.message}</ErrorMessage>}
                 </Field>
+                <SyncWithNetWorthTrackerSelect
+                  fieldId="syncedAssetId"
+                  options={linkableAssets.map((a) => ({ id: a.id, label: `${a.name} | ${assetTypeForDisplay(a.type)}` }))}
+                  value={syncedAssetId}
+                  onChange={handleAssetSyncChange}
+                />
                 <Field>
                   <Label htmlFor="purchasePrice">Purchase Price</Label>
                   <NumberInput
@@ -283,6 +355,7 @@ export default function PhysicalAssetDialog({
                     inputMode="decimal"
                     placeholder={formatCurrencyPlaceholder(525000)}
                     prefix={getCurrencySymbol()}
+                    readOnly={isAssetSynced}
                   />
                   {errors.marketValue && <ErrorMessage>{errors.marketValue?.message}</ErrorMessage>}
                 </Field>
@@ -546,7 +619,7 @@ export default function PhysicalAssetDialog({
                     </DisclosureButton>
                     <DisclosurePanel className="pt-4">
                       <div className="grid grid-cols-2 gap-4">
-                        <Field className="col-span-2">
+                        <Field className={getPaymentMethodColSpan()}>
                           <Label htmlFor="paymentMethod.type">Payment Method</Label>
                           <Select {...register('paymentMethod.type')} id="paymentMethod.type" name="paymentMethod.type">
                             <option value="cash">Paid in Full</option>
@@ -555,6 +628,15 @@ export default function PhysicalAssetDialog({
                         </Field>
                         {paymentMethod.type === 'loan' && (
                           <>
+                            <SyncWithNetWorthTrackerSelect
+                              fieldId="syncedLiabilityId"
+                              options={linkableLiabilities.map((l) => ({
+                                id: l.id,
+                                label: `${l.name} | ${liabilityTypeForDisplay(l.type)}`,
+                              }))}
+                              value={syncedLiabilityId}
+                              onChange={handleLiabilitySyncChange}
+                            />
                             <Field>
                               <Label htmlFor="paymentMethod.loanBalance">Loan Balance</Label>
                               <NumberInput
@@ -564,6 +646,7 @@ export default function PhysicalAssetDialog({
                                 inputMode="decimal"
                                 placeholder={formatCurrencyPlaceholder(400000)}
                                 prefix={getCurrencySymbol()}
+                                readOnly={isLiabilitySynced}
                               />
                               {loanBalanceError && <ErrorMessage>{loanBalanceError.message}</ErrorMessage>}
                             </Field>
