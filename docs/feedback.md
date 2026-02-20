@@ -59,3 +59,7 @@ Allow users to point the AI insights and chat features at a local LLM backend (e
 ## Direct income-to-account routing
 
 Support directing a specific income stream into a designated account without it passing through the general cash flow. This would enable modeling scenarios like an employer HSA contribution that deposits directly into an HSA regardless of employee contributions, or an employer match that flows straight into a 401(k).
+
+## Automatically liquidate physical assets to avoid bankruptcy
+
+When investment accounts are fully depleted and the engine records a shortfall (`outstandingShortfall` in `PortfolioProcessor`), physical assets with positive equity are never considered as a fallback funding source. Sales are currently date-driven only (`shouldSellThisPeriod` checks user-configured `saleDate` TimePoints), and the withdrawal order in `getWithdrawalOrder` only includes investment account types. Since sale proceeds already flow into `netCashFlow` when a scheduled sale occurs, the plumbing exists — but there is no mechanism to trigger an unscheduled liquidation of physical assets when the portfolio can no longer cover expenses.

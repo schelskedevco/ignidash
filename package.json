@@ -17,6 +17,8 @@
     "test:once": "vitest run",
     "test:debug": "vitest --inspect-brk --no-file-parallelism",
     "test:coverage": "vitest run --coverage --coverage.reporter=text",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "create-demo": "tsx scripts/convert-inputs-json-to-demo-inputs.ts",
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d",
@@ -85,6 +87,7 @@
   "devDependencies": {
     "@edge-runtime/vm": "^5.0.0",
     "@next/bundle-analyzer": "16.0.10",
+    "@playwright/test": "^1.58.2",
     "@recharts/devtools": "^0.0.5",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.19",
