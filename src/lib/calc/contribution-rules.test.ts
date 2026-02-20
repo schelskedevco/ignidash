@@ -1923,6 +1923,146 @@ describe('ContributionRules', () => {
         expect(result.contributionAmount).toBe(80000);
       });
     });
+
+    describe('dual Roth 401(k) with mixed MBR settings', () => {
+      it('should give each rule the correct limit independently (MBR → $72k, non-MBR → $24.5k)', () => {
+        const mbrRule = new ContributionRule(
+          createContributionRule({
+            id: 'rule-mbr',
+            contributionType: 'unlimited',
+            accountId: 'roth401k-1',
+            enableMegaBackdoorRoth: true,
+          })
+        );
+        const nonMbrRule = new ContributionRule(
+          createContributionRule({
+            id: 'rule-no-mbr',
+            contributionType: 'unlimited',
+            accountId: 'roth401k-2',
+            enableMegaBackdoorRoth: false,
+          })
+        );
+        const mbrAccount = new TaxFreeAccount(createRoth401kAccount({ id: 'roth401k-1' }));
+        const nonMbrAccount = new TaxFreeAccount(createRoth401kAccount({ id: 'roth401k-2' }));
+
+        const mbrResult = mbrRule.getContributionAmount(100000, mbrAccount, [], 35);
+        const nonMbrResult = nonMbrRule.getContributionAmount(100000, nonMbrAccount, [], 35);
+
+        expect(mbrResult.contributionAmount).toBe(72000);
+        expect(nonMbrResult.contributionAmount).toBe(24500);
+      });
+
+      it('should block non-MBR rule when MBR rule consumed the full §402(g) budget', () => {
+        const nonMbrRule = new ContributionRule(
+          createContributionRule({
+            id: 'rule-no-mbr',
+            contributionType: 'unlimited',
+            accountId: 'roth401k-2',
+            enableMegaBackdoorRoth: false,
+          })
+        );
+        const nonMbrAccount = new TaxFreeAccount(createRoth401kAccount({ id: 'roth401k-2' }));
+
+        // MBR account already contributed $72k — shared limit tracking sums by account type
+        const monthlyData: PortfolioData[] = [
+          {
+            ...createEmptyPortfolioData(),
+            perAccountData: {
+              'roth401k-1': {
+                id: 'roth401k-1',
+                name: 'Roth 401k (MBR)',
+                type: 'roth401k',
+                balance: 122000,
+                cumulativeContributions: { stocks: 0, bonds: 0, cash: 0 },
+                cumulativeEmployerMatch: 0,
+                cumulativeWithdrawals: { stocks: 0, bonds: 0, cash: 0 },
+                cumulativeRealizedGains: 0,
+                cumulativeEarningsWithdrawn: 0,
+                cumulativeRmds: 0,
+                assetAllocation: { stocks: 0.8, bonds: 0.2, cash: 0 },
+                contributions: { stocks: 57600, bonds: 14400, cash: 0 }, // 72k total
+                employerMatch: 0,
+                withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+                realizedGains: 0,
+                earningsWithdrawn: 0,
+                rmds: 0,
+              },
+            },
+          },
+        ];
+
+        // Non-MBR rule uses §402(g) = $24,500
+        // Shared contributions across roth401k type = $72,000
+        // Remaining = max(0, $24,500 - $72,000) = $0
+        // This is correct: the first $24.5k of MBR contributions ARE elective deferrals,
+        // so they consume the §402(g) budget shared across all accounts of this type.
+        const result = nonMbrRule.getContributionAmount(100000, nonMbrAccount, monthlyData, 35);
+
+        expect(result.contributionAmount).toBe(0);
+      });
+
+      it('should allow both rules to contribute when MBR stays within §402(g)', () => {
+        const mbrRule = new ContributionRule(
+          createContributionRule({
+            id: 'rule-mbr',
+            contributionType: 'dollarAmount',
+            dollarAmount: 20000,
+            accountId: 'roth401k-1',
+            enableMegaBackdoorRoth: true,
+          })
+        );
+        const nonMbrRule = new ContributionRule(
+          createContributionRule({
+            id: 'rule-no-mbr',
+            contributionType: 'unlimited',
+            accountId: 'roth401k-2',
+            enableMegaBackdoorRoth: false,
+          })
+        );
+        const mbrAccount = new TaxFreeAccount(createRoth401kAccount({ id: 'roth401k-1' }));
+        const nonMbrAccount = new TaxFreeAccount(createRoth401kAccount({ id: 'roth401k-2' }));
+
+        // MBR rule contributes first — $20k with no prior contributions
+        const mbrResult = mbrRule.getContributionAmount(100000, mbrAccount, [], 35);
+        expect(mbrResult.contributionAmount).toBe(20000);
+
+        // Now simulate that MBR account has $20k in contributions
+        const monthlyData: PortfolioData[] = [
+          {
+            ...createEmptyPortfolioData(),
+            perAccountData: {
+              'roth401k-1': {
+                id: 'roth401k-1',
+                name: 'Roth 401k (MBR)',
+                type: 'roth401k',
+                balance: 70000,
+                cumulativeContributions: { stocks: 0, bonds: 0, cash: 0 },
+                cumulativeEmployerMatch: 0,
+                cumulativeWithdrawals: { stocks: 0, bonds: 0, cash: 0 },
+                cumulativeRealizedGains: 0,
+                cumulativeEarningsWithdrawn: 0,
+                cumulativeRmds: 0,
+                assetAllocation: { stocks: 0.8, bonds: 0.2, cash: 0 },
+                contributions: { stocks: 16000, bonds: 4000, cash: 0 }, // 20k total
+                employerMatch: 0,
+                withdrawals: { stocks: 0, bonds: 0, cash: 0 },
+                realizedGains: 0,
+                earningsWithdrawn: 0,
+                rmds: 0,
+              },
+            },
+          },
+        ];
+
+        // Non-MBR rule uses §402(g) = $24,500
+        // Shared contributions across roth401k type = $20,000
+        // Remaining = $24,500 - $20,000 = $4,500
+        // Demonstrates users can split elective deferrals across accounts using explicit dollar amounts.
+        const nonMbrResult = nonMbrRule.getContributionAmount(100000, nonMbrAccount, monthlyData, 35);
+
+        expect(nonMbrResult.contributionAmount).toBe(4500);
+      });
+    });
   });
 
   // ============================================================================

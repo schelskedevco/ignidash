@@ -48,7 +48,7 @@ export const Input = forwardRef(function Input(
         // Disabled state
         'has-data-disabled:opacity-50 has-data-disabled:before:bg-stone-950/5 has-data-disabled:before:shadow-none',
         // Read-only state
-        'has-[input:read-only]:opacity-50 has-[input:read-only]:before:bg-stone-950/5 has-[input:read-only]:before:shadow-none',
+        'has-[input:read-only]:opacity-50 has-[input:read-only]:before:bg-stone-950/5 has-[input:read-only]:before:shadow-none sm:has-[input:read-only]:focus-within:after:ring-0',
         // Invalid state
         'has-data-invalid:before:shadow-red-500/10',
       ])}
