@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useQuery, useMutation } from 'convex/react';
+import { useQuery, useMutation, useConvexAuth } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import posthog from 'posthog-js';
 
@@ -32,10 +32,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   usePostHogIdentify();
 
-  const onboardingDialogCompleted = useQuery(api.onboarding.get);
+  const { isAuthenticated } = useConvexAuth();
+  const onboardingDialogCompleted = useQuery(api.onboarding.get, isAuthenticated ? {} : 'skip');
+
   useEffect(() => {
     if (onboardingDialogCompleted === undefined) return;
-
     if (!onboardingDialogCompleted) setOnboardingDialogOpen(true);
   }, [onboardingDialogCompleted]);
 
