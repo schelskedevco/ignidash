@@ -285,10 +285,9 @@ export class PortfolioProcessor {
         continue;
       }
 
-      const { contributionAmount, employerMatchAmount } = rule.getContributionAmount(
+      const { contributionAmount, employerMatchAmount } = rule.calculateContribution(
         remainingToContribute,
         contributeToAccount,
-        this.monthlyData,
         age,
         incomesData
       );
@@ -308,6 +307,8 @@ export class PortfolioProcessor {
 
       employerMatchByAccount[contributeToAccountID] = (employerMatchByAccount[contributeToAccountID] ?? 0) + employerMatchAmount;
       employerMatch += employerMatchAmount;
+
+      rule.recordContribution(contributionAmount, employerMatchAmount, contributeToAccount.getAccountType());
 
       remainingToContribute -= contributionAmount;
       currentRuleIndex++;
@@ -626,6 +627,7 @@ export class PortfolioProcessor {
 
   resetMonthlyData(): void {
     this.monthlyData = [];
+    this.contributionRules.resetYTD();
   }
 
   getAnnualData(): PortfolioData {

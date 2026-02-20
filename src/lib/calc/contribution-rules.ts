@@ -16,20 +16,44 @@ import {
 } from '@/lib/schemas/inputs/contribution-form-schema';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 
-import type { PortfolioData } from './portfolio';
 import { Account } from './account';
 import type { IncomesData } from './incomes';
-import { sumFlows } from './asset';
+
+/** Aggregates contributions by account type across all rules for shared IRS limit enforcement */
+export class ContributionTracker {
+  private employeeByType = new Map<AccountInputs['type'], number>();
+  private employerByType = new Map<AccountInputs['type'], number>();
+
+  recordContribution(accountType: AccountInputs['type'], employee: number, employer: number): void {
+    this.employeeByType.set(accountType, (this.employeeByType.get(accountType) ?? 0) + employee);
+    this.employerByType.set(accountType, (this.employerByType.get(accountType) ?? 0) + employer);
+  }
+
+  getEmployeeByTypes(types: AccountInputs['type'][]): number {
+    return types.reduce((sum, t) => sum + (this.employeeByType.get(t) ?? 0), 0);
+  }
+
+  getEmployerByTypes(types: AccountInputs['type'][]): number {
+    return types.reduce((sum, t) => sum + (this.employerByType.get(t) ?? 0), 0);
+  }
+
+  reset(): void {
+    this.employeeByType.clear();
+    this.employerByType.clear();
+  }
+}
 
 /** Collection of contribution rules with a base strategy (spend or save surplus) */
 export class ContributionRules {
   private readonly contributionRules: ContributionRule[];
+  private readonly tracker: ContributionTracker;
 
   constructor(
     rules: ContributionInputs[],
     private baseRule: { type: 'spend' | 'save' }
   ) {
-    this.contributionRules = rules.filter((rule) => !rule.disabled).map((rule) => new ContributionRule(rule));
+    this.tracker = new ContributionTracker();
+    this.contributionRules = rules.filter((rule) => !rule.disabled).map((rule) => new ContributionRule(rule, this.tracker));
   }
 
   getRules(): ContributionRule[] {
@@ -39,57 +63,68 @@ export class ContributionRules {
   getBaseRuleType(): 'spend' | 'save' {
     return this.baseRule.type;
   }
+
+  resetYTD(): void {
+    this.tracker.reset();
+    for (const rule of this.contributionRules) {
+      rule.resetYTD();
+    }
+  }
 }
 
 /** A single contribution rule targeting a specific account with amount/limit logic */
 export class ContributionRule {
-  constructor(private contributionInput: ContributionInputs) {}
+  private ytdEmployeeContribution = 0;
+  private ytdEmployerMatch = 0;
+
+  constructor(
+    private contributionInput: ContributionInputs,
+    private tracker: ContributionTracker
+  ) {}
 
   /**
    * Calculates the contribution and employer match for this rule
    * @param remainingToContribute - Remaining surplus available for contributions
    * @param account - Target investment account
-   * @param monthlyPortfolioData - Year-to-date monthly portfolio data for limit tracking
    * @param age - Current age (for catch-up contribution eligibility)
    * @param incomesData - Income data for income-linked contribution limits
    * @returns Employee contribution and employer match amounts
    */
-  getContributionAmount(
+  calculateContribution(
     remainingToContribute: number,
     account: Account,
-    monthlyPortfolioData: PortfolioData[],
     age: number,
     incomesData?: IncomesData
   ): { contributionAmount: number; employerMatchAmount: number } {
-    const currentBalance = account.getBalance();
-    const maxBalance = this.contributionInput.maxBalance;
+    const remainingToMaxBalance = this.contributionInput.maxBalance
+      ? Math.max(0, this.contributionInput.maxBalance - account.getBalance())
+      : Infinity;
 
-    const remainingToMaxBalance = maxBalance ? Math.max(0, maxBalance - currentBalance) : Infinity;
-    const remainingToAccountTypeContributionLimit = this.getRemainingToAccountTypeContributionLimit(account, monthlyPortfolioData, age);
-    let maxContribution = Math.min(remainingToMaxBalance, remainingToContribute, remainingToAccountTypeContributionLimit);
+    const maxContribution = Math.min(
+      remainingToMaxBalance,
+      remainingToContribute,
+      this.calculateRemainingAccountTypeLimit(account, age),
+      this.calculateIncomeLimit(incomesData)
+    );
 
-    const eligibleIncomeIds = new Set(this.contributionInput?.incomeIds);
-    if (eligibleIncomeIds.size > 0) {
-      const eligibleIncomes = Object.values(incomesData?.perIncomeData || {}).filter((income) => eligibleIncomeIds.has(income.id));
-      const totalEligibleIncome = eligibleIncomes.reduce((sum, income) => sum + income.income, 0);
+    const desiredContribution = this.calculateDesiredContribution(remainingToContribute, this.ytdEmployeeContribution);
 
-      maxContribution = Math.min(maxContribution, totalEligibleIncome);
-    }
-
-    const employeeContributionsSoFar = this.getEmployeeContributionsSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
-
-    const desiredContribution = this.calculateDesiredContribution(remainingToContribute, employeeContributionsSoFar);
     const contributionAmount = Math.min(desiredContribution, maxContribution);
-
-    let employerMatchAmount: number = 0;
-    if (this.contributionInput.employerMatch) {
-      const employerMatchSoFar = this.getEmployerMatchSoFarByAccountID(monthlyPortfolioData, account.getAccountID());
-      const remainingToMaxEmployerMatch = Math.max(0, this.contributionInput.employerMatch - employerMatchSoFar);
-
-      employerMatchAmount = Math.min(contributionAmount, remainingToMaxEmployerMatch);
-    }
+    const employerMatchAmount = this.calculateEmployerMatch(contributionAmount);
 
     return { contributionAmount, employerMatchAmount };
+  }
+
+  /** Records a committed contribution against per-rule YTD counters and the shared tracker */
+  recordContribution(employee: number, employer: number, accountType: AccountInputs['type']): void {
+    this.ytdEmployeeContribution += employee;
+    this.ytdEmployerMatch += employer;
+    this.tracker.recordContribution(accountType, employee, employer);
+  }
+
+  resetYTD(): void {
+    this.ytdEmployeeContribution = 0;
+    this.ytdEmployerMatch = 0;
   }
 
   getAccountID(): string {
@@ -98,6 +133,23 @@ export class ContributionRule {
 
   getRank(): number {
     return this.contributionInput.rank;
+  }
+
+  private calculateIncomeLimit(incomesData?: IncomesData): number {
+    const eligibleIncomeIds = new Set(this.contributionInput?.incomeIds);
+    if (eligibleIncomeIds.size === 0) return Infinity;
+
+    return Object.values(incomesData?.perIncomeData ?? {})
+      .filter((income) => eligibleIncomeIds.has(income.id))
+      .reduce((sum, income) => sum + income.income, 0);
+  }
+
+  private calculateEmployerMatch(contributionAmount: number): number {
+    if (!this.contributionInput.employerMatch) return 0;
+
+    const remainingToMaxEmployerMatch = Math.max(0, this.contributionInput.employerMatch - this.ytdEmployerMatch);
+
+    return Math.min(contributionAmount, remainingToMaxEmployerMatch);
   }
 
   private calculateDesiredContribution(remainingToContribute: number, contributionsSoFar: number): number {
@@ -111,15 +163,15 @@ export class ContributionRule {
     }
   }
 
-  private getRemainingToAccountTypeContributionLimit(account: Account, monthlyPortfolioData: PortfolioData[], age: number): number {
+  private calculateRemainingAccountTypeLimit(account: Account, age: number): number {
     const accountType = account.getAccountType();
 
     const accountTypeGroup = sharedLimitAccounts[accountType];
     if (!accountTypeGroup) return Infinity;
 
     if (this.contributionInput.enableMegaBackdoorRoth && supportsMegaBackdoorRoth(accountType)) {
-      const employeeContributionsSoFar = this.getEmployeeContributionsSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
-      const employerMatchSoFar = this.getEmployerMatchSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
+      const employeeContributionsSoFar = this.tracker.getEmployeeByTypes(accountTypeGroup);
+      const employerMatchSoFar = this.tracker.getEmployerByTypes(accountTypeGroup);
 
       const totalContributionsSoFar = employeeContributionsSoFar + employerMatchSoFar;
 
@@ -129,38 +181,7 @@ export class ContributionRule {
     const limit = getAnnualContributionLimit(getAccountTypeLimitKey(accountType), age);
     if (!Number.isFinite(limit)) return Infinity;
 
-    const employeeContributionsSoFar = this.getEmployeeContributionsSoFarByAccountTypes(monthlyPortfolioData, accountTypeGroup);
+    const employeeContributionsSoFar = this.tracker.getEmployeeByTypes(accountTypeGroup);
     return Math.max(0, limit - employeeContributionsSoFar);
-  }
-
-  private getEmployeeContributionsSoFarByAccountTypes(
-    monthlyPortfolioData: PortfolioData[],
-    accountTypes: AccountInputs['type'][]
-  ): number {
-    return monthlyPortfolioData
-      .flatMap((data) => Object.values(data.perAccountData))
-      .filter((account) => accountTypes.includes(account.type))
-      .reduce((sum, account) => sum + (sumFlows(account.contributions) - account.employerMatch), 0);
-  }
-
-  private getEmployerMatchSoFarByAccountTypes(monthlyPortfolioData: PortfolioData[], accountTypes: AccountInputs['type'][]): number {
-    return monthlyPortfolioData
-      .flatMap((data) => Object.values(data.perAccountData))
-      .filter((account) => accountTypes.includes(account.type))
-      .reduce((sum, account) => sum + account.employerMatch, 0);
-  }
-
-  private getEmployeeContributionsSoFarByAccountID(monthlyPortfolioData: PortfolioData[], accountID: string): number {
-    return monthlyPortfolioData
-      .flatMap((data) => Object.values(data.perAccountData))
-      .filter((account) => account.id === accountID)
-      .reduce((sum, account) => sum + (sumFlows(account.contributions) - account.employerMatch), 0);
-  }
-
-  private getEmployerMatchSoFarByAccountID(monthlyPortfolioData: PortfolioData[], accountID: string): number {
-    return monthlyPortfolioData
-      .flatMap((data) => Object.values(data.perAccountData))
-      .filter((account) => account.id === accountID)
-      .reduce((sum, account) => sum + account.employerMatch, 0);
   }
 }

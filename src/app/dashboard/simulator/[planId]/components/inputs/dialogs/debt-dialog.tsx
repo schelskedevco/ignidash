@@ -81,9 +81,6 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, debts
 
   const hasFormErrors = Object.keys(errors).length > 0;
 
-  const m = useMutation(api.debt.upsertDebt);
-  const [saveError, setSaveError] = useState<string | null>(null);
-
   const syncedFinanceId = useWatch({ control, name: 'syncedFinanceId' });
   const isSynced = !!syncedFinanceId;
 
@@ -104,6 +101,9 @@ export default function DebtDialog({ onClose, selectedDebt: _selectedDebt, debts
     setValue('balance', liability.balance);
     setValue('name', liability.name);
   };
+
+  const m = useMutation(api.debt.upsertDebt);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const onSubmit = async (data: DebtInputs) => {
     const debtId = data.id === '' ? uuidv4() : data.id;

@@ -66,9 +66,6 @@ export default function SavingsDialog({ onClose, selectedAccount: _selectedAccou
 
   const hasFormErrors = Object.keys(errors).length > 0;
 
-  const m = useMutation(api.account.upsertAccount);
-  const [saveError, setSaveError] = useState<string | null>(null);
-
   const syncedFinanceId = useWatch({ control, name: 'syncedFinanceId' });
   const isSynced = !!syncedFinanceId;
 
@@ -89,6 +86,9 @@ export default function SavingsDialog({ onClose, selectedAccount: _selectedAccou
     setValue('balance', asset.value);
     setValue('name', asset.name);
   };
+
+  const m = useMutation(api.account.upsertAccount);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const onSubmit = async (data: AccountInputs) => {
     const accountId = data.id === '' ? uuidv4() : data.id;
