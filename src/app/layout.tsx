@@ -4,6 +4,7 @@ import { Figtree, Geist_Mono, Geist } from 'next/font/google';
 
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import CookieBanner from '@/components/cookie-banner';
+import { getToken } from '@/lib/auth-server';
 
 import { ConvexClientProvider } from './convex-client-provider';
 import './globals.css';
@@ -133,11 +134,13 @@ const jsonLd = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialToken = await getToken();
+
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body className={`${figtree.variable} ${geistMono.variable} ${geist.variable} h-full antialiased`}>
@@ -149,7 +152,7 @@ export default function RootLayout({
           }}
         />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <ConvexClientProvider>
+          <ConvexClientProvider initialToken={initialToken}>
             {children}
             <CookieBanner />
             {process.env.VERCEL && <Analytics />}
