@@ -64,7 +64,11 @@ export default function DataItem({
             >
               {name}
             </h4>
-            {syncedWithNWTracker && <LinkIcon className="text-muted-foreground size-3.5 shrink-0" />}
+            {syncedWithNWTracker && (
+              <span title="Synced with NW Tracker">
+                <LinkIcon className="text-muted-foreground size-3.5 shrink-0" />
+              </span>
+            )}
           </div>
           <div className="text-muted-foreground text-sm">{desc}</div>
         </div>
