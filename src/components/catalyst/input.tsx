@@ -47,6 +47,8 @@ export const Input = forwardRef(function Input(
         'sm:focus-within:after:ring-primary after:pointer-events-none after:absolute after:inset-0 after:rounded-lg after:ring-transparent after:ring-inset sm:focus-within:after:ring-2',
         // Disabled state
         'has-data-disabled:opacity-50 has-data-disabled:before:bg-stone-950/5 has-data-disabled:before:shadow-none',
+        // Read-only state
+        'has-[input:read-only]:opacity-50 has-[input:read-only]:before:bg-stone-950/5 has-[input:read-only]:before:shadow-none has-[input:read-only]:sm:focus-within:after:ring-0',
         // Invalid state
         'has-data-invalid:before:shadow-red-500/10',
       ])}
@@ -54,6 +56,7 @@ export const Input = forwardRef(function Input(
       <HeadlessInput
         ref={ref}
         {...props}
+        tabIndex={props.readOnly ? -1 : props.tabIndex}
         className={clsx([
           // Date classes
           props.type &&
@@ -85,6 +88,8 @@ export const Input = forwardRef(function Input(
           'data-invalid:border-red-500 data-invalid:data-hover:border-red-500 dark:data-invalid:border-red-500 dark:data-invalid:data-hover:border-red-500',
           // Disabled state
           'data-disabled:border-stone-950/20 dark:data-disabled:border-white/15 dark:data-disabled:bg-white/2.5 dark:data-hover:data-disabled:border-white/15',
+          // Read-only state
+          'read-only:cursor-default read-only:border-stone-950/20 data-hover:read-only:border-stone-950/20 dark:read-only:border-white/15 dark:read-only:bg-white/2.5 dark:data-hover:read-only:border-white/15',
           // System icons
           'dark:scheme-dark',
         ])}
