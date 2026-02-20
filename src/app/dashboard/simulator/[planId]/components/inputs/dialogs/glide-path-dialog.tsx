@@ -269,6 +269,7 @@ export default function GlidePathDialog({ onClose, glidePath: _glidePath, accoun
                   inputMode="decimal"
                   placeholder="30%"
                   suffix="%"
+                  autoFocus={!disabled}
                 />
                 {errors.targetBondAllocation && <ErrorMessage>{errors.targetBondAllocation?.message}</ErrorMessage>}
                 <Description>
