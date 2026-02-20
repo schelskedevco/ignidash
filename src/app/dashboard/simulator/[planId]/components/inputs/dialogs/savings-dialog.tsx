@@ -146,7 +146,7 @@ export default function SavingsDialog({ onClose, selectedAccount: _selectedAccou
                   inputMode="decimal"
                   placeholder={formatCurrencyPlaceholder(15000)}
                   prefix={getCurrencySymbol()}
-                  autoFocus
+                  autoFocus={!isSynced}
                   readOnly={isSynced}
                 />
                 {errors.balance && <ErrorMessage>{errors.balance?.message}</ErrorMessage>}
