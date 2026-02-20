@@ -1,11 +1,12 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/console-error-fixture';
 
 test('upgrade button initiates Stripe checkout', async ({ page }) => {
-  let upgradeRequestFired = false;
-
   // Intercept the upgrade API call and mock a redirect to Stripe
+  const upgradeRequestPromise = page.waitForRequest((req) => req.url().includes('/api/auth/') && req.url().includes('upgrade'), {
+    timeout: 10_000,
+  });
+
   await page.route('**/api/auth/**upgrade**', (route) => {
-    upgradeRequestFired = true;
     return route.fulfill({
       status: 302,
       headers: { location: 'https://checkout.stripe.com/test' },
@@ -14,19 +15,12 @@ test('upgrade button initiates Stripe checkout', async ({ page }) => {
 
   await page.goto('/pricing');
 
-  // Click whichever upgrade button is visible
-  const upgradeButton = page.locator('button').filter({ hasText: /free trial|Upgrade to Pro/i });
+  // Since the test runs with authenticated state, a button (not a link) should render
+  const upgradeButton = page.getByRole('button', { name: /free trial|Upgrade to Pro/i });
+  await expect(upgradeButton).toBeVisible({ timeout: 10_000 });
+  await upgradeButton.click();
 
-  // If user is not authenticated, the button is a link — handle both cases
-  const upgradeLink = page.locator('a').filter({ hasText: /free trial|Upgrade to Pro/i });
-
-  const button = (await upgradeButton.isVisible()) ? upgradeButton : upgradeLink;
-
-  await button.click();
-
-  // Verify the upgrade request was intercepted or page navigated toward Stripe
-  const currentUrl = page.url();
-  const stripeRedirectOrRequest = upgradeRequestFired || currentUrl.includes('checkout.stripe.com');
-
-  expect(stripeRedirectOrRequest || currentUrl.includes('/signin')).toBe(true);
+  // Verify the upgrade API request was actually fired
+  const request = await upgradeRequestPromise;
+  expect(request).toBeTruthy();
 });
