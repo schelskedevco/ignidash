@@ -48,7 +48,7 @@ export const Input = forwardRef(function Input(
         // Disabled state
         'has-data-disabled:opacity-50 has-data-disabled:before:bg-stone-950/5 has-data-disabled:before:shadow-none',
         // Read-only state
-        'has-[input:read-only]:opacity-50 has-[input:read-only]:before:bg-stone-950/5 has-[input:read-only]:before:shadow-none has-[input:read-only]:sm:focus-within:after:ring-0',
+        'has-[input:read-only]:opacity-50 has-[input:read-only]:before:bg-stone-950/5 has-[input:read-only]:before:shadow-none',
         // Invalid state
         'has-data-invalid:before:shadow-red-500/10',
       ])}
@@ -87,9 +87,9 @@ export const Input = forwardRef(function Input(
           // Invalid state
           'data-invalid:border-red-500 data-invalid:data-hover:border-red-500 dark:data-invalid:border-red-500 dark:data-invalid:data-hover:border-red-500',
           // Disabled state
-          'data-disabled:border-stone-950/20 dark:data-disabled:border-white/15 dark:data-disabled:bg-white/2.5 dark:data-hover:data-disabled:border-white/15',
+          'data-disabled:border-stone-950/20 dark:data-disabled:border-white/15 dark:data-disabled:bg-white/2.5',
           // Read-only state
-          'read-only:cursor-default read-only:border-stone-950/20 data-hover:read-only:border-stone-950/20 dark:read-only:border-white/15 dark:read-only:bg-white/2.5 dark:data-hover:read-only:border-white/15',
+          'read-only:pointer-events-none read-only:border-stone-950/20 dark:read-only:border-white/15 dark:read-only:bg-white/2.5',
           // System icons
           'dark:scheme-dark',
         ])}
