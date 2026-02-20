@@ -13,7 +13,7 @@ import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { formatCompactCurrency } from '@/lib/utils/format-currency';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
+import { frequencyForDisplay, timeFrameForDisplay, compareTimePoints } from '@/lib/utils/data-display-formatters';
 import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DataItem from '@/components/ui/data-item';
@@ -96,21 +96,23 @@ export default function IncomesSection(props: IncomesSectionProps) {
           {hasIncomes && (
             <>
               <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
-                {Object.entries(incomes).map(([id, income], index) => (
-                  <DataItem
-                    key={id}
-                    id={id}
-                    index={index}
-                    name={income.name}
-                    desc={getIncomeDesc(income)}
-                    leftAddOn={<BanknoteArrowUpIcon className="size-8" />}
-                    disabled={income.disabled}
-                    onDropdownClickEdit={() => handleDropdownClickEdit(income)}
-                    onDropdownClickDelete={() => setIncomeToDelete({ id, name: income.name })}
-                    onDropdownClickDisable={async () => await disableIncome(id)}
-                    colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
-                  />
-                ))}
+                {Object.entries(incomes)
+                  .sort(([, a], [, b]) => compareTimePoints(a.timeframe.start, b.timeframe.start))
+                  .map(([id, income], index) => (
+                    <DataItem
+                      key={id}
+                      id={id}
+                      index={index}
+                      name={income.name}
+                      desc={getIncomeDesc(income)}
+                      leftAddOn={<BanknoteArrowUpIcon className="size-8" />}
+                      disabled={income.disabled}
+                      onDropdownClickEdit={() => handleDropdownClickEdit(income)}
+                      onDropdownClickDelete={() => setIncomeToDelete({ id, name: income.name })}
+                      onDropdownClickDisable={async () => await disableIncome(id)}
+                      colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
+                    />
+                  ))}
               </ul>
               <div className="mt-auto flex items-center justify-end gap-x-2">
                 <Button outline onClick={() => setIncomeDialogOpen(true)} disabled={!!selectedIncome}>

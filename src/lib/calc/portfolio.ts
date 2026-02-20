@@ -299,14 +299,14 @@ export class PortfolioProcessor {
 
       const contributionAllocation = this.getAllocationForContribution(contributionAmount + employerMatchAmount);
       const contributedAssets = contributeToAccount.applyContribution(contributionAmount, 'self', contributionAllocation);
-      byAccount[contributeToAccountID] = { ...contributedAssets };
+      byAccount[contributeToAccountID] = addFlows(byAccount[contributeToAccountID] ?? zeroFlows(), contributedAssets);
 
       if (employerMatchAmount > 0) {
         const matchedAssets = contributeToAccount.applyContribution(employerMatchAmount, 'employer', contributionAllocation);
         byAccount[contributeToAccountID] = addFlows(byAccount[contributeToAccountID], matchedAssets);
       }
 
-      employerMatchByAccount[contributeToAccountID] = employerMatchAmount;
+      employerMatchByAccount[contributeToAccountID] = (employerMatchByAccount[contributeToAccountID] ?? 0) + employerMatchAmount;
       employerMatch += employerMatchAmount;
 
       remainingToContribute -= contributionAmount;
@@ -397,13 +397,15 @@ export class PortfolioProcessor {
           ...withdrawnAssets
         } = account.applyWithdrawal(withdrawFromThisAccount, 'regular', withdrawalAllocation);
 
-        realizedGainsByAccount[account.getAccountID()] = realizedGainsFromThisAccount;
+        realizedGainsByAccount[account.getAccountID()] =
+          (realizedGainsByAccount[account.getAccountID()] ?? 0) + realizedGainsFromThisAccount;
         realizedGains += realizedGainsFromThisAccount;
 
-        earningsWithdrawnByAccount[account.getAccountID()] = earningsWithdrawnFromThisAccount;
+        earningsWithdrawnByAccount[account.getAccountID()] =
+          (earningsWithdrawnByAccount[account.getAccountID()] ?? 0) + earningsWithdrawnFromThisAccount;
         earningsWithdrawn += earningsWithdrawnFromThisAccount;
 
-        byAccount[account.getAccountID()] = { ...withdrawnAssets };
+        byAccount[account.getAccountID()] = addFlows(byAccount[account.getAccountID()] ?? zeroFlows(), withdrawnAssets);
         remainingToWithdraw -= withdrawFromThisAccount;
       }
     }

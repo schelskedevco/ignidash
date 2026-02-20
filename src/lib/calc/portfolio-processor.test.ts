@@ -200,6 +200,38 @@ describe('PortfolioProcessor', () => {
       // Should not touch earnings yet (contributions only modifier)
     });
 
+    it('should track both contribution and earnings withdrawals from the same Roth account before age 59.5', () => {
+      // Before 59.5, Roth appears twice in withdrawal order:
+      // 1st pass: contributionsOnly (withdraw up to contributionBasis)
+      // 2nd pass: full (withdraw earnings after 401k/ira are exhausted)
+      // Both passes must accumulate in the tracking data, not overwrite.
+      const portfolio = new Portfolio([
+        createSavingsAccount({ balance: 0 }),
+        createTaxableBrokerageAccount({ balance: 0 }),
+        createRothIraAccount({ balance: 10000, contributionBasis: 6000 }), // 6k contributions, 4k earnings
+        create401kAccount({ balance: 0 }),
+      ]);
+      const state = createMockSimulationState(portfolio, 50);
+      const processor = new PortfolioProcessor(state, createMockSimulationContext(), new ContributionRules([], { type: 'spend' }));
+
+      const incomes = createEmptyIncomesData({ totalIncomeAfterPayrollDeductions: 0 });
+      const expenses = createEmptyExpensesData({ totalExpenses: 9000 });
+
+      const result = processor.processContributionsAndWithdrawals(
+        incomes,
+        expenses,
+        createEmptyDebtsData(),
+        createEmptyPhysicalAssetsData()
+      );
+
+      // Pass 1 (contributionsOnly): withdraws 6k from Roth contributions
+      // Remaining: 3k still needed, 401k has 0, so falls through to...
+      // Pass 2 (full): withdraws 3k from Roth earnings
+      // Total tracked for roth-1 should be 9k (6k + 3k), not just 3k from the second pass
+      const rothWithdrawals = result.portfolioData.perAccountData['roth-1'].withdrawals;
+      expect(rothWithdrawals.stocks + rothWithdrawals.bonds).toBeCloseTo(9000, 0);
+    });
+
     it('should prefer tax-deferred accounts after age 59.5', () => {
       const portfolio = new Portfolio([
         createSavingsAccount({ balance: 1000 }),
@@ -1242,6 +1274,87 @@ describe('PortfolioProcessor', () => {
         const totalWithdrawals = annualData.withdrawals.stocks + annualData.withdrawals.bonds + annualData.withdrawals.cash;
         expect(totalWithdrawals).toBe(0);
       });
+    });
+  });
+
+  // ============================================================================
+  // Multiple Rules Targeting Same Account
+  // ============================================================================
+
+  describe('multiple contribution rules targeting same account', () => {
+    it('should accumulate contributions from two rules targeting the same 401k', () => {
+      const portfolio = new Portfolio([create401kAccount({ id: '401k-1', balance: 50000 })]);
+      const state = createMockSimulationState(portfolio, 35, 'accumulation');
+      const processor = new PortfolioProcessor(
+        state,
+        createMockSimulationContext(),
+        new ContributionRules(
+          [
+            createContributionRule({
+              id: 'rule-salary',
+              accountId: '401k-1',
+              rank: 1,
+              contributionType: 'dollarAmount',
+              dollarAmount: 1000,
+              employerMatch: 500,
+              incomeIds: ['income-salary'],
+            }),
+            createContributionRule({
+              id: 'rule-commission',
+              accountId: '401k-1',
+              rank: 2,
+              contributionType: 'dollarAmount',
+              dollarAmount: 500,
+              employerMatch: 250,
+              incomeIds: ['income-commission'],
+            }),
+          ],
+          { type: 'spend' }
+        )
+      );
+
+      const incomes = createEmptyIncomesData({
+        totalIncome: 10000,
+        totalIncomeAfterPayrollDeductions: 10000,
+        perIncomeData: {
+          'income-salary': {
+            id: 'income-salary',
+            name: 'Salary',
+            income: 7000,
+            amountWithheld: 0,
+            ficaTax: 0,
+            incomeAfterPayrollDeductions: 7000,
+            taxFreeIncome: 0,
+            socialSecurityIncome: 0,
+          },
+          'income-commission': {
+            id: 'income-commission',
+            name: 'Commission',
+            income: 3000,
+            amountWithheld: 0,
+            ficaTax: 0,
+            incomeAfterPayrollDeductions: 3000,
+            taxFreeIncome: 0,
+            socialSecurityIncome: 0,
+          },
+        },
+      });
+      const expenses = createEmptyExpensesData({ totalExpenses: 0 });
+
+      const result = processor.processContributionsAndWithdrawals(
+        incomes,
+        expenses,
+        createEmptyDebtsData(),
+        createEmptyPhysicalAssetsData()
+      );
+
+      // Both rules target 401k-1: $1000 + $500 employee = $1500 total employee contributions
+      // Employer match: $500 + $250 = $750 total employer match
+      // Total contributions to 401k-1 = $1500 + $750 = $2250
+      const accountData = result.portfolioData.perAccountData['401k-1'];
+      const totalContributions = accountData.contributions.stocks + accountData.contributions.bonds + accountData.contributions.cash;
+      expect(totalContributions).toBeCloseTo(2250, 0);
+      expect(accountData.employerMatch).toBeCloseTo(750, 0);
     });
   });
 });

@@ -13,7 +13,7 @@ import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { formatCompactCurrency } from '@/lib/utils/format-currency';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
+import { frequencyForDisplay, timeFrameForDisplay, compareTimePoints } from '@/lib/utils/data-display-formatters';
 import { estimatePayoffMonths, formatPayoffEstimate } from '@/lib/utils/payoff-estimator';
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import type { DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
@@ -167,38 +167,42 @@ export default function ExpensesSection(props: ExpensesSectionProps) {
             <>
               <ul role="list" className="mb-6 grid grid-cols-1 gap-3">
                 {numExpenses > 0 &&
-                  Object.entries(expenses).map(([id, expense], index) => (
-                    <DataItem
-                      key={id}
-                      id={id}
-                      index={index}
-                      name={expense.name}
-                      desc={getExpenseDesc(expense)}
-                      leftAddOn={<BanknoteArrowDownIcon className="size-8" />}
-                      disabled={expense.disabled}
-                      onDropdownClickEdit={() => handleExpenseDropdownClickEdit(expense)}
-                      onDropdownClickDelete={() => setExpenseToDelete({ id, name: expense.name })}
-                      onDropdownClickDisable={async () => await disableExpense(id)}
-                      colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
-                    />
-                  ))}
+                  Object.entries(expenses)
+                    .sort(([, a], [, b]) => compareTimePoints(a.timeframe.start, b.timeframe.start))
+                    .map(([id, expense], index) => (
+                      <DataItem
+                        key={id}
+                        id={id}
+                        index={index}
+                        name={expense.name}
+                        desc={getExpenseDesc(expense)}
+                        leftAddOn={<BanknoteArrowDownIcon className="size-8" />}
+                        disabled={expense.disabled}
+                        onDropdownClickEdit={() => handleExpenseDropdownClickEdit(expense)}
+                        onDropdownClickDelete={() => setExpenseToDelete({ id, name: expense.name })}
+                        onDropdownClickDisable={async () => await disableExpense(id)}
+                        colorClassName="bg-[var(--chart-3)] dark:bg-[var(--chart-2)]"
+                      />
+                    ))}
                 {numDebts > 0 &&
-                  Object.entries(debts).map(([id, debt], index) => (
-                    <DataItem
-                      key={id}
-                      id={id}
-                      index={index}
-                      name={debt.name}
-                      desc={getDebtDesc(debt)}
-                      leftAddOn={<CreditCardIcon className="size-8" />}
-                      disabled={debt.disabled}
-                      onDropdownClickEdit={() => handleDebtDropdownClickEdit(debt)}
-                      onDropdownClickDelete={() => setDebtToDelete({ id, name: debt.name })}
-                      onDropdownClickDisable={async () => await disableDebt(id)}
-                      colorClassName="bg-[var(--chart-5)]"
-                      syncedWithNWTracker={!!debt.syncedFinanceId}
-                    />
-                  ))}
+                  Object.entries(debts)
+                    .sort(([, a], [, b]) => compareTimePoints(a.startDate, b.startDate))
+                    .map(([id, debt], index) => (
+                      <DataItem
+                        key={id}
+                        id={id}
+                        index={index}
+                        name={debt.name}
+                        desc={getDebtDesc(debt)}
+                        leftAddOn={<CreditCardIcon className="size-8" />}
+                        disabled={debt.disabled}
+                        onDropdownClickEdit={() => handleDebtDropdownClickEdit(debt)}
+                        onDropdownClickDelete={() => setDebtToDelete({ id, name: debt.name })}
+                        onDropdownClickDisable={async () => await disableDebt(id)}
+                        colorClassName="bg-[var(--chart-5)]"
+                        syncedWithNWTracker={!!debt.syncedFinanceId}
+                      />
+                    ))}
               </ul>
               <div className="mt-auto flex items-center justify-end gap-x-2">
                 <Button outline onClick={() => setDebtDialogOpen(true)} disabled={!!selectedDebt}>
