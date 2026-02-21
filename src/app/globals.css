@@ -64,6 +64,13 @@ body {
   font-family: var(--font-figtree), sans-serif;
 }
 
+/* Fix select dropdown colors on Windows/Linux where OS theme may differ from app theme */
+select option,
+select optgroup {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
 /* Chrome, Safari, Edge, Opera */
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {

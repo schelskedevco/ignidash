@@ -48,10 +48,6 @@ On the self-hosted version of the app running in Safari, skeleton/shimmer loadin
 
 Allow users to define named milestones (e.g., "At Retirement", "Kids Leave Home") and attach simulation events to them. This would let income changes, expense adjustments, and contribution rules reference milestones rather than hard-coded dates, so updating one milestone cascades to all linked events.
 
-## Select component dark-mode styling on non-Mac platforms
-
-The dropdown select component renders with an incorrect background color in dark mode on Windows and Linux, making the option text difficult to read.
-
 ## Support for local LLMs as an alternative to Azure OpenAI
 
 Allow users to point the AI insights and chat features at a local LLM backend (e.g., Ollama, llama.cpp) instead of requiring an Azure OpenAI deployment, giving self-hosted users a fully offline option.
