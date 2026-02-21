@@ -56,6 +56,14 @@ Allow users to point the AI insights and chat features at a local LLM backend (e
 
 Support directing a specific income stream into a designated account without it passing through the general cash flow. This would enable modeling scenarios like an employer HSA contribution that deposits directly into an HSA regardless of employee contributions, or an employer match that flows straight into a 401(k).
 
+## Contribution phase-outs at income thresholds
+
+The contribution engine enforces annual dollar limits by account type and age but has no MAGI awareness. Roth IRA contributions should phase out and become disallowed above income thresholds, and traditional IRA deductibility should phase out if covered by a workplace plan. `calculateContribution` already receives `incomesData`, so MAGI can be approximated without a circular dependency.
+
+## Expanded tax support
+
+See [tax-support-roadmap.md](./tax-support-roadmap.md) for the full breakdown of planned and backlog tax features with difficulty ratings and architecture notes.
+
 ## Automatically liquidate physical assets to avoid bankruptcy
 
 When investment accounts are fully depleted and the engine records a shortfall (`outstandingShortfall` in `PortfolioProcessor`), physical assets with positive equity are never considered as a fallback funding source. Sales are currently date-driven only (`shouldSellThisPeriod` checks user-configured `saleDate` TimePoints), and the withdrawal order in `getWithdrawalOrder` only includes investment account types. Since sale proceeds already flow into `netCashFlow` when a scheduled sale occurs, the plumbing exists — but there is no mechanism to trigger an unscheduled liquidation of physical assets when the portfolio can no longer cover expenses.
