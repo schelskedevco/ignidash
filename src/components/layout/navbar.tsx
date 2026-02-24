@@ -1,6 +1,5 @@
 'use client';
 
-import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
@@ -21,6 +20,7 @@ import {
 } from '@/components/catalyst/dropdown';
 import { Avatar } from '@/components/catalyst/avatar';
 import { Navbar as CatalystNavbar, NavbarItem, NavbarSection, NavbarSpacer, NavbarDivider } from '@/components/catalyst/navbar';
+import AppLogo from '@/components/app-logo';
 import { useThemeSwitcher } from '@/hooks/use-theme-switcher';
 
 function NavbarModeToggle() {
@@ -62,7 +62,7 @@ export default function Navbar() {
   return (
     <CatalystNavbar className="border-border/50 from-emphasized-background to-background fixed top-0 z-40 w-full border-b bg-gradient-to-r shadow-sm">
       <Link href="/" aria-label="Home" className="pl-4">
-        <FireIcon className="text-primary size-10 shrink-0 sm:size-8" aria-hidden="true" />
+        <AppLogo className="size-10 shrink-0 sm:size-8" />
       </Link>
       <NavbarDivider className="max-lg:hidden" />
       <NavbarSection className="max-lg:hidden">

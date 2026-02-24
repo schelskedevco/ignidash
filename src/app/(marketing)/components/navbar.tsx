@@ -4,9 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Dialog, DialogPanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
-import { FireIcon } from '@heroicons/react/24/solid';
 import { Authenticated, Unauthenticated, AuthLoading } from 'convex/react';
 
+import AppLogo from '@/components/app-logo';
 import { useThemeSwitcher } from '@/hooks/use-theme-switcher';
 
 const navigation = [
@@ -53,7 +53,7 @@ export default function Navbar() {
           <Link href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Ignidash</span>
             <div className="flex items-center gap-2">
-              <FireIcon className="text-primary h-8 w-8" aria-hidden="true" />
+              <AppLogo className="h-8 w-8" />
               <span className="text-xl font-semibold">Ignidash</span>
             </div>
           </Link>
@@ -128,7 +128,7 @@ export default function Navbar() {
             <Link href="/" className="-m-1.5 p-1.5">
               <span className="sr-only">Ignidash</span>
               <div className="flex items-center gap-2">
-                <FireIcon className="text-primary h-8 w-8" aria-hidden="true" />
+                <AppLogo className="h-8 w-8" />
                 <span className="text-xl font-semibold">Ignidash</span>
               </div>
             </Link>

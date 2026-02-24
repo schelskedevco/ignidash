@@ -1,7 +1,6 @@
 'use client';
 
 import { useRef, useState, useCallback } from 'react';
-import { FireIcon } from '@heroicons/react/24/solid';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import {
   LayoutDashboardIcon,
@@ -14,6 +13,7 @@ import {
 } from 'lucide-react';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
 
+import AppLogo from '@/components/app-logo';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { Strong, Text, TextLink } from '@/components/catalyst/text';
@@ -64,7 +64,7 @@ export default function OnboardingDialog({ onClose }: OnboardingDialogProps) {
     <>
       <DialogTitle onClose={onClose}>
         <div className="flex items-center gap-4">
-          <FireIcon className="text-primary size-8 shrink-0" aria-hidden="true" />
+          <AppLogo className="size-8 shrink-0" />
           <span>Ignidash Onboarding</span>
         </div>
       </DialogTitle>

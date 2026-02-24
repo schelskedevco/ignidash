@@ -1,7 +1,7 @@
-import { FireIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import type { Stripe } from 'stripe';
 
+import AppLogo from '@/components/app-logo';
 import { Badge } from '@/components/catalyst/badge';
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { Subheading } from '@/components/catalyst/heading';
@@ -20,7 +20,7 @@ export default function SubscriptionOverview({ subscription }: SubscriptionOverv
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <FireIcon className="text-primary mx-auto h-10 w-auto" />
+          <AppLogo className="mx-auto h-10 w-auto" />
           <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-stone-900 dark:text-white">
             {isFreeTrial ? 'Your Ignidash Pro trial has started!' : 'Welcome to Ignidash Pro!'}
           </h2>

@@ -113,7 +113,7 @@ const jsonLd = {
       '@id': 'https://www.ignidash.com/#organization',
       name: 'Ignidash',
       url: 'https://www.ignidash.com',
-      logo: 'https://www.ignidash.com/flame.svg',
+      logo: 'https://www.ignidash.com/logo.svg',
       founder: { '@type': 'Person', name: 'Joe Schelske', url: 'https://www.linkedin.com/in/scheljos/' },
       sameAs: ['https://x.com/schelskedevco'],
     },

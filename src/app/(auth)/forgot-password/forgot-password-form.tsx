@@ -1,12 +1,12 @@
 'use client';
 
-import { FireIcon } from '@heroicons/react/24/solid';
 import { CheckCircleIcon } from '@heroicons/react/20/solid';
 import { useState } from 'react';
 import Link from 'next/link';
 import { track } from '@vercel/analytics';
 import posthog from 'posthog-js';
 
+import AppLogo from '@/components/app-logo';
 import { authClient } from '@/lib/auth-client';
 import { useRedirectUrl } from '@/hooks/use-redirect-url';
 
@@ -58,7 +58,7 @@ export default function ForgotPasswordForm() {
     <div className="flex min-h-screen flex-col">
       <div className="flex flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <FireIcon className="text-primary mx-auto h-10 w-auto" />
+          <AppLogo className="mx-auto h-10 w-auto" />
           <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-stone-900 dark:text-white">Reset Your Password</h2>
         </div>
 

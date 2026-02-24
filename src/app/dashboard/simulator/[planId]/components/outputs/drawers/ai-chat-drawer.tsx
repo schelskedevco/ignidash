@@ -6,7 +6,6 @@ import { api } from '@/convex/_generated/api';
 import { useQuery, useMutation, usePaginatedQuery } from 'convex/react';
 import { useSmoothText } from '@convex-dev/agent/react';
 import { PaperAirplaneIcon, PlusIcon } from '@heroicons/react/16/solid';
-import { FireIcon } from '@heroicons/react/24/solid';
 import type { Id, Doc } from '@/convex/_generated/dataModel';
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
 import { CircleUserRoundIcon, CopyIcon, CheckIcon, WandSparklesIcon, Loader2Icon } from 'lucide-react';
@@ -16,6 +15,7 @@ import ReactMarkdown from 'react-markdown';
 import { useTheme } from 'next-themes';
 import posthog from 'posthog-js';
 
+import AppLogo from '@/components/app-logo';
 import { Button } from '@/components/catalyst/button';
 import { Textarea } from '@/components/catalyst/textarea';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
@@ -405,7 +405,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
             {!selectedConversationId ? (
               <div className="absolute inset-0 flex h-full flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
                 <div className="mx-auto w-full max-w-md">
-                  <FireIcon className="text-primary mx-auto h-10 w-auto" />
+                  <AppLogo className="mx-auto h-10 w-auto" />
                   <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-stone-900 dark:text-white">Your AI Assistant</h2>
                   <p className="text-muted-foreground mt-2 text-sm/6">
                     The AI assistant is for educational purposes only and does not provide professional financial advice. Read our{' '}

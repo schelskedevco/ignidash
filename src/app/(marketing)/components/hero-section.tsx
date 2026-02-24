@@ -39,7 +39,7 @@ export default function HeroSection() {
         </div>
         <div className="text-center">
           <h1 className="text-5xl font-semibold tracking-tight text-balance text-stone-900 antialiased sm:text-7xl dark:text-white">
-            <span className="bg-gradient-to-r from-pink-500 to-rose-600 bg-clip-text text-transparent">FIRE</span> Planning Made{' '}
+            <span className="bg-gradient-to-r from-pink-500 to-rose-600 bg-clip-text text-transparent">Financial</span> Planning Made{' '}
             <span className="bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">Smarter</span>.
           </h1>
           <p className="mt-8 text-lg font-medium text-pretty text-stone-500 sm:text-xl/8 dark:text-stone-300">
