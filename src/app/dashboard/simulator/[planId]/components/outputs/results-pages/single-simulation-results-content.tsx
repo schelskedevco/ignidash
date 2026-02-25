@@ -10,12 +10,12 @@ import SimulationCategorySelector from '../simulation-category-selector';
 import SingleSimulationChartsSection from '../sections/single-simulation-charts-section';
 import SingleSimulationDataTableSection from '../sections/single-simulation-data-table-section';
 
-interface SingleSimulationMainResultsProps {
+interface SingleSimulationResultsContentProps {
   simulation: SimulationResult;
   keyMetrics: KeyMetrics;
 }
 
-export default function SingleSimulationMainResults({ simulation, keyMetrics }: SingleSimulationMainResultsProps) {
+export default function SingleSimulationResultsContent({ simulation, keyMetrics }: SingleSimulationResultsContentProps) {
   const startAge = simulation.context.startAge;
 
   const { selectedAge, onAgeSelect } = useResultsState(startAge);

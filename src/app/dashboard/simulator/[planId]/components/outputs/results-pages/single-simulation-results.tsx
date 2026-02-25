@@ -5,7 +5,7 @@ import { useSimulationResult, useKeyMetrics } from '@/lib/stores/simulator-store
 import SectionContainer from '@/components/ui/section-container';
 
 import SimulationMetrics from '../simulation-metrics';
-import SingleSimulationMainResults from './single-simulation-main-results';
+import SingleSimulationResultsContent from './single-simulation-results-content';
 
 interface SingleSimulationResultsProps {
   inputs: SimulatorInputs;
@@ -29,7 +29,7 @@ export default function SingleSimulationResults({ inputs, simulationMode }: Sing
       <SectionContainer showBottomBorder className="mb-0">
         <SimulationMetrics keyMetrics={keyMetrics} />
       </SectionContainer>
-      <SingleSimulationMainResults simulation={simulationResult} keyMetrics={keyMetrics} />
+      <SingleSimulationResultsContent simulation={simulationResult} keyMetrics={keyMetrics} />
     </>
   );
 }
