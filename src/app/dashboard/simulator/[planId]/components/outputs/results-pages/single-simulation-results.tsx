@@ -27,7 +27,7 @@ export default function SingleSimulationResults({ inputs, simulationMode }: Sing
   return (
     <>
       <SectionContainer showBottomBorder className="mb-0">
-        <SimulationMetrics keyMetrics={keyMetrics} />
+        <SimulationMetrics keyMetrics={keyMetrics} simulationResult={simulationResult} />
       </SectionContainer>
       <SingleSimulationResultsContent simulation={simulationResult} keyMetrics={keyMetrics} />
     </>
