@@ -125,19 +125,23 @@ export const setUsage = internalMutation({
     messageId: v.id('messages'),
     userId: v.string(),
     inputTokens: v.number(),
+    cachedInputTokens: v.number(),
     outputTokens: v.number(),
     totalTokens: v.number(),
     subscriptionStartTime: v.number(),
     subscriptionType: v.union(v.literal('active'), v.literal('trialing'), v.literal('admin')),
   },
-  handler: async (ctx, { messageId, userId, inputTokens, outputTokens, totalTokens, subscriptionStartTime, subscriptionType }) => {
+  handler: async (
+    ctx,
+    { messageId, userId, inputTokens, cachedInputTokens, outputTokens, totalTokens, subscriptionStartTime, subscriptionType }
+  ) => {
     if (inputTokens + outputTokens !== totalTokens) {
       console.warn(`Token mismatch for message ${messageId}: ${inputTokens} + ${outputTokens} !== ${totalTokens}`);
     }
 
     await Promise.all([
-      ctx.db.patch(messageId, { usage: { inputTokens, outputTokens, totalTokens }, updatedAt: Date.now() }),
-      recordUsage(ctx, userId, inputTokens, outputTokens, 'chat', subscriptionStartTime, subscriptionType),
+      ctx.db.patch(messageId, { usage: { inputTokens, cachedInputTokens, outputTokens, totalTokens }, updatedAt: Date.now() }),
+      recordUsage(ctx, userId, inputTokens, cachedInputTokens, outputTokens, 'chat', subscriptionStartTime, subscriptionType),
     ]);
   },
 });
