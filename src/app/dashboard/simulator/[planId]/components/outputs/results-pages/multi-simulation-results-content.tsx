@@ -12,7 +12,7 @@ import SingleSimulationChartsSection from '../sections/single-simulation-charts-
 import MultiSimulationChartsSection from '../sections/multi-simulation-charts-section';
 import MultiSimulationDataTableSection from '../sections/multi-simulation-data-table-section';
 
-interface MultiSimulationMainResultsProps {
+interface MultiSimulationResultsContentProps {
   simulation: SimulationResult | null;
   keyMetrics: KeyMetrics;
   startAge: number;
@@ -28,7 +28,7 @@ interface MultiSimulationMainResultsProps {
   handleSeedFromTableChange: (seed: number | null) => void;
 }
 
-export default function MultiSimulationMainResults({
+export default function MultiSimulationResultsContent({
   simulation,
   keyMetrics,
   startAge,
@@ -42,7 +42,7 @@ export default function MultiSimulationMainResults({
   onAgeSelect,
   selectedAge,
   handleSeedFromTableChange,
-}: MultiSimulationMainResultsProps) {
+}: MultiSimulationResultsContentProps) {
   const availableCategories =
     simulation !== null
       ? { mode: 'single' as const, categories: Object.values(SingleSimulationCategory) }

@@ -21,7 +21,7 @@ import { useActiveSeed, useRemoveActiveSeed } from '@/hooks/use-active-seed';
 import ProgressBar from '@/components/ui/progress-bar';
 
 import SimulationMetrics from '../simulation-metrics';
-import MultiSimulationMainResults from './multi-simulation-main-results';
+import MultiSimulationResultsContent from './multi-simulation-results-content';
 
 interface MultiSimulationResultsSharedProps {
   startAge: number;
@@ -67,7 +67,7 @@ function MultiSimulationResultsForActiveSeed({
       <SectionContainer showBottomBorder className="mb-0">
         <SimulationMetrics keyMetrics={keyMetrics} />
       </SectionContainer>
-      <MultiSimulationMainResults
+      <MultiSimulationResultsContent
         simulation={simulation}
         keyMetrics={keyMetrics}
         activeSeed={activeSeed}
@@ -160,7 +160,7 @@ export default function MultiSimulationResults({ inputs, simulationMode }: Multi
       <SectionContainer showBottomBorder className="mb-0">
         <SimulationMetrics keyMetrics={keyMetrics} />
       </SectionContainer>
-      <MultiSimulationMainResults simulation={null} keyMetrics={keyMetrics} {...sharedProps} />
+      <MultiSimulationResultsContent simulation={null} keyMetrics={keyMetrics} {...sharedProps} />
     </>
   );
 }
