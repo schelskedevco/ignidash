@@ -12,7 +12,8 @@ const WEEK = 7 * DAY;
 const MONTH = 30 * DAY;
 
 const TOKEN_COSTS = {
-  input: 1.75,
+  uncachedInput: 1.75,
+  cachedInput: 0.175,
   output: 14.0,
 } as const;
 
@@ -31,17 +32,22 @@ function getInlineRateLimitConfigs(start: number) {
   };
 }
 
-function calculateTokenCost(inputTokens: number, outputTokens: number): number {
-  const inputCost = (inputTokens * TOKEN_COSTS.input) / 1_000_000;
+export function calculateTokenCost(inputTokens: number, cachedInputTokens: number, outputTokens: number): number {
+  if (cachedInputTokens > inputTokens) console.warn(`cachedInputTokens (${cachedInputTokens}) exceeds inputTokens (${inputTokens})`);
+  const uncachedInputTokens = Math.max(0, inputTokens - cachedInputTokens);
+
+  const uncachedInputCost = (uncachedInputTokens * TOKEN_COSTS.uncachedInput) / 1_000_000;
+  const cachedInputCost = (cachedInputTokens * TOKEN_COSTS.cachedInput) / 1_000_000;
   const outputCost = (outputTokens * TOKEN_COSTS.output) / 1_000_000;
 
-  return inputCost + outputCost;
+  return uncachedInputCost + cachedInputCost + outputCost;
 }
 
 export async function recordUsage(
   ctx: MutationCtx,
   userId: string,
   inputTokens: number,
+  cachedInputTokens: number,
   outputTokens: number,
   mode: UsageMode,
   subscriptionStartTime: number,
@@ -49,7 +55,7 @@ export async function recordUsage(
 ) {
   const { weeklyGpt5CostLimit, monthlyGpt5CostLimit } = getInlineRateLimitConfigs(subscriptionStartTime);
 
-  const cost = calculateTokenCost(inputTokens, outputTokens);
+  const cost = calculateTokenCost(inputTokens, cachedInputTokens, outputTokens);
   const costAsMicroDollars = Math.ceil(cost * 1_000_000);
 
   const periodConfig = subscriptionType === 'trialing' ? weeklyGpt5CostLimit : monthlyGpt5CostLimit;

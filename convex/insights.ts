@@ -116,19 +116,23 @@ export const setUsage = internalMutation({
     insightId: v.id('insights'),
     userId: v.string(),
     inputTokens: v.number(),
+    cachedInputTokens: v.number(),
     outputTokens: v.number(),
     totalTokens: v.number(),
     subscriptionStartTime: v.number(),
     subscriptionType: v.union(v.literal('active'), v.literal('trialing'), v.literal('admin')),
   },
-  handler: async (ctx, { insightId, userId, inputTokens, outputTokens, totalTokens, subscriptionStartTime, subscriptionType }) => {
+  handler: async (
+    ctx,
+    { insightId, userId, inputTokens, cachedInputTokens, outputTokens, totalTokens, subscriptionStartTime, subscriptionType }
+  ) => {
     if (inputTokens + outputTokens !== totalTokens) {
       console.warn(`Token mismatch for insight ${insightId}: ${inputTokens} + ${outputTokens} !== ${totalTokens}`);
     }
 
     await Promise.all([
-      ctx.db.patch(insightId, { usage: { inputTokens, outputTokens, totalTokens }, updatedAt: Date.now() }),
-      recordUsage(ctx, userId, inputTokens, outputTokens, 'insights', subscriptionStartTime, subscriptionType),
+      ctx.db.patch(insightId, { usage: { inputTokens, cachedInputTokens, outputTokens, totalTokens }, updatedAt: Date.now() }),
+      recordUsage(ctx, userId, inputTokens, cachedInputTokens, outputTokens, 'insights', subscriptionStartTime, subscriptionType),
     ]);
   },
 });

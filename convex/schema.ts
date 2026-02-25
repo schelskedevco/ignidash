@@ -56,6 +56,7 @@ export default defineSchema({
     usage: v.optional(
       v.object({
         inputTokens: v.number(),
+        cachedInputTokens: v.optional(v.number()),
         outputTokens: v.number(),
         totalTokens: v.number(),
       })
@@ -75,6 +76,7 @@ export default defineSchema({
     usage: v.optional(
       v.object({
         inputTokens: v.number(),
+        cachedInputTokens: v.optional(v.number()),
         outputTokens: v.number(),
         totalTokens: v.number(),
       })
