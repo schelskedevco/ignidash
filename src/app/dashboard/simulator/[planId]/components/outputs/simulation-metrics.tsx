@@ -5,13 +5,16 @@ import { PartyPopperIcon, UmbrellaIcon, TriangleAlertIcon, BanknoteXIcon, Landma
 
 import { cn } from '@/lib/utils';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
+import type { SimulationResult } from '@/lib/calc/simulation-engine';
 import { keyMetricsForDisplay } from '@/lib/utils/data-display-formatters';
-import { useUpdateCachedKeyMetrics } from '@/lib/stores/simulator-store';
+import { useUpdateCachedKeyMetrics, useUpdateCachedSimulationResult } from '@/lib/stores/simulator-store';
+import { simulationResultToConvex } from '@/lib/utils/convex-to-zod-transformers';
 
 import MetricsCard from './metrics-card';
 
 interface SimulationMetricsProps {
   keyMetrics: KeyMetrics;
+  simulationResult?: SimulationResult;
 }
 
 const getSuccessColor = (success: number): string => {
@@ -26,13 +29,23 @@ const getSuccessColor = (success: number): string => {
   return 'bg-red-100 text-red-800 inset-ring inset-ring-red-700/75 dark:bg-red-300/10 dark:text-red-200 dark:inset-ring-red-400/75';
 };
 
-export default function SimulationMetrics({ keyMetrics }: SimulationMetricsProps) {
+export default function SimulationMetrics({ keyMetrics, simulationResult }: SimulationMetricsProps) {
   const updateCachedKeyMetrics = useUpdateCachedKeyMetrics();
+  const updateCachedSimulationResult = useUpdateCachedSimulationResult();
 
   useEffect(() => {
     updateCachedKeyMetrics(keyMetrics);
     return () => updateCachedKeyMetrics(null);
   }, [keyMetrics, updateCachedKeyMetrics]);
+
+  useEffect(() => {
+    if (simulationResult) {
+      updateCachedSimulationResult(simulationResultToConvex(simulationResult));
+    } else {
+      updateCachedSimulationResult(null);
+    }
+    return () => updateCachedSimulationResult(null);
+  }, [simulationResult, updateCachedSimulationResult]);
 
   const {
     successForDisplay,

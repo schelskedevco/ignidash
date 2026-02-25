@@ -7,6 +7,7 @@ import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import useSWR, { mutate } from 'swr';
 import type { Id } from '@/convex/_generated/dataModel';
+import type { SimulationResult as ConvexSimulationResult } from '@/convex/validators/simulation_result_validator';
 
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 import { FinancialSimulationEngine, type SimulationResult } from '@/lib/calc/simulation-engine';
@@ -81,6 +82,7 @@ interface SimulatorState {
     chartTimeFrameToShow: ChartTimeFrame;
     monteCarloTimeFrameToShow: ChartTimeFrame;
     cachedKeyMetrics: KeyMetrics | null;
+    cachedSimulationResult: ConvexSimulationResult | null;
   };
 
   preferences: {
@@ -116,6 +118,7 @@ interface SimulatorState {
     updateChartTimeFrameToShow: (value: ChartTimeFrame) => void;
     updateMonteCarloTimeFrameToShow: (value: ChartTimeFrame) => void;
     updateCachedKeyMetrics: (metrics: KeyMetrics | null) => void;
+    updateCachedSimulationResult: (result: ConvexSimulationResult | null) => void;
 
     /* Preferences */
     updateShowReferenceLines: (value: boolean) => void;
@@ -151,6 +154,7 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
     chartTimeFrameToShow: 'twentyYears',
     monteCarloTimeFrameToShow: 'fullPlan',
     cachedKeyMetrics: null,
+    cachedSimulationResult: null,
   },
   preferences: {
     showReferenceLines: true,
@@ -222,6 +226,10 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               state.results.cachedKeyMetrics = metrics;
             }),
+          updateCachedSimulationResult: (result) =>
+            set((state) => {
+              state.results.cachedSimulationResult = result;
+            }),
           updateShowReferenceLines: (value) =>
             set((state) => {
               state.preferences.showReferenceLines = value;
@@ -290,6 +298,7 @@ export const useMonteCarloSortMode = () => useSimulatorStore((state) => state.re
 export const useChartTimeFrameToShow = () => useSimulatorStore((state) => state.results.chartTimeFrameToShow);
 export const useMonteCarloTimeFrameToShow = () => useSimulatorStore((state) => state.results.monteCarloTimeFrameToShow);
 export const useCachedKeyMetrics = () => useSimulatorStore((state) => state.results.cachedKeyMetrics);
+export const useCachedSimulationResult = () => useSimulatorStore((state) => state.results.cachedSimulationResult);
 export const useSelectedConversationId = (planId: Id<'plans'>) => useSimulatorStore((state) => state.chat.selectedConversationId[planId]);
 export const useInsightsSelectedPlan = () => useSimulatorStore((state) => state.insights.selectedPlan);
 export const useShowAIChatPulse = () => useSimulatorStore((state) => state.nux.showAIChatPulse);
@@ -313,6 +322,7 @@ export const useUpdateMonteCarloSortMode = () => useSimulatorStore((state) => st
 export const useUpdateChartTimeFrameToShow = () => useSimulatorStore((state) => state.actions.updateChartTimeFrameToShow);
 export const useUpdateMonteCarloTimeFrameToShow = () => useSimulatorStore((state) => state.actions.updateMonteCarloTimeFrameToShow);
 export const useUpdateCachedKeyMetrics = () => useSimulatorStore((state) => state.actions.updateCachedKeyMetrics);
+export const useUpdateCachedSimulationResult = () => useSimulatorStore((state) => state.actions.updateCachedSimulationResult);
 export const useUpdateSelectedConversationId = () => useSimulatorStore((state) => state.actions.updateSelectedConversationId);
 export const useClearSelectedConversationId = () => useSimulatorStore((state) => state.actions.clearSelectedConversationId);
 export const useUpdateInsightsSelectedPlan = () => useSimulatorStore((state) => state.actions.updateInsightsSelectedPlan);

@@ -10,6 +10,7 @@ import { getUserIdOrThrow } from './utils/auth_utils';
 import { checkUsageLimits, recordUsage, getCanUseAIFeatures, getSubscriptionInfo } from './utils/ai_utils';
 import { getSystemPrompt } from './utils/sys_prompt_utils';
 import { keyMetricsValidator } from './validators/key_metrics_validator';
+import { simulationResultValidator } from './validators/simulation_result_validator';
 
 const MESSAGE_TIMEOUT_MS = 5 * 60 * 1000;
 const NUM_MESSAGES_AS_CONTEXT = 5;
@@ -42,8 +43,9 @@ export const send = mutation({
     planId: v.id('plans'),
     content: v.string(),
     keyMetrics: v.nullable(keyMetricsValidator),
+    simulationResult: v.optional(v.union(v.null(), simulationResultValidator)),
   },
-  handler: async (ctx, { conversationId: currConvId, planId, content, keyMetrics }) => {
+  handler: async (ctx, { conversationId: currConvId, planId, content, keyMetrics, simulationResult }) => {
     if (content.length > 2000) throw new ConvexError('Message cannot be longer than 2,000 characters.');
 
     const [{ userId }, { canUseAIFeatures: canUseChat, isAdmin }] = await Promise.all([getUserIdOrThrow(ctx), getCanUseAIFeatures(ctx)]);
@@ -66,7 +68,7 @@ export const send = mutation({
     if (loadingMessage) throw new ConvexError('An AI chat is already in progress. Please wait for it to complete.');
 
     const updatedAt = Date.now();
-    const systemPrompt = getSystemPrompt(plan, keyMetrics);
+    const systemPrompt = getSystemPrompt(plan, keyMetrics, simulationResult);
 
     let newConvId: Id<'conversations'> | null = null;
     if (!currConvId) {

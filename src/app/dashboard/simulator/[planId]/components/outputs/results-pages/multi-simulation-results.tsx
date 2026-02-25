@@ -65,7 +65,7 @@ function MultiSimulationResultsForActiveSeed({
   return (
     <>
       <SectionContainer showBottomBorder className="mb-0">
-        <SimulationMetrics keyMetrics={keyMetrics} />
+        <SimulationMetrics keyMetrics={keyMetrics} simulationResult={simulation} />
       </SectionContainer>
       <MultiSimulationResultsContent
         simulation={simulation}

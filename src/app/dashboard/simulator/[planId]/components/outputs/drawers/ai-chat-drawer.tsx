@@ -21,6 +21,7 @@ import { Textarea } from '@/components/catalyst/textarea';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import {
   useCachedKeyMetrics,
+  useCachedSimulationResult,
   useSelectedConversationId,
   useUpdateSelectedConversationId,
   useClearSelectedConversationId,
@@ -259,6 +260,7 @@ interface AIChatDrawerProps {
 export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
   const planId = useSelectedPlanId();
   const keyMetrics = useCachedKeyMetrics();
+  const simulationResult = useCachedSimulationResult();
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const sendButtonRef = useRef<HTMLButtonElement>(null);
@@ -320,7 +322,13 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
     try {
       updateChatState({ errorMessage: '' });
       posthog.capture('send_ai_message');
-      const { conversationId } = await m({ conversationId: selectedConversationId, planId, content: chatMessage, keyMetrics });
+      const { conversationId } = await m({
+        conversationId: selectedConversationId,
+        planId,
+        content: chatMessage,
+        keyMetrics,
+        simulationResult,
+      });
       updateChatState({ chatMessage: '' });
       updateSelectedConversationId(planId, conversationId);
     } catch (error) {
