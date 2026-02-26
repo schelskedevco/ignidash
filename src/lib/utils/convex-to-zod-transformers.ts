@@ -2,6 +2,7 @@ import type { Doc } from '@/convex/_generated/dataModel';
 import type { SimulationResult as ConvexSimulationResult } from '@/convex/validators/simulation_result_validator';
 
 import { ChartDataExtractor } from '@/lib/calc/data-extractors/chart-data-extractor';
+import type { PhaseName } from '@/lib/calc/phase';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
 import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
@@ -472,13 +473,21 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
   const taxesData = ChartDataExtractor.extractSingleSimulationTaxesData(simulation);
   const contributionsData = ChartDataExtractor.extractSingleSimulationContributionsData(simulation);
   const withdrawalsData = ChartDataExtractor.extractSingleSimulationWithdrawalsData(simulation);
+  const returnsData = ChartDataExtractor.extractSingleSimulationReturnsData(simulation);
+
+  const phaseLabels = { accumulation: 'accum', retirement: 'retire' } as const;
+  const toPhaseLabel = (name: PhaseName | undefined): 'accum' | 'retire' | null => (name ? phaseLabels[name] : null);
 
   const simulationResult: ConvexSimulationResult['simulationResult'] = [];
   for (let i = 0; i < netWorthData.length; i++) {
+    const phase = simulation.data[i + 1]?.phase;
+
     simulationResult.push({
       age: netWorthData[i].age,
+      phaseName: toPhaseLabel(phase?.name),
 
       // Net Worth
+      netWorth: netWorthData[i].netWorth,
       stockHoldings: netWorthData[i].stockHoldings,
       bondHoldings: netWorthData[i].bondHoldings,
       cashHoldings: netWorthData[i].cashHoldings,
@@ -507,16 +516,15 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       adjustedGrossIncome: taxesData[i].adjustedGrossIncome,
       taxableIncome: taxesData[i].taxableIncome,
       ficaTax: taxesData[i].annualFicaTax,
-      federalIncomeTax: taxesData[i].annualIncomeTax,
-      capitalGainsTax: taxesData[i].annualCapGainsTax,
+      fedIncomeTax: taxesData[i].annualIncomeTax,
+      fedCapitalGainsTax: taxesData[i].annualCapGainsTax,
       niit: taxesData[i].annualNiit,
       earlyWithdrawalPenalties: taxesData[i].annualEarlyWithdrawalPenalties,
       netInvestmentIncome: taxesData[i].netInvestmentIncome,
-      incomeSubjectToNiit: taxesData[i].incomeSubjectToNiit,
-      effectiveIncomeTaxRate: taxesData[i].effectiveIncomeTaxRate,
-      topMarginalIncomeTaxRate: taxesData[i].topMarginalIncomeTaxRate,
-      effectiveCapitalGainsTaxRate: taxesData[i].effectiveCapGainsTaxRate,
-      topMarginalCapitalGainsTaxRate: taxesData[i].topMarginalCapGainsTaxRate,
+      effectiveFedIncomeTaxRate: taxesData[i].effectiveIncomeTaxRate,
+      topMarginalFedIncomeTaxRate: taxesData[i].topMarginalIncomeTaxRate,
+      effectiveFedCapitalGainsTaxRate: taxesData[i].effectiveCapGainsTaxRate,
+      topMarginalFedCapitalGainsTaxRate: taxesData[i].topMarginalCapGainsTaxRate,
       taxDeductibleContributions: taxesData[i].taxDeductibleContributions,
       capitalLossDeduction: taxesData[i].capitalLossDeduction,
 
@@ -553,15 +561,25 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       assetPurchaseOutlay: cashFlowData[i].assetPurchaseOutlay,
       assetSaleProceeds: cashFlowData[i].assetSaleProceeds,
       assetAppreciation: netWorthData[i].annualAssetAppreciation,
+
+      // Returns
+      realStockReturnRate: returnsData[i].realStockReturnRate,
+      realBondReturnRate: returnsData[i].realBondReturnRate,
+      realCashReturnRate: returnsData[i].realCashReturnRate,
+      inflationRate: returnsData[i].inflationRate,
+      annualStockGain: returnsData[i].annualStockGain,
+      annualBondGain: returnsData[i].annualBondGain,
+      annualCashGain: returnsData[i].annualCashGain,
+      totalAnnualGains: returnsData[i].totalAnnualGains,
     });
   }
 
-  const incomeTaxBrackets: ConvexSimulationResult['incomeTaxBrackets'] = taxesData[0].incomeTaxBrackets;
-  const capitalGainsTaxBrackets: ConvexSimulationResult['capitalGainsTaxBrackets'] = taxesData[0].capitalGainsTaxBrackets;
+  const fedIncomeTaxBrackets: ConvexSimulationResult['fedIncomeTaxBrackets'] = taxesData[0].incomeTaxBrackets;
+  const fedCapitalGainsTaxBrackets: ConvexSimulationResult['fedCapitalGainsTaxBrackets'] = taxesData[0].capitalGainsTaxBrackets;
   const standardDeduction: ConvexSimulationResult['standardDeduction'] = taxesData[0].standardDeduction;
   const niitThreshold: ConvexSimulationResult['niitThreshold'] = taxesData[0].niitThreshold;
 
-  return { simulationResult, incomeTaxBrackets, capitalGainsTaxBrackets, standardDeduction, niitThreshold };
+  return { simulationResult, fedIncomeTaxBrackets, fedCapitalGainsTaxBrackets, standardDeduction, niitThreshold };
 }
 
 // ============================================================================

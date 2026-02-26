@@ -8,8 +8,10 @@ const taxBracketValidator = v.object({
 
 export const simulationDataPointValidator = v.object({
   age: v.number(),
+  phaseName: v.union(v.literal('accum'), v.literal('retire'), v.null()),
 
   // Net Worth
+  netWorth: v.number(),
   stockHoldings: v.number(),
   bondHoldings: v.number(),
   cashHoldings: v.number(),
@@ -39,18 +41,17 @@ export const simulationDataPointValidator = v.object({
   taxableIncome: v.number(),
 
   ficaTax: v.number(),
-  federalIncomeTax: v.number(),
-  capitalGainsTax: v.number(),
+  fedIncomeTax: v.number(),
+  fedCapitalGainsTax: v.number(),
   niit: v.number(),
   earlyWithdrawalPenalties: v.number(),
 
   netInvestmentIncome: v.number(),
-  incomeSubjectToNiit: v.number(),
 
-  effectiveIncomeTaxRate: v.number(),
-  topMarginalIncomeTaxRate: v.number(),
-  effectiveCapitalGainsTaxRate: v.number(),
-  topMarginalCapitalGainsTaxRate: v.number(),
+  effectiveFedIncomeTaxRate: v.number(),
+  topMarginalFedIncomeTaxRate: v.number(),
+  effectiveFedCapitalGainsTaxRate: v.number(),
+  topMarginalFedCapitalGainsTaxRate: v.number(),
 
   taxDeductibleContributions: v.number(),
   capitalLossDeduction: v.number(),
@@ -88,14 +89,24 @@ export const simulationDataPointValidator = v.object({
   assetPurchaseOutlay: v.number(),
   assetSaleProceeds: v.number(),
   assetAppreciation: v.number(),
+
+  // Returns
+  realStockReturnRate: v.number(),
+  realBondReturnRate: v.number(),
+  realCashReturnRate: v.number(),
+  inflationRate: v.number(),
+  annualStockGain: v.number(),
+  annualBondGain: v.number(),
+  annualCashGain: v.number(),
+  totalAnnualGains: v.number(),
 });
 
 export type SimulationDataPoint = Infer<typeof simulationDataPointValidator>;
 
 export const simulationResultValidator = v.object({
   simulationResult: v.array(simulationDataPointValidator),
-  incomeTaxBrackets: v.array(taxBracketValidator),
-  capitalGainsTaxBrackets: v.array(taxBracketValidator),
+  fedIncomeTaxBrackets: v.array(taxBracketValidator),
+  fedCapitalGainsTaxBrackets: v.array(taxBracketValidator),
   standardDeduction: v.number(),
   niitThreshold: v.number(),
 });

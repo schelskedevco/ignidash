@@ -156,13 +156,13 @@ const systemPrompt = (planData: string, keyMetrics: string, simulationData: stri
   If a user asks about unmodeled features, acknowledge the limitation directly—don't suggest workarounds within the app. You may explain these concepts educationally, but clarify they can't be simulated in Ignidash.
 
   ## User's Current Plan
-  ${planData}
+${planData}
 
   ## User's Key Results
-  ${keyMetrics}
+${keyMetrics}
 
   ## User's Full Simulation Results
-  ${simulationData}
+${simulationData}
 `;
 
 const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationData: string, userPrompt: string | undefined): string => `
@@ -332,13 +332,13 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationDa
   ## User Data
 
   **User's Current Plan**
-  ${planData}
+${planData}
 
   **User's Key Results**
-  ${keyMetrics}
+${keyMetrics}
 
   **User's Full Simulation Results**
-  ${simulationData}
+${simulationData}
 `;
 
 const formatPlanData = (plan: Doc<'plans'>): string => {
@@ -496,286 +496,172 @@ const formatKeyMetrics = (keyMetrics: KeyMetrics | null): string => {
   ].join('\n');
 };
 
-const formatSimulationVerbose = (simulationResult: SimulationResult): string => {
-  const { simulationResult: data, incomeTaxBrackets, capitalGainsTaxBrackets, standardDeduction, niitThreshold } = simulationResult;
+type D = SimulationResult['simulationResult'][number];
+type ColumnDef = { header: string; value: (d: D) => number | null; format: (n: number) => string };
 
-  if (!data.length) return 'No simulation data available';
+const hasValue = (v: number | null) => v !== null && v !== 0;
 
-  const lines: string[] = [];
-
-  const fmt = (n: number) => formatNumber(n, 0, '$');
-  const pct = (n: number) => `${(n * 100).toFixed(n && Math.abs(n) < 0.1 ? 1 : 0)}%`;
-
-  const fmtBracket = (b: { min: number; max: number; rate: number }) =>
-    `${pct(b.rate)}:${fmt(b.min)}${Number.isFinite(b.max) ? `-${fmt(b.max)}` : '+'}`;
-
-  lines.push(`Tax Brackets:`);
-  lines.push(`  Income: ${incomeTaxBrackets.map(fmtBracket).join(', ')}`);
-  lines.push(`  CapGains: ${capitalGainsTaxBrackets.map(fmtBracket).join(', ')}`);
-  lines.push(`  StdDeduction: ${fmt(standardDeduction)}`);
-  lines.push(`  NIIT Threshold: ${fmt(niitThreshold)}`);
-
-  lines.push(`\nYear-by-Year:`);
-
-  for (const d of data) {
-    const sections: string[] = [];
-
-    const portfolio = [
-      d.stockHoldings && `stk:${fmt(d.stockHoldings)}`,
-      d.bondHoldings && `bnd:${fmt(d.bondHoldings)}`,
-      d.cashHoldings && `cash:${fmt(d.cashHoldings)}`,
-    ].filter(Boolean);
-    if (portfolio.length) sections.push(`portfolio: ${portfolio.join(', ')} = ${fmt(d.totalValue)}`);
-
-    const accounts = [
-      d.taxableValue && `taxable:${fmt(d.taxableValue)}`,
-      d.taxDeferredValue && `trad:${fmt(d.taxDeferredValue)}`,
-      d.taxFreeValue && `roth:${fmt(d.taxFreeValue)}`,
-      d.cashSavings && `savings:${fmt(d.cashSavings)}`,
-    ].filter(Boolean);
-    if (accounts.length) sections.push(`accounts: ${accounts.join(', ')}`);
-
-    const income = [
-      d.earnedIncome && `earned:${fmt(d.earnedIncome)}`,
-      d.socialSecurityIncome && `SS:${fmt(d.socialSecurityIncome)}`,
-      d.taxFreeIncome && `taxFree:${fmt(d.taxFreeIncome)}`,
-      d.retirementDistributions && `retireDist:${fmt(d.retirementDistributions)}`,
-      d.interestIncome && `interest:${fmt(d.interestIncome)}`,
-      d.dividendIncome && `dividends:${fmt(d.dividendIncome)}`,
-      d.realizedGains && `gains:${fmt(d.realizedGains)}`,
-    ].filter(Boolean);
-    if (income.length) sections.push(`income: ${income.join(', ')}`);
-
-    const cashFlow = [
-      d.expenses && `expenses:${fmt(d.expenses)}`,
-      d.taxesAndPenalties && `taxes:${fmt(d.taxesAndPenalties)}`,
-      d.surplusDeficit && `surplusDeficit:${fmt(d.surplusDeficit)}`,
-      d.savingsRate && `saveRate:${pct(d.savingsRate)}`,
-      d.netCashFlow && `netCashFlow:${fmt(d.netCashFlow)}`,
-    ].filter(Boolean);
-    if (cashFlow.length) sections.push(`cashFlow: ${cashFlow.join(', ')}`);
-
-    const taxBasis = [
-      d.grossIncome && `gross:${fmt(d.grossIncome)}`,
-      d.adjustedGrossIncome && `AGI:${fmt(d.adjustedGrossIncome)}`,
-      d.taxableIncome && `taxableInc:${fmt(d.taxableIncome)}`,
-      d.netInvestmentIncome && `netInvestmentInc:${fmt(d.netInvestmentIncome)}`,
-      d.incomeSubjectToNiit && `incSubjectToNiit:${fmt(d.incomeSubjectToNiit)}`,
-    ].filter(Boolean);
-    if (taxBasis.length) sections.push(`taxBasis: ${taxBasis.join(', ')}`);
-
-    const taxes = [
-      d.federalIncomeTax && `incomeTax:${fmt(d.federalIncomeTax)}`,
-      d.capitalGainsTax && `capGainsTax:${fmt(d.capitalGainsTax)}`,
-      d.ficaTax && `FICA:${fmt(d.ficaTax)}`,
-      d.niit && `NIIT:${fmt(d.niit)}`,
-      d.earlyWithdrawalPenalties && `penalties:${fmt(d.earlyWithdrawalPenalties)}`,
-    ].filter(Boolean);
-    if (taxes.length) sections.push(`taxes: ${taxes.join(', ')}`);
-
-    const rates = [
-      d.effectiveIncomeTaxRate && `effInc:${pct(d.effectiveIncomeTaxRate)}`,
-      d.topMarginalIncomeTaxRate && `margInc:${pct(d.topMarginalIncomeTaxRate)}`,
-      d.effectiveCapitalGainsTaxRate && `effCG:${pct(d.effectiveCapitalGainsTaxRate)}`,
-      d.topMarginalCapitalGainsTaxRate && `margCG:${pct(d.topMarginalCapitalGainsTaxRate)}`,
-    ].filter(Boolean);
-    if (rates.length) sections.push(`rates: ${rates.join(', ')}`);
-
-    const deductions = [
-      d.taxDeductibleContributions && `tradContrib:${fmt(d.taxDeductibleContributions)}`,
-      d.capitalLossDeduction && `capLoss:${fmt(d.capitalLossDeduction)}`,
-    ].filter(Boolean);
-    if (deductions.length) sections.push(`deductions: ${deductions.join(', ')}`);
-
-    const contribs = [
-      d.totalContributions && `total:${fmt(d.totalContributions)}`,
-      d.taxableContributions && `taxable:${fmt(d.taxableContributions)}`,
-      d.taxDeferredContributions && `trad:${fmt(d.taxDeferredContributions)}`,
-      d.taxFreeContributions && `roth:${fmt(d.taxFreeContributions)}`,
-      d.cashContributions && `cash:${fmt(d.cashContributions)}`,
-      d.employerMatch && `match:${fmt(d.employerMatch)}`,
-    ].filter(Boolean);
-    if (contribs.length) sections.push(`contribs: ${contribs.join(', ')}`);
-
-    const withdrawals = [
-      d.totalWithdrawals && `total:${fmt(d.totalWithdrawals)}`,
-      d.taxableWithdrawals && `taxable:${fmt(d.taxableWithdrawals)}`,
-      d.taxDeferredWithdrawals && `trad:${fmt(d.taxDeferredWithdrawals)}`,
-      d.taxFreeWithdrawals && `roth:${fmt(d.taxFreeWithdrawals)}`,
-      d.cashWithdrawals && `cash:${fmt(d.cashWithdrawals)}`,
-      d.requiredMinimumDistributions && `RMD:${fmt(d.requiredMinimumDistributions)}`,
-      d.earlyWithdrawals && `early:${fmt(d.earlyWithdrawals)}`,
-      d.rothEarningsWithdrawals && `rothEarn:${fmt(d.rothEarningsWithdrawals)}`,
-      d.withdrawalRate && `rate:${pct(d.withdrawalRate)}`,
-    ].filter(Boolean);
-    if (withdrawals.length) sections.push(`withdrawals: ${withdrawals.join(', ')}`);
-
-    const debts = [
-      d.unsecuredDebtBalance && `unsecured:${fmt(d.unsecuredDebtBalance)}`,
-      d.securedDebtBalance && `secured:${fmt(d.securedDebtBalance)}`,
-      d.debtPayments && `payments:${fmt(d.debtPayments)}`,
-      d.debtPaydown && `paydown:${fmt(d.debtPaydown)}`,
-      d.debtPayoff && `payoff:${fmt(d.debtPayoff)}`,
-      d.debtIncurred && `incurred:${fmt(d.debtIncurred)}`,
-    ].filter(Boolean);
-    if (debts.length) sections.push(`debts: ${debts.join(', ')}`);
-
-    const assets = [
-      d.assetValue && `value:${fmt(d.assetValue)}`,
-      d.assetEquity && `equity:${fmt(d.assetEquity)}`,
-      d.assetPurchaseOutlay && `purchaseOutlay:${fmt(d.assetPurchaseOutlay)}`,
-      d.assetSaleProceeds && `saleProceeds:${fmt(d.assetSaleProceeds)}`,
-      d.assetAppreciation && `appr:${fmt(d.assetAppreciation)}`,
-    ].filter(Boolean);
-    if (assets.length) sections.push(`physicalAssets: ${assets.join(', ')}`);
-
-    lines.push(`\n  Age ${d.age}:`);
-    sections.forEach((section) => lines.push(`    ${section};`));
-  }
-
-  return lines.join('\n');
-};
-
-type ColumnDef<T> = { header: string; value: (d: T) => number | null; format: (n: number) => string };
-
-const buildTable = (
-  title: string,
-  data: SimulationResult['simulationResult'],
-  columns: ColumnDef<SimulationResult['simulationResult'][number]>[]
-): string | null => {
-  const activeColumns = columns.filter((col) =>
-    data.some((d) => {
-      const v = col.value(d);
-      return v !== null && v !== 0;
-    })
-  );
+const buildTable = (title: string, data: SimulationResult['simulationResult'], columns: ColumnDef[]): string | null => {
+  const activeColumns = columns.filter((col) => data.some((d) => hasValue(col.value(d))));
   if (activeColumns.length === 0) return null;
 
-  const header = `Age|${activeColumns.map((c) => c.header).join('|')}`;
-  const rows = data.map(
-    (d) =>
-      `${d.age}|${activeColumns
-        .map((c) => {
-          const v = c.value(d);
-          return v !== null ? c.format(v) : '';
-        })
-        .join('|')}`
-  );
+  const header = `age|phase|${activeColumns.map((c) => c.header).join('|')}`;
+  const rows = data
+    .filter((d) => activeColumns.some((c) => hasValue(c.value(d))))
+    .map(
+      (d) =>
+        `${d.age}|${d.phaseName ?? 'unknown'}|${activeColumns
+          .map((c) => {
+            const v = c.value(d);
+            return v !== null ? c.format(v) : '';
+          })
+          .join('|')}`
+    );
 
   return `## ${title}\n${header}\n${rows.join('\n')}`;
 };
 
-const formatSimulationCompact = (simulationResult: SimulationResult | null | undefined): string => {
+const formatSimulationData = (simulationResult: SimulationResult | null | undefined): string => {
   if (!simulationResult) return 'No simulation data available';
 
-  const { simulationResult: data, incomeTaxBrackets, capitalGainsTaxBrackets, standardDeduction, niitThreshold } = simulationResult;
+  const { simulationResult: data, fedIncomeTaxBrackets, fedCapitalGainsTaxBrackets, standardDeduction, niitThreshold } = simulationResult;
 
   if (!data.length) return 'No simulation data available';
 
   const fmt = (n: number) => formatNumber(n, 0, '$');
-  const pct = (n: number) => `${(n * 100).toFixed(n && Math.abs(n) < 0.1 ? 1 : 0)}%`;
+  const pct = (n: number) => `${(n * 100).toFixed(1)}%`;
+  const col = (header: string, key: keyof D, format = fmt): ColumnDef => ({
+    header,
+    value: (d) => d[key] as number | null,
+    format,
+  });
   const fmtBracket = (b: { min: number; max: number; rate: number }) =>
-    `${pct(b.rate)}:${fmt(b.min)}${Number.isFinite(b.max) ? `-${fmt(b.max)}` : '+'}`;
+    `${pct(b.rate)} on ${fmt(b.min)}${Number.isFinite(b.max) ? `–${fmt(b.max)}` : '+'}`;
 
   const lines: string[] = [];
 
   lines.push(`Tax Brackets:`);
-  lines.push(`  Income: ${incomeTaxBrackets.map(fmtBracket).join(', ')}`);
-  lines.push(`  CapGains: ${capitalGainsTaxBrackets.map(fmtBracket).join(', ')}`);
+  lines.push(`  FedIncBrackets: ${fedIncomeTaxBrackets.map(fmtBracket).join(', ')}`);
+  lines.push(`  FedCapGainsBrackets: ${fedCapitalGainsTaxBrackets.map(fmtBracket).join(', ')}`);
   lines.push(`  StdDeduction: ${fmt(standardDeduction)}`);
   lines.push(`  NIIT Threshold: ${fmt(niitThreshold)}`);
 
-  type D = SimulationResult['simulationResult'][number];
-
-  const portfolioCols: ColumnDef<D>[] = [
-    { header: 'total', value: (d) => d.totalValue, format: fmt },
-    { header: 'stk', value: (d) => d.stockHoldings, format: fmt },
-    { header: 'bnd', value: (d) => d.bondHoldings, format: fmt },
-    { header: 'cash', value: (d) => d.cashHoldings, format: fmt },
-    { header: 'taxable', value: (d) => d.taxableValue, format: fmt },
-    { header: 'trad', value: (d) => d.taxDeferredValue, format: fmt },
-    { header: 'roth', value: (d) => d.taxFreeValue, format: fmt },
-    { header: 'savings', value: (d) => d.cashSavings, format: fmt },
-  ];
-
-  const incomeCols: ColumnDef<D>[] = [
-    { header: 'earned', value: (d) => d.earnedIncome, format: fmt },
-    { header: 'SS', value: (d) => d.socialSecurityIncome, format: fmt },
-    { header: 'taxFree', value: (d) => d.taxFreeIncome, format: fmt },
-    { header: 'retireDist', value: (d) => d.retirementDistributions, format: fmt },
-    { header: 'interest', value: (d) => d.interestIncome, format: fmt },
-    { header: 'dividends', value: (d) => d.dividendIncome, format: fmt },
-    { header: 'gains', value: (d) => d.realizedGains, format: fmt },
-    { header: 'expenses', value: (d) => d.expenses, format: fmt },
-    { header: 'taxes', value: (d) => d.taxesAndPenalties, format: fmt },
-    { header: 'surplusDeficit', value: (d) => d.surplusDeficit, format: fmt },
-    { header: 'saveRate', value: (d) => d.savingsRate, format: pct },
-    { header: 'netCashFlow', value: (d) => d.netCashFlow, format: fmt },
-  ];
-
-  const taxCols: ColumnDef<D>[] = [
-    { header: 'gross', value: (d) => d.grossIncome, format: fmt },
-    { header: 'AGI', value: (d) => d.adjustedGrossIncome, format: fmt },
-    { header: 'taxableInc', value: (d) => d.taxableIncome, format: fmt },
-    { header: 'netInvestmentInc', value: (d) => d.netInvestmentIncome, format: fmt },
-    { header: 'incSubjectToNiit', value: (d) => d.incomeSubjectToNiit, format: fmt },
-    { header: 'incomeTax', value: (d) => d.federalIncomeTax, format: fmt },
-    { header: 'capGainsTax', value: (d) => d.capitalGainsTax, format: fmt },
-    { header: 'FICA', value: (d) => d.ficaTax, format: fmt },
-    { header: 'NIIT', value: (d) => d.niit, format: fmt },
-    { header: 'penalties', value: (d) => d.earlyWithdrawalPenalties, format: fmt },
-    { header: 'tradContrib', value: (d) => d.taxDeductibleContributions, format: fmt },
-    { header: 'capLoss', value: (d) => d.capitalLossDeduction, format: fmt },
-    { header: 'effInc', value: (d) => d.effectiveIncomeTaxRate, format: pct },
-    { header: 'margInc', value: (d) => d.topMarginalIncomeTaxRate, format: pct },
-    { header: 'effCG', value: (d) => d.effectiveCapitalGainsTaxRate, format: pct },
-    { header: 'margCG', value: (d) => d.topMarginalCapitalGainsTaxRate, format: pct },
-  ];
-
-  const contribCols: ColumnDef<D>[] = [
-    { header: 'total', value: (d) => d.totalContributions, format: fmt },
-    { header: 'taxable', value: (d) => d.taxableContributions, format: fmt },
-    { header: 'trad', value: (d) => d.taxDeferredContributions, format: fmt },
-    { header: 'roth', value: (d) => d.taxFreeContributions, format: fmt },
-    { header: 'cash', value: (d) => d.cashContributions, format: fmt },
-    { header: 'match', value: (d) => d.employerMatch, format: fmt },
-  ];
-
-  const withdrawalCols: ColumnDef<D>[] = [
-    { header: 'total', value: (d) => d.totalWithdrawals, format: fmt },
-    { header: 'taxable', value: (d) => d.taxableWithdrawals, format: fmt },
-    { header: 'trad', value: (d) => d.taxDeferredWithdrawals, format: fmt },
-    { header: 'roth', value: (d) => d.taxFreeWithdrawals, format: fmt },
-    { header: 'cash', value: (d) => d.cashWithdrawals, format: fmt },
-    { header: 'RMD', value: (d) => d.requiredMinimumDistributions, format: fmt },
-    { header: 'early', value: (d) => d.earlyWithdrawals, format: fmt },
-    { header: 'rothEarn', value: (d) => d.rothEarningsWithdrawals, format: fmt },
-    { header: 'rate', value: (d) => d.withdrawalRate, format: pct },
-  ];
-
-  const debtCols: ColumnDef<D>[] = [
-    { header: 'unsecured', value: (d) => d.unsecuredDebtBalance, format: fmt },
-    { header: 'secured', value: (d) => d.securedDebtBalance, format: fmt },
-    { header: 'payments', value: (d) => d.debtPayments, format: fmt },
-    { header: 'paydown', value: (d) => d.debtPaydown, format: fmt },
-    { header: 'payoff', value: (d) => d.debtPayoff, format: fmt },
-    { header: 'incurred', value: (d) => d.debtIncurred, format: fmt },
-    { header: 'value', value: (d) => d.assetValue, format: fmt },
-    { header: 'equity', value: (d) => d.assetEquity, format: fmt },
-    { header: 'purchaseOutlay', value: (d) => d.assetPurchaseOutlay, format: fmt },
-    { header: 'saleProceeds', value: (d) => d.assetSaleProceeds, format: fmt },
-    { header: 'appr', value: (d) => d.assetAppreciation, format: fmt },
-  ];
-
   const tables = [
-    buildTable('Portfolio', data, portfolioCols),
-    buildTable('Income & Cash Flow', data, incomeCols),
-    buildTable('Taxes', data, taxCols),
-    buildTable('Contributions', data, contribCols),
-    buildTable('Withdrawals', data, withdrawalCols),
-    buildTable('Debts & Physical Assets', data, debtCols),
-  ].filter(Boolean);
+    {
+      title: 'Savings & Investments',
+      columns: [
+        col('netWorth', 'netWorth'),
+        col('totalValue', 'totalValue'),
+        col('stocks', 'stockHoldings'),
+        col('bonds', 'bondHoldings'),
+        col('cash', 'cashHoldings'),
+        col('taxable', 'taxableValue'),
+        col('taxDeferred', 'taxDeferredValue'),
+        col('roth', 'taxFreeValue'),
+        col('cashSavings', 'cashSavings'),
+      ],
+    },
+    {
+      title: 'Income & Cash Flow',
+      columns: [
+        col('earnedInc', 'earnedIncome'),
+        col('socSecInc', 'socialSecurityIncome'),
+        col('taxFreeInc', 'taxFreeIncome'),
+        col('retireDist', 'retirementDistributions'),
+        col('interestInc', 'interestIncome'),
+        col('dividendInc', 'dividendIncome'),
+        col('realizedGains', 'realizedGains'),
+        col('expenses', 'expenses'),
+        col('taxes', 'taxesAndPenalties'),
+        col('debtPayments', 'debtPayments'),
+        col('surplusDeficit', 'surplusDeficit'),
+        col('savingsRate', 'savingsRate', pct),
+        col('netCashFlow', 'netCashFlow'),
+      ],
+    },
+    {
+      title: 'Taxes',
+      columns: [
+        col('grossInc', 'grossIncome'),
+        col('AGI', 'adjustedGrossIncome'),
+        col('taxableInc', 'taxableIncome'),
+        col('netInvestmentInc', 'netInvestmentIncome'),
+        col('fedIncTax', 'fedIncomeTax'),
+        col('fedCapGainsTax', 'fedCapitalGainsTax'),
+        col('fica', 'ficaTax'),
+        col('niit', 'niit'),
+        col('earlyWithdrawPen', 'earlyWithdrawalPenalties'),
+        col('deductibleContrib', 'taxDeductibleContributions'),
+        col('capLossDeduction', 'capitalLossDeduction'),
+        col('effFedIncTaxRate', 'effectiveFedIncomeTaxRate', pct),
+        col('margFedIncTaxRate', 'topMarginalFedIncomeTaxRate', pct),
+        col('effFedCapGainsRate', 'effectiveFedCapitalGainsTaxRate', pct),
+        col('margFedCapGainsRate', 'topMarginalFedCapitalGainsTaxRate', pct),
+      ],
+    },
+    {
+      title: 'Contributions',
+      columns: [
+        col('totalContrib', 'totalContributions'),
+        col('taxable', 'taxableContributions'),
+        col('taxDeferred', 'taxDeferredContributions'),
+        col('roth', 'taxFreeContributions'),
+        col('cash', 'cashContributions'),
+        col('employerMatch', 'employerMatch'),
+      ],
+    },
+    {
+      title: 'Withdrawals',
+      columns: [
+        col('totalWithdraw', 'totalWithdrawals'),
+        col('taxable', 'taxableWithdrawals'),
+        col('taxDeferred', 'taxDeferredWithdrawals'),
+        col('roth', 'taxFreeWithdrawals'),
+        col('cash', 'cashWithdrawals'),
+        col('RMD', 'requiredMinimumDistributions'),
+        col('earlyWithdraw', 'earlyWithdrawals'),
+        col('rothEarnings', 'rothEarningsWithdrawals'),
+        col('withdrawRate', 'withdrawalRate', pct),
+      ],
+    },
+    {
+      title: 'Debts & Physical Assets',
+      columns: [
+        col('unsecuredBal', 'unsecuredDebtBalance'),
+        col('securedBal', 'securedDebtBalance'),
+        col('debtPaydown', 'debtPaydown'),
+        col('debtPayoff', 'debtPayoff'),
+        col('debtIncurred', 'debtIncurred'),
+        col('assetValue', 'assetValue'),
+        col('assetEquity', 'assetEquity'),
+        col('purchaseOutlay', 'assetPurchaseOutlay'),
+        col('saleProceeds', 'assetSaleProceeds'),
+        col('appreciation', 'assetAppreciation'),
+      ],
+    },
+  ]
+    .map(({ title, columns }) => buildTable(title, data, columns))
+    .filter(Boolean);
 
+  const rateKeys: (keyof D)[] = ['realStockReturnRate', 'realBondReturnRate', 'realCashReturnRate', 'inflationRate'];
+  const ratesVary = rateKeys.some((key) => data.some((d) => d[key] !== data[0][key]));
+
+  if (ratesVary) {
+    const returnsTable = buildTable('Returns', data, [
+      col('realStockRate', 'realStockReturnRate', pct),
+      col('realBondRate', 'realBondReturnRate', pct),
+      col('realCashRate', 'realCashReturnRate', pct),
+      col('inflationRate', 'inflationRate', pct),
+      col('stockGain', 'annualStockGain'),
+      col('bondGain', 'annualBondGain'),
+      col('cashGain', 'annualCashGain'),
+      col('totalGains', 'totalAnnualGains'),
+    ]);
+    if (returnsTable) tables.push(returnsTable);
+  }
+
+  lines.push('');
+  lines.push('Note: Ages with all-zero values are omitted. Columns that are zero for every age are omitted.');
   lines.push('');
   lines.push(tables.join('\n\n'));
 
@@ -783,7 +669,7 @@ const formatSimulationCompact = (simulationResult: SimulationResult | null | und
 };
 
 export const getSystemPrompt = (plan: Doc<'plans'>, keyMetrics: KeyMetrics | null, simulationResult?: SimulationResult | null): string => {
-  return systemPrompt(formatPlanData(plan), formatKeyMetrics(keyMetrics), formatSimulationCompact(simulationResult));
+  return systemPrompt(formatPlanData(plan), formatKeyMetrics(keyMetrics), formatSimulationData(simulationResult));
 };
 
 export const getInsightsSystemPrompt = (
@@ -792,5 +678,5 @@ export const getInsightsSystemPrompt = (
   simulationResult: SimulationResult,
   userPrompt: string | undefined
 ): string => {
-  return insightsSystemPrompt(formatPlanData(plan), formatKeyMetrics(keyMetrics), formatSimulationVerbose(simulationResult), userPrompt);
+  return insightsSystemPrompt(formatPlanData(plan), formatKeyMetrics(keyMetrics), formatSimulationData(simulationResult), userPrompt);
 };
