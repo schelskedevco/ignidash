@@ -17,6 +17,8 @@ import posthog from 'posthog-js';
 
 import AppLogo from '@/components/app-logo';
 import { Button } from '@/components/catalyst/button';
+import { Checkbox, CheckboxField } from '@/components/catalyst/checkbox';
+import { Label, Description } from '@/components/catalyst/fieldset';
 import { Textarea } from '@/components/catalyst/textarea';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import {
@@ -25,6 +27,8 @@ import {
   useSelectedConversationId,
   useUpdateSelectedConversationId,
   useClearSelectedConversationId,
+  useIncludeSimData,
+  useUpdateIncludeSimData,
 } from '@/lib/stores/simulator-store';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu, DropdownLabel, DropdownDescription } from '@/components/catalyst/dropdown';
 import { cn } from '@/lib/utils';
@@ -32,6 +36,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Subheading } from '@/components/catalyst/heading';
 import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Divider } from '@/components/catalyst/divider';
 
 const PAGE_SIZE = 12;
 
@@ -272,6 +277,9 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
   const updateSelectedConversationId = useUpdateSelectedConversationId();
   const clearSelectedConversationId = useClearSelectedConversationId();
 
+  const includeSimData = useIncludeSimData();
+  const updateIncludeSimData = useUpdateIncludeSimData();
+
   const [chatState, setChatState] = useState<Record<string, { chatMessage: string; errorMessage: string }>>({});
 
   const stateKey = selectedConversationId ?? 'new';
@@ -328,6 +336,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
         content: chatMessage,
         keyMetrics,
         simulationResult,
+        includeSimData,
       });
       updateChatState({ chatMessage: '' });
       updateSelectedConversationId(planId, conversationId);
@@ -415,13 +424,21 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                 <div className="mx-auto w-full max-w-md">
                   <AppLogo className="mx-auto h-10 w-auto" />
                   <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-stone-900 dark:text-white">Your AI Assistant</h2>
-                  <p className="text-muted-foreground mt-2 text-sm/6">
+                  <p className="text-muted-foreground mt-2 text-center text-sm/6">
                     The AI assistant is for educational purposes only and does not provide professional financial advice. Read our{' '}
                     <Link href="/terms" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
                       Terms of Service
                     </Link>{' '}
                     for more.
                   </p>
+                  <Divider className="my-6" soft />
+                  <CheckboxField>
+                    <Checkbox name="include_data" checked={includeSimData} onChange={updateIncludeSimData} color="rose" />
+                    <Label>Include simulation results</Label>
+                    <Description>
+                      Shares full simulation output with the AI for in-depth analysis. Disabling reduces token usage for general questions.
+                    </Description>
+                  </CheckboxField>
                 </div>
               </div>
             ) : (

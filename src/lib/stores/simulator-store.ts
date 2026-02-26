@@ -94,6 +94,7 @@ interface SimulatorState {
 
   chat: {
     selectedConversationId: Record<string, Id<'conversations'>>;
+    includeSimData: boolean;
   };
 
   insights: {
@@ -129,6 +130,7 @@ interface SimulatorState {
     /* Chat */
     updateSelectedConversationId: (planId: Id<'plans'>, id: Id<'conversations'>) => void;
     clearSelectedConversationId: (planId: Id<'plans'>) => void;
+    updateIncludeSimData: (value: boolean) => void;
 
     /* Insights */
     updateInsightsSelectedPlan: (
@@ -164,6 +166,7 @@ export const defaultState: Omit<SimulatorState, 'actions'> = {
   },
   chat: {
     selectedConversationId: {},
+    includeSimData: true,
   },
   insights: {
     selectedPlan: undefined,
@@ -251,6 +254,10 @@ export const useSimulatorStore = create<SimulatorState>()(
             set((state) => {
               delete state.chat.selectedConversationId[planId];
             }),
+          updateIncludeSimData: (value) =>
+            set((state) => {
+              state.chat.includeSimData = value;
+            }),
           updateInsightsSelectedPlan: (plan) =>
             set((state) => {
               state.insights.selectedPlan = plan;
@@ -301,6 +308,7 @@ export const useMonteCarloTimeFrameToShow = () => useSimulatorStore((state) => s
 export const useCachedKeyMetrics = () => useSimulatorStore((state) => state.results.cachedKeyMetrics);
 export const useCachedSimulationResult = () => useSimulatorStore((state) => state.results.cachedSimulationResult);
 export const useSelectedConversationId = (planId: Id<'plans'>) => useSimulatorStore((state) => state.chat.selectedConversationId[planId]);
+export const useIncludeSimData = () => useSimulatorStore((state) => state.chat.includeSimData);
 export const useInsightsSelectedPlan = () => useSimulatorStore((state) => state.insights.selectedPlan);
 export const useShowAIChatPulse = () => useSimulatorStore((state) => state.nux.showAIChatPulse);
 
@@ -326,6 +334,7 @@ export const useUpdateCachedKeyMetrics = () => useSimulatorStore((state) => stat
 export const useUpdateCachedSimulationResult = () => useSimulatorStore((state) => state.actions.updateCachedSimulationResult);
 export const useUpdateSelectedConversationId = () => useSimulatorStore((state) => state.actions.updateSelectedConversationId);
 export const useClearSelectedConversationId = () => useSimulatorStore((state) => state.actions.clearSelectedConversationId);
+export const useUpdateIncludeSimData = () => useSimulatorStore((state) => state.actions.updateIncludeSimData);
 export const useUpdateInsightsSelectedPlan = () => useSimulatorStore((state) => state.actions.updateInsightsSelectedPlan);
 export const useUpdateShowAIChatPulse = () => useSimulatorStore((state) => state.actions.updateShowAIChatPulse);
 

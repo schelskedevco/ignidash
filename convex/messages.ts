@@ -44,8 +44,9 @@ export const send = mutation({
     content: v.string(),
     keyMetrics: v.nullable(keyMetricsValidator),
     simulationResult: v.optional(v.union(v.null(), simulationResultValidator)),
+    includeSimData: v.optional(v.boolean()),
   },
-  handler: async (ctx, { conversationId: currConvId, planId, content, keyMetrics, simulationResult }) => {
+  handler: async (ctx, { conversationId: currConvId, planId, content, keyMetrics, simulationResult, includeSimData }) => {
     if (content.length > 2000) throw new ConvexError('Message cannot be longer than 2,000 characters.');
 
     const [{ userId }, { canUseAIFeatures: canUseChat, isAdmin }] = await Promise.all([getUserIdOrThrow(ctx), getCanUseAIFeatures(ctx)]);
@@ -68,7 +69,7 @@ export const send = mutation({
     if (loadingMessage) throw new ConvexError('An AI chat is already in progress. Please wait for it to complete.');
 
     const updatedAt = Date.now();
-    const systemPrompt = getSystemPrompt(plan, keyMetrics, simulationResult);
+    const systemPrompt = getSystemPrompt(plan, keyMetrics, includeSimData ? simulationResult : null);
 
     let newConvId: Id<'conversations'> | null = null;
     if (!currConvId) {
