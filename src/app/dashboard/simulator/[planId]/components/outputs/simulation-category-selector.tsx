@@ -135,7 +135,7 @@ export default function SimulationCategorySelector({
               }}
               type="button"
               className={cn(
-                'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border/50 relative inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold focus:z-10',
+                'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border/25 relative inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold focus:z-10',
                 { 'text-foreground bg-emphasized-background': resultsCategory === category }
               )}
             >
