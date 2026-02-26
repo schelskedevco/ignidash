@@ -17,7 +17,7 @@ import posthog from 'posthog-js';
 
 import AppLogo from '@/components/app-logo';
 import { Button } from '@/components/catalyst/button';
-import { Checkbox, CheckboxField } from '@/components/catalyst/checkbox';
+import { Checkbox, CheckboxField, CheckboxGroup } from '@/components/catalyst/checkbox';
 import { Label, Description } from '@/components/catalyst/fieldset';
 import { Textarea } from '@/components/catalyst/textarea';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
@@ -432,13 +432,23 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
                     for more.
                   </p>
                   <Divider className="my-6" soft />
-                  <CheckboxField>
-                    <Checkbox name="include_data" checked={includeSimData} onChange={updateIncludeSimData} color="rose" />
-                    <Label>Include simulation results</Label>
-                    <Description>
-                      Shares full simulation output with the AI for in-depth analysis. Disabling reduces token usage for general questions.
-                    </Description>
-                  </CheckboxField>
+                  <CheckboxGroup>
+                    <CheckboxField>
+                      <Checkbox name="planInputs" checked color="rose" disabled />
+                      <Label>Inputs & results summary</Label>
+                      <Description>
+                        Plan inputs and a brief summary of results are always sent to give the AI context about your scenario.
+                      </Description>
+                    </CheckboxField>
+                    <CheckboxField>
+                      <Checkbox name="simulationResults" checked={includeSimData} onChange={updateIncludeSimData} color="rose" />
+                      <Label>Full simulation results</Label>
+                      <Description>
+                        Send detailed simulation results to the AI for in-depth analysis. Disabling reduces token usage for general
+                        questions.
+                      </Description>
+                    </CheckboxField>
+                  </CheckboxGroup>
                 </div>
               </div>
             ) : (

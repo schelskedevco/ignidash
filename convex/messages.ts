@@ -47,7 +47,7 @@ export const send = mutation({
     includeSimData: v.optional(v.boolean()),
   },
   handler: async (ctx, { conversationId: currConvId, planId, content, keyMetrics, simulationResult, includeSimData }) => {
-    if (content.length > 2000) throw new ConvexError('Message cannot be longer than 2,000 characters.');
+    if (content.length > 4000) throw new ConvexError('Message cannot be longer than 4,000 characters.');
 
     const [{ userId }, { canUseAIFeatures: canUseChat, isAdmin }] = await Promise.all([getUserIdOrThrow(ctx), getCanUseAIFeatures(ctx)]);
 
