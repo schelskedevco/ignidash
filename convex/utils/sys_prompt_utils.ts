@@ -513,7 +513,7 @@ const buildTable = (title: string, data: SimulationResult['simulationResult'], c
         `${d.age}|${d.phaseName ?? 'unknown'}|${activeColumns
           .map((c) => {
             const v = c.value(d);
-            return v !== null ? c.format(v) : '';
+            return v !== null ? c.format(v) : 'n/a';
           })
           .join('|')}`
     );
@@ -661,7 +661,7 @@ const formatSimulationData = (simulationResult: SimulationResult | null | undefi
   }
 
   lines.push('');
-  lines.push('Note: Ages with all-zero values are omitted. Columns that are zero for every age are omitted.');
+  lines.push('Note: Rows are omitted when all columns are zero or n/a. Columns are omitted when zero or n/a for every age.');
   lines.push('');
   lines.push(tables.join('\n\n'));
 
