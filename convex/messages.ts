@@ -13,7 +13,7 @@ import { keyMetricsValidator } from './validators/key_metrics_validator';
 import { simulationResultValidator } from './validators/simulation_result_validator';
 
 const MESSAGE_TIMEOUT_MS = 5 * 60 * 1000;
-const NUM_MESSAGES_AS_CONTEXT = 5;
+const NUM_MESSAGES_AS_CONTEXT = 11;
 
 export const canUseChat = query({
   args: {},
