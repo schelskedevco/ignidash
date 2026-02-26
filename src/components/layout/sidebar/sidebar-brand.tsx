@@ -22,7 +22,7 @@ export default function SidebarBrand({ onClose }: SidebarBrandProps) {
           <div className="px-1">
             <AppLogo className="size-8 shrink-0" />
           </div>
-          <span className="relative ml-1 text-2xl font-bold tracking-tight">
+          <span className="relative ml-1 text-2xl font-bold tracking-tight whitespace-nowrap transition-[width,opacity] duration-200 ease-in-out group-data-[state=collapsed]/sidebar:w-0 group-data-[state=collapsed]/sidebar:opacity-0 motion-reduce:transition-none">
             Ignidash
             <span className="text-muted-foreground absolute top-6 left-0 text-xs/6 font-medium tracking-tighter lowercase">
               ▸ beta v{APP_VERSION}
