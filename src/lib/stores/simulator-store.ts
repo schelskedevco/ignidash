@@ -40,6 +40,7 @@ import type {
   MultiSimulationChartData,
 } from '@/lib/types/chart-data-points';
 import { SingleSimulationCategory, MultiSimulationCategory } from '@/lib/types/simulation-category';
+import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { usePrevious } from '@/hooks/use-previous';
 
 // ================================
@@ -398,6 +399,7 @@ export const useMultiSimulationResult = (
   isLoadingOrValidating: boolean;
   completedSimulations: number;
 } => {
+  const planId = useSelectedPlanId();
   const simulationSeed = inputs.simulationSettings.simulationSeed;
   const mergeWorker = getMergeWorker();
 
@@ -406,11 +408,11 @@ export const useMultiSimulationResult = (
 
   useEffect(() => {
     setCompletedSimulations(0);
-  }, [simulationSeed, simulationMode]);
+  }, [planId, simulationSeed, simulationMode]);
 
   const swrOptions = { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false };
 
-  const swrKey = ['simulationHandle', simulationSeed, simulationMode];
+  const swrKey = ['simulationHandle', planId, simulationSeed, simulationMode];
   const {
     data: handleData,
     isLoading,
