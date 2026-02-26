@@ -291,10 +291,10 @@ export default function AccountDialog({ onClose, selectedAccount: _selectedAccou
                     name="percentBonds"
                     control={control}
                     id="percentBonds"
-                    inputMode="numeric"
+                    inputMode="decimal"
                     placeholder="20%"
                     suffix="%"
-                    decimalScale={0}
+                    decimalScale={2}
                     step={1}
                     min={0}
                     max={100}
