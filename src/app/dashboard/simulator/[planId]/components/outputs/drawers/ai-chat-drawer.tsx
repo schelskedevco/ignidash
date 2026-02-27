@@ -420,7 +420,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
         <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full" ref={scrollAreaRef}>
             {!selectedConversationId ? (
-              <div className="absolute inset-0 flex h-full flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+              <div className="absolute inset-0 flex h-full flex-col items-center justify-center overflow-y-auto px-4 py-12 sm:px-6 lg:px-8">
                 <div className="mx-auto w-full max-w-md">
                   <AppLogo className="mx-auto h-10 w-auto" />
                   <h2 className="mt-6 text-center text-2xl/9 font-bold tracking-tight text-stone-900 dark:text-white">Your AI Assistant</h2>
