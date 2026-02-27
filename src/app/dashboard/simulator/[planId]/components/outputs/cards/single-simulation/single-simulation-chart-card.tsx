@@ -11,6 +11,8 @@ import type {
   ContributionsDataView,
   WithdrawalsDataView,
 } from '@/lib/types/chart-data-views';
+import type { TaxableIncomeReferenceLineMode, AgiReferenceLineMode } from '@/lib/types/reference-line-modes';
+import { TAXABLE_INCOME_REFERENCE_LINE_MODES, AGI_REFERENCE_LINE_MODES } from '@/lib/types/reference-line-modes';
 import {
   useSingleSimulationNetWorthChartData,
   useSingleSimulationCashFlowChartData,
@@ -107,11 +109,9 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
 
   const [dataView, setDataView] = useState<TaxesDataView>('annualAmounts');
 
-  const referenceLineModes = ['marginalIncomeTaxRates', 'marginalCapGainsTaxRates', 'hideReferenceLines'] as const;
-  const [referenceLineMode, setReferenceLineMode] = useState<(typeof referenceLineModes)[number]>(referenceLineModes[0]);
+  const [referenceLineMode, setReferenceLineMode] = useState<TaxableIncomeReferenceLineMode>(TAXABLE_INCOME_REFERENCE_LINE_MODES[0]);
 
-  const agiReferenceLineModes = ['niitThreshold', 'hideReferenceLines'] as const;
-  const [agiReferenceLineMode, setAgiReferenceLineMode] = useState<(typeof agiReferenceLineModes)[number]>(agiReferenceLineModes[0]);
+  const [agiReferenceLineMode, setAgiReferenceLineMode] = useState<AgiReferenceLineMode>(AGI_REFERENCE_LINE_MODES[0]);
 
   return (
     <>
@@ -130,10 +130,10 @@ function TaxesCharts({ simulation, keyMetrics, onAgeSelect, selectedAge, startAg
         dataView={dataView}
         setReferenceLineMode={setReferenceLineMode}
         referenceLineMode={referenceLineMode}
-        referenceLineModes={referenceLineModes}
+        referenceLineModes={TAXABLE_INCOME_REFERENCE_LINE_MODES}
         setAgiReferenceLineMode={setAgiReferenceLineMode}
         agiReferenceLineMode={agiReferenceLineMode}
-        agiReferenceLineModes={agiReferenceLineModes}
+        agiReferenceLineModes={AGI_REFERENCE_LINE_MODES}
       />
     </>
   );

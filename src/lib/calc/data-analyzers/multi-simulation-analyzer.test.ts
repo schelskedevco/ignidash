@@ -74,15 +74,15 @@ const createDataPoint = (options: {
   debts: null,
   physicalAssets: null,
   taxes: {
-    incomeTaxes: {
+    federalIncomeTaxes: {
       taxableIncomeTaxedAsOrdinary: 65400,
-      incomeTaxBrackets: [],
-      incomeTaxAmount: 10000,
-      effectiveIncomeTaxRate: 0.125,
-      topMarginalIncomeTaxRate: 0.22,
+      federalIncomeTaxBrackets: [],
+      federalIncomeTaxAmount: 10000,
+      effectiveFederalIncomeTaxRate: 0.125,
+      topMarginalFederalIncomeTaxRate: 0.22,
     },
     capitalGainsTaxes: {
-      taxableIncomeTaxedAsCapGains: 0,
+      taxableIncomeTaxedAsCapitalGains: 0,
       capitalGainsTaxBrackets: [],
       capitalGainsTaxAmount: 0,
       effectiveCapitalGainsTaxRate: 0,
@@ -130,7 +130,7 @@ const createDataPoint = (options: {
       taxDeductibleContributions: 0,
       adjustedGrossIncome: 80000,
       adjustedIncomeTaxedAsOrdinary: 80000,
-      adjustedIncomeTaxedAsCapGains: 0,
+      adjustedIncomeTaxedAsCapitalGains: 0,
       totalIncome: 80000,
       earlyWithdrawals: { rothEarnings: 0, '401kAndIra': 0, hsa: 0 },
     },

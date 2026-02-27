@@ -40,9 +40,9 @@ describe('TaxProcessor', () => {
 
         const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
-        expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(12400);
-        expect(result.incomeTaxes.incomeTaxAmount).toBeCloseTo(1240, 2); // 12,400 * 10%
-        expect(result.incomeTaxes.topMarginalIncomeTaxRate).toBe(0.1);
+        expect(result.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(12400);
+        expect(result.federalIncomeTaxes.federalIncomeTaxAmount).toBeCloseTo(1240, 2); // 12,400 * 10%
+        expect(result.federalIncomeTaxes.topMarginalFederalIncomeTaxRate).toBe(0.1);
       });
 
       it('should apply 12% bracket for income between $12,400 and $50,400', () => {
@@ -53,10 +53,10 @@ describe('TaxProcessor', () => {
 
         const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
-        expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(50400);
+        expect(result.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(50400);
         // 12,400 * 10% + (50,400 - 12,400) * 12% = 1,240 + 4,560 = 5,800
-        expect(result.incomeTaxes.incomeTaxAmount).toBeCloseTo(5800, 2);
-        expect(result.incomeTaxes.topMarginalIncomeTaxRate).toBe(0.12);
+        expect(result.federalIncomeTaxes.federalIncomeTaxAmount).toBeCloseTo(5800, 2);
+        expect(result.federalIncomeTaxes.topMarginalFederalIncomeTaxRate).toBe(0.12);
       });
 
       it('should calculate progressive tax across multiple brackets', () => {
@@ -67,11 +67,11 @@ describe('TaxProcessor', () => {
 
         const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
-        expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(98900);
+        expect(result.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(98900);
         // 12,400 * 10% + (50,400 - 12,400) * 12% + (98,900 - 50,400) * 22%
         // = 1,240 + 4,560 + 10,670 = 16,470
-        expect(result.incomeTaxes.incomeTaxAmount).toBeCloseTo(16470, 2);
-        expect(result.incomeTaxes.topMarginalIncomeTaxRate).toBe(0.22);
+        expect(result.federalIncomeTaxes.federalIncomeTaxAmount).toBeCloseTo(16470, 2);
+        expect(result.federalIncomeTaxes.topMarginalFederalIncomeTaxRate).toBe(0.22);
       });
     });
 
@@ -84,9 +84,9 @@ describe('TaxProcessor', () => {
 
         const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
-        expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(24800);
-        expect(result.incomeTaxes.incomeTaxAmount).toBeCloseTo(2480, 2); // 24,800 * 10%
-        expect(result.incomeTaxes.topMarginalIncomeTaxRate).toBe(0.1);
+        expect(result.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(24800);
+        expect(result.federalIncomeTaxes.federalIncomeTaxAmount).toBeCloseTo(2480, 2); // 24,800 * 10%
+        expect(result.federalIncomeTaxes.topMarginalFederalIncomeTaxRate).toBe(0.1);
       });
     });
 
@@ -99,9 +99,9 @@ describe('TaxProcessor', () => {
 
         const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
-        expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(17700);
-        expect(result.incomeTaxes.incomeTaxAmount).toBeCloseTo(1770, 2); // 17,700 * 10%
-        expect(result.incomeTaxes.topMarginalIncomeTaxRate).toBe(0.1);
+        expect(result.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(17700);
+        expect(result.federalIncomeTaxes.federalIncomeTaxAmount).toBeCloseTo(1770, 2); // 17,700 * 10%
+        expect(result.federalIncomeTaxes.topMarginalFederalIncomeTaxRate).toBe(0.1);
       });
     });
 
@@ -114,7 +114,7 @@ describe('TaxProcessor', () => {
         const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         // 50,000 - 16,100 standard deduction = 33,900 taxable
-        expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(33900);
+        expect(result.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(33900);
         expect(result.deductions.standardDeduction).toBe(STANDARD_DEDUCTION_SINGLE);
       });
 
@@ -159,8 +159,8 @@ describe('TaxProcessor', () => {
         const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
         // Standard deduction of 16.1k: 10k applied to ordinary, 6.1k to cap gains
-        expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(0);
-        expect(result.capitalGainsTaxes.taxableIncomeTaxedAsCapGains).toBe(13900);
+        expect(result.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(0);
+        expect(result.capitalGainsTaxes.taxableIncomeTaxedAsCapitalGains).toBe(13900);
       });
     });
   });
@@ -179,7 +179,7 @@ describe('TaxProcessor', () => {
 
       const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
-      expect(result.capitalGainsTaxes.taxableIncomeTaxedAsCapGains).toBe(17025);
+      expect(result.capitalGainsTaxes.taxableIncomeTaxedAsCapitalGains).toBe(17025);
       expect(result.capitalGainsTaxes.capitalGainsTaxAmount).toBe(0);
     });
 
@@ -614,7 +614,7 @@ describe('TaxProcessor', () => {
 
       const result = processor.process(portfolioData, createEmptyIncomesData(), createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
-      expect(result.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
     });
 
     it('should carry over losses to subsequent years', () => {
@@ -626,20 +626,20 @@ describe('TaxProcessor', () => {
       // Year 1: 10k loss, deduct 3k, carry over 7k
       portfolioData.realizedGains = -10000;
       const result1 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
-      expect(result1.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result1.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
 
       // Year 2: No new gains/losses, deduct 3k from carryover, 4k remaining
       portfolioData.realizedGains = 0;
       const result2 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
-      expect(result2.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result2.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
 
       // Year 3: No new gains/losses, deduct 3k from carryover, 1k remaining
       const result3 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
-      expect(result3.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result3.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
 
       // Year 4: No new gains/losses, deduct remaining 1k
       const result4 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
-      expect(result4.incomeTaxes.capitalLossDeduction).toBe(1000);
+      expect(result4.federalIncomeTaxes.capitalLossDeduction).toBe(1000);
     });
 
     it('should offset gains with losses before applying carryover', () => {
@@ -660,7 +660,7 @@ describe('TaxProcessor', () => {
       // 5k gain offsets 5k of carryover, leaving 2k
       // 2k loss deduction from carryover
       expect(result2.incomeSources.realizedGains).toBe(0);
-      expect(result2.incomeTaxes.capitalLossDeduction).toBe(2000);
+      expect(result2.federalIncomeTaxes.capitalLossDeduction).toBe(2000);
     });
 
     it('should preserve carryover across iterative convergence using snapshot/restore', () => {
@@ -676,16 +676,16 @@ describe('TaxProcessor', () => {
       processor.saveCarryoverSnapshot();
 
       const result1a = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
-      expect(result1a.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result1a.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
 
       // Simulate convergence iterations - restore and process again
       processor.restoreCarryoverSnapshot();
       const result1b = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
-      expect(result1b.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result1b.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
 
       processor.restoreCarryoverSnapshot();
       const result1c = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
-      expect(result1c.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result1c.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
 
       // Year 2: No new losses - should still have 7k carryover available
       portfolioData.realizedGains = 0;
@@ -693,19 +693,19 @@ describe('TaxProcessor', () => {
       const result2 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
       // Should deduct another 3k from the 7k carryover
-      expect(result2.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result2.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
 
       // Year 3: No new losses - should still have 4k carryover available
       processor.saveCarryoverSnapshot();
       const result3 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
-      expect(result3.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result3.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
 
       // Year 4: No new losses - should have 1k carryover remaining
       processor.saveCarryoverSnapshot();
       const result4 = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
-      expect(result4.incomeTaxes.capitalLossDeduction).toBe(1000);
+      expect(result4.federalIncomeTaxes.capitalLossDeduction).toBe(1000);
     });
   });
 
@@ -746,7 +746,7 @@ describe('TaxProcessor', () => {
       // 20k contributions - 5k employer match = 15k deductible
       expect(result.adjustments.taxDeductibleContributions).toBe(15000);
       // 100k - 15k deduction - 16,100 std deduction = 68,900 taxable
-      expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(68900);
+      expect(result.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(68900);
     });
 
     it('should include IRA and HSA contributions as deductible', () => {
@@ -1221,8 +1221,10 @@ describe('TaxProcessor', () => {
       );
 
       // Ordinary income tax should be identical regardless of excluded home sale gains
-      expect(withExclusionResult.incomeTaxes.incomeTaxAmount).toBe(noGainsResult.incomeTaxes.incomeTaxAmount);
-      expect(withExclusionResult.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(noGainsResult.incomeTaxes.taxableIncomeTaxedAsOrdinary);
+      expect(withExclusionResult.federalIncomeTaxes.federalIncomeTaxAmount).toBe(noGainsResult.federalIncomeTaxes.federalIncomeTaxAmount);
+      expect(withExclusionResult.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(
+        noGainsResult.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary
+      );
     });
 
     it('should exclude gain on one primary residence while loss on another flows through', () => {
@@ -1245,7 +1247,7 @@ describe('TaxProcessor', () => {
       // This -50k flows into the capital loss carryover system
       expect(result.adjustments.section121Exclusion).toBe(200000);
       expect(result.incomeSources.realizedGains).toBe(0);
-      expect(result.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
     });
 
     it('should interact correctly with capital loss carryover', () => {
@@ -1275,7 +1277,7 @@ describe('TaxProcessor', () => {
       // Capital loss deduction of 3k, remaining carryover of 4k
       expect(result2.adjustments.section121Exclusion).toBe(200000);
       expect(result2.incomeSources.realizedGains).toBe(0);
-      expect(result2.incomeTaxes.capitalLossDeduction).toBe(3000);
+      expect(result2.federalIncomeTaxes.capitalLossDeduction).toBe(3000);
     });
   });
 
@@ -1309,12 +1311,12 @@ describe('TaxProcessor', () => {
 
         const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
 
-        expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(secondBracketMax);
+        expect(result.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(secondBracketMax);
 
         // Tax = firstBracketMax * 10% + (secondBracketMax - firstBracketMax) * 12%
         const expectedTax = firstBracketMax * 0.1 + (secondBracketMax - firstBracketMax) * 0.12;
-        expect(result.incomeTaxes.incomeTaxAmount).toBeCloseTo(expectedTax, 2);
-        expect(result.incomeTaxes.topMarginalIncomeTaxRate).toBe(0.12);
+        expect(result.federalIncomeTaxes.federalIncomeTaxAmount).toBeCloseTo(expectedTax, 2);
+        expect(result.federalIncomeTaxes.topMarginalFederalIncomeTaxRate).toBe(0.12);
       });
     });
   });

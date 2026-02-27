@@ -28,6 +28,7 @@ export function formatChartString(input: string): string {
     ['Tax Exempt', 'Tax-Exempt'],
     ['Fica', 'FICA'],
     ['Niit', 'NIIT'],
+    ['Federal', 'Fed.'],
     ['Cumulative', 'Cumul.'],
     ['Required Minimum Distributions', 'RMDs'],
     ['Early Withdrawal Penalties', 'EW Penalties'],

@@ -2,7 +2,7 @@ import type { ExpenseData } from '@/lib/calc/expenses';
 import type { IncomeData } from '@/lib/calc/incomes';
 import type { AccountDataWithFlows } from '@/lib/calc/account';
 import type { AccountDataWithReturns } from '@/lib/calc/returns';
-import type { IncomeTaxBracket } from '@/lib/calc/tax-data/income-tax-brackets';
+import type { FederalIncomeTaxBracket } from '@/lib/calc/tax-data/federal-income-tax-brackets';
 import type { CapitalGainsTaxBracket } from '@/lib/calc/tax-data/capital-gains-tax-brackets';
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { DebtData } from '@/lib/calc/debts';
@@ -48,9 +48,9 @@ export interface SingleSimulationCashFlowChartDataPoint {
   socialSecurityIncome: number;
   taxFreeIncome: number;
   income: number;
-  incomeTax: number;
+  federalIncomeTax: number;
   ficaTax: number;
-  capGainsTax: number;
+  capitalGainsTax: number;
   niit: number;
   earlyWithdrawalPenalties: number;
   taxesAndPenalties: number;
@@ -86,11 +86,11 @@ export interface SingleSimulationTaxesChartDataPoint {
   taxableIncomeTaxedAsOrdinary: number;
   adjustedIncomeTaxedAsOrdinary: number;
   incomeTaxedAsOrdinary: number;
-  annualIncomeTax: number;
-  cumulativeIncomeTax: number;
-  effectiveIncomeTaxRate: number;
-  topMarginalIncomeTaxRate: number;
-  incomeTaxBrackets: IncomeTaxBracket[];
+  annualFederalIncomeTax: number;
+  cumulativeFederalIncomeTax: number;
+  effectiveFederalIncomeTaxRate: number;
+  topMarginalFederalIncomeTaxRate: number;
+  federalIncomeTaxBrackets: FederalIncomeTaxBracket[];
 
   // Social Security
   socialSecurityIncome: number;
@@ -98,16 +98,16 @@ export interface SingleSimulationTaxesChartDataPoint {
   maxTaxablePercentage: number;
   actualTaxablePercentage: number;
 
-  // Cap Gains
+  // Capital Gains
   realizedGains: number;
   taxableDividendIncome: number;
-  taxableIncomeTaxedAsCapGains: number;
-  adjustedIncomeTaxedAsCapGains: number;
+  taxableIncomeTaxedAsCapitalGains: number;
+  adjustedIncomeTaxedAsCapitalGains: number;
   incomeTaxedAsLtcg: number;
-  annualCapGainsTax: number;
-  cumulativeCapGainsTax: number;
-  effectiveCapGainsTaxRate: number;
-  topMarginalCapGainsTaxRate: number;
+  annualCapitalGainsTax: number;
+  cumulativeCapitalGainsTax: number;
+  effectiveCapitalGainsTaxRate: number;
+  topMarginalCapitalGainsTaxRate: number;
   capitalGainsTaxBrackets: CapitalGainsTaxBracket[];
 
   // NIIT

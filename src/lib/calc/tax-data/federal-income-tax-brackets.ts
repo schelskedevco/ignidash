@@ -5,9 +5,9 @@
  */
 
 /** Progressive bracket for ordinary income taxation */
-export type IncomeTaxBracket = { min: number; max: number; rate: number };
+export type FederalIncomeTaxBracket = { min: number; max: number; rate: number };
 
-export const INCOME_TAX_BRACKETS_SINGLE: IncomeTaxBracket[] = [
+export const FEDERAL_INCOME_TAX_BRACKETS_SINGLE: FederalIncomeTaxBracket[] = [
   { min: 0, max: 12400, rate: 0.1 },
   { min: 12400, max: 50400, rate: 0.12 },
   { min: 50400, max: 105700, rate: 0.22 },
@@ -17,7 +17,7 @@ export const INCOME_TAX_BRACKETS_SINGLE: IncomeTaxBracket[] = [
   { min: 640600, max: Infinity, rate: 0.37 },
 ];
 
-export const INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY: IncomeTaxBracket[] = [
+export const FEDERAL_INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY: FederalIncomeTaxBracket[] = [
   { min: 0, max: 24800, rate: 0.1 },
   { min: 24800, max: 100800, rate: 0.12 },
   { min: 100800, max: 211400, rate: 0.22 },
@@ -27,7 +27,7 @@ export const INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY: IncomeTaxBracket[] = [
   { min: 768700, max: Infinity, rate: 0.37 },
 ];
 
-export const INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD: IncomeTaxBracket[] = [
+export const FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD: FederalIncomeTaxBracket[] = [
   { min: 0, max: 17700, rate: 0.1 },
   { min: 17700, max: 67450, rate: 0.12 },
   { min: 67450, max: 105700, rate: 0.22 },

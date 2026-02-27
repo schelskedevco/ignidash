@@ -121,9 +121,9 @@ export abstract class ChartDataExtractor {
       const age = Math.floor(data.age);
 
       const {
-        incomeTax,
+        federalIncomeTax,
         ficaTax,
-        capGainsTax,
+        capitalGainsTax,
         niit,
         earlyWithdrawalPenalties,
         totalTaxesAndPenalties: taxesAndPenalties,
@@ -152,9 +152,9 @@ export abstract class ChartDataExtractor {
         socialSecurityIncome,
         taxFreeIncome,
         income,
-        incomeTax,
+        federalIncomeTax,
         ficaTax,
-        capGainsTax,
+        capitalGainsTax,
         niit,
         earlyWithdrawalPenalties,
         taxesAndPenalties,
@@ -181,9 +181,9 @@ export abstract class ChartDataExtractor {
    * @returns Array of data points indexed by age (excludes year 0)
    */
   static extractSingleSimulationTaxesData(simulation: SimulationResult): SingleSimulationTaxesChartDataPoint[] {
-    let cumulativeIncomeTax = 0;
+    let cumulativeFederalIncomeTax = 0;
     let cumulativeFicaTax = 0;
-    let cumulativeCapGainsTax = 0;
+    let cumulativeCapitalGainsTax = 0;
     let cumulativeNiit = 0;
     let cumulativeEarlyWithdrawalPenalties = 0;
     let cumulativeTotalTaxesAndPenalties = 0;
@@ -192,17 +192,17 @@ export abstract class ChartDataExtractor {
       const age = Math.floor(data.age);
 
       const {
-        incomeTax: annualIncomeTax,
+        federalIncomeTax: annualFederalIncomeTax,
         ficaTax: annualFicaTax,
-        capGainsTax: annualCapGainsTax,
+        capitalGainsTax: annualCapitalGainsTax,
         niit: annualNiit,
         earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties,
         totalTaxesAndPenalties: annualTotalTaxesAndPenalties,
       } = SimulationDataExtractor.getTaxAmountsByType(data);
 
-      cumulativeIncomeTax += annualIncomeTax;
+      cumulativeFederalIncomeTax += annualFederalIncomeTax;
       cumulativeFicaTax += annualFicaTax;
-      cumulativeCapGainsTax += annualCapGainsTax;
+      cumulativeCapitalGainsTax += annualCapitalGainsTax;
       cumulativeNiit += annualNiit;
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeTotalTaxesAndPenalties += annualTotalTaxesAndPenalties;
@@ -221,27 +221,27 @@ export abstract class ChartDataExtractor {
         earlyRothEarningsWithdrawals: taxesData.incomeSources.earlyWithdrawals.rothEarnings,
         taxableRetirementDistributions: taxesData.incomeSources.taxableRetirementDistributions,
         taxableInterestIncome: taxesData.incomeSources.taxableInterestIncome,
-        taxableIncomeTaxedAsOrdinary: taxesData.incomeTaxes.taxableIncomeTaxedAsOrdinary,
+        taxableIncomeTaxedAsOrdinary: taxesData.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary,
         adjustedIncomeTaxedAsOrdinary: taxesData.incomeSources.adjustedIncomeTaxedAsOrdinary,
         incomeTaxedAsOrdinary: taxesData.incomeSources.incomeTaxedAsOrdinary,
-        annualIncomeTax,
-        cumulativeIncomeTax,
-        effectiveIncomeTaxRate: taxesData.incomeTaxes.effectiveIncomeTaxRate,
-        topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalIncomeTaxRate,
-        incomeTaxBrackets: taxesData.incomeTaxes.incomeTaxBrackets,
+        annualFederalIncomeTax,
+        cumulativeFederalIncomeTax,
+        effectiveFederalIncomeTaxRate: taxesData.federalIncomeTaxes.effectiveFederalIncomeTaxRate,
+        topMarginalFederalIncomeTaxRate: taxesData.federalIncomeTaxes.topMarginalFederalIncomeTaxRate,
+        federalIncomeTaxBrackets: taxesData.federalIncomeTaxes.federalIncomeTaxBrackets,
         socialSecurityIncome: taxesData.incomeSources.socialSecurityIncome,
         taxableSocialSecurityIncome: taxesData.socialSecurityTaxes.taxableSocialSecurityIncome,
         maxTaxablePercentage: taxesData.socialSecurityTaxes.maxTaxablePercentage,
         actualTaxablePercentage: taxesData.socialSecurityTaxes.actualTaxablePercentage,
         realizedGains: taxesData.incomeSources.realizedGains,
         taxableDividendIncome: taxesData.incomeSources.taxableDividendIncome,
-        taxableIncomeTaxedAsCapGains: taxesData.capitalGainsTaxes.taxableIncomeTaxedAsCapGains,
-        adjustedIncomeTaxedAsCapGains: taxesData.incomeSources.adjustedIncomeTaxedAsCapGains,
+        taxableIncomeTaxedAsCapitalGains: taxesData.capitalGainsTaxes.taxableIncomeTaxedAsCapitalGains,
+        adjustedIncomeTaxedAsCapitalGains: taxesData.incomeSources.adjustedIncomeTaxedAsCapitalGains,
         incomeTaxedAsLtcg: taxesData.incomeSources.incomeTaxedAsLtcg,
-        annualCapGainsTax,
-        cumulativeCapGainsTax,
-        effectiveCapGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
-        topMarginalCapGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
+        annualCapitalGainsTax,
+        cumulativeCapitalGainsTax,
+        effectiveCapitalGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
+        topMarginalCapitalGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
         capitalGainsTaxBrackets: taxesData.capitalGainsTaxes.capitalGainsTaxBrackets,
         netInvestmentIncome: taxesData.niit.netInvestmentIncome,
         incomeSubjectToNiit: taxesData.niit.incomeSubjectToNiit,
@@ -257,7 +257,7 @@ export abstract class ChartDataExtractor {
         deductions: taxesData.deductions,
         taxDeductibleContributions: taxesData.adjustments.taxDeductibleContributions ?? 0,
         standardDeduction: taxesData.deductions.standardDeduction ?? 0,
-        capitalLossDeduction: taxesData.incomeTaxes.capitalLossDeduction ?? 0,
+        capitalLossDeduction: taxesData.federalIncomeTaxes.capitalLossDeduction ?? 0,
       };
     });
   }

@@ -56,9 +56,9 @@ export interface CashFlowData {
 }
 
 export interface TaxAmountsByType {
-  incomeTax: number;
+  federalIncomeTax: number;
   ficaTax: number;
-  capGainsTax: number;
+  capitalGainsTax: number;
   niit: number;
   totalTaxes: number;
   earlyWithdrawalPenalties: number;
@@ -117,9 +117,9 @@ export interface AssetsAndLiabilitiesData {
 }
 
 export interface LifetimeTaxAmounts {
-  lifetimeIncomeTax: number;
+  lifetimeFederalIncomeTax: number;
   lifetimeFicaTax: number;
-  lifetimeCapGainsTax: number;
+  lifetimeCapitalGainsTax: number;
   lifetimeNiit: number;
   lifetimeEarlyWithdrawalPenalties: number;
   lifetimeTaxesAndPenalties: number;
@@ -317,15 +317,15 @@ export class SimulationDataExtractor {
     const ficaTax = incomesData?.totalFicaTax ?? 0;
 
     const taxesData = dp.taxes;
-    const incomeTax = taxesData?.incomeTaxes.incomeTaxAmount ?? 0;
-    const capGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
+    const federalIncomeTax = taxesData?.federalIncomeTaxes.federalIncomeTaxAmount ?? 0;
+    const capitalGainsTax = taxesData?.capitalGainsTaxes.capitalGainsTaxAmount ?? 0;
     const niit = taxesData?.niit.niitAmount ?? 0;
-    const totalTaxes = incomeTax + capGainsTax + niit + ficaTax;
+    const totalTaxes = federalIncomeTax + capitalGainsTax + niit + ficaTax;
 
     const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
     const totalTaxesAndPenalties = totalTaxes + earlyWithdrawalPenalties;
 
-    return { incomeTax, ficaTax, capGainsTax, niit, totalTaxes, earlyWithdrawalPenalties, totalTaxesAndPenalties };
+    return { federalIncomeTax, ficaTax, capitalGainsTax, niit, totalTaxes, earlyWithdrawalPenalties, totalTaxesAndPenalties };
   }
 
   /**
@@ -578,34 +578,35 @@ export class SimulationDataExtractor {
    * @returns Cumulative lifetime tax amounts by type
    */
   static getLifetimeTaxesAndPenalties(data: SimulationDataPoint[]): LifetimeTaxAmounts {
-    const { lifetimeIncomeTax, lifetimeFicaTax, lifetimeCapGainsTax, lifetimeNiit, lifetimeEarlyWithdrawalPenalties } = data.reduce(
-      (acc, dp) => {
-        const { incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties } = this.getTaxAmountsByType(dp);
+    const { lifetimeFederalIncomeTax, lifetimeFicaTax, lifetimeCapitalGainsTax, lifetimeNiit, lifetimeEarlyWithdrawalPenalties } =
+      data.reduce(
+        (acc, dp) => {
+          const { federalIncomeTax, ficaTax, capitalGainsTax, niit, earlyWithdrawalPenalties } = this.getTaxAmountsByType(dp);
 
-        return {
-          lifetimeIncomeTax: acc.lifetimeIncomeTax + incomeTax,
-          lifetimeFicaTax: acc.lifetimeFicaTax + ficaTax,
-          lifetimeCapGainsTax: acc.lifetimeCapGainsTax + capGainsTax,
-          lifetimeNiit: acc.lifetimeNiit + niit,
-          lifetimeEarlyWithdrawalPenalties: acc.lifetimeEarlyWithdrawalPenalties + earlyWithdrawalPenalties,
-        };
-      },
-      {
-        lifetimeIncomeTax: 0,
-        lifetimeFicaTax: 0,
-        lifetimeCapGainsTax: 0,
-        lifetimeNiit: 0,
-        lifetimeEarlyWithdrawalPenalties: 0,
-      }
-    );
+          return {
+            lifetimeFederalIncomeTax: acc.lifetimeFederalIncomeTax + federalIncomeTax,
+            lifetimeFicaTax: acc.lifetimeFicaTax + ficaTax,
+            lifetimeCapitalGainsTax: acc.lifetimeCapitalGainsTax + capitalGainsTax,
+            lifetimeNiit: acc.lifetimeNiit + niit,
+            lifetimeEarlyWithdrawalPenalties: acc.lifetimeEarlyWithdrawalPenalties + earlyWithdrawalPenalties,
+          };
+        },
+        {
+          lifetimeFederalIncomeTax: 0,
+          lifetimeFicaTax: 0,
+          lifetimeCapitalGainsTax: 0,
+          lifetimeNiit: 0,
+          lifetimeEarlyWithdrawalPenalties: 0,
+        }
+      );
 
     const lifetimeTaxesAndPenalties =
-      lifetimeIncomeTax + lifetimeFicaTax + lifetimeCapGainsTax + lifetimeNiit + lifetimeEarlyWithdrawalPenalties;
+      lifetimeFederalIncomeTax + lifetimeFicaTax + lifetimeCapitalGainsTax + lifetimeNiit + lifetimeEarlyWithdrawalPenalties;
 
     return {
-      lifetimeIncomeTax,
+      lifetimeFederalIncomeTax,
       lifetimeFicaTax,
-      lifetimeCapGainsTax,
+      lifetimeCapitalGainsTax,
       lifetimeNiit,
       lifetimeEarlyWithdrawalPenalties,
       lifetimeTaxesAndPenalties,

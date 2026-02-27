@@ -1256,6 +1256,6 @@ describe('full simulation year scenarios', () => {
     expect(year1.taxes!.socialSecurityTaxes.maxTaxablePercentage).toBe(0.85);
 
     // Income taxes should reflect the RMD as ordinary income
-    expect(year1.taxes!.incomeTaxes.incomeTaxAmount).toBeGreaterThan(0);
+    expect(year1.taxes!.federalIncomeTaxes.federalIncomeTaxAmount).toBeGreaterThan(0);
   });
 });

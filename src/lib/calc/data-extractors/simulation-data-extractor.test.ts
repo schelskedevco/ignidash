@@ -383,7 +383,7 @@ describe('SimulationDataExtractor.getMilestonesData', () => {
 const createTaxDataPoint = (options: {
   incomeTax?: number;
   ficaTax?: number;
-  capGainsTax?: number;
+  capitalGainsTax?: number;
   niit?: number;
   earlyWithdrawalPenalties?: number;
 }): SimulationDataPoint => ({
@@ -422,17 +422,17 @@ const createTaxDataPoint = (options: {
   debts: null,
   physicalAssets: null,
   taxes: {
-    incomeTaxes: {
+    federalIncomeTaxes: {
       taxableIncomeTaxedAsOrdinary: 65400,
-      incomeTaxBrackets: [],
-      incomeTaxAmount: options.incomeTax ?? 0,
-      effectiveIncomeTaxRate: 0.125,
-      topMarginalIncomeTaxRate: 0.22,
+      federalIncomeTaxBrackets: [],
+      federalIncomeTaxAmount: options.incomeTax ?? 0,
+      effectiveFederalIncomeTaxRate: 0.125,
+      topMarginalFederalIncomeTaxRate: 0.22,
     },
     capitalGainsTaxes: {
-      taxableIncomeTaxedAsCapGains: 0,
+      taxableIncomeTaxedAsCapitalGains: 0,
       capitalGainsTaxBrackets: [],
-      capitalGainsTaxAmount: options.capGainsTax ?? 0,
+      capitalGainsTaxAmount: options.capitalGainsTax ?? 0,
       effectiveCapitalGainsTaxRate: 0,
       topMarginalCapitalGainsTaxRate: 0,
     },
@@ -478,7 +478,7 @@ const createTaxDataPoint = (options: {
       taxDeductibleContributions: 0,
       adjustedGrossIncome: 80000,
       adjustedIncomeTaxedAsOrdinary: 80000,
-      adjustedIncomeTaxedAsCapGains: 0,
+      adjustedIncomeTaxedAsCapitalGains: 0,
       totalIncome: 80000,
       earlyWithdrawals: { rothEarnings: 0, '401kAndIra': 0, hsa: 0 },
     },
@@ -492,16 +492,16 @@ describe('SimulationDataExtractor.getTaxAmountsByType', () => {
     const dp = createTaxDataPoint({
       incomeTax: 15000,
       ficaTax: 7650,
-      capGainsTax: 3000,
+      capitalGainsTax: 3000,
       niit: 500,
       earlyWithdrawalPenalties: 1000,
     });
 
     const taxes = SimulationDataExtractor.getTaxAmountsByType(dp);
 
-    expect(taxes.incomeTax).toBe(15000);
+    expect(taxes.federalIncomeTax).toBe(15000);
     expect(taxes.ficaTax).toBe(7650);
-    expect(taxes.capGainsTax).toBe(3000);
+    expect(taxes.capitalGainsTax).toBe(3000);
     expect(taxes.niit).toBe(500);
     expect(taxes.earlyWithdrawalPenalties).toBe(1000);
   });
@@ -510,14 +510,14 @@ describe('SimulationDataExtractor.getTaxAmountsByType', () => {
     const dp = createTaxDataPoint({
       incomeTax: 10000,
       ficaTax: 5000,
-      capGainsTax: 2000,
+      capitalGainsTax: 2000,
       niit: 500,
       earlyWithdrawalPenalties: 1000,
     });
 
     const taxes = SimulationDataExtractor.getTaxAmountsByType(dp);
 
-    // totalTaxes = incomeTax + ficaTax + capGainsTax + niit
+    // totalTaxes = incomeTax + ficaTax + capitalGainsTax + niit
     expect(taxes.totalTaxes).toBe(17500);
   });
 
@@ -525,7 +525,7 @@ describe('SimulationDataExtractor.getTaxAmountsByType', () => {
     const dp = createTaxDataPoint({
       incomeTax: 10000,
       ficaTax: 5000,
-      capGainsTax: 2000,
+      capitalGainsTax: 2000,
       niit: 500,
       earlyWithdrawalPenalties: 1000,
     });
@@ -547,9 +547,9 @@ describe('SimulationDataExtractor.getTaxAmountsByType', () => {
 
     const taxes = SimulationDataExtractor.getTaxAmountsByType(dp);
 
-    expect(taxes.incomeTax).toBe(0);
+    expect(taxes.federalIncomeTax).toBe(0);
     expect(taxes.ficaTax).toBe(0);
-    expect(taxes.capGainsTax).toBe(0);
+    expect(taxes.capitalGainsTax).toBe(0);
     expect(taxes.niit).toBe(0);
     expect(taxes.totalTaxes).toBe(0);
     expect(taxes.earlyWithdrawalPenalties).toBe(0);
@@ -608,15 +608,15 @@ const createCashFlowDataPoint = (options: {
   debts: null,
   physicalAssets: null,
   taxes: {
-    incomeTaxes: {
+    federalIncomeTaxes: {
       taxableIncomeTaxedAsOrdinary: options.totalIncome - 14600,
-      incomeTaxBrackets: [],
-      incomeTaxAmount: options.totalTaxesAndPenalties,
-      effectiveIncomeTaxRate: 0.125,
-      topMarginalIncomeTaxRate: 0.22,
+      federalIncomeTaxBrackets: [],
+      federalIncomeTaxAmount: options.totalTaxesAndPenalties,
+      effectiveFederalIncomeTaxRate: 0.125,
+      topMarginalFederalIncomeTaxRate: 0.22,
     },
     capitalGainsTaxes: {
-      taxableIncomeTaxedAsCapGains: 0,
+      taxableIncomeTaxedAsCapitalGains: 0,
       capitalGainsTaxBrackets: [],
       capitalGainsTaxAmount: 0,
       effectiveCapitalGainsTaxRate: 0,
@@ -664,7 +664,7 @@ const createCashFlowDataPoint = (options: {
       taxDeductibleContributions: 0,
       adjustedGrossIncome: options.totalIncome,
       adjustedIncomeTaxedAsOrdinary: options.totalIncome,
-      adjustedIncomeTaxedAsCapGains: 0,
+      adjustedIncomeTaxedAsCapitalGains: 0,
       totalIncome: options.totalIncome,
       earlyWithdrawals: { rothEarnings: 0, '401kAndIra': 0, hsa: 0 },
     },
@@ -961,15 +961,15 @@ const createNetCashFlowDataPoint = (options: {
         }
       : null,
   taxes: {
-    incomeTaxes: {
+    federalIncomeTaxes: {
       taxableIncomeTaxedAsOrdinary: 0,
-      incomeTaxBrackets: [],
-      incomeTaxAmount: options.totalTaxes ?? 0,
-      effectiveIncomeTaxRate: 0,
-      topMarginalIncomeTaxRate: 0,
+      federalIncomeTaxBrackets: [],
+      federalIncomeTaxAmount: options.totalTaxes ?? 0,
+      effectiveFederalIncomeTaxRate: 0,
+      topMarginalFederalIncomeTaxRate: 0,
     },
     capitalGainsTaxes: {
-      taxableIncomeTaxedAsCapGains: 0,
+      taxableIncomeTaxedAsCapitalGains: 0,
       capitalGainsTaxBrackets: [],
       capitalGainsTaxAmount: 0,
       effectiveCapitalGainsTaxRate: 0,
@@ -1017,7 +1017,7 @@ const createNetCashFlowDataPoint = (options: {
       taxDeductibleContributions: 0,
       adjustedGrossIncome: 0,
       adjustedIncomeTaxedAsOrdinary: 0,
-      adjustedIncomeTaxedAsCapGains: 0,
+      adjustedIncomeTaxedAsCapitalGains: 0,
       totalIncome: 0,
       earlyWithdrawals: { rothEarnings: 0, '401kAndIra': 0, hsa: 0 },
     },
@@ -1620,15 +1620,15 @@ const createCashFlowInvariantDataPoint = (options: {
         }
       : null,
   taxes: {
-    incomeTaxes: {
+    federalIncomeTaxes: {
       taxableIncomeTaxedAsOrdinary: 0,
-      incomeTaxBrackets: [],
-      incomeTaxAmount: options.totalTaxes ?? 0,
-      effectiveIncomeTaxRate: 0,
-      topMarginalIncomeTaxRate: 0,
+      federalIncomeTaxBrackets: [],
+      federalIncomeTaxAmount: options.totalTaxes ?? 0,
+      effectiveFederalIncomeTaxRate: 0,
+      topMarginalFederalIncomeTaxRate: 0,
     },
     capitalGainsTaxes: {
-      taxableIncomeTaxedAsCapGains: 0,
+      taxableIncomeTaxedAsCapitalGains: 0,
       capitalGainsTaxBrackets: [],
       capitalGainsTaxAmount: 0,
       effectiveCapitalGainsTaxRate: 0,
@@ -1676,7 +1676,7 @@ const createCashFlowInvariantDataPoint = (options: {
       taxDeductibleContributions: 0,
       adjustedGrossIncome: 0,
       adjustedIncomeTaxedAsOrdinary: 0,
-      adjustedIncomeTaxedAsCapGains: 0,
+      adjustedIncomeTaxedAsCapitalGains: 0,
       totalIncome: 0,
       earlyWithdrawals: { rothEarnings: 0, '401kAndIra': 0, hsa: 0 },
     },

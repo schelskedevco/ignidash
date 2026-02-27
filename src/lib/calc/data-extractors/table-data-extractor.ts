@@ -174,9 +174,9 @@ export abstract class TableDataExtractor {
           employerMatch: null,
           socialSecurityIncome: null,
           taxFreeIncome: null,
-          incomeTax: null,
+          federalIncomeTax: null,
           ficaTax: null,
-          capGainsTax: null,
+          capitalGainsTax: null,
           niit: null,
           earlyWithdrawalPenalties: null,
           totalTaxesAndPenalties: null,
@@ -193,7 +193,7 @@ export abstract class TableDataExtractor {
         };
       }
 
-      const { incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
+      const { federalIncomeTax, ficaTax, capitalGainsTax, niit, earlyWithdrawalPenalties, totalTaxesAndPenalties } =
         SimulationDataExtractor.getTaxAmountsByType(data);
       const {
         earnedIncome,
@@ -219,9 +219,9 @@ export abstract class TableDataExtractor {
         employerMatch,
         socialSecurityIncome,
         taxFreeIncome,
-        incomeTax,
+        federalIncomeTax,
         ficaTax,
-        capGainsTax,
+        capitalGainsTax,
         niit,
         earlyWithdrawalPenalties,
         totalTaxesAndPenalties,
@@ -247,9 +247,9 @@ export abstract class TableDataExtractor {
   static extractSingleSimulationTaxesData(simulation: SimulationResult): SingleSimulationTaxesTableRow[] {
     const historicalRanges = simulation.context.historicalRanges ?? null;
 
-    let cumulativeIncomeTax = 0;
+    let cumulativeFederalIncomeTax = 0;
     let cumulativeFicaTax = 0;
-    let cumulativeCapGainsTax = 0;
+    let cumulativeCapitalGainsTax = 0;
     let cumulativeNiit = 0;
     let cumulativeEarlyWithdrawalPenalties = 0;
     let cumulativeTotalTaxesAndPenalties = 0;
@@ -272,12 +272,12 @@ export abstract class TableDataExtractor {
           earnedIncome: null,
           taxableRetirementDistributions: null,
           taxableInterestIncome: null,
-          annualIncomeTax: null,
-          cumulativeIncomeTax: null,
+          annualFederalIncomeTax: null,
+          cumulativeFederalIncomeTax: null,
           annualFicaTax: null,
           cumulativeFicaTax: null,
-          effectiveIncomeTaxRate: null,
-          topMarginalIncomeTaxRate: null,
+          effectiveFederalIncomeTaxRate: null,
+          topMarginalFederalIncomeTaxRate: null,
           socialSecurityIncome: null,
           taxableSocialSecurityIncome: null,
           provisionalIncome: null,
@@ -285,10 +285,10 @@ export abstract class TableDataExtractor {
           actualTaxablePercentage: null,
           realizedGains: null,
           taxableDividendIncome: null,
-          annualCapGainsTax: null,
-          cumulativeCapGainsTax: null,
-          effectiveCapGainsTaxRate: null,
-          topMarginalCapGainsTaxRate: null,
+          annualCapitalGainsTax: null,
+          cumulativeCapitalGainsTax: null,
+          effectiveCapitalGainsTaxRate: null,
+          topMarginalCapitalGainsTaxRate: null,
           netInvestmentIncome: null,
           incomeSubjectToNiit: null,
           annualNiit: null,
@@ -306,17 +306,17 @@ export abstract class TableDataExtractor {
       }
 
       const {
-        incomeTax: annualIncomeTax,
+        federalIncomeTax: annualFederalIncomeTax,
         ficaTax: annualFicaTax,
-        capGainsTax: annualCapGainsTax,
+        capitalGainsTax: annualCapitalGainsTax,
         niit: annualNiit,
         earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties,
         totalTaxesAndPenalties: annualTotalTaxesAndPenalties,
       } = SimulationDataExtractor.getTaxAmountsByType(data);
 
-      cumulativeIncomeTax += annualIncomeTax;
+      cumulativeFederalIncomeTax += annualFederalIncomeTax;
       cumulativeFicaTax += annualFicaTax;
-      cumulativeCapGainsTax += annualCapGainsTax;
+      cumulativeCapitalGainsTax += annualCapitalGainsTax;
       cumulativeNiit += annualNiit;
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeTotalTaxesAndPenalties += annualTotalTaxesAndPenalties;
@@ -333,12 +333,12 @@ export abstract class TableDataExtractor {
         earnedIncome: taxesData.incomeSources.earnedIncome,
         taxableRetirementDistributions: taxesData.incomeSources.taxableRetirementDistributions,
         taxableInterestIncome: taxesData.incomeSources.taxableInterestIncome,
-        annualIncomeTax,
-        cumulativeIncomeTax,
+        annualFederalIncomeTax,
+        cumulativeFederalIncomeTax,
         annualFicaTax,
         cumulativeFicaTax,
-        effectiveIncomeTaxRate: taxesData.incomeTaxes.effectiveIncomeTaxRate,
-        topMarginalIncomeTaxRate: taxesData.incomeTaxes.topMarginalIncomeTaxRate,
+        effectiveFederalIncomeTaxRate: taxesData.federalIncomeTaxes.effectiveFederalIncomeTaxRate,
+        topMarginalFederalIncomeTaxRate: taxesData.federalIncomeTaxes.topMarginalFederalIncomeTaxRate,
         socialSecurityIncome: taxesData.incomeSources.socialSecurityIncome,
         taxableSocialSecurityIncome: taxesData.socialSecurityTaxes.taxableSocialSecurityIncome,
         provisionalIncome: taxesData.socialSecurityTaxes.provisionalIncome,
@@ -346,10 +346,10 @@ export abstract class TableDataExtractor {
         actualTaxablePercentage: taxesData.socialSecurityTaxes.actualTaxablePercentage,
         realizedGains: taxesData.incomeSources.realizedGains,
         taxableDividendIncome: taxesData.incomeSources.taxableDividendIncome,
-        annualCapGainsTax,
-        cumulativeCapGainsTax,
-        effectiveCapGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
-        topMarginalCapGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
+        annualCapitalGainsTax,
+        cumulativeCapitalGainsTax,
+        effectiveCapitalGainsTaxRate: taxesData.capitalGainsTaxes.effectiveCapitalGainsTaxRate,
+        topMarginalCapitalGainsTaxRate: taxesData.capitalGainsTaxes.topMarginalCapitalGainsTaxRate,
         netInvestmentIncome: taxesData.niit.netInvestmentIncome,
         incomeSubjectToNiit: taxesData.niit.incomeSubjectToNiit,
         annualNiit,
@@ -361,7 +361,7 @@ export abstract class TableDataExtractor {
         taxFreeIncome: taxesData.incomeSources.taxFreeIncome,
         taxDeductibleContributions: taxesData.adjustments.taxDeductibleContributions,
         standardDeduction: taxesData.deductions.standardDeduction,
-        capitalLossDeduction: taxesData.incomeTaxes.capitalLossDeduction ?? null,
+        capitalLossDeduction: taxesData.federalIncomeTaxes.capitalLossDeduction ?? null,
         historicalYear,
       };
     });
@@ -676,9 +676,9 @@ export abstract class TableDataExtractor {
       const formattedFinalPhaseName = finalPhaseName !== null ? finalPhaseName.charAt(0).toUpperCase() + finalPhaseName.slice(1) : null;
 
       const {
-        lifetimeIncomeTax,
+        lifetimeFederalIncomeTax,
         lifetimeFicaTax,
-        lifetimeCapGainsTax,
+        lifetimeCapitalGainsTax,
         lifetimeNiit,
         lifetimeEarlyWithdrawalPenalties,
         lifetimeTaxesAndPenalties,
@@ -704,9 +704,9 @@ export abstract class TableDataExtractor {
         meanBondReturn,
         meanCashReturn,
         meanInflationRate,
-        lifetimeIncomeTax,
+        lifetimeFederalIncomeTax,
         lifetimeFicaTax,
-        lifetimeCapGainsTax,
+        lifetimeCapitalGainsTax,
         lifetimeNiit,
         lifetimeEarlyWithdrawalPenalties,
         lifetimeTaxesAndPenalties,

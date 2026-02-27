@@ -5,24 +5,25 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, 
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
-import type { IncomeTaxBracket } from '@/lib/calc/tax-data/income-tax-brackets';
+import type { FederalIncomeTaxBracket } from '@/lib/calc/tax-data/federal-income-tax-brackets';
 import type { CapitalGainsTaxBracket } from '@/lib/calc/tax-data/capital-gains-tax-brackets';
 import { NIIT_RATE } from '@/lib/calc/tax-data/niit-thresholds';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
 import type { TaxesDataView } from '@/lib/types/chart-data-views';
+import type { TaxableIncomeReferenceLineMode, AgiReferenceLineMode } from '@/lib/types/reference-line-modes';
 
 const getTaxBrackets = (
   chartData: SingleSimulationTaxesChartDataPoint[]
 ): {
-  incomeTaxBrackets: IncomeTaxBracket[] | null;
+  federalIncomeTaxBrackets: FederalIncomeTaxBracket[] | null;
   capitalGainsTaxBrackets: CapitalGainsTaxBracket[] | null;
 } => ({
-  incomeTaxBrackets: chartData[0]?.incomeTaxBrackets ?? null,
+  federalIncomeTaxBrackets: chartData[0]?.federalIncomeTaxBrackets ?? null,
   capitalGainsTaxBrackets: chartData[0]?.capitalGainsTaxBrackets ?? null,
 });
 
 const renderTaxBracketReferenceLines = (
-  taxBrackets: IncomeTaxBracket[] | CapitalGainsTaxBracket[],
+  taxBrackets: FederalIncomeTaxBracket[] | CapitalGainsTaxBracket[],
   taxableIncome: number,
   foregroundColor: string,
   foregroundMutedColor: string
@@ -86,7 +87,7 @@ const CustomLabelListContent = (props: any) => {
       | 'retirementDistributions'
       | 'taxFreeIncome'
       | 'ordinaryIncome'
-      | 'capGainsAndDividends'
+      | 'capitalGainsAndDividends'
       | 'earlyWithdrawalPenalties'
       | 'adjustmentsAndDeductions'
       | 'socialSecurityIncome'
@@ -105,7 +106,7 @@ const CustomLabelListContent = (props: any) => {
       case 'retirementDistributions':
       case 'taxFreeIncome':
       case 'ordinaryIncome':
-      case 'capGainsAndDividends':
+      case 'capitalGainsAndDividends':
       case 'earlyWithdrawalPenalties':
       case 'adjustmentsAndDeductions':
       case 'socialSecurityIncome':
@@ -164,8 +165,8 @@ interface SingleSimulationTaxesBarChartProps {
   age: number;
   dataView: TaxesDataView;
   rawChartData: SingleSimulationTaxesChartDataPoint[];
-  referenceLineMode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates' | null;
-  agiReferenceLineMode: 'hideReferenceLines' | 'niitThreshold' | null;
+  referenceLineMode: TaxableIncomeReferenceLineMode | null;
+  agiReferenceLineMode: AgiReferenceLineMode | null;
 }
 
 export default function SingleSimulationTaxesBarChart({
@@ -180,20 +181,20 @@ export default function SingleSimulationTaxesBarChart({
 
   const labelConfig: Record<string, { mobile: string[]; desktop: string[] }> = {
     marginalRates: {
-      mobile: ['Income Rate', 'Cap Gains Rate'],
-      desktop: ['Top Marginal Income Tax Rate', 'Top Marginal Cap Gains Tax Rate'],
+      mobile: ['Fed. Income Rate', 'Cap Gains Rate'],
+      desktop: ['Top Marginal Fed. Income Tax Rate', 'Top Marginal Cap Gains Tax Rate'],
     },
     effectiveRates: {
-      mobile: ['Income Rate', 'Cap Gains Rate'],
-      desktop: ['Effective Income Tax Rate', 'Effective Cap Gains Tax Rate'],
+      mobile: ['Fed. Income Rate', 'Cap Gains Rate'],
+      desktop: ['Effective Fed. Income Tax Rate', 'Effective Cap Gains Tax Rate'],
     },
     annualAmounts: {
-      mobile: ['Income Tax', 'FICA Tax', 'Cap Gains Tax', 'NIIT', 'EW Penalty'],
-      desktop: ['Annual Income Tax', 'Annual FICA Tax', 'Annual Cap Gains Tax', 'Annual NIIT', 'Annual EW Penalties'],
+      mobile: ['Fed. Income Tax', 'FICA Tax', 'Cap Gains Tax', 'NIIT', 'EW Penalty'],
+      desktop: ['Annual Fed. Income Tax', 'Annual FICA Tax', 'Annual Cap Gains Tax', 'Annual NIIT', 'Annual EW Penalties'],
     },
     cumulativeAmounts: {
-      mobile: ['Cumul. Income Tax', 'Cumul. FICA Tax', 'Cumul. CG Tax', 'Cumul. NIIT', 'Cumul. EW Penalty'],
-      desktop: ['Cumul. Income Tax', 'Cumul. FICA Tax', 'Cumul. Cap Gains Tax', 'Cumul. NIIT', 'Cumul. EW Penalties'],
+      mobile: ['Cumul. Fed. Income Tax', 'Cumul. FICA Tax', 'Cumul. CG Tax', 'Cumul. NIIT', 'Cumul. EW Penalty'],
+      desktop: ['Cumul. Fed. Income Tax', 'Cumul. FICA Tax', 'Cumul. Cap Gains Tax', 'Cumul. NIIT', 'Cumul. EW Penalties'],
     },
     retirementDistributions: {
       mobile: ['Tax-Deferred', 'Early Roth'],
@@ -223,7 +224,7 @@ export default function SingleSimulationTaxesBarChart({
 
   const chartData = rawChartData.filter((item) => item.age === age);
 
-  const { incomeTaxBrackets, capitalGainsTaxBrackets } = getTaxBrackets(chartData);
+  const { federalIncomeTaxBrackets, capitalGainsTaxBrackets } = getTaxBrackets(chartData);
   const niitThreshold = getNiitThreshold(chartData);
   const taxableIncome = Math.max(...chartData.map((item) => item.taxableIncome));
 
@@ -238,10 +239,10 @@ export default function SingleSimulationTaxesBarChart({
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       filterZeroValues = false;
 
-      const [incomeTaxLabel, capGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [incomeTaxLabel, capitalGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: incomeTaxLabel, segments: [{ amount: item.topMarginalIncomeTaxRate, color: 'var(--chart-2)' }] },
-        { name: capGainsTaxLabel, segments: [{ amount: item.topMarginalCapGainsTaxRate, color: 'var(--chart-4)' }] },
+        { name: incomeTaxLabel, segments: [{ amount: item.topMarginalFederalIncomeTaxRate, color: 'var(--chart-2)' }] },
+        { name: capitalGainsTaxLabel, segments: [{ amount: item.topMarginalCapitalGainsTaxRate, color: 'var(--chart-4)' }] },
       ]);
       break;
     }
@@ -249,24 +250,24 @@ export default function SingleSimulationTaxesBarChart({
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
       filterZeroValues = false;
 
-      const [incomeTaxLabel, capGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
+      const [incomeTaxLabel, capitalGainsTaxLabel] = getLabelsForScreenSize(dataView, isSmallScreen);
       transformedChartData = chartData.flatMap((item) => [
-        { name: incomeTaxLabel, segments: [{ amount: item.effectiveIncomeTaxRate, color: 'var(--chart-2)' }] },
-        { name: capGainsTaxLabel, segments: [{ amount: item.effectiveCapGainsTaxRate, color: 'var(--chart-4)' }] },
+        { name: incomeTaxLabel, segments: [{ amount: item.effectiveFederalIncomeTaxRate, color: 'var(--chart-2)' }] },
+        { name: capitalGainsTaxLabel, segments: [{ amount: item.effectiveCapitalGainsTaxRate, color: 'var(--chart-4)' }] },
       ]);
       break;
     }
     case 'annualAmounts': {
       formatter = (value: number) => formatCompactCurrency(value, 1);
 
-      const [incomeTaxLabel, ficaTaxLabel, capGainsTaxLabel, niitLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(
+      const [incomeTaxLabel, ficaTaxLabel, capitalGainsTaxLabel, niitLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(
         dataView,
         isSmallScreen
       );
       transformedChartData = chartData.flatMap((item) => [
-        { name: incomeTaxLabel, segments: [{ amount: item.annualIncomeTax, color: 'var(--chart-1)' }] },
+        { name: incomeTaxLabel, segments: [{ amount: item.annualFederalIncomeTax, color: 'var(--chart-1)' }] },
         { name: ficaTaxLabel, segments: [{ amount: item.annualFicaTax, color: 'var(--chart-2)' }] },
-        { name: capGainsTaxLabel, segments: [{ amount: item.annualCapGainsTax, color: 'var(--chart-3)' }] },
+        { name: capitalGainsTaxLabel, segments: [{ amount: item.annualCapitalGainsTax, color: 'var(--chart-3)' }] },
         { name: niitLabel, segments: [{ amount: item.annualNiit, color: 'var(--chart-4)' }] },
         { name: earlyWithdrawalPenaltiesLabel, segments: [{ amount: item.annualEarlyWithdrawalPenalties, color: 'var(--chart-5)' }] },
       ]);
@@ -275,14 +276,14 @@ export default function SingleSimulationTaxesBarChart({
     case 'cumulativeAmounts': {
       formatter = (value: number) => formatCompactCurrency(value, 1);
 
-      const [incomeTaxLabel, ficaTaxLabel, capGainsTaxLabel, niitLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(
+      const [incomeTaxLabel, ficaTaxLabel, capitalGainsTaxLabel, niitLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(
         dataView,
         isSmallScreen
       );
       transformedChartData = chartData.flatMap((item) => [
-        { name: incomeTaxLabel, segments: [{ amount: item.cumulativeIncomeTax, color: 'var(--chart-1)' }] },
+        { name: incomeTaxLabel, segments: [{ amount: item.cumulativeFederalIncomeTax, color: 'var(--chart-1)' }] },
         { name: ficaTaxLabel, segments: [{ amount: item.cumulativeFicaTax, color: 'var(--chart-2)' }] },
-        { name: capGainsTaxLabel, segments: [{ amount: item.cumulativeCapGainsTax, color: 'var(--chart-3)' }] },
+        { name: capitalGainsTaxLabel, segments: [{ amount: item.cumulativeCapitalGainsTax, color: 'var(--chart-3)' }] },
         { name: niitLabel, segments: [{ amount: item.cumulativeNiit, color: 'var(--chart-4)' }] },
         { name: earlyWithdrawalPenaltiesLabel, segments: [{ amount: item.cumulativeEarlyWithdrawalPenalties, color: 'var(--chart-5)' }] },
       ]);
@@ -297,7 +298,7 @@ export default function SingleSimulationTaxesBarChart({
           name: 'Taxable Income',
           segments: [
             { amount: item.taxableIncomeTaxedAsOrdinary, color: 'var(--chart-1)' },
-            { amount: item.taxableIncomeTaxedAsCapGains, color: 'var(--chart-2)' },
+            { amount: item.taxableIncomeTaxedAsCapitalGains, color: 'var(--chart-2)' },
           ],
         },
       ]);
@@ -312,7 +313,7 @@ export default function SingleSimulationTaxesBarChart({
           name: 'Adjusted Gross Income',
           segments: [
             { amount: item.adjustedIncomeTaxedAsOrdinary, color: 'var(--chart-1)' },
-            { amount: item.adjustedIncomeTaxedAsCapGains, color: 'var(--chart-2)' },
+            { amount: item.adjustedIncomeTaxedAsCapitalGains, color: 'var(--chart-2)' },
           ],
         },
       ]);
@@ -361,7 +362,7 @@ export default function SingleSimulationTaxesBarChart({
       ]);
       break;
     }
-    case 'capGainsAndDividends': {
+    case 'capitalGainsAndDividends': {
       formatter = (value: number) => formatCompactCurrency(value, 1);
 
       transformedChartData = chartData.flatMap((item) => [
@@ -460,10 +461,10 @@ export default function SingleSimulationTaxesBarChart({
               />
             </Bar>
           ))}
-          {referenceLineMode === 'marginalIncomeTaxRates' &&
-            incomeTaxBrackets &&
-            renderTaxBracketReferenceLines(incomeTaxBrackets, taxableIncome, foregroundColor, foregroundMutedColor)}
-          {referenceLineMode === 'marginalCapGainsTaxRates' &&
+          {referenceLineMode === 'marginalFederalIncomeTaxRates' &&
+            federalIncomeTaxBrackets &&
+            renderTaxBracketReferenceLines(federalIncomeTaxBrackets, taxableIncome, foregroundColor, foregroundMutedColor)}
+          {referenceLineMode === 'marginalCapitalGainsTaxRates' &&
             capitalGainsTaxBrackets &&
             renderTaxBracketReferenceLines(capitalGainsTaxBrackets, taxableIncome, foregroundColor, foregroundMutedColor)}
           {agiReferenceLineMode === 'niitThreshold' &&

@@ -53,7 +53,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       | 'retirementDistributions'
       | 'taxFreeIncome'
       | 'ordinaryIncome'
-      | 'capGainsAndDividends'
+      | 'capitalGainsAndDividends'
       | 'earlyWithdrawalPenalties'
       | 'adjustmentsAndDeductions'
       | 'socialSecurityIncome'
@@ -72,7 +72,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       case 'retirementDistributions':
       case 'taxFreeIncome':
       case 'ordinaryIncome':
-      case 'capGainsAndDividends':
+      case 'capitalGainsAndDividends':
       case 'earlyWithdrawalPenalties':
       case 'adjustmentsAndDeductions':
       case 'socialSecurityIncome':
@@ -101,7 +101,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
     case 'retirementDistributions':
     case 'taxFreeIncome':
     case 'ordinaryIncome':
-    case 'capGainsAndDividends':
+    case 'capitalGainsAndDividends':
     case 'adjustmentsAndDeductions':
       footer = (
         <p className="mx-1 mt-2 flex justify-between text-sm font-semibold">
@@ -252,28 +252,28 @@ export default function SingleSimulationTaxesLineChart({
     case 'marginalRates':
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
 
-      lineDataKeys.push('topMarginalIncomeTaxRate', 'topMarginalCapGainsTaxRate');
+      lineDataKeys.push('topMarginalFederalIncomeTaxRate', 'topMarginalCapitalGainsTaxRate');
       strokeColors.push('var(--chart-2)', 'var(--chart-4)');
       break;
     case 'effectiveRates':
       formatter = (value: number) => `${(value * 100).toFixed(1)}%`;
 
-      lineDataKeys.push('effectiveIncomeTaxRate', 'effectiveCapGainsTaxRate');
+      lineDataKeys.push('effectiveFederalIncomeTaxRate', 'effectiveCapitalGainsTaxRate');
       strokeColors.push('var(--chart-2)', 'var(--chart-4)');
       break;
     case 'annualAmounts':
       formatter = (value: number) => formatCompactCurrency(value, 1);
 
-      barDataKeys.push('annualIncomeTax', 'annualFicaTax', 'annualCapGainsTax', 'annualNiit', 'annualEarlyWithdrawalPenalties');
+      barDataKeys.push('annualFederalIncomeTax', 'annualFicaTax', 'annualCapitalGainsTax', 'annualNiit', 'annualEarlyWithdrawalPenalties');
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
       break;
     case 'cumulativeAmounts':
       formatter = (value: number) => formatCompactCurrency(value, 1);
 
       barDataKeys.push(
-        'cumulativeIncomeTax',
+        'cumulativeFederalIncomeTax',
         'cumulativeFicaTax',
-        'cumulativeCapGainsTax',
+        'cumulativeCapitalGainsTax',
         'cumulativeNiit',
         'cumulativeEarlyWithdrawalPenalties'
       );
@@ -344,7 +344,7 @@ export default function SingleSimulationTaxesLineChart({
       barDataKeys.push('earnedIncome', 'taxableSocialSecurityIncome', 'taxableInterestIncome', 'taxableRetirementDistributions');
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
       break;
-    case 'capGainsAndDividends':
+    case 'capitalGainsAndDividends':
       formatter = (value: number) => formatCompactCurrency(value, 1);
 
       barDataKeys.push('realizedGains', 'taxableDividendIncome');

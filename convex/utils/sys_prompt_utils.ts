@@ -540,7 +540,7 @@ const buildTable = (title: string, data: SimulationResult['simulationResult'], c
 const formatSimulationData = (simulationResult: SimulationResult | null | undefined): string => {
   if (!simulationResult) return 'No simulation data available';
 
-  const { simulationResult: data, fedIncomeTaxBrackets, fedCapitalGainsTaxBrackets, standardDeduction, niitThreshold } = simulationResult;
+  const { simulationResult: data, federalIncomeTaxBrackets, capitalGainsTaxBrackets, standardDeduction, niitThreshold } = simulationResult;
 
   if (!data.length) return 'No simulation data available';
 
@@ -557,8 +557,8 @@ const formatSimulationData = (simulationResult: SimulationResult | null | undefi
   const lines: string[] = [];
 
   lines.push(`Tax Brackets:`);
-  lines.push(`  FedIncBrackets: ${fedIncomeTaxBrackets.map(fmtBracket).join(', ')}`);
-  lines.push(`  FedCapGainsBrackets: ${fedCapitalGainsTaxBrackets.map(fmtBracket).join(', ')}`);
+  lines.push(`  FedIncBrackets: ${federalIncomeTaxBrackets.map(fmtBracket).join(', ')}`);
+  lines.push(`  CapGainsBrackets: ${capitalGainsTaxBrackets.map(fmtBracket).join(', ')}`);
   lines.push(`  StdDeduction: ${fmt(standardDeduction)}`);
   lines.push(`  NIIT Threshold: ${fmt(niitThreshold)}`);
 
@@ -602,17 +602,17 @@ const formatSimulationData = (simulationResult: SimulationResult | null | undefi
         col('AGI', 'adjustedGrossIncome'),
         col('taxableInc', 'taxableIncome'),
         col('netInvestmentInc', 'netInvestmentIncome'),
-        col('fedIncTax', 'fedIncomeTax'),
-        col('fedCapGainsTax', 'fedCapitalGainsTax'),
+        col('fedIncTax', 'federalIncomeTax'),
+        col('capGainsTax', 'capitalGainsTax'),
         col('fica', 'ficaTax'),
         col('niit', 'niit'),
         col('earlyWithdrawPen', 'earlyWithdrawalPenalties'),
         col('deductibleContrib', 'taxDeductibleContributions'),
         col('capLossDeduction', 'capitalLossDeduction'),
-        col('effFedIncTaxRate', 'effectiveFedIncomeTaxRate', pct),
-        col('margFedIncTaxRate', 'topMarginalFedIncomeTaxRate', pct),
-        col('effFedCapGainsRate', 'effectiveFedCapitalGainsTaxRate', pct),
-        col('margFedCapGainsRate', 'topMarginalFedCapitalGainsTaxRate', pct),
+        col('effFedIncTaxRate', 'effectiveFederalIncomeTaxRate', pct),
+        col('margFedIncTaxRate', 'topMarginalFederalIncomeTaxRate', pct),
+        col('effCapGainsRate', 'effectiveCapitalGainsTaxRate', pct),
+        col('margCapGainsRate', 'topMarginalCapitalGainsTaxRate', pct),
       ],
     },
     {
