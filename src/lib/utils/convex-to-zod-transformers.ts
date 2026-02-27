@@ -13,10 +13,10 @@ import type { MarketAssumptionsInputs } from '@/lib/schemas/inputs/market-assump
 import type { TimelineInputs } from '@/lib/schemas/inputs/timeline-form-schema';
 import type { TaxSettingsInputs } from '@/lib/schemas/inputs/tax-settings-form-schema';
 import type { PrivacySettingsInputs } from '@/lib/schemas/inputs/privacy-settings-form-schema';
-import type { SimulationSettingsInputs } from '@/lib/schemas/simulation-settings-schema';
+import type { SimulationSettingsInputs } from '@/lib/schemas/inputs/simulation-settings-form-schema';
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
-import type { AssetInputs } from '@/lib/schemas/finances/asset-schema';
-import type { LiabilityInputs } from '@/lib/schemas/finances/liability-schema';
+import type { AssetInputs } from '@/lib/schemas/finances/asset-form-schema';
+import type { LiabilityInputs } from '@/lib/schemas/finances/liability-form-schema';
 import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-form-schema';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 

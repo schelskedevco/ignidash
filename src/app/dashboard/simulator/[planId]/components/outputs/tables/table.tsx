@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/16/solid';
 import { CopyIcon, CheckIcon, DownloadIcon } from 'lucide-react';
 
-import type { TableColumn } from '@/lib/types/table';
+import type { TableColumn } from '@/lib/types/table-column';
 import Pagination from '@/components/ui/pagination';
 import Card from '@/components/ui/card';
 import { cn } from '@/lib/utils';

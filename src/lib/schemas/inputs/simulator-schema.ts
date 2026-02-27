@@ -11,7 +11,7 @@ import { contributionFormSchema, baseContributionSchema } from './contribution-f
 import { marketAssumptionsFormSchema } from './market-assumptions-form-schema';
 import { taxSettingsFormSchema } from './tax-settings-form-schema';
 import { privacySettingsFormSchema } from './privacy-settings-form-schema';
-import { simulationSettingsSchema } from '../simulation-settings-schema';
+import { simulationSettingsSchema } from './simulation-settings-form-schema';
 
 export const simulatorSchema = z.object({
   timeline: timelineFormSchema.nullable(),

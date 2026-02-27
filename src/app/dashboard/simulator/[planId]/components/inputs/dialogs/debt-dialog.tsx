@@ -19,7 +19,7 @@ import { usePayoffEstimate } from '@/hooks/use-payoff-estimate';
 import { debtToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { debtFormSchema, type DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
-import { liabilityTypeForDisplay, type LiabilityInputs } from '@/lib/schemas/finances/liability-schema';
+import { liabilityTypeForDisplay, type LiabilityInputs } from '@/lib/schemas/finances/liability-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import { timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';

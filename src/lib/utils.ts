@@ -16,10 +16,6 @@ export function formatNumber(num: number, fractionDigits: number = 2): string {
   return sign + absNum.toFixed(fractionDigits);
 }
 
-export function formatNumberAsNumber(num: number): number {
-  return parseFloat(num.toFixed(2));
-}
-
 export function formatChartString(input: string): string {
   const withSpaces = input.replace(/(?<!^)([A-Z])/g, ' $1');
   let result = withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);

@@ -1,4 +1,4 @@
-import type { TableColumn } from '@/lib/types/table';
+import type { TableColumn } from '@/lib/types/table-column';
 import type { ColumnFormat } from '@/lib/types/column-format';
 import {
   type SingleSimulationNetWorthTableRow,
