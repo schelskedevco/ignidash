@@ -67,12 +67,8 @@ export class ReturnsProcessor {
     const returns = this.returnsProvider.getReturns(phaseData);
 
     this.cachedAnnualReturnRates = returns.returns;
-    this.cachedAnnualInflationRate = returns.inflationRate / 100;
-    this.cachedAnnualYieldRates = {
-      stocks: returns.yields.stocks / 100,
-      bonds: returns.yields.bonds / 100,
-      cash: returns.yields.cash / 100,
-    };
+    this.cachedAnnualInflationRate = returns.inflationRate;
+    this.cachedAnnualYieldRates = returns.yields;
 
     this.lastYear = this.simulationState.time.year;
   }
@@ -88,12 +84,8 @@ export class ReturnsProcessor {
       const returns = this.returnsProvider.getReturns(phaseData);
 
       this.cachedAnnualReturnRates = returns.returns;
-      this.cachedAnnualInflationRate = returns.inflationRate / 100;
-      this.cachedAnnualYieldRates = {
-        stocks: returns.yields.stocks / 100,
-        bonds: returns.yields.bonds / 100,
-        cash: returns.yields.cash / 100,
-      };
+      this.cachedAnnualInflationRate = returns.inflationRate;
+      this.cachedAnnualYieldRates = returns.yields;
 
       this.lastYear = Math.floor(currentYear);
     }
