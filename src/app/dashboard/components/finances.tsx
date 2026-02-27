@@ -9,8 +9,8 @@ import { WalletIcon as MicroWalletIcon, CreditCardIcon as MicroCreditCardIcon } 
 import { WalletIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 import { ExternalLinkIcon } from 'lucide-react';
 
-import { type AssetInputs, assetTypeForDisplay, assetIconForDisplay } from '@/lib/schemas/finances/asset-schema';
-import { type LiabilityInputs, liabilityTypeForDisplay, liabilityIconForDisplay } from '@/lib/schemas/finances/liability-schema';
+import { type AssetInputs, assetTypeForDisplay, assetIconForDisplay } from '@/lib/schemas/finances/asset-form-schema';
+import { type LiabilityInputs, liabilityTypeForDisplay, liabilityIconForDisplay } from '@/lib/schemas/finances/liability-form-schema';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';

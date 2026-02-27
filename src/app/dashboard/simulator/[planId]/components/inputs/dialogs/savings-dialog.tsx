@@ -13,7 +13,7 @@ import posthog from 'posthog-js';
 import { accountToConvex } from '@/lib/utils/convex-to-zod-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
-import { assetTypeForDisplay, type AssetInputs } from '@/lib/schemas/finances/asset-schema';
+import { assetTypeForDisplay, type AssetInputs } from '@/lib/schemas/finances/asset-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import { Fieldset, FieldGroup, Field, Label, ErrorMessage } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';

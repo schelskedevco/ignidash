@@ -16,7 +16,7 @@ import Card from '@/components/ui/card';
 import { Select } from '@/components/catalyst/select';
 import { Field, FieldGroup, Fieldset, Label, Description, ErrorMessage } from '@/components/catalyst/fieldset';
 import ErrorMessageCard from '@/components/ui/error-message-card';
-import { type SimulationSettingsInputs, simulationSettingsSchema } from '@/lib/schemas/simulation-settings-schema';
+import { type SimulationSettingsInputs, simulationSettingsSchema } from '@/lib/schemas/inputs/simulation-settings-form-schema';
 import { Divider } from '@/components/catalyst/divider';
 import { Button } from '@/components/catalyst/button';
 import { DialogActions } from '@/components/catalyst/dialog';
