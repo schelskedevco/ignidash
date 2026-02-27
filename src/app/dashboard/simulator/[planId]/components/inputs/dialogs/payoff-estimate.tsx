@@ -1,4 +1,4 @@
-import { formatPayoffEstimate } from '@/lib/utils/payoff-estimator';
+import { formatPayoffEstimate } from '@/lib/utils/payoff-estimator-utils';
 import { cn } from '@/lib/utils';
 
 interface PayoffEstimateProps {

@@ -15,7 +15,7 @@ import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
 import { compareTimePoints } from '@/lib/utils/time-point-utils';
-import { estimatePayoffMonths, formatPayoffEstimate } from '@/lib/utils/payoff-estimator';
+import { estimatePayoffMonths, formatPayoffEstimate } from '@/lib/utils/payoff-estimator-utils';
 import type { ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import type { DebtInputs } from '@/lib/schemas/inputs/debt-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
