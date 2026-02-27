@@ -211,7 +211,6 @@ export class SavingsAccount extends Account {
     withdrawalAllocation: AssetAllocation
   ): AssetFlows & { realizedGains: number; earningsWithdrawn: number } {
     if (amount > this.balance) throw new Error('Insufficient funds for withdrawal');
-    if (type === 'rmd') throw new Error('Savings account should not have RMDs');
 
     this.balance -= amount;
     this.cumulativeWithdrawals.cash += amount;

@@ -1278,4 +1278,136 @@ describe('TaxProcessor', () => {
       expect(result2.incomeTaxes.capitalLossDeduction).toBe(3000);
     });
   });
+
+  // ============================================================================
+  // Parametrized Tests Across Filing Statuses
+  // ============================================================================
+
+  describe('bracket boundary interactions across filing statuses', () => {
+    const filingStatuses = [
+      { status: 'single' as const, deduction: STANDARD_DEDUCTION_SINGLE, firstBracketMax: 12400, secondBracketMax: 50400 },
+      {
+        status: 'marriedFilingJointly' as const,
+        deduction: STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY,
+        firstBracketMax: 24800,
+        secondBracketMax: 100800,
+      },
+      {
+        status: 'headOfHousehold' as const,
+        deduction: STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD,
+        firstBracketMax: 17700,
+        secondBracketMax: 67450,
+      },
+    ];
+
+    describe.each(filingStatuses)('$status filing status', ({ status, deduction, firstBracketMax, secondBracketMax }) => {
+      it('should correctly split tax across the 10%/12% bracket boundary', () => {
+        const processor = new TaxProcessor(createMockSimulationState(65), status);
+        const incomes = createEmptyIncomesData();
+        // Set income so taxable = secondBracketMax (crosses into 12% bracket)
+        incomes.totalIncome = secondBracketMax + deduction;
+
+        const result = processor.process(createEmptyPortfolioData(), incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+
+        expect(result.incomeTaxes.taxableIncomeTaxedAsOrdinary).toBe(secondBracketMax);
+
+        // Tax = firstBracketMax * 10% + (secondBracketMax - firstBracketMax) * 12%
+        const expectedTax = firstBracketMax * 0.1 + (secondBracketMax - firstBracketMax) * 0.12;
+        expect(result.incomeTaxes.incomeTaxAmount).toBeCloseTo(expectedTax, 2);
+        expect(result.incomeTaxes.topMarginalIncomeTaxRate).toBe(0.12);
+      });
+    });
+  });
+
+  describe('capital gains bracket stacking across filing statuses', () => {
+    const filingStatuses = [
+      { status: 'single' as const, deduction: STANDARD_DEDUCTION_SINGLE, cgZeroMax: 49450 },
+      { status: 'marriedFilingJointly' as const, deduction: STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY, cgZeroMax: 98900 },
+      { status: 'headOfHousehold' as const, deduction: STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD, cgZeroMax: 66200 },
+    ];
+
+    describe.each(filingStatuses)('$status filing status', ({ status, deduction, cgZeroMax }) => {
+      it('should stack capital gains on top of ordinary income for bracket determination', () => {
+        const processor = new TaxProcessor(createMockSimulationState(65), status);
+        const incomes = createEmptyIncomesData();
+        // Ordinary income fills up to the 0% CG threshold
+        incomes.totalIncome = cgZeroMax + deduction;
+
+        const portfolioData = createEmptyPortfolioData();
+        // $10,000 in realized gains sits entirely in the 15% CG bracket
+        portfolioData.realizedGains = 10000;
+
+        const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+
+        // All gains should be taxed at 15% since ordinary income fills the 0% bracket
+        expect(result.capitalGainsTaxes.capitalGainsTaxAmount).toBeCloseTo(10000 * 0.15, 2);
+        expect(result.capitalGainsTaxes.topMarginalCapitalGainsTaxRate).toBe(0.15);
+      });
+
+      it('should tax gains at 0% when total income is below the 0% CG threshold', () => {
+        const processor = new TaxProcessor(createMockSimulationState(65), status);
+        const incomes = createEmptyIncomesData();
+        // Low ordinary income: only $10,000 after deduction
+        incomes.totalIncome = 10000 + deduction;
+
+        const portfolioData = createEmptyPortfolioData();
+        // Small gains that stay within 0% bracket
+        const gainsAmount = Math.min(5000, cgZeroMax - 10000);
+        portfolioData.realizedGains = gainsAmount;
+
+        const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+
+        // All gains should be in the 0% bracket
+        expect(result.capitalGainsTaxes.capitalGainsTaxAmount).toBe(0);
+      });
+    });
+  });
+
+  describe('NIIT threshold interaction across filing statuses', () => {
+    const filingStatuses = [
+      { status: 'single' as const, deduction: STANDARD_DEDUCTION_SINGLE, threshold: NIIT_THRESHOLDS.single },
+      {
+        status: 'marriedFilingJointly' as const,
+        deduction: STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY,
+        threshold: NIIT_THRESHOLDS.marriedFilingJointly,
+      },
+      {
+        status: 'headOfHousehold' as const,
+        deduction: STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD,
+        threshold: NIIT_THRESHOLDS.headOfHousehold,
+      },
+    ];
+
+    describe.each(filingStatuses)('$status filing status (threshold=$threshold)', ({ status, deduction, threshold }) => {
+      it('should not apply NIIT when AGI is below threshold', () => {
+        const processor = new TaxProcessor(createMockSimulationState(65), status);
+        const incomes = createEmptyIncomesData();
+        // Income slightly below threshold (after adjustments, AGI will be below)
+        incomes.totalIncome = threshold - 10000;
+
+        const portfolioData = createEmptyPortfolioData();
+        portfolioData.realizedGains = 5000;
+
+        const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+
+        expect(result.niit.niitAmount).toBe(0);
+      });
+
+      it('should apply NIIT on investment income when AGI exceeds threshold', () => {
+        const processor = new TaxProcessor(createMockSimulationState(65), status);
+        const incomes = createEmptyIncomesData();
+        // Income well above threshold
+        incomes.totalIncome = threshold + 50000;
+
+        const portfolioData = createEmptyPortfolioData();
+        portfolioData.realizedGains = 20000;
+
+        const result = processor.process(portfolioData, incomes, createEmptyReturnsData(), createEmptyPhysicalAssetsData());
+
+        // NIIT = min(NII, MAGI - threshold) * 3.8%
+        expect(result.niit.niitAmount).toBeGreaterThan(0);
+        expect(result.niit.threshold).toBe(threshold);
+      });
+    });
+  });
 });

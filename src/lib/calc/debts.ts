@@ -266,6 +266,10 @@ export class Debt {
     }
   }
 
+  /**
+   * Calculates monthly real interest using the Fisher equation:
+   * realRate = (1 + nominalRate) / (1 + inflationRate) - 1
+   */
   private calculateMonthlyInterest(monthlyInflationRate: number): number {
     if (this.isPaidOff()) return 0;
     if (this.interestType === 'simple') return this.principal * ((1 + this.nominalAPR / 12) / (1 + monthlyInflationRate) - 1);

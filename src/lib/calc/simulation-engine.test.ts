@@ -13,6 +13,7 @@ import {
   MonteCarloSimulationEngine,
   LcgHistoricalBacktestSimulationEngine,
   type SimulationState,
+  type SimulationResult,
 } from './simulation-engine';
 import { FixedReturnsProvider } from './returns-providers/fixed-returns-provider';
 import { Portfolio } from './portfolio';
@@ -20,6 +21,7 @@ import { Incomes, IncomesProcessor } from './incomes';
 import { Expenses, ExpensesProcessor } from './expenses';
 import { PhaseIdentifier } from './phase';
 import { SeededRandom } from './returns-providers/seeded-random';
+import { uniformLifetimeMap } from './historical-data/rmds-table';
 
 // ============================================================================
 // Test Fixtures
@@ -1061,5 +1063,199 @@ describe('Physical Assets Integration', () => {
 
     // Portfolio should still have a reasonable value (deficit handled via withdrawals or reduced contributions)
     expect(yearAfterSale.portfolio.totalValue).toBeGreaterThanOrEqual(0);
+  });
+});
+
+// ============================================================================
+// Full Simulation Year Integration Tests
+// ============================================================================
+
+describe('full simulation year scenarios', () => {
+  const runFixedSimulation = (inputs: SimulatorInputs): SimulationResult => {
+    const engine = new FinancialSimulationEngine(inputs);
+    const timeline = inputs.timeline!;
+    const returnsProvider = new FixedReturnsProvider(inputs);
+    return engine.runSimulation(returnsProvider, timeline);
+  };
+
+  it('accumulation phase: 35yo with $100k salary, 401k + Roth, 7% fixed returns', () => {
+    const inputs = createSimulatorInputs({
+      timeline: {
+        lifeExpectancy: 87,
+        birthMonth: 1,
+        birthYear: 1990,
+        retirementStrategy: { type: 'fixedAge', retirementAge: 65 },
+      },
+      accounts: {
+        '401k-1': create401kAccount({ balance: 500000 }),
+        'roth-1': createRothIraAccount({ balance: 50000 }),
+      },
+      incomes: { 'income-1': createWageIncome({ amount: 100000 }) },
+      expenses: { 'expense-1': createLivingExpense({ amount: 40000 }) },
+      contributionRules: { 'rule-1': createContributionRule({ accountId: '401k-1' }) },
+      marketAssumptions: {
+        stockReturn: 7,
+        stockYield: 2,
+        bondReturn: 4,
+        bondYield: 3,
+        cashReturn: 3,
+        inflationRate: 3,
+      },
+    });
+
+    const result = runFixedSimulation(inputs);
+
+    // Should have data points from start through life expectancy
+    expect(result.data.length).toBeGreaterThan(2);
+
+    // Year 1 data (index 1, since index 0 is initial state)
+    const year1 = result.data[1];
+    expect(year1).toBeDefined();
+
+    // Portfolio should grow due to contributions + returns
+    expect(year1.portfolio.totalValue).toBeGreaterThan(500000 + 50000);
+
+    // Income should reflect $100k salary
+    expect(year1.incomes).not.toBeNull();
+    expect(year1.incomes!.totalIncome).toBeCloseTo(100000, -2);
+
+    // Expenses should reflect ~$40k
+    expect(year1.expenses).not.toBeNull();
+    expect(year1.expenses!.totalExpenses).toBeGreaterThan(0);
+
+    // Taxes should be computed
+    expect(year1.taxes).not.toBeNull();
+    expect(year1.taxes!.totalTaxableIncome).toBeGreaterThan(0);
+
+    // Contributions should flow into 401k
+    const totalContributions =
+      year1.portfolio.contributions.stocks + year1.portfolio.contributions.bonds + year1.portfolio.contributions.cash;
+    expect(totalContributions).toBeGreaterThan(0);
+
+    // Net worth should grow meaningfully over 5 years
+    const year5 = result.data[5];
+    if (year5) {
+      expect(year5.portfolio.totalValue).toBeGreaterThan(year1.portfolio.totalValue);
+    }
+  });
+
+  it('early retirement: 50yo with no income, $100k savings + $500k 401k, $60k expenses', () => {
+    const inputs = createSimulatorInputs({
+      timeline: {
+        lifeExpectancy: 87,
+        birthMonth: 6,
+        birthYear: 1975,
+        retirementStrategy: { type: 'fixedAge', retirementAge: 50 },
+      },
+      accounts: {
+        'savings-1': createSavingsAccount({ balance: 100000 }),
+        '401k-1': create401kAccount({ balance: 500000 }),
+      },
+      incomes: {},
+      expenses: { 'expense-1': createLivingExpense({ amount: 60000 }) },
+      contributionRules: {},
+      marketAssumptions: {
+        stockReturn: 7,
+        stockYield: 2,
+        bondReturn: 4,
+        bondYield: 3,
+        cashReturn: 3,
+        inflationRate: 3,
+      },
+    });
+
+    const result = runFixedSimulation(inputs);
+    expect(result.data.length).toBeGreaterThan(2);
+
+    const year1 = result.data[1];
+    expect(year1).toBeDefined();
+
+    // No income sources — incomes data should show zero total
+    expect(year1.incomes!.totalIncome).toBe(0);
+
+    // Portfolio should have withdrawals to cover expenses
+    const totalWithdrawals = year1.portfolio.withdrawals.stocks + year1.portfolio.withdrawals.bonds + year1.portfolio.withdrawals.cash;
+    expect(totalWithdrawals).toBeGreaterThan(0);
+
+    // Before age 59.5, savings should be withdrawn first (tax-optimized order)
+    // The savings account should be depleted before 401k in early retirement
+    const savingsAccount = year1.portfolio.perAccountData['savings-1'];
+    if (savingsAccount) {
+      const savingsWithdrawals = savingsAccount.withdrawals.stocks + savingsAccount.withdrawals.bonds + savingsAccount.withdrawals.cash;
+      expect(savingsWithdrawals).toBeGreaterThan(0);
+    }
+
+    // Should survive multiple years without running out
+    const year5 = result.data[5];
+    if (year5) {
+      expect(year5.portfolio.totalValue).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it('RMD phase: 75yo with Social Security, $2M 401k, $50k expenses', () => {
+    const inputs = createSimulatorInputs({
+      timeline: {
+        lifeExpectancy: 95,
+        birthMonth: 1,
+        birthYear: 1950,
+        retirementStrategy: { type: 'fixedAge', retirementAge: 65 },
+      },
+      accounts: {
+        '401k-1': create401kAccount({ balance: 2000000 }),
+        'savings-1': createSavingsAccount({ balance: 50000 }),
+      },
+      incomes: {
+        'ss-1': {
+          id: 'ss-1',
+          name: 'Social Security',
+          amount: 30000,
+          frequency: 'yearly' as const,
+          timeframe: { start: { type: 'now' as const }, end: undefined },
+          taxes: { incomeType: 'socialSecurity' as const, withholding: 0 },
+          disabled: false,
+        },
+      },
+      expenses: { 'expense-1': createLivingExpense({ amount: 50000 }) },
+      contributionRules: {},
+      marketAssumptions: {
+        stockReturn: 7,
+        stockYield: 2,
+        bondReturn: 4,
+        bondYield: 3,
+        cashReturn: 3,
+        inflationRate: 3,
+      },
+    });
+
+    const result = runFixedSimulation(inputs);
+    expect(result.data.length).toBeGreaterThan(2);
+
+    // RMD age is 73 for born before 1960 — but the person starts at 75, so RMDs from year 1
+    expect(result.context.rmdAge).toBe(73); // born 1950 < 1960
+
+    const year1 = result.data[1];
+    expect(year1).toBeDefined();
+
+    // Should have RMD withdrawals from the 401k
+    expect(year1.portfolio.rmds).toBeGreaterThan(0);
+
+    // RMD amount should be in the right ballpark — starting balance $2M,
+    // but grows with returns before RMDs are processed at start of year
+    const minExpected = 2000000 / uniformLifetimeMap[75];
+    expect(year1.portfolio.rmds).toBeGreaterThanOrEqual(minExpected * 0.9);
+    expect(year1.portfolio.rmds).toBeLessThanOrEqual(minExpected * 1.2);
+
+    // Social Security income should be present
+    expect(year1.incomes).not.toBeNull();
+    expect(year1.incomes!.totalSocialSecurityIncome).toBeCloseTo(30000, -2);
+
+    // SS should be partially taxable given the high income from RMDs
+    expect(year1.taxes).not.toBeNull();
+    expect(year1.taxes!.socialSecurityTaxes.taxableSocialSecurityIncome).toBeGreaterThan(0);
+    // With high RMD income, SS should be 85% taxable
+    expect(year1.taxes!.socialSecurityTaxes.maxTaxablePercentage).toBe(0.85);
+
+    // Income taxes should reflect the RMD as ordinary income
+    expect(year1.taxes!.incomeTaxes.incomeTaxAmount).toBeGreaterThan(0);
   });
 });

@@ -454,6 +454,7 @@ export class PortfolioProcessor {
     for (const account of accountsWithRMDs) {
       if (!(account.getBalance() > 0)) continue;
 
+      // IRS Uniform Lifetime Table (Treas. Reg. §1.401(a)(9)-9)
       const lookupAge = Math.min(Math.floor(age), 120);
       const rmdAmount = account.getBalance() / uniformLifetimeMap[lookupAge];
 

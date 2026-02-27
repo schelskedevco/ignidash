@@ -75,7 +75,9 @@ export interface TaxesData {
   totalTaxesDue: number;
   totalTaxesRefund: number;
   totalTaxableIncome: number;
+  /** Above-the-line adjustments: tax-deferred contributions (401k/IRA/HSA), capital loss deduction, Section 121 exclusion */
   adjustments: Record<string, number>;
+  /** Below-the-line deductions: standard deduction (itemized deductions not modeled) */
   deductions: Record<string, number>;
 }
 
@@ -92,6 +94,7 @@ export interface SocialSecurityTaxesData {
   provisionalIncome: number;
 }
 
+/** Detailed breakdown of all income sources for tax computation */
 export interface IncomeSourcesData {
   realizedGains: number;
   capitalLossDeduction: number;
@@ -103,11 +106,15 @@ export interface IncomeSourcesData {
   earnedIncome: number;
   socialSecurityIncome: number;
   taxableSocialSecurityIncome: number;
+  /** IRC §86 threshold result: 0, 0.5, or 0.85 depending on provisional income */
   maxTaxableSocialSecurityPercentage: number;
+  /** AGI + 50% of SS benefits; determines SS taxation tier */
   provisionalIncome: number;
   taxFreeIncome: number;
   grossIncome: number;
+  /** Income taxed at ordinary rates: earned income + retirement distributions + interest + taxable SS */
   incomeTaxedAsOrdinary: number;
+  /** Income taxed at long-term capital gains rates: realized gains + qualified dividends */
   incomeTaxedAsLtcg: number;
   taxDeductibleContributions: number;
   adjustedGrossIncome: number;
@@ -355,8 +362,7 @@ export class TaxProcessor {
 
   /**
    * Applies capital loss carryover and computes the $3,000 annual capital loss deduction
-   *
-   * Losses exceeding $3,000 are carried forward to future years.
+   * (IRC §1211(b)). Losses exceeding $3,000 are carried forward to future years.
    */
   private getRealizedGainsAndCapLossDeductionData(
     annualPortfolioDataBeforeTaxes: PortfolioData,
@@ -382,7 +388,7 @@ export class TaxProcessor {
     return { realizedGains: 0, capitalLossDeduction, section121Exclusion };
   }
 
-  /** Calculates progressive income tax across ordinary income brackets */
+  /** Calculates progressive income tax across ordinary income brackets (IRC §1) */
   private processIncomeTaxes({ taxableIncomeTaxedAsOrdinary }: { taxableIncomeTaxedAsOrdinary: number }): {
     incomeTaxAmount: number;
     topMarginalIncomeTaxRate: number;
@@ -404,7 +410,7 @@ export class TaxProcessor {
   }
 
   /**
-   * Calculates capital gains tax with bracket stacking
+   * Calculates capital gains tax with bracket stacking (IRC §1(h))
    *
    * Capital gains are stacked on top of ordinary income to determine
    * the applicable bracket, then only the gains portion is taxed.
@@ -441,7 +447,7 @@ export class TaxProcessor {
     return { capitalGainsTaxAmount, topMarginalCapitalGainsTaxRate, capitalGainsTaxBrackets };
   }
 
-  /** Calculates Net Investment Income Tax (3.8% surtax on investment income above threshold) */
+  /** Calculates Net Investment Income Tax — IRC §1411: 3.8% on lesser of NII or MAGI over threshold */
   private processNIIT(incomeData: IncomeSourcesData): NIITData {
     const threshold = NIIT_THRESHOLDS[this.filingStatus];
 
@@ -457,7 +463,7 @@ export class TaxProcessor {
     return { netInvestmentIncome, incomeSubjectToNiit, niitAmount, threshold };
   }
 
-  /** Calculates 10% early withdrawal penalty for 401k/IRA and 20% for HSA */
+  /** Calculates early withdrawal penalties — IRC §72(t): 10% for 401k/IRA; IRC §223(f)(4): 20% for HSA */
   private processEarlyWithdrawalPenalties(earlyWithdrawalsData: IncomeSourcesData['earlyWithdrawals']): EarlyWithdrawalPenaltyData {
     const taxDeferredPenaltyAmount = earlyWithdrawalsData['401kAndIra'] * 0.1 + earlyWithdrawalsData.hsa * 0.2;
     const taxFreePenaltyAmount = earlyWithdrawalsData.rothEarnings * 0.1;
@@ -466,10 +472,11 @@ export class TaxProcessor {
   }
 
   /**
-   * Determines taxable portion of Social Security benefits
+   * Determines taxable portion of Social Security benefits (IRC §86)
    *
-   * Uses provisional income to determine 0%, 50%, or up to 85% taxable.
-   * Maximum 85% of benefits can be taxed regardless of income level.
+   * Uses provisional income (AGI + tax-exempt interest + 50% of SS benefits) to
+   * determine 0%, 50%, or up to 85% taxable. Maximum 85% of benefits can be
+   * taxed regardless of income level.
    */
   private getTaxablePortionOfSocialSecurityIncome({
     provisionalIncome,

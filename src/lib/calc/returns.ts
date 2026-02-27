@@ -83,7 +83,7 @@ export class ReturnsProcessor {
       this.lastYear = Math.floor(currentYear);
     }
 
-    // Convert annual rates to monthly: (1 + annual)^(1/12) - 1
+    // Convert annual rates to monthly via geometric mean: (1 + annual)^(1/12) - 1
     const returnRates: AssetReturnRates = {
       stocks: Math.pow(1 + this.cachedAnnualReturnRates.stocks, 1 / 12) - 1,
       bonds: Math.pow(1 + this.cachedAnnualReturnRates.bonds, 1 / 12) - 1,

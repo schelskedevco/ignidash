@@ -17,8 +17,8 @@ import type { PhaseData, PhaseName } from '../phase';
 /** Replays historical market data sequentially from a seeded random start year */
 export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
   private readonly historicalDataRange: { startYear: number; endYear: number };
-  private readonly historicalData: NyuHistoricalYearData[];
-  private readonly historicalYieldData: ShillerHistoricalYearData[];
+  private readonly historicalReturnsByYear: Map<number, NyuHistoricalYearData>;
+  private readonly historicalYieldsByYear: Map<number, ShillerHistoricalYearData>;
   private readonly rng: SeededRandom;
 
   private currentHistoricalYear: number;
@@ -36,8 +36,9 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
     private retirementStartYearOverride: number | undefined
   ) {
     this.historicalDataRange = getNyuDataRange();
-    this.historicalData = nyuHistoricalData;
-    this.historicalYieldData = shillerHistoricalData;
+    this.historicalReturnsByYear = new Map(nyuHistoricalData.map((d) => [d.year, d]));
+    this.historicalYieldsByYear = new Map(shillerHistoricalData.map((d) => [d.year, d]));
+
     this.rng = new SeededRandom(seed);
 
     this.currentHistoricalYear = startYearOverride || this.generateRandomStartYear();
@@ -74,20 +75,20 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
       this.historicalRanges.push({ startYear: this.currentHistoricalYear, endYear: this.currentHistoricalYear });
     }
 
-    const yearData = this.historicalData.find((data) => data.year === this.currentHistoricalYear);
-    const yieldData = this.historicalYieldData.find((data) => data.year === this.currentHistoricalYear);
+    const returnsData = this.historicalReturnsByYear.get(this.currentHistoricalYear);
+    const yieldsData = this.historicalYieldsByYear.get(this.currentHistoricalYear);
 
-    if (!yearData || !yieldData) throw new Error(`Historical data not found for year ${this.currentHistoricalYear}`);
+    if (!returnsData || !yieldsData) throw new Error(`Historical data not found for year ${this.currentHistoricalYear}`);
 
     this.currentHistoricalYear += 1;
 
-    const returns: AssetReturnRates = { stocks: yearData.stockReturn, bonds: yearData.bondReturn, cash: yearData.cashReturn };
-    const nominalCashYield = (1 + returns.cash) * (1 + yearData.inflationRate) - 1;
+    const returns: AssetReturnRates = { stocks: returnsData.stockReturn, bonds: returnsData.bondReturn, cash: returnsData.cashReturn };
+    const nominalCashYield = (1 + returns.cash) * (1 + returnsData.inflationRate) - 1;
 
     return {
       returns,
-      yields: { stocks: yieldData.stockYield * 100, bonds: yieldData.bondYield * 100, cash: nominalCashYield * 100 },
-      inflationRate: yearData.inflationRate * 100,
+      yields: { stocks: yieldsData.stockYield * 100, bonds: yieldsData.bondYield * 100, cash: nominalCashYield * 100 },
+      inflationRate: returnsData.inflationRate * 100,
     };
   }
 

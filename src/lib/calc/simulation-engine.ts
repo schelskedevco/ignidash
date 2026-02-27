@@ -29,6 +29,7 @@ import { TaxProcessor, type TaxesData } from './taxes';
  * Tax convergence threshold in dollars.
  * The iterative tax reconciliation loop converges when the remaining taxes due
  * are within this threshold, leaving small residual values in cash flow calculations.
+ * The loop runs at most 10 iterations before accepting the current approximation.
  */
 export const TAX_CONVERGENCE_THRESHOLD = 1;
 
@@ -454,7 +455,7 @@ export class MonteCarloSimulationEngine extends FinancialSimulationEngine {
 
     const simulations: Array<[number, SimulationResult]> = [];
     for (let i = 0; i < numSimulations; i++) {
-      const simulationSeed = this.baseSeed + i * 1009;
+      const simulationSeed = this.baseSeed + i * 1009; // Prime spacing avoids seed correlation between simulations
       const returnsProvider = new StochasticReturnsProvider(this.inputs, simulationSeed);
 
       const result = this.runSimulation(returnsProvider, timeline);
@@ -510,7 +511,7 @@ export class LcgHistoricalBacktestSimulationEngine extends FinancialSimulationEn
 
     const simulations: Array<[number, SimulationResult]> = [];
     for (let i = 0; i < numSimulations; i++) {
-      const simulationSeed = this.baseSeed + i * 1009;
+      const simulationSeed = this.baseSeed + i * 1009; // Prime spacing avoids seed correlation between simulations
       const returnsProvider = new LcgHistoricalBacktestReturnsProvider(simulationSeed, undefined, undefined);
 
       const result = this.runSimulation(returnsProvider, timeline);
