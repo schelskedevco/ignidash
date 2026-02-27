@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { estimatePayoffMonths, formatPayoffEstimate } from './payoff-estimator';
+import { estimatePayoffMonths, formatPayoffEstimate } from './payoff-estimator-utils';
 
 describe('estimatePayoffMonths', () => {
   it('handles 0% APR correctly', () => {

@@ -13,7 +13,7 @@ import { Button } from '@/components/catalyst/button';
 import { formatNumber } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { physicalAssetTimeFrameForDisplay } from '@/lib/utils/data-display-formatters';
-import { estimatePayoffMonths, formatPayoffEstimate } from '@/lib/utils/payoff-estimator';
+import { estimatePayoffMonths, formatPayoffEstimate } from '@/lib/utils/payoff-estimator-utils';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { accountTypeForDisplay, taxCategoryFromAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import type { TaxCategory } from '@/lib/calc/asset';
