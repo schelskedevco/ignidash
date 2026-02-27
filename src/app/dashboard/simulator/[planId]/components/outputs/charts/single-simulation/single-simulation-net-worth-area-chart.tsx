@@ -18,6 +18,7 @@ import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import { useChartInterval } from '@/hooks/use-chart-interval';
 import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
+import { zeroAssetAmounts, type AssetAllocation } from '@/lib/calc/asset';
 
 import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';
 
@@ -328,7 +329,7 @@ export default function SingleSimulationNetWorthAreaChart({
           .map((account) => {
             const balance = account.balance;
 
-            const assetAllocation = account.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
+            const assetAllocation = account.assetAllocation ?? zeroAssetAmounts<AssetAllocation>();
             const stocksAllocation = assetAllocation.stocks;
             const bondsAllocation = assetAllocation.bonds;
             const cashAllocation = assetAllocation.cash;

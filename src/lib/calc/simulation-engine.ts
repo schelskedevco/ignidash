@@ -24,6 +24,7 @@ import { Expenses, ExpensesProcessor, type ExpensesData } from './expenses';
 import { Debts, DebtsProcessor, type DebtsData, type DebtData } from './debts';
 import { PhysicalAssets, PhysicalAssetsProcessor, type PhysicalAssetsData, type PhysicalAssetData } from './physical-assets';
 import { TaxProcessor, type TaxesData } from './taxes';
+import { type AssetFlows, zeroAssetAmounts } from './asset';
 
 /**
  * Tax convergence threshold in dollars.
@@ -290,7 +291,7 @@ export class FinancialSimulationEngine {
     const totalPortfolioValue = initialSimulationState.portfolio.getTotalValue();
     const assetAllocation = initialSimulationState.portfolio.getWeightedAssetAllocation();
 
-    const defaultAssetFlows = { stocks: 0, bonds: 0, cash: 0 };
+    const defaultAssetFlows = zeroAssetAmounts<AssetFlows>();
 
     const defaultFlowsData = {
       contributions: { ...defaultAssetFlows },

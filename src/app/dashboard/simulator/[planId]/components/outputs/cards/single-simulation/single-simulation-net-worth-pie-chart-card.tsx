@@ -11,6 +11,7 @@ import { formatChartString, formatNumber } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useAccountData, usePhysicalAssetData, useDebtData } from '@/hooks/use-convex-data';
 import { taxCategoryFromAccountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
+import { zeroAssetAmounts, type AssetAllocation } from '@/lib/calc/asset';
 
 import SingleSimulationNetWorthPieChart from '../../charts/single-simulation/single-simulation-net-worth-pie-chart';
 import SingleSimulationNetWorthBarChart from '../../charts/single-simulation/single-simulation-net-worth-bar-chart';
@@ -141,7 +142,7 @@ export default function SingleSimulationNetWorthPieChartCard({
         chartData = perAccountData.flatMap((account) => {
           const balance = account.balance;
 
-          const assetAllocation = account.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
+          const assetAllocation = account.assetAllocation ?? zeroAssetAmounts<AssetAllocation>();
           const stocksAllocation = assetAllocation.stocks;
           const bondsAllocation = assetAllocation.bonds;
           const cashAllocation = assetAllocation.cash;

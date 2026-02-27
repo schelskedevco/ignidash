@@ -12,7 +12,7 @@ import {
   type SimulationResult,
   TAX_CONVERGENCE_THRESHOLD,
 } from '@/lib/calc/simulation-engine';
-import { sumFlows, sumInvestments, sumLiquidations, sumReturnAmounts } from '@/lib/calc/asset';
+import { sumFlows, sumInvestments, sumLiquidations, sumReturnAmounts, zeroAssetAmounts, type AssetAllocation } from '@/lib/calc/asset';
 
 /**
  * Rounds values within the tax convergence threshold to zero.
@@ -512,7 +512,7 @@ export class SimulationDataExtractor {
     const portfolioData = dp.portfolio;
     const totalValue = portfolioData.totalValue;
 
-    const assetAllocation = portfolioData.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
+    const assetAllocation = portfolioData.assetAllocation ?? zeroAssetAmounts<AssetAllocation>();
     const stocksAllocation = assetAllocation.stocks;
     const bondsAllocation = assetAllocation.bonds;
     const cashAllocation = assetAllocation.cash;

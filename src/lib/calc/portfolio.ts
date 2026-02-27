@@ -898,18 +898,15 @@ export class Portfolio {
     const totalValue = this.getTotalValue();
     if (totalValue === 0) return null;
 
-    const weightedAllocation = this.accounts.reduce(
-      (acc, account) => {
-        const weight = account.getBalance() / totalValue;
+    const weightedAllocation = this.accounts.reduce((acc, account) => {
+      const weight = account.getBalance() / totalValue;
 
-        return {
-          stocks: acc.stocks + (account.getAccountData().assetAllocation.stocks ?? 0) * weight,
-          bonds: acc.bonds + (account.getAccountData().assetAllocation.bonds ?? 0) * weight,
-          cash: acc.cash + (account.getAccountData().assetAllocation.cash ?? 0) * weight,
-        };
-      },
-      { stocks: 0, bonds: 0, cash: 0 } as AssetAllocation
-    );
+      return {
+        stocks: acc.stocks + (account.getAccountData().assetAllocation.stocks ?? 0) * weight,
+        bonds: acc.bonds + (account.getAccountData().assetAllocation.bonds ?? 0) * weight,
+        cash: acc.cash + (account.getAccountData().assetAllocation.cash ?? 0) * weight,
+      };
+    }, zeroAssetAmounts<AssetAllocation>());
 
     return weightedAllocation;
   }
@@ -921,7 +918,7 @@ export class Portfolio {
         bonds: acc.bonds + account.getBalance() * account.getAccountData().assetAllocation.bonds,
         cash: acc.cash + account.getBalance() * account.getAccountData().assetAllocation.cash,
       }),
-      { stocks: 0, bonds: 0, cash: 0 }
+      zeroAssetAmounts<AssetValues>()
     );
   }
 
@@ -959,16 +956,8 @@ export class Portfolio {
 
   getCumulativeReturnAmounts(): AssetReturnAmounts {
     return this.accounts.reduce(
-      (acc, curr) => {
-        const cumulativeReturnAmounts = curr.getCumulativeReturnAmounts();
-
-        return {
-          cash: acc.cash + cumulativeReturnAmounts.cash,
-          bonds: acc.bonds + cumulativeReturnAmounts.bonds,
-          stocks: acc.stocks + cumulativeReturnAmounts.stocks,
-        };
-      },
-      { cash: 0, bonds: 0, stocks: 0 } as AssetReturnAmounts
+      (acc, curr) => addAssetAmounts(acc, curr.getCumulativeReturnAmounts()),
+      zeroAssetAmounts<AssetReturnAmounts>()
     );
   }
 
@@ -986,14 +975,8 @@ export class Portfolio {
     cumulativeReturnAmounts: AssetReturnAmounts;
     byAccount: Record<string, AccountDataWithReturns>;
   } {
-    const addAssetAmounts = (a: AssetReturnAmounts, b: AssetReturnAmounts): AssetReturnAmounts => {
-      return { stocks: a.stocks + b.stocks, bonds: a.bonds + b.bonds, cash: a.cash + b.cash };
-    };
-
-    const zeroAssetReturnAmounts: AssetReturnAmounts = { stocks: 0, bonds: 0, cash: 0 };
-
-    let returnAmounts: AssetReturnAmounts = { ...zeroAssetReturnAmounts };
-    let cumulativeReturnAmounts: AssetReturnAmounts = { ...zeroAssetReturnAmounts };
+    let returnAmounts = zeroAssetAmounts<AssetReturnAmounts>();
+    let cumulativeReturnAmounts = zeroAssetAmounts<AssetReturnAmounts>();
 
     const byAccount: Record<string, AccountDataWithReturns> = {};
 
@@ -1025,23 +1008,17 @@ export class Portfolio {
     yieldAmounts: Record<TaxCategory, AssetYieldAmounts>;
     cumulativeYieldAmounts: Record<TaxCategory, AssetYieldAmounts>;
   } {
-    const addAssetAmounts = (a: AssetYieldAmounts, b: AssetYieldAmounts): AssetYieldAmounts => {
-      return { stocks: a.stocks + b.stocks, bonds: a.bonds + b.bonds, cash: a.cash + b.cash };
-    };
-
-    const zeroAssetYieldAmounts: AssetYieldAmounts = { stocks: 0, bonds: 0, cash: 0 };
-
     const yieldAmounts: Record<TaxCategory, AssetYieldAmounts> = {
-      taxable: { ...zeroAssetYieldAmounts },
-      taxDeferred: { ...zeroAssetYieldAmounts },
-      taxFree: { ...zeroAssetYieldAmounts },
-      cashSavings: { ...zeroAssetYieldAmounts },
+      taxable: zeroAssetAmounts<AssetYieldAmounts>(),
+      taxDeferred: zeroAssetAmounts<AssetYieldAmounts>(),
+      taxFree: zeroAssetAmounts<AssetYieldAmounts>(),
+      cashSavings: zeroAssetAmounts<AssetYieldAmounts>(),
     };
     const cumulativeYieldAmounts: Record<TaxCategory, AssetYieldAmounts> = {
-      taxable: { ...zeroAssetYieldAmounts },
-      taxDeferred: { ...zeroAssetYieldAmounts },
-      taxFree: { ...zeroAssetYieldAmounts },
-      cashSavings: { ...zeroAssetYieldAmounts },
+      taxable: zeroAssetAmounts<AssetYieldAmounts>(),
+      taxDeferred: zeroAssetAmounts<AssetYieldAmounts>(),
+      taxFree: zeroAssetAmounts<AssetYieldAmounts>(),
+      cashSavings: zeroAssetAmounts<AssetYieldAmounts>(),
     };
 
     this.accounts.forEach((account) => {

@@ -8,14 +8,15 @@
 
 import type { AccountInputs, InvestmentAccountType } from '@/lib/schemas/inputs/account-form-schema';
 
-import type {
-  AssetReturnRates,
-  AssetReturnAmounts,
-  AssetAllocation,
-  AssetYieldRates,
-  AssetYieldAmounts,
-  TaxCategory,
-  AssetFlows,
+import {
+  type AssetReturnRates,
+  type AssetReturnAmounts,
+  type AssetAllocation,
+  type AssetYieldRates,
+  type AssetYieldAmounts,
+  type TaxCategory,
+  type AssetFlows,
+  zeroAssetAmounts,
 } from './asset';
 
 type WithdrawalType = 'rmd' | 'regular';
@@ -315,7 +316,7 @@ export abstract class InvestmentAccount extends Account {
 
   protected applyContributionShared(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): AssetFlows {
     if (amount < 0) throw new Error('Contribution amount must be non-negative');
-    if (amount === 0) return { stocks: 0, bonds: 0, cash: 0 };
+    if (amount === 0) return zeroAssetAmounts<AssetFlows>();
 
     const currentBondsValue = this.balance * this.currPercentBonds;
     const currentStocksValue = this.balance * (1 - this.currPercentBonds);
@@ -339,7 +340,7 @@ export abstract class InvestmentAccount extends Account {
 
   protected applyWithdrawalShared(amount: number, type: WithdrawalType, withdrawalAllocation: AssetAllocation): AssetFlows {
     if (amount < 0) throw new Error('Withdrawal amount must be non-negative');
-    if (amount === 0) return { stocks: 0, bonds: 0, cash: 0 };
+    if (amount === 0) return zeroAssetAmounts<AssetFlows>();
     if (amount > this.balance) throw new Error('Insufficient funds for withdrawal');
 
     const currentBondsValue = this.balance * this.currPercentBonds;

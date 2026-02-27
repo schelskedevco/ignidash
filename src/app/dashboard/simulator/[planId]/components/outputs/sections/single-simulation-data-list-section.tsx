@@ -12,7 +12,7 @@ import Card from '@/components/ui/card';
 import { SingleSimulationCategory } from '@/lib/types/simulation-category';
 import { Subheading } from '@/components/catalyst/heading';
 import { SimulationDataExtractor } from '@/lib/calc/data-extractors/simulation-data-extractor';
-import { sumFlows } from '@/lib/calc/asset';
+import { sumFlows, zeroAssetAmounts, type AssetReturnAmounts, type AssetAllocation } from '@/lib/calc/asset';
 import { useSingleSimulationCategory } from '@/lib/stores/simulator-store';
 
 function NetPortfolioChangeTooltip() {
@@ -125,7 +125,7 @@ interface DataListCardProps {
 function NetWorthDataListCard({ dp, selectedAge }: DataListCardProps) {
   const returnsData = dp.returns;
 
-  const { stocks: stockAmount, bonds: bondAmount, cash: cashAmount } = returnsData?.returnAmounts ?? { stocks: 0, bonds: 0, cash: 0 };
+  const { stocks: stockAmount, bonds: bondAmount, cash: cashAmount } = returnsData?.returnAmounts ?? zeroAssetAmounts<AssetReturnAmounts>();
 
   const portfolioData = dp.portfolio;
 
@@ -249,7 +249,7 @@ function ReturnsDataListCard({ dp, selectedAge }: DataListCardProps) {
   const portfolioData = dp.portfolio;
   const totalValue = portfolioData.totalValue;
 
-  const assetAllocation = portfolioData.assetAllocation ?? { stocks: 0, bonds: 0, cash: 0 };
+  const assetAllocation = portfolioData.assetAllocation ?? zeroAssetAmounts<AssetAllocation>();
   const stocksAllocation = assetAllocation.stocks;
   const bondsAllocation = assetAllocation.bonds;
   const cashAllocation = assetAllocation.cash;
