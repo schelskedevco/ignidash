@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import posthog from 'posthog-js';
 
-import { accountToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { accountToConvex } from '@/lib/utils/data-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import { accountFormSchema, type AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import { assetTypeForDisplay, type AssetInputs } from '@/lib/schemas/finances/asset-form-schema';

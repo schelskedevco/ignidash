@@ -13,7 +13,7 @@ import { useForm, useWatch, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
-import { incomeToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { incomeToConvex } from '@/lib/utils/data-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import {
   incomeFormSchema,

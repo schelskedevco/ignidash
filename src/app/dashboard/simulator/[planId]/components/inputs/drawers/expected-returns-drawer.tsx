@@ -8,7 +8,7 @@ import { useForm, useWatch } from 'react-hook-form';
 import { useEffect, useMemo, useState } from 'react';
 import posthog from 'posthog-js';
 
-import { marketAssumptionsToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { marketAssumptionsToConvex } from '@/lib/utils/data-transformers';
 import { type MarketAssumptionsInputs, marketAssumptionsFormSchema } from '@/lib/schemas/inputs/market-assumptions-form-schema';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';

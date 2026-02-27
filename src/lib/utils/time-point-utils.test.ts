@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { compareTimePoints } from './data-display-formatters';
+
 import type { TimePoint } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
+
+import { compareTimePoints } from './time-point-utils';
 
 const now: TimePoint = { type: 'now' };
 const atRetirement: TimePoint = { type: 'atRetirement' };

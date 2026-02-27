@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { useEffect, useMemo, useState } from 'react';
 import posthog from 'posthog-js';
 
-import { taxSettingsToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { taxSettingsToConvex } from '@/lib/utils/data-transformers';
 import { type TaxSettingsInputs, taxSettingsFormSchema } from '@/lib/schemas/inputs/tax-settings-form-schema';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';

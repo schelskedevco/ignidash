@@ -11,7 +11,7 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import posthog from 'posthog-js';
 
 import { useAccountsData, useIncomesData, useTimelineData } from '@/hooks/use-convex-data';
-import { contributionToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { contributionToConvex } from '@/lib/utils/data-transformers';
 import { DialogTitle, DialogDescription, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import {
   contributionFormSchema,

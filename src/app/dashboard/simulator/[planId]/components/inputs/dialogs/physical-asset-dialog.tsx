@@ -16,7 +16,7 @@ import { useTimelineData } from '@/hooks/use-convex-data';
 import { useAlreadySyncedIds } from '@/hooks/use-already-synced-ids';
 import { useLinkableFinances } from '@/hooks/use-linkable-finances';
 import { usePayoffEstimate } from '@/hooks/use-payoff-estimate';
-import { physicalAssetToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { physicalAssetToConvex } from '@/lib/utils/data-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { physicalAssetFormSchema, type PhysicalAssetInputs } from '@/lib/schemas/inputs/physical-asset-form-schema';
 import { assetTypeForDisplay, type AssetInputs } from '@/lib/schemas/finances/asset-form-schema';

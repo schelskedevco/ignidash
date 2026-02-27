@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch, type FieldErrors, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
 
-import { timelineToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { timelineToConvex } from '@/lib/utils/data-transformers';
 import { timelineFormSchema, type TimelineInputs, type RetirementStrategyInputs } from '@/lib/schemas/inputs/timeline-form-schema';
 import NumberInput from '@/components/ui/number-input';
 import SectionHeader from '@/components/ui/section-header';

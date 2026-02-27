@@ -22,7 +22,7 @@ import {
   useUpdateInsightsSelectedPlan,
   useClearSelectedConversationId,
 } from '@/lib/stores/simulator-store';
-import { simulatorFromConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { simulatorFromConvex } from '@/lib/utils/data-transformers';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
 import PlanDialog from './dialogs/plan-dialog';

@@ -13,7 +13,7 @@ import { useForm, useWatch, Controller } from 'react-hook-form';
 import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
-import { expenseToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { expenseToConvex } from '@/lib/utils/data-transformers';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { expenseFormSchema, type ExpenseInputs } from '@/lib/schemas/inputs/expense-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';

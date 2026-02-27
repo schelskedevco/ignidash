@@ -1,3 +1,15 @@
+/**
+ * Two-way mapping between Convex documents (DB layer) and Zod-validated types (app layer).
+ *
+ * Convex stores plan data as flat arrays with optional fields shared across discriminated unions.
+ * Zod schemas use stricter discriminated unions and id-keyed records. These transformers bridge
+ * the two representations so the rest of the app only works with Zod types.
+ *
+ * Naming convention:
+ *   - `xFromConvex` — Convex Doc → Zod input type
+ *   - `xToConvex`   — Zod input type → Convex Doc
+ */
+
 import type { Doc } from '@/convex/_generated/dataModel';
 import type { SimulationResult as ConvexSimulationResult } from '@/convex/validators/simulation_result_validator';
 
@@ -21,12 +33,11 @@ import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-form-schem
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 
 // ============================================================================
-// CONVEX TO ZOD TRANSFORMERS
+// CONVEX → ZOD
 // ============================================================================
 
-/**
- * Transforms a Convex account to Zod AccountInputs format
- */
+// percentBonds is optional in Convex (not applicable to savings), but guaranteed by the
+// Zod discriminated union for investment account types — hence the non-null assertions.
 export function accountFromConvex(account: Doc<'plans'>['accounts'][number]): AccountInputs {
   const base = { id: account.id, name: account.name, balance: account.balance, syncedFinanceId: account.syncedFinanceId };
 
@@ -47,9 +58,7 @@ export function accountFromConvex(account: Doc<'plans'>['accounts'][number]): Ac
   }
 }
 
-/**
- * Transforms a Convex contribution rule to Zod ContributionInputs format
- */
+// Flattens nested amount union ({ type, dollarAmount }) into top-level fields (contributionType, dollarAmount).
 export function contributionFromConvex(contribution: Doc<'plans'>['contributionRules'][number]): ContributionInputs {
   const base = {
     id: contribution.id,
@@ -72,37 +81,22 @@ export function contributionFromConvex(contribution: Doc<'plans'>['contributionR
   }
 }
 
-/**
- * Transforms a Convex base contribution rule to Zod BaseContributionInputs format
- */
 export function baseContributionFromConvex(baseContribution: Doc<'plans'>['baseContributionRule']): BaseContributionInputs {
   return { type: baseContribution.type };
 }
 
-/**
- * Transforms Convex tax settings to Zod TaxSettingsInputs format
- */
 export function taxSettingsFromConvex(taxSettings: Doc<'plans'>['taxSettings']): TaxSettingsInputs {
   return { filingStatus: taxSettings.filingStatus };
 }
 
-/**
- * Transforms Convex privacy settings to Zod PrivacySettingsInputs format
- */
 export function privacySettingsFromConvex(privacySettings: Doc<'plans'>['privacySettings']): PrivacySettingsInputs {
   return { isPrivate: privacySettings.isPrivate };
 }
 
-/**
- * Transforms Convex simulation settings to Zod SimulationSettingsInputs format
- */
 export function simulationSettingsFromConvex(simulationSettings: Doc<'plans'>['simulationSettings']): SimulationSettingsInputs {
   return { ...simulationSettings };
 }
 
-/**
- * Transforms a Convex expense to Zod ExpenseInputs format
- */
 export function expenseFromConvex(expense: Doc<'plans'>['expenses'][number]): ExpenseInputs {
   return {
     id: expense.id,
@@ -115,9 +109,6 @@ export function expenseFromConvex(expense: Doc<'plans'>['expenses'][number]): Ex
   };
 }
 
-/**
- * Transforms a Convex debt to Zod DebtInputs format
- */
 export function debtFromConvex(debt: NonNullable<Doc<'plans'>['debts']>[number]): DebtInputs {
   return {
     id: debt.id,
@@ -133,9 +124,7 @@ export function debtFromConvex(debt: NonNullable<Doc<'plans'>['debts']>[number])
   };
 }
 
-/**
- * Transforms a Convex physical asset to Zod PhysicalAssetInputs format
- */
+// Defaults: assetType → 'other', missing saleDate → 'atLifeExpectancy' (never sold).
 export function physicalAssetFromConvex(physicalAsset: NonNullable<Doc<'plans'>['physicalAssets']>[number]): PhysicalAssetInputs {
   return {
     id: physicalAsset.id,
@@ -152,9 +141,6 @@ export function physicalAssetFromConvex(physicalAsset: NonNullable<Doc<'plans'>[
   };
 }
 
-/**
- * Transforms a Convex income to Zod IncomeInputs format
- */
 export function incomeFromConvex(income: Doc<'plans'>['incomes'][number]): IncomeInputs {
   return {
     id: income.id,
@@ -168,9 +154,6 @@ export function incomeFromConvex(income: Doc<'plans'>['incomes'][number]): Incom
   };
 }
 
-/**
- * Transforms Convex market assumptions to Zod MarketAssumptionsInputs format
- */
 export function marketAssumptionsFromConvex(marketAssumptions: Doc<'plans'>['marketAssumptions']): MarketAssumptionsInputs {
   return {
     stockReturn: marketAssumptions.stockReturn,
@@ -182,16 +165,12 @@ export function marketAssumptionsFromConvex(marketAssumptions: Doc<'plans'>['mar
   };
 }
 
-/**
- * Transforms a Convex timeline to Zod TimelineInputs format
- */
+// structuredClone to deep-copy nested TimePoint objects and avoid shared references with the Convex doc.
 export function timelineFromConvex(timeline: Doc<'plans'>['timeline']): TimelineInputs | null {
   return timeline ? structuredClone(timeline) : null;
 }
 
-/**
- * Transforms a complete Convex plan to Zod SimulatorInputs format
- */
+// Converts the full plan: arrays → id-keyed records, Convex unions → Zod discriminated unions.
 export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
   const incomes = Object.fromEntries(plan.incomes.map((income) => [income.id, incomeFromConvex(income)]));
   const accounts = Object.fromEntries(plan.accounts.map((account) => [account.id, accountFromConvex(account)]));
@@ -218,34 +197,22 @@ export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
   };
 }
 
-/**
- * Transforms a Convex asset to Zod AssetInputs format
- */
 export function assetFromConvex(asset: Doc<'finances'>['assets'][number]): AssetInputs {
   return { ...asset };
 }
 
-/**
- * Transforms a Convex liability to Zod LiabilityInputs format
- */
 export function liabilityFromConvex(liability: Doc<'finances'>['liabilities'][number]): LiabilityInputs {
   return { ...liability };
 }
 
-/**
- * Transforms a Convex glide path to Zod GlidePathInputs format
- */
 export function glidePathFromConvex(glidePath: Doc<'plans'>['glidePath']): GlidePathInputs | undefined {
   return glidePath ? structuredClone(glidePath) : undefined;
 }
 
 // ============================================================================
-// ZOD TO CONVEX TRANSFORMERS
+// ZOD → CONVEX
 // ============================================================================
 
-/**
- * Transforms Zod AccountInputs to Convex account format
- */
 export function accountToConvex(account: AccountInputs): Doc<'plans'>['accounts'][number] {
   const base = { id: account.id, name: account.name, balance: account.balance, syncedFinanceId: account.syncedFinanceId };
 
@@ -266,9 +233,7 @@ export function accountToConvex(account: AccountInputs): Doc<'plans'>['accounts'
   }
 }
 
-/**
- * Transforms Zod ContributionInputs to Convex contribution rule format
- */
+// Re-nests flat contributionType/dollarAmount back into the amount union.
 export function contributionToConvex(contribution: ContributionInputs): Doc<'plans'>['contributionRules'][number] {
   const base = {
     id: contribution.id,
@@ -291,37 +256,22 @@ export function contributionToConvex(contribution: ContributionInputs): Doc<'pla
   }
 }
 
-/**
- * Transforms Zod BaseContributionInputs to Convex base contribution rule format
- */
 export function baseContributionToConvex(baseContribution: BaseContributionInputs): Doc<'plans'>['baseContributionRule'] {
   return { type: baseContribution.type };
 }
 
-/**
- * Transforms Zod TaxSettingsInputs to Convex tax settings format
- */
 export function taxSettingsToConvex(taxSettings: TaxSettingsInputs): Doc<'plans'>['taxSettings'] {
   return { filingStatus: taxSettings.filingStatus };
 }
 
-/**
- * Transforms Zod PrivacySettingsInputs to Convex privacy settings format
- */
 export function privacySettingsToConvex(privacySettings: PrivacySettingsInputs): Doc<'plans'>['privacySettings'] {
   return { isPrivate: privacySettings.isPrivate };
 }
 
-/**
- * Transforms Zod SimulationSettingsInputs to Convex simulation settings format
- */
 export function simulationSettingsToConvex(simulationSettings: SimulationSettingsInputs): Doc<'plans'>['simulationSettings'] {
   return { ...simulationSettings };
 }
 
-/**
- * Transforms Zod ExpenseInputs to Convex expense format
- */
 export function expenseToConvex(expense: ExpenseInputs): Doc<'plans'>['expenses'][number] {
   return {
     id: expense.id,
@@ -334,9 +284,6 @@ export function expenseToConvex(expense: ExpenseInputs): Doc<'plans'>['expenses'
   };
 }
 
-/**
- * Transforms Zod DebtInputs to Convex debt format
- */
 export function debtToConvex(debt: DebtInputs): NonNullable<Doc<'plans'>['debts']>[number] {
   return {
     id: debt.id,
@@ -352,9 +299,6 @@ export function debtToConvex(debt: DebtInputs): NonNullable<Doc<'plans'>['debts'
   };
 }
 
-/**
- * Transforms Zod PhysicalAssetInputs to Convex physical asset format
- */
 export function physicalAssetToConvex(physicalAsset: PhysicalAssetInputs): NonNullable<Doc<'plans'>['physicalAssets']>[number] {
   return {
     id: physicalAsset.id,
@@ -371,9 +315,6 @@ export function physicalAssetToConvex(physicalAsset: PhysicalAssetInputs): NonNu
   };
 }
 
-/**
- * Transforms Zod IncomeInputs to Convex income format
- */
 export function incomeToConvex(income: IncomeInputs): Doc<'plans'>['incomes'][number] {
   return {
     id: income.id,
@@ -387,9 +328,6 @@ export function incomeToConvex(income: IncomeInputs): Doc<'plans'>['incomes'][nu
   };
 }
 
-/**
- * Transforms Zod MarketAssumptionsInputs to Convex market assumptions format
- */
 export function marketAssumptionsToConvex(marketAssumptions: MarketAssumptionsInputs): Doc<'plans'>['marketAssumptions'] {
   return {
     stockReturn: marketAssumptions.stockReturn,
@@ -401,16 +339,11 @@ export function marketAssumptionsToConvex(marketAssumptions: MarketAssumptionsIn
   };
 }
 
-/**
- * Transforms Zod TimelineInputs to Convex timeline format
- */
 export function timelineToConvex(timeline: TimelineInputs | null): Doc<'plans'>['timeline'] {
   return timeline ? structuredClone(timeline) : null;
 }
 
-/**
- * Transforms Zod SimulatorInputs to partial Convex plan format (without userId and name)
- */
+// Inverse of simulatorFromConvex: id-keyed records → arrays, excludes DB metadata (userId, name, etc.).
 export function simulatorToConvex(
   simulator: SimulatorInputs
 ): Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId' | 'name' | 'isDefault'> {
@@ -439,34 +372,26 @@ export function simulatorToConvex(
   };
 }
 
-/**
- * Transforms Zod AssetInputs to Convex asset format
- */
+// Coerces empty-string URLs to undefined so Convex doesn't store "".
 export function assetToConvex(asset: AssetInputs): Doc<'finances'>['assets'][number] {
   return { ...asset, url: asset.url === '' ? undefined : asset.url };
 }
 
-/**
- * Transforms Zod LiabilityInputs to Convex liability format
- */
 export function liabilityToConvex(liability: LiabilityInputs): Doc<'finances'>['liabilities'][number] {
   return { ...liability, url: liability.url === '' ? undefined : liability.url };
 }
 
-/**
- * Transforms Zod GlidePathInputs to Convex glide path format
- */
 export function glidePathToConvex(glidePath: GlidePathInputs): NonNullable<Doc<'plans'>['glidePath']> {
   return structuredClone(glidePath);
 }
 
 // ============================================================================
-// SIMULATION RESULT TRANSFORMERS
+// SIMULATION RESULT → CONVEX
 // ============================================================================
 
-/**
- * Transforms TypeScript SimulationResult to Convex SimulationResult format
- */
+// Flattens multiple chart data extractors (net worth, cash flow, taxes, contributions,
+// withdrawals, returns) into a single flat row per year for LLM API consumption.
+// Skips the first net worth data point (initial state before year 1).
 export function simulationResultToConvex(simulation: SimulationResult): ConvexSimulationResult {
   const netWorthData = ChartDataExtractor.extractSingleSimulationNetWorthData(simulation).slice(1);
   const cashFlowData = ChartDataExtractor.extractSingleSimulationCashFlowData(simulation);
@@ -583,19 +508,13 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
 }
 
 // ============================================================================
-// HELPER FUNCTIONS
+// HELPERS
 // ============================================================================
 
-/**
- * Converts an array of items to a record keyed by ID
- */
 export function arrayToRecord<T extends { id: string }>(items: T[]): Record<string, T> {
   return Object.fromEntries(items.map((item) => [item.id, item]));
 }
 
-/**
- * Converts a record to an array of items
- */
 export function recordToArray<T>(record: Record<string, T>): T[] {
   return Object.values(record);
 }

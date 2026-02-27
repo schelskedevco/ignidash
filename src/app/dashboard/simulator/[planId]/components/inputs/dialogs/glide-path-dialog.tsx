@@ -12,7 +12,7 @@ import posthog from 'posthog-js';
 
 import { useTimelineData } from '@/hooks/use-convex-data';
 import { formatNumber } from '@/lib/utils';
-import { glidePathToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { glidePathToConvex } from '@/lib/utils/data-transformers';
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 import { glidePathFormSchema, type GlidePathInputs } from '@/lib/schemas/inputs/glide-path-form-schema';

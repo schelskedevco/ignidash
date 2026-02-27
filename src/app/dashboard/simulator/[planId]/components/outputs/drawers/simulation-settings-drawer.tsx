@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, useWatch } from 'react-hook-form';
 import posthog from 'posthog-js';
 
-import { simulationSettingsToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { simulationSettingsToConvex } from '@/lib/utils/data-transformers';
 import NumberInput from '@/components/ui/number-input';
 import SectionHeader from '@/components/ui/section-header';
 import SectionContainer from '@/components/ui/section-container';

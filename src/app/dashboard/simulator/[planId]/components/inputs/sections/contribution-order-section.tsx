@@ -21,7 +21,7 @@ import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { Field as HeadlessField } from '@headlessui/react';
 
 import { useContributionRulesData, useBaseContributionRuleData, useAccountsData } from '@/hooks/use-convex-data';
-import { contributionToConvex, baseContributionToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { contributionToConvex, baseContributionToConvex } from '@/lib/utils/data-transformers';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';

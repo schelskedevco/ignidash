@@ -14,7 +14,7 @@ import {
   contributionFromConvex,
   baseContributionFromConvex,
   glidePathFromConvex,
-} from '@/lib/utils/convex-to-zod-transformers';
+} from '@/lib/utils/data-transformers';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
 // Plan Name

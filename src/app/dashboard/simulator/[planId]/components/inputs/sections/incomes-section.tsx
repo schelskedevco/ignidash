@@ -7,13 +7,14 @@ import { BanknoteArrowUpIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
 import { useIncomesData } from '@/hooks/use-convex-data';
-import { incomeToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { incomeToConvex } from '@/lib/utils/data-transformers';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
 import { Button } from '@/components/catalyst/button';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import type { DisclosureState } from '@/lib/types/disclosure-state';
-import { frequencyForDisplay, timeFrameForDisplay, compareTimePoints } from '@/lib/utils/data-display-formatters';
+import { frequencyForDisplay, timeFrameForDisplay } from '@/lib/utils/data-display-formatters';
+import { compareTimePoints } from '@/lib/utils/time-point-utils';
 import type { IncomeInputs } from '@/lib/schemas/inputs/income-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DataItem from '@/components/ui/data-item';

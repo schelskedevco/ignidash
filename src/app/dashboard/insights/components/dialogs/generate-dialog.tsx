@@ -12,7 +12,7 @@ import Link from 'next/link';
 import posthog from 'posthog-js';
 
 import { DialogTitle, DialogBody, DialogActions } from '@/components/catalyst/dialog';
-import { simulationResultToConvex } from '@/lib/utils/convex-to-zod-transformers';
+import { simulationResultToConvex } from '@/lib/utils/data-transformers';
 import { generateInsightsSchema, type GenerateInsightsInputs } from '@/lib/schemas/generate-insights-schema';
 import { Fieldset, FieldGroup, Field, Label, Description, ErrorMessage } from '@/components/catalyst/fieldset';
 import { Divider } from '@/components/catalyst/divider';
