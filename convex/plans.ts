@@ -6,6 +6,7 @@ import { getUserIdOrThrow } from './utils/auth_utils';
 import { deleteAllConversationsForPlan } from './utils/conversation_utils';
 import { deleteAllInsightsForPlan } from './utils/insights_utils';
 import { getPlanForCurrentUserOrThrow, getAllPlansForUser } from './utils/plan_utils';
+import { removeDanglingSyncIds } from './utils/plan_export_utils';
 import { timelineValidator } from './validators/timeline_validator';
 import { incomeValidator } from './validators/incomes_validator';
 import { expenseValidator } from './validators/expenses_validator';
@@ -173,49 +174,14 @@ export const createPlanWithData = mutation({
     privacySettings: privacySettingsValidator,
     simulationSettings: simulationSettingsValidator,
   },
-  handler: async (
-    ctx,
-    {
-      newPlanName,
-      isDefault,
-      timeline,
-      incomes,
-      expenses,
-      debts,
-      physicalAssets,
-      accounts,
-      glidePath,
-      contributionRules,
-      baseContributionRule,
-      marketAssumptions,
-      taxSettings,
-      privacySettings,
-      simulationSettings,
-    }
-  ) => {
+  handler: async (ctx, { newPlanName, ...planData }) => {
     const { userId } = await getUserIdOrThrow(ctx);
 
     const plans = await getAllPlansForUser(ctx, userId);
     if (plans.length >= 10) throw new ConvexError('Maximum of 10 plans reached');
 
-    return await ctx.db.insert('plans', {
-      userId,
-      name: newPlanName,
-      isDefault,
-      timeline,
-      incomes,
-      expenses,
-      debts,
-      physicalAssets,
-      accounts,
-      glidePath,
-      contributionRules,
-      baseContributionRule,
-      marketAssumptions,
-      taxSettings,
-      privacySettings,
-      simulationSettings,
-    });
+    const cleaned = await removeDanglingSyncIds(ctx, userId, { name: newPlanName, ...planData });
+    return await ctx.db.insert('plans', { userId, ...cleaned });
   },
 });
 
