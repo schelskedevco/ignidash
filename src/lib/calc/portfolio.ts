@@ -19,15 +19,17 @@ import {
   type AccountDataWithFlows,
 } from './account';
 import type { SimulationState, SimulationContext } from './simulation-engine';
-import type {
-  AssetReturnRates,
-  AssetReturnAmounts,
-  AssetAllocation,
-  AssetValues,
-  AssetYieldRates,
-  AssetYieldAmounts,
-  AssetFlows,
-  TaxCategory,
+import {
+  type AssetReturnRates,
+  type AssetReturnAmounts,
+  type AssetAllocation,
+  type AssetValues,
+  type AssetYieldRates,
+  type AssetYieldAmounts,
+  type AssetFlows,
+  type TaxCategory,
+  zeroAssetAmounts,
+  addAssetAmounts,
 } from './asset';
 import { ContributionRules } from './contribution-rules';
 import type { IncomesData } from './incomes';
@@ -48,13 +50,8 @@ interface WithdrawalOrderItem {
 
 const DEFAULT_ASSET_ALLOCATION = { stocks: 0.6, bonds: 0.4, cash: 0 };
 
-const zeroFlows = (): AssetFlows => ({ stocks: 0, bonds: 0, cash: 0 });
-
-const addFlows = (a: AssetFlows, b: AssetFlows): AssetFlows => ({
-  stocks: a.stocks + b.stocks,
-  bonds: a.bonds + b.bonds,
-  cash: a.cash + b.cash,
-});
+const zeroFlows = zeroAssetAmounts<AssetFlows>;
+const addFlows = addAssetAmounts<AssetFlows>;
 
 /** Manages monthly portfolio transactions including contributions, withdrawals, RMDs, taxes, and rebalancing */
 export class PortfolioProcessor {
@@ -647,17 +644,18 @@ export class PortfolioProcessor {
           acc.shortfall += curr.shortfall;
           acc.shortfallRepaid += curr.shortfallRepaid;
 
-          Object.entries(curr.perAccountData).forEach(([accountID, accountData]) => {
+          for (const [accountID, accountData] of Object.entries(curr.perAccountData)) {
+            const existing = acc.perAccountData[accountID];
             acc.perAccountData[accountID] = {
               ...accountData,
-              contributions: addFlows(acc.perAccountData[accountID]?.contributions ?? zeroFlows(), accountData.contributions),
-              employerMatch: (acc.perAccountData[accountID]?.employerMatch ?? 0) + accountData.employerMatch,
-              withdrawals: addFlows(acc.perAccountData[accountID]?.withdrawals ?? zeroFlows(), accountData.withdrawals),
-              realizedGains: (acc.perAccountData[accountID]?.realizedGains ?? 0) + accountData.realizedGains,
-              earningsWithdrawn: (acc.perAccountData[accountID]?.earningsWithdrawn ?? 0) + accountData.earningsWithdrawn,
-              rmds: (acc.perAccountData[accountID]?.rmds ?? 0) + accountData.rmds,
+              contributions: addFlows(existing?.contributions ?? zeroFlows(), accountData.contributions),
+              employerMatch: (existing?.employerMatch ?? 0) + accountData.employerMatch,
+              withdrawals: addFlows(existing?.withdrawals ?? zeroFlows(), accountData.withdrawals),
+              realizedGains: (existing?.realizedGains ?? 0) + accountData.realizedGains,
+              earningsWithdrawn: (existing?.earningsWithdrawn ?? 0) + accountData.earningsWithdrawn,
+              rmds: (existing?.rmds ?? 0) + accountData.rmds,
             };
-          });
+          }
 
           return acc;
         },

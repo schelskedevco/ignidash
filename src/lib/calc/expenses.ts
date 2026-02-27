@@ -88,16 +88,17 @@ export class ExpensesProcessor {
       (acc, curr) => {
         acc.totalExpenses += curr.totalExpenses;
 
-        Object.entries(curr.perExpenseData).forEach(([expenseID, expenseData]) => {
+        for (const [expenseID, expenseData] of Object.entries(curr.perExpenseData)) {
+          const existing = acc.perExpenseData[expenseID];
           acc.perExpenseData[expenseID] = {
             ...expenseData,
-            expense: (acc.perExpenseData[expenseID]?.expense ?? 0) + expenseData.expense,
+            expense: (existing?.expense ?? 0) + expenseData.expense,
           };
-        });
+        }
 
         return acc;
       },
-      { totalExpenses: 0, perExpenseData: {} }
+      { totalExpenses: 0, perExpenseData: {} } satisfies ExpensesData
     );
   }
 }
