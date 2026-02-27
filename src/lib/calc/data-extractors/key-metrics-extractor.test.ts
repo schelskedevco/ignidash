@@ -35,7 +35,7 @@ const createDataPoint = (options: {
   phase: 'accumulation' | 'retirement';
   totalValue: number;
   shortfall?: number;
-  incomeTax?: number;
+  federalIncomeTax?: number;
   ficaTax?: number;
 }): SimulationDataPoint => ({
   date: '2024-01-01',
@@ -79,7 +79,7 @@ const createDataPoint = (options: {
     federalIncomeTaxes: {
       taxableIncomeTaxedAsOrdinary: 65400,
       federalIncomeTaxBrackets: [],
-      federalIncomeTaxAmount: options.incomeTax ?? 10000,
+      federalIncomeTaxAmount: options.federalIncomeTax ?? 10000,
       effectiveFederalIncomeTaxRate: 0.125,
       topMarginalFederalIncomeTaxRate: 0.22,
     },
@@ -107,7 +107,7 @@ const createDataPoint = (options: {
       taxFreePenaltyAmount: 0,
       totalPenaltyAmount: 0,
     },
-    totalTaxesDue: (options.incomeTax ?? 10000) + (options.ficaTax ?? 7650),
+    totalTaxesDue: (options.federalIncomeTax ?? 10000) + (options.ficaTax ?? 7650),
     totalTaxesRefund: 0,
     totalTaxableIncome: 65400,
     adjustments: {},
@@ -185,7 +185,7 @@ const createSimulationResult = (options: {
         phase,
         totalValue,
         shortfall,
-        incomeTax: 10000 + i * 100,
+        federalIncomeTax: 10000 + i * 100,
         ficaTax: 7650,
       })
     );
@@ -419,7 +419,7 @@ describe('KeyMetricsExtractor', () => {
 
         const metrics = KeyMetricsExtractor.extractSingleSimulationMetrics(simulation);
 
-        // Each year has incomeTax (10000 + i*100) + ficaTax (7650)
+        // Each year has federalIncomeTax (10000 + i*100) + ficaTax (7650)
         // Sum: Σ(10000 + i*100 + 7650) for i = 0 to 10
         // = 11 * 17650 + 100 * (0+1+2+...+10)
         // = 194150 + 100 * 55

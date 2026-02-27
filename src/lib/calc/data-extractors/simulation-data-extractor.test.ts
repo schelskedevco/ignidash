@@ -381,7 +381,7 @@ describe('SimulationDataExtractor.getMilestonesData', () => {
 
 // Helper to create a data point with tax data
 const createTaxDataPoint = (options: {
-  incomeTax?: number;
+  federalIncomeTax?: number;
   ficaTax?: number;
   capitalGainsTax?: number;
   niit?: number;
@@ -425,7 +425,7 @@ const createTaxDataPoint = (options: {
     federalIncomeTaxes: {
       taxableIncomeTaxedAsOrdinary: 65400,
       federalIncomeTaxBrackets: [],
-      federalIncomeTaxAmount: options.incomeTax ?? 0,
+      federalIncomeTaxAmount: options.federalIncomeTax ?? 0,
       effectiveFederalIncomeTaxRate: 0.125,
       topMarginalFederalIncomeTaxRate: 0.22,
     },
@@ -490,7 +490,7 @@ const createTaxDataPoint = (options: {
 describe('SimulationDataExtractor.getTaxAmountsByType', () => {
   it('extracts all tax types correctly', () => {
     const dp = createTaxDataPoint({
-      incomeTax: 15000,
+      federalIncomeTax: 15000,
       ficaTax: 7650,
       capitalGainsTax: 3000,
       niit: 500,
@@ -508,7 +508,7 @@ describe('SimulationDataExtractor.getTaxAmountsByType', () => {
 
   it('calculates totalTaxes correctly (excluding penalties)', () => {
     const dp = createTaxDataPoint({
-      incomeTax: 10000,
+      federalIncomeTax: 10000,
       ficaTax: 5000,
       capitalGainsTax: 2000,
       niit: 500,
@@ -517,13 +517,13 @@ describe('SimulationDataExtractor.getTaxAmountsByType', () => {
 
     const taxes = SimulationDataExtractor.getTaxAmountsByType(dp);
 
-    // totalTaxes = incomeTax + ficaTax + capitalGainsTax + niit
+    // totalTaxes = federalIncomeTax + ficaTax + capitalGainsTax + niit
     expect(taxes.totalTaxes).toBe(17500);
   });
 
   it('calculates totalTaxesAndPenalties correctly', () => {
     const dp = createTaxDataPoint({
-      incomeTax: 10000,
+      federalIncomeTax: 10000,
       ficaTax: 5000,
       capitalGainsTax: 2000,
       niit: 500,
