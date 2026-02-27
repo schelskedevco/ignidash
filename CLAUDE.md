@@ -4,388 +4,139 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Ignidash** is a full-stack financial planning application built with Next.js 16 and Convex. It helps users simulate retirement scenarios using Monte Carlo methods, historical backtesting, and AI-powered insights. The app targets FIRE (Financial Independence, Early Retirement) planning with features like multi-plan comparison, tax optimization, and portfolio analysis.
+Ignidash is an open-source personal financial planning app (AGPL-3.0). It runs Monte Carlo simulations, historical backtesting, US tax estimation, and AI chat/insights for retirement planning.
 
-## Essential Commands
+## Tech Stack
 
-### Development
+- **Frontend:** Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4
+- **Backend:** Convex (serverless DB + functions)
+- **Auth:** Better-Auth with Convex integration + Google OAuth
+- **Payments:** Stripe
+- **AI:** Azure OpenAI (streaming chat + insights)
+- **State:** Zustand 5 (with Immer, persist, devtools)
+- **Forms:** React Hook Form + Zod 4 validation
+- **Charts:** Recharts 3
+- **Analytics:** PostHog
+
+## Commands
 
 ```bash
-npm run dev              # Start Next.js dev server (http://localhost:3000)
-npm run dev:convex       # Start Convex local backend
+npm run dev              # Next.js dev server
+npm run dev:convex       # Local Convex backend (run alongside dev)
 npm run build            # Production build
-npm run start            # Start production server
-npm run lint             # Run ESLint
-npm run lint:fix         # Run ESLint with auto-fix
-npm run typecheck        # TypeScript type checking without output
-npm run format           # Format all files with Prettier
-npm run test             # Run Vitest tests
-npm run create-demo      # Generate demo data from inputs JSON
+npm run lint:fix         # ESLint auto-fix
+npm run format           # Prettier format all
+npm run typecheck        # TypeScript check (tsc --noEmit)
+
+# Testing
+npm run test             # Vitest watch mode
+npm run test:once        # Vitest single run
+npm run test:once -- src/lib/calc/__tests__/taxes.test.ts  # Run single test file
+npm run test:coverage    # Coverage report
+npm run test:e2e         # Playwright e2e tests
 ```
 
-### Working with Convex
+## Pre-commit Hooks
 
-- Backend code lives in `/convex` directory
-- Run `npx convex dev` to start Convex backend with live reload
-- Database schema defined in `convex/schema.ts`
-- Use `npx convex dashboard` to view database in browser
+Husky runs `lint-staged` on commit, which auto-runs `eslint --fix` + `prettier --write` on staged `.js/.jsx/.ts/.tsx` files and `prettier --write` on `.json/.md/.css`. Files in `convex/_generated/` are excluded.
 
-### Code Quality
-
-- Pre-commit hooks automatically run ESLint (with fixes) and Prettier on staged files
-- ESLint uses flat config format - modify `eslint.config.mjs`, not `.eslintrc`
-- Run `npm run format` after making changes to ensure consistent formatting
-- Generated Convex files in `convex/_generated/` are ignored by lint-staged
-
-## Architecture & Key Patterns
-
-### Tech Stack
-
-**Frontend:**
-
-- Next.js 16 with App Router (React 19)
-- TypeScript 5 with strict mode
-- Tailwind CSS v4
-- Zustand 5 for state management
-- React Hook Form + Zod for form validation
-- Recharts for financial visualizations
-- SWR + Convex React for data fetching
-
-**Backend:**
-
-- Convex (serverless backend-as-a-service)
-- Better-Auth with Google OAuth
-- Stripe for payments
-- Azure OpenAI for AI insights
-- Resend for transactional emails
-
-### Directory Structure
-
-```
-src/
-├── app/                    # Next.js App Router pages
-│   ├── (auth)/            # Auth pages (signin, signup, password reset)
-│   ├── (marketing)/       # Public marketing pages
-│   ├── dashboard/         # Protected dashboard pages
-│   │   ├── simulator/[planId]/  # Main financial simulator UI
-│   │   ├── insights/      # AI insights generation
-│   │   └── compare/       # Multi-plan comparison
-│   ├── settings/          # User account settings
-│   ├── api/auth/[...all]/ # Better-Auth API routes
-│   └── layout.tsx         # Root layout with providers
-├── components/
-│   ├── ui/                # Reusable UI components
-│   ├── layout/            # Layout components (sidebar, navbar, main-area)
-│   ├── catalyst/          # Catalyst design system components
-│   └── providers/         # React context providers
-├── hooks/                 # Custom React hooks (18 hooks)
-├── lib/
-│   ├── auth-server.ts     # Better-Auth server config
-│   ├── auth-client.ts     # Better-Auth client setup
-│   ├── stores/            # Zustand stores
-│   │   └── simulator-store.ts  # Global simulator state
-│   ├── schemas/           # Zod validation schemas
-│   │   ├── inputs/        # Form input schemas
-│   │   ├── finances/      # Asset/liability schemas
-│   │   └── tables/        # Table data schemas
-│   ├── calc/              # Financial calculation engine
-│   │   ├── simulation-engine.ts  # Main simulation runner
-│   │   ├── portfolio.ts   # Portfolio calculations
-│   │   ├── taxes.ts       # Tax calculations
-│   │   ├── returns-providers/  # Different return strategies
-│   │   ├── data-extractors/    # Extract data from simulations
-│   │   └── analysis/      # Multi-simulation analysis
-│   ├── types/             # TypeScript type definitions
-│   ├── utils/             # Utility functions
-│   └── workers/           # Web Workers for heavy computation
-└── convex-client-provider.tsx  # Convex + Better-Auth provider
-
-convex/
-├── schema.ts              # Database schema definition
-├── auth.ts                # Auth queries/mutations
-├── plans.ts               # Financial plan CRUD
-├── finances.ts            # Asset/liability management
-├── conversations.ts       # AI chat conversations
-├── messages.ts            # Chat messages with AI
-├── insights.ts            # AI insights generation
-├── betterAuth/            # Better-Auth integration
-├── validators/            # Convex validators (mirror Zod schemas)
-└── templates/             # Default plan templates
-```
-
-### Path Aliases
+## Path Aliases
 
 - `@/*` → `src/*`
-- `@/convex/*` → `convex/*` (for importing generated Convex code)
+- `@/convex/*` → `convex/*`
 
-### State Management (Zustand)
+## Architecture
 
-The app uses a single Zustand store in `src/lib/stores/simulator-store.ts`:
+### Routing (Next.js App Router)
 
-```typescript
-// Global state persisted to localStorage
-{
-  results: {
-    selectedPercentile,
-    simulationMode,
-    chartTimeframe
-  },
-  preferences: {
-    isSidebarOpen,
-    referenceLines
-  },
-  chat: {
-    selectedConversationId
-  },
-  insights: {
-    selectedPlanId
-  }
-}
-```
+- `src/app/(auth)/` — Sign in/up, password reset (public)
+- `src/app/(marketing)/` — Home, pricing, about (public)
+- `src/app/(legal)/` — Privacy, terms (public)
+- `src/app/dashboard/` — Protected area: simulator, insights, compare
+- `src/app/dashboard/simulator/[planId]/` — Main simulator view per plan
+- `src/app/api/auth/` — Better-Auth API endpoints
 
-- Uses Immer middleware for immutable updates
-- Persistence middleware for localStorage sync
-- Redux DevTools integration in development
+### Convex Backend (`convex/`)
 
-### Authentication Flow (Better-Auth + Convex)
+All server functions (queries, mutations, actions) live here. Key files:
 
-- Better-Auth provides auth framework with Google OAuth
-- Session management with JWT strategy
-- Role-based access control (user roles in DB)
-- Rate limiting on sensitive operations (password reset, email change)
-- Email service via Resend
-- Stripe integration for subscription management
+- `plans.ts`, `account.ts`, `income.ts`, `expense.ts`, `debt.ts` — CRUD for financial entities
+- `messages.ts`, `conversations.ts` — AI chat
+- `insights.ts` — AI-generated insights
+- `http.ts` — HTTP endpoints (Stripe webhooks)
+- `utils/auth_utils.ts` — `getUserIdOrThrow(ctx)` for auth in every query/mutation
+- `utils/sys_prompt_utils.ts` — Dynamic AI system prompt from plan data
+- `validators/` — Input validators for Convex functions
+- `_generated/` — Auto-generated types and API (do not edit)
+- `betterAuth/_generated/` — Auto-generated auth types (do not edit)
 
-**Key files:**
+### Simulation Engine (`src/lib/calc/`)
 
-- `src/lib/auth-server.ts` - Server-side auth setup
-- `src/lib/auth-client.ts` - Client-side auth hooks
-- `convex/auth.ts` - Auth queries/mutations
-- `src/app/api/auth/[...all]/route.ts` - Auth API handler
+The core financial simulator runs month-by-month loops producing yearly `SimulationDataPoint`s:
 
-### Database Schema (Convex)
+- `simulation-engine.ts` — `FinancialSimulationEngine` orchestrates the loop
+- `portfolio.ts`, `account.ts`, `incomes.ts`, `expenses.ts`, `taxes.ts`, `debts.ts` — Per-domain calculation modules
+- `returns-providers/` — Strategy pattern: `FixedReturnsProvider`, `StochasticReturnsProvider`, `LcgHistoricalBacktestReturnsProvider`
+- `data-extractors/` — Extract chart data, table data, key metrics from simulation results
+- `__tests__/` — Unit tests for the engine
 
-**Plans table:**
+### Web Workers (`src/lib/workers/`)
 
-- User financial plans with timeline, incomes, expenses, accounts
-- Market assumptions (stock/bond returns, inflation)
-- Tax settings (filing status)
-- Simulation settings
-- Privacy settings
+Heavy simulation work runs off-main-thread via Comlink:
 
-**Finances table:**
+- `simulation-worker-api.ts` — Worker pool management
+- `simulation.worker.ts` — Runs individual simulations
+- `merge-worker-api.ts` / `merge.worker.ts` — Aggregates multi-simulation results
 
-- User assets and liabilities
-- Separate from plans for reusability
+### State Management (`src/lib/stores/simulator-store.ts`)
 
-**Conversations table:**
+Single Zustand store (`useSimulatorStore`) with slices: `results`, `preferences`, `chat`, `insights`, `nux`, `numbers`. Uses Immer middleware for mutable updates. Only `preferences` and `nux` are persisted to localStorage.
 
-- AI chat conversations per plan
-- System prompts and metadata
+### Data Flow Pattern
 
-**Messages table:**
+1. Convex queries fetched via hooks in `src/hooks/use-convex-data.ts` (wraps `useQuery`)
+2. Data transformed from Convex documents → Zod types via `src/lib/utils/convex-to-zod-transformers.ts`
+3. Zod-validated inputs fed into simulation engine
+4. Results extracted by data extractors into chart/table/metric data
+5. SWR used for derived data caching (multi-simulation analysis)
 
-- Chat messages with author (user/assistant/system)
-- Token usage tracking
+### Schemas & Validation (`src/lib/schemas/`)
 
-**Insights table:**
+- `inputs/simulator-schema.ts` — Root `SimulatorInputs` type composing all sub-schemas
+- `inputs/` — Per-domain form schemas (income, account, expense, etc.)
+- `finances/` — Financial object schemas
+- `tables/` — Table row schemas
 
-- AI-generated financial insights per plan
-- Token usage and processing time
+### Hooks (`src/hooks/`)
 
-**Indexes:**
+~25 custom hooks. Key ones:
 
-- Plans: `by_userId`
-- Finances: `by_userId`
-- Conversations: `by_planId_and_updatedAt`
-- Messages: `by_conversationId`, `by_userId`
-- Insights: `by_planId_and_updatedAt`
+- `use-convex-data.ts` — All Convex query hooks (`usePlanData`, `useIncomesData`, etc.)
+- `use-results-state.ts` — Simulation results state
+- `use-regen-simulation.ts` — Trigger simulation re-runs
+- `use-chart-*.ts` — Chart data extraction hooks
 
-### Financial Simulation Engine
+### Components
 
-The core calculation engine lives in `src/lib/calc/`:
+- `src/components/ui/` — shadcn/ui components
+- `src/components/catalyst/` — Catalyst UI library (custom form/table components)
+- `src/components/layout/sidebar/` — Desktop and mobile sidebars
+- `src/components/providers/` — Theme provider
 
-**Main entry point:** `simulation-engine.ts`
+### Currency Formatting
 
-- Takes `SimulatorInputs` (validated by Zod)
-- Returns `SimulationResult` with time-series data
-- Supports multiple simulation modes:
-  - Fixed returns (deterministic)
-  - Stochastic returns (random normal distribution)
-  - Historical backtest (LCG algorithm)
-  - Monte Carlo variations
+Centralized in `src/lib/config/currency.ts` and `src/lib/utils/format-currency.ts`:
 
-**Core modules:**
+- `formatCurrency(amount, {cents?})` — Full display ($1,234,567)
+- `formatCompactCurrency(amount, digits)` — Compact ($1.5M, $200k)
+- `getCurrencySymbol()` — Returns '$'
+- `formatCurrencyPlaceholder(amount)` — Form placeholders
 
-- `portfolio.ts` - Portfolio value tracking, rebalancing
-- `account.ts` - Individual account transactions
-- `taxes.ts` - Income tax, capital gains, Social Security tax
-- `incomes.ts` - Income processing with inflation
-- `expenses.ts` - Expense tracking with inflation
-- `contribution-rules.ts` - Investment contribution logic
-- `returns.ts` - Return calculations from different providers
+`formatNumber` in `src/lib/utils.ts` is only for non-currency values (percentages, plain numbers).
 
-**Data extraction:**
+## Code Style
 
-- `key-metrics-extractor.ts` - Success rate, retirement age, bankruptcy detection
-- `chart-data-extractor.ts` - Time-series for charts
-- `table-data-extractor.ts` - Year-by-year breakdown
-
-**Web Workers:**
-
-- `simulation.worker.ts` - Offload heavy calculations to background thread
-- `merge.worker.ts` - Merge multiple simulation results
-- Uses Comlink for cross-thread communication
-
-### Validation Architecture
-
-The app uses parallel validation layers:
-
-1. **Frontend (Zod):** `src/lib/schemas/inputs/`
-   - Form validation with React Hook Form
-   - Type inference: `type SimulatorInputs = z.infer<typeof simulatorSchema>`
-
-2. **Backend (Convex):** `convex/validators/`
-   - Runtime validation before DB operations
-   - Mirrors Zod schemas
-
-3. **Transformers:** `convex-to-zod-transformers.ts`
-   - Converts Convex DB objects to Zod-validated frontend types
-
-### Custom Hooks Pattern
-
-The app has 18 custom hooks in `src/hooks/`:
-
-**Data fetching:**
-
-- `use-convex-data.ts` - Wrapper hooks for all Convex queries
-- `use-selected-plan-id.ts` - Global plan selection state
-- `use-regen-simulation.ts` - Trigger simulation recalculation
-
-**Common pattern:**
-
-```typescript
-// Custom hook wrapping Convex query
-export function useCurrentUser() {
-  return useQuery(api.auth.currentUser);
-}
-```
-
-### Styling Architecture
-
-- **Tailwind CSS v4** with modern `@import "tailwindcss"` syntax
-- Prettier automatically sorts Tailwind classes via `prettier-plugin-tailwindcss`
-- Global styles in `src/app/globals.css` with CSS custom properties for theming
-- Catalyst UI component library for design consistency
-- Headless UI and Radix UI for accessible components
-- `clsx` and `tailwind-merge` via `cn()` utility for conditional classes
-
-### AI Integration
-
-**Chat conversations:**
-
-- System prompts stored per conversation
-- Messages with token usage tracking (input/output/total)
-- Streaming responses from Azure OpenAI
-
-**Insights generation:**
-
-- AI-powered financial analysis
-- Markdown export for analysis reports
-- System prompts for different insight types
-
-**Key files:**
-
-- `convex/conversations.ts` - Conversation management
-- `convex/messages.ts` - Message CRUD with AI
-- `convex/insights.ts` - Insight generation
-
-### Component Organization
-
-**Layout pattern:**
-
-- Desktop/mobile variants for responsive design
-- `MainArea` wrapper with optional secondary column
-- `Sidebar` with role-based auth display
-
-**Component types:**
-
-- `ui/` - Reusable primitives (buttons, inputs, cards)
-- `layout/` - Page structure components
-- `catalyst/` - Design system components
-- Feature-specific components in page directories
-
-### TypeScript Configuration
-
-- Strict mode enabled with incremental compilation
-- Path aliases: `@/*` → `src/*`, `@/convex/*` → `convex/*`
-- React 19 types with overrides for compatibility
-- Separate `tsconfig.json` for Convex backend
-
-## Development Workflow
-
-### Adding a New Feature
-
-1. **Define schema:** Add Zod schema in `src/lib/schemas/`
-2. **Add Convex validator:** Mirror in `convex/validators/`
-3. **Update DB schema:** Modify `convex/schema.ts`
-4. **Create queries/mutations:** Add in relevant `convex/*.ts` file
-5. **Add custom hook:** Wrap query in `src/hooks/use-convex-data.ts`
-6. **Build UI:** Create components in `src/components/`
-7. **Add page:** Create route in `src/app/`
-
-### Working with Forms
-
-1. Define Zod schema in `src/lib/schemas/inputs/`
-2. Use React Hook Form with `@hookform/resolvers/zod`
-3. Submit to Convex mutation with validation
-
-```typescript
-const schema = z.object({ name: z.string() });
-const form = useForm({ resolver: zodResolver(schema) });
-const mutation = useMutation(api.plans.update);
-```
-
-### Running Simulations
-
-1. Inputs validated by Zod schema
-2. Passed to `simulation-engine.ts`
-3. Heavy computation offloaded to Web Worker
-4. Results extracted by data extractors
-5. Charts/tables rendered from extracted data
-
-### Testing Locally
-
-```bash
-# Terminal 1: Start Next.js
-npm run dev
-
-# Terminal 2: Start Convex
-npm run dev:convex
-
-# Terminal 3: Run tests
-npm run test
-```
-
-## Important Notes
-
-- Generated Convex code in `convex/_generated/` should never be edited
-- Always validate inputs with Zod before passing to calculation engine
-- Use Web Workers for simulations to keep UI responsive
-- Pre-commit hooks will auto-format code - don't bypass with `--no-verify`
-- Convex functions are serverless - keep them fast and focused
-- Better-Auth sessions are JWT-based - check auth state client-side
-- Stripe webhooks handled in Convex for subscription events
-
-## Key Dependencies to Know
-
-- **convex** - Backend-as-a-service with real-time sync
-- **better-auth** - Auth framework with OAuth and session management
-- **zustand** - Lightweight state management
-- **zod** - Schema validation and type inference
-- **recharts** - Chart library for financial visualizations
-- **react-hook-form** - Form state management with validation
-- **stripe** - Payment processing
-- **@azure/openai** - AI insights generation
-- **@dnd-kit** - Drag-and-drop for UI interactions
-- **next-themes** - Dark mode support
+- Prettier: single quotes, semicolons, trailing commas (ES5), 140 char width, Tailwind class sorting
+- ESLint: flat config (ESLint 9), extends `next/core-web-vitals` + `next/typescript` + `prettier`
+- Unused variables: underscore prefix allowed (e.g., `_unused`)
+- All components are `'use client'` unless explicitly server components
