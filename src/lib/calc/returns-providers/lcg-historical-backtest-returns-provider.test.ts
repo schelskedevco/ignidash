@@ -85,6 +85,76 @@ describe('LcgHistoricalBacktestReturnsProvider', () => {
     });
   });
 
+  describe('startYearOverride', () => {
+    it('should use the override instead of a random start year', () => {
+      const provider = new LcgHistoricalBacktestReturnsProvider(42, 1950, undefined);
+      const ranges = provider.getHistoricalRanges();
+      expect(ranges[0].startYear).toBe(1950);
+
+      const result = provider.getReturns(phaseData);
+      const expectedData = nyuHistoricalData.find((d) => d.year === 1950)!;
+      expect(result.returns.stocks).toBe(expectedData.stockReturn);
+    });
+  });
+
+  describe('retirementStartYearOverride', () => {
+    const accumulationPhase: PhaseData = { name: 'accumulation' };
+    const retirementPhase: PhaseData = { name: 'retirement' };
+
+    it('should reset to the override year when entering retirement', () => {
+      const provider = new LcgHistoricalBacktestReturnsProvider(42, 1950, 1980);
+
+      // Accumulation phase — starts at 1950
+      provider.getReturns(accumulationPhase);
+      const rangesBeforeRetirement = provider.getHistoricalRanges();
+      expect(rangesBeforeRetirement).toHaveLength(1);
+      expect(rangesBeforeRetirement[0].startYear).toBe(1950);
+
+      // Transition to retirement — should reset to 1980
+      provider.getReturns(retirementPhase);
+      const rangesAfterRetirement = provider.getHistoricalRanges();
+      expect(rangesAfterRetirement).toHaveLength(2);
+      expect(rangesAfterRetirement[1].startYear).toBe(1980);
+      expect(rangesAfterRetirement[1].endYear).toBe(1980);
+    });
+
+    it('should only reset once on the first retirement call', () => {
+      const provider = new LcgHistoricalBacktestReturnsProvider(42, 1950, 1980);
+
+      provider.getReturns(accumulationPhase); // year 1950
+      provider.getReturns(retirementPhase); // resets to 1980
+      provider.getReturns(retirementPhase); // should continue to 1981, not reset again
+
+      const ranges = provider.getHistoricalRanges();
+      expect(ranges).toHaveLength(2);
+      expect(ranges[1].startYear).toBe(1980);
+      expect(ranges[1].endYear).toBe(1981);
+    });
+
+    it('should not reset if retirementStartYearOverride is undefined', () => {
+      const provider = new LcgHistoricalBacktestReturnsProvider(42, 1950, undefined);
+
+      provider.getReturns(accumulationPhase);
+      provider.getReturns(retirementPhase);
+
+      const ranges = provider.getHistoricalRanges();
+      expect(ranges).toHaveLength(1);
+      expect(ranges[0].startYear).toBe(1950);
+      expect(ranges[0].endYear).toBe(1951);
+    });
+
+    it('should return correct historical data after retirement reset', () => {
+      const provider = new LcgHistoricalBacktestReturnsProvider(42, 1950, 2000);
+
+      provider.getReturns(accumulationPhase); // consumes 1950
+      const result = provider.getReturns(retirementPhase); // resets to 2000
+
+      const expectedData = nyuHistoricalData.find((d) => d.year === 2000)!;
+      expect(result.returns.stocks).toBe(expectedData.stockReturn);
+      expect(result.returns.bonds).toBe(expectedData.bondReturn);
+    });
+  });
+
   describe('edge cases', () => {
     it('should correctly handle starting at 1928', () => {
       // Find a seed that selects 1928
