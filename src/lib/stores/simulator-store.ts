@@ -11,7 +11,7 @@ import type { SimulationResult as ConvexSimulationResult } from '@/convex/valida
 
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 import { FinancialSimulationEngine, type SimulationResult } from '@/lib/calc/simulation-engine';
-import type { MultiSimulationAnalysis } from '@/lib/calc/analysis/multi-simulation-analyzer';
+import type { MultiSimulationAnalysis } from '@/lib/calc/data-analyzers/multi-simulation-analyzer';
 import { FixedReturnsProvider } from '@/lib/calc/returns-providers/fixed-returns-provider';
 import { StochasticReturnsProvider } from '@/lib/calc/returns-providers/stochastic-returns-provider';
 import { LcgHistoricalBacktestReturnsProvider } from '@/lib/calc/returns-providers/lcg-historical-backtest-returns-provider';

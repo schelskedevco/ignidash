@@ -2,7 +2,7 @@ import * as Comlink from 'comlink';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { MonteCarloSortMode } from '@/lib/stores/simulator-store';
-import { MultiSimulationAnalyzer, type MultiSimulationAnalysis } from '@/lib/calc/analysis/multi-simulation-analyzer';
+import { MultiSimulationAnalyzer, type MultiSimulationAnalysis } from '@/lib/calc/data-analyzers/multi-simulation-analyzer';
 import type { MultiSimulationTableRow, YearlyAggregateTableRow } from '@/lib/schemas/tables/multi-simulation-table-schema';
 import type { MultiSimulationChartData } from '@/lib/types/chart-data-points';
 import { ChartDataExtractor } from '@/lib/calc/data-extractors/chart-data-extractor';
