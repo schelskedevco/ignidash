@@ -70,18 +70,18 @@ export class IncomesProcessor {
         acc.totalTaxFreeIncome += curr.totalTaxFreeIncome;
         acc.totalSocialSecurityIncome += curr.totalSocialSecurityIncome;
 
-        Object.entries(curr.perIncomeData).forEach(([incomeID, incomeData]) => {
+        for (const [incomeID, incomeData] of Object.entries(curr.perIncomeData)) {
+          const existing = acc.perIncomeData[incomeID];
           acc.perIncomeData[incomeID] = {
             ...incomeData,
-            income: (acc.perIncomeData[incomeID]?.income ?? 0) + incomeData.income,
-            amountWithheld: (acc.perIncomeData[incomeID]?.amountWithheld ?? 0) + incomeData.amountWithheld,
-            ficaTax: (acc.perIncomeData[incomeID]?.ficaTax ?? 0) + incomeData.ficaTax,
-            incomeAfterPayrollDeductions:
-              (acc.perIncomeData[incomeID]?.incomeAfterPayrollDeductions ?? 0) + incomeData.incomeAfterPayrollDeductions,
-            taxFreeIncome: (acc.perIncomeData[incomeID]?.taxFreeIncome ?? 0) + incomeData.taxFreeIncome,
-            socialSecurityIncome: (acc.perIncomeData[incomeID]?.socialSecurityIncome ?? 0) + incomeData.socialSecurityIncome,
+            income: (existing?.income ?? 0) + incomeData.income,
+            amountWithheld: (existing?.amountWithheld ?? 0) + incomeData.amountWithheld,
+            ficaTax: (existing?.ficaTax ?? 0) + incomeData.ficaTax,
+            incomeAfterPayrollDeductions: (existing?.incomeAfterPayrollDeductions ?? 0) + incomeData.incomeAfterPayrollDeductions,
+            taxFreeIncome: (existing?.taxFreeIncome ?? 0) + incomeData.taxFreeIncome,
+            socialSecurityIncome: (existing?.socialSecurityIncome ?? 0) + incomeData.socialSecurityIncome,
           };
-        });
+        }
 
         return acc;
       },
@@ -93,7 +93,7 @@ export class IncomesProcessor {
         totalTaxFreeIncome: 0,
         totalSocialSecurityIncome: 0,
         perIncomeData: {},
-      }
+      } satisfies IncomesData
     );
   }
 }

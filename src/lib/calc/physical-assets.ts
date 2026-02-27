@@ -167,24 +167,25 @@ export class PhysicalAssetsProcessor {
         acc.totalSecuredDebtIncurred += curr.totalSecuredDebtIncurred;
         acc.totalDebtPayoff += curr.totalDebtPayoff;
 
-        Object.entries(curr.perAssetData).forEach(([assetID, assetData]) => {
+        for (const [assetID, assetData] of Object.entries(curr.perAssetData)) {
+          const existing = acc.perAssetData[assetID];
           acc.perAssetData[assetID] = {
             ...assetData,
-            appreciation: (acc.perAssetData[assetID]?.appreciation ?? 0) + assetData.appreciation,
-            loanPayment: (acc.perAssetData[assetID]?.loanPayment ?? 0) + assetData.loanPayment,
-            interest: (acc.perAssetData[assetID]?.interest ?? 0) + assetData.interest,
-            principalPaid: (acc.perAssetData[assetID]?.principalPaid ?? 0) + assetData.principalPaid,
-            unpaidInterest: (acc.perAssetData[assetID]?.unpaidInterest ?? 0) + assetData.unpaidInterest,
-            debtPaydown: (acc.perAssetData[assetID]?.debtPaydown ?? 0) + assetData.debtPaydown,
-            purchaseOutlay: (acc.perAssetData[assetID]?.purchaseOutlay ?? 0) + assetData.purchaseOutlay,
-            purchaseMarketValue: (acc.perAssetData[assetID]?.purchaseMarketValue ?? 0) + assetData.purchaseMarketValue,
-            saleProceeds: (acc.perAssetData[assetID]?.saleProceeds ?? 0) + assetData.saleProceeds,
-            saleMarketValue: (acc.perAssetData[assetID]?.saleMarketValue ?? 0) + assetData.saleMarketValue,
-            realizedGains: (acc.perAssetData[assetID]?.realizedGains ?? 0) + assetData.realizedGains,
-            securedDebtIncurred: (acc.perAssetData[assetID]?.securedDebtIncurred ?? 0) + assetData.securedDebtIncurred,
-            debtPayoff: (acc.perAssetData[assetID]?.debtPayoff ?? 0) + assetData.debtPayoff,
+            appreciation: (existing?.appreciation ?? 0) + assetData.appreciation,
+            loanPayment: (existing?.loanPayment ?? 0) + assetData.loanPayment,
+            interest: (existing?.interest ?? 0) + assetData.interest,
+            principalPaid: (existing?.principalPaid ?? 0) + assetData.principalPaid,
+            unpaidInterest: (existing?.unpaidInterest ?? 0) + assetData.unpaidInterest,
+            debtPaydown: (existing?.debtPaydown ?? 0) + assetData.debtPaydown,
+            purchaseOutlay: (existing?.purchaseOutlay ?? 0) + assetData.purchaseOutlay,
+            purchaseMarketValue: (existing?.purchaseMarketValue ?? 0) + assetData.purchaseMarketValue,
+            saleProceeds: (existing?.saleProceeds ?? 0) + assetData.saleProceeds,
+            saleMarketValue: (existing?.saleMarketValue ?? 0) + assetData.saleMarketValue,
+            realizedGains: (existing?.realizedGains ?? 0) + assetData.realizedGains,
+            securedDebtIncurred: (existing?.securedDebtIncurred ?? 0) + assetData.securedDebtIncurred,
+            debtPayoff: (existing?.debtPayoff ?? 0) + assetData.debtPayoff,
           };
-        });
+        }
 
         return acc;
       },
@@ -206,7 +207,7 @@ export class PhysicalAssetsProcessor {
         totalSecuredDebtIncurred: 0,
         totalDebtPayoff: 0,
         perAssetData: {},
-      }
+      } satisfies PhysicalAssetsData
     );
   }
 }

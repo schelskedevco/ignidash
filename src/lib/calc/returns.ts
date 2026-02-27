@@ -9,7 +9,15 @@ import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 
 import type { SimulationState } from './simulation-engine';
 import { ReturnsProvider } from './returns-providers/returns-provider';
-import type { AssetReturnRates, AssetReturnAmounts, AssetYieldAmounts, AssetYieldRates, TaxCategory } from './asset';
+import {
+  type AssetReturnRates,
+  type AssetReturnAmounts,
+  type AssetYieldAmounts,
+  type AssetYieldRates,
+  type TaxCategory,
+  zeroAssetAmounts,
+  addAssetAmounts,
+} from './asset';
 
 /** Per-account return amounts for data extraction */
 export interface AccountDataWithReturns {
@@ -123,17 +131,6 @@ export class ReturnsProcessor {
   }
 
   getAnnualData(): ReturnsData {
-    const addAssetAmounts = (
-      a: AssetReturnAmounts | AssetYieldAmounts | undefined,
-      b: AssetReturnAmounts | AssetYieldAmounts
-    ): AssetReturnAmounts | AssetYieldAmounts => {
-      if (!a) return { ...b };
-      return { stocks: a.stocks + b.stocks, bonds: a.bonds + b.bonds, cash: a.cash + b.cash };
-    };
-
-    const zeroAssetReturnAmounts: AssetReturnAmounts = { stocks: 0, bonds: 0, cash: 0 };
-    const zeroAssetYieldAmounts: AssetYieldAmounts = { stocks: 0, bonds: 0, cash: 0 };
-
     const lastMonthData = this.monthlyData[this.monthlyData.length - 1];
 
     return {
@@ -150,19 +147,19 @@ export class ReturnsProcessor {
             const existing = acc.perAccountData[accountID];
             acc.perAccountData[accountID] = {
               ...accountData,
-              returnAmounts: addAssetAmounts(existing?.returnAmounts, accountData.returnAmounts),
+              returnAmounts: addAssetAmounts(existing?.returnAmounts ?? zeroAssetAmounts(), accountData.returnAmounts),
             };
           }
 
           return acc;
         },
         {
-          returnAmounts: { ...zeroAssetReturnAmounts },
+          returnAmounts: zeroAssetAmounts<AssetReturnAmounts>(),
           yieldAmounts: {
-            taxable: { ...zeroAssetYieldAmounts },
-            taxDeferred: { ...zeroAssetYieldAmounts },
-            taxFree: { ...zeroAssetYieldAmounts },
-            cashSavings: { ...zeroAssetYieldAmounts },
+            taxable: zeroAssetAmounts<AssetYieldAmounts>(),
+            taxDeferred: zeroAssetAmounts<AssetYieldAmounts>(),
+            taxFree: zeroAssetAmounts<AssetYieldAmounts>(),
+            cashSavings: zeroAssetAmounts<AssetYieldAmounts>(),
           },
           perAccountData: {} as Record<string, AccountDataWithReturns>,
         }

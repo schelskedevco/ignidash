@@ -92,16 +92,17 @@ export class DebtsProcessor {
         acc.totalDebtPaydown += curr.totalDebtPaydown;
         acc.totalUnsecuredDebtIncurred += curr.totalUnsecuredDebtIncurred;
 
-        Object.entries(curr.perDebtData).forEach(([debtID, debtData]) => {
+        for (const [debtID, debtData] of Object.entries(curr.perDebtData)) {
+          const existing = acc.perDebtData[debtID];
           acc.perDebtData[debtID] = {
             ...debtData,
-            payment: (acc.perDebtData[debtID]?.payment ?? 0) + debtData.payment,
-            interest: (acc.perDebtData[debtID]?.interest ?? 0) + debtData.interest,
-            principalPaid: (acc.perDebtData[debtID]?.principalPaid ?? 0) + debtData.principalPaid,
-            unpaidInterest: (acc.perDebtData[debtID]?.unpaidInterest ?? 0) + debtData.unpaidInterest,
-            debtPaydown: (acc.perDebtData[debtID]?.debtPaydown ?? 0) + debtData.debtPaydown,
+            payment: (existing?.payment ?? 0) + debtData.payment,
+            interest: (existing?.interest ?? 0) + debtData.interest,
+            principalPaid: (existing?.principalPaid ?? 0) + debtData.principalPaid,
+            unpaidInterest: (existing?.unpaidInterest ?? 0) + debtData.unpaidInterest,
+            debtPaydown: (existing?.debtPaydown ?? 0) + debtData.debtPaydown,
           };
-        });
+        }
 
         return acc;
       },
@@ -114,7 +115,7 @@ export class DebtsProcessor {
         totalDebtPaydown: 0,
         totalUnsecuredDebtIncurred: 0,
         perDebtData: {},
-      }
+      } satisfies DebtsData
     );
   }
 }

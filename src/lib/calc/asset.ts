@@ -31,3 +31,10 @@ export const sumFlows = (t: AssetFlows): number => t.stocks + t.bonds + t.cash;
 export const sumInvestments = (t: AssetFlows): number => t.stocks + t.bonds;
 /** Sums liquidation flows (stocks + bonds, excluding cash) */
 export const sumLiquidations = (t: AssetFlows): number => t.stocks + t.bonds;
+
+/** Creates a zero-valued asset amounts object, usable as AssetFlows, AssetReturnAmounts, etc. */
+export const zeroAssetAmounts = <T extends Record<AssetClass, number>>(): T => ({ stocks: 0, bonds: 0, cash: 0 }) as T;
+
+/** Adds two asset amounts objects together (works for AssetFlows, AssetReturnAmounts, AssetYieldAmounts, etc.) */
+export const addAssetAmounts = <T extends Record<AssetClass, number>>(a: T, b: T): T =>
+  ({ stocks: a.stocks + b.stocks, bonds: a.bonds + b.bonds, cash: a.cash + b.cash }) as T;
