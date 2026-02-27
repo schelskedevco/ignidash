@@ -1003,6 +1003,59 @@ describe('PhysicalAssetsProcessor', () => {
     expect(annualData.totalLoanPayment).toBeGreaterThan(0);
   });
 
+  it('getAnnualData uses last month snapshot fields, not summed across months', () => {
+    const assets = new PhysicalAssets([
+      createFinancedAssetInput({
+        id: 'house',
+        purchasePrice: 400000,
+        appreciationRate: 0, // Zero appreciation for predictable values
+        paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 0, monthlyPayment: 1000 },
+      }),
+    ]);
+
+    const simState = createSimulationState();
+    const processor = new PhysicalAssetsProcessor(simState, assets);
+
+    // Process 3 months — loan balance goes 320k -> 319k -> 318k -> 317k
+    for (let i = 0; i < 3; i++) {
+      processor.process(ZERO_INFLATION);
+    }
+
+    const annualData = processor.getAnnualData();
+
+    // Snapshot fields should be last month's values, not summed
+    expect(annualData.totalMarketValue).toBe(400000);
+    expect(annualData.totalLoanBalance).toBe(317000);
+    expect(annualData.totalEquity).toBe(400000 - 317000);
+  });
+
+  it('getAnnualData uses last month per-asset snapshot fields, not summed', () => {
+    const assets = new PhysicalAssets([
+      createFinancedAssetInput({
+        id: 'house',
+        purchasePrice: 400000,
+        appreciationRate: 0,
+        paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 0, monthlyPayment: 1000 },
+      }),
+    ]);
+
+    const simState = createSimulationState();
+    const processor = new PhysicalAssetsProcessor(simState, assets);
+
+    for (let i = 0; i < 3; i++) {
+      processor.process(ZERO_INFLATION);
+    }
+
+    const annualData = processor.getAnnualData();
+    const assetData = annualData.perAssetData['house'];
+
+    // Per-asset snapshot fields should be last month's values
+    expect(assetData.marketValue).toBe(400000);
+    expect(assetData.loanBalance).toBe(317000);
+    expect(assetData.equity).toBe(400000 - 317000);
+    expect(assetData.isSold).toBe(false);
+  });
+
   it('resetMonthlyData clears accumulated data', () => {
     const assets = new PhysicalAssets([
       createPhysicalAssetInput({

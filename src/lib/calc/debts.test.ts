@@ -681,6 +681,58 @@ describe('DebtsProcessor', () => {
     expect(annualData.totalPrincipalPaid).toBe(0);
   });
 
+  it('getAnnualData() uses last month totalDebtBalance, not summed across months', () => {
+    const debts = new Debts([
+      createDebtInput({
+        id: 'loan',
+        name: 'Personal Loan',
+        balance: 12000,
+        apr: 0,
+        monthlyPayment: 1000,
+      }),
+    ]);
+
+    const simState = createSimulationState();
+    const processor = new DebtsProcessor(simState, debts);
+
+    // Process 3 months — balance goes 12k -> 11k -> 10k -> 9k
+    for (let i = 0; i < 3; i++) {
+      processor.process(ZERO_INFLATION);
+    }
+
+    const annualData = processor.getAnnualData();
+
+    // Should be last month's balance (9k), not sum of monthly balances (12k+11k+10k+9k = 42k)
+    expect(annualData.totalDebtBalance).toBe(9000);
+  });
+
+  it('getAnnualData() uses last month per-debt balance and isPaidOff, not summed', () => {
+    const debts = new Debts([
+      createDebtInput({
+        id: 'loan',
+        name: 'Personal Loan',
+        balance: 3000,
+        apr: 0,
+        monthlyPayment: 1000,
+      }),
+    ]);
+
+    const simState = createSimulationState();
+    const processor = new DebtsProcessor(simState, debts);
+
+    // Process 4 months — balance goes 3k -> 2k -> 1k -> 0 (paid off at month 3, no payment month 4)
+    for (let i = 0; i < 4; i++) {
+      processor.process(ZERO_INFLATION);
+    }
+
+    const annualData = processor.getAnnualData();
+    const debtData = annualData.perDebtData['loan'];
+
+    // balance and isPaidOff should reflect last month's snapshot
+    expect(debtData.balance).toBe(0);
+    expect(debtData.isPaidOff).toBe(true);
+  });
+
   it('unpaidInterest and principalPaid are capped at 0, debtPaydown is raw', () => {
     // NEW SEMANTICS:
     // - principalPaid = max(0, payment - interest) - capped, for display

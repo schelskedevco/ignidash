@@ -151,71 +151,78 @@ export class PhysicalAssetsProcessor {
   }
 
   getAnnualData(): PhysicalAssetsData {
-    return this.monthlyData.reduce(
-      (acc, curr) => {
-        acc.totalAppreciation += curr.totalAppreciation;
-        acc.totalLoanPayment += curr.totalLoanPayment;
-        acc.totalInterest += curr.totalInterest;
-        acc.totalPrincipalPaid += curr.totalPrincipalPaid;
-        acc.totalUnpaidInterest += curr.totalUnpaidInterest;
-        acc.totalDebtPaydown += curr.totalDebtPaydown;
-        acc.totalPurchaseOutlay += curr.totalPurchaseOutlay;
-        acc.totalPurchaseMarketValue += curr.totalPurchaseMarketValue;
-        acc.totalSaleProceeds += curr.totalSaleProceeds;
-        acc.totalSaleMarketValue += curr.totalSaleMarketValue;
-        acc.totalRealizedGains += curr.totalRealizedGains;
-        acc.totalSecuredDebtIncurred += curr.totalSecuredDebtIncurred;
-        acc.totalDebtPayoff += curr.totalDebtPayoff;
+    const lastMonthData = this.monthlyData[this.monthlyData.length - 1];
 
-        for (const [assetID, assetData] of Object.entries(curr.perAssetData)) {
-          const existing = acc.perAssetData[assetID];
-          acc.perAssetData[assetID] = {
-            ...assetData,
-            appreciation: (existing?.appreciation ?? 0) + assetData.appreciation,
-            loanPayment: (existing?.loanPayment ?? 0) + assetData.loanPayment,
-            interest: (existing?.interest ?? 0) + assetData.interest,
-            principalPaid: (existing?.principalPaid ?? 0) + assetData.principalPaid,
-            unpaidInterest: (existing?.unpaidInterest ?? 0) + assetData.unpaidInterest,
-            debtPaydown: (existing?.debtPaydown ?? 0) + assetData.debtPaydown,
-            purchaseOutlay: (existing?.purchaseOutlay ?? 0) + assetData.purchaseOutlay,
-            purchaseMarketValue: (existing?.purchaseMarketValue ?? 0) + assetData.purchaseMarketValue,
-            saleProceeds: (existing?.saleProceeds ?? 0) + assetData.saleProceeds,
-            saleMarketValue: (existing?.saleMarketValue ?? 0) + assetData.saleMarketValue,
-            realizedGains: (existing?.realizedGains ?? 0) + assetData.realizedGains,
-            securedDebtIncurred: (existing?.securedDebtIncurred ?? 0) + assetData.securedDebtIncurred,
-            debtPayoff: (existing?.debtPayoff ?? 0) + assetData.debtPayoff,
-          };
-        }
+    return {
+      ...lastMonthData,
+      ...this.monthlyData.reduce(
+        (acc, curr) => {
+          acc.totalAppreciation += curr.totalAppreciation;
+          acc.totalLoanPayment += curr.totalLoanPayment;
+          acc.totalInterest += curr.totalInterest;
+          acc.totalPrincipalPaid += curr.totalPrincipalPaid;
+          acc.totalUnpaidInterest += curr.totalUnpaidInterest;
+          acc.totalDebtPaydown += curr.totalDebtPaydown;
+          acc.totalPurchaseOutlay += curr.totalPurchaseOutlay;
+          acc.totalPurchaseMarketValue += curr.totalPurchaseMarketValue;
+          acc.totalSaleProceeds += curr.totalSaleProceeds;
+          acc.totalSaleMarketValue += curr.totalSaleMarketValue;
+          acc.totalRealizedGains += curr.totalRealizedGains;
+          acc.totalSecuredDebtIncurred += curr.totalSecuredDebtIncurred;
+          acc.totalDebtPayoff += curr.totalDebtPayoff;
 
-        return acc;
-      },
-      {
-        totalMarketValue: this.monthlyData[this.monthlyData.length - 1]?.totalMarketValue ?? 0,
-        totalLoanBalance: this.monthlyData[this.monthlyData.length - 1]?.totalLoanBalance ?? 0,
-        totalEquity: this.monthlyData[this.monthlyData.length - 1]?.totalEquity ?? 0,
-        totalAppreciation: 0,
-        totalLoanPayment: 0,
-        totalInterest: 0,
-        totalPrincipalPaid: 0,
-        totalUnpaidInterest: 0,
-        totalDebtPaydown: 0,
-        totalPurchaseOutlay: 0,
-        totalPurchaseMarketValue: 0,
-        totalSaleProceeds: 0,
-        totalSaleMarketValue: 0,
-        totalRealizedGains: 0,
-        totalSecuredDebtIncurred: 0,
-        totalDebtPayoff: 0,
-        perAssetData: {},
-      } satisfies PhysicalAssetsData
-    );
+          for (const [assetID, assetData] of Object.entries(curr.perAssetData)) {
+            const existing = acc.perAssetData[assetID];
+            acc.perAssetData[assetID] = {
+              ...assetData,
+              appreciation: (existing?.appreciation ?? 0) + assetData.appreciation,
+              loanPayment: (existing?.loanPayment ?? 0) + assetData.loanPayment,
+              interest: (existing?.interest ?? 0) + assetData.interest,
+              principalPaid: (existing?.principalPaid ?? 0) + assetData.principalPaid,
+              unpaidInterest: (existing?.unpaidInterest ?? 0) + assetData.unpaidInterest,
+              debtPaydown: (existing?.debtPaydown ?? 0) + assetData.debtPaydown,
+              purchaseOutlay: (existing?.purchaseOutlay ?? 0) + assetData.purchaseOutlay,
+              purchaseMarketValue: (existing?.purchaseMarketValue ?? 0) + assetData.purchaseMarketValue,
+              saleProceeds: (existing?.saleProceeds ?? 0) + assetData.saleProceeds,
+              saleMarketValue: (existing?.saleMarketValue ?? 0) + assetData.saleMarketValue,
+              realizedGains: (existing?.realizedGains ?? 0) + assetData.realizedGains,
+              securedDebtIncurred: (existing?.securedDebtIncurred ?? 0) + assetData.securedDebtIncurred,
+              debtPayoff: (existing?.debtPayoff ?? 0) + assetData.debtPayoff,
+            };
+          }
+
+          return acc;
+        },
+        {
+          totalAppreciation: 0,
+          totalLoanPayment: 0,
+          totalInterest: 0,
+          totalPrincipalPaid: 0,
+          totalUnpaidInterest: 0,
+          totalDebtPaydown: 0,
+          totalPurchaseOutlay: 0,
+          totalPurchaseMarketValue: 0,
+          totalSaleProceeds: 0,
+          totalSaleMarketValue: 0,
+          totalRealizedGains: 0,
+          totalSecuredDebtIncurred: 0,
+          totalDebtPayoff: 0,
+          perAssetData: {} as Record<string, PhysicalAssetData>,
+        } satisfies PhysicalAssetsFlowData
+      ),
+    };
   }
 }
 
-export interface PhysicalAssetsData {
+/** Point-in-time snapshot fields — taken from last month's data, not summed */
+interface PhysicalAssetsSnapshotData {
   totalMarketValue: number;
   totalLoanBalance: number;
   totalEquity: number;
+}
+
+/** Flow fields — summed across months in getAnnualData */
+interface PhysicalAssetsFlowData {
   totalAppreciation: number;
   totalLoanPayment: number;
   totalPurchaseOutlay: number;
@@ -231,6 +238,8 @@ export interface PhysicalAssetsData {
   totalDebtPayoff: number;
   perAssetData: Record<string, PhysicalAssetData>;
 }
+
+export type PhysicalAssetsData = PhysicalAssetsSnapshotData & PhysicalAssetsFlowData;
 
 export interface PhysicalAssetData {
   id: string;

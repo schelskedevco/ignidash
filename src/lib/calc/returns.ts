@@ -28,19 +28,26 @@ export interface AccountDataWithReturns {
   cumulativeReturnAmounts: AssetReturnAmounts;
 }
 
-export interface ReturnsData {
+/** Point-in-time snapshot fields — taken from last month's data, not summed */
+interface ReturnsSnapshotData {
   cumulativeReturnAmounts: AssetReturnAmounts;
   cumulativeYieldAmounts: Record<TaxCategory, AssetYieldAmounts>;
-  returnAmounts: AssetReturnAmounts;
   returnRates: AssetReturnRates;
-  yieldAmounts: Record<TaxCategory, AssetYieldAmounts>;
   yieldRates: AssetYieldRates;
   inflationRate: number;
   annualReturnRates: AssetReturnRates;
   annualYieldRates: AssetYieldRates;
   annualInflationRate: number;
+}
+
+/** Flow fields — summed across months in getAnnualData */
+interface ReturnsFlowData {
+  returnAmounts: AssetReturnAmounts;
+  yieldAmounts: Record<TaxCategory, AssetYieldAmounts>;
   perAccountData: Record<string, AccountDataWithReturns>;
 }
+
+export type ReturnsData = ReturnsSnapshotData & ReturnsFlowData;
 
 const TAX_CATEGORIES: TaxCategory[] = ['taxable', 'taxDeferred', 'taxFree', 'cashSavings'];
 
@@ -162,7 +169,7 @@ export class ReturnsProcessor {
             cashSavings: zeroAssetAmounts<AssetYieldAmounts>(),
           },
           perAccountData: {} as Record<string, AccountDataWithReturns>,
-        }
+        } satisfies ReturnsFlowData
       ),
     };
   }

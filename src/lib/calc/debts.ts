@@ -83,45 +83,54 @@ export class DebtsProcessor {
   }
 
   getAnnualData(): DebtsData {
-    return this.monthlyData.reduce(
-      (acc, curr) => {
-        acc.totalPayment += curr.totalPayment;
-        acc.totalInterest += curr.totalInterest;
-        acc.totalPrincipalPaid += curr.totalPrincipalPaid;
-        acc.totalUnpaidInterest += curr.totalUnpaidInterest;
-        acc.totalDebtPaydown += curr.totalDebtPaydown;
-        acc.totalUnsecuredDebtIncurred += curr.totalUnsecuredDebtIncurred;
+    const lastMonthData = this.monthlyData[this.monthlyData.length - 1];
 
-        for (const [debtID, debtData] of Object.entries(curr.perDebtData)) {
-          const existing = acc.perDebtData[debtID];
-          acc.perDebtData[debtID] = {
-            ...debtData,
-            payment: (existing?.payment ?? 0) + debtData.payment,
-            interest: (existing?.interest ?? 0) + debtData.interest,
-            principalPaid: (existing?.principalPaid ?? 0) + debtData.principalPaid,
-            unpaidInterest: (existing?.unpaidInterest ?? 0) + debtData.unpaidInterest,
-            debtPaydown: (existing?.debtPaydown ?? 0) + debtData.debtPaydown,
-          };
-        }
+    return {
+      ...lastMonthData,
+      ...this.monthlyData.reduce(
+        (acc, curr) => {
+          acc.totalPayment += curr.totalPayment;
+          acc.totalInterest += curr.totalInterest;
+          acc.totalPrincipalPaid += curr.totalPrincipalPaid;
+          acc.totalUnpaidInterest += curr.totalUnpaidInterest;
+          acc.totalDebtPaydown += curr.totalDebtPaydown;
+          acc.totalUnsecuredDebtIncurred += curr.totalUnsecuredDebtIncurred;
 
-        return acc;
-      },
-      {
-        totalDebtBalance: this.monthlyData[this.monthlyData.length - 1]?.totalDebtBalance ?? 0,
-        totalPayment: 0,
-        totalInterest: 0,
-        totalPrincipalPaid: 0,
-        totalUnpaidInterest: 0,
-        totalDebtPaydown: 0,
-        totalUnsecuredDebtIncurred: 0,
-        perDebtData: {},
-      } satisfies DebtsData
-    );
+          for (const [debtID, debtData] of Object.entries(curr.perDebtData)) {
+            const existing = acc.perDebtData[debtID];
+            acc.perDebtData[debtID] = {
+              ...debtData,
+              payment: (existing?.payment ?? 0) + debtData.payment,
+              interest: (existing?.interest ?? 0) + debtData.interest,
+              principalPaid: (existing?.principalPaid ?? 0) + debtData.principalPaid,
+              unpaidInterest: (existing?.unpaidInterest ?? 0) + debtData.unpaidInterest,
+              debtPaydown: (existing?.debtPaydown ?? 0) + debtData.debtPaydown,
+            };
+          }
+
+          return acc;
+        },
+        {
+          totalPayment: 0,
+          totalInterest: 0,
+          totalPrincipalPaid: 0,
+          totalUnpaidInterest: 0,
+          totalDebtPaydown: 0,
+          totalUnsecuredDebtIncurred: 0,
+          perDebtData: {} as Record<string, DebtData>,
+        } satisfies DebtsFlowData
+      ),
+    };
   }
 }
 
-export interface DebtsData {
+/** Point-in-time snapshot fields — taken from last month's data, not summed */
+interface DebtsSnapshotData {
   totalDebtBalance: number;
+}
+
+/** Flow fields — summed across months in getAnnualData */
+interface DebtsFlowData {
   totalPayment: number;
   totalInterest: number;
   totalPrincipalPaid: number;
@@ -130,6 +139,8 @@ export interface DebtsData {
   totalUnsecuredDebtIncurred: number;
   perDebtData: Record<string, DebtData>;
 }
+
+export type DebtsData = DebtsSnapshotData & DebtsFlowData;
 
 export interface DebtData {
   id: string;

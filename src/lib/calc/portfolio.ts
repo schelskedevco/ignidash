@@ -669,7 +669,7 @@ export class PortfolioProcessor {
           shortfall: 0,
           shortfallRepaid: 0,
           perAccountData: {} as Record<string, AccountDataWithFlows>,
-        }
+        } satisfies PortfolioFlowData
       ),
     };
   }
@@ -834,8 +834,8 @@ export class PortfolioProcessor {
   }
 }
 
-/** Snapshot of portfolio state for a single period */
-export interface PortfolioData {
+/** Point-in-time snapshot fields — taken from last month's data, not summed */
+interface PortfolioSnapshotData {
   totalValue: number;
   cumulativeWithdrawals: AssetFlows;
   cumulativeContributions: AssetFlows;
@@ -844,6 +844,11 @@ export interface PortfolioData {
   cumulativeEarningsWithdrawn: number;
   cumulativeRmds: number;
   outstandingShortfall: number;
+  assetAllocation: AssetAllocation | null;
+}
+
+/** Flow fields — summed across months in getAnnualData */
+interface PortfolioFlowData {
   withdrawals: AssetFlows;
   contributions: AssetFlows;
   employerMatch: number;
@@ -853,8 +858,9 @@ export interface PortfolioData {
   shortfall: number;
   shortfallRepaid: number;
   perAccountData: Record<string, AccountDataWithFlows>;
-  assetAllocation: AssetAllocation | null;
 }
+
+export type PortfolioData = PortfolioSnapshotData & PortfolioFlowData;
 
 /** Container for all investment accounts with aggregate operations */
 export class Portfolio {
