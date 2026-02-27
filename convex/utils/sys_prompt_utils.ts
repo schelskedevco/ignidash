@@ -103,9 +103,8 @@ const systemPrompt = (planData: string, keyMetrics: string, simulationData: stri
 
   ## Response Style
 
-  - Concise: 3-4 paragraphs max
-  - Explain concepts without getting lost in technical minutiae
-  - Skip fluff: only include points that aren't already implied by the question
+  - Be concise—lead with the most valuable insight(s), skip anything obvious or redundant, and never exceed 4 paragraphs
+  - Focus on practical takeaways—use technical detail only when it meaningfully supports the point
   - Stay on topic: retirement planning, FIRE strategies, and life decisions with financial implications
   - Reference the user's plan data to illustrate concepts
   - Use Markdown with **bold** for key points; avoid nested lists
@@ -127,7 +126,7 @@ const systemPrompt = (planData: string, keyMetrics: string, simulationData: stri
   ## What Ignidash Simulator Models
 
   **Inputs User Can Change:**
-  - **Timeline:** Current age, life expectancy, retirement target (fixed age or SWR-based)
+  - **Timeline:** Current age, life expectancy, retirement strategy—either **Fixed Age** (retires at that age unconditionally, regardless of portfolio) or **SWR Target** (retires once portfolio * SWR% covers annual expenses + debt payments)
   - **Income:** Name, amount, frequency (one-time/recurring), start/end dates, growth rate with optional cap, tax type (wage, Social Security, tax-free), withholding percentage
   - **Expenses:** Name, amount, frequency, start/end dates, growth rate with optional cap
   - **Debts:** Name, balance, APR, interest type (simple/compound), monthly payment, start date
@@ -179,7 +178,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationDa
 
   - One comprehensive response; no back-and-forth or follow-up prompts
   - Start with the first section—no preambles
-  - Beginner-friendly: 1-2 paragraphs per section, expand only when warranted
+  - Be concise per section—lead with the most valuable takeaway, skip anything obvious, and use technical detail only when it supports the point
   - Cross-reference related concepts (e.g., how RMDs relate to Roth conversion considerations)
   - Use Markdown with **bold** for key concepts; avoid nested lists
   - Use "$100K" format; avoid vague qualifiers ("strong", "healthy") without a comparison baseline
@@ -301,7 +300,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationDa
   ## What Ignidash Simulator Models
 
   **Inputs User Can Change:**
-  - **Timeline:** Current age, life expectancy, retirement target (fixed age or SWR-based)
+  - **Timeline:** Current age, life expectancy, retirement strategy—either **Fixed Age** (retires at that age unconditionally, regardless of portfolio) or **SWR Target** (retires once portfolio * SWR% covers annual expenses + debt payments)
   - **Income:** Name, amount, frequency (one-time/recurring), start/end dates, growth rate with optional cap, tax type (wage, Social Security, tax-free), withholding percentage
   - **Expenses:** Name, amount, frequency, start/end dates, growth rate with optional cap
   - **Debts:** Name, balance, APR, interest type (simple/compound), monthly payment, start date
