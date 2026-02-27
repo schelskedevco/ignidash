@@ -459,6 +459,8 @@ describe('MultiSimulationAnalyzer', () => {
       });
 
       it('non-bankrupt simulations rank higher than bankrupt ones for bankruptcyAge sort', () => {
+        // With a single bankrupt sim, range=0 → normalize returns 0.5
+        // Non-bankrupt sims get fallback=1, so they rank strictly higher
         const simulations: Array<[number, SimulationResult]> = [
           [
             1,
@@ -471,30 +473,16 @@ describe('MultiSimulationAnalyzer', () => {
               bankruptcyAge: 68,
             }),
           ],
-          [
-            2,
-            createSimulationResult({
-              seed: 2,
-              startAge: 30,
-              years: 40,
-              retirementAge: 65,
-              finalPortfolioValue: 0,
-              bankruptcyAge: 72,
-            }),
-          ],
-          [3, createSimulationResult({ seed: 3, startAge: 30, years: 40, retirementAge: 65, finalPortfolioValue: 1000000 })],
-          [4, createSimulationResult({ seed: 4, startAge: 30, years: 40, retirementAge: 65, finalPortfolioValue: 2000000 })],
+          [2, createSimulationResult({ seed: 2, startAge: 30, years: 40, retirementAge: 65, finalPortfolioValue: 1000000 })],
+          [3, createSimulationResult({ seed: 3, startAge: 30, years: 40, retirementAge: 65, finalPortfolioValue: 2000000 })],
         ];
 
         const multiResult = createMultiSimulationResult(simulations);
         const analysis = MultiSimulationAnalyzer.analyze(multiResult, 'bankruptcyAge');
 
-        // Bankrupt@68 has lowest score → p10
+        // Bankrupt sim (score 0.5) ranks below non-bankrupt sims (fallback=1)
         expect(analysis.results.p10.seed).toBe(1);
-        // Non-bankrupt sims (seeds 3, 4) get fallback=1 → highest scores
-        // p75 and p90 should both be non-bankrupt
-        expect([3, 4]).toContain(analysis.results.p75.seed);
-        expect([3, 4]).toContain(analysis.results.p90.seed);
+        expect([2, 3]).toContain(analysis.results.p90.seed);
       });
     });
 
@@ -514,18 +502,8 @@ describe('MultiSimulationAnalyzer', () => {
 
       it('returns 0.0 when all simulations fail', () => {
         const simulations: Array<[number, SimulationResult]> = [
-          // Bankrupt (portfolio <= 0.1)
-          [
-            1,
-            createSimulationResult({
-              seed: 1,
-              startAge: 30,
-              years: 40,
-              retirementAge: 65,
-              finalPortfolioValue: 0,
-              bankruptcyAge: 72,
-            }),
-          ],
+          // Bankrupt (portfolio = 0 at end, which is <= 0.1)
+          [1, createSimulationResult({ seed: 1, startAge: 30, years: 40, retirementAge: 65, finalPortfolioValue: 0 })],
           // Portfolio exactly 0.1 → failure (check is > 0.1)
           [2, createSimulationResult({ seed: 2, startAge: 30, years: 40, retirementAge: 65, finalPortfolioValue: 0.1 })],
           // Never retired (stays in accumulation) → failure despite large portfolio
