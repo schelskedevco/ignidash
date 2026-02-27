@@ -21,11 +21,11 @@ import {
   STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD,
 } from './tax-data/standard-deduction';
 import {
-  type IncomeTaxBracket,
-  INCOME_TAX_BRACKETS_SINGLE,
-  INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY,
-  INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD,
-} from './tax-data/income-tax-brackets';
+  type FederalIncomeTaxBracket,
+  FEDERAL_INCOME_TAX_BRACKETS_SINGLE,
+  FEDERAL_INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY,
+  FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD,
+} from './tax-data/federal-income-tax-brackets';
 import {
   type CapitalGainsTaxBracket,
   CAPITAL_GAINS_TAX_BRACKETS_SINGLE,
@@ -42,19 +42,19 @@ import {
 import { SECTION_121_EXCLUSION } from './tax-data/section-121-exclusion';
 
 export interface CapitalGainsTaxesData {
-  taxableIncomeTaxedAsCapGains: number;
+  taxableIncomeTaxedAsCapitalGains: number;
   capitalGainsTaxAmount: number;
   effectiveCapitalGainsTaxRate: number;
   topMarginalCapitalGainsTaxRate: number;
   capitalGainsTaxBrackets: CapitalGainsTaxBracket[];
 }
 
-export interface IncomeTaxesData {
+export interface FederalIncomeTaxesData {
   taxableIncomeTaxedAsOrdinary: number;
-  incomeTaxAmount: number;
-  effectiveIncomeTaxRate: number;
-  topMarginalIncomeTaxRate: number;
-  incomeTaxBrackets: IncomeTaxBracket[];
+  federalIncomeTaxAmount: number;
+  effectiveFederalIncomeTaxRate: number;
+  topMarginalFederalIncomeTaxRate: number;
+  federalIncomeTaxBrackets: FederalIncomeTaxBracket[];
   capitalLossDeduction?: number;
 }
 
@@ -66,7 +66,7 @@ export interface NIITData {
 }
 
 export interface TaxesData {
-  incomeTaxes: IncomeTaxesData;
+  federalIncomeTaxes: FederalIncomeTaxesData;
   capitalGainsTaxes: CapitalGainsTaxesData;
   niit: NIITData;
   earlyWithdrawalPenalties: EarlyWithdrawalPenaltyData;
@@ -119,7 +119,7 @@ export interface IncomeSourcesData {
   taxDeductibleContributions: number;
   adjustedGrossIncome: number;
   adjustedIncomeTaxedAsOrdinary: number;
-  adjustedIncomeTaxedAsCapGains: number;
+  adjustedIncomeTaxedAsCapitalGains: number;
   totalIncome: number;
   earlyWithdrawals: {
     rothEarnings: number;
@@ -184,27 +184,29 @@ export class TaxProcessor {
     const deductionUsedForGains = standardDeduction - deductionUsedForOrdinary;
 
     const taxableIncomeTaxedAsOrdinary = Math.max(0, incomeData.adjustedIncomeTaxedAsOrdinary - deductionUsedForOrdinary);
-    const taxableIncomeTaxedAsCapGains = Math.max(0, incomeData.adjustedIncomeTaxedAsCapGains - deductionUsedForGains);
+    const taxableIncomeTaxedAsCapitalGains = Math.max(0, incomeData.adjustedIncomeTaxedAsCapitalGains - deductionUsedForGains);
 
-    const { incomeTaxAmount, topMarginalIncomeTaxRate, incomeTaxBrackets } = this.processIncomeTaxes({ taxableIncomeTaxedAsOrdinary });
-    const incomeTaxes: IncomeTaxesData = {
+    const { federalIncomeTaxAmount, topMarginalFederalIncomeTaxRate, federalIncomeTaxBrackets } = this.processFederalIncomeTaxes({
       taxableIncomeTaxedAsOrdinary,
-      incomeTaxAmount,
-      effectiveIncomeTaxRate: incomeData.totalIncome > 0 ? incomeTaxAmount / incomeData.totalIncome : 0,
-      topMarginalIncomeTaxRate,
-      incomeTaxBrackets,
+    });
+    const federalIncomeTaxes: FederalIncomeTaxesData = {
+      taxableIncomeTaxedAsOrdinary,
+      federalIncomeTaxAmount,
+      effectiveFederalIncomeTaxRate: incomeData.totalIncome > 0 ? federalIncomeTaxAmount / incomeData.totalIncome : 0,
+      topMarginalFederalIncomeTaxRate,
+      federalIncomeTaxBrackets,
       capitalLossDeduction: incomeData.capitalLossDeduction !== 0 ? incomeData.capitalLossDeduction : undefined,
     };
 
     const { capitalGainsTaxAmount, topMarginalCapitalGainsTaxRate, capitalGainsTaxBrackets } = this.processCapitalGainsTaxes({
-      taxableIncomeTaxedAsCapGains,
+      taxableIncomeTaxedAsCapitalGains,
       taxableIncomeTaxedAsOrdinary,
     });
     const capitalGainsTaxes: CapitalGainsTaxesData = {
-      taxableIncomeTaxedAsCapGains,
+      taxableIncomeTaxedAsCapitalGains,
       capitalGainsTaxAmount,
       effectiveCapitalGainsTaxRate:
-        incomeData.adjustedIncomeTaxedAsCapGains > 0 ? capitalGainsTaxAmount / incomeData.adjustedIncomeTaxedAsCapGains : 0,
+        incomeData.adjustedIncomeTaxedAsCapitalGains > 0 ? capitalGainsTaxAmount / incomeData.adjustedIncomeTaxedAsCapitalGains : 0,
       topMarginalCapitalGainsTaxRate,
       capitalGainsTaxBrackets,
     };
@@ -214,11 +216,14 @@ export class TaxProcessor {
     const earlyWithdrawalPenalties = this.processEarlyWithdrawalPenalties(incomeData.earlyWithdrawals);
 
     const totalTaxLiabilityExcludingFICA =
-      incomeTaxes.incomeTaxAmount + capitalGainsTaxes.capitalGainsTaxAmount + niit.niitAmount + earlyWithdrawalPenalties.totalPenaltyAmount;
+      federalIncomeTaxes.federalIncomeTaxAmount +
+      capitalGainsTaxes.capitalGainsTaxAmount +
+      niit.niitAmount +
+      earlyWithdrawalPenalties.totalPenaltyAmount;
     const difference = totalTaxLiabilityExcludingFICA - annualIncomesData.totalAmountWithheld;
 
     return {
-      incomeTaxes,
+      federalIncomeTaxes,
       capitalGainsTaxes,
       niit,
       earlyWithdrawalPenalties,
@@ -226,7 +231,7 @@ export class TaxProcessor {
       incomeSources: incomeData,
       totalTaxesDue: difference > 0 ? difference : 0,
       totalTaxesRefund: difference < 0 ? Math.abs(difference) : 0,
-      totalTaxableIncome: taxableIncomeTaxedAsOrdinary + taxableIncomeTaxedAsCapGains,
+      totalTaxableIncome: taxableIncomeTaxedAsOrdinary + taxableIncomeTaxedAsCapitalGains,
       adjustments: {
         taxDeductibleContributions: incomeData.taxDeductibleContributions,
         capitalLossDeduction: incomeData.capitalLossDeduction,
@@ -311,11 +316,11 @@ export class TaxProcessor {
 
     const totalAdjustments = taxDeductibleContributions + capitalLossDeduction;
     const adjustmentsAppliedToOrdinary = Math.min(totalAdjustments, incomeTaxedAsOrdinaryExceptSocSec);
-    const adjustmentsAppliedToCapGains = totalAdjustments - adjustmentsAppliedToOrdinary;
+    const adjustmentsAppliedToCapitalGains = totalAdjustments - adjustmentsAppliedToOrdinary;
 
     const adjustedIncomeTaxedAsOrdinaryExceptSocSec = incomeTaxedAsOrdinaryExceptSocSec - adjustmentsAppliedToOrdinary;
-    const adjustedIncomeTaxedAsCapGains = Math.max(0, incomeTaxedAsLtcg - adjustmentsAppliedToCapGains);
-    const adjustedGrossIncomeExceptSocSec = adjustedIncomeTaxedAsOrdinaryExceptSocSec + adjustedIncomeTaxedAsCapGains;
+    const adjustedIncomeTaxedAsCapitalGains = Math.max(0, incomeTaxedAsLtcg - adjustmentsAppliedToCapitalGains);
+    const adjustedGrossIncomeExceptSocSec = adjustedIncomeTaxedAsOrdinaryExceptSocSec + adjustedIncomeTaxedAsCapitalGains;
 
     const provisionalIncome = adjustedGrossIncomeExceptSocSec + socialSecurityIncome * 0.5;
     const { taxableSocialSecurityIncome, maxTaxableSocialSecurityPercentage } = this.getTaxablePortionOfSocialSecurityIncome({
@@ -325,7 +330,7 @@ export class TaxProcessor {
 
     const incomeTaxedAsOrdinary = incomeTaxedAsOrdinaryExceptSocSec + taxableSocialSecurityIncome;
     const adjustedIncomeTaxedAsOrdinary = adjustedIncomeTaxedAsOrdinaryExceptSocSec + taxableSocialSecurityIncome;
-    const adjustedGrossIncome = adjustedIncomeTaxedAsOrdinary + adjustedIncomeTaxedAsCapGains;
+    const adjustedGrossIncome = adjustedIncomeTaxedAsOrdinary + adjustedIncomeTaxedAsCapitalGains;
 
     const grossIncome = grossIncomeExceptSocSec + taxableSocialSecurityIncome;
     const totalIncome = grossIncome + taxFreeIncome + (socialSecurityIncome - taxableSocialSecurityIncome);
@@ -350,7 +355,7 @@ export class TaxProcessor {
       taxDeductibleContributions,
       adjustedGrossIncome,
       adjustedIncomeTaxedAsOrdinary,
-      adjustedIncomeTaxedAsCapGains,
+      adjustedIncomeTaxedAsCapitalGains,
       totalIncome,
       earlyWithdrawals: {
         rothEarnings: earlyRothEarningsWithdrawals,
@@ -389,24 +394,24 @@ export class TaxProcessor {
   }
 
   /** Calculates progressive income tax across ordinary income brackets (IRC §1) */
-  private processIncomeTaxes({ taxableIncomeTaxedAsOrdinary }: { taxableIncomeTaxedAsOrdinary: number }): {
-    incomeTaxAmount: number;
-    topMarginalIncomeTaxRate: number;
-    incomeTaxBrackets: IncomeTaxBracket[];
+  private processFederalIncomeTaxes({ taxableIncomeTaxedAsOrdinary }: { taxableIncomeTaxedAsOrdinary: number }): {
+    federalIncomeTaxAmount: number;
+    topMarginalFederalIncomeTaxRate: number;
+    federalIncomeTaxBrackets: FederalIncomeTaxBracket[];
   } {
-    let incomeTaxAmount = 0;
-    let topMarginalIncomeTaxRate = 0;
+    let federalIncomeTaxAmount = 0;
+    let topMarginalFederalIncomeTaxRate = 0;
 
-    const incomeTaxBrackets = this.getIncomeTaxBrackets();
-    for (const bracket of incomeTaxBrackets) {
+    const federalIncomeTaxBrackets = this.getFederalIncomeTaxBrackets();
+    for (const bracket of federalIncomeTaxBrackets) {
       if (taxableIncomeTaxedAsOrdinary <= bracket.min) break;
 
       const taxableInBracket = Math.min(taxableIncomeTaxedAsOrdinary, bracket.max) - bracket.min;
-      incomeTaxAmount += taxableInBracket * bracket.rate;
-      topMarginalIncomeTaxRate = bracket.rate;
+      federalIncomeTaxAmount += taxableInBracket * bracket.rate;
+      topMarginalFederalIncomeTaxRate = bracket.rate;
     }
 
-    return { incomeTaxAmount, topMarginalIncomeTaxRate, incomeTaxBrackets };
+    return { federalIncomeTaxAmount, topMarginalFederalIncomeTaxRate, federalIncomeTaxBrackets };
   }
 
   /**
@@ -416,17 +421,17 @@ export class TaxProcessor {
    * the applicable bracket, then only the gains portion is taxed.
    */
   private processCapitalGainsTaxes({
-    taxableIncomeTaxedAsCapGains,
+    taxableIncomeTaxedAsCapitalGains,
     taxableIncomeTaxedAsOrdinary,
   }: {
-    taxableIncomeTaxedAsCapGains: number;
+    taxableIncomeTaxedAsCapitalGains: number;
     taxableIncomeTaxedAsOrdinary: number;
   }): {
     capitalGainsTaxAmount: number;
     topMarginalCapitalGainsTaxRate: number;
     capitalGainsTaxBrackets: CapitalGainsTaxBracket[];
   } {
-    const totalTaxableIncome = taxableIncomeTaxedAsOrdinary + taxableIncomeTaxedAsCapGains;
+    const totalTaxableIncome = taxableIncomeTaxedAsOrdinary + taxableIncomeTaxedAsCapitalGains;
 
     let capitalGainsTaxAmount = 0;
     let topMarginalCapitalGainsTaxRate = 0;
@@ -529,14 +534,14 @@ export class TaxProcessor {
     }
   }
 
-  private getIncomeTaxBrackets(): IncomeTaxBracket[] {
+  private getFederalIncomeTaxBrackets(): FederalIncomeTaxBracket[] {
     switch (this.filingStatus) {
       case 'single':
-        return INCOME_TAX_BRACKETS_SINGLE;
+        return FEDERAL_INCOME_TAX_BRACKETS_SINGLE;
       case 'marriedFilingJointly':
-        return INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY;
+        return FEDERAL_INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY;
       case 'headOfHousehold':
-        return INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD;
+        return FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD;
     }
   }
 

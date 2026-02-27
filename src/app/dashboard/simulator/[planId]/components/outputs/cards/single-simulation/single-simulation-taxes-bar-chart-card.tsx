@@ -6,6 +6,7 @@ import { cn, formatChartString } from '@/lib/utils';
 import Card from '@/components/ui/card';
 import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data-points';
 import type { TaxesDataView } from '@/lib/types/chart-data-views';
+import type { TaxableIncomeReferenceLineMode, AgiReferenceLineMode } from '@/lib/types/reference-line-modes';
 import { Subheading } from '@/components/catalyst/heading';
 import { Dropdown, DropdownButton, DropdownItem, DropdownMenu, DropdownLabel } from '@/components/catalyst/dropdown';
 
@@ -15,12 +16,12 @@ interface SingleSimulationTaxesBarChartCardProps {
   selectedAge: number;
   rawChartData: SingleSimulationTaxesChartDataPoint[];
   dataView: TaxesDataView;
-  setReferenceLineMode: (mode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates') => void;
-  referenceLineMode: 'hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates';
-  referenceLineModes: readonly ('hideReferenceLines' | 'marginalCapGainsTaxRates' | 'marginalIncomeTaxRates')[];
-  setAgiReferenceLineMode: (mode: 'hideReferenceLines' | 'niitThreshold') => void;
-  agiReferenceLineMode: 'hideReferenceLines' | 'niitThreshold';
-  agiReferenceLineModes: readonly ('hideReferenceLines' | 'niitThreshold')[];
+  setReferenceLineMode: (mode: TaxableIncomeReferenceLineMode) => void;
+  referenceLineMode: TaxableIncomeReferenceLineMode;
+  referenceLineModes: readonly TaxableIncomeReferenceLineMode[];
+  setAgiReferenceLineMode: (mode: AgiReferenceLineMode) => void;
+  agiReferenceLineMode: AgiReferenceLineMode;
+  agiReferenceLineModes: readonly AgiReferenceLineMode[];
 }
 
 export default function SingleSimulationTaxesBarChartCard({
@@ -66,7 +67,7 @@ export default function SingleSimulationTaxesBarChartCard({
     case 'ordinaryIncome':
       title = 'Ordinary Income';
       break;
-    case 'capGainsAndDividends':
+    case 'capitalGainsAndDividends':
       title = 'Capital Gains & Dividends';
       break;
     case 'earlyWithdrawalPenalties':

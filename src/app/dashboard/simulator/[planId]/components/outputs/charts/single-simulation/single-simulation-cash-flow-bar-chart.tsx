@@ -86,8 +86,8 @@ export default function SingleSimulationCashFlowBarChart({
       desktop: ['Employer Match'],
     },
     expenses: {
-      mobile: ['Income Tax', 'FICA Tax', 'Cap Gains Tax', 'NIIT', 'EW Penalty'],
-      desktop: ['Income Tax', 'FICA Tax', 'Cap Gains Tax', 'NIIT', 'EW Penalties'],
+      mobile: ['Fed. Income Tax', 'FICA Tax', 'Cap Gains Tax', 'NIIT', 'EW Penalty'],
+      desktop: ['Fed. Income Tax', 'FICA Tax', 'Cap Gains Tax', 'NIIT', 'EW Penalties'],
     },
   };
 
@@ -178,17 +178,17 @@ export default function SingleSimulationCashFlowBarChart({
       break;
     }
     case 'expenses': {
-      const [incomeTaxLabel, ficaTaxLabel, capGainsTaxLabel, niitLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(
+      const [incomeTaxLabel, ficaTaxLabel, capitalGainsTaxLabel, niitLabel, earlyWithdrawalPenaltiesLabel] = getLabelsForScreenSize(
         dataView,
         isSmallScreen
       );
 
       transformedChartData = chartData.flatMap(
-        ({ perExpenseData, perAssetData, perDebtData, incomeTax, ficaTax, capGainsTax, niit, earlyWithdrawalPenalties }) => [
+        ({ perExpenseData, perAssetData, perDebtData, federalIncomeTax, ficaTax, capitalGainsTax, niit, earlyWithdrawalPenalties }) => [
           ...perExpenseData.map(({ name, expense }) => ({ name, amount: expense, color: 'var(--chart-1)' })),
-          { name: incomeTaxLabel, amount: incomeTax, color: 'var(--chart-2)' },
+          { name: incomeTaxLabel, amount: federalIncomeTax, color: 'var(--chart-2)' },
           { name: ficaTaxLabel, amount: ficaTax, color: 'var(--chart-2)' },
-          { name: capGainsTaxLabel, amount: capGainsTax, color: 'var(--chart-2)' },
+          { name: capitalGainsTaxLabel, amount: capitalGainsTax, color: 'var(--chart-2)' },
           { name: niitLabel, amount: niit, color: 'var(--chart-2)' },
           { name: earlyWithdrawalPenaltiesLabel, amount: earlyWithdrawalPenalties, color: 'var(--chart-2)' },
           ...perAssetData.map(({ name, loanPayment }) => ({ name, amount: loanPayment, color: 'var(--chart-3)' })),

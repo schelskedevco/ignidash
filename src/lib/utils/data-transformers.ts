@@ -441,15 +441,15 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
       adjustedGrossIncome: taxesData[i].adjustedGrossIncome,
       taxableIncome: taxesData[i].taxableIncome,
       ficaTax: taxesData[i].annualFicaTax,
-      fedIncomeTax: taxesData[i].annualIncomeTax,
-      fedCapitalGainsTax: taxesData[i].annualCapGainsTax,
+      federalIncomeTax: taxesData[i].annualFederalIncomeTax,
+      capitalGainsTax: taxesData[i].annualCapitalGainsTax,
       niit: taxesData[i].annualNiit,
       earlyWithdrawalPenalties: taxesData[i].annualEarlyWithdrawalPenalties,
       netInvestmentIncome: taxesData[i].netInvestmentIncome,
-      effectiveFedIncomeTaxRate: taxesData[i].effectiveIncomeTaxRate,
-      topMarginalFedIncomeTaxRate: taxesData[i].topMarginalIncomeTaxRate,
-      effectiveFedCapitalGainsTaxRate: taxesData[i].effectiveCapGainsTaxRate,
-      topMarginalFedCapitalGainsTaxRate: taxesData[i].topMarginalCapGainsTaxRate,
+      effectiveFederalIncomeTaxRate: taxesData[i].effectiveFederalIncomeTaxRate,
+      topMarginalFederalIncomeTaxRate: taxesData[i].topMarginalFederalIncomeTaxRate,
+      effectiveCapitalGainsTaxRate: taxesData[i].effectiveCapitalGainsTaxRate,
+      topMarginalCapitalGainsTaxRate: taxesData[i].topMarginalCapitalGainsTaxRate,
       taxDeductibleContributions: taxesData[i].taxDeductibleContributions,
       capitalLossDeduction: taxesData[i].capitalLossDeduction,
 
@@ -499,12 +499,12 @@ export function simulationResultToConvex(simulation: SimulationResult): ConvexSi
     });
   }
 
-  const fedIncomeTaxBrackets: ConvexSimulationResult['fedIncomeTaxBrackets'] = taxesData[0].incomeTaxBrackets;
-  const fedCapitalGainsTaxBrackets: ConvexSimulationResult['fedCapitalGainsTaxBrackets'] = taxesData[0].capitalGainsTaxBrackets;
+  const federalIncomeTaxBrackets: ConvexSimulationResult['federalIncomeTaxBrackets'] = taxesData[0].federalIncomeTaxBrackets;
+  const capitalGainsTaxBrackets: ConvexSimulationResult['capitalGainsTaxBrackets'] = taxesData[0].capitalGainsTaxBrackets;
   const standardDeduction: ConvexSimulationResult['standardDeduction'] = taxesData[0].standardDeduction;
   const niitThreshold: ConvexSimulationResult['niitThreshold'] = taxesData[0].niitThreshold;
 
-  return { simulationResult, fedIncomeTaxBrackets, fedCapitalGainsTaxBrackets, standardDeduction, niitThreshold };
+  return { simulationResult, federalIncomeTaxBrackets, capitalGainsTaxBrackets, standardDeduction, niitThreshold };
 }
 
 // ============================================================================

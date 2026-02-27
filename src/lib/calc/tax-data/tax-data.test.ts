@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 
 import {
-  INCOME_TAX_BRACKETS_SINGLE,
-  INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY,
-  INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD,
-} from './income-tax-brackets';
+  FEDERAL_INCOME_TAX_BRACKETS_SINGLE,
+  FEDERAL_INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY,
+  FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD,
+} from './federal-income-tax-brackets';
 import {
   CAPITAL_GAINS_TAX_BRACKETS_SINGLE,
   CAPITAL_GAINS_TAX_BRACKETS_MARRIED_FILING_JOINTLY,
@@ -25,21 +25,21 @@ import {
 describe('Tax Data Validation (2026 IRS values)', () => {
   describe('income tax brackets', () => {
     it('should have correct Single 10% bracket: $0-$12,400', () => {
-      expect(INCOME_TAX_BRACKETS_SINGLE[0]).toEqual({ min: 0, max: 12400, rate: 0.1 });
+      expect(FEDERAL_INCOME_TAX_BRACKETS_SINGLE[0]).toEqual({ min: 0, max: 12400, rate: 0.1 });
     });
 
     it('should have correct MFJ 22% bracket: $100,800-$211,400', () => {
-      expect(INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY[2]).toEqual({ min: 100800, max: 211400, rate: 0.22 });
+      expect(FEDERAL_INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY[2]).toEqual({ min: 100800, max: 211400, rate: 0.22 });
     });
 
     it('should have correct HOH 10% bracket: $0-$17,700', () => {
-      expect(INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD[0]).toEqual({ min: 0, max: 17700, rate: 0.1 });
+      expect(FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD[0]).toEqual({ min: 0, max: 17700, rate: 0.1 });
     });
 
     it.each([
-      ['single', INCOME_TAX_BRACKETS_SINGLE],
-      ['MFJ', INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY],
-      ['HOH', INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD],
+      ['single', FEDERAL_INCOME_TAX_BRACKETS_SINGLE],
+      ['MFJ', FEDERAL_INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY],
+      ['HOH', FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD],
     ] as const)('%s brackets should be sorted by min ascending', (_name, brackets) => {
       for (let i = 1; i < brackets.length; i++) {
         expect(brackets[i].min).toBeGreaterThanOrEqual(brackets[i - 1].min);
@@ -47,25 +47,25 @@ describe('Tax Data Validation (2026 IRS values)', () => {
     });
 
     it.each([
-      ['single', INCOME_TAX_BRACKETS_SINGLE],
-      ['MFJ', INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY],
-      ['HOH', INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD],
+      ['single', FEDERAL_INCOME_TAX_BRACKETS_SINGLE],
+      ['MFJ', FEDERAL_INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY],
+      ['HOH', FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD],
     ] as const)('%s brackets should have last bracket max as Infinity', (_name, brackets) => {
       expect(brackets[brackets.length - 1].max).toBe(Infinity);
     });
 
     it.each([
-      ['single', INCOME_TAX_BRACKETS_SINGLE],
-      ['MFJ', INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY],
-      ['HOH', INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD],
+      ['single', FEDERAL_INCOME_TAX_BRACKETS_SINGLE],
+      ['MFJ', FEDERAL_INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY],
+      ['HOH', FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD],
     ] as const)('%s brackets should have 7 brackets', (_name, brackets) => {
       expect(brackets).toHaveLength(7);
     });
 
     it.each([
-      ['single', INCOME_TAX_BRACKETS_SINGLE],
-      ['MFJ', INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY],
-      ['HOH', INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD],
+      ['single', FEDERAL_INCOME_TAX_BRACKETS_SINGLE],
+      ['MFJ', FEDERAL_INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY],
+      ['HOH', FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD],
     ] as const)('%s brackets should be contiguous (each bracket.max === next bracket.min)', (_name, brackets) => {
       for (let i = 0; i < brackets.length - 1; i++) {
         expect(brackets[i].max).toBe(brackets[i + 1].min);

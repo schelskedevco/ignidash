@@ -63,7 +63,7 @@ export default function SingleSimulationTaxesLineChartCard({
             </optgroup>
             <optgroup label="Income Sources">
               <option value="ordinaryIncome">Ordinary Income</option>
-              <option value="capGainsAndDividends">Capital Gains &amp; Dividends</option>
+              <option value="capitalGainsAndDividends">Capital Gains &amp; Dividends</option>
               <option value="investmentIncome">Investment Income</option>
               <option value="retirementDistributions">Retirement Distributions</option>
               <option value="taxFreeIncome">Tax-Free Income</option>

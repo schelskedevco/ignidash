@@ -23,7 +23,7 @@ export type TaxesDataView =
   | 'retirementDistributions'
   | 'taxFreeIncome'
   | 'ordinaryIncome'
-  | 'capGainsAndDividends'
+  | 'capitalGainsAndDividends'
   | 'earlyWithdrawalPenalties'
   | 'adjustmentsAndDeductions'
   | 'socialSecurityIncome'

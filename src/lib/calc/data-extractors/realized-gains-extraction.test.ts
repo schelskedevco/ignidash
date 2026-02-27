@@ -41,15 +41,15 @@ const createReturnsData = (): ReturnsData => ({
  */
 function createZeroTaxesData(realizedGains: number): TaxesData {
   return {
-    incomeTaxes: {
+    federalIncomeTaxes: {
       taxableIncomeTaxedAsOrdinary: 0,
-      incomeTaxBrackets: [],
-      incomeTaxAmount: 0,
-      effectiveIncomeTaxRate: 0,
-      topMarginalIncomeTaxRate: 0,
+      federalIncomeTaxBrackets: [],
+      federalIncomeTaxAmount: 0,
+      effectiveFederalIncomeTaxRate: 0,
+      topMarginalFederalIncomeTaxRate: 0,
     },
     capitalGainsTaxes: {
-      taxableIncomeTaxedAsCapGains: 0,
+      taxableIncomeTaxedAsCapitalGains: 0,
       capitalGainsTaxBrackets: [],
       capitalGainsTaxAmount: 0,
       effectiveCapitalGainsTaxRate: 0,
@@ -97,7 +97,7 @@ function createZeroTaxesData(realizedGains: number): TaxesData {
       taxDeductibleContributions: 0,
       adjustedGrossIncome: 0,
       adjustedIncomeTaxedAsOrdinary: 0,
-      adjustedIncomeTaxedAsCapGains: 0,
+      adjustedIncomeTaxedAsCapitalGains: 0,
       totalIncome: 0,
       earlyWithdrawals: { rothEarnings: 0, '401kAndIra': 0, hsa: 0 },
     },
