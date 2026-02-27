@@ -526,14 +526,14 @@ describe('ReturnsProcessor.getAnnualData', () => {
     } as SimulationState;
 
     // Provider returns different rates based on year
-    // Note: yields and inflationRate are percentages (e.g., 2 = 2%), returns are decimals (0.08 = 8%)
+    // All values are decimals (e.g., 0.02 = 2%)
     const provider: ReturnsProvider = {
       getReturns: () => {
         const isFirstYear = state.time.year === 0;
         return {
           returns: { stocks: isFirstYear ? 0.08 : 0.12, bonds: 0.04, cash: 0.02 },
-          yields: { stocks: isFirstYear ? 2 : 4, bonds: 3, cash: 1 }, // percentages
-          inflationRate: isFirstYear ? 3 : 5, // percentage
+          yields: { stocks: isFirstYear ? 0.02 : 0.04, bonds: 0.03, cash: 0.01 },
+          inflationRate: isFirstYear ? 0.03 : 0.05,
         };
       },
     };
@@ -553,10 +553,9 @@ describe('ReturnsProcessor.getAnnualData', () => {
 
     // MUST use first month's rates (year 0: 8% stocks, 2% yield, 3% inflation)
     // NOT last month's rates (year 1: 12% stocks, 4% yield, 5% inflation)
-    // Note: yields/inflation are converted from percentages to decimals (2 -> 0.02)
     expect(annualData.annualReturnRates.stocks).toBe(0.08);
-    expect(annualData.annualYieldRates.stocks).toBe(0.02); // 2% -> 0.02
-    expect(annualData.annualInflationRate).toBe(0.03); // 3% -> 0.03
+    expect(annualData.annualYieldRates.stocks).toBe(0.02);
+    expect(annualData.annualInflationRate).toBe(0.03);
   });
 
   it('returns cumulativeReturnAmounts from last month only, not summed', () => {
@@ -575,7 +574,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       getReturns: () => ({
         returns: { stocks: 0.08, bonds: 0.04, cash: 0.02 },
         yields: { stocks: 0.02, bonds: 0.03, cash: 0.01 },
-        inflationRate: 3,
+        inflationRate: 0.03,
       }),
     };
 
@@ -608,7 +607,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       getReturns: () => ({
         returns: { stocks: 0.08, bonds: 0.04, cash: 0.02 },
         yields: { stocks: 0.02, bonds: 0.03, cash: 0.01 },
-        inflationRate: 3,
+        inflationRate: 0.03,
       }),
     };
 
@@ -641,7 +640,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       getReturns: () => ({
         returns: { stocks: 0.08, bonds: 0.04, cash: 0.02 },
         yields: { stocks: 0.02, bonds: 0.03, cash: 0.01 },
-        inflationRate: 3,
+        inflationRate: 0.03,
       }),
     };
 
@@ -672,7 +671,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       getReturns: () => ({
         returns: { stocks: 0.08, bonds: 0.04, cash: 0.02 },
         yields: { stocks: 0.02, bonds: 0.03, cash: 0.01 },
-        inflationRate: 3,
+        inflationRate: 0.03,
       }),
     };
 
@@ -734,8 +733,8 @@ describe('ReturnsProcessor.getAnnualData', () => {
     const provider: ReturnsProvider = {
       getReturns: () => ({
         returns: { stocks: 0.08, bonds: 0.04, cash: 0.02 },
-        yields: { stocks: 2, bonds: 3, cash: 1 },
-        inflationRate: 3,
+        yields: { stocks: 0.02, bonds: 0.03, cash: 0.01 },
+        inflationRate: 0.03,
       }),
     };
 

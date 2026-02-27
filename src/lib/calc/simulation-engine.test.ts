@@ -446,7 +446,7 @@ describe('FixedReturnsProvider', () => {
     expect(returns.stocks).toBeCloseTo(1.1 / 1.03 - 1, 6);
     expect(returns.bonds).toBeCloseTo(1.05 / 1.03 - 1, 6);
     expect(returns.cash).toBeCloseTo(0, 6);
-    expect(inflationRate).toBe(3);
+    expect(inflationRate).toBe(0.03);
   });
 
   it('should return consistent values regardless of phase', () => {

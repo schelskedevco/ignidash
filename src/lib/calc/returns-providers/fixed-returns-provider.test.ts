@@ -40,7 +40,7 @@ describe('FixedReturnsProvider', () => {
       expect(returns.stocks).toBeCloseTo(1.1 / 1.03 - 1, 6);
       expect(returns.bonds).toBeCloseTo(1.05 / 1.03 - 1, 6);
       expect(returns.cash).toBeCloseTo(0, 6);
-      expect(inflationRate).toBe(3);
+      expect(inflationRate).toBe(0.03);
     });
 
     it('should handle high inflation scenario (10%+)', () => {
@@ -63,7 +63,7 @@ describe('FixedReturnsProvider', () => {
       expect(returns.stocks).toBeCloseTo(1.12 / 1.1 - 1, 6);
       expect(returns.bonds).toBeCloseTo(1.08 / 1.1 - 1, 6);
       expect(returns.cash).toBeCloseTo(1.06 / 1.1 - 1, 6);
-      expect(inflationRate).toBe(10);
+      expect(inflationRate).toBe(0.1);
 
       // Verify bonds and cash have negative real returns
       expect(returns.bonds).toBeLessThan(0);
@@ -111,7 +111,7 @@ describe('FixedReturnsProvider', () => {
       expect(returns.stocks).toBeCloseTo(1.05 / 0.98 - 1, 6);
       expect(returns.bonds).toBeCloseTo(1.03 / 0.98 - 1, 6);
       expect(returns.cash).toBeCloseTo(1.01 / 0.98 - 1, 6);
-      expect(inflationRate).toBe(-2);
+      expect(inflationRate).toBe(-0.02);
 
       // Verify all real returns are higher than nominal
       expect(returns.stocks).toBeGreaterThan(0.05);
@@ -140,6 +140,28 @@ describe('FixedReturnsProvider', () => {
       expect(returns.bonds).toBeCloseTo(0.04, 6);
       expect(returns.cash).toBeCloseTo(0.02, 6);
       expect(inflationRate).toBe(0);
+    });
+
+    it('should return all values in decimal format', () => {
+      const inputs = createSimulatorInputs({
+        marketAssumptions: {
+          ...createDefaultMarketAssumptions(),
+          stockReturn: 10,
+          bondReturn: 5,
+          cashReturn: 3,
+          inflationRate: 3,
+          stockYield: 2.5,
+          bondYield: 4.0,
+        },
+      });
+      const provider = new FixedReturnsProvider(inputs);
+      const result = provider.getReturns(null);
+
+      // All fields should be decimals (less than 1 for typical rates)
+      expect(Math.abs(result.inflationRate)).toBeLessThan(1);
+      expect(Math.abs(result.yields.stocks)).toBeLessThan(1);
+      expect(Math.abs(result.yields.bonds)).toBeLessThan(1);
+      expect(Math.abs(result.yields.cash)).toBeLessThan(1);
     });
 
     it('should handle zero nominal returns with positive inflation', () => {
@@ -186,8 +208,8 @@ describe('FixedReturnsProvider', () => {
     });
   });
 
-  describe('yield passthrough', () => {
-    it('should pass through yield rates unchanged', () => {
+  describe('yield conversion', () => {
+    it('should convert yield rates from percentage to decimal', () => {
       const inputs = createSimulatorInputs({
         marketAssumptions: {
           ...createDefaultMarketAssumptions(),
@@ -199,9 +221,9 @@ describe('FixedReturnsProvider', () => {
       const provider = new FixedReturnsProvider(inputs);
       const { yields } = provider.getReturns(null);
 
-      expect(yields.stocks).toBe(2.5);
-      expect(yields.bonds).toBe(4.0);
-      expect(yields.cash).toBe(3.0);
+      expect(yields.stocks).toBe(0.025);
+      expect(yields.bonds).toBe(0.04);
+      expect(yields.cash).toBe(0.03);
     });
   });
 

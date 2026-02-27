@@ -87,8 +87,8 @@ export class LcgHistoricalBacktestReturnsProvider implements ReturnsProvider {
 
     return {
       returns,
-      yields: { stocks: yieldsData.stockYield * 100, bonds: yieldsData.bondYield * 100, cash: nominalCashYield * 100 },
-      inflationRate: returnsData.inflationRate * 100,
+      yields: { stocks: yieldsData.stockYield, bonds: yieldsData.bondYield, cash: nominalCashYield },
+      inflationRate: returnsData.inflationRate,
     };
   }
 

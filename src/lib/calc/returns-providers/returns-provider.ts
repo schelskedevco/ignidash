@@ -10,8 +10,11 @@ import type { PhaseData } from '../phase';
 
 /** Output from a returns provider for a single simulation year */
 export interface ReturnsProviderData {
+  /** Real return rates as decimals (e.g. 0.07 = 7%) */
   returns: AssetReturnRates;
+  /** Nominal yield rates as decimals (e.g. 0.03 = 3%) */
   yields: AssetYieldRates;
+  /** Annual inflation rate as a decimal (e.g. 0.03 = 3%) */
   inflationRate: number;
 }
 

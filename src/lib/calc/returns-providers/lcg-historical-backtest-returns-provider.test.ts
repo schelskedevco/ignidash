@@ -36,7 +36,7 @@ describe('LcgHistoricalBacktestReturnsProvider', () => {
       expect(result.returns.stocks).toBe(expectedData.stockReturn);
       expect(result.returns.bonds).toBe(expectedData.bondReturn);
       expect(result.returns.cash).toBe(expectedData.cashReturn);
-      expect(result.inflationRate).toBeCloseTo(expectedData.inflationRate * 100, 10); // Converted to percentage
+      expect(result.inflationRate).toBeCloseTo(expectedData.inflationRate, 10);
     });
 
     it('should produce consistent results with same seed', () => {
@@ -152,6 +152,19 @@ describe('LcgHistoricalBacktestReturnsProvider', () => {
       const expectedData = nyuHistoricalData.find((d) => d.year === 2000)!;
       expect(result.returns.stocks).toBe(expectedData.stockReturn);
       expect(result.returns.bonds).toBe(expectedData.bondReturn);
+    });
+  });
+
+  describe('decimal format contract', () => {
+    it('should return all values in decimal format', () => {
+      const provider = new LcgHistoricalBacktestReturnsProvider(42, 1950, undefined);
+      const result = provider.getReturns(phaseData);
+
+      // All fields should be decimals (less than 1 for typical rates)
+      expect(Math.abs(result.inflationRate)).toBeLessThan(1);
+      expect(Math.abs(result.yields.stocks)).toBeLessThan(1);
+      expect(Math.abs(result.yields.bonds)).toBeLessThan(1);
+      expect(Math.abs(result.yields.cash)).toBeLessThan(1);
     });
   });
 

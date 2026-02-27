@@ -219,14 +219,14 @@ describe('StochasticReturnsProvider', () => {
           const result = scenarioProvider.getReturns(phaseData);
 
           // Convert real returns back to nominal for statistical analysis
-          const nominalStock = (1 + result.returns.stocks) * (1 + result.inflationRate / 100) - 1;
-          const nominalBond = (1 + result.returns.bonds) * (1 + result.inflationRate / 100) - 1;
-          const nominalCash = (1 + result.returns.cash) * (1 + result.inflationRate / 100) - 1;
+          const nominalStock = (1 + result.returns.stocks) * (1 + result.inflationRate) - 1;
+          const nominalBond = (1 + result.returns.bonds) * (1 + result.inflationRate) - 1;
+          const nominalCash = (1 + result.returns.cash) * (1 + result.inflationRate) - 1;
 
           returns.stocks.push(nominalStock);
           returns.bonds.push(nominalBond);
           returns.cash.push(nominalCash);
-          returns.inflation.push(result.inflationRate / 100);
+          returns.inflation.push(result.inflationRate);
         }
       }
 
@@ -377,9 +377,9 @@ describe('StochasticReturnsProvider', () => {
         for (let year = 1; year <= yearsPerScenario; year++) {
           const result = scenarioProvider.getReturns(phaseData);
 
-          yields.bondYield.push(result.yields.bonds / 100);
-          yields.stockYield.push(result.yields.stocks / 100);
-          yields.inflation.push(result.inflationRate / 100);
+          yields.bondYield.push(result.yields.bonds);
+          yields.stockYield.push(result.yields.stocks);
+          yields.inflation.push(result.inflationRate);
         }
       }
 
@@ -418,6 +418,19 @@ describe('StochasticReturnsProvider', () => {
 
       expect(maxBondYield).toBeLessThan(1.0); // Less than 100%
       expect(maxStockYield).toBeLessThan(1.0); // Less than 100%
+    });
+  });
+
+  describe('decimal format contract', () => {
+    it('should return all values in decimal format', () => {
+      const provider = new StochasticReturnsProvider(defaultInputs, 12345);
+      const result = provider.getReturns(phaseData);
+
+      // All fields should be decimals (less than 1 for typical rates)
+      expect(Math.abs(result.inflationRate)).toBeLessThan(1);
+      expect(Math.abs(result.yields.stocks)).toBeLessThan(1);
+      expect(Math.abs(result.yields.bonds)).toBeLessThan(1);
+      expect(Math.abs(result.yields.cash)).toBeLessThan(1);
     });
   });
 

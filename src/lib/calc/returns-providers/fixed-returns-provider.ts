@@ -28,8 +28,8 @@ export class FixedReturnsProvider implements ReturnsProvider {
 
     return {
       returns: { stocks: realStockReturn, bonds: realBondReturn, cash: realCashReturn },
-      yields: { stocks: stockYield, bonds: bondYield, cash: cashReturn },
-      inflationRate,
+      yields: { stocks: stockYield / 100, bonds: bondYield / 100, cash: cashReturn / 100 },
+      inflationRate: inflationRate / 100,
     };
   }
 }
