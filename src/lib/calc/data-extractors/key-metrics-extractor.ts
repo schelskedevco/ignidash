@@ -5,7 +5,7 @@
  * from single or multi-simulation results for display in the dashboard.
  */
 
-import type { KeyMetrics } from '@/lib/types/key-metrics';
+import type { SingleSimulationKeyMetrics, MultiSimulationKeyMetrics } from '@/lib/types/key-metrics';
 import { SimulationDataExtractor } from '@/lib/calc/data-extractors/simulation-data-extractor';
 import { StatsUtils } from '@/lib/utils/stats-utils';
 
@@ -18,7 +18,7 @@ export abstract class KeyMetricsExtractor {
    * @param simulation - A single simulation result
    * @returns Key metrics including success, retirement age, and lifetime taxes
    */
-  static extractSingleSimulationMetrics(simulation: SimulationResult): KeyMetrics {
+  static extractSingleSimulationMetrics(simulation: SimulationResult): SingleSimulationKeyMetrics {
     const { data, context } = simulation;
 
     const startAge = context.startAge; // Not rounded to integer
@@ -80,7 +80,7 @@ export abstract class KeyMetricsExtractor {
       lifetimeTaxesAndPenalties,
       finalPortfolio,
       progressToRetirement,
-      areValuesMeans: false,
+      type: 'single',
     };
   }
 
@@ -89,14 +89,19 @@ export abstract class KeyMetricsExtractor {
    * @param simulations - Multi-simulation result set (e.g., Monte Carlo)
    * @returns Averaged key metrics with success rate as proportion of successful runs
    */
-  static extractMultiSimulationMetrics(simulations: MultiSimulationResult): KeyMetrics {
-    const keyMetricsList: KeyMetrics[] = simulations.simulations.map(([, sim]) => this.extractSingleSimulationMetrics(sim));
+  static extractMultiSimulationMetrics(simulations: MultiSimulationResult): MultiSimulationKeyMetrics {
+    const keyMetricsList: SingleSimulationKeyMetrics[] = simulations.simulations.map(([, sim]) => this.extractSingleSimulationMetrics(sim));
 
-    const meanOrNull = (getter: (km: KeyMetrics) => number | null): number | null => {
+    const meanOrNull = (getter: (km: SingleSimulationKeyMetrics) => number | null): number | null => {
       const values = keyMetricsList.map(getter).filter((v): v is number => v !== null);
       const mean = StatsUtils.mean(values);
       return mean !== -1 ? mean : null;
     };
+
+    const retirementAges = keyMetricsList.map((km) => km.retirementAge).filter((v): v is number => v !== null);
+    const bankruptcyAges = keyMetricsList.map((km) => km.bankruptcyAge).filter((v): v is number => v !== null);
+    const chanceOfRetirement = retirementAges.length / keyMetricsList.length;
+    const chanceOfBankruptcy = bankruptcyAges.length / keyMetricsList.length;
 
     return {
       success: keyMetricsList.reduce((sum, km) => sum + km.success, 0) / keyMetricsList.length,
@@ -108,7 +113,13 @@ export abstract class KeyMetricsExtractor {
       lifetimeTaxesAndPenalties: StatsUtils.mean(keyMetricsList.map((km) => km.lifetimeTaxesAndPenalties)),
       finalPortfolio: StatsUtils.mean(keyMetricsList.map((km) => km.finalPortfolio)),
       progressToRetirement: meanOrNull((km) => km.progressToRetirement),
-      areValuesMeans: true,
+      type: 'multi',
+      chanceOfRetirement,
+      chanceOfBankruptcy,
+      minRetirementAge: retirementAges.length > 0 ? Math.min(...retirementAges) : null,
+      maxRetirementAge: retirementAges.length > 0 ? Math.max(...retirementAges) : null,
+      minBankruptcyAge: bankruptcyAges.length > 0 ? Math.min(...bankruptcyAges) : null,
+      maxBankruptcyAge: bankruptcyAges.length > 0 ? Math.max(...bankruptcyAges) : null,
     };
   }
 }

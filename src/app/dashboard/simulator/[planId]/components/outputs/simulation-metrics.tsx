@@ -79,7 +79,7 @@ export default function SimulationMetrics({ keyMetrics, simulationResult }: Simu
       </div>
     ) : null;
 
-  const metricName = (name: string) => (keyMetrics.areValuesMeans ? `Mean ${name}` : name);
+  const metricName = (name: string) => (keyMetrics.type === 'multi' ? `Mean ${name}` : name);
 
   return (
     <div className="grid grid-cols-2 gap-2 2xl:grid-cols-3">

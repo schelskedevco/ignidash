@@ -62,12 +62,11 @@ const keyMetricsForDisplay = (keyMetrics: KeyMetrics) => {
     lifetimeTaxesAndPenalties,
     finalPortfolio,
     progressToRetirement,
-    areValuesMeans,
   } = keyMetrics;
 
   const formatters = {
     success: (v: number) =>
-      areValuesMeans ? `${formatNumber(v * 100, 1)}%` : v >= 0.99 ? 'Yes!' : v <= 0.01 ? 'No' : `${formatNumber(v * 100, 1)}%`,
+      keyMetrics.type === 'multi' ? `${formatNumber(v * 100, 1)}%` : v >= 0.99 ? 'Yes!' : v <= 0.01 ? 'No' : `${formatNumber(v * 100, 1)}%`,
     retirementAge: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
     yearsToRetirement: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
     bankruptcyAge: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
@@ -485,7 +484,7 @@ const formatKeyMetrics = (keyMetrics: KeyMetrics | null): string => {
     progressToRetirementForDisplay,
   } = keyMetricsForDisplay(keyMetrics);
 
-  return [
+  const lines = [
     `  - Success: ${successForDisplay}`,
     `  - Retirement Age: ${retirementAgeForDisplay}`,
     `  - Bankruptcy Age: ${bankruptcyAgeForDisplay}`,
@@ -493,7 +492,25 @@ const formatKeyMetrics = (keyMetrics: KeyMetrics | null): string => {
     `  - Lifetime Taxes/Penalties: ${lifetimeTaxesAndPenaltiesForDisplay}`,
     `  - Final Portfolio: ${finalPortfolioForDisplay}`,
     `  - Progress to Retirement: ${progressToRetirementForDisplay}`,
-  ].join('\n');
+  ];
+
+  if (keyMetrics.type === 'multi') {
+    const retPct = `${(keyMetrics.chanceOfRetirement * 100).toFixed(1)}%`;
+    const retRange =
+      keyMetrics.minRetirementAge !== null && keyMetrics.maxRetirementAge !== null
+        ? ` (range: ${keyMetrics.minRetirementAge}–${keyMetrics.maxRetirementAge})`
+        : '';
+    lines.push(`  - Chance of Retirement: ${retPct}${retRange}`);
+
+    const bankPct = `${(keyMetrics.chanceOfBankruptcy * 100).toFixed(1)}%`;
+    const bankRange =
+      keyMetrics.minBankruptcyAge !== null && keyMetrics.maxBankruptcyAge !== null
+        ? ` (range: ${keyMetrics.minBankruptcyAge}–${keyMetrics.maxBankruptcyAge})`
+        : '';
+    lines.push(`  - Chance of Bankruptcy: ${bankPct}${bankRange}`);
+  }
+
+  return lines.join('\n');
 };
 
 type D = SimulationResult['simulationResult'][number];

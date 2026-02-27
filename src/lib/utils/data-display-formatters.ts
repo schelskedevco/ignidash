@@ -161,12 +161,11 @@ export const keyMetricsForDisplay = (keyMetrics: KeyMetrics) => {
     lifetimeTaxesAndPenalties,
     finalPortfolio,
     progressToRetirement,
-    areValuesMeans,
   } = keyMetrics;
 
   const formatters = {
     success: (v: number) =>
-      areValuesMeans ? `${formatNumber(v * 100, 1)}%` : v >= 0.99 ? 'Yes!' : v <= 0.01 ? 'No' : `${formatNumber(v * 100, 1)}%`,
+      keyMetrics.type === 'multi' ? `${formatNumber(v * 100, 1)}%` : v >= 0.99 ? 'Yes!' : v <= 0.01 ? 'No' : `${formatNumber(v * 100, 1)}%`,
     retirementAge: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
     yearsToRetirement: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),
     bankruptcyAge: (v: number | null) => (v !== null ? `${formatNumber(v, 0)}` : '∞'),

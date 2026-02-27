@@ -445,6 +445,15 @@ describe('KeyMetricsExtractor', () => {
 
       // 3 successes out of 5
       expect(metrics.success).toBeCloseTo(0.6, 3);
+
+      // All 5 simulations have fixedAge retirement, so all retire
+      expect(metrics.chanceOfRetirement).toBe(1);
+      // 1 out of 5 goes bankrupt
+      expect(metrics.chanceOfBankruptcy).toBeCloseTo(0.2, 3);
+      expect(metrics.minRetirementAge).toBe(65);
+      expect(metrics.maxRetirementAge).toBe(65);
+      expect(metrics.minBankruptcyAge).toBe(75);
+      expect(metrics.maxBankruptcyAge).toBe(75);
     });
 
     it('calculates mean retirement age excluding nulls', () => {
@@ -498,6 +507,15 @@ describe('KeyMetricsExtractor', () => {
 
       // Only 2 simulations have retirement ages, mean of 60 and 65 = 62.5
       expect(metrics.retirementAge).toBeCloseTo(62.5, 3);
+
+      // 2 out of 3 retire
+      expect(metrics.chanceOfRetirement).toBeCloseTo(2 / 3, 3);
+      expect(metrics.minRetirementAge).toBe(60);
+      expect(metrics.maxRetirementAge).toBe(65);
+      // None go bankrupt
+      expect(metrics.chanceOfBankruptcy).toBe(0);
+      expect(metrics.minBankruptcyAge).toBeNull();
+      expect(metrics.maxBankruptcyAge).toBeNull();
     });
 
     it('calculates mean final portfolio across all simulations', () => {
@@ -527,7 +545,68 @@ describe('KeyMetricsExtractor', () => {
       expect(metrics.lifetimeTaxesAndPenalties).toBeCloseTo(199650, 0);
     });
 
-    it('sets areValuesMeans to true for multi-simulation', () => {
+    it('computes chance and range fields for varied retirement and bankruptcy ages', () => {
+      const simulations: Array<[number, SimulationResult]> = [
+        [1, createSimulationResult({ startAge: 30, years: 50, retirementAge: 55, finalPortfolioValue: 2000000 })],
+        [2, createSimulationResult({ startAge: 30, years: 50, retirementAge: 60, bankruptcyYear: 45, finalPortfolioValue: 0 })],
+        [3, createSimulationResult({ startAge: 30, years: 50, retirementAge: 65, bankruptcyYear: 40, finalPortfolioValue: 0 })],
+        [4, createSimulationResult({ startAge: 30, years: 50, retirementAge: 58, finalPortfolioValue: 1500000 })],
+      ];
+
+      const multiResult = createMultiSimulationResult(simulations);
+      const metrics = KeyMetricsExtractor.extractMultiSimulationMetrics(multiResult);
+
+      expect(metrics.chanceOfRetirement).toBe(1);
+      expect(metrics.minRetirementAge).toBe(55);
+      expect(metrics.maxRetirementAge).toBe(65);
+
+      expect(metrics.chanceOfBankruptcy).toBe(0.5);
+      expect(metrics.minBankruptcyAge).toBe(70);
+      expect(metrics.maxBankruptcyAge).toBe(75);
+    });
+
+    it('sets age ranges to null when no simulations retire or go bankrupt', () => {
+      // All simulations use swrTarget and never retire
+      const neverRetiresData: SimulationDataPoint[] = [];
+      for (let i = 0; i <= 40; i++) {
+        neverRetiresData.push(
+          createDataPoint({
+            age: 30 + i,
+            phase: 'accumulation',
+            totalValue: 500000 + i * 10000,
+          })
+        );
+      }
+      const neverRetiresSim: SimulationResult = {
+        data: neverRetiresData,
+        context: {
+          startAge: 30,
+          endAge: 70,
+          yearsToSimulate: 40,
+          startDate: '2024-01-01',
+          endDate: '2064-01-01',
+          retirementStrategy: { type: 'swrTarget', safeWithdrawalRate: 4 },
+          rmdAge: 73,
+        },
+      };
+
+      const simulations: Array<[number, SimulationResult]> = [
+        [1, neverRetiresSim],
+        [2, neverRetiresSim],
+      ];
+
+      const multiResult = createMultiSimulationResult(simulations);
+      const metrics = KeyMetricsExtractor.extractMultiSimulationMetrics(multiResult);
+
+      expect(metrics.chanceOfRetirement).toBe(0);
+      expect(metrics.chanceOfBankruptcy).toBe(0);
+      expect(metrics.minRetirementAge).toBeNull();
+      expect(metrics.maxRetirementAge).toBeNull();
+      expect(metrics.minBankruptcyAge).toBeNull();
+      expect(metrics.maxBankruptcyAge).toBeNull();
+    });
+
+    it('sets type to multi for multi-simulation', () => {
       const simulations: Array<[number, SimulationResult]> = [
         [1, createSimulationResult({ startAge: 30, years: 50, retirementAge: 65, finalPortfolioValue: 2000000 })],
       ];
@@ -535,7 +614,7 @@ describe('KeyMetricsExtractor', () => {
       const multiResult = createMultiSimulationResult(simulations);
       const metrics = KeyMetricsExtractor.extractMultiSimulationMetrics(multiResult);
 
-      expect(metrics.areValuesMeans).toBe(true);
+      expect(metrics.type).toBe('multi');
     });
   });
 });

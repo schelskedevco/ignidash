@@ -1,4 +1,4 @@
-export interface KeyMetrics {
+export interface KeyMetricsBase {
   success: number;
   retirementAge: number | null;
   yearsToRetirement: number | null;
@@ -8,5 +8,20 @@ export interface KeyMetrics {
   lifetimeTaxesAndPenalties: number;
   finalPortfolio: number;
   progressToRetirement: number | null;
-  areValuesMeans: boolean;
 }
+
+export interface SingleSimulationKeyMetrics extends KeyMetricsBase {
+  type: 'single';
+}
+
+export interface MultiSimulationKeyMetrics extends KeyMetricsBase {
+  type: 'multi';
+  chanceOfRetirement: number;
+  chanceOfBankruptcy: number;
+  minRetirementAge: number | null;
+  maxRetirementAge: number | null;
+  minBankruptcyAge: number | null;
+  maxBankruptcyAge: number | null;
+}
+
+export type KeyMetrics = SingleSimulationKeyMetrics | MultiSimulationKeyMetrics;
