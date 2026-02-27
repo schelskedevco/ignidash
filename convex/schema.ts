@@ -47,6 +47,7 @@ export default defineSchema({
     title: v.string(),
     updatedAt: v.number(),
     systemPrompt: v.optional(v.string()),
+    includeSimData: v.optional(v.boolean()),
   }).index('by_planId_updatedAt', ['planId', 'updatedAt']),
   messages: defineTable({
     userId: v.string(),

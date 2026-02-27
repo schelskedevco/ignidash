@@ -69,14 +69,23 @@ export const send = mutation({
     if (loadingMessage) throw new ConvexError('An AI chat is already in progress. Please wait for it to complete.');
 
     const updatedAt = Date.now();
-    const systemPrompt = getSystemPrompt(plan, keyMetrics, includeSimData ? simulationResult : null);
+
+    // Also validates that the user owns currConvId when it exists
+    const shouldIncludeSimData = currConvId ? (await getConversationForCurrentUserOrThrow(ctx, currConvId)).includeSimData : includeSimData;
+
+    const systemPrompt = getSystemPrompt(plan, keyMetrics, shouldIncludeSimData ? simulationResult : null);
 
     let newConvId: Id<'conversations'> | null = null;
     if (!currConvId) {
       const title = content.length > 25 ? content.slice(0, 25) + '...' : content;
-      newConvId = await ctx.db.insert('conversations', { userId, planId, title, updatedAt, systemPrompt });
-    } else {
-      await getConversationForCurrentUserOrThrow(ctx, currConvId);
+      newConvId = await ctx.db.insert('conversations', {
+        userId,
+        planId,
+        title,
+        updatedAt,
+        systemPrompt,
+        includeSimData: shouldIncludeSimData,
+      });
     }
 
     const conversationId = (currConvId ?? newConvId)!;
