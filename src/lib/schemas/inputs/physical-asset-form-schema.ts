@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { currencyFieldForbidsZero, currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-schema-utils';
+import { currencyFieldForbidsZero, currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-utils';
 import { timePointSchema } from './income-expenses-shared-schemas';
 
 export const physicalAssetTypeSchema = z.enum(['primaryResidence', 'other']);

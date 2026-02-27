@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { percentageField } from '@/lib/utils/zod-schema-utils';
+import { percentageField } from '@/lib/utils/zod-utils';
 
 export const marketAssumptionsFormSchema = z
   .object({

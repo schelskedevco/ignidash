@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-schema-utils';
+import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-utils';
 
 import { growthSchema, frequencyTimeframeSchema } from './income-expenses-shared-schemas';
 

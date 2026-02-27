@@ -6,7 +6,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } 
 import type { MultiSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { formatChartString, cn } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/format-currency';
+import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';

@@ -2,7 +2,7 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, ReferenceLine, LabelList } from 'recharts';
 
-import { formatCompactCurrency } from '@/lib/utils/format-currency';
+import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { IncomeTaxBracket } from '@/lib/calc/tax-data/income-tax-brackets';

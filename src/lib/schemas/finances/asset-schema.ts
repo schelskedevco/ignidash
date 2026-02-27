@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { PiggyBankIcon, TrendingUpIcon, HouseIcon, CarIcon, CoinsIcon, FileQuestionMarkIcon } from 'lucide-react';
 
-import { currencyFieldAllowsZero } from '@/lib/utils/zod-schema-utils';
+import { currencyFieldAllowsZero } from '@/lib/utils/zod-utils';
 
 export const assetFormSchema = z.object({
   id: z.string(),

@@ -4,7 +4,7 @@ import { memo } from 'react';
 
 import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/catalyst/description-list';
 import { formatNumber } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/format-currency';
+import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import Card from '@/components/ui/card';
 import { MultiSimulationCategory } from '@/lib/types/simulation-category';
 import { Subheading } from '@/components/catalyst/heading';

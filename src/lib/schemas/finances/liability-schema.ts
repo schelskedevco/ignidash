@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { HouseIcon, CarIcon, SchoolIcon, FileUserIcon, CreditCardIcon, StethoscopeIcon, FileQuestionMarkIcon } from 'lucide-react';
 
-import { currencyFieldAllowsZero } from '@/lib/utils/zod-schema-utils';
+import { currencyFieldAllowsZero } from '@/lib/utils/zod-utils';
 
 export const liabilityFormSchema = z.object({
   id: z.string(),

@@ -1,5 +1,5 @@
 import { formatNumber } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/format-currency';
+import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import type { TimePoint, Growth, Frequency } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 import type { IncomeType } from '@/lib/schemas/inputs/income-form-schema';
 import type { KeyMetrics } from '@/lib/types/key-metrics';

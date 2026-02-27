@@ -32,7 +32,7 @@ import { Switch, SwitchField } from '@/components/catalyst/switch';
 import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
-import { formatCompactCurrency, getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/format-currency';
+import { formatCompactCurrency, getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/currency-formatters';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Divider } from '@/components/catalyst/divider';

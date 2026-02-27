@@ -4,7 +4,7 @@ import { useState, useCallback, memo } from 'react';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 
 import { formatChartString, cn } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/format-currency';
+import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';

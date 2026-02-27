@@ -30,7 +30,7 @@ import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { Divider } from '@/components/catalyst/divider';
-import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/format-currency';
+import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/currency-formatters';
 
 interface ExpenseDialogProps {
   onClose: () => void;

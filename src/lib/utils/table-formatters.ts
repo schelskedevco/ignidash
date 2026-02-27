@@ -20,7 +20,7 @@ import {
   type YearlyAggregateTableRow,
   YEARLY_AGGREGATE_TABLE_CONFIG,
 } from '@/lib/schemas/tables/multi-simulation-table-schema';
-import { formatCurrency } from '@/lib/utils/format-currency';
+import { formatCurrency } from '@/lib/utils/currency-formatters';
 
 const formatValue = (value: unknown, format: ColumnFormat): string => {
   if (value == null) return '–';

@@ -3,7 +3,7 @@
 import { Pie, PieChart, Sector, SectorProps, Cell } from 'recharts';
 
 import { formatChartString } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/format-currency';
+import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 
 type Coordinate = {
   x: number;

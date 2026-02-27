@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { percentageField, currencyFieldAllowsZero } from '@/lib/utils/zod-schema-utils';
+import { percentageField, currencyFieldAllowsZero } from '@/lib/utils/zod-utils';
 
 // Shared time point schema for income and expenses
 export const timePointSchema = z

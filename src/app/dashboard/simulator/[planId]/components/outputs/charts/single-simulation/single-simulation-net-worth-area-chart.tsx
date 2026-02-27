@@ -11,7 +11,7 @@ import type { AccountDataWithFlows } from '@/lib/calc/account';
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { DebtData } from '@/lib/calc/debts';
 import { formatNumber, formatChartString, cn } from '@/lib/utils';
-import { formatCompactCurrency } from '@/lib/utils/format-currency';
+import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';

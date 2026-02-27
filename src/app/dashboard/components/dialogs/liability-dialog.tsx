@@ -20,7 +20,7 @@ import { Select } from '@/components/catalyst/select';
 import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
 import { getErrorMessages } from '@/lib/utils/form-utils';
-import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/format-currency';
+import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/currency-formatters';
 
 interface LiabilityDialogProps {
   onClose: () => void;

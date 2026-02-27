@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { percentageField } from '@/lib/utils/zod-schema-utils';
+import { percentageField } from '@/lib/utils/zod-utils';
 
 const glidePathTimePointSchema = z
   .object({

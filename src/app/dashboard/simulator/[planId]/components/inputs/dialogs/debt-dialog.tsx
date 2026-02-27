@@ -33,7 +33,7 @@ import { Input } from '@/components/catalyst/input';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Divider } from '@/components/catalyst/divider';
-import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/format-currency';
+import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/currency-formatters';
 
 import SyncWithNetWorthTrackerSelect from './sync-with-nw-tracker-select';
 import { PayoffEstimate } from './payoff-estimate';

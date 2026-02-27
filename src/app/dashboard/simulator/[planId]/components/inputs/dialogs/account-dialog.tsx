@@ -25,7 +25,7 @@ import { useAlreadySyncedIds } from '@/hooks/use-already-synced-ids';
 import { useLinkableFinances } from '@/hooks/use-linkable-finances';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
-import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/format-currency';
+import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/currency-formatters';
 
 import SyncWithNetWorthTrackerSelect from './sync-with-nw-tracker-select';
 
