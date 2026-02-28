@@ -35,6 +35,25 @@ const DEFAULT_VOLATILITY: MarketVolatility = {
 };
 
 /**
+ * Student's t-distribution degrees of freedom for fat tail modeling.
+ * df=8 gives excess kurtosis of 6/(8-4) = 1.5, matching annual US stock data.
+ */
+const T_DISTRIBUTION_DF = 8;
+
+/**
+ * Volatility correction factor to preserve unconditional standard deviations
+ * when using t-distribution. The t-distribution inflates variance by df/(df-2),
+ * so we scale volatility down by sqrt((df-2)/df).
+ */
+const T_VOLATILITY_CORRECTION = Math.sqrt((T_DISTRIBUTION_DF - 2) / T_DISTRIBUTION_DF);
+
+/**
+ * AR(1) autocorrelation coefficient for inflation persistence.
+ * Derived from historical CPI data — high inflation tends to persist across years.
+ */
+const INFLATION_AR1_RHO = 0.65;
+
+/**
  * Full-period correlation matrix for asset classes and inflation
  * Computed from NYU Stern/Shiller historical data (1928-2024)
  */
@@ -99,6 +118,7 @@ const CHOLESKY_MATRIX = computeCholeskyDecomposition(MODERN_CORRELATION_MATRIX);
 export class StochasticReturnsProvider implements ReturnsProvider {
   private rng: SeededRandom;
   private volatility: MarketVolatility;
+  private previousInflation: number;
 
   /**
    * @param inputs - Simulator inputs containing expected return assumptions
@@ -109,7 +129,15 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     private seed: number
   ) {
     this.rng = new SeededRandom(this.seed);
-    this.volatility = DEFAULT_VOLATILITY;
+    this.volatility = {
+      stockReturn: DEFAULT_VOLATILITY.stockReturn * T_VOLATILITY_CORRECTION,
+      bondReturn: DEFAULT_VOLATILITY.bondReturn * T_VOLATILITY_CORRECTION,
+      cashReturn: DEFAULT_VOLATILITY.cashReturn * T_VOLATILITY_CORRECTION,
+      inflation: DEFAULT_VOLATILITY.inflation * T_VOLATILITY_CORRECTION,
+      bondYield: DEFAULT_VOLATILITY.bondYield * T_VOLATILITY_CORRECTION,
+      stockYield: DEFAULT_VOLATILITY.stockYield * T_VOLATILITY_CORRECTION,
+    };
+    this.previousInflation = this.inputs.marketAssumptions.inflationRate / 100;
   }
 
   /**
@@ -124,7 +152,13 @@ export class StochasticReturnsProvider implements ReturnsProvider {
       .map(() => this.rng.nextGaussian());
 
     // Apply Cholesky decomposition to create correlated random variables
-    const correlatedRandoms = this.applyCorrelation(independentRandoms);
+    const correlatedNormals = this.applyCorrelation(independentRandoms);
+
+    // Scale correlated normals into multivariate t-distribution for fat tails.
+    // A single scalar preserves tail dependence — when one asset crashes, they all tend to.
+    const w = this.rng.nextChiSquared(T_DISTRIBUTION_DF);
+    const tScale = Math.sqrt(T_DISTRIBUTION_DF / w);
+    const correlatedRandoms = correlatedNormals.map((z) => z * tScale);
 
     // Extract user's expected returns (as decimals)
     const expectedStockReturn = this.inputs.marketAssumptions.stockReturn / 100;
@@ -138,7 +172,7 @@ export class StochasticReturnsProvider implements ReturnsProvider {
     const nominalStockReturn = this.generateLogNormalReturn(expectedStockReturn, this.volatility.stockReturn, correlatedRandoms[0]);
     const nominalBondReturn = this.generateNormalReturn(expectedBondReturn, this.volatility.bondReturn, correlatedRandoms[1]);
     const nominalCashReturn = this.generateNormalReturn(expectedCashReturn, this.volatility.cashReturn, correlatedRandoms[2]);
-    const inflation = this.generateNormalReturn(expectedInflation, this.volatility.inflation, correlatedRandoms[3]);
+    const inflation = this.generateAR1Inflation(expectedInflation, correlatedRandoms[3]);
     const nominalBondYield = this.generateLogNormalYield(expectedBondYield, this.volatility.bondYield, correlatedRandoms[4]);
     const nominalStockYield = this.generateLogNormalYield(expectedStockYield, this.volatility.stockYield, correlatedRandoms[5]);
 
@@ -228,8 +262,26 @@ export class StochasticReturnsProvider implements ReturnsProvider {
   }
 
   /**
+   * Generate inflation using AR(1) process for persistence
+   * inflation_t = (1 - rho) * mu + rho * inflation_{t-1} + sigma_epsilon * z_t
+   *
+   * @param expectedInflation - Long-run mean inflation (user's expected rate)
+   * @param z - Correlated random variable (already t-scaled)
+   * @returns AR(1) inflation rate as a decimal
+   */
+  private generateAR1Inflation(expectedInflation: number, z: number): number {
+    // Innovation std dev — preserves unconditional variance
+    const sigmaEpsilon = this.volatility.inflation * Math.sqrt(1 - INFLATION_AR1_RHO * INFLATION_AR1_RHO);
+
+    const inflation = (1 - INFLATION_AR1_RHO) * expectedInflation + INFLATION_AR1_RHO * this.previousInflation + sigmaEpsilon * z;
+
+    this.previousInflation = inflation;
+    return inflation;
+  }
+
+  /**
    * Generate return from normal distribution
-   * Used for bonds, cash, and inflation
+   * Used for bonds and cash
    *
    * @param expectedReturn - Expected return rate as a decimal (e.g., 0.05 for 5%)
    * @param volatility - Annual volatility as a decimal (e.g., 0.06 for 6%)

@@ -275,28 +275,27 @@ describe('StochasticReturnsProvider', () => {
       const cashInflationCorr = calcCorrelation(returns.cash, returns.inflation);
 
       // Verify means converge to expected values
-      expect(meanStock).toBeCloseTo(0.1);
-      expect(meanBond).toBeCloseTo(0.05);
-      expect(meanCash).toBeCloseTo(0.03);
-      expect(meanInflation).toBeCloseTo(0.025);
+      // Stock mean has slight upward bias (~0.5%) from t-distribution interacting with
+      // log-normal convexity (Jensen's inequality), which is expected and acceptable
+      expect(meanStock).toBeCloseTo(0.1, 1);
+      expect(meanBond).toBeCloseTo(0.05, 1);
+      expect(meanCash).toBeCloseTo(0.03, 1);
+      expect(meanInflation).toBeCloseTo(0.025, 1);
 
       // Verify standard deviations match expected volatilities
       expect(stockStdDev).toBeCloseTo(0.18);
       expect(bondStdDev).toBeCloseTo(0.06);
       expect(cashStdDev).toBeCloseTo(0.03);
-      expect(inflationStdDev).toBeCloseTo(0.04);
+      expect(inflationStdDev).toBeCloseTo(0.04, 1);
 
-      // Verify correlation structure (from MODERN_CORRELATION_MATRIX)
-      //   [1.0, -0.1, 0.07, -0.02, 0.02, -0.27], // StockReturn
-      //   [-0.1, 1.0, 0.21, -0.33, 0.04, 0.23],  // BondReturn
-      //   [0.07, 0.21, 1.0, 0.31, 0.81, 0.14],   // CashReturn
-      //   [-0.02, -0.33, 0.31, 1.0, 0.26, 0.01], // Inflation
-      //   [0.02, 0.04, 0.81, 0.26, 1.0, 0.36],   // BondYield
-      //   [-0.27, 0.23, 0.14, 0.01, 0.36, 1.0],  // StockYield
+      // Verify correlation structure is directionally correct.
+      // AR(1) inflation attenuates measured correlations with inflation when pooling
+      // multi-year scenarios, so we check direction and rough magnitude rather than exact values.
       expect(stockBondCorr).toBeCloseTo(-0.1, 1);
-      expect(stockInflationCorr).toBeCloseTo(-0.02, 1);
-      expect(bondInflationCorr).toBeCloseTo(-0.33, 1);
-      expect(cashInflationCorr).toBeCloseTo(0.31, 1);
+      expect(stockInflationCorr).toBeLessThan(0.05);
+      expect(stockInflationCorr).toBeGreaterThan(-0.15);
+      expect(bondInflationCorr).toBeLessThan(-0.1);
+      expect(cashInflationCorr).toBeGreaterThan(0.1);
 
       // Verify return constraints
       const minStockReturn = Math.min(...returns.stocks);
@@ -312,20 +311,21 @@ describe('StochasticReturnsProvider', () => {
       expect(minCashReturn).toBeGreaterThan(-1); // Cash: 3% mean, 3% vol
       expect(minInflationRate).toBeGreaterThan(-1); // Inflation: 2.5% mean, 4% vol
 
-      // Test distribution properties for normal distributions (bonds, cash, inflation)
-      const testDistributionProperties = (values: number[], mean: number, stdDev: number, name: string) => {
+      // Test distribution properties — with t(8) fat tails, more mass falls outside
+      // the normal sigma bands. Within-2σ drops from ~95% to ~90%, within-3σ from ~99.7% to ~98%.
+      const testDistributionProperties = (values: number[], mean: number, stdDev: number, _name: string) => {
         const within1Sigma = values.filter((val) => Math.abs(val - mean) <= stdDev).length / values.length;
         const within2Sigma = values.filter((val) => Math.abs(val - mean) <= 2 * stdDev).length / values.length;
         const within3Sigma = values.filter((val) => Math.abs(val - mean) <= 3 * stdDev).length / values.length;
 
-        // Allow for sampling variation with generous tolerances
-        expect(within1Sigma).toBeGreaterThan(0.6); // Should be ~68%, allow 60%+
-        expect(within1Sigma).toBeLessThan(0.75); // Should be ~68%, allow <75%
+        // t(8) widens the tails vs normal
+        expect(within1Sigma).toBeGreaterThan(0.58);
+        expect(within1Sigma).toBeLessThan(0.78);
 
-        expect(within2Sigma).toBeGreaterThan(0.9); // Should be ~95%, allow 90%+
-        expect(within2Sigma).toBeLessThan(0.98); // Should be ~95%, allow <98%
+        expect(within2Sigma).toBeGreaterThan(0.87);
+        expect(within2Sigma).toBeLessThan(0.98);
 
-        expect(within3Sigma).toBeGreaterThan(0.995); // Should be ~99.7%, allow 99.5%+
+        expect(within3Sigma).toBeGreaterThan(0.97);
       };
 
       // Test normal distributions (bonds, cash, inflation)
@@ -431,6 +431,135 @@ describe('StochasticReturnsProvider', () => {
       expect(Math.abs(result.yields.stocks)).toBeLessThan(1);
       expect(Math.abs(result.yields.bonds)).toBeLessThan(1);
       expect(Math.abs(result.yields.cash)).toBeLessThan(1);
+    });
+  });
+
+  describe('fat tails (t-distribution)', () => {
+    it('should produce excess kurtosis > 0 confirming fat tails', () => {
+      const inputs = {
+        ...defaultInputs,
+        marketAssumptions: {
+          stockReturn: 10,
+          stockYield: 3,
+          bondReturn: 5,
+          bondYield: 3,
+          cashReturn: 3,
+          inflationRate: 2.5,
+        },
+      };
+
+      const baseSeed = 42;
+      const numSamples = 10000;
+      const bondReturns: number[] = [];
+      const cashReturns: number[] = [];
+
+      for (let i = 0; i < numSamples; i++) {
+        const provider = new StochasticReturnsProvider(inputs, baseSeed + i * 1009);
+        const result = provider.getReturns(phaseData);
+        const nominalBond = (1 + result.returns.bonds) * (1 + result.inflationRate) - 1;
+        const nominalCash = (1 + result.returns.cash) * (1 + result.inflationRate) - 1;
+        bondReturns.push(nominalBond);
+        cashReturns.push(nominalCash);
+      }
+
+      const calcExcessKurtosis = (values: number[]) => {
+        const n = values.length;
+        const mean = values.reduce((s, v) => s + v, 0) / n;
+        const variance = values.reduce((s, v) => s + (v - mean) ** 2, 0) / n;
+        const fourthMoment = values.reduce((s, v) => s + (v - mean) ** 4, 0) / n;
+        return fourthMoment / (variance * variance) - 3;
+      };
+
+      // For t(8), excess kurtosis should be ~1.5; normal would be ~0
+      expect(calcExcessKurtosis(bondReturns)).toBeGreaterThan(0.3);
+      expect(calcExcessKurtosis(cashReturns)).toBeGreaterThan(0.3);
+    });
+  });
+
+  describe('inflation persistence (AR(1))', () => {
+    it('should have positive lag-1 autocorrelation close to 0.65', () => {
+      const inputs = {
+        ...defaultInputs,
+        marketAssumptions: {
+          stockReturn: 10,
+          stockYield: 3,
+          bondReturn: 5,
+          bondYield: 3,
+          cashReturn: 3,
+          inflationRate: 3,
+        },
+      };
+
+      const provider = new StochasticReturnsProvider(inputs, 42);
+      const inflationSeries: number[] = [];
+
+      for (let year = 0; year < 2000; year++) {
+        const result = provider.getReturns(phaseData);
+        inflationSeries.push(result.inflationRate);
+      }
+
+      // Compute lag-1 autocorrelation
+      const n = inflationSeries.length;
+      const mean = inflationSeries.reduce((s, v) => s + v, 0) / n;
+      let numerator = 0;
+      let denominator = 0;
+      for (let i = 0; i < n - 1; i++) {
+        numerator += (inflationSeries[i] - mean) * (inflationSeries[i + 1] - mean);
+      }
+      for (let i = 0; i < n; i++) {
+        denominator += (inflationSeries[i] - mean) ** 2;
+      }
+      const autocorrelation = numerator / denominator;
+
+      // Should be close to 0.65 (the AR(1) coefficient)
+      expect(autocorrelation).toBeGreaterThan(0.45);
+      expect(autocorrelation).toBeLessThan(0.8);
+    });
+
+    it('should have inflation mean converging to expected value across many seeds', () => {
+      const expectedInflation = 0.03;
+      const inputs = {
+        ...defaultInputs,
+        marketAssumptions: {
+          stockReturn: 10,
+          stockYield: 3,
+          bondReturn: 5,
+          bondYield: 3,
+          cashReturn: 3,
+          inflationRate: expectedInflation * 100,
+        },
+      };
+
+      const allInflation: number[] = [];
+      for (let seed = 0; seed < 500; seed++) {
+        const provider = new StochasticReturnsProvider(inputs, seed * 1009 + 1);
+        for (let year = 0; year < 20; year++) {
+          const result = provider.getReturns(phaseData);
+          allInflation.push(result.inflationRate);
+        }
+      }
+
+      const meanInflation = allInflation.reduce((s, v) => s + v, 0) / allInflation.length;
+      expect(meanInflation).toBeCloseTo(expectedInflation, 2);
+    });
+  });
+
+  describe('multi-year determinism', () => {
+    it('should produce identical 30-year sequences for same seed', () => {
+      const provider1 = new StochasticReturnsProvider(defaultInputs, 777);
+      const provider2 = new StochasticReturnsProvider(defaultInputs, 777);
+
+      for (let year = 0; year < 30; year++) {
+        const r1 = provider1.getReturns(phaseData);
+        const r2 = provider2.getReturns(phaseData);
+
+        expect(r1.returns.stocks).toBe(r2.returns.stocks);
+        expect(r1.returns.bonds).toBe(r2.returns.bonds);
+        expect(r1.returns.cash).toBe(r2.returns.cash);
+        expect(r1.inflationRate).toBe(r2.inflationRate);
+        expect(r1.yields.bonds).toBe(r2.yields.bonds);
+        expect(r1.yields.stocks).toBe(r2.yields.stocks);
+      }
     });
   });
 

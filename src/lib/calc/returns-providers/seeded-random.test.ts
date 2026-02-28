@@ -119,4 +119,99 @@ describe('SeededRandom', () => {
       expect(std).toBeCloseTo(1, 1); // within ~0.05 of 1
     });
   });
+
+  describe('nextGamma()', () => {
+    it('should produce identical sequences for the same seed', () => {
+      const rng1 = new SeededRandom(42);
+      const rng2 = new SeededRandom(42);
+
+      const seq1 = Array.from({ length: 50 }, () => rng1.nextGamma(4, 2));
+      const seq2 = Array.from({ length: 50 }, () => rng2.nextGamma(4, 2));
+
+      expect(seq1).toEqual(seq2);
+    });
+
+    it('should converge to correct mean and variance for Gamma(4, 2)', () => {
+      const rng = new SeededRandom(123);
+      const n = 10000;
+      const values: number[] = [];
+
+      for (let i = 0; i < n; i++) {
+        values.push(rng.nextGamma(4, 2));
+      }
+
+      const mean = values.reduce((a, b) => a + b, 0) / n;
+      const variance = values.reduce((a, b) => a + (b - mean) ** 2, 0) / n;
+
+      // Gamma(4, 2): mean = shape * scale = 8, variance = shape * scale^2 = 16
+      expect(mean).toBeCloseTo(8, 0);
+      expect(variance).toBeGreaterThan(14);
+      expect(variance).toBeLessThan(18);
+    });
+
+    it('should produce only positive values', () => {
+      const rng = new SeededRandom(42);
+
+      for (let i = 0; i < 10000; i++) {
+        const value = rng.nextGamma(4, 2);
+        expect(value).toBeGreaterThan(0);
+      }
+    });
+
+    it('should work for shape < 1 (Ahrens-Dieter boost)', () => {
+      const rng = new SeededRandom(42);
+      const n = 10000;
+      const values: number[] = [];
+
+      for (let i = 0; i < n; i++) {
+        values.push(rng.nextGamma(0.5, 1));
+      }
+
+      const mean = values.reduce((a, b) => a + b, 0) / n;
+
+      // Gamma(0.5, 1): mean = 0.5
+      expect(mean).toBeCloseTo(0.5, 1);
+      // All values should be positive
+      expect(Math.min(...values)).toBeGreaterThan(0);
+    });
+  });
+
+  describe('nextChiSquared()', () => {
+    it('should produce identical sequences for the same seed', () => {
+      const rng1 = new SeededRandom(42);
+      const rng2 = new SeededRandom(42);
+
+      const seq1 = Array.from({ length: 50 }, () => rng1.nextChiSquared(8));
+      const seq2 = Array.from({ length: 50 }, () => rng2.nextChiSquared(8));
+
+      expect(seq1).toEqual(seq2);
+    });
+
+    it('should converge to correct mean and variance for Chi-squared(8)', () => {
+      const rng = new SeededRandom(456);
+      const n = 10000;
+      const values: number[] = [];
+
+      for (let i = 0; i < n; i++) {
+        values.push(rng.nextChiSquared(8));
+      }
+
+      const mean = values.reduce((a, b) => a + b, 0) / n;
+      const variance = values.reduce((a, b) => a + (b - mean) ** 2, 0) / n;
+
+      // Chi-squared(8): mean = 8, variance = 2*df = 16
+      expect(mean).toBeCloseTo(8, 0);
+      expect(variance).toBeGreaterThan(14);
+      expect(variance).toBeLessThan(18);
+    });
+
+    it('should produce only positive values', () => {
+      const rng = new SeededRandom(42);
+
+      for (let i = 0; i < 10000; i++) {
+        const value = rng.nextChiSquared(8);
+        expect(value).toBeGreaterThan(0);
+      }
+    });
+  });
 });
