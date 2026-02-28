@@ -28,8 +28,11 @@ export default function SettingsForms({ preloadedUser, preloadedSubscriptions }:
   const authData = usePreloadedAuthQuery(preloadedUser);
   const { accounts: accountsData, isLoading: isAccountsDataLoading } = useAccountsList();
 
-  const subscriptions = usePreloadedAuthQuery(preloadedSubscriptions) ?? [];
-  const subscriptionsData = subscriptions.map(({ plan, status, stripeSubscriptionId: id }) => ({ plan, status, id }));
+  const subscriptions = usePreloadedAuthQuery(preloadedSubscriptions);
+  const subscriptionsData = useMemo(
+    () => (subscriptions ?? []).map(({ plan, status, stripeSubscriptionId: id }) => ({ plan, status, id })),
+    [subscriptions]
+  );
   const isProUser = subscriptionsData.some(
     (subscription) => subscription.plan === 'pro' && (subscription.status === 'active' || subscription.status === 'trialing')
   );
