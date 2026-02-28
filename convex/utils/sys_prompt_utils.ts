@@ -5,7 +5,7 @@ import { expenseTimeFrameForDisplay } from '../validators/expenses_validator';
 import type { KeyMetrics } from '../validators/key_metrics_validator';
 import type { SimulationResult } from '../validators/simulation_result_validator';
 
-const formatNumber = (num: number, fractionDigits: number = 2, prefix: string = ''): string => {
+export const formatNumber = (num: number, fractionDigits: number = 2, prefix: string = ''): string => {
   const absNum = Math.abs(num);
   const sign = num < 0 ? '-' : '';
 
@@ -27,7 +27,7 @@ const calculateAge = (birthMonth: number, birthYear: number): number => {
   return age;
 };
 
-const timePointLabel = (tp: { type: string; month?: number; year?: number; age?: number }): string => {
+export const timePointLabel = (tp: { type: string; month?: number; year?: number; age?: number }): string => {
   switch (tp.type) {
     case 'now':
       return 'Now';
@@ -51,7 +51,7 @@ const timePointLabel = (tp: { type: string; month?: number; year?: number; age?:
   }
 };
 
-const keyMetricsForDisplay = (keyMetrics: KeyMetrics) => {
+export const keyMetricsForDisplay = (keyMetrics: KeyMetrics) => {
   const {
     success,
     retirementAge,
@@ -339,7 +339,7 @@ ${keyMetrics}
 ${simulationData}
 `;
 
-const formatPlanData = (plan: Doc<'plans'>): string => {
+export const formatPlanData = (plan: Doc<'plans'>): string => {
   const lines: string[] = [];
 
   if (plan.timeline) {
@@ -513,11 +513,11 @@ const formatKeyMetrics = (keyMetrics: KeyMetrics | null): string => {
 };
 
 type D = SimulationResult['simulationResult'][number];
-type ColumnDef = { header: string; value: (d: D) => number | null; format: (n: number) => string };
+export type ColumnDef = { header: string; value: (d: D) => number | null; format: (n: number) => string };
 
 const hasValue = (v: number | null) => v !== null && v !== 0;
 
-const buildTable = (title: string, data: SimulationResult['simulationResult'], columns: ColumnDef[]): string | null => {
+export const buildTable = (title: string, data: SimulationResult['simulationResult'], columns: ColumnDef[]): string | null => {
   const activeColumns = columns.filter((col) => data.some((d) => hasValue(col.value(d))));
   if (activeColumns.length === 0) return null;
 
