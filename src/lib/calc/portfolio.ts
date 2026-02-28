@@ -191,7 +191,7 @@ export class PortfolioProcessor {
 
     let discretionaryExpense = 0;
     if (taxesData.totalTaxesRefund > 0) {
-      const res = this.processContributions(taxesData.totalTaxesRefund);
+      const res = this.processContributions(taxesData.totalTaxesRefund, null);
       contributions = addFlows(contributions, res.total);
       contributionsByAccount = res.byAccount;
       discretionaryExpense += res.discretionaryExpense;
@@ -240,7 +240,7 @@ export class PortfolioProcessor {
 
   private processContributions(
     netCashFlow: number,
-    incomesData?: IncomesData
+    incomesData: IncomesData | null
   ): FlowsData & {
     discretionaryExpense: number;
     employerMatch: number;

@@ -94,7 +94,7 @@ export class ContributionRule {
     remainingToContribute: number,
     account: Account,
     age: number,
-    incomesData?: IncomesData
+    incomesData: IncomesData | null
   ): { contributionAmount: number; employerMatchAmount: number } {
     const remainingToMaxBalance = this.contributionInput.maxBalance
       ? Math.max(0, this.contributionInput.maxBalance - account.getBalance())
@@ -135,7 +135,7 @@ export class ContributionRule {
     return this.contributionInput.rank;
   }
 
-  private calculateIncomeLimit(incomesData?: IncomesData): number {
+  private calculateIncomeLimit(incomesData: IncomesData | null): number {
     const eligibleIncomeIds = new Set(this.contributionInput?.incomeIds);
     if (eligibleIncomeIds.size === 0) return Infinity;
 
