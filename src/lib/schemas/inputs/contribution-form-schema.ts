@@ -22,7 +22,7 @@ const sharedContributionSchema = z.object({
   accountId: z.string(),
   rank: z.number().int().min(0),
   maxBalance: currencyFieldForbidsZero('Max balance must be greater than zero').optional(),
-  incomeIds: z.array(z.string()).optional(),
+  incomeId: z.string().optional(),
   disabled: z.boolean().optional(),
   employerMatch: currencyFieldForbidsZero('Employer match must be greater than zero').optional(),
   enableMegaBackdoorRoth: z.boolean().optional(),

@@ -75,7 +75,7 @@ const createContributionRule = (
     disabled: overrides?.disabled ?? false,
     employerMatch: overrides?.employerMatch,
     maxBalance: overrides?.maxBalance,
-    incomeIds: overrides?.incomeIds,
+    incomeId: overrides?.incomeId,
     enableMegaBackdoorRoth: overrides?.enableMegaBackdoorRoth,
   };
 
@@ -810,13 +810,13 @@ describe('ContributionRules', () => {
   // ============================================================================
 
   describe('income allocation filtering', () => {
-    it('should only contribute from specified income IDs', () => {
+    it('should only contribute from the specified income', () => {
       const tracker = new ContributionTracker();
       const rule = new ContributionRule(
         createContributionRule({
           contributionType: 'unlimited',
           accountId: '401k-1',
-          incomeIds: ['income-1', 'income-2'],
+          incomeId: 'income-1',
         }),
         tracker
       );
@@ -844,23 +844,13 @@ describe('ContributionRules', () => {
             taxFreeIncome: 0,
             socialSecurityIncome: 0,
           },
-          'income-3': {
-            id: 'income-3',
-            name: 'Side Gig',
-            income: 3000,
-            amountWithheld: 0,
-            ficaTax: 0,
-            incomeAfterPayrollDeductions: 3000,
-            taxFreeIncome: 0,
-            socialSecurityIncome: 0,
-          },
         },
       });
 
-      // Total remaining is 10000, but eligible income is only 7000 (income-1 + income-2)
+      // Total remaining is 10000, but eligible income is only 5000 (income-1)
       const result = rule.calculateContribution(10000, account, 35, incomesData);
 
-      expect(result.contributionAmount).toBe(7000);
+      expect(result.contributionAmount).toBe(5000);
     });
 
     it('should use contribution limit when it is more restrictive than eligible income', () => {
@@ -869,7 +859,7 @@ describe('ContributionRules', () => {
         createContributionRule({
           contributionType: 'unlimited',
           accountId: '401k-1',
-          incomeIds: ['income-1'],
+          incomeId: 'income-1',
         }),
         tracker
       );
@@ -905,7 +895,7 @@ describe('ContributionRules', () => {
         createContributionRule({
           contributionType: 'unlimited',
           accountId: '401k-1',
-          incomeIds: ['income-1'],
+          incomeId: 'income-1',
         }),
         tracker
       );
@@ -942,7 +932,7 @@ describe('ContributionRules', () => {
           contributionType: 'dollarAmount',
           dollarAmount: 5000,
           accountId: '401k-1',
-          incomeIds: ['income-1'],
+          incomeId: 'income-1',
         }),
         tracker
       );
@@ -975,7 +965,7 @@ describe('ContributionRules', () => {
         createContributionRule({
           contributionType: 'unlimited',
           accountId: '401k-1',
-          // No incomeIds specified
+          // No incomeId specified
         }),
         tracker
       );
@@ -1401,7 +1391,7 @@ describe('ContributionRules', () => {
             contributionType: 'unlimited',
             accountId: 'roth401k-1',
             enableMegaBackdoorRoth: true,
-            incomeIds: ['income-1'],
+            incomeId: 'income-1',
           }),
           tracker
         );
@@ -2174,7 +2164,7 @@ describe('ContributionRules', () => {
   // Configuration Combination Tests
   // ============================================================================
   // Each test exercises a different combination of constraints to verify they
-  // compose correctly: maxBalance, incomeIds, employerMatch, MBR, contribution types.
+  // compose correctly: maxBalance, incomeId, employerMatch, MBR, contribution types.
 
   describe('configuration combinations', () => {
     describe('maxBalance + shared limit', () => {
@@ -2225,7 +2215,7 @@ describe('ContributionRules', () => {
             contributionType: 'unlimited',
             accountId: '401k-1',
             rank: 1,
-            incomeIds: ['salary'],
+            incomeId: 'salary',
           }),
           tracker
         );
@@ -2235,7 +2225,7 @@ describe('ContributionRules', () => {
             contributionType: 'unlimited',
             accountId: 'roth401k-1',
             rank: 2,
-            incomeIds: ['bonus'],
+            incomeId: 'bonus',
           }),
           tracker
         );
@@ -2266,7 +2256,7 @@ describe('ContributionRules', () => {
             contributionType: 'unlimited',
             accountId: 'roth401k-1',
             enableMegaBackdoorRoth: true,
-            incomeIds: ['salary'],
+            incomeId: 'salary',
           }),
           tracker
         );
@@ -2291,7 +2281,7 @@ describe('ContributionRules', () => {
             accountId: '401k-1',
             maxBalance: 102000,
             employerMatch: 5000,
-            incomeIds: ['salary'],
+            incomeId: 'salary',
           }),
           tracker
         );
@@ -2506,14 +2496,14 @@ describe('ContributionRules', () => {
   // ============================================================================
 
   describe('edge case coverage gaps', () => {
-    describe('incomeIds set but incomesData is null', () => {
-      it('should return 0 contribution when incomeIds are configured but incomesData is null', () => {
+    describe('incomeId set but incomesData is null', () => {
+      it('should return 0 contribution when incomeId is configured but incomesData is null', () => {
         const tracker = new ContributionTracker();
         const rule = new ContributionRule(
           createContributionRule({
             contributionType: 'unlimited',
             accountId: '401k-1',
-            incomeIds: ['income-1', 'income-2'],
+            incomeId: 'income-1',
           }),
           tracker
         );

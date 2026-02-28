@@ -136,12 +136,9 @@ export class ContributionRule {
   }
 
   private calculateIncomeLimit(incomesData: IncomesData | null): number {
-    const eligibleIncomeIds = new Set(this.contributionInput?.incomeIds);
-    if (eligibleIncomeIds.size === 0) return Infinity;
-
-    return Object.values(incomesData?.perIncomeData ?? {})
-      .filter((income) => eligibleIncomeIds.has(income.id))
-      .reduce((sum, income) => sum + income.income, 0);
+    const incomeId = this.contributionInput.incomeId;
+    if (!incomeId) return Infinity;
+    return incomesData?.perIncomeData?.[incomeId]?.income ?? 0;
   }
 
   private calculateEmployerMatch(contributionAmount: number): number {

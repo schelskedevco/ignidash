@@ -59,8 +59,8 @@ export const deleteIncome = mutation({
     const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const updatedContributionRules = plan.contributionRules.map((rule) => {
-      if (rule.incomeIds?.includes(incomeId)) {
-        return { ...rule, incomeIds: rule.incomeIds.filter((id) => id !== incomeId) };
+      if (rule.incomeId === incomeId) {
+        return { ...rule, incomeId: undefined };
       }
       return rule;
     });

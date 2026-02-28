@@ -1297,7 +1297,7 @@ describe('PortfolioProcessor', () => {
               contributionType: 'dollarAmount',
               dollarAmount: 1000,
               employerMatch: 500,
-              incomeIds: ['income-salary'],
+              incomeId: 'income-salary',
             }),
             createContributionRule({
               id: 'rule-commission',
@@ -1306,7 +1306,7 @@ describe('PortfolioProcessor', () => {
               contributionType: 'dollarAmount',
               dollarAmount: 500,
               employerMatch: 250,
-              incomeIds: ['income-commission'],
+              incomeId: 'income-commission',
             }),
           ],
           { type: 'spend' }

@@ -11,9 +11,11 @@ export const contributionRulesValidator = v.object({
   ),
   disabled: v.boolean(),
   maxBalance: v.optional(v.number()),
-  incomeIds: v.optional(v.array(v.string())),
+  incomeId: v.optional(v.string()),
   employerMatch: v.optional(v.number()),
   enableMegaBackdoorRoth: v.optional(v.boolean()),
+  // Deprecated — kept for migration compatibility
+  incomeIds: v.optional(v.array(v.string())),
 });
 
 export const baseContributionRuleValidator = v.object({

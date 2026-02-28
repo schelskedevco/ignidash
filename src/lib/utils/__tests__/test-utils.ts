@@ -87,7 +87,7 @@ export const createConvexContribution = (
   accountId: overrides?.accountId ?? 'acct-1',
   rank: overrides?.rank ?? 1,
   maxBalance: overrides?.maxBalance,
-  incomeIds: overrides?.incomeIds,
+  incomeId: overrides?.incomeId,
   disabled: overrides?.disabled ?? false,
   employerMatch: overrides?.employerMatch,
   enableMegaBackdoorRoth: overrides?.enableMegaBackdoorRoth,

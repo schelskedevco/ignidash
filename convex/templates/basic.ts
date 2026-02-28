@@ -142,7 +142,7 @@ export const basicTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId
         dollarAmount: 11750,
       },
       disabled: false,
-      incomeIds: ['income-1'],
+      incomeId: 'income-1',
       employerMatch: 7000,
     },
     {
@@ -154,12 +154,23 @@ export const basicTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId
         dollarAmount: 3500,
       },
       disabled: false,
-      incomeIds: ['income-1', 'income-2'],
+      incomeId: 'income-1',
     },
     {
       id: 'contribution-rule-3',
-      accountId: 'account-3',
+      accountId: 'account-2',
       rank: 3,
+      amount: {
+        type: 'dollarAmount',
+        dollarAmount: 3500,
+      },
+      disabled: false,
+      incomeId: 'income-2',
+    },
+    {
+      id: 'contribution-rule-4',
+      accountId: 'account-3',
+      rank: 4,
       amount: {
         type: 'percentRemaining',
         percentRemaining: 60,
@@ -167,9 +178,9 @@ export const basicTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId
       disabled: false,
     },
     {
-      id: 'contribution-rule-4',
+      id: 'contribution-rule-5',
       accountId: 'account-4',
-      rank: 4,
+      rank: 5,
       amount: {
         type: 'unlimited',
       },

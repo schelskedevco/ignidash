@@ -242,6 +242,23 @@ deploy_convex() {
     echo ""
 }
 
+# Run pending data migrations
+run_migrations() {
+    echo "Running pending data migrations..."
+
+    # Source the .env.local file
+    set -a
+    source .env.local
+    set +a
+
+    npx convex run migrations:runAll \
+        --url "$CONVEX_SELF_HOSTED_URL" \
+        --admin-key "$CONVEX_SELF_HOSTED_ADMIN_KEY"
+
+    echo -e "${GREEN}Data migrations complete${NC}"
+    echo ""
+}
+
 # Print next steps
 print_next_steps() {
     # Source .env.local to get the credentials
@@ -311,6 +328,7 @@ main() {
     setup_convex_admin_key
     sync_convex_env
     deploy_convex
+    run_migrations
     print_next_steps
 }
 
@@ -322,6 +340,7 @@ main_init() {
     setup_convex_admin_key
     sync_convex_env
     deploy_convex
+    run_migrations
     print_next_steps
 }
 

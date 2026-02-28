@@ -242,7 +242,7 @@ export const createContributionRule = (
     disabled: overrides?.disabled ?? false,
     employerMatch: overrides?.employerMatch,
     maxBalance: overrides?.maxBalance,
-    incomeIds: overrides?.incomeIds,
+    incomeId: overrides?.incomeId,
   };
 
   const contributionType = overrides?.contributionType ?? 'unlimited';

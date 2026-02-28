@@ -78,7 +78,7 @@ describe('upsertAccount', () => {
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
       expect(plan!.accounts).toHaveLength(4);
-      expect(plan!.contributionRules).toHaveLength(4);
+      expect(plan!.contributionRules).toHaveLength(5);
       const updated = plan!.accounts.find((a) => a.id === 'account-1');
       expect(updated!.name).toBe('updated 401k');
       expect(updated!.balance).toBe(99999);
@@ -528,7 +528,7 @@ describe('upsertContributionRule', () => {
 
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
-      expect(plan!.contributionRules).toHaveLength(5);
+      expect(plan!.contributionRules).toHaveLength(6);
       const inserted = plan!.contributionRules.find((r) => r.id === 'cr-new');
       expect(inserted).toBeDefined();
       expect(inserted!.accountId).toBe('account-1');
@@ -551,7 +551,7 @@ describe('upsertContributionRule', () => {
 
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
-      expect(plan!.contributionRules).toHaveLength(4);
+      expect(plan!.contributionRules).toHaveLength(5);
       const updated = plan!.contributionRules.find((r) => r.id === 'contribution-rule-1');
       expect(updated!.amount).toEqual({ type: 'percentRemaining', percentRemaining: 50 });
     });
@@ -605,10 +605,10 @@ describe('deleteAccount', () => {
 
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
-      expect(plan!.contributionRules).toHaveLength(3);
+      expect(plan!.contributionRules).toHaveLength(4);
       expect(plan!.contributionRules.find((r) => r.accountId === 'account-1')).toBeUndefined();
-      // Re-ranked contiguously 1, 2, 3
-      expect(plan!.contributionRules.map((r) => r.rank)).toEqual([1, 2, 3]);
+      // Re-ranked contiguously 1, 2, 3, 4
+      expect(plan!.contributionRules.map((r) => r.rank)).toEqual([1, 2, 3, 4]);
     });
   });
 
@@ -651,13 +651,13 @@ describe('deleteIncome', () => {
     });
   });
 
-  it('strips deleted incomeId from contribution rules incomeIds arrays', async () => {
+  it('clears incomeId from contribution rules that reference the deleted income', async () => {
     const t = convexTest(schema, modules);
     const planId = await t.run(async (ctx) => {
       return ctx.db.insert('plans', makePlan());
     });
 
-    // basicTemplate: rule-1 has incomeIds: ['income-1'], rule-2 has incomeIds: ['income-1', 'income-2']
+    // basicTemplate: rule-1 and rule-2 have incomeId: 'income-1', rule-3 has incomeId: 'income-2'
     const asUser = t.withIdentity({ subject: TEST_USER });
     await asUser.mutation(api.income.deleteIncome, { planId, incomeId: 'income-1' });
 
@@ -665,27 +665,29 @@ describe('deleteIncome', () => {
       const plan = await ctx.db.get(planId);
       const rule1 = plan!.contributionRules.find((r) => r.id === 'contribution-rule-1');
       const rule2 = plan!.contributionRules.find((r) => r.id === 'contribution-rule-2');
-      expect(rule1!.incomeIds).toEqual([]);
-      expect(rule2!.incomeIds).toEqual(['income-2']);
+      const rule3 = plan!.contributionRules.find((r) => r.id === 'contribution-rule-3');
+      expect(rule1!.incomeId).toBeUndefined();
+      expect(rule2!.incomeId).toBeUndefined();
+      expect(rule3!.incomeId).toBe('income-2');
     });
   });
 
-  it('does not affect contribution rules without that incomeId', async () => {
+  it('does not affect contribution rules without an incomeId', async () => {
     const t = convexTest(schema, modules);
     const planId = await t.run(async (ctx) => {
       return ctx.db.insert('plans', makePlan());
     });
 
-    // basicTemplate: rule-3 and rule-4 have no incomeIds
+    // basicTemplate: rule-4 and rule-5 have no incomeId
     const asUser = t.withIdentity({ subject: TEST_USER });
     await asUser.mutation(api.income.deleteIncome, { planId, incomeId: 'income-1' });
 
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
-      const rule3 = plan!.contributionRules.find((r) => r.id === 'contribution-rule-3');
       const rule4 = plan!.contributionRules.find((r) => r.id === 'contribution-rule-4');
-      expect(rule3!.incomeIds).toBeUndefined();
-      expect(rule4!.incomeIds).toBeUndefined();
+      const rule5 = plan!.contributionRules.find((r) => r.id === 'contribution-rule-5');
+      expect(rule4!.incomeId).toBeUndefined();
+      expect(rule5!.incomeId).toBeUndefined();
     });
   });
 });
@@ -707,7 +709,7 @@ describe('deleteContributionRule', () => {
 
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
-      expect(plan!.contributionRules).toHaveLength(3);
+      expect(plan!.contributionRules).toHaveLength(4);
       expect(plan!.contributionRules.find((r) => r.id === 'contribution-rule-2')).toBeUndefined();
     });
   });
@@ -727,9 +729,14 @@ describe('deleteContributionRule', () => {
 
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
-      expect(plan!.contributionRules.map((r) => r.rank)).toEqual([1, 2, 3]);
-      // Verify order preserved: rule-1, rule-3, rule-4
-      expect(plan!.contributionRules.map((r) => r.id)).toEqual(['contribution-rule-1', 'contribution-rule-3', 'contribution-rule-4']);
+      expect(plan!.contributionRules.map((r) => r.rank)).toEqual([1, 2, 3, 4]);
+      // Verify order preserved: rule-1, rule-3, rule-4, rule-5
+      expect(plan!.contributionRules.map((r) => r.id)).toEqual([
+        'contribution-rule-1',
+        'contribution-rule-3',
+        'contribution-rule-4',
+        'contribution-rule-5',
+      ]);
     });
   });
 });
@@ -745,20 +752,22 @@ describe('reorderContributionRules', () => {
 
     const asUser = t.withIdentity({ subject: TEST_USER });
     // Reverse the order
-    const newOrder = ['contribution-rule-4', 'contribution-rule-3', 'contribution-rule-2', 'contribution-rule-1'];
+    const newOrder = ['contribution-rule-5', 'contribution-rule-4', 'contribution-rule-3', 'contribution-rule-2', 'contribution-rule-1'];
     await asUser.mutation(api.contribution_rule.reorderContributionRules, { planId, newOrder });
 
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
-      expect(plan!.contributionRules).toHaveLength(4);
-      expect(plan!.contributionRules[0].id).toBe('contribution-rule-4');
+      expect(plan!.contributionRules).toHaveLength(5);
+      expect(plan!.contributionRules[0].id).toBe('contribution-rule-5');
       expect(plan!.contributionRules[0].rank).toBe(1);
-      expect(plan!.contributionRules[1].id).toBe('contribution-rule-3');
+      expect(plan!.contributionRules[1].id).toBe('contribution-rule-4');
       expect(plan!.contributionRules[1].rank).toBe(2);
-      expect(plan!.contributionRules[2].id).toBe('contribution-rule-2');
+      expect(plan!.contributionRules[2].id).toBe('contribution-rule-3');
       expect(plan!.contributionRules[2].rank).toBe(3);
-      expect(plan!.contributionRules[3].id).toBe('contribution-rule-1');
+      expect(plan!.contributionRules[3].id).toBe('contribution-rule-2');
       expect(plan!.contributionRules[3].rank).toBe(4);
+      expect(plan!.contributionRules[4].id).toBe('contribution-rule-1');
+      expect(plan!.contributionRules[4].rank).toBe(5);
     });
   });
 

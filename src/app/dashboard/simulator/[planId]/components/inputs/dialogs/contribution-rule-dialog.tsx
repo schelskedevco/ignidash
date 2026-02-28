@@ -132,7 +132,7 @@ export default function ContributionRuleDialog({
     }
 
     if (!(selectedAccount && supportsIncomeAllocation(selectedAccount.type))) {
-      unregister('incomeIds');
+      unregister('incomeId');
     }
 
     if (!(selectedAccount && supportsEmployerMatch(selectedAccount.type))) {
@@ -197,16 +197,17 @@ export default function ContributionRuleDialog({
               )}
               {selectedAccount && supportsIncomeAllocation(selectedAccount.type) && (
                 <Field>
-                  <Label htmlFor="incomeIds">With Income(s)</Label>
-                  <Select {...register('incomeIds')} id="incomeIds" name="incomeIds" multiple invalid={!!errors.incomeIds}>
+                  <Label htmlFor="incomeId">From Income</Label>
+                  <Select {...register('incomeId')} id="incomeId" name="incomeId" invalid={!!errors.incomeId}>
+                    <option value="">Any income</option>
                     {incomeOptions.map((income) => (
                       <option key={income.id} value={income.id}>
                         {income.name}
                       </option>
                     ))}
                   </Select>
-                  {errors.incomeIds && <ErrorMessage>{errors.incomeIds?.message}</ErrorMessage>}
-                  <Description>Selecting specific income(s) will restrict contributions to those sources only.</Description>
+                  {errors.incomeId && <ErrorMessage>{errors.incomeId?.message}</ErrorMessage>}
+                  <Description>Restrict contributions to a specific income source.</Description>
                 </Field>
               )}
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
