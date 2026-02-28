@@ -1,3 +1,5 @@
+/** Reference line overlay modes for tax charts (bracket thresholds, NIIT threshold). */
+
 export type TaxableIncomeReferenceLineMode = 'marginalFederalIncomeTaxRates' | 'marginalCapitalGainsTaxRates' | 'hideReferenceLines';
 
 export type AgiReferenceLineMode = 'niitThreshold' | 'hideReferenceLines';

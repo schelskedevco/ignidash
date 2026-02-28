@@ -1,8 +1,14 @@
+/**
+ * Shared schemas for income and expense forms.
+ *
+ * Provides reusable sub-schemas for TimePoint (now / atRetirement / atLifeExpectancy /
+ * customDate / customAge), Frequency, Growth (rate + optional limit), and the combined
+ * frequency + timeframe shape used by both income and expense forms.
+ */
+
 import { z } from 'zod';
 
 import { percentageField, currencyFieldAllowsZero } from '@/lib/utils/zod-utils';
-
-// Shared time point schema for income and expenses
 export const timePointSchema = z
   .object({
     type: z.enum(['now', 'atRetirement', 'atLifeExpectancy', 'customDate', 'customAge']),

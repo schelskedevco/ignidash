@@ -1,3 +1,10 @@
+/**
+ * Singleton lifecycle manager for the merge Web Worker.
+ *
+ * Lazily creates a single merge worker instance and exposes its Comlink-wrapped API.
+ * The singleton is shared across all simulation runs to aggregate partial results.
+ */
+
 import * as Comlink from 'comlink';
 import type { MergeWorkerAPI } from './merge.worker';
 

@@ -1,3 +1,4 @@
+/** Safe redirect URL extraction from search params. */
 import { useSearchParams } from 'next/navigation';
 
 import { getSafeRedirect } from '@/lib/utils/navigation-utils';

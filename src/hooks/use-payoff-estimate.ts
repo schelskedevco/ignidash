@@ -1,3 +1,4 @@
+/** Memoized debt payoff month estimate. */
 import { useMemo } from 'react';
 import { estimatePayoffMonths, type PayoffEstimateParams } from '@/lib/utils/payoff-estimator-utils';
 

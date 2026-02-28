@@ -1,3 +1,4 @@
+/** Regenerate simulation button with random seed and disabled-state logic. */
 import { RefreshCwIcon } from 'lucide-react';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';

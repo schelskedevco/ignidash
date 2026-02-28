@@ -1,3 +1,4 @@
+/** Plan ID extraction from Next.js route params. */
 import { useParams } from 'next/navigation';
 import type { Id } from '@/convex/_generated/dataModel';
 

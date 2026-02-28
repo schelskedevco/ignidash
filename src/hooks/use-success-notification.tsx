@@ -1,3 +1,4 @@
+/** Auto-dismissing success notification state. */
 import { useState, useRef, useEffect, useCallback } from 'react';
 
 type NotificationState = {

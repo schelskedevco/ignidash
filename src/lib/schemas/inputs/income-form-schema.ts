@@ -1,3 +1,11 @@
+/**
+ * Income type schema with tax treatment and withholding rules.
+ *
+ * Supports wage, socialSecurity, exempt, selfEmployment, and pension income types.
+ * Includes withholding validation (required for wages, constrained rates for Social Security)
+ * and helper functions for withholding support checks and defaults.
+ */
+
 import { z } from 'zod';
 
 import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-utils';

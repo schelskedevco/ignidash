@@ -1,3 +1,4 @@
+/** Per-field loading/error/success state for account settings forms. */
 import { useState } from 'react';
 
 export type SettingsFieldState = {

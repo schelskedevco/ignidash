@@ -1,3 +1,4 @@
+/** Selected-age state for simulation results with minimum constraint. */
 import { useCallback, useState } from 'react';
 
 export function useResultsState(startAge: number) {

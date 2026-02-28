@@ -1,3 +1,10 @@
+/**
+ * Timeline and retirement strategy schema with cross-field validation.
+ *
+ * Defines birth date, life expectancy, and retirement strategy (fixed age or
+ * SWR target). Includes validation ensuring retirement age < life expectancy.
+ */
+
 import { z } from 'zod';
 
 import { ageField, percentageField } from '@/lib/utils/zod-utils';

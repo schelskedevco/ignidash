@@ -1,3 +1,11 @@
+/**
+ * Single-simulation table row schemas and column configurations.
+ *
+ * Defines Zod schemas for each table category (net worth, cash flow, taxes, returns,
+ * contributions, withdrawals) and their corresponding TABLE_CONFIG maps that pair
+ * each column key with a display title and ColumnFormat.
+ */
+
 import { z } from 'zod';
 
 import type { ColumnFormat } from '@/lib/types/column-format';

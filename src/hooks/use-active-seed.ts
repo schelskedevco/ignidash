@@ -1,3 +1,4 @@
+/** Resolves the active simulation seed from table selection or percentile quick-select. */
 import { useMemo, useCallback } from 'react';
 
 import {

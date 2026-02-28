@@ -1,3 +1,10 @@
+/**
+ * Summary metrics extracted from simulation results.
+ *
+ * Provides at-a-glance indicators (success rate, retirement/bankruptcy ages,
+ * portfolio values) for both single and multi-simulation runs.
+ */
+
 export interface KeyMetricsBase {
   success: number;
   retirementAge: number | null;

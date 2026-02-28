@@ -1,3 +1,4 @@
+/** Copy-to-clipboard button state with temporary confirmation feedback. */
 import { useState, useCallback } from 'react';
 import { LinkIcon, CheckIcon } from '@heroicons/react/20/solid';
 

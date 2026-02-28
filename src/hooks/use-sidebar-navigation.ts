@@ -1,3 +1,4 @@
+/** Navigation menu items, path matching, and current page title. */
 import { LayoutDashboardIcon, ChartNoAxesCombinedIcon, Layers2Icon, ZapIcon, CircleQuestionMarkIcon, GemIcon } from 'lucide-react';
 import { api } from '@/convex/_generated/api';
 import { useQuery, useMutation, useConvexAuth } from 'convex/react';

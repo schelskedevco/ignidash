@@ -1,3 +1,4 @@
+/** Theme-aware color palette for Recharts rendering. */
 import { useMemo } from 'react';
 import { useTheme } from 'next-themes';
 

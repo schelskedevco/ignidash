@@ -1,3 +1,4 @@
+/** Convex query hooks for all plan entities with Zod transformation. */
 import { useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useMemo } from 'react';

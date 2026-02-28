@@ -1,3 +1,4 @@
+/** Collects already-synced entity IDs from a record, excluding a given item. */
 import { useMemo } from 'react';
 
 export function useAlreadySyncedIds<T extends { id: string }>(

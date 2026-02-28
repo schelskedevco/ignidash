@@ -1,3 +1,4 @@
+/** Fetches linked accounts from the Better-Auth client. */
 import { useState, useEffect, useCallback } from 'react';
 
 import { authClient } from '@/lib/auth-client';

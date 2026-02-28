@@ -1,3 +1,11 @@
+/**
+ * Contribution strategies and IRS limit helpers.
+ *
+ * Defines the contribution form schema (dollarAmount / percentRemaining / unlimited)
+ * and helper functions for IRS annual contribution limits, Section 415(c) limits,
+ * shared-limit account groupings, and per-account-type feature support flags.
+ */
+
 import { z } from 'zod';
 import { currencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-utils';
 

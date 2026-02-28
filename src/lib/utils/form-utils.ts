@@ -1,3 +1,9 @@
+/**
+ * React Hook Form error extraction utilities.
+ *
+ * Recursively walks a FieldErrors tree and collects all human-readable messages.
+ */
+
 import type { FieldErrors } from 'react-hook-form';
 
 export const getErrorMessages = (errors: FieldErrors): string[] => {

@@ -1,3 +1,11 @@
+/**
+ * Account type schema with 8-way discriminated union and tax classification.
+ *
+ * Defines savings, taxableBrokerage, Roth variants (with contributionBasis),
+ * traditional variants, and HSA — along with type guards, display labels,
+ * and TaxCategory mapping.
+ */
+
 import { z } from 'zod';
 
 import { currencyFieldAllowsZero, percentageField } from '@/lib/utils/zod-utils';

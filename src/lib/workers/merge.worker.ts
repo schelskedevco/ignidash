@@ -1,3 +1,11 @@
+/**
+ * Result aggregation and derived data extraction Web Worker.
+ *
+ * Collects partial MultiSimulationResults from simulation workers, merges them into a
+ * single result set, and computes derived analysis data (charts, tables, key metrics).
+ * Uses a UUID-keyed cache so the main thread can request derived data without re-merging.
+ */
+
 import * as Comlink from 'comlink';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -25,10 +33,12 @@ type DerivedMultiSimulationData = {
 };
 
 const mergeAPI = {
+  /** Buffers a partial result from a simulation worker for later merging. */
   async addPartialResult(result: MultiSimulationResult): Promise<void> {
     partialResults.push(result);
   },
 
+  /** Merges all buffered partial results, caches the combined result, and returns a UUID handle. */
   async getMergedResult(): Promise<{ handle: string }> {
     const merged: MultiSimulationResult = { simulations: partialResults.flatMap((r) => r.simulations) };
     partialResults = [];
@@ -38,6 +48,7 @@ const mergeAPI = {
     return { handle };
   },
 
+  /** Extracts analysis, chart data, table data, and key metrics from the cached merged result. */
   async getDerivedMultiSimulationData(handle: string, sortMode: MonteCarloSortMode): Promise<DerivedMultiSimulationData> {
     if (!cache || cache.handle !== handle) {
       console.error('Cache miss or invalid handle in getDerivedMultiSimulationData');

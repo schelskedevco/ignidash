@@ -1,3 +1,10 @@
+/**
+ * View mode enums for chart series visibility.
+ *
+ * Each chart category has a union type controlling which data series are
+ * rendered (e.g., net worth by asset class vs. tax category).
+ */
+
 export type NetWorthDataView =
   | 'assetClass'
   | 'taxCategory'

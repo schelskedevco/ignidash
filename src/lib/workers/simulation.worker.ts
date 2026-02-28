@@ -1,3 +1,11 @@
+/**
+ * Simulation execution Web Worker.
+ *
+ * Runs Monte Carlo (stochastic or historical backtest) simulations in an off-main-thread
+ * context. Each worker selects the appropriate engine based on the simulation mode, executes
+ * the requested number of simulations, and forwards partial results to the merge worker.
+ */
+
 import * as Comlink from 'comlink';
 
 import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';

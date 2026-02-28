@@ -1,8 +1,13 @@
+/**
+ * Multi-simulation table row schemas and column configurations.
+ *
+ * Defines per-simulation summary rows (MultiSimulationTableRow) and per-year
+ * aggregate rows (YearlyAggregateTableRow), plus their TABLE_CONFIG maps.
+ */
+
 import { z } from 'zod';
 
 import type { ColumnFormat } from '@/lib/types/column-format';
-
-// Multi Simulation Table Schema
 export const multiSimulationTableRowSchema = z.object({
   seed: z.number(),
   success: z.boolean(),

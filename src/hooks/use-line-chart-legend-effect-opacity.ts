@@ -1,3 +1,4 @@
+/** Debounced hover state for line chart legend opacity effects. */
 import { useState, useRef, useEffect } from 'react';
 
 export function useLineChartLegendEffectOpacity() {

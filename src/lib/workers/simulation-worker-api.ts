@@ -1,3 +1,10 @@
+/**
+ * Worker pool manager for parallel simulation execution.
+ *
+ * Creates and manages a pool of Web Workers (one per available CPU core minus one)
+ * that run financial simulations off the main thread via Comlink RPC.
+ */
+
 import * as Comlink from 'comlink';
 import type { SimulationWorkerAPI } from './simulation.worker';
 

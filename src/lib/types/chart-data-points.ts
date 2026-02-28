@@ -1,3 +1,10 @@
+/**
+ * Data point interfaces for all chart types.
+ *
+ * Defines the row shapes consumed by Recharts for single-simulation and
+ * multi-simulation charts (net worth, cash flow, taxes, returns, contributions, withdrawals).
+ */
+
 import type { ExpenseData } from '@/lib/calc/expenses';
 import type { IncomeData } from '@/lib/calc/incomes';
 import type { AccountDataWithFlows } from '@/lib/calc/account';

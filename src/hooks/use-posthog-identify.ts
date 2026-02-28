@@ -1,3 +1,4 @@
+/** PostHog user identification on auth session. */
 import posthog from 'posthog-js';
 import { useEffect } from 'react';
 

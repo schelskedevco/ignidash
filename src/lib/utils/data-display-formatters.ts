@@ -1,3 +1,10 @@
+/**
+ * Human-readable formatters for financial data display.
+ *
+ * Converts domain values (timeframes, growth rates, frequencies, key metrics)
+ * into user-facing display strings for cards, lists, and summary panels.
+ */
+
 import { formatNumber } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import type { TimePoint, Growth, Frequency } from '@/lib/schemas/inputs/income-expenses-shared-schemas';

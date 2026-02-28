@@ -1,3 +1,10 @@
+/**
+ * Safe redirect validation for auth flows.
+ *
+ * Prevents open-redirect attacks by validating redirect URLs against an explicit
+ * allowlist. Only same-origin paths matching known routes are permitted.
+ */
+
 const ALLOWED_REDIRECTS = [
   '/',
   '/settings',
@@ -15,6 +22,7 @@ const ALLOWED_REDIRECTS = [
 const ALLOWED_REDIRECT_PREFIXES = ['/dashboard/simulator/'];
 const DEFAULT_REDIRECT = '/dashboard';
 
+/** Returns the redirect path if it matches an allowed route, otherwise falls back to /dashboard. */
 export function getSafeRedirect(redirectParam: string | null): string {
   if (!redirectParam) return DEFAULT_REDIRECT;
   if (!redirectParam.startsWith('/')) return DEFAULT_REDIRECT;

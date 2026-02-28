@@ -1,3 +1,10 @@
+/**
+ * Statistical utilities for simulation analysis.
+ *
+ * Provides descriptive statistics (mean, standard deviation, percentiles) and
+ * normalization helpers used by multi-simulation analyzers and chart data extractors.
+ */
+
 export interface Stats {
   mean: number;
   median: number;
@@ -23,6 +30,10 @@ export class StatsUtils {
     return { min, max, range: max - min };
   }
 
+  /**
+   * Normalizes a value to the 0–1 range, clamped. Returns `fallback` for null values
+   * and 0.5 when range is zero. When `invert` is true, higher raw values produce lower normalized values.
+   */
   static normalize(value: number | null, min: number, range: number, fallback: number = 0, invert: boolean = false): number {
     if (value === null) return fallback;
     if (range === 0) return 0.5;

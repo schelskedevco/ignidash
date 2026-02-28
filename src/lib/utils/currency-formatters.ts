@@ -1,3 +1,10 @@
+/**
+ * Currency display formatting via Intl.NumberFormat.
+ *
+ * Provides full-precision and compact formatters for currency values.
+ * All formatters use the locale and symbol from CURRENCY_CONFIG.
+ */
+
 export const CURRENCY_CONFIG = {
   currency: 'USD',
   locale: 'en-US',

@@ -1,3 +1,4 @@
+/** Slices chart data arrays by the selected time frame (10/20/30yr or full). */
 import { useMemo } from 'react';
 import { useChartTimeFrameToShow, useMonteCarloTimeFrameToShow } from '@/lib/stores/simulator-store';
 

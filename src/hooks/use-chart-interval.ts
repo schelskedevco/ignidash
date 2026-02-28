@@ -1,3 +1,4 @@
+/** Calculates x-axis tick interval for approximately 12 evenly spaced labels. */
 import { useMemo } from 'react';
 
 export function useChartInterval(dataLength: number, desiredTicks = 12) {

@@ -1,3 +1,4 @@
+/** Client-side mount detection for hydration safety. */
 import { useEffect, useState } from 'react';
 
 export function useMounted() {

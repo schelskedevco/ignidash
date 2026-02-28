@@ -1,3 +1,11 @@
+/**
+ * Root SimulatorInputs composition schema.
+ *
+ * Composes all per-domain form schemas (timeline, incomes, accounts, expenses, debts,
+ * contributions, market assumptions, etc.) into a single SimulatorInputs type that
+ * represents a complete financial plan for simulation.
+ */
+
 import { z } from 'zod';
 
 import { timelineFormSchema } from './timeline-form-schema';

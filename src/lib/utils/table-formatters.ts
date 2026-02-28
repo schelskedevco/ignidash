@@ -1,3 +1,10 @@
+/**
+ * Table column generators for simulation data tables.
+ *
+ * Each generator reads a table config (column key → title + format) and produces
+ * an array of TableColumn objects with pre-bound format functions.
+ */
+
 import type { TableColumn } from '@/lib/types/table-column';
 import type { ColumnFormat } from '@/lib/types/column-format';
 import {
@@ -22,6 +29,7 @@ import {
 } from '@/lib/schemas/tables/multi-simulation-table-schema';
 import { formatCurrency } from '@/lib/utils/currency-formatters';
 
+/** Dispatches a cell value to the appropriate formatter based on the column's ColumnFormat. */
 const formatValue = (value: unknown, format: ColumnFormat): string => {
   if (value == null) return '–';
   if (typeof value !== 'number' && format !== 'string' && format !== 'historicalRanges') return '–';

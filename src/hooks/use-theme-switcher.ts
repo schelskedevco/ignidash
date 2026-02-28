@@ -1,3 +1,4 @@
+/** Light/dark theme toggle button state. */
 import { useTheme } from 'next-themes';
 import { SunMediumIcon, MoonIcon } from 'lucide-react';
 
