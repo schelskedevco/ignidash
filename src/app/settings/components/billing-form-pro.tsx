@@ -2,7 +2,7 @@
 
 import { useAction } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { CreditCardIcon } from 'lucide-react';
 import posthog from 'posthog-js';
 
@@ -33,19 +33,20 @@ export default function BillingFormPro({ subscriptions }: BillingFormProProps) {
     setIsLoading(false);
   };
 
-  const activeSubscriptions = subscriptions.filter(
-    (subscription) => subscription.status === 'active' || subscription.status === 'trialing'
+  const activeSubscriptions = useMemo(
+    () => subscriptions.filter((subscription) => subscription.status === 'active' || subscription.status === 'trialing'),
+    [subscriptions]
   );
 
-  const a = useAction(api.auth.getStripeSubscription);
+  const getStripeSubscription = useAction(api.auth.getStripeSubscription);
   useEffect(() => {
     const subscriptionId = activeSubscriptions[0]?.id;
     if (!subscriptionId) return;
 
-    a({ subscriptionId }).then((subscription) => {
+    getStripeSubscription({ subscriptionId }).then((subscription) => {
       if (subscription?.cancel_at) setCancelAtTime(subscription.cancel_at);
     });
-  }, [activeSubscriptions, a]);
+  }, [activeSubscriptions, getStripeSubscription]);
 
   return (
     <Card className="my-6">
