@@ -207,7 +207,7 @@ export default function ContributionRuleDialog({
                     ))}
                   </Select>
                   {errors.incomeId && <ErrorMessage>{errors.incomeId?.message}</ErrorMessage>}
-                  <Description>Optionally restrict contributions to a specific income source.</Description>
+                  <Description>Allow contributions only from a specific income source, if applicable.</Description>
                 </Field>
               )}
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
