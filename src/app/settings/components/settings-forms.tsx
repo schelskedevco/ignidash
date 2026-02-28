@@ -44,7 +44,7 @@ export default function SettingsForms({ preloadedUser, preloadedSubscriptions }:
     };
   }, [accountsData, isAuthenticated]);
 
-  const { notificationState, showSuccessNotification, setShow } = useSuccessNotification();
+  const { notificationState, showSuccessNotification, dismiss } = useSuccessNotification();
 
   if (isAccountsDataLoading || isAuthLoading || (isAuthenticated && !authData)) {
     return (
@@ -71,7 +71,7 @@ export default function SettingsForms({ preloadedUser, preloadedSubscriptions }:
           <DataSettingsForm showSuccessNotification={showSuccessNotification} />
         </Authenticated>
       </main>
-      <SuccessNotification {...notificationState} setShow={setShow} />
+      <SuccessNotification {...notificationState} onDismiss={dismiss} />
     </>
   );
 }

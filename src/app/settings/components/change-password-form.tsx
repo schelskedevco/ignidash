@@ -9,7 +9,7 @@ import { Fieldset, FieldGroup, Field, Label, Legend, ErrorMessage } from '@/comp
 import { Button } from '@/components/catalyst/button';
 import { DialogActions } from '@/components/catalyst/dialog';
 import { authClient } from '@/lib/auth-client';
-import { useAccountSettingsFieldState } from '@/hooks/use-account-settings-field-state';
+import { useBetterAuthField } from '@/hooks/use-better-auth-field';
 
 interface ChangePasswordFormProps {
   showSuccessNotification: (title: string, desc?: string) => void;
@@ -19,7 +19,7 @@ export default function ChangePasswordForm({ showSuccessNotification }: ChangePa
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
-  const { fieldState: passwordFieldState, createCallbacks: createPasswordCallbacks } = useAccountSettingsFieldState();
+  const { fieldState: passwordFieldState, createCallbacks: createPasswordCallbacks } = useBetterAuthField();
   const handlePasswordSave = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 

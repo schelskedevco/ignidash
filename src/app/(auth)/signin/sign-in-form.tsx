@@ -17,7 +17,7 @@ import PasswordInput from '../components/password-input';
 import GoogleSignIn from '../components/google-sign-in';
 
 export default function SignInForm() {
-  const { notificationState, showSuccessNotification, setShow } = useSuccessNotification();
+  const { notificationState, showSuccessNotification, dismiss } = useSuccessNotification();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -170,7 +170,7 @@ export default function SignInForm() {
           .
         </p>
       </div>
-      <SuccessNotification {...notificationState} setShow={setShow} />
+      <SuccessNotification {...notificationState} onDismiss={dismiss} />
     </>
   );
 }

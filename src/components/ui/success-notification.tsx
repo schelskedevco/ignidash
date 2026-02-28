@@ -7,11 +7,11 @@ import { Transition } from '@headlessui/react';
 interface SuccessNotificationProps {
   title: string;
   desc?: string;
-  setShow: (show: boolean) => void;
+  onDismiss: () => void;
   show: boolean;
 }
 
-export default function SuccessNotification({ title, desc, setShow, show }: SuccessNotificationProps) {
+export default function SuccessNotification({ title, desc, onDismiss, show }: SuccessNotificationProps) {
   return (
     <div aria-live="assertive" className="pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-6 sm:items-start sm:p-6">
       <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
@@ -29,7 +29,7 @@ export default function SuccessNotification({ title, desc, setShow, show }: Succ
                 <div className="ml-4 flex shrink-0">
                   <button
                     type="button"
-                    onClick={() => setShow(false)}
+                    onClick={onDismiss}
                     className="inline-flex rounded-md text-stone-400 hover:text-stone-500 focus:outline-2 focus:outline-offset-2 focus:outline-rose-600 dark:hover:text-white dark:focus:outline-rose-500"
                   >
                     <span className="sr-only">Close</span>

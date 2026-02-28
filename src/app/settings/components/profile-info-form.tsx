@@ -10,12 +10,12 @@ import { Fieldset, FieldGroup, Field, Label, Legend, Description, ErrorMessage }
 import { Button } from '@/components/catalyst/button';
 import { Divider } from '@/components/catalyst/divider';
 import { authClient } from '@/lib/auth-client';
-import { useAccountSettingsFieldState } from '@/hooks/use-account-settings-field-state';
+import { useBetterAuthField } from '@/hooks/use-better-auth-field';
 
 import ChangePasswordForm from './change-password-form';
 
 function useNameFieldHook(fetchedName: string, showSuccessNotification: (title: string, desc?: string) => void) {
-  const { fieldState: nameFieldState, createCallbacks: nameCallbacks } = useAccountSettingsFieldState();
+  const { fieldState: nameFieldState, createCallbacks: nameCallbacks } = useBetterAuthField();
 
   const [name, setName] = useState(fetchedName);
   const handleNameSave = async () =>
@@ -35,7 +35,7 @@ function useNameFieldHook(fetchedName: string, showSuccessNotification: (title: 
 }
 
 function useEmailFieldHook(fetchedEmail: string, showSuccessNotification: (title: string, desc?: string) => void) {
-  const { fieldState: emailFieldState, createCallbacks: emailCallbacks } = useAccountSettingsFieldState();
+  const { fieldState: emailFieldState, createCallbacks: emailCallbacks } = useBetterAuthField();
 
   const [email, setEmail] = useState(fetchedEmail);
   const handleEmailSave = async () =>
@@ -53,7 +53,7 @@ function useEmailFieldHook(fetchedEmail: string, showSuccessNotification: (title
 }
 
 function useSendVerificationEmailFieldHook(fetchedEmail: string, showSuccessNotification: (title: string, desc?: string) => void) {
-  const { fieldState: sendVerificationEmailState, createCallbacks: sendVerificationEmailCallbacks } = useAccountSettingsFieldState();
+  const { fieldState: sendVerificationEmailState, createCallbacks: sendVerificationEmailCallbacks } = useBetterAuthField();
 
   const [isVerificationEmailSent, setIsVerificationEmailSent] = useState(false);
   const handleSendVerificationEmail = async () =>

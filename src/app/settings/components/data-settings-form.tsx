@@ -14,7 +14,7 @@ import ErrorMessageCard from '@/components/ui/error-message-card';
 import { Button } from '@/components/catalyst/button';
 import { Divider } from '@/components/catalyst/divider';
 import { authClient } from '@/lib/auth-client';
-import { useAccountSettingsFieldState } from '@/hooks/use-account-settings-field-state';
+import { useBetterAuthField } from '@/hooks/use-better-auth-field';
 
 interface DataSettingsFormProps {
   showSuccessNotification: (title: string, desc?: string) => void;
@@ -28,14 +28,13 @@ export default function DataSettingsForm({ showSuccessNotification }: DataSettin
 
   const [accountDeletionAlertOpen, setAccountDeletionAlertOpen] = useState(false);
 
-  const { fieldState: deleteApplicationDataState } = useAccountSettingsFieldState();
   const deleteAppDataMutation = useMutation(api.app_data.deleteAppData);
   const handleDeleteApplicationData = async () => {
     posthog.capture('delete_app_data');
     await deleteAppDataMutation({ shouldCreateBlankPlan: true });
   };
 
-  const { fieldState: deleteAccountState, createCallbacks: deleteAccountCallbacks } = useAccountSettingsFieldState();
+  const { fieldState: deleteAccountState, createCallbacks: deleteAccountCallbacks } = useBetterAuthField();
   const handleDeleteAccount = async () => {
     posthog.capture('delete_account');
     await authClient.deleteUser(
@@ -61,11 +60,11 @@ export default function DataSettingsForm({ showSuccessNotification }: DataSettin
                   className="w-full"
                   data-slot="control"
                   onClick={() => setAppDataAlertOpen(true)}
-                  disabled={deleteApplicationDataState.isLoading}
+                  disabled={isDeleting}
                 >
-                  {deleteApplicationDataState.isLoading ? 'Deleting...' : 'Delete application data'}
+                  {isDeleting ? 'Deleting...' : 'Delete application data'}
                 </Button>
-                {deleteApplicationDataState.errorMessage && <ErrorMessage>{deleteApplicationDataState.errorMessage}</ErrorMessage>}
+                {appDataDeleteError && <ErrorMessage>{appDataDeleteError}</ErrorMessage>}
                 <Description>
                   <strong className="text-red-500 dark:text-red-400">Warning:</strong> This action will permanently delete your app data,
                   including Simulator plans, but will not delete your account. This cannot be undone.

@@ -7,8 +7,10 @@ type NotificationState = {
   desc?: string;
 };
 
+const INITIAL_STATE: NotificationState = { show: false, title: '', desc: undefined };
+
 export function useSuccessNotification() {
-  const [notificationState, setNotificationState] = useState<NotificationState>({ show: false, title: '' });
+  const [notificationState, setNotificationState] = useState<NotificationState>(INITIAL_STATE);
   const notificationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -23,11 +25,14 @@ export function useSuccessNotification() {
     if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
 
     notificationTimeoutRef.current = setTimeout(() => {
-      setNotificationState({ show: false, title: '' });
+      setNotificationState(INITIAL_STATE);
     }, 5000);
   }, []);
 
-  const setShow = useCallback((show: boolean) => setNotificationState((prev) => ({ ...prev, show })), []);
+  const dismiss = useCallback(() => {
+    if (notificationTimeoutRef.current) clearTimeout(notificationTimeoutRef.current);
+    setNotificationState(INITIAL_STATE);
+  }, []);
 
-  return { notificationState, showSuccessNotification, setShow };
+  return { notificationState, showSuccessNotification, dismiss };
 }
