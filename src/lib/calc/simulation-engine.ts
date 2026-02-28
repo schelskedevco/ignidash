@@ -154,46 +154,19 @@ export class FinancialSimulationEngine {
         const annualPhysicalAssetsData = physicalAssetsProcessor.getAnnualData();
         simulationState.annualData.physicalAssets.push(annualPhysicalAssetsData);
 
-        // Process taxes - save carryover snapshot before first calculation
-        taxProcessor.saveCarryoverSnapshot();
-
-        let annualTaxesData = taxProcessor.process(
+        // Process taxes with iterative convergence (withdrawals to pay taxes can generate additional taxable income)
+        const {
+          taxesData: annualTaxesData,
+          portfolioData: annualPortfolioDataAfterTaxes,
+          discretionaryExpense: annualDiscretionaryExpense,
+        } = this.settleTaxes(
+          taxProcessor,
+          portfolioProcessor,
           annualPortfolioDataBeforeTaxes,
           annualIncomesData,
           annualReturnsData,
           annualPhysicalAssetsData
         );
-        const { totalTaxesDue, totalTaxesRefund } = annualTaxesData;
-
-        // Process portfolio updates after calculating taxes
-        const processTaxesResult = portfolioProcessor.processTaxes(annualPortfolioDataBeforeTaxes, { totalTaxesDue, totalTaxesRefund });
-        let { portfolioData: annualPortfolioDataAfterTaxes } = processTaxesResult;
-        const { discretionaryExpense: annualDiscretionaryExpense } = processTaxesResult;
-
-        // Tax convergence loop: withdrawals to pay taxes generate additional taxable gains
-        let totalTaxesPaid = totalTaxesDue;
-        for (let i = 0; i < 10 && totalTaxesDue > 0; i++) {
-          // Restore carryover to start-of-year state before each iteration
-          taxProcessor.restoreCarryoverSnapshot();
-
-          annualTaxesData = taxProcessor.process(
-            annualPortfolioDataAfterTaxes,
-            annualIncomesData,
-            annualReturnsData,
-            annualPhysicalAssetsData
-          );
-          const totalTaxesDue = annualTaxesData.totalTaxesDue;
-
-          const remainingTaxesDue = totalTaxesDue - totalTaxesPaid;
-          if (Math.abs(remainingTaxesDue) < TAX_CONVERGENCE_THRESHOLD) break;
-
-          ({ portfolioData: annualPortfolioDataAfterTaxes } = portfolioProcessor.processTaxes(annualPortfolioDataAfterTaxes, {
-            totalTaxesDue: remainingTaxesDue,
-            totalTaxesRefund: 0,
-          }));
-
-          totalTaxesPaid = totalTaxesDue;
-        }
 
         // Process expenses last to account for discretionary expenses from tax refunds
         if (annualDiscretionaryExpense) expensesProcessor.processDiscretionaryExpense(annualDiscretionaryExpense);
@@ -253,6 +226,60 @@ export class FinancialSimulationEngine {
 
     simulationState.time.age = simulationContext.startAge + monthsElapsed / 12;
     simulationState.time.year = monthsElapsed / 12;
+  }
+
+  /**
+   * Settles annual taxes with iterative convergence.
+   *
+   * Withdrawals to pay taxes can generate additional taxable income, which increases
+   * tax liability, requiring further withdrawals. The loop converges when remaining
+   * taxes due fall within TAX_CONVERGENCE_THRESHOLD, or after 10 iterations.
+   */
+  private settleTaxes(
+    taxProcessor: TaxProcessor,
+    portfolioProcessor: PortfolioProcessor,
+    portfolioDataBeforeTaxes: PortfolioData,
+    incomesData: IncomesData,
+    returnsData: ReturnsData,
+    physicalAssetsData: PhysicalAssetsData
+  ): {
+    taxesData: TaxesData;
+    portfolioData: PortfolioData;
+    discretionaryExpense: number;
+  } {
+    taxProcessor.saveCarryoverSnapshot();
+
+    const initialTaxesData = taxProcessor.process(portfolioDataBeforeTaxes, incomesData, returnsData, physicalAssetsData);
+    const { totalTaxesDue, totalTaxesRefund } = initialTaxesData;
+
+    const { portfolioData: initialPortfolioData, discretionaryExpense } = portfolioProcessor.processTaxes(portfolioDataBeforeTaxes, {
+      totalTaxesDue,
+      totalTaxesRefund,
+    });
+
+    let taxesData = initialTaxesData;
+    let portfolioData = initialPortfolioData;
+
+    if (totalTaxesDue > 0) {
+      let totalTaxesPaid = totalTaxesDue;
+      for (let i = 0; i < 10; i++) {
+        taxProcessor.restoreCarryoverSnapshot();
+
+        taxesData = taxProcessor.process(portfolioData, incomesData, returnsData, physicalAssetsData);
+
+        const remainingTaxesDue = taxesData.totalTaxesDue - totalTaxesPaid;
+        if (Math.abs(remainingTaxesDue) < TAX_CONVERGENCE_THRESHOLD) break;
+
+        ({ portfolioData } = portfolioProcessor.processTaxes(portfolioData, {
+          totalTaxesDue: remainingTaxesDue,
+          totalTaxesRefund: 0,
+        }));
+
+        totalTaxesPaid = taxesData.totalTaxesDue;
+      }
+    }
+
+    return { taxesData, portfolioData, discretionaryExpense };
   }
 
   private initSimulationContext(timeline: TimelineInputs): SimulationContext {
