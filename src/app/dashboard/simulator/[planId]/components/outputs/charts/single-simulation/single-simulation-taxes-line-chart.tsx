@@ -191,7 +191,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
                 })}
               >
                 <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-                <span className="ml-1 font-semibold">{formatValue(Math.abs(entry.value), dataView)}</span>
+                <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
               </p>
             ))}
           </div>
