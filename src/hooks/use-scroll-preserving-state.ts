@@ -1,10 +1,7 @@
+/** Preserves scroll position across state updates for both window and container scrolling. */
 import { useCallback } from 'react';
 import { flushSync } from 'react-dom';
 
-/**
- * Returns a wrapper function that preserves scroll position across state updates.
- * Handles both window scrolling (mobile) and fixed container scrolling (desktop xl+).
- */
 export function useScrollPreservation() {
   return useCallback(<TArgs extends unknown[]>(fn: (...args: TArgs) => void) => {
     return (...args: TArgs) => {
