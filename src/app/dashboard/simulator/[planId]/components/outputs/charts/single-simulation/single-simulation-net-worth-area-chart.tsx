@@ -17,7 +17,6 @@ import { useChartTheme } from '@/hooks/use-chart-theme';
 import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import { useChartInterval } from '@/hooks/use-chart-interval';
-import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 import { zeroAssetAmounts, type AssetAllocation } from '@/lib/calc/asset';
 
 import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';
@@ -397,8 +396,6 @@ export default function SingleSimulationNetWorthAreaChart({
     [onAgeSelect]
   );
 
-  const { getOpacity } = useLineChartLegendEffectOpacity();
-
   const allDataKeys = [...areaDataKeys, ...lineDataKeys, ...barDataKeys];
   const hasNoData =
     chartData.length === 0 || chartData.every((point) => allDataKeys.every((key) => point[key as keyof typeof point] === 0));
@@ -444,7 +441,7 @@ export default function SingleSimulationNetWorthAreaChart({
             activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
             dot={{ fill: backgroundColor, strokeWidth: 2 }}
             strokeWidth={2}
-            strokeOpacity={getOpacity(dataKey)}
+            strokeOpacity={1}
           />
         ))}
         {barDataKeys.map((dataKey, i) => (

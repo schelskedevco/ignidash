@@ -18,7 +18,6 @@ import type { ExpenseData } from '@/lib/calc/expenses';
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { DebtData } from '@/lib/calc/debts';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 
 import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';
 
@@ -355,8 +354,6 @@ export default function SingleSimulationCashFlowLineChart({
     [onAgeSelect]
   );
 
-  const { getOpacity } = useLineChartLegendEffectOpacity();
-
   const allDataKeys = [...lineDataKeys, ...barDataKeys];
   const hasNoData =
     chartData.length === 0 || chartData.every((point) => allDataKeys.every((key) => point[key as keyof typeof point] === 0));
@@ -390,7 +387,7 @@ export default function SingleSimulationCashFlowLineChart({
             activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
             dot={{ fill: backgroundColor, strokeWidth: 2 }}
             strokeWidth={2}
-            strokeOpacity={getOpacity(dataKey)}
+            strokeOpacity={1}
           />
         ))}
         {barDataKeys.map((dataKey, i) => (

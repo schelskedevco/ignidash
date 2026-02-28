@@ -15,7 +15,6 @@ import type { WithdrawalsDataView } from '@/lib/types/chart-data-views';
 import type { AccountDataWithFlows } from '@/lib/calc/account';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { uniformLifetimeMap } from '@/lib/calc/historical-data/rmd-table';
-import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 
 import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';
 
@@ -277,8 +276,6 @@ export default function SingleSimulationWithdrawalsLineChart({
     [onAgeSelect]
   );
 
-  const { getOpacity } = useLineChartLegendEffectOpacity();
-
   const allDataKeys = [...lineDataKeys, ...barDataKeys];
   const hasNoData =
     chartData.length === 0 || chartData.every((point) => allDataKeys.every((key) => point[key as keyof typeof point] === 0));
@@ -310,7 +307,7 @@ export default function SingleSimulationWithdrawalsLineChart({
             activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
             dot={{ fill: backgroundColor, strokeWidth: 2 }}
             strokeWidth={2}
-            strokeOpacity={getOpacity(dataKey)}
+            strokeOpacity={1}
           />
         ))}
         {barDataKeys.map((dataKey, i) => (
