@@ -4,7 +4,7 @@ import { useState, useCallback, memo } from 'react';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import { ChartLineIcon } from 'lucide-react';
 
-import { formatChartString, cn } from '@/lib/utils';
+import { formatChartString } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
@@ -17,7 +17,7 @@ import type { AccountDataWithReturns } from '@/lib/calc/returns';
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 
-import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';
+import { ChartEmptyState, TimeSeriesChartContainer, TooltipContainer, TooltipEntryRow } from '../chart-primitives';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -47,22 +47,13 @@ interface CustomTooltipProps {
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView, customDataType }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
-  const currentYear = new Date().getFullYear();
-  const yearForAge = currentYear + (label! - Math.floor(startAge));
-
-  const formatValue = (value: number, mode: ReturnsDataView) => {
-    switch (mode) {
+  const formatValue = (value: number) => {
+    switch (dataView) {
       case 'rates':
       case 'cagr':
         return `${(value * 100).toFixed(1)}%`;
-      case 'annualAmounts':
-      case 'cumulativeAmounts':
-      case 'taxCategory':
-      case 'appreciation':
-      case 'custom':
-        return formatCompactCurrency(value, 1);
       default:
-        return value;
+        return formatCompactCurrency(value, 1);
     }
   };
 
@@ -100,27 +91,13 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   }
 
   return (
-    <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
-      <p className="mx-1 mb-2 flex justify-between text-sm font-semibold">
-        <span className="mr-2">Age {label}</span>
-        <span className="text-muted-foreground ml-1">{yearForAge}</span>
-      </p>
+    <TooltipContainer label={label!} startAge={startAge} footer={footer}>
       <div className="flex flex-col gap-1">
         {transformedPayload.map((entry) => (
-          <p
-            key={entry.dataKey}
-            style={{ backgroundColor: entry.color }}
-            className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-              'text-background': NEEDS_BG_TEXT_COLORS.includes(entry.color),
-            })}
-          >
-            <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-            <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
-          </p>
+          <TooltipEntryRow key={entry.dataKey} dataKey={entry.dataKey} color={entry.color} formattedValue={formatValue(entry.value)} />
         ))}
       </div>
-      {footer}
-    </div>
+    </TooltipContainer>
   );
 });
 
@@ -301,11 +278,11 @@ export default function SingleSimulationReturnsLineChart({
   const hasNoData =
     chartData.length === 0 || chartData.every((point) => allDataKeys.every((key) => point[key as keyof typeof point] === 0));
   if (hasNoData) {
-    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+    return <ChartEmptyState />;
   }
 
   return (
-    <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+    <TimeSeriesChartContainer ref={chartRef}>
       <ComposedChart
         responsive
         width="100%"
@@ -352,6 +329,6 @@ export default function SingleSimulationReturnsLineChart({
         )}
         {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
       </ComposedChart>
-    </div>
+    </TimeSeriesChartContainer>
   );
 }

@@ -12,6 +12,8 @@ import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data
 import type { TaxesDataView } from '@/lib/types/chart-data-views';
 import type { TaxableIncomeReferenceLineMode, AgiReferenceLineMode } from '@/lib/types/reference-line-modes';
 
+import { CustomLabelListContent, getBarChartTickConfig, ChartEmptyState, BarChartContainer } from '../chart-primitives';
+
 const getTaxBrackets = (
   chartData: SingleSimulationTaxesChartDataPoint[]
 ): {
@@ -67,82 +69,17 @@ const renderNiitThresholdReferenceLine = (niitThreshold: number, foregroundColor
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomLabelListContent = (props: any) => {
-  const { x, y, width, height, offset, value, isSmallScreen, dataView } = props;
-  if (!value || value === 0) {
-    return null;
-  }
-
-  const formatValue = (
-    value: number,
-    mode:
-      | 'marginalRates'
-      | 'effectiveRates'
-      | 'annualAmounts'
-      | 'cumulativeAmounts'
-      | 'taxableIncome'
-      | 'adjustedGrossIncome'
-      | 'investmentIncome'
-      | 'retirementDistributions'
-      | 'taxFreeIncome'
-      | 'ordinaryIncome'
-      | 'capitalGainsAndDividends'
-      | 'earlyWithdrawalPenalties'
-      | 'adjustmentsAndDeductions'
-      | 'socialSecurityIncome'
-      | 'socialSecurityTaxablePercentage'
-  ) => {
-    switch (mode) {
+const getTaxesLabelFormatter = (dataView: TaxesDataView) => {
+  return (value: number) => {
+    switch (dataView) {
       case 'marginalRates':
       case 'effectiveRates':
       case 'socialSecurityTaxablePercentage':
         return `${(value * 100).toFixed(1)}%`;
-      case 'annualAmounts':
-      case 'cumulativeAmounts':
-      case 'taxableIncome':
-      case 'adjustedGrossIncome':
-      case 'investmentIncome':
-      case 'retirementDistributions':
-      case 'taxFreeIncome':
-      case 'ordinaryIncome':
-      case 'capitalGainsAndDividends':
-      case 'earlyWithdrawalPenalties':
-      case 'adjustmentsAndDeductions':
-      case 'socialSecurityIncome':
-        return formatCompactCurrency(value, 1);
       default:
-        return value;
+        return formatCompactCurrency(value, 1);
     }
   };
-
-  return (
-    <text
-      x={x + width / 2}
-      y={y + height / 2 + (isSmallScreen ? offset : 0)}
-      fill="var(--foreground)"
-      textAnchor="middle"
-      dominantBaseline="middle"
-      className="text-xs sm:text-sm"
-    >
-      <tspan className="font-semibold">{formatValue(value, dataView)}</tspan>
-    </text>
-  );
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
-  const truncateText = (text: string, maxLength = 24) => {
-    return text.length > maxLength ? text.substring(0, maxLength - 3) + '…' : text;
-  };
-
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} textAnchor="end" fill="currentColor" transform="rotate(-35)" fontSize={12}>
-        {truncateText(payload.value)}
-      </text>
-    </g>
-  );
 };
 
 type BarChartData = {
@@ -424,18 +361,16 @@ export default function SingleSimulationTaxesBarChart({
     .filter((item) => (filterZeroValues ? getTotalAmount(item) !== 0 : true))
     .sort((a, b) => getTotalAmount(b) - getTotalAmount(a));
   if (transformedChartData.length === 0) {
-    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+    return <ChartEmptyState />;
   }
 
-  const shouldUseCustomTick = transformedChartData.length > 3 || (isSmallScreen && transformedChartData.length > 1);
-  const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
-  const bottomMargin = shouldUseCustomTick ? 100 : 25;
+  const { tick, bottomMargin } = getBarChartTickConfig(transformedChartData.length, isSmallScreen, foregroundMutedColor);
 
   const { maxSegments, normalizedData } = normalizeChartData(transformedChartData);
   const getDataKey = (segmentIndex: number) => `segments[${segmentIndex}].amount`;
 
   return (
-    <div className="h-full min-h-72 w-full sm:min-h-84 lg:min-h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+    <BarChartContainer>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={normalizedData} className="text-xs" margin={{ top: 5, right: 10, left: 10, bottom: bottomMargin }} tabIndex={-1}>
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
@@ -457,7 +392,7 @@ export default function SingleSimulationTaxesBarChart({
               <LabelList
                 dataKey={getDataKey(segmentIndex)}
                 position="middle"
-                content={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
+                content={<CustomLabelListContent isSmallScreen={isSmallScreen} formatValue={getTaxesLabelFormatter(dataView)} />}
               />
             </Bar>
           ))}
@@ -472,6 +407,6 @@ export default function SingleSimulationTaxesBarChart({
             renderNiitThresholdReferenceLine(niitThreshold, foregroundColor, foregroundMutedColor)}
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </BarChartContainer>
   );
 }

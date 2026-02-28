@@ -8,15 +8,11 @@ import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { ReturnsDataView } from '@/lib/types/chart-data-views';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomLabelListContent = (props: any) => {
-  const { x, y, width, height, offset, value, isSmallScreen, dataView } = props;
-  if (!value || value === 0) {
-    return null;
-  }
+import { CustomLabelListContent, getBarChartTickConfig, ChartEmptyState, BarChartContainer } from '../chart-primitives';
 
-  const formatValue = (value: number, mode: ReturnsDataView) => {
-    switch (mode) {
+const getReturnsLabelFormatter = (dataView: ReturnsDataView) => {
+  return (value: number) => {
+    switch (dataView) {
       case 'rates':
       case 'cagr':
         return `${(value * 100).toFixed(1)}%`;
@@ -30,34 +26,6 @@ const CustomLabelListContent = (props: any) => {
         return value;
     }
   };
-
-  return (
-    <text
-      x={x + width / 2}
-      y={y + height / 2 + (isSmallScreen ? offset : 0)}
-      fill="var(--foreground)"
-      textAnchor="middle"
-      dominantBaseline="middle"
-      className="text-xs sm:text-sm"
-    >
-      <tspan className="font-semibold">{formatValue(value, dataView)}</tspan>
-    </text>
-  );
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
-  const truncateText = (text: string, maxLength = 24) => {
-    return text.length > maxLength ? text.substring(0, maxLength - 3) + '…' : text;
-  };
-
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} textAnchor="end" fill="currentColor" transform="rotate(-35)" fontSize={12}>
-        {truncateText(payload.value)}
-      </text>
-    </g>
-  );
 };
 
 interface SingleSimulationReturnsBarChartProps {
@@ -211,15 +179,13 @@ export default function SingleSimulationReturnsBarChart({
   }
 
   if (transformedChartData.length === 0) {
-    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+    return <ChartEmptyState />;
   }
 
-  const shouldUseCustomTick = transformedChartData.length > 3 || (isSmallScreen && transformedChartData.length > 1);
-  const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
-  const bottomMargin = shouldUseCustomTick ? 100 : 25;
+  const { tick, bottomMargin } = getBarChartTickConfig(transformedChartData.length, isSmallScreen, foregroundMutedColor);
 
   return (
-    <div className="h-full min-h-72 w-full sm:min-h-84 lg:min-h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+    <BarChartContainer>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={transformedChartData}
@@ -235,7 +201,7 @@ export default function SingleSimulationReturnsBarChart({
             dataKey="amount"
             maxBarSize={75}
             minPointSize={20}
-            label={<CustomLabelListContent isSmallScreen={isSmallScreen} dataView={dataView} />}
+            label={<CustomLabelListContent isSmallScreen={isSmallScreen} formatValue={getReturnsLabelFormatter(dataView)} />}
           >
             {transformedChartData.map((entry, i) => (
               <Cell key={`${entry.name}-${i}`} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />
@@ -243,6 +209,6 @@ export default function SingleSimulationReturnsBarChart({
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </BarChartContainer>
   );
 }

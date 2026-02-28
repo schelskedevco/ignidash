@@ -3,7 +3,6 @@
 import { useState, useCallback, memo } from 'react';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 
-import { formatChartString, cn } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
@@ -15,7 +14,7 @@ import type { ContributionsDataView } from '@/lib/types/chart-data-views';
 import type { AccountDataWithFlows } from '@/lib/calc/account';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 
-import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';
+import { ChartEmptyState, TimeSeriesChartContainer, TooltipContainer, TooltipEntryRow } from '../chart-primitives';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -42,9 +41,6 @@ interface CustomTooltipProps {
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
-  const currentYear = new Date().getFullYear();
-  const yearForAge = currentYear + (label! - Math.floor(startAge));
-
   let footer = null;
   switch (dataView) {
     case 'annualAmounts':
@@ -70,29 +66,20 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   const filterZeroValues = !['employerMatch', 'shortfall'].includes(dataView);
 
   return (
-    <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
-      <p className="mx-1 mb-2 flex justify-between text-sm font-semibold">
-        <span className="mr-2">Age {label}</span>
-        <span className="text-muted-foreground ml-1">{yearForAge}</span>
-      </p>
+    <TooltipContainer label={label!} startAge={startAge} footer={footer}>
       <div className="flex flex-col gap-1">
         {payload
           .filter((entry) => (filterZeroValues ? entry.value !== 0 : true))
           .map((entry) => (
-            <p
+            <TooltipEntryRow
               key={entry.dataKey}
-              style={{ backgroundColor: entry.color }}
-              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                'text-background': NEEDS_BG_TEXT_COLORS.includes(entry.color),
-              })}
-            >
-              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-              <span className="ml-1 font-semibold">{formatCompactCurrency(entry.value, 1)}</span>
-            </p>
+              dataKey={entry.dataKey}
+              color={entry.color}
+              formattedValue={formatCompactCurrency(entry.value, 1)}
+            />
           ))}
       </div>
-      {footer}
-    </div>
+    </TooltipContainer>
   );
 });
 
@@ -216,11 +203,11 @@ export default function SingleSimulationContributionsLineChart({
   const hasNoData =
     chartData.length === 0 || chartData.every((point) => allDataKeys.every((key) => point[key as keyof typeof point] === 0));
   if (hasNoData) {
-    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+    return <ChartEmptyState />;
   }
 
   return (
-    <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+    <TimeSeriesChartContainer ref={chartRef}>
       <ComposedChart
         responsive
         width="100%"
@@ -258,6 +245,6 @@ export default function SingleSimulationContributionsLineChart({
         )}
         {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
       </ComposedChart>
-    </div>
+    </TimeSeriesChartContainer>
   );
 }

@@ -4,7 +4,7 @@ import { useState, useCallback, memo } from 'react';
 import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
 import { ChartLineIcon } from 'lucide-react';
 
-import { formatChartString, cn } from '@/lib/utils';
+import { formatChartString } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
@@ -16,7 +16,7 @@ import type { TaxesDataView } from '@/lib/types/chart-data-views';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 import { Divider } from '@/components/catalyst/divider';
 
-import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';
+import { ChartEmptyState, TimeSeriesChartContainer, TooltipContainer, TooltipEntryRow } from '../chart-primitives';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -36,48 +36,14 @@ interface CustomTooltipProps {
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
-  const currentYear = new Date().getFullYear();
-  const yearForAge = currentYear + (label! - Math.floor(startAge));
-
-  const formatValue = (
-    value: number,
-    mode:
-      | 'marginalRates'
-      | 'effectiveRates'
-      | 'annualAmounts'
-      | 'cumulativeAmounts'
-      | 'taxableIncome'
-      | 'adjustedGrossIncome'
-      | 'investmentIncome'
-      | 'retirementDistributions'
-      | 'taxFreeIncome'
-      | 'ordinaryIncome'
-      | 'capitalGainsAndDividends'
-      | 'earlyWithdrawalPenalties'
-      | 'adjustmentsAndDeductions'
-      | 'socialSecurityIncome'
-      | 'socialSecurityTaxablePercentage'
-  ) => {
-    switch (mode) {
+  const formatValue = (value: number) => {
+    switch (dataView) {
       case 'marginalRates':
       case 'effectiveRates':
       case 'socialSecurityTaxablePercentage':
         return `${(value * 100).toFixed(1)}%`;
-      case 'annualAmounts':
-      case 'cumulativeAmounts':
-      case 'taxableIncome':
-      case 'adjustedGrossIncome':
-      case 'investmentIncome':
-      case 'retirementDistributions':
-      case 'taxFreeIncome':
-      case 'ordinaryIncome':
-      case 'capitalGainsAndDividends':
-      case 'earlyWithdrawalPenalties':
-      case 'adjustmentsAndDeductions':
-      case 'socialSecurityIncome':
-        return formatCompactCurrency(value, 1);
       default:
-        return value;
+        return formatCompactCurrency(value, 1);
     }
   };
 
@@ -128,7 +94,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         <div className="mb-2 flex flex-col gap-2">
           <p className="mx-1 flex justify-between text-sm font-semibold">
             <span className="mr-2">Gross Income:</span>
-            <span className="ml-1 font-semibold">{formatValue(entry.grossIncome, dataView)}</span>
+            <span className="ml-1 font-semibold">{formatValue(entry.grossIncome)}</span>
           </p>
           <Divider soft />
         </div>
@@ -140,7 +106,7 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
             <ChartLineIcon className="h-3 w-3" />
             <span className="mr-2">{`${formatChartString(lineEntry.dataKey)}:`}</span>
           </span>
-          <span className="ml-1 font-semibold">{formatValue(lineEntry.value, dataView)}</span>
+          <span className="ml-1 font-semibold">{formatValue(lineEntry.value)}</span>
         </p>
       );
       break;
@@ -156,26 +122,12 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   const negativeEntries = transformedPayload.filter((entry) => entry.value < 0);
 
   return (
-    <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
-      <p className="mx-1 mb-2 flex justify-between text-sm font-semibold">
-        <span className="mr-2">Age {label}</span>
-        <span className="text-muted-foreground ml-1">{yearForAge}</span>
-      </p>
-      {header}
+    <TooltipContainer label={label!} startAge={startAge} header={header} footer={footer}>
       <div className="flex flex-col gap-2">
         {positiveEntries.length > 0 && (
           <div className="flex flex-col gap-1">
             {positiveEntries.map((entry) => (
-              <p
-                key={entry.dataKey}
-                style={{ backgroundColor: entry.color }}
-                className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                  'text-background': NEEDS_BG_TEXT_COLORS.includes(entry.color),
-                })}
-              >
-                <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-                <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
-              </p>
+              <TooltipEntryRow key={entry.dataKey} dataKey={entry.dataKey} color={entry.color} formattedValue={formatValue(entry.value)} />
             ))}
           </div>
         )}
@@ -183,22 +135,12 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
         {negativeEntries.length > 0 && (
           <div className="flex flex-col gap-1">
             {negativeEntries.map((entry) => (
-              <p
-                key={entry.dataKey}
-                style={{ backgroundColor: entry.color }}
-                className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                  'text-background': NEEDS_BG_TEXT_COLORS.includes(entry.color),
-                })}
-              >
-                <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-                <span className="ml-1 font-semibold">{formatValue(entry.value, dataView)}</span>
-              </p>
+              <TooltipEntryRow key={entry.dataKey} dataKey={entry.dataKey} color={entry.color} formattedValue={formatValue(entry.value)} />
             ))}
           </div>
         )}
       </div>
-      {footer}
-    </div>
+    </TooltipContainer>
   );
 });
 
@@ -392,11 +334,11 @@ export default function SingleSimulationTaxesLineChart({
   const hasNoData =
     chartData.length === 0 || chartData.every((point) => allDataKeys.every((key) => point[key as keyof typeof point] === 0));
   if (hasNoData) {
-    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+    return <ChartEmptyState />;
   }
 
   return (
-    <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+    <TimeSeriesChartContainer ref={chartRef}>
       <ComposedChart
         responsive
         width="100%"
@@ -438,6 +380,6 @@ export default function SingleSimulationTaxesLineChart({
         )}
         {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
       </ComposedChart>
-    </div>
+    </TimeSeriesChartContainer>
   );
 }

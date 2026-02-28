@@ -5,6 +5,8 @@ import { Pie, PieChart, Sector, SectorProps, Cell } from 'recharts';
 import { formatChartString } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 
+import { ChartEmptyState, TimeSeriesChartContainer } from '../chart-primitives';
+
 type Coordinate = {
   x: number;
   y: number;
@@ -72,12 +74,12 @@ interface SingleSimulationNetWorthPieChartProps {
 
 export default function SingleSimulationNetWorthPieChart({ chartData }: SingleSimulationNetWorthPieChartProps) {
   if (chartData.reduce((sum, item) => sum + item.value, 0) === 0) {
-    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+    return <ChartEmptyState />;
   }
 
   return (
     <div className="flex items-center">
-      <div className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+      <TimeSeriesChartContainer>
         <PieChart responsive width="100%" height="100%" className="text-xs">
           <Pie activeShape={renderActiveShape} data={chartData} cx="50%" cy="50%" innerRadius={75} outerRadius={100} dataKey="value">
             {chartData.map((entry, i) => (
@@ -85,7 +87,7 @@ export default function SingleSimulationNetWorthPieChart({ chartData }: SingleSi
             ))}
           </Pie>
         </PieChart>
-      </div>
+      </TimeSeriesChartContainer>
     </div>
   );
 }

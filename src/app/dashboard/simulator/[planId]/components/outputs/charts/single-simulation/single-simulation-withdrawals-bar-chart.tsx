@@ -8,41 +8,7 @@ import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { WithdrawalsDataView } from '@/lib/types/chart-data-views';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomLabelListContent = (props: any) => {
-  const { x, y, width, height, offset, value, isSmallScreen } = props;
-  if (!value || value === 0) {
-    return null;
-  }
-
-  return (
-    <text
-      x={x + width / 2}
-      y={y + height / 2 + (isSmallScreen ? offset : 0)}
-      fill="var(--foreground)"
-      textAnchor="middle"
-      dominantBaseline="middle"
-      className="text-xs sm:text-sm"
-    >
-      <tspan className="font-semibold">{formatCompactCurrency(value, 1)}</tspan>
-    </text>
-  );
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
-  const truncateText = (text: string, maxLength = 24) => {
-    return text.length > maxLength ? text.substring(0, maxLength - 3) + '…' : text;
-  };
-
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} textAnchor="end" fill="currentColor" transform="rotate(-35)" fontSize={12}>
-        {truncateText(payload.value)}
-      </text>
-    </g>
-  );
-};
+import { CustomLabelListContent, getBarChartTickConfig, ChartEmptyState, BarChartContainer } from '../chart-primitives';
 
 interface SingleSimulationWithdrawalsBarChartProps {
   age: number;
@@ -173,15 +139,13 @@ export default function SingleSimulationWithdrawalsBarChart({
 
   transformedChartData = transformedChartData.sort((a, b) => b.amount - a.amount);
   if (transformedChartData.length === 0) {
-    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+    return <ChartEmptyState />;
   }
 
-  const shouldUseCustomTick = transformedChartData.length > 3 || (isSmallScreen && transformedChartData.length > 1);
-  const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
-  const bottomMargin = shouldUseCustomTick ? 100 : 25;
+  const { tick, bottomMargin } = getBarChartTickConfig(transformedChartData.length, isSmallScreen, foregroundMutedColor);
 
   return (
-    <div className="h-full min-h-72 w-full sm:min-h-84 lg:min-h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+    <BarChartContainer>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={transformedChartData}
@@ -199,6 +163,6 @@ export default function SingleSimulationWithdrawalsBarChart({
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </BarChartContainer>
   );
 }

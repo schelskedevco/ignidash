@@ -10,7 +10,7 @@ import type { NetWorthDataView } from '@/lib/types/chart-data-views';
 import type { AccountDataWithFlows } from '@/lib/calc/account';
 import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { DebtData } from '@/lib/calc/debts';
-import { formatNumber, formatChartString, cn } from '@/lib/utils';
+import { formatNumber, formatChartString } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
@@ -19,7 +19,7 @@ import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import { useChartInterval } from '@/hooks/use-chart-interval';
 import { zeroAssetAmounts, type AssetAllocation } from '@/lib/calc/asset';
 
-import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';
+import { ChartEmptyState, TimeSeriesChartContainer, TooltipContainer, TooltipEntryRow } from '../chart-primitives';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -44,9 +44,6 @@ interface CustomTooltipProps {
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataView, customDataType }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
-  const currentYear = new Date().getFullYear();
-  const yearForAge = currentYear + (label! - Math.floor(startAge));
-
   const transformedPayload = payload.filter((entry) => entry.color !== LINE_COLOR);
 
   let body = null;
@@ -67,16 +64,12 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       body = (
         <div className="flex flex-col gap-1">
           {transformedPayload.map((entry) => (
-            <p
+            <TooltipEntryRow
               key={entry.dataKey}
-              style={{ backgroundColor: entry.color }}
-              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                'text-background': NEEDS_BG_TEXT_COLORS.includes(entry.color),
-              })}
-            >
-              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-              <span className="ml-1 font-semibold">{formatCompactCurrency(entry.value, 1)}</span>
-            </p>
+              dataKey={entry.dataKey}
+              color={entry.color}
+              formattedValue={formatCompactCurrency(entry.value, 1)}
+            />
           ))}
         </div>
       );
@@ -98,16 +91,12 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       body = (
         <div className="flex flex-col gap-1">
           {transformedPayload.map((entry) => (
-            <p
+            <TooltipEntryRow
               key={entry.dataKey}
-              style={{ backgroundColor: entry.color }}
-              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                'text-background': NEEDS_BG_TEXT_COLORS.includes(entry.color),
-              })}
-            >
-              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-              <span className="ml-1 font-semibold">{formatCompactCurrency(entry.value, 1)}</span>
-            </p>
+              dataKey={entry.dataKey}
+              color={entry.color}
+              formattedValue={formatCompactCurrency(entry.value, 1)}
+            />
           ))}
         </div>
       );
@@ -137,19 +126,12 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
       body = (
         <div className="flex flex-col gap-1">
           {transformedPayload.map((entry) => (
-            <p
+            <TooltipEntryRow
               key={entry.dataKey}
-              style={{ backgroundColor: entry.color }}
-              className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-                'text-background': NEEDS_BG_TEXT_COLORS.includes(entry.color),
-              })}
-            >
-              <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-              <span className="ml-1 font-semibold">
-                {formatCompactCurrency(entry.value, 1)}
-                {total > 0 && ` (${formatNumber((entry.value / total) * 100, 1)}%)`}
-              </span>
-            </p>
+              dataKey={entry.dataKey}
+              color={entry.color}
+              formattedValue={`${formatCompactCurrency(entry.value, 1)}${total > 0 ? ` (${formatNumber((entry.value / total) * 100, 1)}%)` : ''}`}
+            />
           ))}
         </div>
       );
@@ -165,14 +147,9 @@ const CustomTooltip = memo(({ active, payload, label, startAge, disabled, dataVi
   }
 
   return (
-    <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
-      <p className="mx-1 mb-2 flex justify-between text-sm font-semibold">
-        <span className="mr-2">Age {label}</span>
-        <span className="text-muted-foreground ml-1">{yearForAge}</span>
-      </p>
+    <TooltipContainer label={label!} startAge={startAge} footer={footer}>
       {body}
-      {footer}
-    </div>
+    </TooltipContainer>
   );
 });
 
@@ -400,11 +377,11 @@ export default function SingleSimulationNetWorthAreaChart({
   const hasNoData =
     chartData.length === 0 || chartData.every((point) => allDataKeys.every((key) => point[key as keyof typeof point] === 0));
   if (hasNoData) {
-    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+    return <ChartEmptyState />;
   }
 
   return (
-    <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+    <TimeSeriesChartContainer ref={chartRef}>
       <ComposedChart
         responsive
         width="100%"
@@ -466,6 +443,6 @@ export default function SingleSimulationNetWorthAreaChart({
           <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
         )}
       </ComposedChart>
-    </div>
+    </TimeSeriesChartContainer>
   );
 }
