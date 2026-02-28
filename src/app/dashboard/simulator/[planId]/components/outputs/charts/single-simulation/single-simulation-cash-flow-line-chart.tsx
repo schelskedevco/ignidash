@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, memo } from 'react';
-import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { ComposedChart, Tooltip } from 'recharts';
 import { ChartLineIcon } from 'lucide-react';
 
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
@@ -18,7 +18,19 @@ import type { PhysicalAssetData } from '@/lib/calc/physical-assets';
 import type { DebtData } from '@/lib/calc/debts';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 
-import { ChartEmptyState, TimeSeriesChartContainer, TooltipContainer, TooltipEntryRow } from '../chart-primitives';
+import {
+  ChartEmptyState,
+  TimeSeriesChartContainer,
+  TooltipContainer,
+  TooltipEntryRow,
+  ChartGrid,
+  TimeSeriesXAxis,
+  TimeSeriesYAxis,
+  LineSeries,
+  BarSeries,
+  SignReferenceLine,
+  AgeReferenceLines,
+} from '../chart-primitives';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -144,7 +156,7 @@ export default function SingleSimulationCashFlowLineChart({
 }: SingleSimulationCashFlowLineChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
-  const { gridColor, foregroundColor, backgroundColor, foregroundMutedColor } = useChartTheme();
+  const { foregroundColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
   const chartRef = useClickDetection<HTMLDivElement>(
@@ -347,33 +359,17 @@ export default function SingleSimulationCashFlowLineChart({
         tabIndex={-1}
         onClick={onClick}
       >
-        <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-        <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-        <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {stackOffset === 'sign' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
-        {lineDataKeys.map((dataKey, i) => (
-          <Line
-            key={`line-${dataKey}-${i}`}
-            type="monotone"
-            dataKey={dataKey}
-            stroke={strokeColors[i]}
-            activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
-            dot={{ fill: backgroundColor, strokeWidth: 2 }}
-            strokeWidth={2}
-            strokeOpacity={1}
-          />
-        ))}
-        {barDataKeys.map((dataKey, i) => (
-          <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[i]} />
-        ))}
+        <ChartGrid />
+        <TimeSeriesXAxis interval={interval} />
+        <TimeSeriesYAxis formatter={formatter} />
+        {stackOffset === 'sign' && <SignReferenceLine />}
+        <LineSeries dataKeys={lineDataKeys} strokeColors={strokeColors} />
+        <BarSeries dataKeys={barDataKeys} barColors={barColors} stackId="barStack" />
         <Tooltip
           content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
           cursor={{ stroke: foregroundColor }}
         />
-        {keyMetrics.retirementAge && showReferenceLines && (
-          <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
-        )}
-        {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
+        <AgeReferenceLines keyMetrics={keyMetrics} showReferenceLines={showReferenceLines} selectedAge={selectedAge} />
       </ComposedChart>
     </TimeSeriesChartContainer>
   );

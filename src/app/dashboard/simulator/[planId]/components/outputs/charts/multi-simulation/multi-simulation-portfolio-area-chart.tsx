@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, memo } from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { AreaChart, Tooltip, ReferenceLine } from 'recharts';
 
 import type { MultiSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
@@ -12,7 +12,16 @@ import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import { useChartInterval } from '@/hooks/use-chart-interval';
 
-import { TimeSeriesChartContainer, TooltipContainer, TooltipEntryRow } from '../chart-primitives';
+import {
+  TimeSeriesChartContainer,
+  TooltipContainer,
+  TooltipEntryRow,
+  ChartGrid,
+  TimeSeriesXAxis,
+  TimeSeriesYAxis,
+  AreaSeries,
+  AgeReferenceLines,
+} from '../chart-primitives';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -68,7 +77,7 @@ export default function MultiSimulationPortfolioAreaChart({
 }: MultiSimulationPortfolioAreaChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
-  const { gridColor, foregroundColor, foregroundMutedColor } = useChartTheme();
+  const { foregroundColor, foregroundMutedColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
   const chartRef = useClickDetection<HTMLDivElement>(
@@ -103,28 +112,15 @@ export default function MultiSimulationPortfolioAreaChart({
         tabIndex={-1}
         onClick={onClick}
       >
-        <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-        <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-        <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {dataKeys.map((dataKey, index) => (
-          <Area
-            key={dataKey}
-            type="monotone"
-            dataKey={dataKey}
-            stroke={COLORS[index]}
-            fill={COLORS[index]}
-            fillOpacity={1}
-            activeDot={false}
-          />
-        ))}
+        <ChartGrid />
+        <TimeSeriesXAxis interval={interval} />
+        <TimeSeriesYAxis formatter={formatter} />
+        <AreaSeries dataKeys={dataKeys} areaColors={COLORS} stackId={undefined} />
         <Tooltip
           content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} />}
           cursor={{ stroke: foregroundColor }}
         />
-        {keyMetrics.retirementAge && (
-          <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
-        )}
-        {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
+        <AgeReferenceLines keyMetrics={keyMetrics} selectedAge={selectedAge} />
         {keyMetrics.portfolioAtRetirement && (
           <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
         )}

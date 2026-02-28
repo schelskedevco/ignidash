@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, memo } from 'react';
-import { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { ComposedChart, Tooltip } from 'recharts';
 
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -14,7 +14,18 @@ import type { ContributionsDataView } from '@/lib/types/chart-data-views';
 import type { AccountDataWithFlows } from '@/lib/calc/account';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
 
-import { ChartEmptyState, TimeSeriesChartContainer, TooltipContainer, TooltipEntryRow } from '../chart-primitives';
+import {
+  ChartEmptyState,
+  TimeSeriesChartContainer,
+  TooltipContainer,
+  TooltipEntryRow,
+  ChartGrid,
+  TimeSeriesXAxis,
+  TimeSeriesYAxis,
+  LineSeries,
+  BarSeries,
+  AgeReferenceLines,
+} from '../chart-primitives';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -108,7 +119,7 @@ export default function SingleSimulationContributionsLineChart({
 }: SingleSimulationContributionsLineChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
-  const { gridColor, foregroundColor, backgroundColor, foregroundMutedColor } = useChartTheme();
+  const { foregroundColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
   const chartRef = useClickDetection<HTMLDivElement>(
@@ -138,19 +149,19 @@ export default function SingleSimulationContributionsLineChart({
 
   switch (dataView) {
     case 'annualAmounts':
-      stackId = 'stack';
+      stackId = 'barStack';
 
       barDataKeys.push('annualStockContributions', 'annualBondContributions', 'annualCashContributions');
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
       break;
     case 'cumulativeAmounts':
-      stackId = 'stack';
+      stackId = 'barStack';
 
       barDataKeys.push('cumulativeStockContributions', 'cumulativeBondContributions', 'cumulativeCashContributions');
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)');
       break;
     case 'taxCategory':
-      stackId = 'stack';
+      stackId = 'barStack';
 
       barDataKeys.push('taxableContributions', 'taxDeferredContributions', 'taxFreeContributions', 'cashSavingsContributions');
       barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)');
@@ -169,7 +180,7 @@ export default function SingleSimulationContributionsLineChart({
         break;
       }
 
-      stackId = 'stack';
+      stackId = 'barStack';
 
       chartData = chartData.flatMap(({ age, perAccountData }) =>
         perAccountData
@@ -218,32 +229,16 @@ export default function SingleSimulationContributionsLineChart({
         tabIndex={-1}
         onClick={onClick}
       >
-        <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-        <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-        <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {lineDataKeys.map((dataKey, i) => (
-          <Line
-            key={`line-${dataKey}-${i}`}
-            type="monotone"
-            dataKey={dataKey}
-            stroke={strokeColors[i]}
-            activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
-            dot={{ fill: backgroundColor, strokeWidth: 2 }}
-            strokeWidth={2}
-            strokeOpacity={1}
-          />
-        ))}
-        {barDataKeys.map((dataKey, i) => (
-          <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId={stackId} fill={barColors[i]} />
-        ))}
+        <ChartGrid />
+        <TimeSeriesXAxis interval={interval} />
+        <TimeSeriesYAxis formatter={formatter} />
+        <LineSeries dataKeys={lineDataKeys} strokeColors={strokeColors} />
+        <BarSeries dataKeys={barDataKeys} barColors={barColors} stackId={stackId} />
         <Tooltip
           content={<CustomTooltip startAge={startAge} disabled={isSmallScreen && clickedOutsideChart} dataView={dataView} />}
           cursor={{ stroke: foregroundColor }}
         />
-        {keyMetrics.retirementAge && showReferenceLines && (
-          <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
-        )}
-        {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
+        <AgeReferenceLines keyMetrics={keyMetrics} showReferenceLines={showReferenceLines} selectedAge={selectedAge} />
       </ComposedChart>
     </TimeSeriesChartContainer>
   );

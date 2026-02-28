@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, ReferenceLine, LabelList } from 'recharts';
+import { BarChart, Bar, ResponsiveContainer, Cell, ReferenceLine, LabelList } from 'recharts';
 
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -12,7 +12,15 @@ import type { SingleSimulationTaxesChartDataPoint } from '@/lib/types/chart-data
 import type { TaxesDataView } from '@/lib/types/chart-data-views';
 import type { TaxableIncomeReferenceLineMode, AgiReferenceLineMode } from '@/lib/types/reference-line-modes';
 
-import { CustomLabelListContent, getBarChartTickConfig, ChartEmptyState, BarChartContainer } from '../chart-primitives';
+import {
+  CustomLabelListContent,
+  getBarChartTickConfig,
+  ChartEmptyState,
+  BarChartContainer,
+  ChartGrid,
+  BarChartXAxis,
+  BarChartYAxis,
+} from '../chart-primitives';
 
 const getTaxBrackets = (
   chartData: SingleSimulationTaxesChartDataPoint[]
@@ -113,7 +121,7 @@ export default function SingleSimulationTaxesBarChart({
   referenceLineMode,
   agiReferenceLineMode,
 }: SingleSimulationTaxesBarChartProps) {
-  const { gridColor, foregroundColor, foregroundMutedColor } = useChartTheme();
+  const { foregroundColor, foregroundMutedColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
   const labelConfig: Record<string, { mobile: string[]; desktop: string[] }> = {
@@ -228,7 +236,7 @@ export default function SingleSimulationTaxesBarChart({
     }
     case 'taxableIncome': {
       formatter = (value: number) => formatCompactCurrency(value, 1);
-      stackId = 'stack';
+      stackId = 'barStack';
 
       transformedChartData = chartData.flatMap((item) => [
         {
@@ -243,7 +251,7 @@ export default function SingleSimulationTaxesBarChart({
     }
     case 'adjustedGrossIncome': {
       formatter = (value: number) => formatCompactCurrency(value, 1);
-      stackId = 'stack';
+      stackId = 'barStack';
 
       transformedChartData = chartData.flatMap((item) => [
         {
@@ -373,9 +381,9 @@ export default function SingleSimulationTaxesBarChart({
     <BarChartContainer>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={normalizedData} className="text-xs" margin={{ top: 5, right: 10, left: 10, bottom: bottomMargin }} tabIndex={-1}>
-          <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-          <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
-          <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
+          <ChartGrid />
+          <BarChartXAxis tick={tick} />
+          <BarChartYAxis formatter={formatter} />
           {Array.from({ length: maxSegments }).map((_, segmentIndex) => (
             <Bar key={segmentIndex} dataKey={getDataKey(segmentIndex)} maxBarSize={75} minPointSize={20} stackId={stackId}>
               {normalizedData.map((entry, i) => {

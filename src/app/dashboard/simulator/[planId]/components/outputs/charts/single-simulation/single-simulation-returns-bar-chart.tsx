@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
+import { BarChart, ReferenceLine, ResponsiveContainer } from 'recharts';
 
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -8,7 +8,15 @@ import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { SingleSimulationReturnsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { ReturnsDataView } from '@/lib/types/chart-data-views';
 
-import { CustomLabelListContent, getBarChartTickConfig, ChartEmptyState, BarChartContainer } from '../chart-primitives';
+import {
+  getBarChartTickConfig,
+  ChartEmptyState,
+  BarChartContainer,
+  ChartGrid,
+  BarChartXAxis,
+  BarChartYAxis,
+  StandardBar,
+} from '../chart-primitives';
 
 const getReturnsLabelFormatter = (dataView: ReturnsDataView) => {
   return (value: number) => {
@@ -22,8 +30,6 @@ const getReturnsLabelFormatter = (dataView: ReturnsDataView) => {
       case 'appreciation':
       case 'custom':
         return formatCompactCurrency(value, 1);
-      default:
-        return value;
     }
   };
 };
@@ -41,7 +47,7 @@ export default function SingleSimulationReturnsBarChart({
   rawChartData,
   customDataID,
 }: SingleSimulationReturnsBarChartProps) {
-  const { gridColor, foregroundColor, foregroundMutedColor } = useChartTheme();
+  const { foregroundColor, foregroundMutedColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
   const labelConfig: Record<string, { mobile: string[]; desktop: string[] }> = {
@@ -193,20 +199,11 @@ export default function SingleSimulationReturnsBarChart({
           margin={{ top: 5, right: 10, left: 10, bottom: bottomMargin }}
           tabIndex={-1}
         >
-          <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-          <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
-          <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
+          <ChartGrid />
+          <BarChartXAxis tick={tick} />
+          <BarChartYAxis formatter={formatter} />
           {showReferenceLineAtZero && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
-          <Bar
-            dataKey="amount"
-            maxBarSize={75}
-            minPointSize={20}
-            label={<CustomLabelListContent isSmallScreen={isSmallScreen} formatValue={getReturnsLabelFormatter(dataView)} />}
-          >
-            {transformedChartData.map((entry, i) => (
-              <Cell key={`${entry.name}-${i}`} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />
-            ))}
-          </Bar>
+          <StandardBar data={transformedChartData} formatValue={getReturnsLabelFormatter(dataView)} />
         </BarChart>
       </ResponsiveContainer>
     </BarChartContainer>

@@ -1,7 +1,13 @@
+'use client';
+
 import type { ReactNode, Ref } from 'react';
+import { CartesianGrid, XAxis, YAxis, ReferenceLine, Line, Bar, Area, Cell } from 'recharts';
 
 import { formatChartString, cn } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
+import { useChartTheme } from '@/hooks/use-chart-theme';
+import { useIsMobile } from '@/hooks/use-mobile';
+import type { KeyMetrics } from '@/lib/types/key-metrics';
 
 export const NEEDS_BG_TEXT_COLORS = [
   'var(--chart-3)',
@@ -117,5 +123,127 @@ export function TooltipEntryRow({ dataKey, color, formattedValue }: { dataKey: s
       <span className="mr-2">{`${formatChartString(dataKey)}:`}</span>
       <span className="ml-1 font-semibold">{formattedValue}</span>
     </p>
+  );
+}
+
+export function ChartGrid() {
+  const { gridColor } = useChartTheme();
+  return <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />;
+}
+
+export function TimeSeriesXAxis({ interval }: { interval: number }) {
+  const { foregroundMutedColor } = useChartTheme();
+  return <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />;
+}
+
+export function TimeSeriesYAxis({ formatter }: { formatter?: (value: number) => string }) {
+  const { foregroundMutedColor } = useChartTheme();
+  const isSmallScreen = useIsMobile();
+  return <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />;
+}
+
+export function BarChartXAxis({ tick }: { tick: typeof CustomizedAxisTick | { fill: string } }) {
+  return <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />;
+}
+
+export function BarChartYAxis({ formatter }: { formatter?: (value: number) => string }) {
+  const { foregroundMutedColor } = useChartTheme();
+  const isSmallScreen = useIsMobile();
+  return <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />;
+}
+
+export function StandardBar({
+  data,
+  formatValue,
+}: {
+  data: Array<{ name: string; amount: number; color: string }>;
+  formatValue?: (value: number) => string;
+}) {
+  const isSmallScreen = useIsMobile();
+  return (
+    <Bar
+      dataKey="amount"
+      maxBarSize={75}
+      minPointSize={20}
+      label={<CustomLabelListContent isSmallScreen={isSmallScreen} formatValue={formatValue} />}
+    >
+      {data.map((entry, i) => (
+        <Cell key={`${entry.name}-${i}`} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />
+      ))}
+    </Bar>
+  );
+}
+
+export function LineSeries({ dataKeys, strokeColors }: { dataKeys: string[]; strokeColors: string[] }) {
+  const { backgroundColor } = useChartTheme();
+  return (
+    <>
+      {dataKeys.map((dataKey, i) => (
+        <Line
+          key={`line-${dataKey}-${i}`}
+          type="monotone"
+          dataKey={dataKey}
+          stroke={strokeColors[i]}
+          activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
+          dot={{ fill: backgroundColor, strokeWidth: 2 }}
+          strokeWidth={2}
+          strokeOpacity={1}
+        />
+      ))}
+    </>
+  );
+}
+
+export function BarSeries({ dataKeys, barColors, stackId }: { dataKeys: string[]; barColors: string[]; stackId: string | undefined }) {
+  return (
+    <>
+      {dataKeys.map((dataKey, i) => (
+        <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId={stackId} fill={barColors[i]} />
+      ))}
+    </>
+  );
+}
+
+export function AreaSeries({ dataKeys, areaColors, stackId }: { dataKeys: string[]; areaColors: string[]; stackId: string | undefined }) {
+  return (
+    <>
+      {dataKeys.map((dataKey, i) => (
+        <Area
+          key={`area-${dataKey}-${i}`}
+          type="monotone"
+          dataKey={dataKey}
+          stackId={stackId}
+          stroke={areaColors[i]}
+          fill={areaColors[i]}
+          fillOpacity={1}
+          activeDot={false}
+        />
+      ))}
+    </>
+  );
+}
+
+export function SignReferenceLine() {
+  const { foregroundColor } = useChartTheme();
+  return <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />;
+}
+
+export function AgeReferenceLines({
+  keyMetrics,
+  showReferenceLines = true,
+  selectedAge,
+}: {
+  keyMetrics: KeyMetrics;
+  showReferenceLines?: boolean;
+  selectedAge: number;
+}) {
+  const { foregroundMutedColor } = useChartTheme();
+  return (
+    <>
+      {keyMetrics.retirementAge && showReferenceLines && (
+        <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
+      )}
+      {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
+    </>
   );
 }

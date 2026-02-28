@@ -1,6 +1,6 @@
 'use client';
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, ResponsiveContainer } from 'recharts';
 
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -8,7 +8,15 @@ import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { SingleSimulationContributionsChartDataPoint } from '@/lib/types/chart-data-points';
 import type { ContributionsDataView } from '@/lib/types/chart-data-views';
 
-import { CustomLabelListContent, getBarChartTickConfig, ChartEmptyState, BarChartContainer } from '../chart-primitives';
+import {
+  getBarChartTickConfig,
+  ChartEmptyState,
+  BarChartContainer,
+  ChartGrid,
+  BarChartXAxis,
+  BarChartYAxis,
+  StandardBar,
+} from '../chart-primitives';
 
 interface SingleSimulationContributionsBarChartProps {
   age: number;
@@ -23,7 +31,7 @@ export default function SingleSimulationContributionsBarChart({
   rawChartData,
   customDataID,
 }: SingleSimulationContributionsBarChartProps) {
-  const { gridColor, foregroundMutedColor } = useChartTheme();
+  const { foregroundMutedColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
   const labelConfig: Record<string, { mobile: string[]; desktop: string[] }> = {
@@ -137,14 +145,10 @@ export default function SingleSimulationContributionsBarChart({
           margin={{ top: 5, right: 10, left: 10, bottom: bottomMargin }}
           tabIndex={-1}
         >
-          <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-          <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
-          <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          <Bar dataKey="amount" maxBarSize={75} minPointSize={20} label={<CustomLabelListContent isSmallScreen={isSmallScreen} />}>
-            {transformedChartData.map((entry, i) => (
-              <Cell key={`${entry.name}-${i}`} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />
-            ))}
-          </Bar>
+          <ChartGrid />
+          <BarChartXAxis tick={tick} />
+          <BarChartYAxis formatter={formatter} />
+          <StandardBar data={transformedChartData} />
         </BarChart>
       </ResponsiveContainer>
     </BarChartContainer>

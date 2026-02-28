@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, memo } from 'react';
-import { ComposedChart, Area, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { ComposedChart, Tooltip, ReferenceLine } from 'recharts';
 import { ChartLineIcon } from 'lucide-react';
 
 import type { KeyMetrics } from '@/lib/types/key-metrics';
@@ -19,7 +19,20 @@ import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import { useChartInterval } from '@/hooks/use-chart-interval';
 import { zeroAssetAmounts, type AssetAllocation } from '@/lib/calc/asset';
 
-import { ChartEmptyState, TimeSeriesChartContainer, TooltipContainer, TooltipEntryRow } from '../chart-primitives';
+import {
+  ChartEmptyState,
+  TimeSeriesChartContainer,
+  TooltipContainer,
+  TooltipEntryRow,
+  ChartGrid,
+  TimeSeriesXAxis,
+  TimeSeriesYAxis,
+  AreaSeries,
+  LineSeries,
+  BarSeries,
+  SignReferenceLine,
+  AgeReferenceLines,
+} from '../chart-primitives';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -180,7 +193,7 @@ export default function SingleSimulationNetWorthAreaChart({
 }: SingleSimulationNetWorthAreaChartProps) {
   const [clickedOutsideChart, setClickedOutsideChart] = useState(false);
 
-  const { gridColor, foregroundColor, backgroundColor, foregroundMutedColor } = useChartTheme();
+  const { foregroundColor, foregroundMutedColor } = useChartTheme();
   const isSmallScreen = useIsMobile();
 
   const chartRef = useClickDetection<HTMLDivElement>(
@@ -393,37 +406,13 @@ export default function SingleSimulationNetWorthAreaChart({
         tabIndex={-1}
         onClick={onClick}
       >
-        <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
-        <XAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} dataKey="age" interval={interval} />
-        <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-        {stackOffset === 'sign' && <ReferenceLine y={0} stroke={foregroundColor} strokeWidth={1} ifOverflow="extendDomain" />}
-        {areaDataKeys.map((dataKey, i) => (
-          <Area
-            key={`area-${dataKey}-${i}`}
-            type="monotone"
-            dataKey={dataKey}
-            stackId="1"
-            stroke={areaColors[i]}
-            fill={areaColors[i]}
-            fillOpacity={1}
-            activeDot={false}
-          />
-        ))}
-        {lineDataKeys.map((dataKey, i) => (
-          <Line
-            key={`line-${dataKey}-${i}`}
-            type="monotone"
-            dataKey={dataKey}
-            stroke={LINE_COLOR}
-            activeDot={{ stroke: backgroundColor, strokeWidth: 2 }}
-            dot={{ fill: backgroundColor, strokeWidth: 2 }}
-            strokeWidth={2}
-            strokeOpacity={1}
-          />
-        ))}
-        {barDataKeys.map((dataKey, i) => (
-          <Bar key={`bar-${dataKey}-${i}`} dataKey={dataKey} maxBarSize={20} stackId="stack" fill={barColors[i]} />
-        ))}
+        <ChartGrid />
+        <TimeSeriesXAxis interval={interval} />
+        <TimeSeriesYAxis formatter={formatter} />
+        {stackOffset === 'sign' && <SignReferenceLine />}
+        <AreaSeries dataKeys={areaDataKeys} areaColors={areaColors} stackId="areaStack" />
+        <LineSeries dataKeys={lineDataKeys} strokeColors={[LINE_COLOR]} />
+        <BarSeries dataKeys={barDataKeys} barColors={barColors} stackId="barStack" />
         <Tooltip
           content={
             <CustomTooltip
@@ -435,10 +424,7 @@ export default function SingleSimulationNetWorthAreaChart({
           }
           cursor={{ stroke: foregroundColor }}
         />
-        {keyMetrics.retirementAge && showReferenceLines && (
-          <ReferenceLine x={Math.round(keyMetrics.retirementAge)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
-        )}
-        {selectedAge && <ReferenceLine x={selectedAge} stroke={foregroundMutedColor} strokeWidth={1.5} ifOverflow="visible" />}
+        <AgeReferenceLines keyMetrics={keyMetrics} showReferenceLines={showReferenceLines} selectedAge={selectedAge} />
         {keyMetrics.portfolioAtRetirement && showReferenceLines && ['assetClass', 'taxCategory'].includes(dataView) && (
           <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
         )}
