@@ -37,7 +37,7 @@ import type { ExpensesData } from './expenses';
 import type { DebtsData } from './debts';
 import type { PhysicalAssetsData } from './physical-assets';
 import type { AccountDataWithReturns } from './returns';
-import { uniformLifetimeMap } from './historical-data/rmds-table';
+import { uniformLifetimeMap } from './historical-data/rmd-table';
 
 type FlowsData = { total: AssetFlows; byAccount: Record<string, AssetFlows> };
 

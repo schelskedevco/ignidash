@@ -1,11 +1,16 @@
 /**
- * Uniform Lifetime Table for Required Minimum Distributions (RMDs)
+ * IRS Uniform Lifetime Table for Required Minimum Distributions (RMDs)
  *
  * Source: IRS Uniform Lifetime Table via Fidelity
- * (https://www.fidelity.com/bin-public/060_www_fidelity_com/documents/UniformLifetimeTable.pdf)
+ * https://www.fidelity.com/bin-public/060_www_fidelity_com/documents/UniformLifetimeTable.pdf
+ *
+ * Contents: Life expectancy factors for ages 72-120, used to calculate annual
+ * RMD amounts from tax-deferred accounts (RMD = balance / factor).
  *
  * Effective for distribution calendar years beginning on or after January 1, 2022.
  * See IRS Reg. §1.401(a)(9)-9(c) for official regulations.
+ *
+ * Used by: Portfolio (withdrawal calculations) and withdrawals chart (RMD line overlay)
  */
 
 export interface UniformLifetimeEntry {

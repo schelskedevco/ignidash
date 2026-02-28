@@ -22,7 +22,7 @@ import { Incomes, IncomesProcessor } from './incomes';
 import { Expenses, ExpensesProcessor } from './expenses';
 import { PhaseIdentifier } from './phase';
 import { SeededRandom } from './returns-providers/seeded-random';
-import { uniformLifetimeMap } from './historical-data/rmds-table';
+import { uniformLifetimeMap } from './historical-data/rmd-table';
 
 // ============================================================================
 // Test Fixtures

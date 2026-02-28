@@ -8,8 +8,8 @@
  */
 
 import { ReturnsProvider, type ReturnsProviderData } from './returns-provider';
-import { nyuHistoricalData, type NyuHistoricalYearData, getNyuDataRange } from '../historical-data/nyu-historical-data';
-import { shillerHistoricalData, type ShillerHistoricalYearData } from '../historical-data/shiller-historical-yield-data';
+import { nyuHistoricalData, type NyuHistoricalYearData, getNyuDataRange } from '../historical-data/nyu-returns';
+import { shillerHistoricalData, type ShillerHistoricalYearData } from '../historical-data/shiller-yields';
 import type { AssetReturnRates } from '../asset';
 import { SeededRandom } from './seeded-random';
 import type { PhaseData, PhaseName } from '../phase';

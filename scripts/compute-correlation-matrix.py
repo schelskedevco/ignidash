@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """
-Compute correlation matrices for historical financial data.
+Compute correlation matrices from NYU returns + Shiller yields.
 
-This script merges NYU historical returns data with Shiller yield data
-and computes correlation matrices for:
-- Nominal stock, bond, and cash returns
-- Inflation rates
-- Bond and stock yields
+Reads:
+  src/lib/calc/historical-data/nyu-returns.ts    (real returns + inflation)
+  src/lib/calc/historical-data/shiller-yields.ts (stock/bond yields)
 
-Outputs correlations for both full dataset (1928-present) and last 35 years.
+Merges by year, converts real returns to nominal, then prints correlation
+matrices for nominal stock/bond/cash returns, inflation, and yields —
+both for the full dataset (1928-present) and the most recent 35 years.
+
+This is a diagnostic/analysis script, not part of the build.
 """
 
 import re
@@ -37,10 +39,8 @@ def parse_ts_data(filepath, pattern, columns):
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(script_dir)
 
-NYU_TS = os.path.join(project_root, "src/lib/calc/data/nyu-historical-data.ts")
-SHILLER_TS = os.path.join(
-    project_root, "src/lib/calc/data/shiller-historical-yield-data.ts"
-)
+NYU_TS = os.path.join(project_root, "src/lib/calc/historical-data/nyu-returns.ts")
+SHILLER_TS = os.path.join(project_root, "src/lib/calc/historical-data/shiller-yields.ts")
 
 # Parse NYU data (real returns + inflation)
 nyu_pattern = r"\{\s*year:\s*(\d+),\s*stockReturn:\s*([-\d.eE]+),\s*bondReturn:\s*([-\d.eE]+),\s*cashReturn:\s*([-\d.eE]+),\s*inflationRate:\s*([-\d.eE]+)\s*\}"

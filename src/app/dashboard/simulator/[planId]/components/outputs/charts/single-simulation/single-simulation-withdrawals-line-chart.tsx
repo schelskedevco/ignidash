@@ -14,7 +14,7 @@ import type { SingleSimulationWithdrawalsChartDataPoint } from '@/lib/types/char
 import type { WithdrawalsDataView } from '@/lib/types/chart-data-views';
 import type { AccountDataWithFlows } from '@/lib/calc/account';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { uniformLifetimeMap } from '@/lib/calc/historical-data/rmds-table';
+import { uniformLifetimeMap } from '@/lib/calc/historical-data/rmd-table';
 import { useLineChartLegendEffectOpacity } from '@/hooks/use-line-chart-legend-effect-opacity';
 
 import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';

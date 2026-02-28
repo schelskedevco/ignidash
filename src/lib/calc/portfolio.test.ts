@@ -4,7 +4,7 @@ import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-form-schem
 
 import { Portfolio, PortfolioProcessor } from './portfolio';
 import { ContributionRules } from './contribution-rules';
-import { uniformLifetimeMap } from './historical-data/rmds-table';
+import { uniformLifetimeMap } from './historical-data/rmd-table';
 import {
   createSavingsAccount,
   create401kAccount,
