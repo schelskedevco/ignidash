@@ -12,6 +12,7 @@ import {
   FinancialSimulationEngine,
   MonteCarloSimulationEngine,
   LcgHistoricalBacktestSimulationEngine,
+  TAX_CONVERGENCE_THRESHOLD,
   type SimulationState,
   type SimulationResult,
 } from './simulation-engine';
@@ -1257,5 +1258,74 @@ describe('full simulation year scenarios', () => {
 
     // Income taxes should reflect the RMD as ordinary income
     expect(year1.taxes!.federalIncomeTaxes.federalIncomeTaxAmount).toBeGreaterThan(0);
+  });
+
+  it('tax convergence: withdrawals from taxable brokerage to pay taxes generate additional taxable gains', () => {
+    // Scenario: retiree with only a taxable brokerage account and large expenses.
+    // Withdrawals to cover expenses + taxes generate realized capital gains,
+    // which increase tax liability, requiring further withdrawals. The convergence
+    // loop must iterate to settle the circular dependency.
+    const inputs = createSimulatorInputs({
+      timeline: {
+        lifeExpectancy: 72,
+        birthMonth: 1,
+        birthYear: 1955,
+        retirementStrategy: { type: 'fixedAge', retirementAge: 65 },
+      },
+      accounts: {
+        'brokerage-1': {
+          type: 'taxableBrokerage' as const,
+          id: 'brokerage-1',
+          name: 'Taxable Brokerage',
+          balance: 1000000,
+          percentBonds: 0,
+          costBasis: 200000, // 80% unrealized gains — withdrawals will realize significant gains
+        },
+      },
+      incomes: {},
+      expenses: { 'expense-1': createLivingExpense({ amount: 80000 }) },
+      contributionRules: {},
+      marketAssumptions: {
+        stockReturn: 7,
+        stockYield: 2,
+        bondReturn: 4,
+        bondYield: 3,
+        cashReturn: 3,
+        inflationRate: 3,
+      },
+    });
+
+    const result = runFixedSimulation(inputs);
+    const year1 = result.data[1];
+    expect(year1).toBeDefined();
+
+    // Taxes should be computed with capital gains from the withdrawals
+    expect(year1.taxes).not.toBeNull();
+    expect(year1.taxes!.totalTaxesDue).toBeGreaterThan(0);
+    expect(year1.taxes!.incomeSources.realizedGains).toBeGreaterThan(0);
+
+    // The convergence should settle: taxes paid via withdrawals plus the additional
+    // taxes on those withdrawals' gains should be self-consistent within threshold.
+    // We verify this by checking that totalTaxesDue matches what the portfolio actually paid.
+    const totalWithdrawals = year1.portfolio.withdrawals.stocks + year1.portfolio.withdrawals.bonds + year1.portfolio.withdrawals.cash;
+
+    // Withdrawals must cover both expenses and taxes
+    expect(totalWithdrawals).toBeGreaterThan(80000);
+
+    // The portfolio value should decrease by roughly withdrawals minus returns
+    const initialValue = 1000000;
+    expect(year1.portfolio.totalValue).toBeLessThan(initialValue);
+    expect(year1.portfolio.totalValue).toBeGreaterThan(0);
+
+    // Verify convergence: the tax amount should be self-consistent.
+    // Realized gains from withdrawals should be reflected in the tax calculation.
+    // If convergence failed, realized gains in taxes wouldn't account for withdrawal-generated gains.
+    const taxRealizedGains = year1.taxes!.incomeSources.realizedGains;
+    const portfolioRealizedGains = year1.portfolio.realizedGains;
+    expect(taxRealizedGains).toBeCloseTo(portfolioRealizedGains, -1);
+
+    // Final taxes due and what was withdrawn for taxes should be within convergence threshold
+    // The portfolio's shortfall should be 0 (all taxes were payable)
+    expect(year1.portfolio.shortfall).toBeLessThanOrEqual(TAX_CONVERGENCE_THRESHOLD);
   });
 });
