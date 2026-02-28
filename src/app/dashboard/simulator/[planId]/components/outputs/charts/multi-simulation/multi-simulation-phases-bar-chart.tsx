@@ -7,41 +7,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
 import type { MultiSimulationPhasesChartDataPoint } from '@/lib/types/chart-data-points';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomLabelListContent = (props: any) => {
-  const { x, y, width, height, offset, value, isSmallScreen } = props;
-  if (!value || value === 0) {
-    return null;
-  }
-
-  return (
-    <text
-      x={x + width / 2}
-      y={y + height / 2 + (isSmallScreen ? offset : 0)}
-      fill="var(--foreground)"
-      textAnchor="middle"
-      dominantBaseline="middle"
-      className="text-xs sm:text-sm"
-    >
-      <tspan className="font-semibold">{formatNumber(value, 0)}</tspan>
-    </text>
-  );
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const CustomizedAxisTick = ({ x, y, stroke, payload }: any) => {
-  const truncateText = (text: string, maxLength = 24) => {
-    return text.length > maxLength ? text.substring(0, maxLength - 3) + '…' : text;
-  };
-
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text x={0} y={0} dy={16} textAnchor="end" fill="currentColor" transform="rotate(-35)" fontSize={12}>
-        {truncateText(payload.value)}
-      </text>
-    </g>
-  );
-};
+import { CustomLabelListContent, getBarChartTickConfig, ChartEmptyState, BarChartContainer } from '../chart-primitives';
 
 interface MultiSimulationPhasesBarChartProps {
   age: number;
@@ -62,27 +28,30 @@ export default function MultiSimulationPhasesBarChart({ age, rawChartData }: Mul
     ]);
 
   if (chartData.length === 0) {
-    return <div className="flex h-72 w-full items-center justify-center sm:h-84 lg:h-96">No data available for the selected view.</div>;
+    return <ChartEmptyState />;
   }
 
-  const shouldUseCustomTick = chartData.length > 3 || (isSmallScreen && chartData.length > 1);
-  const tick = shouldUseCustomTick ? CustomizedAxisTick : { fill: foregroundMutedColor };
-  const bottomMargin = shouldUseCustomTick ? 100 : 25;
+  const { tick, bottomMargin } = getBarChartTickConfig(chartData.length, isSmallScreen, foregroundMutedColor);
 
   return (
-    <div className="h-full min-h-72 w-full sm:min-h-84 lg:min-h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+    <BarChartContainer>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData} className="text-xs" margin={{ top: 5, right: 10, left: 10, bottom: bottomMargin }} tabIndex={-1}>
           <CartesianGrid strokeDasharray="5 5" stroke={gridColor} vertical={false} />
           <XAxis tick={tick} axisLine={false} dataKey="name" interval={0} />
           <YAxis tick={{ fill: foregroundMutedColor }} axisLine={false} tickLine={false} hide={isSmallScreen} tickFormatter={formatter} />
-          <Bar dataKey="amount" maxBarSize={75} minPointSize={20} label={<CustomLabelListContent isSmallScreen={isSmallScreen} />}>
+          <Bar
+            dataKey="amount"
+            maxBarSize={75}
+            minPointSize={20}
+            label={<CustomLabelListContent isSmallScreen={isSmallScreen} formatValue={(v: number) => formatNumber(v, 0)} />}
+          >
             {chartData.map((entry, i) => (
               <Cell key={`${entry.name}-${i}`} fill={entry.color} fillOpacity={0.5} stroke={entry.color} strokeWidth={3} />
             ))}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </BarChartContainer>
   );
 }

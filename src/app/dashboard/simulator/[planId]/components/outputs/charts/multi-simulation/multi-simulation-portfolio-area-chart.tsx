@@ -5,7 +5,6 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } 
 
 import type { MultiSimulationPortfolioChartDataPoint } from '@/lib/types/chart-data-points';
 import type { KeyMetrics } from '@/lib/types/key-metrics';
-import { formatChartString, cn } from '@/lib/utils';
 import { formatCompactCurrency } from '@/lib/utils/currency-formatters';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useChartTheme } from '@/hooks/use-chart-theme';
@@ -13,7 +12,7 @@ import { useClickDetection } from '@/hooks/use-outside-click';
 import { useChartDataSlice } from '@/hooks/use-chart-data-slice';
 import { useChartInterval } from '@/hooks/use-chart-interval';
 
-import { NEEDS_BG_TEXT_COLORS } from '../chart-primitives';
+import { TimeSeriesChartContainer, TooltipContainer, TooltipEntryRow } from '../chart-primitives';
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -32,30 +31,19 @@ interface CustomTooltipProps {
 const CustomTooltip = memo(({ active, payload, label, startAge, disabled }: CustomTooltipProps) => {
   if (!(active && payload && payload.length) || disabled) return null;
 
-  const currentYear = new Date().getFullYear();
-  const yearForAge = currentYear + (label! - Math.floor(startAge));
-
   return (
-    <div className="text-foreground bg-background rounded-lg border p-2 shadow-md">
-      <p className="mx-1 mb-2 flex justify-between text-sm font-semibold">
-        <span className="mr-2">Age {label}</span>
-        <span className="text-muted-foreground ml-1">{yearForAge}</span>
-      </p>
+    <TooltipContainer label={label!} startAge={startAge}>
       <div className="flex flex-col gap-1">
         {payload.map((entry) => (
-          <p
+          <TooltipEntryRow
             key={entry.dataKey}
-            style={{ backgroundColor: entry.color }}
-            className={cn('border-foreground/50 flex justify-between rounded-lg border px-2 text-sm', {
-              'text-background': NEEDS_BG_TEXT_COLORS.includes(entry.color),
-            })}
-          >
-            <span className="mr-2">{`${formatChartString(entry.dataKey)}:`}</span>
-            <span className="ml-1 font-semibold">{formatCompactCurrency(entry.value, 1)}</span>
-          </p>
+            dataKey={entry.dataKey}
+            color={entry.color}
+            formattedValue={formatCompactCurrency(entry.value, 1)}
+          />
         ))}
       </div>
-    </div>
+    </TooltipContainer>
   );
 });
 
@@ -104,7 +92,7 @@ export default function MultiSimulationPortfolioAreaChart({
   );
 
   return (
-    <div ref={chartRef} className="h-72 w-full sm:h-84 lg:h-96 [&_g:focus]:outline-none [&_svg:focus]:outline-none">
+    <TimeSeriesChartContainer ref={chartRef}>
       <AreaChart
         responsive
         width="100%"
@@ -141,6 +129,6 @@ export default function MultiSimulationPortfolioAreaChart({
           <ReferenceLine y={Math.round(keyMetrics.portfolioAtRetirement)} stroke={foregroundMutedColor} strokeDasharray="10 5" />
         )}
       </AreaChart>
-    </div>
+    </TimeSeriesChartContainer>
   );
 }
