@@ -1357,4 +1357,178 @@ describe('PortfolioProcessor', () => {
       expect(accountData.employerMatch).toBeCloseTo(750, 0);
     });
   });
+
+  // ============================================================================
+  // Contribution Reset Integration Tests
+  // ============================================================================
+
+  describe('contribution reset wiring', () => {
+    it('resetMonthly is called each month: shared incomeId caps contributions within a single processContributions call', () => {
+      // Two rules sharing the same incomeId — the second rule should see reduced income
+      const portfolio = new Portfolio([
+        create401kAccount({ id: '401k-1', balance: 50000 }),
+        createHsaAccount({ id: 'hsa-1', balance: 5000 }),
+      ]);
+      const state = createMockSimulationState(portfolio, 35, 'accumulation');
+      const processor = new PortfolioProcessor(
+        state,
+        createMockSimulationContext(),
+        new ContributionRules(
+          [
+            createContributionRule({ id: 'rule-1', accountId: '401k-1', rank: 1, incomeId: 'income-1' }),
+            createContributionRule({ id: 'rule-2', accountId: 'hsa-1', rank: 2, incomeId: 'income-1' }),
+          ],
+          { type: 'spend' }
+        )
+      );
+
+      const incomes = createEmptyIncomesData({
+        totalIncome: 2000,
+        totalIncomeAfterPayrollDeductions: 2000,
+        perIncomeData: {
+          'income-1': {
+            id: 'income-1',
+            name: 'Part-Time Job',
+            income: 200, // $200/mo — both rules are capped to this
+            amountWithheld: 0,
+            ficaTax: 0,
+            incomeAfterPayrollDeductions: 200,
+            taxFreeIncome: 0,
+            socialSecurityIncome: 0,
+          },
+          'income-2': {
+            id: 'income-2',
+            name: 'Main Salary',
+            income: 1800, // provides cash flow but not linked to any rule
+            amountWithheld: 0,
+            ficaTax: 0,
+            incomeAfterPayrollDeductions: 1800,
+            taxFreeIncome: 0,
+            socialSecurityIncome: 0,
+          },
+        },
+      });
+      const expenses = createEmptyExpensesData({ totalExpenses: 0 });
+
+      const result = processor.processContributionsAndWithdrawals(
+        incomes,
+        expenses,
+        createEmptyDebtsData(),
+        createEmptyPhysicalAssetsData()
+      );
+
+      // Rule 1 (401k) gets $200 (full income-1), rule 2 (HSA) gets $0 (income consumed)
+      const account401k = result.portfolioData.perAccountData['401k-1'];
+      const accountHsa = result.portfolioData.perAccountData['hsa-1'];
+      const contributions401k = account401k.contributions.stocks + account401k.contributions.bonds + account401k.contributions.cash;
+      const contributionsHsa = accountHsa.contributions.stocks + accountHsa.contributions.bonds + accountHsa.contributions.cash;
+      expect(contributions401k).toBeCloseTo(200, 0);
+      expect(contributionsHsa).toBe(0);
+    });
+
+    it('resetMonthly clears per-income tracking between months so income is available again', () => {
+      const portfolio = new Portfolio([create401kAccount({ id: '401k-1', balance: 50000 })]);
+      const state = createMockSimulationState(portfolio, 35, 'accumulation');
+      const contributionRules = new ContributionRules(
+        [
+          createContributionRule({
+            id: 'rule-1',
+            accountId: '401k-1',
+            rank: 1,
+            incomeId: 'income-1',
+          }),
+        ],
+        { type: 'spend' }
+      );
+      const processor = new PortfolioProcessor(state, createMockSimulationContext(), contributionRules);
+
+      const incomes = createEmptyIncomesData({
+        totalIncome: 500,
+        totalIncomeAfterPayrollDeductions: 500,
+        perIncomeData: {
+          'income-1': {
+            id: 'income-1',
+            name: 'Side Job',
+            income: 500,
+            amountWithheld: 0,
+            ficaTax: 0,
+            incomeAfterPayrollDeductions: 500,
+            taxFreeIncome: 0,
+            socialSecurityIncome: 0,
+          },
+        },
+      });
+      const expenses = createEmptyExpensesData({ totalExpenses: 0 });
+
+      // Month 1
+      const m1 = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), createEmptyPhysicalAssetsData());
+      const m1Contributions =
+        m1.portfolioData.perAccountData['401k-1'].contributions.stocks +
+        m1.portfolioData.perAccountData['401k-1'].contributions.bonds +
+        m1.portfolioData.perAccountData['401k-1'].contributions.cash;
+      expect(m1Contributions).toBeCloseTo(500, 0);
+
+      // Month 2: resetMonthly is called internally by processContributions,
+      // so income-1 should be available again
+      const m2 = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), createEmptyPhysicalAssetsData());
+      const m2Contributions =
+        m2.portfolioData.perAccountData['401k-1'].contributions.stocks +
+        m2.portfolioData.perAccountData['401k-1'].contributions.bonds +
+        m2.portfolioData.perAccountData['401k-1'].contributions.cash;
+      // If resetMonthly wasn't called, this would be 0 (income already consumed)
+      expect(m2Contributions).toBeCloseTo(500, 0);
+    });
+
+    it('resetYTD is called on year boundary: IRS limits and dollarAmount reset for new year', () => {
+      const portfolio = new Portfolio([create401kAccount({ id: '401k-1', balance: 50000 })]);
+      const state = createMockSimulationState(portfolio, 35, 'accumulation');
+      const contributionRules = new ContributionRules(
+        [
+          createContributionRule({
+            id: 'rule-1',
+            accountId: '401k-1',
+            rank: 1,
+            contributionType: 'dollarAmount',
+            dollarAmount: 1000,
+          }),
+        ],
+        { type: 'spend' }
+      );
+      const processor = new PortfolioProcessor(state, createMockSimulationContext(), contributionRules);
+
+      const incomes = createEmptyIncomesData({
+        totalIncome: 5000,
+        totalIncomeAfterPayrollDeductions: 5000,
+      });
+      const expenses = createEmptyExpensesData({ totalExpenses: 0 });
+
+      // Month 1: contribute $1000 (dollarAmount fully used)
+      const m1 = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), createEmptyPhysicalAssetsData());
+      const m1Contributions =
+        m1.portfolioData.perAccountData['401k-1'].contributions.stocks +
+        m1.portfolioData.perAccountData['401k-1'].contributions.bonds +
+        m1.portfolioData.perAccountData['401k-1'].contributions.cash;
+      expect(m1Contributions).toBeCloseTo(1000, 0);
+
+      // Month 2: dollarAmount exhausted → $0
+      const m2 = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), createEmptyPhysicalAssetsData());
+      const m2Contributions =
+        m2.portfolioData.perAccountData['401k-1'].contributions.stocks +
+        m2.portfolioData.perAccountData['401k-1'].contributions.bonds +
+        m2.portfolioData.perAccountData['401k-1'].contributions.cash;
+      expect(m2Contributions).toBe(0);
+
+      // Year boundary: resetMonthlyData calls resetYTD internally
+      processor.resetMonthlyData();
+
+      // Month 1 of year 2: dollarAmount should be available again
+      const y2m1 = processor.processContributionsAndWithdrawals(incomes, expenses, createEmptyDebtsData(), createEmptyPhysicalAssetsData());
+      const y2m1Contributions =
+        y2m1.portfolioData.perAccountData['401k-1'].contributions.stocks +
+        y2m1.portfolioData.perAccountData['401k-1'].contributions.bonds +
+        y2m1.portfolioData.perAccountData['401k-1'].contributions.cash;
+      // If resetYTD wasn't called, this would be 0
+      expect(y2m1Contributions).toBeCloseTo(1000, 0);
+    });
+  });
 });

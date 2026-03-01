@@ -124,7 +124,7 @@ export class ContributionRule {
       this.calculateIncomeLimit(incomesData)
     );
 
-    const desiredContribution = this.calculateDesiredContribution(remainingToContribute, this.ytdEmployeeContribution);
+    const desiredContribution = this.calculateDesiredContribution(remainingToContribute);
 
     const contributionAmount = Math.min(desiredContribution, maxContribution);
     const employerMatchAmount = this.calculateEmployerMatch(contributionAmount);
@@ -166,10 +166,10 @@ export class ContributionRule {
     return Math.min(contributionAmount, remainingToMaxEmployerMatch);
   }
 
-  private calculateDesiredContribution(remainingToContribute: number, contributionsSoFar: number): number {
+  private calculateDesiredContribution(remainingToContribute: number): number {
     switch (this.contributionInput.contributionType) {
       case 'dollarAmount':
-        return Math.max(0, this.contributionInput.dollarAmount - contributionsSoFar);
+        return Math.max(0, this.contributionInput.dollarAmount - this.ytdEmployeeContribution);
       case 'percentRemaining':
         return remainingToContribute * (this.contributionInput.percentRemaining / 100);
       case 'unlimited':
