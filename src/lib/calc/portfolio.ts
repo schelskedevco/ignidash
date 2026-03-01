@@ -264,6 +264,8 @@ export class PortfolioProcessor {
     this.outstandingShortfall -= shortfallRepaid;
 
     const age = this.simulationState.time.age;
+
+    this.contributionRules.resetMonthly();
     const contributionRules = this.contributionRules.getRules().sort((a, b) => a.getRank() - b.getRank());
 
     let employerMatch = 0;

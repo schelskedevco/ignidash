@@ -880,8 +880,9 @@ describe('ContributionRules', () => {
         },
       });
 
-      // Prior 401k contributions: 22000 employee
+      // Prior 401k contributions: 22000 employee (from prior months)
       rule.recordContribution(22000, 0, '401k');
+      tracker.resetMonthly(); // clear per-income tracking to simulate month boundary
 
       // Contribution limit remaining = 24500 - 22000 = 2500 (binding); income = 3000
       const result = rule.calculateContribution(10000, account, 35, incomesData);
@@ -916,8 +917,9 @@ describe('ContributionRules', () => {
         },
       });
 
-      // Prior 401k contributions: 22000 employee
+      // Prior 401k contributions: 22000 employee (from prior months)
       rule.recordContribution(22000, 0, '401k');
+      tracker.resetMonthly(); // clear per-income tracking to simulate month boundary
 
       // Contribution limit remaining = 24500 - 22000 = 2500; income = 1500 (binding)
       const result = rule.calculateContribution(10000, account, 35, incomesData);
@@ -1020,7 +1022,7 @@ describe('ContributionRules', () => {
       const account = new TaxFreeAccount(roth401kAccountData);
 
       // Already contributed 20k to traditional 401k (via a different rule)
-      tracker.recordContribution('401k', 20000, 0);
+      tracker.recordContribution('401k', 20000, 0, undefined);
 
       // At age 35, limit is 24,500 for 401k+roth401k combined
       // Already contributed 20k to 401k, so roth401k can only get 4,500
@@ -1041,7 +1043,7 @@ describe('ContributionRules', () => {
       const account = new TaxFreeAccount(createRothIraAccount({ id: 'roth-ira-1' }));
 
       // Already contributed 5k to traditional IRA (via a different rule)
-      tracker.recordContribution('ira', 5000, 0);
+      tracker.recordContribution('ira', 5000, 0, undefined);
 
       // At age 35, IRA limit is 7,500 for IRA+rothIRA combined
       // Already contributed 5k to IRA, so Roth IRA can only get 2,500
@@ -1201,7 +1203,7 @@ describe('ContributionRules', () => {
         const account = new TaxFreeAccount(createRoth401kAccount());
 
         // $24,500 employee already contributed to 401k (via a different rule)
-        tracker.recordContribution('401k', 24500, 0);
+        tracker.recordContribution('401k', 24500, 0, undefined);
 
         // 415(c) limit at age 35 = $72,000. Already $24,500 total → $47,500 remaining
         const result = rule.calculateContribution(100000, account, 35, null);
@@ -1222,7 +1224,7 @@ describe('ContributionRules', () => {
         const account = new TaxFreeAccount(createRoth401kAccount());
 
         // $24,500 employee + $7,000 employer = $31,500 total in 401k (via a different rule)
-        tracker.recordContribution('401k', 24500, 7000);
+        tracker.recordContribution('401k', 24500, 7000, undefined);
 
         // 415(c) limit = $72,000. Total (incl employer) = $31,500 → $40,500 remaining
         const result = rule.calculateContribution(100000, account, 35, null);
@@ -1243,7 +1245,7 @@ describe('ContributionRules', () => {
         const account = new TaxFreeAccount(createRoth403bAccount());
 
         // $20,000 already contributed to 401k (via a different rule)
-        tracker.recordContribution('401k', 20000, 0);
+        tracker.recordContribution('401k', 20000, 0, undefined);
 
         // 415(c) = $72,000. $20,000 from 401k → $52,000 remaining for roth403b MBR
         const result = rule.calculateContribution(100000, account, 35, null);
@@ -1263,7 +1265,7 @@ describe('ContributionRules', () => {
         const iraAccount = new TaxFreeAccount(createRothIraAccount());
 
         // MBR roth401k has $60k contributed — should not affect IRA
-        tracker.recordContribution('roth401k', 60000, 0);
+        tracker.recordContribution('roth401k', 60000, 0, undefined);
 
         // IRA limit at age 35 = $7,500, completely independent of 401k/roth401k
         const result = iraRule.calculateContribution(10000, iraAccount, 35, null);
@@ -1287,7 +1289,7 @@ describe('ContributionRules', () => {
         const account = new TaxFreeAccount(createRoth401kAccount());
 
         // Prior total = $71,000 in shared limit group (via a different rule)
-        tracker.recordContribution('401k', 71000, 0);
+        tracker.recordContribution('401k', 71000, 0, undefined);
 
         // 415(c) remaining = $72,000 - $71,000 = $1,000
         // Employee contribution capped at $1,000
@@ -1519,7 +1521,7 @@ describe('ContributionRules', () => {
         const nonMbrAccount = new TaxFreeAccount(createRoth401kAccount({ id: 'roth401k-2' }));
 
         // MBR account already contributed $72k — shared limit tracking sums by account type
-        tracker.recordContribution('roth401k', 72000, 0);
+        tracker.recordContribution('roth401k', 72000, 0, undefined);
 
         // Non-MBR rule uses §402(g) = $24,500
         // Shared contributions across roth401k type = $72,000
@@ -1596,7 +1598,7 @@ describe('ContributionRules', () => {
       // This rule: 2000 employee contributions
       rule.recordContribution(2000, 0, '401k');
       // Another rule's contributions (via tracker directly): 22000 employee
-      tracker.recordContribution('401k', 22000, 0);
+      tracker.recordContribution('401k', 22000, 0, undefined);
       // Combined by account types = 24000
 
       // Constraints at age 35:
@@ -2396,8 +2398,8 @@ describe('ContributionRules', () => {
         const account = new TaxFreeAccount(createRoth403bAccount());
 
         // Already $60k in the 401k/403b/roth group
-        tracker.recordContribution('401k', 24500, 5500);
-        tracker.recordContribution('roth401k', 30000, 0);
+        tracker.recordContribution('401k', 24500, 5500, undefined);
+        tracker.recordContribution('roth401k', 30000, 0, undefined);
         // Total = employee $54,500 + employer $5,500 = $60,000
 
         // 415(c) at 35 = $72,000 − $60,000 = $12,000
@@ -2595,6 +2597,312 @@ describe('ContributionRules', () => {
 
         // Age 64 is past the 60-63 super catch-up window, falls back to $80,000
         expect(result.contributionAmount).toBe(80000);
+      });
+    });
+  });
+
+  // ============================================================================
+  // Per-Income Contribution Tracking
+  // ============================================================================
+
+  describe('per-income contribution tracking', () => {
+    describe('ContributionTracker.getEmployeeByIncome', () => {
+      it('should return 0 for an unknown incomeId', () => {
+        const tracker = new ContributionTracker();
+        expect(tracker.getEmployeeByIncome('nonexistent')).toBe(0);
+      });
+
+      it('should accumulate contributions across multiple calls with the same incomeId', () => {
+        const tracker = new ContributionTracker();
+        tracker.recordContribution('401k', 1000, 0, 'income-1');
+        tracker.recordContribution('401k', 500, 0, 'income-1');
+        expect(tracker.getEmployeeByIncome('income-1')).toBe(1500);
+      });
+
+      it('should not record income tracking when incomeId is undefined', () => {
+        const tracker = new ContributionTracker();
+        tracker.recordContribution('401k', 1000, 0, undefined);
+        expect(tracker.getEmployeeByIncome('income-1')).toBe(0);
+      });
+    });
+
+    describe('ContributionTracker.resetMonthly vs resetYTD', () => {
+      it('should clear employeeByIncome but preserve employeeByType and employerByType on resetMonthly', () => {
+        const tracker = new ContributionTracker();
+        tracker.recordContribution('401k', 5000, 2000, 'income-1');
+
+        tracker.resetMonthly();
+
+        // Per-income tracking cleared
+        expect(tracker.getEmployeeByIncome('income-1')).toBe(0);
+        // Per-type tracking preserved
+        expect(tracker.getEmployeeByTypes(['401k'])).toBe(5000);
+        expect(tracker.getEmployerByTypes(['401k'])).toBe(2000);
+      });
+
+      it('should clear all maps on resetYTD', () => {
+        const tracker = new ContributionTracker();
+        tracker.recordContribution('401k', 5000, 2000, 'income-1');
+
+        tracker.resetYTD();
+
+        expect(tracker.getEmployeeByIncome('income-1')).toBe(0);
+        expect(tracker.getEmployeeByTypes(['401k'])).toBe(0);
+        expect(tracker.getEmployerByTypes(['401k'])).toBe(0);
+      });
+    });
+
+    describe('income limit deduction within a month', () => {
+      it('should reduce available income for subsequent rules sharing the same incomeId', () => {
+        const tracker = new ContributionTracker();
+        const rule1 = new ContributionRule(
+          createContributionRule({
+            id: 'rule-1',
+            contributionType: 'dollarAmount',
+            dollarAmount: 2000,
+            accountId: '401k-1',
+            incomeId: 'income-1',
+            rank: 1,
+          }),
+          tracker
+        );
+        const rule2 = new ContributionRule(
+          createContributionRule({
+            id: 'rule-2',
+            contributionType: 'unlimited',
+            accountId: 'savings-1',
+            incomeId: 'income-1',
+            rank: 2,
+          }),
+          tracker
+        );
+        const account401k = new TaxDeferredAccount(create401kAccount());
+        const accountSavings = new SavingsAccount(createSavingsAccountInput());
+
+        const incomesData = createEmptyIncomesData({
+          perIncomeData: {
+            'income-1': {
+              id: 'income-1',
+              name: 'Salary',
+              income: 3000,
+              amountWithheld: 0,
+              ficaTax: 0,
+              incomeAfterPayrollDeductions: 3000,
+              taxFreeIncome: 0,
+              socialSecurityIncome: 0,
+            },
+          },
+        });
+
+        // Rule 1 contributes $2000
+        const r1 = rule1.calculateContribution(10000, account401k, 35, incomesData);
+        expect(r1.contributionAmount).toBe(2000);
+        rule1.recordContribution(2000, 0, '401k');
+
+        // Rule 2 should only see $1000 remaining income ($3000 - $2000)
+        const r2 = rule2.calculateContribution(10000, accountSavings, 35, incomesData);
+        expect(r2.contributionAmount).toBe(1000);
+      });
+    });
+
+    describe('rules with different incomeIds do not interfere', () => {
+      it('should not reduce income limit for a rule with a different incomeId', () => {
+        const tracker = new ContributionTracker();
+        const rule1 = new ContributionRule(
+          createContributionRule({
+            id: 'rule-1',
+            contributionType: 'unlimited',
+            accountId: '401k-1',
+            incomeId: 'income-1',
+            rank: 1,
+          }),
+          tracker
+        );
+        const rule2 = new ContributionRule(
+          createContributionRule({
+            id: 'rule-2',
+            contributionType: 'unlimited',
+            accountId: 'savings-1',
+            incomeId: 'income-2',
+            rank: 2,
+          }),
+          tracker
+        );
+        const account401k = new TaxDeferredAccount(create401kAccount());
+        const accountSavings = new SavingsAccount(createSavingsAccountInput());
+
+        const incomesData = createEmptyIncomesData({
+          perIncomeData: {
+            'income-1': {
+              id: 'income-1',
+              name: 'Salary',
+              income: 3000,
+              amountWithheld: 0,
+              ficaTax: 0,
+              incomeAfterPayrollDeductions: 3000,
+              taxFreeIncome: 0,
+              socialSecurityIncome: 0,
+            },
+            'income-2': {
+              id: 'income-2',
+              name: 'Side Job',
+              income: 2000,
+              amountWithheld: 0,
+              ficaTax: 0,
+              incomeAfterPayrollDeductions: 2000,
+              taxFreeIncome: 0,
+              socialSecurityIncome: 0,
+            },
+          },
+        });
+
+        // Rule 1 consumes full income-1
+        const r1 = rule1.calculateContribution(10000, account401k, 35, incomesData);
+        expect(r1.contributionAmount).toBe(3000);
+        rule1.recordContribution(3000, 0, '401k');
+
+        // Rule 2 should still have full income-2 available
+        const r2 = rule2.calculateContribution(10000, accountSavings, 35, incomesData);
+        expect(r2.contributionAmount).toBe(2000);
+      });
+    });
+
+    describe('regression: shared incomeId caps total contributions across accounts', () => {
+      it('should limit annual contributions to the income amount when two accounts share an incomeId', () => {
+        // Scenario: 401k + HSA both linked to income-1 ($100/mo).
+        // A second income ($1000/mo) provides excess cash flow but is NOT selected by either rule.
+        // Without per-income tracking, both rules would each see $100 income → $200/mo total (bug).
+        // With the fix, rule 1 consumes the $100 income, rule 2 sees $0 remaining → $100/mo total.
+        const rules = new ContributionRules(
+          [
+            createContributionRule({
+              id: 'rule-401k',
+              contributionType: 'unlimited',
+              accountId: '401k-1',
+              incomeId: 'income-1',
+              rank: 1,
+            }),
+            createContributionRule({
+              id: 'rule-hsa',
+              contributionType: 'unlimited',
+              accountId: 'hsa-1',
+              incomeId: 'income-1',
+              rank: 2,
+            }),
+          ],
+          { type: 'spend' }
+        );
+        const [rule401k, ruleHsa] = rules.getRules().sort((a, b) => a.getRank() - b.getRank());
+        const account401k = new TaxDeferredAccount(create401kAccount());
+        const accountHsa = new TaxDeferredAccount({
+          type: 'hsa',
+          id: 'hsa-1',
+          name: 'HSA',
+          balance: 5000,
+          percentBonds: 0,
+        });
+
+        const incomesData = createEmptyIncomesData({
+          perIncomeData: {
+            'income-1': {
+              id: 'income-1',
+              name: 'Part-Time Job',
+              income: 100, // $100/mo = $1,200/yr
+              amountWithheld: 0,
+              ficaTax: 0,
+              incomeAfterPayrollDeductions: 100,
+              taxFreeIncome: 0,
+              socialSecurityIncome: 0,
+            },
+            'income-2': {
+              id: 'income-2',
+              name: 'Main Salary',
+              income: 1000, // $1,000/mo — provides cash flow but not linked to any rule
+              amountWithheld: 0,
+              ficaTax: 0,
+              incomeAfterPayrollDeductions: 1000,
+              taxFreeIncome: 0,
+              socialSecurityIncome: 0,
+            },
+          },
+        });
+
+        let totalContributions = 0;
+        const monthlySurplus = 1100; // $100 (income-1) + $1000 (income-2)
+
+        for (let month = 0; month < 12; month++) {
+          rules.resetMonthly();
+
+          let remaining = monthlySurplus;
+
+          // Process rules in rank order (same as PortfolioProcessor)
+          const r1 = rule401k.calculateContribution(remaining, account401k, 35, incomesData);
+          rule401k.recordContribution(r1.contributionAmount, r1.employerMatchAmount, '401k');
+          remaining -= r1.contributionAmount;
+          totalContributions += r1.contributionAmount;
+
+          const r2 = ruleHsa.calculateContribution(remaining, accountHsa, 35, incomesData);
+          ruleHsa.recordContribution(r2.contributionAmount, r2.employerMatchAmount, 'hsa');
+          remaining -= r2.contributionAmount;
+          totalContributions += r2.contributionAmount;
+
+          expect(r1.contributionAmount + r2.contributionAmount).toEqual(100);
+          expect(r1.contributionAmount).toBe(100);
+          expect(r2.contributionAmount).toBe(0);
+        }
+
+        // Total should be $1,200 (12 × $100 from income-1), NOT $2,400
+        expect(totalContributions).toBe(1200);
+      });
+    });
+
+    describe('ContributionRules.resetMonthly', () => {
+      it('should clear per-income tracking so a new month has full income available', () => {
+        const rules = new ContributionRules(
+          [
+            createContributionRule({
+              id: 'rule-1',
+              contributionType: 'unlimited',
+              accountId: '401k-1',
+              incomeId: 'income-1',
+              rank: 1,
+            }),
+          ],
+          { type: 'spend' }
+        );
+        const rule = rules.getRules()[0];
+        const account = new TaxDeferredAccount(create401kAccount());
+
+        const incomesData = createEmptyIncomesData({
+          perIncomeData: {
+            'income-1': {
+              id: 'income-1',
+              name: 'Salary',
+              income: 3000,
+              amountWithheld: 0,
+              ficaTax: 0,
+              incomeAfterPayrollDeductions: 3000,
+              taxFreeIncome: 0,
+              socialSecurityIncome: 0,
+            },
+          },
+        });
+
+        // Month 1: contribute full income
+        const m1 = rule.calculateContribution(10000, account, 35, incomesData);
+        expect(m1.contributionAmount).toBe(3000);
+        rule.recordContribution(3000, 0, '401k');
+
+        // Without reset, income-1 budget is exhausted
+        const exhausted = rule.calculateContribution(10000, account, 35, incomesData);
+        expect(exhausted.contributionAmount).toBe(0);
+
+        // Reset monthly — per-income tracking cleared, YTD preserved
+        rules.resetMonthly();
+
+        // Month 2: full income available again, but YTD dollar amount accrues
+        const m2 = rule.calculateContribution(10000, account, 35, incomesData);
+        expect(m2.contributionAmount).toBe(3000);
       });
     });
   });

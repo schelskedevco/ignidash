@@ -23,10 +23,12 @@ import type { IncomesData } from './incomes';
 export class ContributionTracker {
   private employeeByType = new Map<AccountInputs['type'], number>();
   private employerByType = new Map<AccountInputs['type'], number>();
+  private employeeByIncome = new Map<string, number>();
 
-  recordContribution(accountType: AccountInputs['type'], employee: number, employer: number): void {
+  recordContribution(accountType: AccountInputs['type'], employee: number, employer: number, incomeId: string | undefined): void {
     this.employeeByType.set(accountType, (this.employeeByType.get(accountType) ?? 0) + employee);
     this.employerByType.set(accountType, (this.employerByType.get(accountType) ?? 0) + employer);
+    if (incomeId) this.employeeByIncome.set(incomeId, (this.employeeByIncome.get(incomeId) ?? 0) + employee);
   }
 
   getEmployeeByTypes(types: AccountInputs['type'][]): number {
@@ -37,9 +39,18 @@ export class ContributionTracker {
     return types.reduce((sum, t) => sum + (this.employerByType.get(t) ?? 0), 0);
   }
 
-  reset(): void {
+  getEmployeeByIncome(incomeId: string): number {
+    return this.employeeByIncome.get(incomeId) ?? 0;
+  }
+
+  resetYTD(): void {
     this.employeeByType.clear();
     this.employerByType.clear();
+    this.employeeByIncome.clear();
+  }
+
+  resetMonthly(): void {
+    this.employeeByIncome.clear();
   }
 }
 
@@ -65,16 +76,22 @@ export class ContributionRules {
   }
 
   resetYTD(): void {
-    this.tracker.reset();
+    this.tracker.resetYTD();
     for (const rule of this.contributionRules) {
       rule.resetYTD();
     }
+  }
+
+  resetMonthly(): void {
+    this.tracker.resetMonthly();
   }
 }
 
 /** A single contribution rule targeting a specific account with amount/limit logic */
 export class ContributionRule {
+  // Year-to-date employee contribution for this rule
   private ytdEmployeeContribution = 0;
+  // Year-to-date employer match for this rule
   private ytdEmployerMatch = 0;
 
   constructor(
@@ -119,7 +136,7 @@ export class ContributionRule {
   recordContribution(employee: number, employer: number, accountType: AccountInputs['type']): void {
     this.ytdEmployeeContribution += employee;
     this.ytdEmployerMatch += employer;
-    this.tracker.recordContribution(accountType, employee, employer);
+    this.tracker.recordContribution(accountType, employee, employer, this.contributionInput.incomeId);
   }
 
   resetYTD(): void {
@@ -138,7 +155,7 @@ export class ContributionRule {
   private calculateIncomeLimit(incomesData: IncomesData | null): number {
     const incomeId = this.contributionInput.incomeId;
     if (!incomeId) return Infinity;
-    return incomesData?.perIncomeData?.[incomeId]?.income ?? 0;
+    return Math.max(0, (incomesData?.perIncomeData?.[incomeId]?.income ?? 0) - this.tracker.getEmployeeByIncome(incomeId));
   }
 
   private calculateEmployerMatch(contributionAmount: number): number {
