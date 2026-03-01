@@ -183,32 +183,23 @@ export default function ContributionRuleDialog({
                   </Description>
                 )}
               </Field>
-              {selectedAccount && supportsMegaBackdoorRoth(selectedAccount.type) && (
-                <SwitchField>
-                  <Label>Enable mega-backdoor Roth</Label>
-                  <Description>Contribute up to the 415(c) limit using after-tax conversions.</Description>
-                  <Controller
-                    name="enableMegaBackdoorRoth"
-                    defaultValue={false}
-                    control={control}
-                    render={({ field: { onChange, value, name } }) => <Switch name={name} checked={value} onChange={onChange} />}
-                  />
-                </SwitchField>
-              )}
               {selectedAccount && supportsIncomeAllocation(selectedAccount.type) && (
-                <Field>
-                  <Label htmlFor="incomeId">From Income</Label>
-                  <Select {...register('incomeId')} id="incomeId" name="incomeId" invalid={!!errors.incomeId}>
-                    <option value="">Any income</option>
-                    {incomeOptions.map((income) => (
-                      <option key={income.id} value={income.id}>
-                        {income.name}
-                      </option>
-                    ))}
-                  </Select>
-                  {errors.incomeId && <ErrorMessage>{errors.incomeId?.message}</ErrorMessage>}
-                  <Description>Allow contributions only from a specific income source, if applicable.</Description>
-                </Field>
+                <>
+                  <Field>
+                    <Label htmlFor="incomeId">From Income</Label>
+                    <Select {...register('incomeId')} id="incomeId" name="incomeId" invalid={!!errors.incomeId}>
+                      <option value="">Any income</option>
+                      {incomeOptions.map((income) => (
+                        <option key={income.id} value={income.id}>
+                          {income.name}
+                        </option>
+                      ))}
+                    </Select>
+                    {errors.incomeId && <ErrorMessage>{errors.incomeId?.message}</ErrorMessage>}
+                    <Description>Allow contributions only from a specific income source, if applicable.</Description>
+                  </Field>
+                  <Divider soft />
+                </>
               )}
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                 <Field className={getContributionTypeColSpan()}>
@@ -291,6 +282,21 @@ export default function ContributionRuleDialog({
                   {errors.employerMatch && <ErrorMessage>{errors.employerMatch?.message}</ErrorMessage>}
                   <Description>Employer will match your contributions dollar-for-dollar up to this amount.</Description>
                 </Field>
+              )}
+              {selectedAccount && supportsMegaBackdoorRoth(selectedAccount.type) && (
+                <>
+                  <Divider soft />
+                  <SwitchField>
+                    <Label>Enable mega-backdoor Roth</Label>
+                    <Description>Contribute up to the 415(c) limit using after-tax conversions.</Description>
+                    <Controller
+                      name="enableMegaBackdoorRoth"
+                      defaultValue={false}
+                      control={control}
+                      render={({ field: { onChange, value, name } }) => <Switch name={name} checked={value} onChange={onChange} />}
+                    />
+                  </SwitchField>
+                </>
               )}
             </FieldGroup>
           </DialogBody>
