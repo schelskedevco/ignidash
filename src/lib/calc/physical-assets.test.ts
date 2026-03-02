@@ -1859,6 +1859,39 @@ describe('Inflation Adjustment', () => {
   });
 
   describe('Processor Integration', () => {
+    it('future-dated asset first payment is at full nominal value through processor', () => {
+      const nominalPayment = 2000;
+      const purchaseAge = 36;
+      const assets = new PhysicalAssets([
+        createFinancedAssetInput({
+          id: 'house',
+          purchasePrice: 400000,
+          purchaseDate: { type: 'customAge', age: purchaseAge },
+          paymentMethod: { type: 'loan', downPayment: 80000, loanBalance: 320000, apr: 6, monthlyPayment: nominalPayment },
+        }),
+      ]);
+
+      const monthlyInflation = Math.pow(1.08, 1 / 12) - 1; // 8% annual
+      const simState = createSimulationState();
+      const processor = new PhysicalAssetsProcessor(simState, assets);
+
+      // Process months before purchase — no payments should occur
+      for (let month = 0; month < 12; month++) {
+        const result = processor.process(monthlyInflation);
+        expect(result.totalLoanPayment).toBe(0);
+        simState.time.age += 1 / 12;
+      }
+
+      // Purchase month — first payment should be at full nominal value
+      const purchaseResult = processor.process(monthlyInflation);
+      expect(purchaseResult.totalLoanPayment).toBeCloseTo(nominalPayment, 0);
+
+      // Next month — payment should be deflated
+      simState.time.age += 1 / 12;
+      const nextResult = processor.process(monthlyInflation);
+      expect(nextResult.totalLoanPayment).toBeLessThan(nominalPayment);
+    });
+
     it('should apply inflation through processor', () => {
       const assets = new PhysicalAssets([
         createFinancedAssetInput({
@@ -1879,8 +1912,8 @@ describe('Inflation Adjustment', () => {
       // Process second month - payment should be slightly lower due to deflation
       const result2 = processor.process(monthlyInflation);
 
-      // Both should have payments (less than original 2000 due to inflation)
-      expect(result1.totalLoanPayment).toBeLessThan(2000);
+      // First payment at full nominal, second deflated (inflation applied after payment)
+      expect(result1.totalLoanPayment).toBeCloseTo(2000, 0);
       expect(result2.totalLoanPayment).toBeLessThan(result1.totalLoanPayment);
     });
   });
@@ -2392,6 +2425,109 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
       // This correctly reflects that more principal is "paid" due to balance erosion
       expect(result.totalPrincipalPaid).toBeGreaterThan(result.totalLoanPayment);
       expect(result.totalPrincipalPaid).toBeCloseTo(result.totalLoanPayment - result.totalInterest, 2);
+    });
+  });
+
+  describe('Loan Payoff Timing with Inflation', () => {
+    const loanBalance = 400000;
+    const apr = 6;
+    const monthlyPayment = 2400;
+    const MAX_MONTHS = 600;
+    const PENDING_MONTHS = 60;
+
+    function countMonthsToPayoff(monthlyInflationRate: number, pendingMonths: number = 0): number {
+      const asset = new PhysicalAsset(
+        createFinancedAssetInput({
+          purchasePrice: 500000,
+          appreciationRate: 0,
+          purchaseDate: pendingMonths > 0 ? { type: 'customAge', age: 35 + pendingMonths / 12 } : { type: 'now' },
+          paymentMethod: { type: 'loan', downPayment: 100000, loanBalance, apr, monthlyPayment },
+        })
+      );
+
+      let paymentMonths = 0;
+      for (let month = 0; month < MAX_MONTHS; month++) {
+        // Simulate purchase at the right month
+        if (month === pendingMonths && pendingMonths > 0) {
+          asset.purchase();
+        }
+
+        if (asset.getOwnershipStatus() === 'owned' && !asset.isPaidOff()) {
+          asset.applyMonthlyAppreciation();
+          const { monthlyPaymentDue, interest } = asset.getMonthlyPaymentInfo(monthlyInflationRate);
+          asset.applyLoanPayment(monthlyPaymentDue, interest);
+          asset.applyMonthlyInflation(monthlyInflationRate);
+          paymentMonths++;
+          if (asset.isPaidOff()) return paymentMonths;
+        }
+      }
+      return MAX_MONTHS;
+    }
+
+    it('future-dated purchase with 8% inflation pays off in same months as owned-now', () => {
+      const monthlyInflation = Math.pow(1.08, 1 / 12) - 1;
+      const monthsNow = countMonthsToPayoff(monthlyInflation, 0);
+      const monthsFuture = countMonthsToPayoff(monthlyInflation, PENDING_MONTHS);
+      // Without the fix, the future case would never pay off (600 months).
+      expect(monthsFuture).toBeLessThan(MAX_MONTHS);
+      expect(monthsNow).toBe(monthsFuture);
+    });
+
+    it('future-dated purchase with 3% inflation pays off in same months as owned-now', () => {
+      const monthlyInflation = Math.pow(1.03, 1 / 12) - 1;
+      const monthsNow = countMonthsToPayoff(monthlyInflation, 0);
+      const monthsFuture = countMonthsToPayoff(monthlyInflation, PENDING_MONTHS);
+      expect(monthsFuture).toBeLessThan(MAX_MONTHS);
+      expect(monthsNow).toBe(monthsFuture);
+    });
+  });
+
+  describe('Debt vs PhysicalAsset Loan Parity', () => {
+    it('simple-interest debt and physical asset loan pay off in the same number of months', () => {
+      const balance = 400000;
+      const aprPercent = 6;
+      const payment = 2400;
+      const monthlyInflation = Math.pow(1.03, 1 / 12) - 1;
+      const MAX = 600;
+
+      const asset = new PhysicalAsset(
+        createFinancedAssetInput({
+          purchasePrice: 500000,
+          appreciationRate: 0,
+          paymentMethod: { type: 'loan', downPayment: 100000, loanBalance: balance, apr: aprPercent, monthlyPayment: payment },
+        })
+      );
+
+      const debt = new Debt(
+        createDebtInput({
+          balance,
+          apr: aprPercent,
+          monthlyPayment: payment,
+          interestType: 'simple',
+        })
+      );
+
+      let assetMonths = MAX;
+      let debtMonths = MAX;
+
+      for (let month = 0; month < MAX; month++) {
+        if (!asset.isPaidOff()) {
+          asset.applyMonthlyAppreciation();
+          const { monthlyPaymentDue, interest } = asset.getMonthlyPaymentInfo(monthlyInflation);
+          asset.applyLoanPayment(monthlyPaymentDue, interest);
+          asset.applyMonthlyInflation(monthlyInflation);
+          if (asset.isPaidOff() && assetMonths === MAX) assetMonths = month + 1;
+        }
+
+        if (!debt.isPaidOff()) {
+          const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflation);
+          debt.applyPayment(monthlyPaymentDue, interest);
+          debt.applyMonthlyInflation(monthlyInflation);
+          if (debt.isPaidOff() && debtMonths === MAX) debtMonths = month + 1;
+        }
+      }
+
+      expect(assetMonths).toBe(debtMonths);
     });
   });
 });

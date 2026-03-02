@@ -1559,6 +1559,41 @@ describe('Inflation Adjustment', () => {
   });
 
   describe('Processor Integration', () => {
+    it('future-dated debt first payment is at full nominal value through processor', () => {
+      const nominalPayment = 200;
+      const startAge = 36;
+      const debts = new Debts([
+        createDebtInput({
+          id: 'loan',
+          balance: 10000,
+          apr: 6,
+          monthlyPayment: nominalPayment,
+          interestType: 'simple',
+          startDate: { type: 'customAge', age: startAge },
+        }),
+      ]);
+
+      const monthlyInflation = Math.pow(1.08, 1 / 12) - 1; // 8% annual
+      const simState = createSimulationState();
+      const processor = new DebtsProcessor(simState, debts);
+
+      // Process months before incurred — no payments should occur
+      for (let month = 0; month < 12; month++) {
+        const result = processor.process(monthlyInflation);
+        expect(result.totalPayment).toBe(0);
+        simState.time.age += 1 / 12;
+      }
+
+      // Incur month — first payment should be at full nominal value
+      const incurResult = processor.process(monthlyInflation);
+      expect(incurResult.totalPayment).toBeCloseTo(nominalPayment, 0);
+
+      // Next month — payment should be deflated
+      simState.time.age += 1 / 12;
+      const nextResult = processor.process(monthlyInflation);
+      expect(nextResult.totalPayment).toBeLessThan(nominalPayment);
+    });
+
     it('should apply inflation through processor', () => {
       const debts = new Debts([
         createDebtInput({
@@ -1581,8 +1616,8 @@ describe('Inflation Adjustment', () => {
       // Process second month - payment should be slightly lower due to deflation
       const result2 = processor.process(monthlyInflation);
 
-      // Both should have payments (less than original 200 due to inflation)
-      expect(result1.totalPayment).toBeLessThan(200);
+      // First payment at full nominal, second deflated (inflation applied after payment)
+      expect(result1.totalPayment).toBeCloseTo(200, 0);
       expect(result2.totalPayment).toBeLessThan(result1.totalPayment);
     });
   });
@@ -1946,6 +1981,62 @@ describe('Negative Interest Reporting (High Inflation Fix)', () => {
 
       // INVARIANT 3: principalPaid <= initialBalance (can't pay more principal than existed)
       expect(principalPaid).toBeLessThanOrEqual(initialBalance + 0.01);
+    });
+  });
+
+  describe('Loan Payoff Timing with Inflation', () => {
+    const balance = 400000;
+    const aprPercent = 6;
+    const payment = 2400;
+    const MAX_MONTHS = 600;
+    const PENDING_MONTHS = 60;
+
+    function countMonthsToPayoff(monthlyInflationRate: number, pendingMonths: number = 0): number {
+      const debt = new Debt(
+        createDebtInput({
+          balance,
+          apr: aprPercent,
+          monthlyPayment: payment,
+          interestType: 'simple',
+          startDate: pendingMonths > 0 ? { type: 'customAge', age: 35 + pendingMonths / 12 } : { type: 'now' },
+        })
+      );
+
+      let paymentMonths = 0;
+      let incurred = pendingMonths === 0;
+      for (let month = 0; month < MAX_MONTHS; month++) {
+        // Simulate incurring at the right month
+        if (month === pendingMonths && pendingMonths > 0) {
+          debt.incurUnsecuredDebt();
+          incurred = true;
+        }
+
+        if (incurred && !debt.isPaidOff()) {
+          const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflationRate);
+          debt.applyPayment(monthlyPaymentDue, interest);
+          debt.applyMonthlyInflation(monthlyInflationRate);
+          paymentMonths++;
+          if (debt.isPaidOff()) return paymentMonths;
+        }
+      }
+      return MAX_MONTHS;
+    }
+
+    it('future-dated debt with 8% inflation pays off in same months as start-now', () => {
+      const monthlyInflation = Math.pow(1.08, 1 / 12) - 1;
+      const monthsNow = countMonthsToPayoff(monthlyInflation, 0);
+      const monthsFuture = countMonthsToPayoff(monthlyInflation, PENDING_MONTHS);
+      // Without the fix, the future case would never pay off (600 months).
+      expect(monthsFuture).toBeLessThan(MAX_MONTHS);
+      expect(monthsNow).toBe(monthsFuture);
+    });
+
+    it('future-dated debt with 3% inflation pays off in same months as start-now', () => {
+      const monthlyInflation = Math.pow(1.03, 1 / 12) - 1;
+      const monthsNow = countMonthsToPayoff(monthlyInflation, 0);
+      const monthsFuture = countMonthsToPayoff(monthlyInflation, PENDING_MONTHS);
+      expect(monthsFuture).toBeLessThan(MAX_MONTHS);
+      expect(monthsNow).toBe(monthsFuture);
     });
   });
 });

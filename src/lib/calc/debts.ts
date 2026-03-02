@@ -21,8 +21,6 @@ export class DebtsProcessor {
   ) {}
 
   process(monthlyInflationRate: number): DebtsData {
-    this.debts.applyMonthlyInflation(monthlyInflationRate);
-
     let totalPayment = 0;
     let totalInterest = 0;
     let totalPrincipalPaid = 0;
@@ -37,6 +35,7 @@ export class DebtsProcessor {
 
       const { monthlyPaymentDue, interest } = debt.getMonthlyPaymentInfo(monthlyInflationRate);
       debt.applyPayment(monthlyPaymentDue, interest);
+      debt.applyMonthlyInflation(monthlyInflationRate);
 
       const principalPaid = Math.max(0, monthlyPaymentDue - interest);
       const unpaidInterest = Math.max(0, interest - monthlyPaymentDue);
@@ -162,10 +161,6 @@ export class Debts {
     this.debts = data.filter((debt) => !debt.disabled).map((debt) => new Debt(debt));
   }
 
-  applyMonthlyInflation(monthlyInflationRate: number): void {
-    this.debts.forEach((debt) => debt.applyMonthlyInflation(monthlyInflationRate));
-  }
-
   getActiveDebts(simulationState: SimulationState): Debt[] {
     return this.debts.filter((debt) => debt.getIsActive(simulationState));
   }
@@ -207,6 +202,8 @@ export class Debt {
     return this.balance;
   }
 
+  /** Deflates the nominal payment to reflect real purchasing power loss.
+   *  Must only be called on incurred debts, after payment processing. */
   applyMonthlyInflation(monthlyInflationRate: number): void {
     this.monthlyPayment /= 1 + monthlyInflationRate;
   }

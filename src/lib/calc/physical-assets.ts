@@ -24,8 +24,6 @@ export class PhysicalAssetsProcessor {
   ) {}
 
   process(monthlyInflationRate: number): PhysicalAssetsData {
-    this.physicalAssets.applyMonthlyInflation(monthlyInflationRate);
-
     let totalPurchaseOutlay = 0;
     let totalPurchaseMarketValue = 0;
     const purchaseDataByAsset: Record<string, { purchaseOutlay: number; purchaseMarketValue: number }> = {};
@@ -61,6 +59,7 @@ export class PhysicalAssetsProcessor {
 
       const { monthlyPaymentDue, interest } = asset.getMonthlyPaymentInfo(monthlyInflationRate);
       asset.applyLoanPayment(monthlyPaymentDue, interest);
+      asset.applyMonthlyInflation(monthlyInflationRate);
 
       const principalPaid = Math.max(0, monthlyPaymentDue - interest);
       const unpaidInterest = Math.max(0, interest - monthlyPaymentDue);
@@ -273,10 +272,6 @@ export class PhysicalAssets {
     this.assets = data.map((asset) => new PhysicalAsset(asset));
   }
 
-  applyMonthlyInflation(monthlyInflationRate: number): void {
-    this.assets.forEach((asset) => asset.applyMonthlyInflation(monthlyInflationRate));
-  }
-
   getOwnedAssets(): PhysicalAsset[] {
     return this.assets.filter((asset) => asset.getOwnershipStatus() === 'owned');
   }
@@ -344,6 +339,8 @@ export class PhysicalAsset {
     this.hasSecuredDebtBeenIncurred = data.purchaseDate.type === 'now' && data.paymentMethod.type === 'loan';
   }
 
+  /** Deflates the nominal loan payment to reflect real purchasing power loss.
+   *  Must only be called on owned assets, after payment processing. */
   applyMonthlyInflation(monthlyInflationRate: number): void {
     if (this.paymentMethod.type === 'loan') {
       this.monthlyLoanPayment /= 1 + monthlyInflationRate;
