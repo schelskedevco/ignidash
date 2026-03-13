@@ -7,9 +7,8 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "next dev --turbopack -H 0.0.0.0",
-    "dev:convex": "node scripts/dev-convex.js",
-    "sync-convex-env": "node scripts/sync-convex-env.js",
+    "dev": "next dev",
+    "dev:convex": "npx convex dev --local",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
