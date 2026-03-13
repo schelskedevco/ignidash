@@ -2,7 +2,6 @@ import { httpRouter } from 'convex/server';
 import { httpAction } from './_generated/server';
 import { internal } from './_generated/api';
 import { authComponent, createAuth } from './auth';
-
 const http = httpRouter();
 
 authComponent.registerRoutes(http, createAuth);
@@ -63,6 +62,29 @@ http.route({
     if (!userId || !method) return new Response('Missing required fields', { status: 400 });
 
     await ctx.runAction(internal.posthog.captureSignIn, { userId, method });
+    return new Response('OK', { status: 200 });
+  }),
+});
+
+http.route({
+  path: '/plaid/webhook',
+  method: 'POST',
+  handler: httpAction(async (ctx, request) => {
+    const body = await request.json();
+    const { webhook_type, webhook_code, item_id } = body;
+
+    if (webhook_type === 'INVESTMENTS' && (webhook_code === 'DEFAULT_UPDATE' || webhook_code === 'HOLDINGS_DEFAULT_UPDATE')) {
+      const item = await ctx.runQuery(internal.plaid_data.getPlaidItemByItemId, { itemId: item_id });
+      if (item) {
+        await ctx.runAction(internal.plaid.fetchAndUpsertHoldings, {
+          userId: item.userId,
+          accessToken: item.accessToken,
+          plaidItemId: item._id,
+        });
+        await ctx.runMutation(internal.plaid_data.updateLastSynced, { plaidItemId: item._id });
+      }
+    }
+
     return new Response('OK', { status: 200 });
   }),
 });

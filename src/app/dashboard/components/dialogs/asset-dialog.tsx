@@ -21,6 +21,7 @@ import { Button } from '@/components/catalyst/button';
 import { Input } from '@/components/catalyst/input';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { getCurrencySymbol, formatCurrencyPlaceholder } from '@/lib/utils/number-formatters';
+import { LinkIcon } from 'lucide-react';
 
 interface AssetDialogProps {
   onClose: () => void;
@@ -30,6 +31,7 @@ interface AssetDialogProps {
 
 export default function AssetDialog({ onClose, selectedAsset: _selectedAsset, numAssets }: AssetDialogProps) {
   const [selectedAsset] = useState(_selectedAsset);
+  const isPlaidManaged = !!selectedAsset?.plaidAccountId;
 
   const newAssetDefaultValues = useMemo(
     () =>
@@ -86,6 +88,12 @@ export default function AssetDialog({ onClose, selectedAsset: _selectedAsset, nu
           <DialogBody>
             <FieldGroup>
               {(saveError || hasFormErrors) && <ErrorMessageCard errorMessage={saveError || getErrorMessages(errors).join(', ')} />}
+              {isPlaidManaged && (
+                <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300">
+                  <LinkIcon className="size-4 shrink-0" />
+                  <span>Value is synced from a connected institution and cannot be edited manually.</span>
+                </div>
+              )}
               <Field>
                 <Label htmlFor="name">Name</Label>
                 <Input
@@ -110,6 +118,7 @@ export default function AssetDialog({ onClose, selectedAsset: _selectedAsset, nu
                   placeholder={formatCurrencyPlaceholder(15000)}
                   prefix={getCurrencySymbol()}
                   autoFocus
+                  disabled={isPlaidManaged}
                 />
                 {errors.value && <ErrorMessage>{errors.value?.message}</ErrorMessage>}
               </Field>

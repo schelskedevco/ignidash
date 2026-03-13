@@ -92,4 +92,23 @@ export default defineSchema({
     userId: v.string(),
     onboardingDialogCompleted: v.boolean(),
   }).index('by_userId', ['userId']),
+  plaidItems: defineTable({
+    userId: v.string(),
+    accessToken: v.string(),
+    itemId: v.string(),
+    institutionName: v.string(),
+    institutionId: v.optional(v.string()),
+    accounts: v.array(
+      v.object({
+        plaidAccountId: v.string(),
+        name: v.string(),
+        officialName: v.optional(v.string()),
+        type: v.string(),
+        subtype: v.optional(v.string()),
+      })
+    ),
+    lastSyncedAt: v.optional(v.number()),
+  })
+    .index('by_userId', ['userId'])
+    .index('by_itemId', ['itemId']),
 });
