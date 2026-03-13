@@ -48,5 +48,3 @@ docker-compose.override.yml
 *.tsbuildinfo
 next-env.d.ts
 
-# local dev scripts
-scripts/
