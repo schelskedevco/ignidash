@@ -47,3 +47,6 @@ docker-compose.override.yml
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local dev scripts
+scripts/

@@ -7,8 +7,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "next dev",
-    "dev:convex": "npx convex dev --local",
+    "dev": "next dev --turbopack -H 0.0.0.0",
+    "dev:convex": "node scripts/dev-convex.js",
+    "sync-convex-env": "node scripts/sync-convex-env.js",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -62,6 +63,7 @@
     "next": "^16.1.6",
     "next-themes": "^0.4.6",
     "openai": "^6.9.1",
+    "plaid": "^41.4.0",
     "posthog-js": "^1.311.0",
     "posthog-node": "^5.18.1",
     "react": "^19.2.3",
@@ -69,6 +71,7 @@
     "react-hook-form": "^7.62.0",
     "react-markdown": "^10.1.0",
     "react-number-format": "^5.4.4",
+    "react-plaid-link": "^4.1.1",
     "recharts": "^3.7.0",
     "stripe": "^20.1.0",
     "swr": "^2.3.6",

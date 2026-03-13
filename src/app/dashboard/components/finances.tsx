@@ -1,13 +1,14 @@
 'use client';
 
-import { useMutation } from 'convex/react';
+import { useMutation, useAction } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import type { Id } from '@/convex/_generated/dataModel';
 import type { Preloaded } from 'convex/react';
 import { usePreloadedAuthQuery } from '@convex-dev/better-auth/nextjs/client';
 import { useState } from 'react';
-import { WalletIcon as MicroWalletIcon, CreditCardIcon as MicroCreditCardIcon } from '@heroicons/react/16/solid';
+import { WalletIcon as MicroWalletIcon, CreditCardIcon as MicroCreditCardIcon, BuildingLibraryIcon } from '@heroicons/react/16/solid';
 import { WalletIcon, CreditCardIcon } from '@heroicons/react/24/outline';
-import { ExternalLinkIcon } from 'lucide-react';
+import { ExternalLinkIcon, LinkIcon } from 'lucide-react';
 
 import { type AssetInputs, assetTypeForDisplay, assetIconForDisplay } from '@/lib/schemas/finances/asset-form-schema';
 import { type LiabilityInputs, liabilityTypeForDisplay, liabilityIconForDisplay } from '@/lib/schemas/finances/liability-form-schema';
@@ -21,14 +22,28 @@ import DataItem from '@/components/ui/data-item';
 import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 import { cn } from '@/lib/utils';
+import { Dropdown, DropdownButton, DropdownItem, DropdownMenu } from '@/components/catalyst/dropdown';
+import { EllipsisVerticalIcon } from '@heroicons/react/20/solid';
+import PlaidLinkButton from '@/components/ui/plaid-link-button';
+import { usePlaidItemsData, usePlaidConfigured } from '@/hooks/use-convex-data';
 import AssetDialog from './dialogs/asset-dialog';
 import LiabilityDialog from './dialogs/liability-dialog';
 
-function getAssetDesc(asset: AssetInputs) {
+function InstitutionPill({ name }: { name: string }) {
+  return (
+    <span className="inline-flex items-center gap-0.5 rounded-full bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
+      <LinkIcon className="size-2.5" />
+      {name}
+    </span>
+  );
+}
+
+function getAssetDesc(asset: AssetInputs, institutionName?: string) {
   return (
     <>
-      <p>
+      <p className="flex items-center gap-1.5">
         {formatCompactCurrency(asset.value, 1)} | {assetTypeForDisplay(asset.type)}
+        {institutionName && <InstitutionPill name={institutionName} />}
       </p>
       <p>
         Updated <time dateTime={new Date(asset.updatedAt).toISOString()}>{new Date(asset.updatedAt).toLocaleDateString()}</time>
@@ -37,11 +52,12 @@ function getAssetDesc(asset: AssetInputs) {
   );
 }
 
-function getLiabilityDesc(liability: LiabilityInputs) {
+function getLiabilityDesc(liability: LiabilityInputs, institutionName?: string) {
   return (
     <>
-      <p>
+      <p className="flex items-center gap-1.5">
         {formatCompactCurrency(liability.balance, 1)} | {liabilityTypeForDisplay(liability.type)}
+        {institutionName && <InstitutionPill name={institutionName} />}
       </p>
       <p>
         Updated <time dateTime={new Date(liability.updatedAt).toISOString()}>{new Date(liability.updatedAt).toLocaleDateString()}</time>
@@ -143,11 +159,41 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
   const totalLiabilities = liabilities?.reduce((acc, liability) => acc + liability.balance, 0) ?? 0;
   const netWorth = totalAssets - totalLiabilities;
 
+  // Plaid
+  const plaidConfigured = usePlaidConfigured();
+  type PlaidItem = { _id: string; institutionName: string; accounts: { plaidAccountId: string; name: string }[]; lastSyncedAt?: number };
+  const plaidItems = usePlaidItemsData() as PlaidItem[];
+  const syncPlaidItem = useAction(api.plaid.syncPlaidItem);
+  const deletePlaidItem = useAction(api.plaid.deletePlaidItem);
+  const [syncingItemId, setSyncingItemId] = useState<string | null>(null);
+  const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
+  const [managingItemId, setManagingItemId] = useState<Id<'plaidItems'> | null>(null);
+  const [connectingInstitution, setConnectingInstitution] = useState(false);
+  const institutionNameById = Object.fromEntries(plaidItems.map((item) => [item._id, item.institutionName]));
+
+  const handleSyncPlaidItem = async (plaidItemId: Id<'plaidItems'>) => {
+    setSyncingItemId(plaidItemId);
+    try {
+      await syncPlaidItem({ plaidItemId });
+    } finally {
+      setSyncingItemId(null);
+    }
+  };
+
+  const handleDeletePlaidItem = async (plaidItemId: Id<'plaidItems'>) => {
+    setDeletingItemId(plaidItemId);
+    try {
+      await deletePlaidItem({ plaidItemId });
+    } finally {
+      setDeletingItemId(null);
+    }
+  };
+
   return (
     <>
       <aside className="border-border/50 -mx-2 border-t sm:-mx-3 lg:fixed lg:top-[4.3125rem] lg:right-0 lg:bottom-0 lg:mx-0 lg:w-96 lg:overflow-y-auto lg:border-t-0 lg:border-l lg:bg-stone-50 dark:lg:bg-black/10">
-        <header className="from-emphasized-background to-background border-border/50 flex items-center justify-between border-b bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
-          <div className="flex w-full items-center gap-3">
+        <header className="from-emphasized-background to-background border-border/50 flex flex-col gap-3 border-b bg-gradient-to-l px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+          <div className="flex w-full items-center justify-between gap-3">
             <Tooltip>
               <TooltipTrigger>
                 <Heading level={4} className="underline decoration-stone-300 underline-offset-4 dark:decoration-stone-600">
@@ -161,7 +207,7 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
             </Tooltip>
             <span className="text-muted-foreground text-2xl/8 font-normal sm:text-xl/8">{formatCompactCurrency(netWorth, 2)}</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-center gap-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button outline onClick={() => setAssetDialogOpen(true)}>
@@ -180,6 +226,17 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
               </TooltipTrigger>
               <TooltipContent>Add liability</TooltipContent>
             </Tooltip>
+            {plaidConfigured && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button outline onClick={() => setConnectingInstitution(true)}>
+                    <BuildingLibraryIcon />
+                    <span className="sr-only">Connect institution</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Connect institution</TooltipContent>
+              </Tooltip>
+            )}
           </div>
         </header>
         <div className="flex h-full flex-col gap-2 px-4 py-5 sm:py-6 lg:h-[calc(100%-5.3125rem)]">
@@ -212,7 +269,7 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                           asset.name
                         )
                       }
-                      desc={getAssetDesc(asset)}
+                      desc={getAssetDesc(asset, asset.plaidItemId ? institutionNameById[asset.plaidItemId] : undefined)}
                       leftAddOn={<HoverableIcon defaultIcon={Icon} hoverIcon={ExternalLinkIcon} className="size-8" href={asset.url} />}
                       onDropdownClickEdit={() => handleEditAsset(asset)}
                       onDropdownClickDelete={() => setAssetToDelete({ id: asset.id, name: asset.name })}
@@ -253,7 +310,7 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
                           liability.name
                         )
                       }
-                      desc={getLiabilityDesc(liability)}
+                      desc={getLiabilityDesc(liability, liability.plaidItemId ? institutionNameById[liability.plaidItemId] : undefined)}
                       leftAddOn={<HoverableIcon defaultIcon={Icon} hoverIcon={ExternalLinkIcon} className="size-8" href={liability.url} />}
                       onDropdownClickEdit={() => handleEditLiability(liability)}
                       onDropdownClickDelete={() => setLiabilityToDelete({ id: liability.id, name: liability.name })}
@@ -264,6 +321,57 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
               </ul>
             </>
           )}
+          {plaidConfigured && plaidItems.length > 0 && (
+            <>
+              <Divider className="my-2" soft />
+              <div className="flex w-full items-center justify-between">
+                <Subheading level={5} className="font-medium underline decoration-stone-300 underline-offset-4 dark:decoration-stone-600">
+                  Connected Institutions
+                </Subheading>
+              </div>
+              {plaidItems.length > 0 && (
+                <ul role="list" className="grid grid-cols-1 gap-2">
+                  {plaidItems.map((item) => {
+                    const linkedCount = item.accounts.length;
+                    return (
+                      <li key={item._id} className="bg-background border-border/50 rounded-lg border px-3 py-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-medium">{item.institutionName}</p>
+                            <p className="text-muted-foreground text-xs">
+                              {linkedCount} account{linkedCount !== 1 ? 's' : ''}
+                              {item.lastSyncedAt ? ` · synced ${new Date(item.lastSyncedAt).toLocaleDateString()}` : ' · never synced'}
+                            </p>
+                          </div>
+                          <div className="shrink-0">
+                            <Dropdown>
+                              <DropdownButton
+                                plain
+                                aria-label="Open options"
+                                disabled={syncingItemId === item._id || deletingItemId === item._id}
+                              >
+                                <EllipsisVerticalIcon className="size-5" />
+                              </DropdownButton>
+                              <DropdownMenu portal={false}>
+                                <DropdownItem onClick={() => setManagingItemId(item._id as Id<'plaidItems'>)}>Manage accounts</DropdownItem>
+                                <DropdownItem onClick={() => handleSyncPlaidItem(item._id as Id<'plaidItems'>)}>
+                                  {syncingItemId === item._id ? 'Refreshing…' : 'Refresh holdings'}
+                                </DropdownItem>
+                                <DropdownItem onClick={() => handleDeletePlaidItem(item._id as Id<'plaidItems'>)}>
+                                  Disconnect institution
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </Dropdown>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </>
+          )}
+          <div className="h-4 shrink-0" aria-hidden="true" />
         </div>
       </aside>
       <Dialog size="xl" open={assetDialogOpen} onClose={handleAssetDialogClose}>
@@ -274,6 +382,16 @@ export default function Finances({ preloadedAssets, preloadedLiabilities }: Fina
       </Dialog>
       <DeleteDataItemAlert dataToDelete={assetToDelete} setDataToDelete={setAssetToDelete} deleteData={deleteAsset} />
       <DeleteDataItemAlert dataToDelete={liabilityToDelete} setDataToDelete={setLiabilityToDelete} deleteData={deleteLiability} />
+      {connectingInstitution && (
+        <div className="hidden">
+          <PlaidLinkButton autoOpen onSuccess={() => setConnectingInstitution(false)} />
+        </div>
+      )}
+      {managingItemId && (
+        <div className="hidden">
+          <PlaidLinkButton plaidItemId={managingItemId} onSuccess={() => setManagingItemId(null)} />
+        </div>
+      )}
     </>
   );
 }

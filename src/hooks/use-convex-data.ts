@@ -227,6 +227,14 @@ export const useSimulationSettingsData = () => {
   return useMemo(() => (q ? q : null), [q]);
 };
 
+// Plaid
+export const usePlaidItemsData = () => {
+  const q = useQuery(api.plaid_data.getPlaidItems);
+  return useMemo(() => q ?? [], [q]);
+};
+
+export const usePlaidConfigured = () => useQuery(api.plaid_data.isPlaidConfigured) ?? false;
+
 // Finances
 export const useAssetData = () => {
   const q = useQuery(api.finances.getAssets);

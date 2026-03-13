@@ -24,6 +24,8 @@ export const liabilityFormSchema = z.object({
       },
       { message: 'Must be a valid http:// or https:// URL' }
     ),
+  plaidAccountId: z.string().optional(),
+  plaidItemId: z.string().optional(),
   type: z.enum(['mortgage', 'autoLoan', 'studentLoan', 'personalLoan', 'creditCard', 'medicalDebt', 'other']),
 });
 
