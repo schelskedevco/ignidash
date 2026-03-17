@@ -1,18 +1,7 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 
-import { timelineValidator } from './validators/timeline_validator';
-import { incomeValidator } from './validators/incomes_validator';
-import { expenseValidator } from './validators/expenses_validator';
-import { debtValidator } from './validators/debt_validator';
-import { physicalAssetValidator } from './validators/physical_asset_validator';
-import { accountValidator } from './validators/accounts_validator';
-import { glidePathValidator } from './validators/glide_path_validator';
-import { contributionRulesValidator, baseContributionRuleValidator } from './validators/contribution_rules_validator';
-import { marketAssumptionsValidator } from './validators/market_assumptions_validator';
-import { taxSettingsValidator } from './validators/tax_settings_validator';
-import { privacySettingsValidator } from './validators/privacy_settings_validator';
-import { simulationSettingsValidator } from './validators/simulation_settings_validator';
+import { planDataFields } from './validators/plan_data_fields';
 import { assetValidator } from './validators/asset_validator';
 import { liabilityValidator } from './validators/liability_validator';
 import { userFeedbackValidator } from './validators/user_feedback_validator';
@@ -22,20 +11,15 @@ export default defineSchema({
     userId: v.string(),
     name: v.string(),
     isDefault: v.boolean(),
-    timeline: v.union(timelineValidator, v.null()),
-    incomes: v.array(incomeValidator),
-    expenses: v.array(expenseValidator),
-    debts: v.optional(v.array(debtValidator)),
-    physicalAssets: v.optional(v.array(physicalAssetValidator)),
-    accounts: v.array(accountValidator),
-    glidePath: v.optional(glidePathValidator),
-    contributionRules: v.array(contributionRulesValidator),
-    baseContributionRule: baseContributionRuleValidator,
-    marketAssumptions: marketAssumptionsValidator,
-    taxSettings: taxSettingsValidator,
-    privacySettings: privacySettingsValidator,
-    simulationSettings: simulationSettingsValidator,
+    ...planDataFields,
   }).index('by_userId', ['userId']),
+  planSnapshots: defineTable({
+    planId: v.id('plans'),
+    userId: v.string(),
+    ...planDataFields,
+  })
+    .index('by_planId', ['planId'])
+    .index('by_userId', ['userId']),
   finances: defineTable({
     userId: v.string(),
     assets: v.array(assetValidator),

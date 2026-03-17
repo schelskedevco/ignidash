@@ -26,6 +26,7 @@ import type * as messages from "../messages.js";
 import type * as migrations from "../migrations.js";
 import type * as onboarding from "../onboarding.js";
 import type * as physical_asset from "../physical_asset.js";
+import type * as plan_snapshots from "../plan_snapshots.js";
 import type * as plans from "../plans.js";
 import type * as posthog from "../posthog.js";
 import type * as privacy_settings from "../privacy_settings.js";
@@ -44,6 +45,7 @@ import type * as utils_finances_utils from "../utils/finances_utils.js";
 import type * as utils_insights_utils from "../utils/insights_utils.js";
 import type * as utils_plan_export_utils from "../utils/plan_export_utils.js";
 import type * as utils_plan_utils from "../utils/plan_utils.js";
+import type * as utils_snapshot_utils from "../utils/snapshot_utils.js";
 import type * as utils_sys_prompt_utils from "../utils/sys_prompt_utils.js";
 import type * as validators_accounts_validator from "../validators/accounts_validator.js";
 import type * as validators_asset_validator from "../validators/asset_validator.js";
@@ -56,6 +58,7 @@ import type * as validators_key_metrics_validator from "../validators/key_metric
 import type * as validators_liability_validator from "../validators/liability_validator.js";
 import type * as validators_market_assumptions_validator from "../validators/market_assumptions_validator.js";
 import type * as validators_physical_asset_validator from "../validators/physical_asset_validator.js";
+import type * as validators_plan_data_fields from "../validators/plan_data_fields.js";
 import type * as validators_privacy_settings_validator from "../validators/privacy_settings_validator.js";
 import type * as validators_simulation_result_validator from "../validators/simulation_result_validator.js";
 import type * as validators_simulation_settings_validator from "../validators/simulation_settings_validator.js";
@@ -88,6 +91,7 @@ declare const fullApi: ApiFromModules<{
   migrations: typeof migrations;
   onboarding: typeof onboarding;
   physical_asset: typeof physical_asset;
+  plan_snapshots: typeof plan_snapshots;
   plans: typeof plans;
   posthog: typeof posthog;
   privacy_settings: typeof privacy_settings;
@@ -106,6 +110,7 @@ declare const fullApi: ApiFromModules<{
   "utils/insights_utils": typeof utils_insights_utils;
   "utils/plan_export_utils": typeof utils_plan_export_utils;
   "utils/plan_utils": typeof utils_plan_utils;
+  "utils/snapshot_utils": typeof utils_snapshot_utils;
   "utils/sys_prompt_utils": typeof utils_sys_prompt_utils;
   "validators/accounts_validator": typeof validators_accounts_validator;
   "validators/asset_validator": typeof validators_asset_validator;
@@ -118,6 +123,7 @@ declare const fullApi: ApiFromModules<{
   "validators/liability_validator": typeof validators_liability_validator;
   "validators/market_assumptions_validator": typeof validators_market_assumptions_validator;
   "validators/physical_asset_validator": typeof validators_physical_asset_validator;
+  "validators/plan_data_fields": typeof validators_plan_data_fields;
   "validators/privacy_settings_validator": typeof validators_privacy_settings_validator;
   "validators/simulation_result_validator": typeof validators_simulation_result_validator;
   "validators/simulation_settings_validator": typeof validators_simulation_settings_validator;

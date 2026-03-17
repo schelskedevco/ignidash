@@ -3,6 +3,7 @@ import { query, mutation } from './_generated/server';
 
 import { debtValidator } from './validators/debt_validator';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
+import { patchPlanWithSnapshot } from './utils/snapshot_utils';
 
 export const getDebts = query({
   args: { planId: v.id('plans') },
@@ -28,7 +29,7 @@ export const getDebt = query({
     const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const debt = (plan.debts ?? []).find((d) => d.id === debtId);
-    return debt || null;
+    return debt ?? null;
   },
 });
 
@@ -46,7 +47,7 @@ export const upsertDebt = mutation({
 
     const updatedDebts = existingIndex !== -1 ? debts.map((d, index) => (index === existingIndex ? debt : d)) : [...debts, debt];
 
-    await ctx.db.patch(planId, { debts: updatedDebts });
+    await patchPlanWithSnapshot(ctx, planId, { debts: updatedDebts });
   },
 });
 
@@ -60,6 +61,6 @@ export const deleteDebt = mutation({
 
     const updatedDebts = (plan.debts ?? []).filter((d) => d.id !== debtId);
 
-    await ctx.db.patch(planId, { debts: updatedDebts });
+    await patchPlanWithSnapshot(ctx, planId, { debts: updatedDebts });
   },
 });

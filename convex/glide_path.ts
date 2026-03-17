@@ -3,6 +3,7 @@ import { query, mutation } from './_generated/server';
 
 import { glidePathValidator } from './validators/glide_path_validator';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
+import { patchPlanWithSnapshot } from './utils/snapshot_utils';
 
 export const get = query({
   args: { planId: v.id('plans') },
@@ -21,6 +22,6 @@ export const update = mutation({
   handler: async (ctx, { planId, glidePath }) => {
     await getPlanForCurrentUserOrThrow(ctx, planId);
 
-    await ctx.db.patch(planId, { glidePath });
+    await patchPlanWithSnapshot(ctx, planId, { glidePath });
   },
 });

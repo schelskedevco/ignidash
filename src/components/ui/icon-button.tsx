@@ -11,7 +11,7 @@ interface IconButtonProps {
     React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & { title?: string; titleId?: string } & React.RefAttributes<SVGSVGElement>
   >;
   iconClassName?: string;
-  label: string;
+  label: string | React.ReactNode;
   onClick?: () => void;
   surfaceColor?: SurfaceColor;
   isDisabled?: boolean;
@@ -43,7 +43,7 @@ export default function IconButton({
       <TooltipTrigger asChild>
         <button
           type="button"
-          aria-label={label}
+          aria-label={typeof label === 'string' ? label : undefined}
           onClick={onClick}
           disabled={isDisabled}
           className={cn('ring-border focus-outline rounded-full p-2 transition-transform hover:ring', className, hoverClass, {

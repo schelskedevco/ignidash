@@ -3,6 +3,7 @@ import { query, mutation } from './_generated/server';
 
 import { incomeValidator } from './validators/incomes_validator';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
+import { patchPlanWithSnapshot } from './utils/snapshot_utils';
 
 export const getIncomes = query({
   args: { planId: v.id('plans') },
@@ -28,7 +29,7 @@ export const getIncome = query({
     const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const income = plan.incomes.find((inc) => inc.id === incomeId);
-    return income || null;
+    return income ?? null;
   },
 });
 
@@ -46,7 +47,7 @@ export const upsertIncome = mutation({
     const updatedIncomes =
       existingIndex !== -1 ? plan.incomes.map((inc, index) => (index === existingIndex ? income : inc)) : [...plan.incomes, income];
 
-    await ctx.db.patch(planId, { incomes: updatedIncomes });
+    await patchPlanWithSnapshot(ctx, planId, { incomes: updatedIncomes });
   },
 });
 
@@ -67,6 +68,6 @@ export const deleteIncome = mutation({
 
     const updatedIncomes = plan.incomes.filter((inc) => inc.id !== incomeId);
 
-    await ctx.db.patch(planId, { incomes: updatedIncomes, contributionRules: updatedContributionRules });
+    await patchPlanWithSnapshot(ctx, planId, { incomes: updatedIncomes, contributionRules: updatedContributionRules });
   },
 });
