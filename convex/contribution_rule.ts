@@ -3,6 +3,7 @@ import { query, mutation } from './_generated/server';
 
 import { contributionRulesValidator, baseContributionRuleValidator } from './validators/contribution_rules_validator';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
+import { patchPlanWithSnapshot } from './utils/snapshot_utils';
 
 export const getContributionRules = query({
   args: { planId: v.id('plans') },
@@ -28,7 +29,7 @@ export const getContributionRule = query({
     const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const rule = plan.contributionRules.find((rule) => rule.id === ruleId);
-    return rule || null;
+    return rule ?? null;
   },
 });
 
@@ -48,7 +49,7 @@ export const upsertContributionRule = mutation({
         ? plan.contributionRules.map((cr, index) => (index === existingIndex ? contributionRule : cr))
         : [...plan.contributionRules, contributionRule];
 
-    await ctx.db.patch(planId, { contributionRules: updatedContributionRules });
+    await patchPlanWithSnapshot(ctx, planId, { contributionRules: updatedContributionRules });
   },
 });
 
@@ -66,7 +67,7 @@ export const reorderContributionRules = mutation({
       return { ...cr, rank: index + 1 };
     });
 
-    await ctx.db.patch(planId, { contributionRules: reorderedContributionRules });
+    await patchPlanWithSnapshot(ctx, planId, { contributionRules: reorderedContributionRules });
   },
 });
 
@@ -82,7 +83,7 @@ export const deleteContributionRule = mutation({
       .filter((rule) => rule.id !== contributionRuleId)
       .map((rule, idx) => ({ ...rule, rank: idx + 1 }));
 
-    await ctx.db.patch(planId, { contributionRules: updatedContributionRules });
+    await patchPlanWithSnapshot(ctx, planId, { contributionRules: updatedContributionRules });
   },
 });
 
@@ -103,6 +104,6 @@ export const updateBaseRule = mutation({
   handler: async (ctx, { planId, baseContributionRule }) => {
     await getPlanForCurrentUserOrThrow(ctx, planId);
 
-    await ctx.db.patch(planId, { baseContributionRule });
+    await patchPlanWithSnapshot(ctx, planId, { baseContributionRule });
   },
 });

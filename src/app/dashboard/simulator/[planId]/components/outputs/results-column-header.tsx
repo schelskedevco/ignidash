@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, lazy, Suspense } from 'react';
-import { MessageCircleMoreIcon, PresentationIcon, SettingsIcon, WandSparklesIcon } from 'lucide-react';
+import { MessageCircleMoreIcon, PresentationIcon, SettingsIcon, Undo2Icon, WandSparklesIcon } from 'lucide-react';
 import posthog from 'posthog-js';
 
 import { cn } from '@/lib/utils';
@@ -9,8 +9,10 @@ import IconButton from '@/components/ui/icon-button';
 import PageLoading from '@/components/ui/page-loading';
 import Drawer from '@/components/ui/drawer';
 import ColumnHeader from '@/components/ui/column-header';
+import { Kbd, KbdGroup } from '@/components/ui/kbd';
 import { useRegenSimulation } from '@/hooks/use-regen-simulation';
 import { useSimulationSettingsData } from '@/hooks/use-convex-data';
+import { useUndoPlanChange } from '@/hooks/use-undo-plan-change';
 import { useShowAIChatPulse, useUpdateShowAIChatPulse } from '@/lib/stores/simulator-store';
 
 import DrillDownBreadcrumb from './drill-down-breadcrumb';
@@ -21,6 +23,8 @@ const SimulationSettingsDrawer = lazy(() => import('./drawers/simulation-setting
 
 export default function ResultsColumnHeader() {
   const { icon, label, handleClick, isDisabled } = useRegenSimulation();
+  const { canUndo, handleUndo } = useUndoPlanChange();
+  const isMac = navigator.userAgent.includes('Mac');
 
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [simulationSettingsOpen, setSimulationSettingsOpen] = useState(false);
@@ -91,6 +95,19 @@ export default function ResultsColumnHeader() {
             {!isDisabled && (
               <IconButton icon={icon} label={label} onClick={handleClick} surfaceColor="emphasized" isDisabled={isDisabled} />
             )}
+            <IconButton
+              icon={Undo2Icon}
+              label={
+                <KbdGroup>
+                  <Kbd>{isMac ? '⌘' : 'Ctrl'}</Kbd>
+                  <span>+</span>
+                  <Kbd>Z</Kbd>
+                </KbdGroup>
+              }
+              onClick={handleUndo}
+              surfaceColor="emphasized"
+              isDisabled={!canUndo}
+            />
             <IconButton
               icon={SettingsIcon}
               label="Simulation Settings"

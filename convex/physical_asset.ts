@@ -3,6 +3,7 @@ import { query, mutation } from './_generated/server';
 
 import { physicalAssetValidator } from './validators/physical_asset_validator';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
+import { patchPlanWithSnapshot } from './utils/snapshot_utils';
 
 export const getPhysicalAssets = query({
   args: { planId: v.id('plans') },
@@ -28,7 +29,7 @@ export const getPhysicalAsset = query({
     const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const physicalAsset = (plan.physicalAssets ?? []).find((pa) => pa.id === physicalAssetId);
-    return physicalAsset || null;
+    return physicalAsset ?? null;
   },
 });
 
@@ -49,7 +50,7 @@ export const upsertPhysicalAsset = mutation({
         ? physicalAssets.map((pa, index) => (index === existingIndex ? physicalAsset : pa))
         : [...physicalAssets, physicalAsset];
 
-    await ctx.db.patch(planId, { physicalAssets: updatedPhysicalAssets });
+    await patchPlanWithSnapshot(ctx, planId, { physicalAssets: updatedPhysicalAssets });
   },
 });
 
@@ -63,6 +64,6 @@ export const deletePhysicalAsset = mutation({
 
     const updatedPhysicalAssets = (plan.physicalAssets ?? []).filter((pa) => pa.id !== physicalAssetId);
 
-    await ctx.db.patch(planId, { physicalAssets: updatedPhysicalAssets });
+    await patchPlanWithSnapshot(ctx, planId, { physicalAssets: updatedPhysicalAssets });
   },
 });

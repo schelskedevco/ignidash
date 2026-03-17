@@ -3,6 +3,7 @@ import { query, mutation } from './_generated/server';
 
 import { expenseValidator } from './validators/expenses_validator';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
+import { patchPlanWithSnapshot } from './utils/snapshot_utils';
 
 export const getExpenses = query({
   args: { planId: v.id('plans') },
@@ -28,7 +29,7 @@ export const getExpense = query({
     const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const expense = plan.expenses.find((exp) => exp.id === expenseId);
-    return expense || null;
+    return expense ?? null;
   },
 });
 
@@ -46,7 +47,7 @@ export const upsertExpense = mutation({
     const updatedExpenses =
       existingIndex !== -1 ? plan.expenses.map((exp, index) => (index === existingIndex ? expense : exp)) : [...plan.expenses, expense];
 
-    await ctx.db.patch(planId, { expenses: updatedExpenses });
+    await patchPlanWithSnapshot(ctx, planId, { expenses: updatedExpenses });
   },
 });
 
@@ -60,6 +61,6 @@ export const deleteExpense = mutation({
 
     const updatedExpenses = plan.expenses.filter((exp) => exp.id !== expenseId);
 
-    await ctx.db.patch(planId, { expenses: updatedExpenses });
+    await patchPlanWithSnapshot(ctx, planId, { expenses: updatedExpenses });
   },
 });

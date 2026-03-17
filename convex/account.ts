@@ -5,6 +5,7 @@ import { query, mutation } from './_generated/server';
 
 import { accountValidator } from './validators/accounts_validator';
 import { getPlanForCurrentUserOrThrow } from './utils/plan_utils';
+import { patchPlanWithSnapshot } from './utils/snapshot_utils';
 
 export const getAccounts = query({
   args: { planId: v.id('plans') },
@@ -30,7 +31,7 @@ export const getAccount = query({
     const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const account = plan.accounts.find((acc) => acc.id === accountId);
-    return account || null;
+    return account ?? null;
   },
 });
 
@@ -40,7 +41,7 @@ export const getSavingsAccount = query({
     const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const account = plan.accounts.find((acc) => acc.id === accountId && acc.type === 'savings');
-    return account || null;
+    return account ?? null;
   },
 });
 
@@ -50,7 +51,7 @@ export const getInvestmentAccount = query({
     const plan = await getPlanForCurrentUserOrThrow(ctx, planId);
 
     const account = plan.accounts.find((acc) => acc.id === accountId && acc.type !== 'savings');
-    return account || null;
+    return account ?? null;
   },
 });
 
@@ -81,7 +82,7 @@ export const upsertAccount = mutation({
     const updatedAccounts =
       existingIndex !== -1 ? plan.accounts.map((acc, index) => (index === existingIndex ? account : acc)) : [...plan.accounts, account];
 
-    await ctx.db.patch(planId, { accounts: updatedAccounts, contributionRules: updatedContributionRules });
+    await patchPlanWithSnapshot(ctx, planId, { accounts: updatedAccounts, contributionRules: updatedContributionRules });
   },
 });
 
@@ -99,6 +100,6 @@ export const deleteAccount = mutation({
 
     const updatedAccounts = plan.accounts.filter((acc) => acc.id !== accountId);
 
-    await ctx.db.patch(planId, { accounts: updatedAccounts, contributionRules: updatedContributionRules });
+    await patchPlanWithSnapshot(ctx, planId, { accounts: updatedAccounts, contributionRules: updatedContributionRules });
   },
 });
