@@ -102,6 +102,22 @@ export const getAnnualSection415cLimit = (age: number): number => {
   return 72000;
 };
 
+/**
+ * Returns the annual contribution cap used for an account before rule-order,
+ * income-source, employer-match, or max-balance constraints are applied.
+ */
+export const getAnnualContributionLimitForAccount = (
+  accountType: AccountInputs['type'],
+  age: number,
+  options?: { enableMegaBackdoorRoth?: boolean }
+): number => {
+  if (options?.enableMegaBackdoorRoth && supportsMegaBackdoorRoth(accountType)) {
+    return getAnnualSection415cLimit(age);
+  }
+
+  return getAnnualContributionLimit(getAccountTypeLimitKey(accountType), age);
+};
+
 export const supportsMaxBalance = (type: AccountInputs['type']): boolean => {
   switch (type) {
     case 'savings':
