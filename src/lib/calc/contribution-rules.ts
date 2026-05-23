@@ -127,7 +127,7 @@ export class ContributionRule {
     const desiredContribution = this.calculateDesiredContribution(remainingToContribute);
 
     const contributionAmount = Math.min(desiredContribution, maxContribution);
-    const employerMatchAmount = this.calculateEmployerMatch(contributionAmount);
+    const employerMatchAmount = this.calculateEmployerMatch(contributionAmount, incomesData);
 
     return { contributionAmount, employerMatchAmount };
   }
@@ -158,12 +158,30 @@ export class ContributionRule {
     return Math.max(0, (incomesData?.perIncomeData?.[incomeId]?.income ?? 0) - this.tracker.getEmployeeByIncome(incomeId));
   }
 
-  private calculateEmployerMatch(contributionAmount: number): number {
-    if (!this.contributionInput.employerMatch) return 0;
+  private calculateEmployerMatch(contributionAmount: number, incomesData: IncomesData | null): number {
+    const matchRate = this.contributionInput.employerMatchRate ?? 100;
+    const matchAtRate = (matchRate / 100) * contributionAmount;
 
-    const remainingToMaxEmployerMatch = Math.max(0, this.contributionInput.employerMatch - this.ytdEmployerMatch);
+    if (this.contributionInput.employerMatchType === 'percentOfIncome') {
+      if (!this.contributionInput.employerMatchPercent) return 0;
 
-    return Math.min(contributionAmount, remainingToMaxEmployerMatch);
+      let baseIncome = 0;
+      const incomeId = this.contributionInput.incomeId;
+      if (incomeId) {
+        baseIncome = incomesData?.perIncomeData?.[incomeId]?.income ?? 0;
+      } else {
+        baseIncome = incomesData?.totalIncome ?? 0;
+      }
+
+      const maxEmployerMatch = (this.contributionInput.employerMatchPercent / 100) * baseIncome;
+      return Math.min(matchAtRate, maxEmployerMatch);
+    } else {
+      if (!this.contributionInput.employerMatch) return 0;
+
+      const remainingToMaxEmployerMatch = Math.max(0, this.contributionInput.employerMatch - this.ytdEmployerMatch);
+
+      return Math.min(matchAtRate, remainingToMaxEmployerMatch);
+    }
   }
 
   private calculateDesiredContribution(remainingToContribute: number): number {

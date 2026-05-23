@@ -7,7 +7,7 @@
  */
 
 import { z } from 'zod';
-import { currencyFieldForbidsZero, optionalCurrencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-utils';
+import { currencyFieldForbidsZero, optionalCurrencyFieldForbidsZero, percentageField, optionalPercentageField } from '@/lib/utils/zod-utils';
 
 import type { AccountInputs } from './account-form-schema';
 
@@ -25,6 +25,9 @@ const sharedContributionSchema = z.object({
   incomeId: z.string().optional(),
   disabled: z.boolean().optional(),
   employerMatch: optionalCurrencyFieldForbidsZero('Employer match must be greater than zero'),
+  employerMatchPercent: optionalPercentageField(0, 100, 'Employer match percentage'),
+  employerMatchType: z.enum(['dollarAmount', 'percentOfIncome']).optional(),
+  employerMatchRate: optionalPercentageField(0, 500, 'Employer match rate'),
   enableMegaBackdoorRoth: z.boolean().optional(),
 });
 

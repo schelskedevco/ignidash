@@ -572,6 +572,51 @@ describe('ContributionRules', () => {
       expect(result.employerMatchAmount).toBe(0);
     });
 
+    it('should calculate employer match at 50% rate up to 4% of income limit', () => {
+      const tracker = new ContributionTracker();
+      const rule = new ContributionRule(
+        {
+          id: 'rule-1',
+          accountId: '401k-1',
+          rank: 1,
+          contributionType: 'dollarAmount',
+          dollarAmount: 10000,
+          employerMatchType: 'percentOfIncome',
+          employerMatchRate: 50,
+          employerMatchPercent: 4,
+        },
+        tracker
+      );
+      const account = new TaxDeferredAccount(create401kAccount());
+      const incomesData = createEmptyIncomesData({
+        totalIncome: 100000,
+      });
+
+      // Scenario 1: Employee contributes 8% of income ($8,000)
+      // Employer match at 50% of 8,000 = 4,000
+      // Employer match limit (4% of 100,000) = 4,000
+      // Expected match = 4,000
+      const result1 = rule.calculateContribution(8000, account, 35, incomesData);
+      expect(result1.contributionAmount).toBe(8000);
+      expect(result1.employerMatchAmount).toBe(4000);
+
+      // Scenario 2: Employee contributes 10% of income ($10,000)
+      // Employer match at 50% of 10,000 = 5,000
+      // Employer match limit (4% of 100,000) = 4,000
+      // Expected match capped at 4,000
+      const result2 = rule.calculateContribution(10000, account, 35, incomesData);
+      expect(result2.contributionAmount).toBe(10000);
+      expect(result2.employerMatchAmount).toBe(4000);
+
+      // Scenario 3: Employee contributes 6% of income ($6,000)
+      // Employer match at 50% of 6,000 = 3,000
+      // Employer match limit (4% of 100,000) = 4,000
+      // Expected match = 3,000 (below limit)
+      const result3 = rule.calculateContribution(6000, account, 35, incomesData);
+      expect(result3.contributionAmount).toBe(6000);
+      expect(result3.employerMatchAmount).toBe(3000);
+    });
+
     describe('multi-account employer match independence', () => {
       it('should track employer match independently across multiple accounts', () => {
         const tracker = new ContributionTracker();

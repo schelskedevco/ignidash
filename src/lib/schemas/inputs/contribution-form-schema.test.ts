@@ -220,6 +220,9 @@ describe('contributionFormSchema', () => {
       ...validDollarContribution,
       maxBalance: undefined,
       employerMatch: undefined,
+      employerMatchPercent: undefined,
+      employerMatchType: undefined,
+      employerMatchRate: undefined,
       incomeId: undefined,
     });
     expect(result.success).toBe(true);
@@ -237,6 +240,25 @@ describe('contributionFormSchema', () => {
     const result = contributionFormSchema.safeParse({
       ...validDollarContribution,
       maxBalance: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('should accept valid employerMatchRate and employerMatchPercent', () => {
+    const result = contributionFormSchema.safeParse({
+      ...validDollarContribution,
+      employerMatchType: 'percentOfIncome',
+      employerMatchRate: 50,
+      employerMatchPercent: 8,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('should reject invalid employerMatchRate', () => {
+    const result = contributionFormSchema.safeParse({
+      ...validDollarContribution,
+      employerMatchType: 'percentOfIncome',
+      employerMatchRate: 600, // exceeds 500% max limit
     });
     expect(result.success).toBe(false);
   });
