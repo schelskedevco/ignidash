@@ -160,26 +160,33 @@ export class ContributionRule {
 
   private calculateEmployerMatch(contributionAmount: number, incomesData: IncomesData | null): number {
     const matchRate = this.contributionInput.employerMatchRate ?? 100;
-    const matchAtRate = (matchRate / 100) * contributionAmount;
 
     if (this.contributionInput.employerMatchType === 'percentOfIncome') {
       if (!this.contributionInput.employerMatchPercent) return 0;
 
-      let baseIncome = 0;
+      let baseMonthlyIncome = 0;
       const incomeId = this.contributionInput.incomeId;
       if (incomeId) {
-        baseIncome = incomesData?.perIncomeData?.[incomeId]?.income ?? 0;
+        baseMonthlyIncome = incomesData?.perIncomeData?.[incomeId]?.income ?? 0;
       } else {
-        baseIncome = incomesData?.totalIncome ?? 0;
+        baseMonthlyIncome = incomesData?.totalIncome ?? 0;
       }
 
-      const maxEmployerMatch = (this.contributionInput.employerMatchPercent / 100) * baseIncome;
-      return Math.min(matchAtRate, maxEmployerMatch);
+      // employerMatchPercent is the annual max employer match as % of salary.
+      // employerMatchRate is only applied to the contribution side (e.g., 50% match on your contributions).
+      // Since incomesData is monthly, annualize it to compute the correct cap.
+      // YTD tracking ensures multi-month contributions don't exceed the annual limit.
+      const annualMaxEmployerMatch = (this.contributionInput.employerMatchPercent / 100) * baseMonthlyIncome * 12;
+
+      const remainingAnnualMatch = Math.max(0, annualMaxEmployerMatch - this.ytdEmployerMatch);
+      const matchOnThisContribution = (matchRate / 100) * contributionAmount;
+      return Math.min(matchOnThisContribution, remainingAnnualMatch);
     } else {
       if (!this.contributionInput.employerMatch) return 0;
 
       const remainingToMaxEmployerMatch = Math.max(0, this.contributionInput.employerMatch - this.ytdEmployerMatch);
 
+      const matchAtRate = (matchRate / 100) * contributionAmount;
       return Math.min(matchAtRate, remainingToMaxEmployerMatch);
     }
   }
