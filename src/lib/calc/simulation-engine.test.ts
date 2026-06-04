@@ -153,11 +153,11 @@ const createSimulatorInputs = (overrides?: Partial<SimulatorInputs>): SimulatorI
   contributionRules: overrides?.contributionRules ?? {},
   baseContributionRule: overrides?.baseContributionRule ?? { type: 'save' },
   marketAssumptions: overrides?.marketAssumptions ?? createDefaultMarketAssumptions(),
-  taxSettings: overrides?.taxSettings ?? { filingStatus: 'single' },
+  taxSettings: overrides?.taxSettings ?? { filingStatus: 'single', numOnMedicare: 1, acaEnhancedSubsidies: true },
   privacySettings: overrides?.privacySettings ?? { isPrivate: true },
   simulationSettings: overrides?.simulationSettings ?? { simulationSeed: 12345, simulationMode: 'fixedReturns' },
   glidePath: overrides?.glidePath,
-});
+conversionRules: [],});
 
 // ============================================================================
 // SeededRandom Tests

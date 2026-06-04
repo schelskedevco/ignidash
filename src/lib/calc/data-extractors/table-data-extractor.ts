@@ -253,6 +253,7 @@ export abstract class TableDataExtractor {
     let cumulativeNiit = 0;
     let cumulativeEarlyWithdrawalPenalties = 0;
     let cumulativeTotalTaxesAndPenalties = 0;
+    let cumulativePropertyTax = 0;
 
     return simulation.data.map((data, idx) => {
       const historicalYear: number | null = getHistoricalYear(historicalRanges, idx);
@@ -295,6 +296,8 @@ export abstract class TableDataExtractor {
           cumulativeNiit: null,
           annualEarlyWithdrawalPenalties: null,
           cumulativeEarlyWithdrawalPenalties: null,
+          annualPropertyTax: null,
+          cumulativePropertyTax: null,
           annualTotalTaxesAndPenalties: null,
           cumulativeTotalTaxesAndPenalties: null,
           taxFreeIncome: null,
@@ -312,6 +315,7 @@ export abstract class TableDataExtractor {
         niit: annualNiit,
         earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties,
         totalTaxesAndPenalties: annualTotalTaxesAndPenalties,
+        propertyTax: annualPropertyTax,
       } = SimulationDataExtractor.getTaxAmountsByType(data);
 
       cumulativeFederalIncomeTax += annualFederalIncomeTax;
@@ -320,6 +324,7 @@ export abstract class TableDataExtractor {
       cumulativeNiit += annualNiit;
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeTotalTaxesAndPenalties += annualTotalTaxesAndPenalties;
+      cumulativePropertyTax += annualPropertyTax;
 
       const taxesData = data.taxes!;
 
@@ -356,8 +361,14 @@ export abstract class TableDataExtractor {
         cumulativeNiit,
         annualEarlyWithdrawalPenalties,
         cumulativeEarlyWithdrawalPenalties,
+        annualPropertyTax,
+        cumulativePropertyTax,
         annualTotalTaxesAndPenalties,
         cumulativeTotalTaxesAndPenalties,
+        irmaaPartB: data.irmaaPartB ?? null,
+        irmaaPartD: data.irmaaPartD ?? null,
+        acaSubsidy: data.acaSubsidy ?? null,
+        acaNetPremium: data.acaNetPremium ?? null,
         taxFreeIncome: taxesData.incomeSources.taxFreeIncome,
         taxDeductibleContributions: taxesData.adjustments.taxDeductibleContributions,
         standardDeduction: taxesData.deductions.standardDeduction,

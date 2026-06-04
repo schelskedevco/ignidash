@@ -303,10 +303,11 @@ export const createSimulatorInputs = (overrides?: Partial<SimulatorInputs>): Sim
   contributionRules: overrides?.contributionRules ?? {},
   baseContributionRule: overrides?.baseContributionRule ?? { type: 'save' },
   marketAssumptions: overrides?.marketAssumptions ?? createDefaultMarketAssumptions(),
-  taxSettings: overrides?.taxSettings ?? { filingStatus: 'single' },
+  taxSettings: overrides?.taxSettings ?? { filingStatus: 'single', numOnMedicare: 1, acaEnhancedSubsidies: true },
   privacySettings: overrides?.privacySettings ?? { isPrivate: true },
   simulationSettings: overrides?.simulationSettings ?? { simulationSeed: 12345, simulationMode: 'fixedReturns' },
   glidePath: overrides?.glidePath,
+  conversionRules: overrides?.conversionRules ?? [],
 });
 
 // ============================================================================
@@ -324,6 +325,7 @@ export const createSimulationState = (overrides: Partial<SimulationState> = {}):
   phase: overrides.phase !== undefined ? overrides.phase : { name: 'accumulation' },
   portfolio: overrides.portfolio ?? ({} as SimulationState['portfolio']),
   annualData: overrides.annualData ?? { expenses: [], debts: [], physicalAssets: [] },
+  magiHistory: overrides.magiHistory ?? [],
 });
 
 export const createMockSimulationState = (
@@ -335,6 +337,7 @@ export const createMockSimulationState = (
   portfolio,
   phase: { name: phase },
   annualData: { expenses: [], debts: [], physicalAssets: [] },
+  magiHistory: [],
 });
 
 // ============================================================================
@@ -380,6 +383,7 @@ export const createEmptyPortfolioData = (): PortfolioData => ({
   rmds: 0,
   shortfall: 0,
   shortfallRepaid: 0,
+  conversions: 0,
   perAccountData: {},
   assetAllocation: null,
 });
@@ -391,6 +395,8 @@ export const createEmptyIncomesData = (overrides?: Partial<IncomesData>): Income
   totalIncomeAfterPayrollDeductions: overrides?.totalIncomeAfterPayrollDeductions ?? 0,
   totalTaxFreeIncome: overrides?.totalTaxFreeIncome ?? 0,
   totalSocialSecurityIncome: overrides?.totalSocialSecurityIncome ?? 0,
+  totalAdditionalMedicareTax: overrides?.totalAdditionalMedicareTax ?? 0,
+  conversionIncome: overrides?.conversionIncome ?? 0,
   perIncomeData: overrides?.perIncomeData ?? {},
 });
 
@@ -440,6 +446,7 @@ export const createEmptyPhysicalAssetsData = (overrides?: Partial<PhysicalAssets
   totalRealizedGains: overrides?.totalRealizedGains ?? 0,
   totalSecuredDebtIncurred: overrides?.totalSecuredDebtIncurred ?? 0,
   totalDebtPayoff: overrides?.totalDebtPayoff ?? 0,
+  totalPropertyTax: overrides?.totalPropertyTax ?? 0,
   perAssetData: overrides?.perAssetData ?? {},
 });
 

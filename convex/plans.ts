@@ -20,6 +20,7 @@ import { marketAssumptionsValidator } from './validators/market_assumptions_vali
 import { taxSettingsValidator } from './validators/tax_settings_validator';
 import { privacySettingsValidator } from './validators/privacy_settings_validator';
 import { simulationSettingsValidator } from './validators/simulation_settings_validator';
+import { conversionRulesValidator } from './validators/conversion_rules_validator';
 import { basicTemplate } from './templates/basic';
 import { earlyRetirementTemplate } from './templates/early_retirement';
 
@@ -90,6 +91,7 @@ export const getOrCreateDefaultPlan = mutation({
       physicalAssets: [],
       accounts: [],
       contributionRules: [],
+      conversionRules: [],
       baseContributionRule: { type: 'save' },
       marketAssumptions: { stockReturn: 10, stockYield: 3.5, bondReturn: 5, bondYield: 4.5, cashReturn: 3, inflationRate: 3 },
       taxSettings: { filingStatus: 'single' },
@@ -120,6 +122,7 @@ export const internalGetOrCreateDefaultPlan = internalMutation({
       physicalAssets: [],
       accounts: [],
       contributionRules: [],
+      conversionRules: [],
       baseContributionRule: { type: 'save' },
       marketAssumptions: { stockReturn: 10, stockYield: 3.5, bondReturn: 5, bondYield: 4.5, cashReturn: 3, inflationRate: 3 },
       taxSettings: { filingStatus: 'single' },
@@ -148,6 +151,7 @@ export const createBlankPlan = mutation({
       physicalAssets: [],
       accounts: [],
       contributionRules: [],
+      conversionRules: [],
       baseContributionRule: { type: 'save' },
       marketAssumptions: { stockReturn: 10, stockYield: 3.5, bondReturn: 5, bondYield: 4.5, cashReturn: 3, inflationRate: 3 },
       taxSettings: { filingStatus: 'single' },
@@ -174,6 +178,7 @@ export const createPlanWithData = mutation({
     taxSettings: taxSettingsValidator,
     privacySettings: privacySettingsValidator,
     simulationSettings: simulationSettingsValidator,
+    conversionRules: v.array(conversionRulesValidator),
   },
   handler: async (ctx, { newPlanName, ...planData }) => {
     const { userId } = await getUserIdOrThrow(ctx);
@@ -211,6 +216,7 @@ export const clonePlan = mutation({
       physicalAssets,
       accounts,
       contributionRules,
+      conversionRules,
       baseContributionRule,
       marketAssumptions,
       taxSettings,
@@ -225,6 +231,7 @@ export const clonePlan = mutation({
       physicalAssets: structuredClone(physicalAssets),
       accounts: structuredClone(accounts),
       contributionRules: structuredClone(contributionRules),
+      conversionRules: structuredClone(conversionRules ?? []),
       baseContributionRule: structuredClone(baseContributionRule),
       marketAssumptions: structuredClone(marketAssumptions),
       taxSettings: structuredClone(taxSettings),

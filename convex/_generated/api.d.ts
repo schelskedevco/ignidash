@@ -50,6 +50,7 @@ import type * as utils_sys_prompt_utils from "../utils/sys_prompt_utils.js";
 import type * as validators_accounts_validator from "../validators/accounts_validator.js";
 import type * as validators_asset_validator from "../validators/asset_validator.js";
 import type * as validators_contribution_rules_validator from "../validators/contribution_rules_validator.js";
+import type * as validators_conversion_rules_validator from "../validators/conversion_rules_validator.js";
 import type * as validators_debt_validator from "../validators/debt_validator.js";
 import type * as validators_expenses_validator from "../validators/expenses_validator.js";
 import type * as validators_glide_path_validator from "../validators/glide_path_validator.js";
@@ -115,6 +116,7 @@ declare const fullApi: ApiFromModules<{
   "validators/accounts_validator": typeof validators_accounts_validator;
   "validators/asset_validator": typeof validators_asset_validator;
   "validators/contribution_rules_validator": typeof validators_contribution_rules_validator;
+  "validators/conversion_rules_validator": typeof validators_conversion_rules_validator;
   "validators/debt_validator": typeof validators_debt_validator;
   "validators/expenses_validator": typeof validators_expenses_validator;
   "validators/glide_path_validator": typeof validators_glide_path_validator;

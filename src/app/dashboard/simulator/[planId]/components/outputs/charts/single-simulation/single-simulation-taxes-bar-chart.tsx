@@ -215,6 +215,7 @@ export default function SingleSimulationTaxesBarChart({
         { name: capitalGainsTaxLabel, segments: [{ amount: item.annualCapitalGainsTax, color: 'var(--chart-3)' }] },
         { name: niitLabel, segments: [{ amount: item.annualNiit, color: 'var(--chart-4)' }] },
         { name: earlyWithdrawalPenaltiesLabel, segments: [{ amount: item.annualEarlyWithdrawalPenalties, color: 'var(--chart-5)' }] },
+        { name: 'Property Tax', segments: [{ amount: item.annualPropertyTax, color: 'var(--chart-6)' }] },
       ]);
       break;
     }
@@ -231,6 +232,7 @@ export default function SingleSimulationTaxesBarChart({
         { name: capitalGainsTaxLabel, segments: [{ amount: item.cumulativeCapitalGainsTax, color: 'var(--chart-3)' }] },
         { name: niitLabel, segments: [{ amount: item.cumulativeNiit, color: 'var(--chart-4)' }] },
         { name: earlyWithdrawalPenaltiesLabel, segments: [{ amount: item.cumulativeEarlyWithdrawalPenalties, color: 'var(--chart-5)' }] },
+        { name: 'Cumulative Property Tax', segments: [{ amount: item.cumulativePropertyTax, color: 'var(--chart-6)' }] },
       ]);
       break;
     }

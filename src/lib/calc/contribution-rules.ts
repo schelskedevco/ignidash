@@ -16,7 +16,7 @@ import {
 } from '@/lib/schemas/inputs/contribution-form-schema';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 
-import { Account } from './account';
+import { Account, TaxDeferredAccount } from './account';
 import type { IncomesData } from './incomes';
 
 /** Aggregates contributions by account type across all rules for shared IRS limit enforcement */
@@ -127,7 +127,7 @@ export class ContributionRule {
     const desiredContribution = this.calculateDesiredContribution(remainingToContribute);
 
     const contributionAmount = Math.min(desiredContribution, maxContribution);
-    const employerMatchAmount = this.calculateEmployerMatch(contributionAmount);
+    const employerMatchAmount = this.calculateEmployerMatch(contributionAmount, incomesData);
 
     return { contributionAmount, employerMatchAmount };
   }
@@ -158,12 +158,37 @@ export class ContributionRule {
     return Math.max(0, (incomesData?.perIncomeData?.[incomeId]?.income ?? 0) - this.tracker.getEmployeeByIncome(incomeId));
   }
 
-  private calculateEmployerMatch(contributionAmount: number): number {
-    if (!this.contributionInput.employerMatch) return 0;
+  private calculateEmployerMatch(contributionAmount: number, incomesData: IncomesData | null): number {
+    const matchRate = this.contributionInput.employerMatchRate ?? 100;
 
-    const remainingToMaxEmployerMatch = Math.max(0, this.contributionInput.employerMatch - this.ytdEmployerMatch);
+    if (this.contributionInput.employerMatchType === 'percentOfIncome') {
+      if (!this.contributionInput.employerMatchPercent) return 0;
 
-    return Math.min(contributionAmount, remainingToMaxEmployerMatch);
+      let baseMonthlyIncome = 0;
+      const incomeId = this.contributionInput.incomeId;
+      if (incomeId) {
+        baseMonthlyIncome = incomesData?.perIncomeData?.[incomeId]?.income ?? 0;
+      } else {
+        baseMonthlyIncome = incomesData?.totalIncome ?? 0;
+      }
+
+      // employerMatchPercent is the annual max employer match as % of salary.
+      // employerMatchRate is only applied to the contribution side (e.g., 50% match on your contributions).
+      // Since incomesData is monthly, annualize it to compute the correct cap.
+      // YTD tracking ensures multi-month contributions don't exceed the annual limit.
+      const annualMaxEmployerMatch = (this.contributionInput.employerMatchPercent / 100) * baseMonthlyIncome * 12;
+
+      const remainingAnnualMatch = Math.max(0, annualMaxEmployerMatch - this.ytdEmployerMatch);
+      const matchOnThisContribution = (matchRate / 100) * contributionAmount;
+      return Math.min(matchOnThisContribution, remainingAnnualMatch);
+    } else {
+      if (!this.contributionInput.employerMatch) return 0;
+
+      const remainingToMaxEmployerMatch = Math.max(0, this.contributionInput.employerMatch - this.ytdEmployerMatch);
+
+      const matchAtRate = (matchRate / 100) * contributionAmount;
+      return Math.min(matchAtRate, remainingToMaxEmployerMatch);
+    }
   }
 
   private calculateDesiredContribution(remainingToContribute: number): number {
@@ -192,7 +217,13 @@ export class ContributionRule {
       return Math.max(0, getAnnualSection415cLimit(age) - totalContributionsSoFar);
     }
 
-    const limit = getAnnualContributionLimit(getAccountTypeLimitKey(accountType), age);
+    // Get HSA coverage type for HSA account limit calculation
+    const hsaCoverageType =
+      accountType === 'hsa' && account instanceof TaxDeferredAccount
+        ? account.getHsaCoverageType()
+        : undefined;
+
+    const limit = getAnnualContributionLimit(getAccountTypeLimitKey(accountType), age, hsaCoverageType);
     if (!Number.isFinite(limit)) return Infinity;
 
     const employeeContributionsSoFar = this.tracker.getEmployeeByTypes(accountTypeGroup);

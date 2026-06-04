@@ -11,11 +11,13 @@ import {
   CAPITAL_GAINS_TAX_BRACKETS_HEAD_OF_HOUSEHOLD,
 } from './capital-gains-tax-brackets';
 import {
-  STANDARD_DEDUCTION_SINGLE,
-  STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY,
-  STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD,
+  BASE_STANDARD_DEDUCTION_SINGLE,
+  BASE_STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY,
+  BASE_STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD,
 } from './standard-deduction';
 import { NIIT_RATE, NIIT_THRESHOLDS } from './niit-thresholds';
+import { IRMAA_TIERS_2026_MFJ } from './irmaa-tiers';
+import { FPL_2026, DEFAULT_BENCHMARK_PREMIUM } from './aca-params';
 import {
   SOCIAL_SECURITY_TAX_THRESHOLDS_SINGLE,
   SOCIAL_SECURITY_TAX_THRESHOLDS_MARRIED_FILING_JOINTLY,
@@ -108,13 +110,13 @@ describe('Tax Data Validation (2026 IRS values)', () => {
 
   describe('standard deductions', () => {
     it('should have correct values for each filing status', () => {
-      expect(STANDARD_DEDUCTION_SINGLE).toBe(16100);
-      expect(STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY).toBe(32200);
-      expect(STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD).toBe(24150);
+      expect(BASE_STANDARD_DEDUCTION_SINGLE).toBe(16100);
+      expect(BASE_STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY).toBe(32200);
+      expect(BASE_STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD).toBe(24150);
     });
 
     it('MFJ should be exactly 2x single', () => {
-      expect(STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY).toBe(STANDARD_DEDUCTION_SINGLE * 2);
+      expect(BASE_STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY).toBe(BASE_STANDARD_DEDUCTION_SINGLE * 2);
     });
   });
 
@@ -160,6 +162,39 @@ describe('Tax Data Validation (2026 IRS values)', () => {
       expect(thresholds[0].taxablePercentage).toBe(0);
       expect(thresholds[1].taxablePercentage).toBe(0.5);
       expect(thresholds[2].taxablePercentage).toBe(0.85);
+    });
+  });
+
+  describe('IRMAA tiers', () => {
+    it('should have 5 tiers with correct MFJ thresholds', () => {
+      expect(IRMAA_TIERS_2026_MFJ).toHaveLength(5);
+      expect(IRMAA_TIERS_2026_MFJ[0].magiThreshold).toBe(212_000);
+      expect(IRMAA_TIERS_2026_MFJ[1].magiThreshold).toBe(267_000);
+      expect(IRMAA_TIERS_2026_MFJ[2].magiThreshold).toBe(334_000);
+      expect(IRMAA_TIERS_2026_MFJ[3].magiThreshold).toBe(750_000);
+      expect(IRMAA_TIERS_2026_MFJ[4].magiThreshold).toBe(Infinity);
+    });
+
+    it('first tier should have $0 surcharges', () => {
+      expect(IRMAA_TIERS_2026_MFJ[0].partBSurcharge).toBe(0);
+      expect(IRMAA_TIERS_2026_MFJ[0].partDSurcharge).toBe(0);
+    });
+
+    it('last tier should have highest surcharges', () => {
+      expect(IRMAA_TIERS_2026_MFJ[4].partBSurcharge).toBe(370.0);
+      expect(IRMAA_TIERS_2026_MFJ[4].partDSurcharge).toBe(81.0);
+    });
+  });
+
+  describe('ACA parameters', () => {
+    it('should have correct 2026 FPL values', () => {
+      expect(FPL_2026.base).toBe(15650);
+      expect(FPL_2026.perPerson).toBe(5480);
+    });
+
+    it('should have benchmark premium defaults', () => {
+      expect(DEFAULT_BENCHMARK_PREMIUM.single).toBe(8400);
+      expect(DEFAULT_BENCHMARK_PREMIUM.couple).toBe(16800);
     });
   });
 });

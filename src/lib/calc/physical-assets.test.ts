@@ -57,6 +57,7 @@ const createSimulationState = (overrides: Partial<SimulationState> = {}): Simula
   phase: overrides.phase !== undefined ? overrides.phase : { name: 'accumulation' },
   portfolio: {} as SimulationState['portfolio'],
   annualData: { expenses: [], debts: [], physicalAssets: [] },
+  magiHistory: [],
 });
 
 const createPhysicalAssetInput = (overrides: Partial<PhysicalAssetInputs> = {}): PhysicalAssetInputs => ({

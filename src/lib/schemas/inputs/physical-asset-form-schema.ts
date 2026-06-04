@@ -4,6 +4,7 @@ import {
   optionalCurrencyFieldForbidsZero,
   optionalCurrencyFieldAllowsZero,
   percentageField,
+  optionalPercentageField,
 } from '@/lib/utils/zod-utils';
 import { timePointSchema } from './income-expenses-shared-schemas';
 
@@ -34,8 +35,9 @@ export const physicalAssetFormSchema = z
     assetType: physicalAssetTypeSchema,
     purchaseDate: timePointSchema,
     purchasePrice: currencyFieldForbidsZero('Purchase price must be greater than zero'),
-    marketValue: optionalCurrencyFieldForbidsZero('Market value must be greater than zero'),
+    marketValue: currencyFieldForbidsZero('Market value must be greater than zero'),
     appreciationRate: percentageField(-30, 20, 'Annual appreciation rate'),
+    propertyTaxRate: optionalPercentageField(0, 10, 'Property tax rate'),
     saleDate: timePointSchema,
     paymentMethod: paymentMethodSchema,
     syncedAssetId: z.string().optional(),

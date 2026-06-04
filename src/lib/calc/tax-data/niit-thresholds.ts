@@ -1,6 +1,7 @@
 /**
  * Net Investment Income Tax (NIIT) rate and thresholds by filing status
  *
+ * Tax year 2026.
  * The NIIT is a 3.8% surtax on investment income for high earners.
  * Source: IRC §1411, IRS Form 8960.
  */
