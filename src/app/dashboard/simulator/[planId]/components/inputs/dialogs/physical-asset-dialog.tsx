@@ -68,6 +68,7 @@ export default function PhysicalAssetDialog({
         name: 'Asset ' + (numPhysicalAssets + 1),
         assetType: 'other',
         purchaseDate: { type: 'now' },
+        marketValue: 0,
         appreciationRate: 1,
         saleDate: { type: 'atLifeExpectancy' },
         paymentMethod: { type: 'cash' },
@@ -345,10 +346,7 @@ export default function PhysicalAssetDialog({
                   {errors.purchasePrice && <ErrorMessage>{errors.purchasePrice?.message}</ErrorMessage>}
                 </Field>
                 <Field>
-                  <Label htmlFor="marketValue" className="flex w-full items-center justify-between">
-                    <span className="whitespace-nowrap">Market Value</span>
-                    <span className="text-muted-foreground hidden truncate text-sm/6 sm:inline">Optional</span>
-                  </Label>
+                  <Label htmlFor="marketValue">Market Value</Label>
                   <NumberInput
                     name="marketValue"
                     control={control}
@@ -728,8 +726,8 @@ export default function PhysicalAssetDialog({
                       </span>
                     </DisclosureButton>
                     <DisclosurePanel className="pt-4">
-                      <div className="grid grid-cols-1 gap-4">
-                        <Field>
+                      <div className="grid grid-cols-2 gap-4">
+                        <Field className="col-span-2">
                           <Label htmlFor="assetType">Asset Type</Label>
                           <Select {...register('assetType')} id="assetType" name="assetType">
                             <option value="primaryResidence">Primary Residence</option>
@@ -739,6 +737,18 @@ export default function PhysicalAssetDialog({
                           <Description>
                             When sold, primary residences may qualify for the Section 121 exclusion, reducing capital gains taxes.
                           </Description>
+                        </Field>
+                        <Field>
+                          <Label htmlFor="propertyTaxRate">Annual Property Tax Rate</Label>
+                          <NumberInput
+                            name="propertyTaxRate"
+                            control={control}
+                            id="propertyTaxRate"
+                            inputMode="decimal"
+                            placeholder="1.0"
+                            suffix="%"
+                          />
+                          {errors.propertyTaxRate && <ErrorMessage>{errors.propertyTaxRate?.message}</ErrorMessage>}
                         </Field>
                       </div>
                     </DisclosurePanel>

@@ -48,6 +48,7 @@ const createSimulationState = (overrides: {
     debts: overrides.debts ?? [],
     physicalAssets: overrides.physicalAssets ?? [],
   },
+  magiHistory: [],
 });
 
 const createFixedAgeTimeline = (retirementAge: number): TimelineInputs => ({

@@ -110,6 +110,7 @@ const createEmptyIncomesData = (overrides?: Partial<IncomesData>): IncomesData =
   totalIncomeAfterPayrollDeductions: overrides?.totalIncomeAfterPayrollDeductions ?? 0,
   totalTaxFreeIncome: overrides?.totalTaxFreeIncome ?? 0,
   totalSocialSecurityIncome: overrides?.totalSocialSecurityIncome ?? 0,
+  totalAdditionalMedicareTax: overrides?.totalAdditionalMedicareTax ?? 0,
   perIncomeData: overrides?.perIncomeData ?? {},
 });
 

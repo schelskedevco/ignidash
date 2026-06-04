@@ -12,6 +12,7 @@ import { marketAssumptionsValidator } from './market_assumptions_validator';
 import { taxSettingsValidator } from './tax_settings_validator';
 import { privacySettingsValidator } from './privacy_settings_validator';
 import { simulationSettingsValidator } from './simulation_settings_validator';
+import { conversionRulesValidator } from './conversion_rules_validator';
 
 /** Plan data fields shared between `plans` and `planSnapshots` tables. */
 export const planDataFields = {
@@ -28,4 +29,5 @@ export const planDataFields = {
   taxSettings: taxSettingsValidator,
   privacySettings: privacySettingsValidator,
   simulationSettings: simulationSettingsValidator,
+  conversionRules: v.array(conversionRulesValidator),
 };

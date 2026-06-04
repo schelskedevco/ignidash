@@ -16,7 +16,7 @@ import {
 } from '@/lib/schemas/inputs/contribution-form-schema';
 import type { AccountInputs } from '@/lib/schemas/inputs/account-form-schema';
 
-import { Account } from './account';
+import { Account, TaxDeferredAccount } from './account';
 import type { IncomesData } from './incomes';
 
 /** Aggregates contributions by account type across all rules for shared IRS limit enforcement */
@@ -217,7 +217,13 @@ export class ContributionRule {
       return Math.max(0, getAnnualSection415cLimit(age) - totalContributionsSoFar);
     }
 
-    const limit = getAnnualContributionLimit(getAccountTypeLimitKey(accountType), age);
+    // Get HSA coverage type for HSA account limit calculation
+    const hsaCoverageType =
+      accountType === 'hsa' && account instanceof TaxDeferredAccount
+        ? account.getHsaCoverageType()
+        : undefined;
+
+    const limit = getAnnualContributionLimit(getAccountTypeLimitKey(accountType), age, hsaCoverageType);
     if (!Number.isFinite(limit)) return Infinity;
 
     const employeeContributionsSoFar = this.tracker.getEmployeeByTypes(accountTypeGroup);

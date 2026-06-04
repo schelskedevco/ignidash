@@ -222,7 +222,7 @@ export class SavingsAccount extends Account {
 
 /** Base class for stock/bond investment accounts with asset allocation tracking */
 export abstract class InvestmentAccount extends Account {
-  private currPercentBonds: number;
+  protected currPercentBonds: number;
 
   constructor(data: AccountInputs & { type: InvestmentAccountType }) {
     const cumulativeReturnAmounts: AssetReturnAmounts = { cash: 0, bonds: 0, stocks: 0 };
@@ -450,9 +450,23 @@ export class TaxableBrokerageAccount extends InvestmentAccount {
 /** Tax-deferred account (401k, 403b, IRA, HSA) — all withdrawals taxed as ordinary income */
 export class TaxDeferredAccount extends InvestmentAccount {
   readonly taxCategory: TaxCategory = 'taxDeferred';
+  private hsaCoverageType?: 'individual' | 'family';
+  /** Tracks cumulative amount converted OUT of this account (excluded from taxable distributions) */
+  private cumulativeConversionWithdrawals: number = 0;
 
   constructor(data: AccountInputs & { type: 'ira' | '401k' | '403b' | 'hsa' }) {
     super(data);
+    if (data.type === 'hsa') {
+      this.hsaCoverageType = (data as AccountInputs & { type: 'hsa'; hsaCoverageType?: 'individual' | 'family' }).hsaCoverageType;
+    }
+  }
+
+  getHsaCoverageType(): 'individual' | 'family' | undefined {
+    return this.hsaCoverageType;
+  }
+
+  getCumulativeConversionWithdrawals(): number {
+    return this.cumulativeConversionWithdrawals;
   }
 
   applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): AssetFlows {
@@ -467,26 +481,66 @@ export class TaxDeferredAccount extends InvestmentAccount {
     const withdrawn = super.applyWithdrawalShared(amount, type, withdrawalAllocation);
     return { ...withdrawn, realizedGains: 0, earningsWithdrawn: 0 };
   }
+
+  /**
+   * Withdraws funds for a Roth conversion.
+   *
+   * Conversions bypass normal withdrawal tracking:
+   * - Not counted in cumulativeWithdrawals (so they don't appear as taxable distributions)
+   * - Don't trigger early withdrawal penalties
+   * - Don't affect cumulative RMD tracking
+   *
+   * The converted amount is tracked separately and added to ordinary income
+   * via the `conversionIncome` field on IncomesData in the tax processor.
+   */
+  applyConversion(amount: number, allocation: AssetAllocation): AssetFlows {
+    if (amount < 0) throw new Error('Conversion amount must be non-negative');
+    if (amount === 0) return { stocks: 0, bonds: 0, cash: 0 };
+    if (amount > this.balance) throw new Error('Insufficient funds for conversion');
+
+    const currentBondsValue = this.balance * this.currPercentBonds;
+    const currentStocksValue = this.balance * (1 - this.currPercentBonds);
+
+    const bondWithdrawal = Math.min(amount * allocation.bonds, currentBondsValue);
+    const stockWithdrawal = amount - bondWithdrawal;
+
+    const newBondsValue = currentBondsValue - bondWithdrawal;
+    const newStocksValue = currentStocksValue - stockWithdrawal;
+    this.balance = newBondsValue + newStocksValue;
+    this.currPercentBonds = this.balance > 0 ? newBondsValue / this.balance : this.currPercentBonds;
+
+    this.cumulativeConversionWithdrawals += amount;
+
+    return { stocks: stockWithdrawal, bonds: bondWithdrawal, cash: 0 };
+  }
 }
 
 /**
- * Tax-free (Roth) account with contribution basis tracking
+ * Tax-free (Roth) account with contribution and conversion basis tracking
  *
  * Withdrawals first draw from contribution basis (tax/penalty-free),
+ * then from conversion basis (subject to 5-year aging rule),
  * then from earnings (potentially subject to early withdrawal penalties).
  */
 export class TaxFreeAccount extends InvestmentAccount {
   readonly taxCategory: TaxCategory = 'taxFree';
 
   private contributionBasis: number;
+  /** Tracks cumulative amount converted INTO this account (for 5-year rule enforcement) */
+  private conversionBasis: number;
 
   constructor(data: AccountInputs & { type: 'rothIra' | 'roth401k' | 'roth403b' }) {
     super(data);
-    this.contributionBasis = data.contributionBasis!;
+    this.contributionBasis = data.contributionBasis ?? 0;
+    this.conversionBasis = data.conversionBasis ?? 0;
   }
 
   getContributionBasis(): number {
     return this.contributionBasis;
+  }
+
+  getConversionBasis(): number {
+    return this.conversionBasis;
   }
 
   applyContribution(amount: number, type: ContributionType, contributionAllocation: AssetAllocation): AssetFlows {
@@ -495,20 +549,30 @@ export class TaxFreeAccount extends InvestmentAccount {
     return contributed;
   }
 
+  /** Applies a conversion deposit (transfer from tax-deferred account) */
+  applyConversion(amount: number, allocation: AssetAllocation): AssetFlows {
+    const contributed = super.applyContributionShared(amount, 'self', allocation);
+    this.conversionBasis += amount;
+    return contributed;
+  }
+
   applyWithdrawal(
     amount: number,
     type: WithdrawalType,
     withdrawalAllocation: AssetAllocation
   ): AssetFlows & { realizedGains: number; earningsWithdrawn: number } {
-    // Roth ordering: contributions withdrawn first (tax-free), then earnings
+    // Roth ordering: contributions withdrawn first (tax-free), then conversion basis, then earnings
     const contributionWithdrawn = Math.min(amount, this.contributionBasis);
     this.contributionBasis -= contributionWithdrawn;
 
-    const earningsWithdrawn = amount - contributionWithdrawn;
+    const conversionWithdrawn = Math.min(amount - contributionWithdrawn, this.conversionBasis);
+    this.conversionBasis -= conversionWithdrawn;
+
+    const earningsWithdrawn = amount - contributionWithdrawn - conversionWithdrawn;
     this.cumulativeEarningsWithdrawn += earningsWithdrawn;
 
     const withdrawn = super.applyWithdrawalShared(amount, type, withdrawalAllocation);
 
-    return { ...withdrawn, earningsWithdrawn, realizedGains: 0 };
+    return { ...withdrawn, earningsWithdrawn: earningsWithdrawn + conversionWithdrawn, realizedGains: 0 };
   }
 }

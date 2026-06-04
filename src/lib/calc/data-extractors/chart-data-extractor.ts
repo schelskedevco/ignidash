@@ -187,6 +187,7 @@ export abstract class ChartDataExtractor {
     let cumulativeNiit = 0;
     let cumulativeEarlyWithdrawalPenalties = 0;
     let cumulativeTotalTaxesAndPenalties = 0;
+    let cumulativePropertyTax = 0;
 
     return simulation.data.slice(1).map((data) => {
       const age = Math.floor(data.age);
@@ -198,6 +199,7 @@ export abstract class ChartDataExtractor {
         niit: annualNiit,
         earlyWithdrawalPenalties: annualEarlyWithdrawalPenalties,
         totalTaxesAndPenalties: annualTotalTaxesAndPenalties,
+        propertyTax: annualPropertyTax,
       } = SimulationDataExtractor.getTaxAmountsByType(data);
 
       cumulativeFederalIncomeTax += annualFederalIncomeTax;
@@ -206,6 +208,7 @@ export abstract class ChartDataExtractor {
       cumulativeNiit += annualNiit;
       cumulativeEarlyWithdrawalPenalties += annualEarlyWithdrawalPenalties;
       cumulativeTotalTaxesAndPenalties += annualTotalTaxesAndPenalties;
+      cumulativePropertyTax += annualPropertyTax;
 
       const taxesData = data.taxes!;
 
@@ -252,6 +255,12 @@ export abstract class ChartDataExtractor {
         cumulativeEarlyWithdrawalPenalties,
         annualTotalTaxesAndPenalties,
         cumulativeTotalTaxesAndPenalties,
+        annualPropertyTax,
+        cumulativePropertyTax,
+        irmaaPartB: data.irmaaPartB ?? 0,
+        irmaaPartD: data.irmaaPartD ?? 0,
+        acaSubsidy: data.acaSubsidy ?? 0,
+        acaNetPremium: data.acaNetPremium ?? 0,
         taxFreeIncome: taxesData.incomeSources.taxFreeIncome,
         adjustments: taxesData.adjustments,
         deductions: taxesData.deductions,

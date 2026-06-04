@@ -24,6 +24,7 @@ import { Expenses, ExpensesProcessor, type ExpensesData } from './expenses';
 import { Debts, DebtsProcessor, type DebtsData, type DebtData } from './debts';
 import { PhysicalAssets, PhysicalAssetsProcessor, type PhysicalAssetsData, type PhysicalAssetData } from './physical-assets';
 import { TaxProcessor, type TaxesData } from './taxes';
+import { ConversionProcessor } from './conversions';
 import { type AssetFlows, zeroAssetAmounts } from './asset';
 
 /**
@@ -48,6 +49,14 @@ export interface SimulationDataPoint {
   phase: PhaseData | null;
   taxes: TaxesData | null;
   returns: ReturnsData | null;
+  /** IRMAA Part B surcharge annual amount (populated for Medicare years) */
+  irmaaPartB?: number;
+  /** IRMAA Part D surcharge annual amount (populated for Medicare years) */
+  irmaaPartD?: number;
+  /** ACA premium subsidy amount (populated for pre-Medicare years) */
+  acaSubsidy?: number;
+  /** ACA net premium after subsidy (populated for pre-Medicare years) */
+  acaNetPremium?: number;
 }
 
 /** Complete output from a single simulation run */
@@ -82,6 +91,8 @@ export interface SimulationState {
   portfolio: Portfolio;
   phase: PhaseData | null;
   annualData: { expenses: ExpensesData[]; debts: DebtsData[]; physicalAssets: PhysicalAssetsData[] };
+  /** MAGI history buffer for IRMAA 2-year lookback. Index 0 = 2 years ago, index 1 = 1 year ago. */
+  magiHistory: number[];
 }
 
 /** Base simulation engine that runs a month-by-month simulation with annual tax reconciliation */
@@ -115,6 +126,18 @@ export class FinancialSimulationEngine {
     const physicalAssetsProcessor = new PhysicalAssetsProcessor(simulationState, physicalAssets);
     const portfolioProcessor = new PortfolioProcessor(simulationState, simulationContext, contributionRules, this.inputs.glidePath);
     const taxProcessor = new TaxProcessor(simulationState, this.inputs.taxSettings.filingStatus);
+    const conversionProcessor = new ConversionProcessor(
+      simulationState.portfolio,
+      () => simulationState.time.age,
+      () => simulationContext.rmdAge
+    );
+
+    // ACA parameters for pre-Medicare years
+    const acaParams = {
+      householdSize: this.inputs.taxSettings.numOnMedicare ?? 1,
+      benchmarkPremium: this.inputs.taxSettings.benchmarkPremium ?? 8_400,
+      acaEnhancedSubsidies: this.inputs.taxSettings.acaEnhancedSubsidies ?? true,
+    };
 
     // Init phase identifier
     const phaseIdentifier = new PhaseIdentifier(simulationState, timeline);
@@ -154,7 +177,17 @@ export class FinancialSimulationEngine {
         const annualPhysicalAssetsData = physicalAssetsProcessor.getAnnualData();
         simulationState.annualData.physicalAssets.push(annualPhysicalAssetsData);
 
+        // Process Roth conversions (before tax settlement so conversion income is taxed)
+        const conversionData = conversionProcessor.processConversionRules(
+          this.inputs.conversionRules,
+          simulationState.phase
+        );
+        annualIncomesData.conversionIncome = conversionData.totalConverted;
+        portfolioProcessor.setAnnualConversionAmount(conversionData.totalConverted);
+
         // Process taxes with iterative convergence (withdrawals to pay taxes can generate additional taxable income)
+        const magiTwoYearsAgo =
+          simulationState.magiHistory.length >= 2 ? simulationState.magiHistory[0] : undefined;
         const {
           taxesData: annualTaxesData,
           portfolioData: annualPortfolioDataAfterTaxes,
@@ -165,7 +198,19 @@ export class FinancialSimulationEngine {
           annualPortfolioDataBeforeTaxes,
           annualIncomesData,
           annualReturnsData,
-          annualPhysicalAssetsData
+          annualPhysicalAssetsData,
+          magiTwoYearsAgo,
+          acaParams
+        );
+
+        // Record MAGI for IRMAA 2-year lookback in future years
+        simulationState.magiHistory.push(annualTaxesData.incomeSources.adjustedGrossIncome);
+        if (simulationState.magiHistory.length > 2) simulationState.magiHistory.shift();
+
+        // Record tax data for bracket-filling estimation in future years
+        conversionProcessor.recordTaxData(
+          annualTaxesData.federalIncomeTaxes.topMarginalFederalIncomeTaxRate,
+          annualTaxesData.federalIncomeTaxes.taxableIncomeTaxedAsOrdinary
         );
 
         // Process expenses last to account for discretionary expenses from tax refunds
@@ -188,6 +233,10 @@ export class FinancialSimulationEngine {
           phase: { ...simulationState.phase },
           taxes: annualTaxesData,
           returns: annualReturnsData,
+          irmaaPartB: annualTaxesData.irmaa?.annualPartB,
+          irmaaPartD: annualTaxesData.irmaa?.annualPartD,
+          acaSubsidy: annualTaxesData.aca?.subsidy,
+          acaNetPremium: annualTaxesData.aca?.netPremium,
         });
 
         // Reset monthly data for next iteration
@@ -197,6 +246,7 @@ export class FinancialSimulationEngine {
         debtsProcessor.resetMonthlyData();
         physicalAssetsProcessor.resetMonthlyData();
         portfolioProcessor.resetMonthlyData();
+        conversionProcessor.resetAnnualData();
       }
     }
 
@@ -241,7 +291,9 @@ export class FinancialSimulationEngine {
     portfolioDataBeforeTaxes: PortfolioData,
     incomesData: IncomesData,
     returnsData: ReturnsData,
-    physicalAssetsData: PhysicalAssetsData
+    physicalAssetsData: PhysicalAssetsData,
+    magiTwoYearsAgo?: number,
+    acaParams?: { householdSize: number; benchmarkPremium: number; acaEnhancedSubsidies: boolean }
   ): {
     taxesData: TaxesData;
     portfolioData: PortfolioData;
@@ -249,7 +301,10 @@ export class FinancialSimulationEngine {
   } {
     taxProcessor.saveCarryoverSnapshot();
 
-    const initialTaxesData = taxProcessor.process(portfolioDataBeforeTaxes, incomesData, returnsData, physicalAssetsData);
+    const initialTaxesData = taxProcessor.process(
+      portfolioDataBeforeTaxes, incomesData, returnsData, physicalAssetsData,
+      magiTwoYearsAgo, acaParams
+    );
     const { totalTaxesDue, totalTaxesRefund } = initialTaxesData;
 
     const { portfolioData: initialPortfolioData, discretionaryExpense } = portfolioProcessor.processTaxes(portfolioDataBeforeTaxes, {
@@ -265,7 +320,12 @@ export class FinancialSimulationEngine {
       for (let i = 0; i < 10; i++) {
         taxProcessor.restoreCarryoverSnapshot();
 
-        taxesData = taxProcessor.process(portfolioData, incomesData, returnsData, physicalAssetsData);
+        // Pass magiTwoYearsAgo and acaParams only on first convergence iteration;
+        // subsequent iterations inherit from initial calculation
+        taxesData = taxProcessor.process(
+          portfolioData, incomesData, returnsData, physicalAssetsData,
+          magiTwoYearsAgo, acaParams
+        );
 
         const remainingTaxesDue = taxesData.totalTaxesDue - totalTaxesPaid;
         if (Math.abs(remainingTaxesDue) < TAX_CONVERGENCE_THRESHOLD) break;
@@ -307,6 +367,7 @@ export class FinancialSimulationEngine {
       portfolio: new Portfolio(Object.values(this.inputs.accounts)),
       phase: null,
       annualData: { expenses: [], debts: [], physicalAssets: [] },
+      magiHistory: [],
     };
   }
 
@@ -389,6 +450,7 @@ export class FinancialSimulationEngine {
           debtPaydown: 0,
           securedDebtIncurred: 0,
           debtPayoff: 0,
+          propertyTaxExpense: 0,
           isSold: asset.isSold(),
         },
       ])
@@ -411,6 +473,7 @@ export class FinancialSimulationEngine {
       totalDebtPaydown: 0,
       totalSecuredDebtIncurred: 0,
       totalDebtPayoff: 0,
+      totalPropertyTax: 0,
       perAssetData,
     };
 
@@ -434,6 +497,7 @@ export class FinancialSimulationEngine {
         rmds: 0,
         shortfall: 0,
         shortfallRepaid: 0,
+        conversions: 0,
         perAccountData,
         assetAllocation,
       },

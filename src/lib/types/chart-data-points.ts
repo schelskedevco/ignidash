@@ -128,12 +128,24 @@ export interface SingleSimulationTaxesChartDataPoint {
   annualEarlyWithdrawalPenalties: number;
   cumulativeEarlyWithdrawalPenalties: number;
 
+  // IRMAA (Medicare years)
+  irmaaPartB: number;
+  irmaaPartD: number;
+
+  // ACA (pre-Medicare years)
+  acaSubsidy: number;
+  acaNetPremium: number;
+
   // Totals
   annualTotalTaxesAndPenalties: number;
   cumulativeTotalTaxesAndPenalties: number;
 
   // Tax-Free Income
   taxFreeIncome: number;
+
+  // Property Tax
+  annualPropertyTax: number;
+  cumulativePropertyTax: number;
 
   // Adjustments & Deductions
   adjustments: Record<string, number>;

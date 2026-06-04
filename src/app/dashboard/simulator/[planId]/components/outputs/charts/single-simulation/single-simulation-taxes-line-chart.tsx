@@ -217,8 +217,8 @@ export default function SingleSimulationTaxesLineChart({
     case 'annualAmounts':
       formatter = (value: number) => formatCompactCurrency(value, 1);
 
-      barDataKeys.push('annualFederalIncomeTax', 'annualFicaTax', 'annualCapitalGainsTax', 'annualNiit', 'annualEarlyWithdrawalPenalties');
-      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
+      barDataKeys.push('annualFederalIncomeTax', 'annualFicaTax', 'annualCapitalGainsTax', 'annualNiit', 'annualEarlyWithdrawalPenalties', 'annualPropertyTax');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)', 'var(--chart-6)');
       break;
     case 'cumulativeAmounts':
       formatter = (value: number) => formatCompactCurrency(value, 1);
@@ -228,9 +228,10 @@ export default function SingleSimulationTaxesLineChart({
         'cumulativeFicaTax',
         'cumulativeCapitalGainsTax',
         'cumulativeNiit',
-        'cumulativeEarlyWithdrawalPenalties'
+        'cumulativeEarlyWithdrawalPenalties',
+        'cumulativePropertyTax'
       );
-      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)');
+      barColors.push('var(--chart-1)', 'var(--chart-2)', 'var(--chart-3)', 'var(--chart-4)', 'var(--chart-5)', 'var(--chart-6)');
       break;
     case 'taxableIncome':
       formatter = (value: number) => formatCompactCurrency(value, 1);
