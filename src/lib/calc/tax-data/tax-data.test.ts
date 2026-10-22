@@ -36,6 +36,10 @@ describe('Tax Data Validation (2026 IRS values)', () => {
       expect(FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD[0]).toEqual({ min: 0, max: 17700, rate: 0.1 });
     });
 
+    it('should have correct HOH 24% bracket: $105,700-$201,750', () => {
+      expect(FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD[3]).toEqual({ min: 105700, max: 201750, rate: 0.24 });
+    });
+
     it.each([
       ['single', FEDERAL_INCOME_TAX_BRACKETS_SINGLE],
       ['MFJ', FEDERAL_INCOME_TAX_BRACKETS_MARRIED_FILING_JOINTLY],

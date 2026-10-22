@@ -31,8 +31,8 @@ export const FEDERAL_INCOME_TAX_BRACKETS_HEAD_OF_HOUSEHOLD: FederalIncomeTaxBrac
   { min: 0, max: 17700, rate: 0.1 },
   { min: 17700, max: 67450, rate: 0.12 },
   { min: 67450, max: 105700, rate: 0.22 },
-  { min: 105700, max: 201775, rate: 0.24 },
-  { min: 201775, max: 256200, rate: 0.32 },
+  { min: 105700, max: 201750, rate: 0.24 },
+  { min: 201750, max: 256200, rate: 0.32 },
   { min: 256200, max: 640600, rate: 0.35 },
   { min: 640600, max: Infinity, rate: 0.37 },
 ];
