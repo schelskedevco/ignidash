@@ -41,6 +41,7 @@ export const accountFormSchema = z.discriminatedUnion('type', [
     ...investmentAccountSchema.shape,
     type: z.enum(['roth401k', 'roth403b', 'rothIra']),
     contributionBasis: optionalCurrencyFieldAllowsZero('Contribution basis cannot be negative'),
+    conversionBasis: optionalCurrencyFieldAllowsZero('Conversion basis cannot be negative'),
   }),
 
   // Tax Deferred
@@ -53,6 +54,7 @@ export const accountFormSchema = z.discriminatedUnion('type', [
   z.object({
     ...investmentAccountSchema.shape,
     type: z.literal('hsa'),
+    hsaCoverageType: z.enum(['individual', 'family']).optional(),
   }),
 ]);
 

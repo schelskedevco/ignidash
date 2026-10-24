@@ -86,6 +86,7 @@ function createZeroTaxesData(realizedGains: number): TaxesData {
       taxableDividendIncome: 0,
       taxableInterestIncome: 0,
       earnedIncome: 0,
+      conversionIncome: 0,
       socialSecurityIncome: 0,
       taxableSocialSecurityIncome: 0,
       maxTaxableSocialSecurityPercentage: 0.85,
@@ -132,6 +133,7 @@ function createRealizedGainsDataPoint(options: {
     shortfall: 0,
     shortfallRepaid: 0,
     outstandingShortfall: 0,
+    conversions: 0,
     perAccountData: {},
   };
 
@@ -146,6 +148,8 @@ function createRealizedGainsDataPoint(options: {
       totalIncomeAfterPayrollDeductions: 0,
       totalSocialSecurityIncome: 0,
       totalTaxFreeIncome: 0,
+      totalAdditionalMedicareTax: 0,
+      conversionIncome: 0,
       perIncomeData: {},
     },
     expenses: { totalExpenses: 0, perExpenseData: {} },

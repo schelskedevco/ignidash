@@ -72,6 +72,7 @@ function createNetWorthTestDataPoint(options: {
     shortfall: 0,
     shortfallRepaid: 0,
     outstandingShortfall: 0,
+    conversions: 0,
     perAccountData: {},
   };
 

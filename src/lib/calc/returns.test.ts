@@ -523,6 +523,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       ]),
       phase: { name: 'accumulation' },
       annualData: { expenses: [], debts: [], physicalAssets: [] },
+      magiHistory: [],
     } as SimulationState;
 
     // Provider returns different rates based on year
@@ -568,6 +569,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       ]),
       phase: { name: 'accumulation' },
       annualData: { expenses: [], debts: [], physicalAssets: [] },
+magiHistory: [],
     } as SimulationState;
 
     const provider: ReturnsProvider = {
@@ -601,6 +603,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       ]),
       phase: { name: 'accumulation' },
       annualData: { expenses: [], debts: [], physicalAssets: [] },
+magiHistory: [],
     } as SimulationState;
 
     const provider: ReturnsProvider = {
@@ -634,6 +637,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       ]),
       phase: { name: 'accumulation' },
       annualData: { expenses: [], debts: [], physicalAssets: [] },
+magiHistory: [],
     } as SimulationState;
 
     const provider: ReturnsProvider = {
@@ -665,6 +669,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       ]),
       phase: { name: 'accumulation' },
       annualData: { expenses: [], debts: [], physicalAssets: [] },
+magiHistory: [],
     } as SimulationState;
 
     const provider: ReturnsProvider = {
@@ -728,6 +733,7 @@ describe('ReturnsProcessor.getAnnualData', () => {
       portfolio: mockPortfolio,
       phase: { name: 'accumulation' },
       annualData: { expenses: [], debts: [], physicalAssets: [] },
+magiHistory: [],
     } as SimulationState;
 
     const provider: ReturnsProvider = {

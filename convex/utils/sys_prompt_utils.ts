@@ -142,7 +142,7 @@ const systemPrompt = (planData: string, keyMetrics: string, simulationData: stri
   **Simulation Outputs:**
   - Portfolio value over time by asset class, tax category (taxable, tax-deferred, tax-free, cash savings), and individual account
   - Cash flow: income by type, expenses, taxes (federal income, FICA, capital gains, NIIT), surplus/deficit, savings rate, net cash flow
-  - Tax detail: AGI, taxable income, effective/marginal rates, Social Security taxation, capital gains treatment, early withdrawal penalties, standard deduction, NIIT
+  - Tax detail: AGI, taxable income, effective/marginal rates, Social Security taxation, capital gains treatment, early withdrawal penalties, standard deduction, NIIT, IRMAA surcharges (Part B and Part D), ACA premium subsidies and net premiums
   - Investment returns: real returns by asset class, inflation impact, cumulative and annual growth
   - Contributions and withdrawals: amounts by tax category and asset class, RMDs, early withdrawal penalties, Roth earnings withdrawals, withdrawal rate
   - Debt & physical assets: debt balances and payments over time, physical asset market values, loan paydown, purchase outlays, sale proceeds
@@ -150,7 +150,7 @@ const systemPrompt = (planData: string, keyMetrics: string, simulationData: stri
   - Monte Carlo results: percentile distributions (P10-P90), phase breakdowns, outcome probabilities
 
   **Not Modeled (but fair to discuss educationally):**
-  529/ABLE accounts, annuities, pensions, Roth conversions, self-employment income, rental/business income, state taxes, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
+  529/ABLE accounts, annuities, pensions, Roth conversions, self-employment income, rental/business income, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
 
   If a user asks about unmodeled features, acknowledge the limitation directly—don't suggest workarounds within the app. You may explain these concepts educationally, but clarify they can't be simulated in Ignidash.
 
@@ -316,7 +316,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationDa
   **Simulation Outputs:**
   - Portfolio value over time by asset class, tax category (taxable, tax-deferred, tax-free, cash savings), and individual account
   - Cash flow: income by type, expenses, taxes (federal income, FICA, capital gains, NIIT), surplus/deficit, savings rate, net cash flow
-  - Tax detail: AGI, taxable income, effective/marginal rates, Social Security taxation, capital gains treatment, early withdrawal penalties, standard deduction, NIIT
+  - Tax detail: AGI, taxable income, effective/marginal rates, Social Security taxation, capital gains treatment, early withdrawal penalties, standard deduction, NIIT, IRMAA surcharges (Part B and Part D), ACA premium subsidies and net premiums
   - Investment returns: real returns by asset class, inflation impact, cumulative and annual growth
   - Contributions and withdrawals: amounts by tax category and asset class, RMDs, early withdrawal penalties, Roth earnings withdrawals, withdrawal rate
   - Debt & physical assets: debt balances and payments over time, physical asset market values, loan paydown, purchase outlays, sale proceeds
@@ -324,7 +324,7 @@ const insightsSystemPrompt = (planData: string, keyMetrics: string, simulationDa
   - Monte Carlo results: percentile distributions (P10-P90), phase breakdowns, outcome probabilities
 
   **Not Modeled (but fair to discuss educationally):**
-  529/ABLE accounts, annuities, pensions, Roth conversions, self-employment income, rental/business income, state taxes, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
+  529/ABLE accounts, annuities, pensions, Roth conversions, self-employment income, rental/business income, itemized deductions, tax credits, spousal Social Security strategies, 72(t) SEPP distributions, estate planning, dependents
 
   Do not assume unlisted features exist. When discussing topics the simulator does not model, note that Ignidash cannot simulate them directly.
 

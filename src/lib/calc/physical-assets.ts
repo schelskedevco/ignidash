@@ -48,6 +48,7 @@ export class PhysicalAssetsProcessor {
     let totalRealizedGains = 0;
     let totalSecuredDebtIncurred = 0;
     let totalDebtPayoff = 0;
+    let totalPropertyTax = 0;
     const perAssetData: Record<string, PhysicalAssetData> = {};
 
     const ownedAssets = this.physicalAssets.getOwnedAssets();
@@ -65,6 +66,9 @@ export class PhysicalAssetsProcessor {
       const unpaidInterest = Math.max(0, interest - monthlyPaymentDue);
 
       const debtPaydown = monthlyPaymentDue - interest;
+
+      // Property tax: annual rate applied to market value, divided by 12 for monthly
+      const propertyTaxExpense = (asset.getMarketValue() * asset.getPropertyTaxRate()) / 12;
 
       const assetData: PhysicalAssetData = {
         id: asset.getId(),
@@ -87,6 +91,7 @@ export class PhysicalAssetsProcessor {
         realizedGains: 0,
         securedDebtIncurred,
         debtPayoff: 0,
+        propertyTaxExpense,
         isSold: asset.isSold(),
       };
 
@@ -97,6 +102,7 @@ export class PhysicalAssetsProcessor {
       totalPrincipalPaid += principalPaid;
       totalUnpaidInterest += unpaidInterest;
       totalDebtPaydown += debtPaydown;
+      totalPropertyTax += propertyTaxExpense;
     }
 
     const assetsToSell = this.physicalAssets.getAssetsToSellThisPeriod(this.simulationState);
@@ -138,6 +144,7 @@ export class PhysicalAssetsProcessor {
       totalRealizedGains,
       totalSecuredDebtIncurred,
       totalDebtPayoff,
+      totalPropertyTax,
       perAssetData,
     };
 
@@ -169,6 +176,7 @@ export class PhysicalAssetsProcessor {
           acc.totalRealizedGains += curr.totalRealizedGains;
           acc.totalSecuredDebtIncurred += curr.totalSecuredDebtIncurred;
           acc.totalDebtPayoff += curr.totalDebtPayoff;
+          acc.totalPropertyTax += curr.totalPropertyTax;
 
           for (const [assetID, assetData] of Object.entries(curr.perAssetData)) {
             const existing = acc.perAssetData[assetID];
@@ -187,6 +195,7 @@ export class PhysicalAssetsProcessor {
               realizedGains: (existing?.realizedGains ?? 0) + assetData.realizedGains,
               securedDebtIncurred: (existing?.securedDebtIncurred ?? 0) + assetData.securedDebtIncurred,
               debtPayoff: (existing?.debtPayoff ?? 0) + assetData.debtPayoff,
+              propertyTaxExpense: (existing?.propertyTaxExpense ?? 0) + assetData.propertyTaxExpense,
             };
           }
 
@@ -206,6 +215,7 @@ export class PhysicalAssetsProcessor {
           totalRealizedGains: 0,
           totalSecuredDebtIncurred: 0,
           totalDebtPayoff: 0,
+          totalPropertyTax: 0,
           perAssetData: {} as Record<string, PhysicalAssetData>,
         } satisfies PhysicalAssetsFlowData
       ),
@@ -235,6 +245,7 @@ interface PhysicalAssetsFlowData {
   totalDebtPaydown: number;
   totalSecuredDebtIncurred: number;
   totalDebtPayoff: number;
+  totalPropertyTax: number;
   perAssetData: Record<string, PhysicalAssetData>;
 }
 
@@ -261,6 +272,7 @@ export interface PhysicalAssetData {
   debtPaydown: number;
   securedDebtIncurred: number;
   debtPayoff: number;
+  propertyTaxExpense: number;
   isSold: boolean;
 }
 
@@ -306,6 +318,7 @@ export class PhysicalAsset {
   private marketValue: number;
   private purchasePrice: number;
   private appreciationRate: number;
+  private propertyTaxRate: number;
   private saleDate: TimePoint | undefined;
   private paymentMethod: PaymentMethodInputs;
   private loanBalance: number = 0;
@@ -323,6 +336,7 @@ export class PhysicalAsset {
     this.marketValue = data.marketValue ?? data.purchasePrice;
     this.purchasePrice = data.purchasePrice;
     this.appreciationRate = data.appreciationRate / 100;
+    this.propertyTaxRate = data.propertyTaxRate ?? 0;
     this.saleDate = data.saleDate;
     this.paymentMethod = data.paymentMethod;
 
@@ -361,6 +375,10 @@ export class PhysicalAsset {
 
   getMarketValue(): number {
     return this.ownershipStatus !== 'owned' ? 0 : this.marketValue;
+  }
+
+  getPropertyTaxRate(): number {
+    return this.propertyTaxRate / 100;
   }
 
   getLoanBalance(): number {

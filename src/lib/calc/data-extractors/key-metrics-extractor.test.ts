@@ -58,6 +58,7 @@ const createDataPoint = (options: {
     shortfall: options.shortfall ?? 0,
     shortfallRepaid: 0,
     outstandingShortfall: 0,
+    conversions: 0,
     perAccountData: {},
   },
   incomes: {
@@ -67,6 +68,8 @@ const createDataPoint = (options: {
     totalIncomeAfterPayrollDeductions: 72350,
     totalSocialSecurityIncome: 0,
     totalTaxFreeIncome: 0,
+    totalAdditionalMedicareTax: 0,
+    conversionIncome: 0,
     perIncomeData: {},
   },
   expenses: {
@@ -121,6 +124,7 @@ const createDataPoint = (options: {
       taxableDividendIncome: 0,
       taxableInterestIncome: 0,
       earnedIncome: 80000,
+      conversionIncome: 0,
       socialSecurityIncome: 0,
       taxableSocialSecurityIncome: 0,
       maxTaxableSocialSecurityPercentage: 0.85,

@@ -20,6 +20,7 @@ import { marketAssumptionsFormSchema } from './market-assumptions-form-schema';
 import { taxSettingsFormSchema } from './tax-settings-form-schema';
 import { privacySettingsFormSchema } from './privacy-settings-form-schema';
 import { simulationSettingsSchema } from './simulation-settings-form-schema';
+import { conversionRuleSchema } from './conversion-rule-schema';
 
 export const simulatorSchema = z.object({
   timeline: timelineFormSchema.nullable(),
@@ -35,6 +36,7 @@ export const simulatorSchema = z.object({
   taxSettings: taxSettingsFormSchema,
   privacySettings: privacySettingsFormSchema,
   simulationSettings: simulationSettingsSchema,
+  conversionRules: z.array(conversionRuleSchema).default([]),
 });
 
 export type SimulatorInputs = z.infer<typeof simulatorSchema>;

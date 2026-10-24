@@ -60,6 +60,8 @@ export class PortfolioProcessor {
   private rmdSavingsAccount: SavingsAccount;
   private monthlyData: PortfolioData[] = [];
   private outstandingShortfall: number = 0;
+  /** Tracks Roth conversion amount for the current year (set by engine after processing conversions) */
+  private annualConversionAmount: number = 0;
 
   constructor(
     private simulationState: SimulationState,
@@ -104,7 +106,8 @@ export class PortfolioProcessor {
       physicalAssetSaleProceeds -
       expensesData.totalExpenses -
       debtAndLoanPayments -
-      physicalAssetPurchaseOutlay;
+      physicalAssetPurchaseOutlay -
+      physicalAssetsData.totalPropertyTax;
 
     const {
       total: contributions,
@@ -153,6 +156,7 @@ export class PortfolioProcessor {
         rmds: 0,
         shortfall,
         shortfallRepaid,
+        conversions: 0,
       },
       perAccountData
     );
@@ -231,6 +235,7 @@ export class PortfolioProcessor {
         rmds,
         shortfall,
         shortfallRepaid,
+        conversions: 0,
       },
       perAccountData
     );
@@ -510,6 +515,7 @@ export class PortfolioProcessor {
         rmds: total,
         shortfall: 0,
         shortfallRepaid: 0,
+        conversions: 0,
       },
       perAccountData
     );
@@ -567,6 +573,7 @@ export class PortfolioProcessor {
       rmds: number;
       shortfall: number;
       shortfallRepaid: number;
+      conversions: number;
     },
     perAccountData: Record<string, AccountDataWithFlows>
   ): PortfolioData {
@@ -633,47 +640,57 @@ export class PortfolioProcessor {
   getAnnualData(): PortfolioData {
     const lastMonthData = this.monthlyData[this.monthlyData.length - 1];
 
+    const flowData = this.monthlyData.reduce(
+      (acc, curr) => {
+        acc.contributions = addFlows(acc.contributions, curr.contributions);
+        acc.employerMatch += curr.employerMatch;
+        acc.withdrawals = addFlows(acc.withdrawals, curr.withdrawals);
+        acc.realizedGains += curr.realizedGains;
+        acc.earningsWithdrawn += curr.earningsWithdrawn;
+        acc.rmds += curr.rmds;
+        acc.shortfall += curr.shortfall;
+        acc.shortfallRepaid += curr.shortfallRepaid;
+        acc.conversions += curr.conversions;
+
+        for (const [accountID, accountData] of Object.entries(curr.perAccountData)) {
+          const existing = acc.perAccountData[accountID];
+          acc.perAccountData[accountID] = {
+            ...accountData,
+            contributions: addFlows(existing?.contributions ?? zeroFlows(), accountData.contributions),
+            employerMatch: (existing?.employerMatch ?? 0) + accountData.employerMatch,
+            withdrawals: addFlows(existing?.withdrawals ?? zeroFlows(), accountData.withdrawals),
+            realizedGains: (existing?.realizedGains ?? 0) + accountData.realizedGains,
+            earningsWithdrawn: (existing?.earningsWithdrawn ?? 0) + accountData.earningsWithdrawn,
+            rmds: (existing?.rmds ?? 0) + accountData.rmds,
+          };
+        }
+
+        return acc;
+      },
+      {
+        contributions: zeroFlows(),
+        employerMatch: 0,
+        withdrawals: zeroFlows(),
+        realizedGains: 0,
+        earningsWithdrawn: 0,
+        rmds: 0,
+        shortfall: 0,
+        shortfallRepaid: 0,
+        conversions: 0,
+        perAccountData: {} as Record<string, AccountDataWithFlows>,
+      } satisfies PortfolioFlowData
+    );
+
     return {
       ...lastMonthData,
-      ...this.monthlyData.reduce(
-        (acc, curr) => {
-          acc.contributions = addFlows(acc.contributions, curr.contributions);
-          acc.employerMatch += curr.employerMatch;
-          acc.withdrawals = addFlows(acc.withdrawals, curr.withdrawals);
-          acc.realizedGains += curr.realizedGains;
-          acc.earningsWithdrawn += curr.earningsWithdrawn;
-          acc.rmds += curr.rmds;
-          acc.shortfall += curr.shortfall;
-          acc.shortfallRepaid += curr.shortfallRepaid;
-
-          for (const [accountID, accountData] of Object.entries(curr.perAccountData)) {
-            const existing = acc.perAccountData[accountID];
-            acc.perAccountData[accountID] = {
-              ...accountData,
-              contributions: addFlows(existing?.contributions ?? zeroFlows(), accountData.contributions),
-              employerMatch: (existing?.employerMatch ?? 0) + accountData.employerMatch,
-              withdrawals: addFlows(existing?.withdrawals ?? zeroFlows(), accountData.withdrawals),
-              realizedGains: (existing?.realizedGains ?? 0) + accountData.realizedGains,
-              earningsWithdrawn: (existing?.earningsWithdrawn ?? 0) + accountData.earningsWithdrawn,
-              rmds: (existing?.rmds ?? 0) + accountData.rmds,
-            };
-          }
-
-          return acc;
-        },
-        {
-          contributions: zeroFlows(),
-          employerMatch: 0,
-          withdrawals: zeroFlows(),
-          realizedGains: 0,
-          earningsWithdrawn: 0,
-          rmds: 0,
-          shortfall: 0,
-          shortfallRepaid: 0,
-          perAccountData: {} as Record<string, AccountDataWithFlows>,
-        } satisfies PortfolioFlowData
-      ),
+      ...flowData,
+      conversions: flowData.conversions + this.annualConversionAmount,
     };
+  }
+
+  /** Sets the annual Roth conversion amount (called by the engine after processing conversions) */
+  setAnnualConversionAmount(amount: number): void {
+    this.annualConversionAmount = amount;
   }
 
   /** Rebalances portfolio toward glide path target allocation if enabled */
@@ -859,6 +876,7 @@ interface PortfolioFlowData {
   rmds: number;
   shortfall: number;
   shortfallRepaid: number;
+  conversions: number;
   perAccountData: Record<string, AccountDataWithFlows>;
 }
 

@@ -1,5 +1,13 @@
 /** Navigation menu items, path matching, and current page title. */
-import { LayoutDashboardIcon, ChartNoAxesCombinedIcon, Layers2Icon, ZapIcon, CircleQuestionMarkIcon, GemIcon } from 'lucide-react';
+import {
+  LayoutDashboardIcon,
+  ChartNoAxesCombinedIcon,
+  Layers2Icon,
+  ZapIcon,
+  BookOpenIcon,
+  CircleQuestionMarkIcon,
+  GemIcon,
+} from 'lucide-react';
 import { api } from '@/convex/_generated/api';
 import { useQuery, useMutation, useConvexAuth } from 'convex/react';
 import { useEffect, useMemo } from 'react';
@@ -49,6 +57,7 @@ export const useNavigationItems = () => {
     simulatorItem,
     { name: 'Insights', href: '/dashboard/insights', icon: ZapIcon, current: isCurrentPath(pathname, '/dashboard/insights') },
     { name: 'Compare', href: '/dashboard/compare', icon: Layers2Icon, current: isCurrentPath(pathname, '/dashboard/compare') },
+    { name: 'Methodology', href: '/dashboard/methodology', icon: BookOpenIcon, current: isCurrentPath(pathname, '/dashboard/methodology') },
   ];
 };
 

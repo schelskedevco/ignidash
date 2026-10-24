@@ -195,10 +195,21 @@ export const singleSimulationTaxesTableRowSchema = z.object({
   // Early Withdrawal Penalties
   annualEarlyWithdrawalPenalties: z.number().nullable(),
   cumulativeEarlyWithdrawalPenalties: z.number().nullable(),
+  // Property Tax
+  annualPropertyTax: z.number().nullable(),
+  cumulativePropertyTax: z.number().nullable(),
 
   // Totals
   annualTotalTaxesAndPenalties: z.number().nullable(),
   cumulativeTotalTaxesAndPenalties: z.number().nullable(),
+
+  // IRMAA (Medicare years)
+  irmaaPartB: z.number().nullable(),
+  irmaaPartD: z.number().nullable(),
+
+  // ACA (pre-Medicare years)
+  acaSubsidy: z.number().nullable(),
+  acaNetPremium: z.number().nullable(),
 
   // Tax-Free Income
   taxFreeIncome: z.number().nullable(),
@@ -245,8 +256,14 @@ const SINGLE_SIMULATION_TAXES_COLUMNS = {
   cumulativeNiit: { title: 'Cumulative NIIT', format: 'currency' },
   annualEarlyWithdrawalPenalties: { title: 'Annual Early Withdrawal Penalties', format: 'currency' },
   cumulativeEarlyWithdrawalPenalties: { title: 'Cumulative Early Withdrawal Penalties', format: 'currency' },
+  annualPropertyTax: { title: 'Annual Property Tax', format: 'currency' },
+  cumulativePropertyTax: { title: 'Cumulative Property Tax', format: 'currency' },
   annualTotalTaxesAndPenalties: { title: 'Annual Total Taxes & Penalties', format: 'currency' },
   cumulativeTotalTaxesAndPenalties: { title: 'Cumulative Total Taxes & Penalties', format: 'currency' },
+  irmaaPartB: { title: 'IRMAA Part B Surcharge', format: 'currency' },
+  irmaaPartD: { title: 'IRMAA Part D Surcharge', format: 'currency' },
+  acaSubsidy: { title: 'ACA Premium Subsidy', format: 'currency' },
+  acaNetPremium: { title: 'ACA Net Premium', format: 'currency' },
   taxFreeIncome: { title: 'Tax-Free Income', format: 'currency' },
   taxDeductibleContributions: { title: 'Tax-Deductible Contributions', format: 'currency' },
   standardDeduction: { title: 'Standard Deduction', format: 'currency' },

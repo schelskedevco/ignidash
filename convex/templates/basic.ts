@@ -209,4 +209,5 @@ export const basicTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime' | 'userId
     simulationMode: 'fixedReturns',
     simulationSeed: 9521,
   },
+  conversionRules: [],
 };

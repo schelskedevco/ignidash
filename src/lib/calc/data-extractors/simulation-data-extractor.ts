@@ -63,6 +63,15 @@ export interface TaxAmountsByType {
   totalTaxes: number;
   earlyWithdrawalPenalties: number;
   totalTaxesAndPenalties: number;
+  propertyTax: number;
+  /** IRMAA Part B surcharge (annual, Medicare years only) */
+  irmaaPartB: number;
+  /** IRMAA Part D surcharge (annual, Medicare years only) */
+  irmaaPartD: number;
+  /** ACA premium subsidy (pre-Medicare years only) */
+  acaSubsidy: number;
+  /** ACA net premium after subsidy (pre-Medicare years only) */
+  acaNetPremium: number;
 }
 
 export interface ContributionsByTaxCategory {
@@ -323,9 +332,19 @@ export class SimulationDataExtractor {
     const totalTaxes = federalIncomeTax + capitalGainsTax + niit + ficaTax;
 
     const earlyWithdrawalPenalties = taxesData?.earlyWithdrawalPenalties.totalPenaltyAmount ?? 0;
-    const totalTaxesAndPenalties = totalTaxes + earlyWithdrawalPenalties;
+    const propertyTax = taxesData?.totalPropertyTax ?? 0;
+    const totalTaxesAndPenalties = totalTaxes + earlyWithdrawalPenalties + propertyTax;
 
-    return { federalIncomeTax, ficaTax, capitalGainsTax, niit, totalTaxes, earlyWithdrawalPenalties, totalTaxesAndPenalties };
+    const irmaaPartB = taxesData?.irmaa?.annualPartB ?? 0;
+    const irmaaPartD = taxesData?.irmaa?.annualPartD ?? 0;
+    const acaSubsidy = taxesData?.aca?.subsidy ?? 0;
+    const acaNetPremium = taxesData?.aca?.netPremium ?? 0;
+
+    return {
+      federalIncomeTax, ficaTax, capitalGainsTax, niit, totalTaxes,
+      earlyWithdrawalPenalties, totalTaxesAndPenalties, propertyTax,
+      irmaaPartB, irmaaPartD, acaSubsidy, acaNetPremium,
+    };
   }
 
   /**

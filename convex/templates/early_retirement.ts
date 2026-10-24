@@ -252,4 +252,5 @@ export const earlyRetirementTemplate: Omit<Doc<'plans'>, '_id' | '_creationTime'
     simulationMode: 'fixedReturns',
     simulationSeed: 9521,
   },
+  conversionRules: [],
 };

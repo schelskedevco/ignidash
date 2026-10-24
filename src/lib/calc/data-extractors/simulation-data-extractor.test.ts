@@ -416,6 +416,10 @@ const createTaxDataPoint = (options: {
     totalIncomeAfterPayrollDeductions: 72350,
     totalSocialSecurityIncome: 0,
     totalTaxFreeIncome: 0,
+   totalAdditionalMedicareTax: 0,
+      conversionIncome: 0,
+ totalAdditionalMedicareTax: 0,
+    conversionIncome: 0,
     perIncomeData: {},
   },
   expenses: null,
@@ -456,6 +460,7 @@ const createTaxDataPoint = (options: {
     totalTaxesDue: 0,
     totalTaxesRefund: 0,
     totalTaxableIncome: 65400,
+    totalPropertyTax: 0,
     adjustments: {},
     deductions: {},
     incomeSources: {
@@ -467,6 +472,7 @@ const createTaxDataPoint = (options: {
       taxableDividendIncome: 0,
       taxableInterestIncome: 0,
       earnedIncome: 80000,
+      conversionIncome: 0,
       socialSecurityIncome: 0,
       taxableSocialSecurityIncome: 0,
       maxTaxableSocialSecurityPercentage: 0.85,
@@ -532,7 +538,7 @@ describe('SimulationDataExtractor.getTaxAmountsByType', () => {
 
     const taxes = SimulationDataExtractor.getTaxAmountsByType(dp);
 
-    // totalTaxesAndPenalties = totalTaxes + earlyWithdrawalPenalties
+    // totalTaxesAndPenalties = totalTaxes + earlyWithdrawalPenalties + propertyTax
     expect(taxes.totalTaxesAndPenalties).toBe(18500);
   });
 
@@ -553,6 +559,7 @@ describe('SimulationDataExtractor.getTaxAmountsByType', () => {
     expect(taxes.niit).toBe(0);
     expect(taxes.totalTaxes).toBe(0);
     expect(taxes.earlyWithdrawalPenalties).toBe(0);
+    expect(taxes.propertyTax).toBe(0);
     expect(taxes.totalTaxesAndPenalties).toBe(0);
   });
 });
@@ -599,6 +606,8 @@ const createCashFlowDataPoint = (options: {
     totalIncomeAfterPayrollDeductions: options.totalIncome,
     totalSocialSecurityIncome: options.socialSecurityIncome ?? 0,
     totalTaxFreeIncome: options.taxFreeIncome ?? 0,
+    totalAdditionalMedicareTax: 0,
+    conversionIncome: 0,
     perIncomeData: {},
   },
   expenses: {
@@ -653,6 +662,7 @@ const createCashFlowDataPoint = (options: {
       taxableDividendIncome: 0,
       taxableInterestIncome: 0,
       earnedIncome: options.totalIncome,
+      conversionIncome: 0,
       socialSecurityIncome: options.socialSecurityIncome ?? 0,
       taxableSocialSecurityIncome: 0,
       maxTaxableSocialSecurityPercentage: 0.85,
@@ -919,6 +929,10 @@ const createNetCashFlowDataPoint = (options: {
     totalIncomeAfterPayrollDeductions: options.totalIncome ?? 0,
     totalSocialSecurityIncome: 0,
     totalTaxFreeIncome: 0,
+     totalAdditionalMedicareTax: 0,
+      conversionIncome: 0,
+ totalAdditionalMedicareTax: 0,
+      conversionIncome: 0,
     perIncomeData: {},
   },
   expenses: {
@@ -1006,6 +1020,7 @@ const createNetCashFlowDataPoint = (options: {
       taxableDividendIncome: 0,
       taxableInterestIncome: 0,
       earnedIncome: 0,
+      conversionIncome: 0,
       socialSecurityIncome: 0,
       taxableSocialSecurityIncome: 0,
       maxTaxableSocialSecurityPercentage: 0.85,
@@ -1578,6 +1593,10 @@ const createCashFlowInvariantDataPoint = (options: {
     totalIncomeAfterPayrollDeductions: options.totalIncome ?? 0,
     totalSocialSecurityIncome: 0,
     totalTaxFreeIncome: 0,
+     totalAdditionalMedicareTax: 0,
+      conversionIncome: 0,
+ totalAdditionalMedicareTax: 0,
+      conversionIncome: 0,
     perIncomeData: {},
   },
   expenses: {
@@ -1665,6 +1684,7 @@ const createCashFlowInvariantDataPoint = (options: {
       taxableDividendIncome: 0,
       taxableInterestIncome: 0,
       earnedIncome: 0,
+      conversionIncome: 0,
       socialSecurityIncome: 0,
       taxableSocialSecurityIncome: 0,
       maxTaxableSocialSecurityPercentage: 0.85,

@@ -110,6 +110,7 @@ const createEmptyIncomesData = (overrides?: Partial<IncomesData>): IncomesData =
   totalIncomeAfterPayrollDeductions: overrides?.totalIncomeAfterPayrollDeductions ?? 0,
   totalTaxFreeIncome: overrides?.totalTaxFreeIncome ?? 0,
   totalSocialSecurityIncome: overrides?.totalSocialSecurityIncome ?? 0,
+  totalAdditionalMedicareTax: overrides?.totalAdditionalMedicareTax ?? 0,
   perIncomeData: overrides?.perIncomeData ?? {},
 });
 
@@ -570,6 +571,63 @@ describe('ContributionRules', () => {
       expect(result.contributionAmount).toBe(4000);
       // Employer: match=2000, 2000 already matched → 0 remaining
       expect(result.employerMatchAmount).toBe(0);
+    });
+
+    it('should calculate employer match at 50% rate up to 4% of income limit', () => {
+      const tracker = new ContributionTracker();
+      const rule = new ContributionRule(
+        {
+          id: 'rule-1',
+          accountId: '401k-1',
+          rank: 1,
+          contributionType: 'dollarAmount',
+          dollarAmount: 10000,
+          employerMatchType: 'percentOfIncome',
+          employerMatchRate: 50,
+          employerMatchPercent: 4,
+        },
+        tracker
+      );
+      const account = new TaxDeferredAccount(create401kAccount());
+
+      // $120k/year salary → $10k/month. incomesData is monthly in the simulation.
+      const monthlyIncome = 10000;
+      const incomesData = createEmptyIncomesData({
+        totalIncome: monthlyIncome,
+      });
+
+      // 50% match up to 4% of income
+      // Annual max employer match = 4% × $120k = $4,800
+      //   (employerMatchPercent is the cap — matchRate does NOT apply to it)
+      // Match rate: 50% of each dollar contributed
+
+      // Month 1: Employee contributes $2,000
+      // matchOnThisContribution = 50% × $2,000 = $1,000
+      // remainingAnnualMatch = $4,800 - $0 = $4,800
+      // → $1,000
+      const result1 = rule.calculateContribution(2000, account, 35, incomesData);
+      expect(result1.contributionAmount).toBe(2000);
+      expect(result1.employerMatchAmount).toBe(1000);
+
+      rule.recordContribution(2000, 1000, '401k');
+
+      // Month 2: Employee contributes $3,000
+      // matchOnThisContribution = 50% × $3,000 = $1,500
+      // remainingAnnualMatch = $4,800 - $1,000 = $3,800
+      // → $1,500
+      const result2 = rule.calculateContribution(3000, account, 35, incomesData);
+      expect(result2.contributionAmount).toBe(3000);
+      expect(result2.employerMatchAmount).toBe(1500);
+
+      rule.recordContribution(3000, 1500, '401k');
+
+      // Month 3: Employee contributes $5,000
+      // matchOnThisContribution = 50% × $5,000 = $2,500
+      // remainingAnnualMatch = $4,800 - $2,500 = $2,300
+      // → $2,300
+      const result3 = rule.calculateContribution(5000, account, 35, incomesData);
+      expect(result3.contributionAmount).toBe(5000);
+      expect(result3.employerMatchAmount).toBe(2300);
     });
 
     describe('multi-account employer match independence', () => {

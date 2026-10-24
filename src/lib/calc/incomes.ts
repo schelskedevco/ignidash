@@ -2,14 +2,25 @@
  * Income processing for the simulation engine
  *
  * Handles multiple income sources with varying frequencies, time frames,
- * growth rates, and tax treatments (wage, exempt, Social Security).
- * Processes FICA tax (7.65%) and withholding at the income level.
+ * growth rates, and tax treatments (wage, exempt, Social Security, pension,
+ * self-employment). Processes FICA tax (SS wage base capped, Additional
+ * Medicare Tax) and withholding at the income level.
  */
 
 import type { IncomeInputs, IncomeType } from '@/lib/schemas/inputs/income-form-schema';
 import type { TimePoint } from '@/lib/schemas/inputs/income-expenses-shared-schemas';
 
 import type { SimulationState } from './simulation-engine';
+import {
+  SS_WAGE_BASE,
+  ADDITIONAL_MEDICARE_THRESHOLDS,
+  SOCIAL_SECURITY_TAX_RATE,
+  MEDICARE_TAX_RATE,
+  ADDITIONAL_MEDICARE_TAX_RATE,
+  SE_SOCIAL_SECURITY_TAX_RATE,
+  SE_MEDICARE_TAX_RATE,
+  SE_DEDUCTION_RATIO,
+} from './tax-data/fica-params';
 
 /** Processes all active incomes each month and aggregates annual totals */
 export class IncomesProcessor {
@@ -37,6 +48,7 @@ export class IncomesProcessor {
         acc.totalIncomeAfterPayrollDeductions += curr.incomeAfterPayrollDeductions;
         acc.totalTaxFreeIncome += curr.taxFreeIncome;
         acc.totalSocialSecurityIncome += curr.socialSecurityIncome;
+        acc.totalAdditionalMedicareTax += curr.additionalMedicareTax;
         return acc;
       },
       {
@@ -46,11 +58,12 @@ export class IncomesProcessor {
         totalIncomeAfterPayrollDeductions: 0,
         totalTaxFreeIncome: 0,
         totalSocialSecurityIncome: 0,
+        totalAdditionalMedicareTax: 0,
       }
     );
     const perIncomeData = Object.fromEntries(processedIncomes.map((income) => [income.id, income]));
 
-    const result = { ...totals, perIncomeData };
+    const result = { ...totals, perIncomeData, conversionIncome: 0 };
 
     this.monthlyData.push(result);
     return result;
@@ -69,6 +82,8 @@ export class IncomesProcessor {
         acc.totalIncomeAfterPayrollDeductions += curr.totalIncomeAfterPayrollDeductions;
         acc.totalTaxFreeIncome += curr.totalTaxFreeIncome;
         acc.totalSocialSecurityIncome += curr.totalSocialSecurityIncome;
+        acc.totalAdditionalMedicareTax += curr.totalAdditionalMedicareTax;
+        acc.conversionIncome += curr.conversionIncome;
 
         for (const [incomeID, incomeData] of Object.entries(curr.perIncomeData)) {
           const existing = acc.perIncomeData[incomeID];
@@ -80,6 +95,7 @@ export class IncomesProcessor {
             incomeAfterPayrollDeductions: (existing?.incomeAfterPayrollDeductions ?? 0) + incomeData.incomeAfterPayrollDeductions,
             taxFreeIncome: (existing?.taxFreeIncome ?? 0) + incomeData.taxFreeIncome,
             socialSecurityIncome: (existing?.socialSecurityIncome ?? 0) + incomeData.socialSecurityIncome,
+            additionalMedicareTax: (existing?.additionalMedicareTax ?? 0) + incomeData.additionalMedicareTax,
           };
         }
 
@@ -92,6 +108,8 @@ export class IncomesProcessor {
         totalIncomeAfterPayrollDeductions: 0,
         totalTaxFreeIncome: 0,
         totalSocialSecurityIncome: 0,
+        totalAdditionalMedicareTax: 0,
+        conversionIncome: 0,
         perIncomeData: {},
       } satisfies IncomesData
     );
@@ -105,6 +123,8 @@ export interface IncomesData {
   totalIncomeAfterPayrollDeductions: number;
   totalTaxFreeIncome: number;
   totalSocialSecurityIncome: number;
+  totalAdditionalMedicareTax: number;
+  conversionIncome: number;
   perIncomeData: Record<string, IncomeData>;
 }
 
@@ -130,6 +150,7 @@ export interface IncomeData {
   incomeAfterPayrollDeductions: number;
   taxFreeIncome: number;
   socialSecurityIncome: number;
+  additionalMedicareTax: number;
 }
 
 /** A single income source with frequency, growth, time frame, and tax treatment */
@@ -146,6 +167,9 @@ export class Income {
   private lastYear: number = 0;
   private incomeType: IncomeType;
   private withholdingRate: number;
+  /** Year-to-date wages for SS wage base cap and Additional Medicare Tax tracking */
+  private ytdWages: number = 0;
+  private lastFicaYear: number = -1;
 
   constructor(data: IncomeInputs) {
     this.hasOneTimeIncomeOccurred = false;
@@ -167,6 +191,13 @@ export class Income {
    * @returns Income data including gross, withholding, and FICA amounts
    */
   processMonthlyAmount(year: number): IncomeData {
+    // Reset YTD FICA tracking when a new year starts
+    const currentYear = Math.floor(year);
+    if (this.lastFicaYear !== currentYear) {
+      this.ytdWages = 0;
+      this.lastFicaYear = currentYear;
+    }
+
     const rawAmount = this.amount;
 
     const timesToApplyPerYear = this.getTimesToApplyPerYear();
@@ -174,7 +205,7 @@ export class Income {
 
     let annualAmount = rawAmount * timesToApplyPerYear;
 
-    if (this.lastYear !== Math.floor(year)) {
+    if (this.lastYear !== currentYear) {
       if (this.growthRate) {
         const realGrowthRate = this.growthRate / 100;
         annualAmount *= 1 + realGrowthRate;
@@ -189,7 +220,7 @@ export class Income {
         if (timesToApplyPerYear !== 0) this.amount = Math.max(annualAmount / timesToApplyPerYear, 0);
       }
 
-      this.lastYear = Math.floor(year);
+      this.lastYear = currentYear;
     }
 
     if (timesToApplyPerYear === 0) {
@@ -202,6 +233,7 @@ export class Income {
         incomeAfterPayrollDeductions: 0,
         taxFreeIncome: 0,
         socialSecurityIncome: 0,
+        additionalMedicareTax: 0,
       };
     }
 
@@ -211,11 +243,42 @@ export class Income {
     let ficaTax: number = 0;
     let taxFreeIncome: number = 0;
     let socialSecurityIncome: number = 0;
+    let additionalMedicareTax: number = 0;
     switch (this.incomeType) {
-      case 'wage':
+      case 'wage': {
         amountWithheld = income * (this.withholdingRate / 100);
-        ficaTax = income * 0.0765; // FICA: 6.2% Social Security + 1.45% Medicare
+
+        // Social Security wage base cap (6.2% up to SS_WAGE_BASE)
+        const remainingSSWageBase = Math.max(0, SS_WAGE_BASE[2026] - this.ytdWages);
+        const ssTaxableIncome = Math.min(income, remainingSSWageBase);
+        const ssTax = ssTaxableIncome * SOCIAL_SECURITY_TAX_RATE;
+
+        // Medicare tax (1.45%, no cap)
+        const medicareTax = income * MEDICARE_TAX_RATE;
+
+        // Additional Medicare Tax (0.9% on wages above threshold)
+        const cumulativeBeforeThisMonth = this.ytdWages;
+        const threshold = ADDITIONAL_MEDICARE_THRESHOLDS.single;
+        if (cumulativeBeforeThisMonth + income > threshold) {
+          const additionalMedicareIncome = Math.max(0, cumulativeBeforeThisMonth + income - threshold);
+          additionalMedicareTax = additionalMedicareIncome * ADDITIONAL_MEDICARE_TAX_RATE;
+        }
+
+        this.ytdWages += income;
+        ficaTax = ssTax + medicareTax;
         break;
+      }
+      case 'selfEmployment': {
+        // Self-employment tax: 15.3% on 92.35% of net earnings
+        const seNetEarnings = income * SE_DEDUCTION_RATIO;
+        ficaTax = seNetEarnings * (SE_SOCIAL_SECURITY_TAX_RATE + SE_MEDICARE_TAX_RATE);
+        amountWithheld = income * (this.withholdingRate / 100);
+        break;
+      }
+      case 'pension': {
+        amountWithheld = income * (this.withholdingRate / 100);
+        break;
+      }
       case 'exempt':
         taxFreeIncome = income;
         break;
@@ -239,6 +302,7 @@ export class Income {
       incomeAfterPayrollDeductions,
       taxFreeIncome,
       socialSecurityIncome,
+      additionalMedicareTax,
     };
   }
 

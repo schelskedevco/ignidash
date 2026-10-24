@@ -45,11 +45,14 @@ export const incomeTaxSchema = z
   )
   .refine(
     (data) => {
-      return !['selfEmployment', 'pension'].includes(data.incomeType);
+      if (data.incomeType === 'selfEmployment' && data.withholding !== undefined) {
+        return data.withholding >= 0;
+      }
+      return true;
     },
     {
-      message: 'This income type is not yet supported',
-      path: ['incomeType'],
+      message: 'Self-employment income can have a withholding rate set for estimated tax payments',
+      path: ['withholding'],
     }
   );
 
@@ -96,10 +99,10 @@ export const supportsWithholding = (incomeType: IncomeType): boolean => {
   switch (incomeType) {
     case 'wage':
     case 'socialSecurity':
+    case 'pension':
       return true;
     case 'exempt':
     case 'selfEmployment':
-    case 'pension':
       return false;
   }
 };
@@ -110,9 +113,10 @@ export const defaultWithholding = (incomeType: IncomeType): number | undefined =
       return 20;
     case 'socialSecurity':
       return 0;
+    case 'pension':
+      return 10;
     case 'exempt':
     case 'selfEmployment':
-    case 'pension':
       return undefined;
   }
 };

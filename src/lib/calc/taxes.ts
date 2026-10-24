@@ -15,11 +15,9 @@ import type { PortfolioData } from './portfolio';
 import type { ReturnsData } from './returns';
 import type { PhysicalAssetsData } from './physical-assets';
 import { sumFlows } from './asset';
-import {
-  STANDARD_DEDUCTION_SINGLE,
-  STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY,
-  STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD,
-} from './tax-data/standard-deduction';
+import { getStandardDeduction } from './tax-data/standard-deduction';
+import { IRMAA_TIERS_2026_MFJ } from './tax-data/irmaa-tiers';
+import { FPL_2026 } from './tax-data/aca-params';
 import {
   type FederalIncomeTaxBracket,
   FEDERAL_INCOME_TAX_BRACKETS_SINGLE,
@@ -65,6 +63,16 @@ export interface NIITData {
   threshold: number;
 }
 
+export interface IrmaaData {
+  annualPartB: number;
+  annualPartD: number;
+}
+
+export interface AcaData {
+  subsidy: number;
+  netPremium: number;
+}
+
 export interface TaxesData {
   federalIncomeTaxes: FederalIncomeTaxesData;
   capitalGainsTaxes: CapitalGainsTaxesData;
@@ -75,10 +83,15 @@ export interface TaxesData {
   totalTaxesDue: number;
   totalTaxesRefund: number;
   totalTaxableIncome: number;
+  totalPropertyTax: number;
   /** Above-the-line adjustments: tax-deferred contributions (401k/IRA/HSA), capital loss deduction, Section 121 exclusion */
   adjustments: Record<string, number>;
   /** Below-the-line deductions: standard deduction (itemized deductions not modeled) */
   deductions: Record<string, number>;
+  /** IRMAA surcharges (Part B & D). Only populated when age >= 65 and on Medicare. */
+  irmaa?: IrmaaData;
+  /** ACA premium tax credit. Only populated when age < 65 (pre-Medicare years). */
+  aca?: AcaData;
 }
 
 export interface EarlyWithdrawalPenaltyData {
@@ -104,6 +117,7 @@ export interface IncomeSourcesData {
   taxableDividendIncome: number;
   taxableInterestIncome: number;
   earnedIncome: number;
+  conversionIncome: number;
   socialSecurityIncome: number;
   taxableSocialSecurityIncome: number;
   /** IRC §86 threshold result: 0, 0.5, or 0.85 depending on provisional income */
@@ -126,6 +140,71 @@ export interface IncomeSourcesData {
     '401kAndIra': number;
     hsa: number;
   };
+}
+
+/**
+ * Calculates IRMAA (Income-Related Monthly Adjustment Amount) surcharges
+ * for Medicare Part B and Part D.
+ *
+ * Uses a 2-year lookback on MAGI. Single filers use half the MFJ thresholds.
+ * The surcharge is per person on Medicare.
+ *
+ * Source: CMS 2026 IRMAA Fact Sheet.
+ */
+export function calcIrmaaSurcharge(
+  magiTwoYearsAgo: number,
+  filingStatus: FilingStatus,
+  numOnMedicare: number,
+): { annualPartB: number; annualPartD: number } {
+  const thresholdMultiplier = filingStatus === 'marriedFilingJointly' ? 1.0 : 0.5;
+  const tier = IRMAA_TIERS_2026_MFJ.find(
+    (b) => magiTwoYearsAgo < b.magiThreshold * thresholdMultiplier
+  ) ?? IRMAA_TIERS_2026_MFJ.at(-1)!;
+  return {
+    annualPartB: tier.partBSurcharge * 12 * numOnMedicare,
+    annualPartD: tier.partDSurcharge * 12 * numOnMedicare,
+  };
+}
+
+/**
+ * Calculates ACA Premium Tax Credit and net premium.
+ *
+ * Under enhanced provisions (ARP/IRA, default true): no cliff, smooth sliding scale.
+ * Without enhanced provisions: hard cliff at 400% FPL.
+ *
+ * Source: HHS 2026 Poverty Guidelines, Healthcare.gov.
+ */
+export function calcAcaSubsidy(
+  householdIncome: number,
+  householdSize: number,
+  benchmarkPremium: number,
+  acaEnhancedSubsidies: boolean = true,
+): { subsidy: number; netPremium: number } {
+  const fpl = FPL_2026.base + (householdSize - 1) * FPL_2026.perPerson;
+  const fplRatio = householdIncome / fpl;
+
+  if (acaEnhancedSubsidies) {
+    const expectedContribution =
+      fplRatio <= 1.5 ? 0 :
+      fplRatio <= 2.0 ? householdIncome * 0.02 :
+      fplRatio <= 3.0 ? householdIncome * 0.06 :
+                         householdIncome * 0.085;
+    const subsidy = Math.max(0, benchmarkPremium - expectedContribution);
+    return { subsidy, netPremium: benchmarkPremium - subsidy };
+  }
+
+  // Without enhanced provisions: hard cliff at 400% FPL
+  if (fplRatio > 4.0) return { subsidy: 0, netPremium: benchmarkPremium };
+
+  const expectedContribution =
+    fplRatio <= 1.33 ? householdIncome * 0.02 :
+    fplRatio <= 1.5  ? householdIncome * 0.03 :
+    fplRatio <= 2.0  ? householdIncome * 0.04 :
+    fplRatio <= 2.5  ? householdIncome * 0.065 :
+    fplRatio <= 3.0  ? householdIncome * 0.085 :
+                        householdIncome * 0.096;
+  const subsidy = Math.max(0, benchmarkPremium - expectedContribution);
+  return { subsidy, netPremium: benchmarkPremium - subsidy };
 }
 
 /** Computes annual federal taxes across all tax types for a simulation year */
@@ -156,13 +235,17 @@ export class TaxProcessor {
    * @param annualIncomesData - Aggregated annual income data
    * @param annualReturnsData - Annual investment return data
    * @param annualPhysicalAssetsData - Annual physical asset data
+   * @param magiTwoYearsAgo - MAGI from 2 years ago for IRMAA calculation (optional)
+   * @param acaParams - ACA calculation parameters (optional, only used when age < 65)
    * @returns Complete tax breakdown including income, capital gains, NIIT, and penalties
    */
   process(
     annualPortfolioDataBeforeTaxes: PortfolioData,
     annualIncomesData: IncomesData,
     annualReturnsData: ReturnsData,
-    annualPhysicalAssetsData: PhysicalAssetsData
+    annualPhysicalAssetsData: PhysicalAssetsData,
+    magiTwoYearsAgo?: number,
+    acaParams?: { householdSize: number; benchmarkPremium: number; acaEnhancedSubsidies: boolean },
   ): TaxesData {
     const incomeData = this.getTaxableIncomeData(
       annualPortfolioDataBeforeTaxes,
@@ -215,6 +298,24 @@ export class TaxProcessor {
 
     const earlyWithdrawalPenalties = this.processEarlyWithdrawalPenalties(incomeData.earlyWithdrawals);
 
+    // IRMAA surcharge (age >= 65, Medicare years)
+    const age = this.simulationState.time.age;
+    let irmaa: IrmaaData | undefined;
+    if (age >= 65 && magiTwoYearsAgo !== undefined) {
+      irmaa = calcIrmaaSurcharge(magiTwoYearsAgo, this.filingStatus, 1);
+    }
+
+    // ACA premium tax credit (pre-Medicare years)
+    let aca: AcaData | undefined;
+    if (age < 65 && acaParams) {
+      aca = calcAcaSubsidy(
+        incomeData.adjustedGrossIncome,
+        acaParams.householdSize,
+        acaParams.benchmarkPremium,
+        acaParams.acaEnhancedSubsidies,
+      );
+    }
+
     const totalTaxLiabilityExcludingFICA =
       federalIncomeTaxes.federalIncomeTaxAmount +
       capitalGainsTaxes.capitalGainsTaxAmount +
@@ -232,12 +333,15 @@ export class TaxProcessor {
       totalTaxesDue: difference > 0 ? difference : 0,
       totalTaxesRefund: difference < 0 ? Math.abs(difference) : 0,
       totalTaxableIncome: taxableIncomeTaxedAsOrdinary + taxableIncomeTaxedAsCapitalGains,
+      totalPropertyTax: annualPhysicalAssetsData.totalPropertyTax,
       adjustments: {
         taxDeductibleContributions: incomeData.taxDeductibleContributions,
         capitalLossDeduction: incomeData.capitalLossDeduction,
         section121Exclusion: incomeData.section121Exclusion,
       },
       deductions: { standardDeduction },
+      irmaa,
+      aca,
     };
   }
 
@@ -303,8 +407,9 @@ export class TaxProcessor {
     const socialSecurityIncome = annualIncomesData.totalSocialSecurityIncome;
     const taxFreeIncome = annualIncomesData.totalTaxFreeIncome;
     const earnedIncome = totalIncomeFromIncomes - socialSecurityIncome - taxFreeIncome;
+    const conversionIncome = annualIncomesData.conversionIncome ?? 0;
 
-    const incomeTaxedAsOrdinaryExceptSocSec = earnedIncome + taxableRetirementDistributions + taxableInterestIncome;
+    const incomeTaxedAsOrdinaryExceptSocSec = earnedIncome + taxableRetirementDistributions + taxableInterestIncome + conversionIncome;
     const incomeTaxedAsLtcg = realizedGains + taxableDividendIncome;
     const grossIncomeExceptSocSec = incomeTaxedAsOrdinaryExceptSocSec + incomeTaxedAsLtcg;
 
@@ -344,6 +449,7 @@ export class TaxProcessor {
       taxableDividendIncome,
       taxableInterestIncome,
       earnedIncome,
+      conversionIncome,
       socialSecurityIncome,
       taxableSocialSecurityIncome,
       maxTaxableSocialSecurityPercentage,
@@ -524,14 +630,12 @@ export class TaxProcessor {
   }
 
   private getStandardDeduction(): number {
-    switch (this.filingStatus) {
-      case 'single':
-        return STANDARD_DEDUCTION_SINGLE;
-      case 'marriedFilingJointly':
-        return STANDARD_DEDUCTION_MARRIED_FILING_JOINTLY;
-      case 'headOfHousehold':
-        return STANDARD_DEDUCTION_HEAD_OF_HOUSEHOLD;
-    }
+    return getStandardDeduction(
+      this.filingStatus,
+      this.simulationState.time.age,
+      undefined, // spouseAge — Sprint 4 couple planning
+      this.simulationState.time.year,
+    );
   }
 
   private getFederalIncomeTaxBrackets(): FederalIncomeTaxBracket[] {

@@ -7,7 +7,7 @@
  */
 
 import { z } from 'zod';
-import { currencyFieldForbidsZero, optionalCurrencyFieldForbidsZero, percentageField } from '@/lib/utils/zod-utils';
+import { currencyFieldForbidsZero, optionalCurrencyFieldForbidsZero, percentageField, optionalPercentageField } from '@/lib/utils/zod-utils';
 
 import type { AccountInputs } from './account-form-schema';
 
@@ -25,6 +25,9 @@ const sharedContributionSchema = z.object({
   incomeId: z.string().optional(),
   disabled: z.boolean().optional(),
   employerMatch: optionalCurrencyFieldForbidsZero('Employer match must be greater than zero'),
+  employerMatchPercent: optionalPercentageField(0, 100, 'Employer match percentage'),
+  employerMatchType: z.enum(['dollarAmount', 'percentOfIncome']).optional(),
+  employerMatchRate: optionalPercentageField(0, 500, 'Employer match rate'),
   enableMegaBackdoorRoth: z.boolean().optional(),
 });
 
@@ -81,7 +84,7 @@ export const getAccountTypeLimitKey = (accountType: AccountInputs['type']): stri
   }
 };
 
-export const getAnnualContributionLimit = (limitKey: string, age: number): number => {
+export const getAnnualContributionLimit = (limitKey: string, age: number, hsaCoverageType?: 'individual' | 'family'): number => {
   switch (limitKey) {
     case '401kCombined':
       if (age >= 60 && age <= 63) return 35750;
@@ -89,8 +92,10 @@ export const getAnnualContributionLimit = (limitKey: string, age: number): numbe
       return 24500;
     case 'iraCombined':
       return age >= 50 ? 8600 : 7500;
-    case 'hsa':
-      return age >= 55 ? 5400 : 4400;
+    case 'hsa': {
+      const baseLimit = hsaCoverageType === 'family' ? 8750 : 4400;
+      return age >= 55 ? baseLimit + 1000 : baseLimit;
+    }
     default:
       return Infinity;
   }

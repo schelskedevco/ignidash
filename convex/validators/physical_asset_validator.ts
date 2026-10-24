@@ -35,6 +35,7 @@ export const physicalAssetValidator = v.object({
   purchasePrice: v.number(),
   marketValue: v.optional(v.number()),
   appreciationRate: v.number(),
+  propertyTaxRate: v.optional(v.number()),
   saleDate: v.optional(physicalAssetTimePointValidator),
   paymentMethod: paymentMethodValidator,
   syncedAssetId: v.optional(v.string()),

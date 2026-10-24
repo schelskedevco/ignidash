@@ -13,6 +13,9 @@ export const contributionRulesValidator = v.object({
   maxBalance: v.optional(v.number()),
   incomeId: v.optional(v.string()),
   employerMatch: v.optional(v.number()),
+  employerMatchPercent: v.optional(v.number()),
+  employerMatchType: v.optional(v.union(v.literal('dollarAmount'), v.literal('percentOfIncome'))),
+  employerMatchRate: v.optional(v.number()),
   enableMegaBackdoorRoth: v.optional(v.boolean()),
   // Deprecated — kept for migration compatibility
   incomeIds: v.optional(v.array(v.string())),

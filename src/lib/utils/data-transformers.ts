@@ -30,6 +30,7 @@ import type { SimulatorInputs } from '@/lib/schemas/inputs/simulator-schema';
 import type { AssetInputs } from '@/lib/schemas/finances/asset-form-schema';
 import type { LiabilityInputs } from '@/lib/schemas/finances/liability-form-schema';
 import type { GlidePathInputs } from '@/lib/schemas/inputs/glide-path-form-schema';
+import type { ConversionRuleInputs } from '@/lib/schemas/inputs/conversion-rule-schema';
 import type { SimulationResult } from '@/lib/calc/simulation-engine';
 
 // ============================================================================
@@ -49,7 +50,7 @@ export function accountFromConvex(account: Doc<'plans'>['accounts'][number]): Ac
     case 'roth401k':
     case 'roth403b':
     case 'rothIra':
-      return { ...base, type: account.type, percentBonds: account.percentBonds!, contributionBasis: account.contributionBasis };
+      return { ...base, type: account.type, percentBonds: account.percentBonds!, contributionBasis: account.contributionBasis, conversionBasis: account.conversionBasis };
     case '401k':
     case '403b':
     case 'ira':
@@ -68,6 +69,9 @@ export function contributionFromConvex(contribution: Doc<'plans'>['contributionR
     incomeId: contribution.incomeId,
     disabled: contribution.disabled ?? false,
     employerMatch: contribution.employerMatch,
+    employerMatchPercent: contribution.employerMatchPercent,
+    employerMatchType: contribution.employerMatchType ?? 'dollarAmount',
+    employerMatchRate: contribution.employerMatchRate ?? 100,
     enableMegaBackdoorRoth: contribution.enableMegaBackdoorRoth,
   };
 
@@ -86,7 +90,13 @@ export function baseContributionFromConvex(baseContribution: Doc<'plans'>['baseC
 }
 
 export function taxSettingsFromConvex(taxSettings: Doc<'plans'>['taxSettings']): TaxSettingsInputs {
-  return { filingStatus: taxSettings.filingStatus };
+  return {
+    filingStatus: taxSettings.filingStatus,
+    stateOfResidence: taxSettings.stateOfResidence ?? undefined,
+    numOnMedicare: taxSettings.numOnMedicare ?? 1,
+    acaEnhancedSubsidies: taxSettings.acaEnhancedSubsidies ?? true,
+    benchmarkPremium: taxSettings.benchmarkPremium ?? undefined,
+  };
 }
 
 export function privacySettingsFromConvex(privacySettings: Doc<'plans'>['privacySettings']): PrivacySettingsInputs {
@@ -134,6 +144,7 @@ export function physicalAssetFromConvex(physicalAsset: NonNullable<Doc<'plans'>[
     purchasePrice: physicalAsset.purchasePrice,
     marketValue: physicalAsset.marketValue,
     appreciationRate: physicalAsset.appreciationRate,
+    propertyTaxRate: physicalAsset.propertyTaxRate,
     saleDate: physicalAsset.saleDate ? { ...physicalAsset.saleDate } : { type: 'atLifeExpectancy' },
     paymentMethod: physicalAsset.paymentMethod,
     syncedAssetId: physicalAsset.syncedAssetId,
@@ -179,6 +190,7 @@ export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
   const debts = Object.fromEntries((plan.debts ?? []).map((debt) => [debt.id, debtFromConvex(debt)]));
   const physicalAssets = Object.fromEntries((plan.physicalAssets ?? []).map((asset) => [asset.id, physicalAssetFromConvex(asset)]));
   const contributionRules = Object.fromEntries(plan.contributionRules.map((rule) => [rule.id, contributionFromConvex(rule)]));
+  const conversionRules = (plan.conversionRules ?? []).map(conversionRuleFromConvex);
 
   return {
     timeline: timelineFromConvex(plan.timeline),
@@ -194,6 +206,7 @@ export function simulatorFromConvex(plan: Doc<'plans'>): SimulatorInputs {
     taxSettings: taxSettingsFromConvex(plan.taxSettings),
     privacySettings: privacySettingsFromConvex(plan.privacySettings),
     simulationSettings: simulationSettingsFromConvex(plan.simulationSettings),
+    conversionRules,
   };
 }
 
@@ -224,13 +237,21 @@ export function accountToConvex(account: AccountInputs): Doc<'plans'>['accounts'
     case 'roth401k':
     case 'roth403b':
     case 'rothIra':
-      return { ...base, type: account.type, percentBonds: account.percentBonds, contributionBasis: account.contributionBasis };
+      return { ...base, type: account.type, percentBonds: account.percentBonds, contributionBasis: account.contributionBasis, conversionBasis: account.conversionBasis };
     case '401k':
     case '403b':
     case 'ira':
     case 'hsa':
       return { ...base, type: account.type, percentBonds: account.percentBonds };
   }
+}
+
+export function conversionRuleFromConvex(rule: Doc<'plans'>['conversionRules'][number]): ConversionRuleInputs {
+  return { ...structuredClone(rule) };
+}
+
+export function conversionRuleToConvex(rule: ConversionRuleInputs): Doc<'plans'>['conversionRules'][number] {
+  return { ...structuredClone(rule) };
 }
 
 // Re-nests flat contributionType/dollarAmount back into the amount union.
@@ -243,6 +264,9 @@ export function contributionToConvex(contribution: ContributionInputs): Doc<'pla
     maxBalance: contribution.maxBalance,
     incomeId: contribution.incomeId,
     employerMatch: contribution.employerMatch,
+    employerMatchPercent: contribution.employerMatchPercent,
+    employerMatchType: contribution.employerMatchType,
+    employerMatchRate: contribution.employerMatchRate,
     enableMegaBackdoorRoth: contribution.enableMegaBackdoorRoth,
   };
 
@@ -261,7 +285,13 @@ export function baseContributionToConvex(baseContribution: BaseContributionInput
 }
 
 export function taxSettingsToConvex(taxSettings: TaxSettingsInputs): Doc<'plans'>['taxSettings'] {
-  return { filingStatus: taxSettings.filingStatus };
+  return {
+    filingStatus: taxSettings.filingStatus,
+    stateOfResidence: taxSettings.stateOfResidence,
+    numOnMedicare: taxSettings.numOnMedicare,
+    acaEnhancedSubsidies: taxSettings.acaEnhancedSubsidies,
+    benchmarkPremium: taxSettings.benchmarkPremium,
+  };
 }
 
 export function privacySettingsToConvex(privacySettings: PrivacySettingsInputs): Doc<'plans'>['privacySettings'] {
@@ -308,6 +338,7 @@ export function physicalAssetToConvex(physicalAsset: PhysicalAssetInputs): NonNu
     purchasePrice: physicalAsset.purchasePrice,
     marketValue: physicalAsset.marketValue,
     appreciationRate: physicalAsset.appreciationRate,
+    propertyTaxRate: physicalAsset.propertyTaxRate,
     saleDate: physicalAsset.saleDate ? { ...physicalAsset.saleDate } : undefined,
     paymentMethod: physicalAsset.paymentMethod,
     syncedAssetId: physicalAsset.syncedAssetId,
@@ -354,6 +385,7 @@ export function simulatorToConvex(
   const debts = Object.values(simulator.debts).map(debtToConvex);
   const physicalAssets = Object.values(simulator.physicalAssets).map(physicalAssetToConvex);
   const contributionRules = Object.values(simulator.contributionRules).map(contributionToConvex);
+  const conversionRules = simulator.conversionRules.map(conversionRuleToConvex);
 
   return {
     timeline: timelineToConvex(simulator.timeline),
@@ -369,6 +401,7 @@ export function simulatorToConvex(
     taxSettings: taxSettingsToConvex(simulator.taxSettings),
     privacySettings: privacySettingsToConvex(simulator.privacySettings),
     simulationSettings: simulationSettingsToConvex(simulator.simulationSettings),
+    conversionRules,
   };
 }
 
