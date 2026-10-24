@@ -20,9 +20,7 @@ import {
   supportsIncomeAllocation,
   supportsEmployerMatch,
   supportsMegaBackdoorRoth,
-  getAccountTypeLimitKey,
-  getAnnualContributionLimit,
-  getAnnualSection415cLimit,
+  getAnnualContributionLimitForAccount,
 } from '@/lib/schemas/inputs/contribution-form-schema';
 import { accountTypeForDisplay } from '@/lib/schemas/inputs/account-form-schema';
 import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
@@ -36,6 +34,7 @@ import { formatCompactCurrency, getCurrencySymbol, formatCurrencyPlaceholder } f
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import { getErrorMessages } from '@/lib/utils/form-utils';
 import { Divider } from '@/components/catalyst/divider';
+import ContributionLimitTooltip from '../contribution-limit-tooltip';
 
 interface ContributionRuleDialogProps {
   onClose: () => void;
@@ -110,9 +109,7 @@ export default function ContributionRuleDialog({
   const timeline = useTimelineData();
   const currentAge = timeline ? calculateAge(timeline.birthMonth, timeline.birthYear) : 18;
   const selectedAccountAnnualContributionLimit = selectedAccount
-    ? enableMegaBackdoorRoth
-      ? getAnnualSection415cLimit(currentAge)
-      : getAnnualContributionLimit(getAccountTypeLimitKey(selectedAccount.type), currentAge)
+    ? getAnnualContributionLimitForAccount(selectedAccount.type, currentAge, { enableMegaBackdoorRoth })
     : null;
 
   const { data: incomes } = useIncomesData();
@@ -203,7 +200,10 @@ export default function ContributionRuleDialog({
               )}
               <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                 <Field className={getContributionTypeColSpan()}>
-                  <Label htmlFor="contributionType">Type</Label>
+                  <Label htmlFor="contributionType" className="flex items-center gap-1.5">
+                    Type
+                    {contributionType === 'unlimited' && <ContributionLimitTooltip annualLimit={selectedAccountAnnualContributionLimit} />}
+                  </Label>
                   <Select
                     {...register('contributionType')}
                     id="contributionType"
@@ -212,7 +212,7 @@ export default function ContributionRuleDialog({
                   >
                     <option value="dollarAmount">Dollar Amount</option>
                     <option value="percentRemaining">% Remaining</option>
-                    <option value="unlimited">Unlimited</option>
+                    <option value="unlimited">All Remaining</option>
                   </Select>
                   {errors.contributionType && <ErrorMessage>{errors.contributionType?.message}</ErrorMessage>}
                 </Field>
