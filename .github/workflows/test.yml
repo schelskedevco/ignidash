@@ -15,6 +15,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Validate self-hosting configuration
+        run: |
+          test -L .env
+          test "$(readlink .env)" = '.env.local'
+          cp .env.selfhost.example .env.local
+          docker compose config --quiet
+          docker compose config --format json | jq -e '.services.app.environment | (has("BETTER_AUTH_SECRET") or has("CONVEX_API_SECRET") or has("GOOGLE_CLIENT_SECRET") or has("STRIPE_SECRET_KEY") or has("OPENAI_API_KEY") or has("RESEND_API_KEY")) | not'
+          sh scripts/selfhost.test.sh
+
+      - name: Check self-hosting scripts
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes shellcheck
+          shellcheck scripts/convex-admin-key.sh scripts/convex-init.sh scripts/selfhost.sh scripts/selfhost.test.sh
+
+      - name: Build Convex initializer image
+        run: docker build --target convex-init --tag ignidash-convex-init:test .
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:

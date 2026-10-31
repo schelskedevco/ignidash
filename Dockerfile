@@ -8,6 +8,24 @@ RUN apk add --no-cache libc6-compat
 COPY package.json package-lock.json ./
 RUN npm ci
 
+# One-shot image used by Docker Compose to deploy the Convex backend.
+FROM node:22-alpine AS convex-init
+WORKDIR /app
+
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 --ingroup nodejs nextjs
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/package.json /app/package-lock.json ./
+COPY --chown=nextjs:nodejs convex ./convex
+COPY --chown=nextjs:nodejs tsconfig.json ./
+COPY --chown=nextjs:nodejs scripts/convex-init.sh ./scripts/convex-init.sh
+
+RUN chmod +x ./scripts/convex-init.sh
+
+USER nextjs
+
+ENTRYPOINT ["./scripts/convex-init.sh"]
+
 # Stage 2: Builder
 FROM node:22-alpine AS builder
 WORKDIR /app
