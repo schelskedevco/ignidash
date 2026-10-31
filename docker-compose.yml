@@ -1,6 +1,6 @@
 services:
   convex-backend:
-    image: ghcr.io/get-convex/convex-backend:latest
+    image: ghcr.io/convex/convex-backend:latest
     restart: unless-stopped
     ports:
       - '3210:3210'
@@ -20,8 +20,39 @@ services:
     stop_signal: SIGINT
     stop_grace_period: 10s
 
+  convex-admin-key:
+    image: ghcr.io/convex/convex-backend:latest
+    restart: 'no'
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+    volumes:
+      - convex-data:/convex/data
+      - convex-credentials:/credentials
+      - ./scripts/convex-admin-key.sh:/usr/local/bin/convex-admin-key.sh:ro
+    entrypoint: ['/bin/sh', '/usr/local/bin/convex-admin-key.sh']
+
+  convex-init:
+    build:
+      context: .
+      target: convex-init
+    restart: 'no'
+    depends_on:
+      convex-backend:
+        condition: service_healthy
+      convex-admin-key:
+        condition: service_completed_successfully
+    env_file:
+      - .env.local
+    environment:
+      - CONVEX_SELF_HOSTED_URL=http://convex-backend:3210
+      - CONVEX_ADMIN_KEY_FILE=/run/ignidash/admin-key
+      - SELF_HOSTED=true
+    volumes:
+      - convex-credentials:/run/ignidash:ro
+
   convex-dashboard:
-    image: ghcr.io/get-convex/convex-dashboard:latest
+    image: ghcr.io/convex/convex-dashboard:latest
     restart: unless-stopped
     ports:
       - '6791:6791'
@@ -40,15 +71,15 @@ services:
     ports:
       - '3000:3000'
     depends_on:
-      convex-backend:
-        condition: service_healthy
-    env_file:
-      - .env.local
+      convex-init:
+        condition: service_completed_successfully
     environment:
       - NODE_ENV=production
       - SELF_HOSTED_CONVEX_URL=http://convex-backend:3210
       - SELF_HOSTED_CONVEX_SITE_URL=http://convex-backend:3211
       - SITE_URL=${SITE_URL:-http://localhost:3000}
+      - NEXT_PUBLIC_CONVEX_URL=${NEXT_PUBLIC_CONVEX_URL:-http://localhost:3210}
+      - NEXT_PUBLIC_CONVEX_SITE_URL=${NEXT_PUBLIC_CONVEX_SITE_URL:-http://localhost:3211}
     healthcheck:
       test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:3000/api/health']
       interval: 10s
@@ -65,3 +96,4 @@ services:
 
 volumes:
   convex-data:
+  convex-credentials:

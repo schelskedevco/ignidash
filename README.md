@@ -96,7 +96,7 @@ See [Known Limitations](https://www.ignidash.com/help#:~:text=Known%20limitation
 
 ## Self-Hosting with Docker
 
-See [SELF_HOSTING.md](./SELF_HOSTING.md) for how to host Ignidash yourself with Docker.
+Self-hosting requires only Docker and Docker Compose on the host. See [SELF_HOSTING.md](./SELF_HOSTING.md) for the automated installation and upgrade guide.
 
 ## Local Development
 
@@ -135,11 +135,13 @@ openssl rand -base64 32  # For CONVEX_API_SECRET
 
 ### Syncing Environment Variables
 
-After updating `.env.local`, sync your environment variables to Convex:
+For Docker self-hosting, reconcile `.env.local` through the initializer:
 
 ```bash
-npm run selfhost -- --sync-only
+docker compose up -d --build
 ```
+
+For cloud development, configure function environment variables through the Convex Dashboard or Convex CLI for that deployment.
 
 ### Running Locally
 
