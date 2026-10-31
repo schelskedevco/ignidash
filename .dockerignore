@@ -53,6 +53,7 @@ demo-log.json
 
 # Scripts (not needed at runtime)
 scripts/
+!scripts/convex-init.sh
 
 # Backup files
 *.backup
