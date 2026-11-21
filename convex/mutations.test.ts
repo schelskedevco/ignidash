@@ -196,9 +196,9 @@ describe('upsertIncome', () => {
     });
   });
 
-  it('throws at max 10 incomes on insert', async () => {
+  it('throws at max 25 incomes on insert', async () => {
     const t = convexTest(schema, modules);
-    const incomes = Array.from({ length: 10 }, (_, i) => ({
+    const incomes = Array.from({ length: 25 }, (_, i) => ({
       id: `inc-${i}`,
       name: `Income ${i}`,
       amount: 50000,
@@ -215,9 +215,9 @@ describe('upsertIncome', () => {
     await expect(asUser.mutation(api.income.upsertIncome, { planId, income: newIncome })).rejects.toThrow();
   });
 
-  it('allows update when at max 10', async () => {
+  it('allows update when at max 25', async () => {
     const t = convexTest(schema, modules);
-    const incomes = Array.from({ length: 10 }, (_, i) => ({
+    const incomes = Array.from({ length: 25 }, (_, i) => ({
       id: `inc-${i}`,
       name: `Income ${i}`,
       amount: 50000,
@@ -238,7 +238,7 @@ describe('upsertIncome', () => {
 
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
-      expect(plan!.incomes).toHaveLength(10);
+      expect(plan!.incomes).toHaveLength(25);
       expect(plan!.incomes.find((i) => i.id === 'inc-0')!.name).toBe('Updated');
     });
   });
@@ -291,9 +291,9 @@ describe('upsertExpense', () => {
     });
   });
 
-  it('throws at max 10 expenses on insert', async () => {
+  it('throws at max 25 expenses on insert', async () => {
     const t = convexTest(schema, modules);
-    const expenses = Array.from({ length: 10 }, (_, i) => ({
+    const expenses = Array.from({ length: 25 }, (_, i) => ({
       id: `exp-${i}`,
       name: `Expense ${i}`,
       amount: 10000,
@@ -309,9 +309,9 @@ describe('upsertExpense', () => {
     await expect(asUser.mutation(api.expense.upsertExpense, { planId, expense: newExpense })).rejects.toThrow();
   });
 
-  it('allows update when at max 10', async () => {
+  it('allows update when at max 25', async () => {
     const t = convexTest(schema, modules);
-    const expenses = Array.from({ length: 10 }, (_, i) => ({
+    const expenses = Array.from({ length: 25 }, (_, i) => ({
       id: `exp-${i}`,
       name: `Expense ${i}`,
       amount: 10000,
@@ -331,7 +331,7 @@ describe('upsertExpense', () => {
 
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
-      expect(plan!.expenses).toHaveLength(10);
+      expect(plan!.expenses).toHaveLength(25);
       expect(plan!.expenses.find((e) => e.id === 'exp-0')!.name).toBe('Updated');
     });
   });
@@ -388,9 +388,9 @@ describe('upsertDebt', () => {
     });
   });
 
-  it('throws at max 10 debts on insert', async () => {
+  it('throws at max 25 debts on insert', async () => {
     const t = convexTest(schema, modules);
-    const debts = Array.from({ length: 10 }, (_, i) => ({
+    const debts = Array.from({ length: 25 }, (_, i) => ({
       id: `debt-${i}`,
       name: `Debt ${i}`,
       balance: 10000,
@@ -408,9 +408,9 @@ describe('upsertDebt', () => {
     await expect(asUser.mutation(api.debt.upsertDebt, { planId, debt: newDebt })).rejects.toThrow();
   });
 
-  it('allows update when at max 10', async () => {
+  it('allows update when at max 25', async () => {
     const t = convexTest(schema, modules);
-    const debts = Array.from({ length: 10 }, (_, i) => ({
+    const debts = Array.from({ length: 25 }, (_, i) => ({
       id: `debt-${i}`,
       name: `Debt ${i}`,
       balance: 10000,
@@ -432,7 +432,7 @@ describe('upsertDebt', () => {
 
     await t.run(async (ctx) => {
       const plan = await ctx.db.get(planId);
-      expect(plan!.debts).toHaveLength(10);
+      expect(plan!.debts).toHaveLength(25);
       expect(plan!.debts!.find((d) => d.id === 'debt-0')!.name).toBe('Updated');
     });
   });
@@ -487,9 +487,9 @@ describe('upsertPhysicalAsset', () => {
     });
   });
 
-  it('throws at max 10 physical assets on insert', async () => {
+  it('throws at max 25 physical assets on insert', async () => {
     const t = convexTest(schema, modules);
-    const physicalAssets = Array.from({ length: 10 }, (_, i) => ({
+    const physicalAssets = Array.from({ length: 25 }, (_, i) => ({
       id: `pa-${i}`,
       name: `Asset ${i}`,
       purchaseDate: { type: 'now' as const },
