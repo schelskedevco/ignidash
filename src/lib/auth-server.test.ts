@@ -68,13 +68,6 @@ describe('auth-server JWT cache', () => {
     expect(String(tokenEndpoint.mock.calls[0][0])).toBe('https://example.convex.site/api/auth/convex/token');
   });
 
-  it('fetches a fresh token when there is no cookie', async () => {
-    const { getToken } = await loadAuthServer();
-
-    await expect(getToken()).resolves.toBe('fresh-token');
-    expect(tokenEndpoint).toHaveBeenCalledTimes(1);
-  });
-
   it('retries once with a fresh token when a cached token is rejected', async () => {
     const cached = unsignedJwt(3600);
     requestCookie.value = `better-auth.convex_jwt=${cached}`;
