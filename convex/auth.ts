@@ -100,7 +100,7 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
       },
       changeEmail: {
         enabled: true,
-        sendChangeEmailVerification: async ({ user, newEmail, url, token }, request) => {
+        sendChangeEmailConfirmation: async ({ user, newEmail, url, token }, request) => {
           const { ok } = await rateLimiter.limit(requireActionCtx(ctx), 'emailChange', { key: user.id });
           if (!ok) throw new APIError('TOO_MANY_REQUESTS', { message: 'Too many email change requests. Please try again later.' });
 
