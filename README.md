@@ -144,7 +144,10 @@ npm run selfhost -- --sync-only
 ### Running Locally
 
 ```bash
-# Terminal 1: Start Convex (follow prompts to create deployment)
+# One-time: select a local Convex deployment (or `npx convex deployment select dev` for a cloud dev deployment)
+npx convex deployment select local
+
+# Terminal 1: Start Convex against the selected deployment
 npm run dev:convex
 
 # Terminal 2: Start Next.js dev server
@@ -155,16 +158,16 @@ Open http://localhost:3000 in your browser.
 
 ### Available Scripts
 
-| Command              | Description                |
-| -------------------- | -------------------------- |
-| `npm run dev`        | Start Next.js dev server   |
-| `npm run dev:convex` | Start Convex local backend |
-| `npm run build`      | Production build           |
-| `npm run lint`       | Run ESLint                 |
-| `npm run lint:fix`   | Run ESLint with auto-fix   |
-| `npm run typecheck`  | TypeScript type checking   |
-| `npm run format`     | Format with Prettier       |
-| `npm run test`       | Run Vitest tests           |
+| Command              | Description              |
+| -------------------- | ------------------------ |
+| `npm run dev`        | Start Next.js dev server |
+| `npm run dev:convex` | Start Convex dev server  |
+| `npm run build`      | Production build         |
+| `npm run lint`       | Run ESLint               |
+| `npm run lint:fix`   | Run ESLint with auto-fix |
+| `npm run typecheck`  | TypeScript type checking |
+| `npm run format`     | Format with Prettier     |
+| `npm run test`       | Run Vitest tests         |
 
 ### Code Style
 

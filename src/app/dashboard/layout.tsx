@@ -37,6 +37,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   useEffect(() => {
     if (onboardingDialogCompleted === undefined) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!onboardingDialogCompleted) setOnboardingDialogOpen(true);
   }, [onboardingDialogCompleted]);
 
