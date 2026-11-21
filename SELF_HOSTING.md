@@ -54,11 +54,13 @@ Your self-hosted Ignidash is now running. If you find bugs or have feature reque
 
 ## Docker Images
 
-| Tag      | Description                                        |
-| -------- | -------------------------------------------------- |
-| `stable` | Latest tagged release (recommended for production) |
-| `latest` | Latest commit to main branch                       |
-| `vX.Y.Z` | Specific version                                   |
+| Tag                  | Description                                        |
+| -------------------- | -------------------------------------------------- |
+| `stable`             | Latest tagged release (recommended for production) |
+| `latest`             | Latest commit to main branch                       |
+| `X.Y.Z` (e.g. 0.3.0) | Specific release (no `v` prefix)                   |
+| `X.Y` (e.g. 0.3)     | Latest patch release of a minor version            |
+| `<short-sha>`        | A specific commit on main (e.g. `56a1aac`)         |
 
 The default `docker-compose.yml` uses `stable`.
 
