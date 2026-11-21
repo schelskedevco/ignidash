@@ -9,6 +9,9 @@ import { convexBetterAuthNextJs } from '@convex-dev/better-auth/nextjs';
  * otherwise retries once with a freshly fetched token. Returning false means any failure on a cached
  * token (for example, a JWT signed by a rotated key) gets one retry with a fresh token. Failures on a
  * fresh token are never retried. Covered by auth-server.test.ts.
+ *
+ * The retry also applies to fetchAuthMutation and fetchAuthAction. Mutations are transactional, so a retry
+ * is safe, but actions are not: an action with side effects that throws on a cached token runs twice.
  */
 export const jwtCache = {
   enabled: true,
