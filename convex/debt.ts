@@ -43,7 +43,7 @@ export const upsertDebt = mutation({
     const debts = plan.debts ?? [];
 
     const existingIndex = debts.findIndex((d) => d.id === debt.id);
-    if (existingIndex === -1 && debts.length >= 10) throw new ConvexError('Maximum of 10 debts reached.');
+    if (existingIndex === -1 && debts.length >= 25) throw new ConvexError('Maximum of 25 debts reached.');
 
     const updatedDebts = existingIndex !== -1 ? debts.map((d, index) => (index === existingIndex ? debt : d)) : [...debts, debt];
 

@@ -43,7 +43,7 @@ export const upsertPhysicalAsset = mutation({
     const physicalAssets = plan.physicalAssets ?? [];
 
     const existingIndex = physicalAssets.findIndex((pa) => pa.id === physicalAsset.id);
-    if (existingIndex === -1 && physicalAssets.length >= 10) throw new ConvexError('Maximum of 10 physical assets reached.');
+    if (existingIndex === -1 && physicalAssets.length >= 25) throw new ConvexError('Maximum of 25 physical assets reached.');
 
     const updatedPhysicalAssets =
       existingIndex !== -1
