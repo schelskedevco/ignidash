@@ -71,6 +71,8 @@ export const tables = {
     privateKey: v.string(),
     createdAt: v.number(),
     expiresAt: v.optional(v.union(v.null(), v.number())),
+    alg: v.optional(v.union(v.null(), v.string())),
+    crv: v.optional(v.union(v.null(), v.string())),
   }),
   subscription: defineTable({
     plan: v.string(),
@@ -83,7 +85,12 @@ export const tables = {
     trialStart: v.optional(v.union(v.null(), v.number())),
     trialEnd: v.optional(v.union(v.null(), v.number())),
     cancelAtPeriodEnd: v.optional(v.union(v.null(), v.boolean())),
+    cancelAt: v.optional(v.union(v.null(), v.number())),
+    canceledAt: v.optional(v.union(v.null(), v.number())),
+    endedAt: v.optional(v.union(v.null(), v.number())),
     seats: v.optional(v.union(v.null(), v.number())),
+    billingInterval: v.optional(v.union(v.null(), v.string())),
+    stripeScheduleId: v.optional(v.union(v.null(), v.string())),
   }),
 };
 
