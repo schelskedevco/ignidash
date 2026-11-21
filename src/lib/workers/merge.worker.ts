@@ -22,7 +22,17 @@ import type { KeyMetrics } from '@/lib/types/key-metrics';
 type CacheEntry = { handle: string; res: MultiSimulationResult };
 let cache: CacheEntry | null = null;
 
-let partialResults: MultiSimulationResult[] = [];
+/** Per-run state, keyed by run ID, so overlapping runs (e.g. a seed change mid-run) never mix results or close each other's ports. */
+type RunState = { partialResults: MultiSimulationResult[]; ports: MessagePort[] };
+const runs = new Map<string, RunState>();
+
+/** The most recently started run; only its merged result is cached. */
+let latestRunId: string | null = null;
+
+/** The narrow API exposed to simulation workers over their dedicated ports. */
+export type PartialResultSink = {
+  addPartialResult(result: MultiSimulationResult): Promise<void>;
+};
 
 type DerivedMultiSimulationData = {
   analysis: MultiSimulationAnalysis;
@@ -33,18 +43,45 @@ type DerivedMultiSimulationData = {
 };
 
 const mergeAPI = {
-  /** Buffers a partial result from a simulation worker for later merging. */
-  async addPartialResult(result: MultiSimulationResult): Promise<void> {
-    partialResults.push(result);
+  /**
+   * Exposes a run-scoped PartialResultSink on a port whose other end is held by a simulation worker,
+   * so partial results bypass the main thread.
+   */
+  async connect(runId: string, port: MessagePort): Promise<void> {
+    let run = runs.get(runId);
+    if (!run) {
+      run = { partialResults: [], ports: [] };
+      runs.set(runId, run);
+      latestRunId = runId;
+    }
+
+    const runState = run;
+    const sink: PartialResultSink = {
+      async addPartialResult(result) {
+        runState.partialResults.push(result);
+      },
+    };
+
+    Comlink.expose(sink, port);
+    run.ports.push(port);
   },
 
-  /** Merges all buffered partial results, caches the combined result, and returns a UUID handle. */
-  async getMergedResult(): Promise<{ handle: string }> {
-    const merged: MultiSimulationResult = { simulations: partialResults.flatMap((r) => r.simulations) };
-    partialResults = [];
+  /** Closes a run's simulation worker ports and drops any unmerged results once its pool is released. */
+  async disconnect(runId: string): Promise<void> {
+    runs.get(runId)?.ports.forEach((port) => port.close());
+    runs.delete(runId);
+  },
+
+  /** Merges a run's buffered partial results, caches the combined result if the run is the latest, and returns a UUID handle. */
+  async getMergedResult(runId: string): Promise<{ handle: string }> {
+    const run = runs.get(runId);
+    if (!run) throw new Error('Simulation run not found');
+
+    const merged: MultiSimulationResult = { simulations: run.partialResults.flatMap((r) => r.simulations) };
+    run.partialResults = [];
 
     const handle = uuidv4();
-    cache = { handle, res: merged };
+    if (runId === latestRunId) cache = { handle, res: merged };
     return { handle };
   },
 
@@ -69,9 +106,9 @@ const mergeAPI = {
     return { analysis, tableData, yearlyTableData, chartData: { portfolioData, phasesData }, keyMetrics };
   },
 
+  /** Drops the cached merged result; per-run buffers are owned by their runs and cleaned up on disconnect. */
   async reset(): Promise<void> {
     cache = null;
-    partialResults = [];
   },
 };
 

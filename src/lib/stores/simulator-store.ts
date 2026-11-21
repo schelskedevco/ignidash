@@ -18,7 +18,7 @@ import { LcgHistoricalBacktestReturnsProvider } from '@/lib/calc/returns-provide
 import { KeyMetricsExtractor } from '@/lib/calc/data-extractors/key-metrics-extractor';
 import { ChartDataExtractor } from '@/lib/calc/data-extractors/chart-data-extractor';
 import { TableDataExtractor } from '@/lib/calc/data-extractors/table-data-extractor';
-import { createWorkerPool, releaseWorkerPool } from '@/lib/workers/simulation-worker-api';
+import { createWorkerPool } from '@/lib/workers/simulation-worker-api';
 import { getMergeWorker } from '@/lib/workers/merge-worker-api';
 import type {
   SingleSimulationNetWorthTableRow,
@@ -467,7 +467,7 @@ export const useMultiSimulationResult = (
     async () => {
       await Promise.all([mutate(() => true, undefined, { revalidate: false }), mergeWorker.reset()]);
 
-      const pool = createWorkerPool();
+      const pool = await createWorkerPool();
 
       const chunks: number[] = [];
       for (let i = 0; i < 500; i += 10) {
@@ -480,17 +480,20 @@ export const useMultiSimulationResult = (
         return { size: chunks[chunkIndex], seed: simulationSeed + chunkIndex * 9973, index: chunkIndex++ };
       };
 
-      await Promise.all(
-        pool.map(async (worker) => {
-          let chunk;
-          while ((chunk = getNextChunk())) {
-            await worker.runSimulation(inputs, chunk.seed, chunk.size, simulationMode, mergeWorker, Comlink.proxy(onProgress));
-          }
-        })
-      );
+      try {
+        await Promise.all(
+          pool.apis.map(async (worker) => {
+            let chunk;
+            while ((chunk = getNextChunk())) {
+              await worker.runSimulation(inputs, chunk.seed, chunk.size, simulationMode, Comlink.proxy(onProgress));
+            }
+          })
+        );
 
-      releaseWorkerPool();
-      return mergeWorker.getMergedResult();
+        return await mergeWorker.getMergedResult(pool.runId);
+      } finally {
+        pool.release();
+      }
     },
     swrOptions
   );
