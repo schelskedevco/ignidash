@@ -142,7 +142,7 @@ export default async function RootLayout({
   const initialToken = await getToken();
 
   return (
-    <html lang="en" className="h-full" suppressHydrationWarning>
+    <html lang="en" className="h-full" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className={`${figtree.variable} ${geistMono.variable} ${geist.variable} h-full antialiased`}>
         <script
           type="application/ld+json"
