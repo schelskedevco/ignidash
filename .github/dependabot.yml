@@ -15,10 +15,8 @@ updates:
       minor-and-patch:
         update-types: [minor, patch]
     ignore:
-      - dependency-name: convex
-        versions: ['>=1.49.0'] # 1.49+ requires Node 22; remove after moving off Node 20
       - dependency-name: '@types/node'
-        update-types: ['version-update:semver-major'] # keep matched to runtime Node
+        update-types: ['version-update:semver-major'] # keep matched to the engines.node floor in package.json
 
   - package-ecosystem: github-actions
     directory: /
@@ -34,4 +32,4 @@ updates:
       interval: monthly
     ignore:
       - dependency-name: node
-        update-types: ['version-update:semver-major']
+        update-types: ['version-update:semver-major'] # bump by hand alongside .nvmrc

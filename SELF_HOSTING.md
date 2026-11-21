@@ -10,7 +10,7 @@ Follow the steps below to get your app running.
 
 #### Node.js
 
-1. Install Node.js 20+ from the [official website](https://nodejs.org/)
+1. Install Node.js 22+ (24 recommended) from the [official website](https://nodejs.org/)
 2. Verify Node.js is installed:
 
 ```bash
@@ -87,6 +87,8 @@ git pull                 # Update app code and Convex functions
 docker compose pull      # Pull latest images (app, Convex backend, and dashboard)
 npm run selfhost         # Rebuild, sync env vars, and deploy
 ```
+
+> **Note:** Since v0.4.0, `npm run selfhost` requires Node.js 22+ on the host machine. Check with `node --version` and upgrade before running it.
 
 It's recommended to back up with `npx convex export` before upgrading. See [Convex Upgrading Guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md) for more.
 

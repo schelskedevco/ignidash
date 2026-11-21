@@ -163,7 +163,12 @@ jobs:
             TAG="${GITHUB_REF_NAME//\//-}"
           fi
           echo "Using tag: $TAG"
-          docker run --rm --platform linux/amd64 --entrypoint node ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG --version
+          NODE_VERSION=$(docker run --rm --platform linux/amd64 --entrypoint node ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG --version)
+          echo "Node version: $NODE_VERSION"
+          if [[ "$NODE_VERSION" != v24.* ]]; then
+            echo "::error::Expected Node v24.x in image, got $NODE_VERSION"
+            exit 1
+          fi
           echo "Image test passed"
 
   summary:

@@ -53,6 +53,15 @@ check_prerequisites() {
         exit 1
     fi
 
+    # The Convex CLI runs on the host and requires Node 22+
+    local node_major
+    node_major=$(node -p 'process.versions.node.split(".")[0]')
+    if [ "$node_major" -lt 22 ]; then
+        echo -e "${RED}Error: Node.js 22+ is required on the host (for the Convex CLI); found $(node --version)${NC}"
+        echo "Install Node.js 22 or newer (24 recommended): https://nodejs.org/"
+        exit 1
+    fi
+
     echo "Installing dependencies..."
     npm install
 
