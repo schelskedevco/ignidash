@@ -451,6 +451,7 @@ export const useMultiSimulationResult = (
   const onProgress = useCallback(() => setCompletedSimulations((prev) => prev + 1), []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCompletedSimulations(0);
   }, [planId, simulationSeed, simulationMode]);
 

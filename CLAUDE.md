@@ -22,7 +22,7 @@ Ignidash is an open-source personal financial planning app (AGPL-3.0). It runs M
 
 ```bash
 npm run dev              # Next.js dev server
-npm run dev:convex       # Local Convex backend (run alongside dev)
+npm run dev:convex       # Convex dev against the selected deployment (run alongside dev; first run `npx convex deployment select local`)
 npm run build            # Production build
 npm run lint:fix         # ESLint auto-fix
 npm run format           # Prettier format all
