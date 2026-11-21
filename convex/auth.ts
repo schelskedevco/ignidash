@@ -42,12 +42,6 @@ export const createAuthOptions = (ctx: GenericCtx<DataModel>) => {
     session: {
       expiresIn: 60 * 60 * 24 * 7,
       updateAge: 60 * 60 * 24,
-      cookieCache: {
-        enabled: true,
-        maxAge: 60 * 60 * 24 * 7,
-        strategy: 'jwt',
-        refreshCache: true,
-      },
     },
     baseURL,
     database: authComponent.adapter(ctx),
