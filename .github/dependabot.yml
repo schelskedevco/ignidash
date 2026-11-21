@@ -1,0 +1,37 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 3 # don't take releases newer than 3 days (supply-chain buffer)
+      semver-major-days: 14
+    groups:
+      better-auth: # peer deps; must move in lockstep
+        patterns: ['better-auth', '@better-auth/*', '@convex-dev/better-auth']
+      minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      - dependency-name: convex
+        versions: ['>=1.49.0'] # 1.49+ requires Node 22; remove after moving off Node 20
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major'] # keep matched to runtime Node
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ['*']
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: monthly
+    ignore:
+      - dependency-name: node
+        update-types: ['version-update:semver-major']
