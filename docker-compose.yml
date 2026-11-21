@@ -1,6 +1,6 @@
 services:
   convex-backend:
-    image: ghcr.io/get-convex/convex-backend:latest
+    image: ghcr.io/convex/convex-backend:latest
     restart: unless-stopped
     ports:
       - '3210:3210'
@@ -21,7 +21,7 @@ services:
     stop_grace_period: 10s
 
   convex-dashboard:
-    image: ghcr.io/get-convex/convex-dashboard:latest
+    image: ghcr.io/convex/convex-dashboard:latest
     restart: unless-stopped
     ports:
       - '6791:6791'
