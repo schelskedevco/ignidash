@@ -99,7 +99,7 @@
     "@types/react-dom": "19.2.3",
     "@vitest/coverage-v8": "^4.1.12",
     "convex-test": "^0.0.41",
-    "eslint": "^9",
+    "eslint": "^10",
     "eslint-config-next": "16.4.6",
     "eslint-config-prettier": "^10.1.5",
     "husky": "^9.1.7",
