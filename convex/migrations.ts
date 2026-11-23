@@ -18,7 +18,7 @@ export const migrateIncomeIdsToIncomeId = migrations.define({
       const { incomeIds, ...rest } = rule;
       return {
         ...rest,
-        incomeId: incomeIds?.[0],
+        incomeId: rule.incomeId ?? incomeIds?.[0],
       };
     });
     return { contributionRules: updatedRules };
