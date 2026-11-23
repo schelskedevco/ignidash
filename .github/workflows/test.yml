@@ -11,6 +11,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22: engines.node floor (self-host host CLI)
+        # 24: .nvmrc, Docker image, Convex Node actions
+        # 26: Vercel (engines ">=22" resolves to its newest major)
+        node-version: ['22', '24', '26']
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,7 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Install dependencies
