@@ -96,7 +96,7 @@ See [Known Limitations](https://www.ignidash.com/help#:~:text=Known%20limitation
 
 ## Self-Hosting with Docker
 
-Self-hosting requires only Docker and Docker Compose on the host. See [SELF_HOSTING.md](./SELF_HOSTING.md) for the automated installation and upgrade guide.
+Self-hosting needs only Git and Docker (with Compose) on the host: no Node.js or npm. Docker Compose generates the Convex admin key, deploys the Convex functions, and runs migrations before starting the app. See [SELF_HOSTING.md](./SELF_HOSTING.md) for setup and upgrades.
 
 ## Local Development
 
@@ -135,13 +135,13 @@ openssl rand -base64 32  # For CONVEX_API_SECRET
 
 ### Syncing Environment Variables
 
-For Docker self-hosting, reconcile `.env.local` through the initializer:
+For cloud development, set Convex function environment variables through the Convex Dashboard or `npx convex env set`.
+
+For Docker self-hosting, sync `.env.local` changes to Convex with:
 
 ```bash
-docker compose up -d --build
+docker compose run --rm convex-init
 ```
-
-For cloud development, configure function environment variables through the Convex Dashboard or Convex CLI for that deployment.
 
 ### Running Locally
 

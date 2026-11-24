@@ -33,9 +33,7 @@ services:
     entrypoint: ['/bin/sh', '/usr/local/bin/convex-admin-key.sh']
 
   convex-init:
-    build:
-      context: .
-      target: convex-init
+    image: ghcr.io/schelskedevco/ignidash-convex-init:${IGNIDASH_TAG:-stable}
     restart: 'no'
     depends_on:
       convex-backend:
@@ -66,7 +64,7 @@ services:
     stop_grace_period: 10s
 
   app:
-    image: ghcr.io/schelskedevco/ignidash:stable
+    image: ghcr.io/schelskedevco/ignidash:${IGNIDASH_TAG:-stable}
     restart: unless-stopped
     ports:
       - '3000:3000'
