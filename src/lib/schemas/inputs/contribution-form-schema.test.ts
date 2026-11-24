@@ -3,6 +3,7 @@ import {
   contributionFormSchema,
   getAccountTypeLimitKey,
   getAnnualContributionLimit,
+  getAnnualContributionLimitForAccount,
   getAnnualSection415cLimit,
   supportsMaxBalance,
   supportsIncomeAllocation,
@@ -109,6 +110,23 @@ describe('getAnnualSection415cLimit', () => {
 
   it('should return catch-up limit for age 64+', () => {
     expect(getAnnualSection415cLimit(64)).toBe(80000);
+  });
+});
+
+describe('getAnnualContributionLimitForAccount', () => {
+  it('should return the standard annual limit for the account type', () => {
+    expect(getAnnualContributionLimitForAccount('401k', 30)).toBe(24500);
+    expect(getAnnualContributionLimitForAccount('rothIra', 50)).toBe(8600);
+    expect(getAnnualContributionLimitForAccount('hsa', 55)).toBe(5400);
+  });
+
+  it('should use the Section 415(c) limit for mega backdoor Roth rules on supported accounts', () => {
+    expect(getAnnualContributionLimitForAccount('roth401k', 30, { enableMegaBackdoorRoth: true })).toBe(72000);
+    expect(getAnnualContributionLimitForAccount('roth403b', 50, { enableMegaBackdoorRoth: true })).toBe(80000);
+  });
+
+  it('should ignore mega backdoor Roth for unsupported accounts', () => {
+    expect(getAnnualContributionLimitForAccount('rothIra', 30, { enableMegaBackdoorRoth: true })).toBe(7500);
   });
 });
 

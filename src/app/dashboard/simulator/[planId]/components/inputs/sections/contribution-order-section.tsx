@@ -20,7 +20,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { Field as HeadlessField } from '@headlessui/react';
 
-import { useContributionRulesData, useBaseContributionRuleData, useAccountsData } from '@/hooks/use-convex-data';
+import { useContributionRulesData, useBaseContributionRuleData, useAccountsData, useTimelineData } from '@/hooks/use-convex-data';
 import { contributionToConvex, baseContributionToConvex } from '@/lib/utils/data-transformers';
 import DisclosureSection from '@/components/ui/disclosure-section';
 import { Dialog } from '@/components/catalyst/dialog';
@@ -30,9 +30,14 @@ import type { DisclosureState } from '@/lib/types/disclosure-state';
 import { Divider } from '@/components/catalyst/divider';
 import { Select } from '@/components/catalyst/select';
 import { Label } from '@/components/catalyst/fieldset';
-import type { ContributionInputs, BaseContributionInputs } from '@/lib/schemas/inputs/contribution-form-schema';
+import {
+  type ContributionInputs,
+  type BaseContributionInputs,
+  getAnnualContributionLimitForAccount,
+} from '@/lib/schemas/inputs/contribution-form-schema';
 import { accountTypeForDisplay, type AccountInputs, taxCategoryFromAccountType } from '@/lib/schemas/inputs/account-form-schema';
 import type { TaxCategory } from '@/lib/calc/asset';
+import { calculateAge } from '@/lib/schemas/inputs/timeline-form-schema';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
@@ -42,11 +47,18 @@ import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip
 import ContributionRuleDialog from '../dialogs/contribution-rule-dialog';
 import SortableContributionItem from '../sortable-contribution-item';
 import ContributionItem from '../contribution-item';
+import ContributionLimitTooltip from '../contribution-limit-tooltip';
 
-function getContributionRuleDesc(accounts: Record<string, AccountInputs>, contributionInputs: ContributionInputs) {
-  const accountType = accountTypeForDisplay(accounts[contributionInputs.accountId]?.type);
+function getContributionRuleDesc(accounts: Record<string, AccountInputs>, contributionInputs: ContributionInputs, currentAge: number) {
+  const account = accounts[contributionInputs.accountId];
+  const accountType = accountTypeForDisplay(account?.type);
+  const annualLimit = account
+    ? getAnnualContributionLimitForAccount(account.type, currentAge, {
+        enableMegaBackdoorRoth: contributionInputs.enableMegaBackdoorRoth,
+      })
+    : null;
 
-  let description: string;
+  let description: React.ReactNode;
   switch (contributionInputs.contributionType) {
     case 'dollarAmount':
       description = `${formatCompactCurrency(contributionInputs.dollarAmount, 2)} per year`;
@@ -55,7 +67,12 @@ function getContributionRuleDesc(accounts: Record<string, AccountInputs>, contri
       description = `${contributionInputs.percentRemaining}% remaining`;
       break;
     case 'unlimited':
-      description = 'Unlimited';
+      description = (
+        <span className="inline-flex items-center gap-1">
+          All remaining up to limits
+          <ContributionLimitTooltip annualLimit={annualLimit} />
+        </span>
+      );
       break;
   }
 
@@ -88,6 +105,8 @@ export default function ContributionOrderSection(props: ContributionOrderSection
   const [activeId, setActiveId] = useState<string | null>(null);
 
   const { data: accounts, isLoading: isLoadingAccounts } = useAccountsData();
+  const timeline = useTimelineData();
+  const currentAge = timeline ? calculateAge(timeline.birthMonth, timeline.birthYear) : 18;
   const { data: contributionRules, isLoading: isLoadingContributionRules } = useContributionRulesData();
   const contributionRulesValues = Object.values(contributionRules);
 
@@ -247,7 +266,7 @@ export default function ContributionOrderSection(props: ContributionOrderSection
                         id={id}
                         index={index}
                         name={`To ${accounts[contributionRule.accountId]?.name || 'Unknown'}`}
-                        desc={getContributionRuleDesc(accounts, { id, ...contributionRule })}
+                        desc={getContributionRuleDesc(accounts, { id, ...contributionRule }, currentAge)}
                         leftAddOn={String(index + 1)}
                         disabled={contributionRule.disabled}
                         onDropdownClickEdit={() => handleDropdownClickEdit({ id, ...contributionRule })}
@@ -267,7 +286,7 @@ export default function ContributionOrderSection(props: ContributionOrderSection
                       id={activeId}
                       index={activeIndex}
                       name={`To ${accounts[activeContributionRule.accountId]?.name || 'Unknown'}`}
-                      desc={getContributionRuleDesc(accounts, activeContributionRule)}
+                      desc={getContributionRuleDesc(accounts, activeContributionRule, currentAge)}
                       leftAddOn={String(activeIndex + 1)}
                       disabled={activeContributionRule.disabled}
                       onDropdownClickEdit={() => handleDropdownClickEdit(activeContributionRule)}
