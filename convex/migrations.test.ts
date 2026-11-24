@@ -39,7 +39,10 @@ test('income ID migration converts legacy rules without clearing current values'
   });
 
   await t.run(async (ctx) => {
-    await runToCompletion(ctx, components.migrations, internal.migrations.migrateIncomeIdsToIncomeId);
+    await runToCompletion(ctx, components.migrations, internal.migrations.migrateIncomeIdsToIncomeId, {
+      // Restart from the beginning; without a cursor the completed migration is skipped.
+      cursor: null,
+    });
   });
 
   await t.run(async (ctx) => {
