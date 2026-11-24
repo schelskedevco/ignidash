@@ -16,6 +16,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  INIT_IMAGE_NAME: ${{ github.repository }}-convex-init
 
 jobs:
   build:
@@ -26,15 +27,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # ignidash: the Next.js app (runner stage)
+        # ignidash-convex-init: one-shot Convex deploy/migrate image (convex-init stage)
+        image: [ignidash, ignidash-convex-init]
+        platform: [linux/amd64, linux/arm64]
         include:
           - platform: linux/amd64
             runner: ubuntu-latest
           - platform: linux/arm64
             runner: ubuntu-24.04-arm
+          - image: ignidash
+            target: runner
+          - image: ignidash-convex-init
+            target: convex-init
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Resolve image name
+        run: |
+          if [[ "${{ matrix.image }}" == "ignidash-convex-init" ]]; then
+            echo "IMAGE=${{ env.REGISTRY }}/${{ env.INIT_IMAGE_NAME }}" >> "$GITHUB_ENV"
+          else
+            echo "IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" >> "$GITHUB_ENV"
+          fi
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -50,22 +67,23 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.IMAGE }}
 
       - name: Build and push by digest
         id: build
         uses: docker/build-push-action@v5
         with:
           context: .
+          target: ${{ matrix.target }}
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             SELF_HOSTED=true
             NEXT_PUBLIC_CONVEX_URL=http://localhost:3210
             NEXT_PUBLIC_CONVEX_SITE_URL=http://localhost:3211
-          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha,scope=${{ matrix.platform }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
+          outputs: type=image,name=${{ env.IMAGE }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ matrix.image }}-${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}-${{ matrix.platform }}
 
       - name: Export digest
         run: |
@@ -76,7 +94,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-${{ matrix.runner }}
+          name: digests-${{ matrix.image }}-${{ matrix.runner }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -87,13 +105,31 @@ jobs:
     permissions:
       contents: read
       packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: ignidash
+            title: Ignidash
+            description: Self-hosted Ignidash application
+          - image: ignidash-convex-init
+            title: Ignidash Convex Init
+            description: One-shot initializer that deploys Ignidash's Convex functions and runs migrations
 
     steps:
+      - name: Resolve image name
+        run: |
+          if [[ "${{ matrix.image }}" == "ignidash-convex-init" ]]; then
+            echo "IMAGE=${{ env.REGISTRY }}/${{ env.INIT_IMAGE_NAME }}" >> "$GITHUB_ENV"
+          else
+            echo "IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" >> "$GITHUB_ENV"
+          fi
+
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
           path: /tmp/digests
-          pattern: digests-*
+          pattern: digests-${{ matrix.image }}-*
           merge-multiple: true
 
       - name: Set up Docker Buildx
@@ -110,7 +146,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ env.IMAGE }}
           tags: |
             # Push to main: latest + sha
             type=raw,value=latest,enable={{is_default_branch}}
@@ -123,19 +159,19 @@ jobs:
             # Fallback for workflow_dispatch on non-main branches
             type=ref,event=branch,enable=${{ github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main' }}
           labels: |
-            org.opencontainers.image.title=Ignidash
-            org.opencontainers.image.description=Self-hosted Ignidash application
+            org.opencontainers.image.title=${{ matrix.title }}
+            org.opencontainers.image.description=${{ matrix.description }}
             org.opencontainers.image.vendor=SchelskeDevCo
 
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
+            $(printf '${{ env.IMAGE }}@sha256:%s ' *)
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ env.IMAGE }}:${{ steps.meta.outputs.version }}
 
   test:
     runs-on: ubuntu-latest
@@ -152,9 +188,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Test amd64 image
+      - name: Resolve tag
         run: |
-          echo "Testing amd64 image..."
           if [[ "${{ startsWith(github.ref, 'refs/tags/v') }}" == "true" ]]; then
             TAG="stable"
           elif [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
@@ -163,6 +198,11 @@ jobs:
             TAG="${GITHUB_REF_NAME//\//-}"
           fi
           echo "Using tag: $TAG"
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Test amd64 image
+        run: |
+          echo "Testing amd64 image..."
           NODE_VERSION=$(docker run --rm --platform linux/amd64 --entrypoint node ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG --version)
           echo "Node version: $NODE_VERSION"
           if [[ "$NODE_VERSION" != v24.* ]]; then
@@ -170,6 +210,20 @@ jobs:
             exit 1
           fi
           echo "Image test passed"
+
+      - name: Test amd64 Convex init image
+        run: |
+          echo "Testing amd64 Convex init image..."
+          IMAGE=${{ env.REGISTRY }}/${{ env.INIT_IMAGE_NAME }}:$TAG
+          NODE_VERSION=$(docker run --rm --platform linux/amd64 --entrypoint node "$IMAGE" --version)
+          echo "Node version: $NODE_VERSION"
+          if [[ "$NODE_VERSION" != v24.* ]]; then
+            echo "::error::Expected Node v24.x in init image, got $NODE_VERSION"
+            exit 1
+          fi
+          CONVEX_VERSION=$(docker run --rm --platform linux/amd64 --entrypoint /app/node_modules/.bin/convex "$IMAGE" --version)
+          echo "Convex CLI version: $CONVEX_VERSION"
+          echo "Init image test passed"
 
   summary:
     runs-on: ubuntu-latest
@@ -197,9 +251,11 @@ jobs:
         run: |
           echo "## Docker Image Published 🐳" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Images:**" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- \`${{ env.REGISTRY }}/${{ env.INIT_IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Tags" >> $GITHUB_STEP_SUMMARY
+          echo "### Tags (same for both images)" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
@@ -218,4 +274,5 @@ jobs:
             TAG="${GITHUB_REF_NAME//\//-}"
           fi
           echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ env.REGISTRY }}/${{ env.INIT_IMAGE_NAME }}:$TAG" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

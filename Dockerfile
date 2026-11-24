@@ -9,7 +9,9 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 # One-shot image used by Docker Compose to deploy the Convex backend.
-FROM node:22-alpine AS convex-init
+# Published as ghcr.io/schelskedevco/ignidash-convex-init. Keep this stage before
+# the runner stage so that the default build target remains the app image.
+FROM node:24-alpine AS convex-init
 WORKDIR /app
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 --ingroup nodejs nextjs

@@ -35,7 +35,6 @@ yarn-error.log*
 
 # env files
 .env*
-!.env
 !.env.cloud.example
 !.env.selfhost.example
 
