@@ -67,7 +67,9 @@ jobs:
   # and changed ports, HTTPS reverse proxy, backups, key recovery, and upgrading
   # from the previous release. See scripts/selfhost.e2e.sh.
   selfhost-e2e:
-    runs-on: ubuntu-latest
+    # Pinned: Playwright 1.58 cannot install Chromium on ubuntu-latest (26.04).
+    # Move to ubuntu-latest once Playwright supports it.
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
 
     steps:

@@ -438,6 +438,13 @@ npm run test:selfhost       # fast script and configuration checks (needs Docker
 npm run test:selfhost:e2e   # builds both images and runs every scenario in this guide (about 15 minutes)
 ```
 
+To run your own changes as a self-hosted stack, build both images from your working tree and point Compose at them:
+
+```bash
+npm run docker:build                    # tags both images as :local
+IGNIDASH_TAG=local docker compose up -d
+```
+
 ## Convex Documentation
 
 - [Self-hosting overview](https://docs.convex.dev/self-hosting)

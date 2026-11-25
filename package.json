@@ -25,7 +25,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "create-demo": "tsx scripts/convert-inputs-json-to-demo-inputs.ts",
-    "docker:build": "docker compose build",
+    "docker:build": "docker build --target convex-init -t ghcr.io/schelskedevco/ignidash-convex-init:local . && docker build -t ghcr.io/schelskedevco/ignidash:local --build-arg SELF_HOSTED=true --build-arg NEXT_PUBLIC_CONVEX_URL=http://localhost:3210 --build-arg NEXT_PUBLIC_CONVEX_SITE_URL=http://localhost:3211 .",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",

@@ -175,6 +175,7 @@ Open http://localhost:3000 in your browser.
 | `npm run test:e2e`          | Run Playwright browser tests against the dev server          |
 | `npm run test:selfhost`     | Check self-hosting scripts and Docker Compose configuration  |
 | `npm run test:selfhost:e2e` | Build the Docker images and test every self-hosting scenario |
+| `npm run docker:build`      | Build both Docker images from your working tree as `:local`  |
 
 ### Code Style
 
