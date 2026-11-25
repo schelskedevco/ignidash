@@ -44,6 +44,23 @@ jobs:
       - name: Run tests
         run: npm run test
 
+  # Scans every commit for secrets with gitleaks and .gitleaks.toml (default rules
+  # plus Convex keys and Ignidash's own settings), and tests those rules.
+  secrets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # every commit, not just the latest
+
+      - name: Scan the full history for secrets
+        run: sh scripts/check-secrets.sh --history
+
+      - name: Test the secret scanning rules
+        run: sh scripts/check-secrets.test.sh
+
   selfhost:
     runs-on: ubuntu-latest
 

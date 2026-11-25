@@ -198,6 +198,7 @@ IGNIDASH_TAG=local docker compose up -d
 ### Code Style
 
 - ESLint and Prettier run automatically on commit via Husky
+- A secret scan ([gitleaks](https://github.com/gitleaks/gitleaks), rules in `.gitleaks.toml`) runs on commit and in CI. It uses a local `gitleaks` if installed (`brew install gitleaks`), otherwise Docker; without either, the commit hook only warns. Run `npm run test:secrets` after changing the rules.
 - Run `npm run format` to format all files
 - Run `npm run lint:fix` to auto-fix linting issues
 
