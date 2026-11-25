@@ -119,6 +119,13 @@ jobs:
       - name: Resolve reverse proxy test hostnames locally
         run: echo '127.0.0.1 localtest.me api.localtest.me actions.localtest.me' | sudo tee -a /etc/hosts
 
+      - name: Find the previous release
+        run: |
+          git fetch --force --tags origin
+          previous=$(git tag --list 'v*' --merged HEAD --no-contains HEAD --sort=-v:refname | head -n 1)
+          echo "Upgrading from: ${previous:-none found}"
+          echo "SELFHOST_E2E_PREVIOUS_RELEASE=$previous" >> "$GITHUB_ENV"
+
       - name: Run self-hosting end-to-end tests
         env:
           SELFHOST_E2E_SKIP_BUILD: '1'

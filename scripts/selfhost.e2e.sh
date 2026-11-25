@@ -345,7 +345,7 @@ scenario_upgrade() {
   previous=${SELFHOST_E2E_PREVIOUS_RELEASE:-$(git -C "$repository_root" tag --list 'v*' --merged HEAD --no-contains HEAD --sort=-v:refname 2> "$artifacts/upgrade-git.err" | head -n 1)}
   section "Upgrade from ${previous:-the previous release}"
   if [ -z "$previous" ]; then
-    fail "no previous release tag found (fetch tags, or set SELFHOST_E2E_PREVIOUS_RELEASE): $(cat "$artifacts/upgrade-git.err")"
+    fail "no previous release tag found (fetch tags, or set SELFHOST_E2E_PREVIOUS_RELEASE). git: $(cat "$artifacts/upgrade-git.err") tags=$(git -C "$repository_root" tag --list 'v*' | wc -l | tr -d ' ') head=$(git -C "$repository_root" rev-parse --short HEAD 2>&1) shallow=$(git -C "$repository_root" rev-parse --is-shallow-repository 2>&1)"
     return
   fi
   use_project upgrade
