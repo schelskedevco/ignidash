@@ -76,6 +76,8 @@ fi
 if [ "$1" = 'run' ] && [ "$2" = 'migrations:getStatus' ]; then
   if [ "${MIGRATION_STATUS:-complete}" = 'failed' ]; then
     printf '%s\n' '[{"isDone":false,"state":"failed","error":"test failure"}]'
+  elif [ "${MIGRATION_STATUS:-complete}" = 'empty' ]; then
+    printf '%s\n' '[]'
   else
     printf '%s\n' '[{"isDone":true,"state":"success"}]'
   fi
@@ -168,4 +170,69 @@ if COMMAND_LOG="$command_log" \
 fi
 assert_contains "$(cat "$temporary_directory/migration-failure.out")" 'one or more Convex migrations failed'
 
+CONVEX_MIGRATION_TIMEOUT_SECONDS=0 \
+COMMAND_LOG="$command_log" \
+  MIGRATION_STATUS=empty \
+  CONVEX_BIN="$fake_convex" \
+  CONVEX_ADMIN_KEY_FILE="$credentials_directory/admin-key" \
+  SELF_HOSTED=true \
+  SITE_URL=http://localhost:3000 \
+  NEXT_PUBLIC_CONVEX_URL=http://localhost:3210 \
+  NEXT_PUBLIC_CONVEX_SITE_URL=http://localhost:3211 \
+  BETTER_AUTH_SECRET="$auth_secret" \
+  CONVEX_API_SECRET="$api_secret" \
+    sh "$repository_root/scripts/convex-init.sh" >/dev/null 2>&1 || fail 'an empty migration list did not count as complete'
+
+# selfhost.sh: run against a scratch checkout with a fake docker binary.
+fake_bin="$temporary_directory/bin"
+mkdir -p "$fake_bin"
+printf '#!/bin/sh\nexit 0\n' > "$fake_bin/docker"
+chmod +x "$fake_bin/docker"
+
+new_checkout() {
+  checkout_directory=$(mktemp -d "$temporary_directory/checkout.XXXXXX")
+  mkdir "$checkout_directory/scripts"
+  cp "$repository_root/.env.selfhost.example" "$checkout_directory/"
+  cp "$repository_root/scripts/selfhost.sh" "$checkout_directory/scripts/"
+  printf '%s' "$checkout_directory"
+}
+
+run_selfhost() {
+  (cd "$1" && shift && PATH="$fake_bin:$PATH" sh scripts/selfhost.sh "$@")
+}
+
+checkout=$(new_checkout)
+printf '2\n192.168.1.5\n' | run_selfhost "$checkout" --init >/dev/null 2>&1 || fail 'valid LAN host was rejected'
+grep -qx 'SITE_URL=http://192.168.1.5:3000' "$checkout/.env.local" || fail 'LAN SITE_URL was not written'
+grep -qx 'NEXT_PUBLIC_CONVEX_URL=http://192.168.1.5:3210' "$checkout/.env.local" || fail 'LAN Convex URL was not written'
+
+checkout=$(new_checkout)
+printf '3\nmy-domain.example.com\n' | run_selfhost "$checkout" --init >/dev/null 2>&1 || fail 'valid domain was rejected'
+grep -qx 'NEXT_PUBLIC_CONVEX_SITE_URL=https://actions.my-domain.example.com' "$checkout/.env.local" || fail 'domain site URL was not written'
+
+for bad_input in '2\na|b\n' '2\nx&y\n' '2\nhttps://host\n' '3\nexample.com/\n' '3\nexample.com:443\n' '2\n\n'; do
+  checkout=$(new_checkout)
+  # shellcheck disable=SC2059 # the test inputs contain intentional \n escapes
+  if printf "$bad_input" | run_selfhost "$checkout" --init >"$temporary_directory/bad-host.out" 2>&1; then
+    fail "invalid host input was accepted: $bad_input"
+  fi
+  [ ! -e "$checkout/.env.local" ] || fail "invalid host input left a partial .env.local: $bad_input"
+done
+
+checkout=$(new_checkout)
+cp "$checkout/.env.selfhost.example" "$checkout/.env.local"
+printf 'CONVEX_SELF_HOSTED_ADMIN_KEY="convex-self-hosted|legacy"\n' >> "$checkout/.env.local"
+chmod 644 "$checkout/.env.local"
+legacy_output=$(run_selfhost "$checkout" --sync-only 2>&1) || fail 'sync-only failed on a legacy .env.local'
+[ -n "$(find "$checkout/.env.local" -perm 600)" ] || fail 'legacy .env.local permissions were not tightened'
+assert_contains "$legacy_output" 'still contains CONVEX_SELF_HOSTED_ADMIN_KEY'
+
 echo 'Self-host initialization tests passed.'
+
+checkout=$(new_checkout)
+sed -e "s|^SITE_URL=.*|SITE_URL='http://quoted.example:3000'|" \
+  -e 's|^NEXT_PUBLIC_CONVEX_URL=.*|NEXT_PUBLIC_CONVEX_URL="http://quoted.example:3210"|' \
+  "$checkout/.env.selfhost.example" > "$checkout/.env.local"
+quoted_output=$(run_selfhost "$checkout" 2>&1) || fail 'default run failed with quoted values'
+assert_contains "$quoted_output" 'App:              http://quoted.example:3000/signup'
+assert_contains "$quoted_output" 'Convex Dashboard: http://quoted.example:6791'

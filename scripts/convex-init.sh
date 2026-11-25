@@ -104,7 +104,7 @@ while :; do
     const statuses = JSON.parse(require("fs").readFileSync(0, "utf8"));
     if (statuses.some(({ error, state }) => error || state === "failed" || state === "canceled")) {
       process.stdout.write("failed");
-    } else if (statuses.length > 0 && statuses.every(({ isDone }) => isDone)) {
+    } else if (statuses.every(({ isDone }) => isDone)) {
       process.stdout.write("complete");
     } else {
       process.stdout.write("pending");

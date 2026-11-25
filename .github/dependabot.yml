@@ -33,3 +33,16 @@ updates:
     ignore:
       - dependency-name: node
         update-types: ['version-update:semver-major'] # bump by hand alongside .nvmrc
+
+  # Self-hosted Convex images in docker-compose.yml are pinned as latest@sha256:<digest>.
+  # Dependabot can't bump Convex's commit-SHA tags, but it does refresh the digest when
+  # `latest` moves. The Ignidash images use ${IGNIDASH_TAG:-stable} and are skipped.
+  - package-ecosystem: docker-compose
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7 # let upstream regressions surface before pinning a new build
+    groups:
+      convex-self-hosted: # backend and dashboard must stay on the same build
+        patterns: ['convex/convex-backend', 'convex/convex-dashboard']

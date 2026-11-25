@@ -33,7 +33,20 @@ ensure_env_symlink() {
 
 # Read a single value from .env.local without sourcing it
 env_value() {
-  sed -n "s/^$1=//p" .env.local | tail -n 1 | sed -e 's/^"//' -e 's/"$//'
+  sed -n "s/^$1=//p" .env.local | tail -n 1 | sed -e 's/^"\(.*\)"$/\1/' -e "s/^'\(.*\)'$/\1/"
+}
+
+# Accept a bare hostname or IPv4 address: letters, digits, dots and hyphens only.
+# Rejects schemes, ports, paths and characters that would corrupt .env.local.
+require_hostname() {
+  if [ -z "$1" ]; then
+    echo "Error: $2 is required." >&2
+    exit 1
+  fi
+  if ! printf '%s' "$1" | grep -Eq '^[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?$'; then
+    echo "Error: '$1' is not a valid $2. Enter only the name, without http://, a port or a path (e.g., 192.168.1.100 or mydomain.com)." >&2
+    exit 1
+  fi
 }
 
 check_prerequisites() {
@@ -54,7 +67,21 @@ require_env_file() {
     echo 'Run scripts/selfhost.sh --init to create one.' >&2
     exit 1
   fi
+  secure_env_file
   ensure_env_symlink
+}
+
+# .env.local holds secrets. Installs created by v0.3.x and earlier left it
+# world-readable, and may still contain the old Convex admin key, which grants
+# full database access.
+secure_env_file() {
+  if ! chmod 600 .env.local 2>/dev/null; then
+    echo 'Warning: could not set .env.local permissions to 600. Run: chmod 600 .env.local' >&2
+  fi
+  if [ -n "$(env_value CONVEX_SELF_HOSTED_ADMIN_KEY)" ]; then
+    echo 'Warning: .env.local still contains CONVEX_SELF_HOSTED_ADMIN_KEY, which is no longer used.' >&2
+    echo '         Delete the CONVEX_SELF_HOSTED_URL and CONVEX_SELF_HOSTED_ADMIN_KEY lines from .env.local.' >&2
+  fi
 }
 
 setup_env_file() {
@@ -74,10 +101,6 @@ setup_env_file() {
     exit 1
   fi
 
-  umask 077
-  cp .env.selfhost.example .env.local
-  chmod 600 .env.local
-
   echo 'How will you access Ignidash?'
   echo '  1) localhost (default)'
   echo '  2) LAN IP or hostname (e.g., 192.168.1.100)'
@@ -85,38 +108,47 @@ setup_env_file() {
   printf 'Choice [1]: '
   read -r access_choice || access_choice=''
 
+  # Ask and validate before touching .env.local, so a bad answer leaves nothing half-written.
+  convex_url=''
+  convex_site_url=''
+  site_url=''
   case "$access_choice" in
     2)
       printf 'IP or hostname: '
       read -r custom_host || custom_host=''
-      if [ -z "$custom_host" ]; then
-        echo 'Error: IP or hostname is required.' >&2
-        exit 1
-      fi
+      require_hostname "$custom_host" 'IP or hostname'
       echo "Configuring for host: $custom_host"
-      portable_sed "s|^NEXT_PUBLIC_CONVEX_URL=.*|NEXT_PUBLIC_CONVEX_URL=http://$custom_host:3210|" .env.local
-      portable_sed "s|^NEXT_PUBLIC_CONVEX_SITE_URL=.*|NEXT_PUBLIC_CONVEX_SITE_URL=http://$custom_host:3211|" .env.local
-      portable_sed "s|^SITE_URL=.*|SITE_URL=http://$custom_host:3000|" .env.local
+      convex_url="http://$custom_host:3210"
+      convex_site_url="http://$custom_host:3211"
+      site_url="http://$custom_host:3000"
       ;;
     3)
       printf 'Domain (e.g., mydomain.com): '
       read -r custom_domain || custom_domain=''
-      if [ -z "$custom_domain" ]; then
-        echo 'Error: Domain is required.' >&2
-        exit 1
-      fi
+      require_hostname "$custom_domain" 'Domain'
       echo "Configuring for domain: $custom_domain"
       echo "  App:     https://$custom_domain"
       echo "  API:     https://api.$custom_domain"
       echo "  Actions: https://actions.$custom_domain"
-      portable_sed "s|^NEXT_PUBLIC_CONVEX_URL=.*|NEXT_PUBLIC_CONVEX_URL=https://api.$custom_domain|" .env.local
-      portable_sed "s|^NEXT_PUBLIC_CONVEX_SITE_URL=.*|NEXT_PUBLIC_CONVEX_SITE_URL=https://actions.$custom_domain|" .env.local
-      portable_sed "s|^SITE_URL=.*|SITE_URL=https://$custom_domain|" .env.local
+      convex_url="https://api.$custom_domain"
+      convex_site_url="https://actions.$custom_domain"
+      site_url="https://$custom_domain"
       ;;
     *)
       # localhost: the example defaults already apply
       ;;
   esac
+
+  umask 077
+  cp .env.selfhost.example .env.local
+  chmod 600 .env.local
+
+  # require_hostname guarantees these contain no | & or \ that would break the sed expressions.
+  if [ -n "$site_url" ]; then
+    portable_sed "s|^NEXT_PUBLIC_CONVEX_URL=.*|NEXT_PUBLIC_CONVEX_URL=$convex_url|" .env.local
+    portable_sed "s|^NEXT_PUBLIC_CONVEX_SITE_URL=.*|NEXT_PUBLIC_CONVEX_SITE_URL=$convex_site_url|" .env.local
+    portable_sed "s|^SITE_URL=.*|SITE_URL=$site_url|" .env.local
+  fi
 
   # base64 can contain / + =, so use | as the sed delimiter and quote the values
   better_auth_secret=$(openssl rand -base64 32)

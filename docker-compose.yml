@@ -1,6 +1,10 @@
+# Convex images are pinned by digest to a tested upstream build. Docker uses the
+# digest and ignores the tag. Dependabot (.github/dependabot.yml) opens a PR to
+# move the pins when Convex publishes a new `latest`; backend and dashboard move
+# together. Test the full self-host flow before merging those PRs.
 services:
   convex-backend:
-    image: ghcr.io/convex/convex-backend:latest
+    image: ghcr.io/convex/convex-backend:latest@sha256:d4e012c68640830310139632481f8d1c1915bdf66de5c3a594a99799eab51679
     restart: unless-stopped
     ports:
       - '3210:3210'
@@ -21,7 +25,7 @@ services:
     stop_grace_period: 10s
 
   convex-admin-key:
-    image: ghcr.io/convex/convex-backend:latest
+    image: ghcr.io/convex/convex-backend:latest@sha256:d4e012c68640830310139632481f8d1c1915bdf66de5c3a594a99799eab51679
     restart: 'no'
     depends_on:
       convex-backend:
@@ -50,7 +54,7 @@ services:
       - convex-credentials:/run/ignidash:ro
 
   convex-dashboard:
-    image: ghcr.io/convex/convex-dashboard:latest
+    image: ghcr.io/convex/convex-dashboard:latest@sha256:2cb0f7e51597ea41d08147649f9f65cb2676aa96ce1f2fce1531116a408e1c98
     restart: unless-stopped
     ports:
       - '6791:6791'
@@ -78,6 +82,9 @@ services:
       - SITE_URL=${SITE_URL:-http://localhost:3000}
       - NEXT_PUBLIC_CONVEX_URL=${NEXT_PUBLIC_CONVEX_URL:-http://localhost:3210}
       - NEXT_PUBLIC_CONVEX_SITE_URL=${NEXT_PUBLIC_CONVEX_SITE_URL:-http://localhost:3211}
+      # Read at runtime by the Next.js server (src/lib/posthog-server.ts). Not secret.
+      - NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY:-}
+      - NEXT_PUBLIC_POSTHOG_HOST=${NEXT_PUBLIC_POSTHOG_HOST:-}
     healthcheck:
       test: ['CMD', 'wget', '--no-verbose', '--tries=1', '--spider', 'http://127.0.0.1:3000/api/health']
       interval: 10s

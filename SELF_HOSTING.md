@@ -166,7 +166,7 @@ If you changed the public URLs, also run `docker compose up -d` so the app and b
 
 Empty optional values are skipped; they do not delete an existing value from Convex. Remove a previously configured value through the Convex Dashboard if it must be deleted.
 
-The published `stable` frontend has public browser variables baked in at image-build time. Runtime configuration patches the public Convex URLs, but changing browser-side Stripe or PostHog values requires a custom frontend image. Server-side PostHog configuration is still synchronized to Convex.
+The published `stable` frontend has public browser variables baked in at image-build time. Runtime configuration patches the public Convex URLs, but changing browser-side Stripe or PostHog values requires a custom frontend image. Server-side PostHog configuration is synchronized to Convex and also passed to the app container, which reads it when it starts; run `docker compose up -d` after changing it.
 
 ## Upgrading
 
@@ -182,7 +182,7 @@ docker compose up -d
 
 Both images, `ignidash` (the app) and `ignidash-convex-init` (the Convex initializer), are published together with the same tags, so the Convex functions that get deployed always match the app version. On every `up`, the initializer reuses the stored admin credential, updates configured Convex environment values, deploys functions idempotently, and runs any pending migrations, waiting for them to finish. It never deletes Convex data or regenerates application secrets.
 
-Review the upstream [Convex upgrading guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md) before a major Convex backend upgrade.
+The Convex backend and dashboard images are pinned by digest in `docker-compose.yml` to an upstream build tested with this release, so `docker compose pull` only changes the Convex version when you `git pull` a release that moves the pin. Review the upstream [Convex upgrading guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md) before a major Convex backend upgrade.
 
 ### Pinning a version
 
@@ -206,7 +206,13 @@ docker compose up -d
 
 Keep your existing `.env.local`, the `.env` symlink, and the Docker volumes. On first start, the initializer creates its own admin credential from the persisted Convex instance secret; existing data, users, sessions, and old admin keys are kept.
 
-`CONVEX_SELF_HOSTED_URL` and `CONVEX_SELF_HOSTED_ADMIN_KEY` are no longer used and can be removed from `.env.local`. The initializer ignores them, and the app never receives an admin key. Node.js is no longer needed on the host.
+After upgrading, delete the `CONVEX_SELF_HOSTED_URL` and `CONVEX_SELF_HOSTED_ADMIN_KEY` lines from `.env.local` and restrict the file's permissions. The initializer ignores those lines and the app never receives an admin key, but the old key still grants full access to your Convex data, and older releases created `.env.local` readable by every user on the host:
+
+```bash
+chmod 600 .env.local
+```
+
+`scripts/selfhost.sh` applies these permissions and warns about a leftover admin key whenever it runs. Node.js is no longer needed on the host.
 
 ## Credentials and Dashboard Access
 
