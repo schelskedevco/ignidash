@@ -104,7 +104,7 @@ cd ignidash
 sh scripts/selfhost.sh --init
 ```
 
-See [SELF_HOSTING.md](./SELF_HOSTING.md) for network access (LAN, reverse proxy), upgrades, backups, and troubleshooting.
+Then open http://localhost:3000/signup and create your account. [SELF_HOSTING.md](./SELF_HOSTING.md) covers using Ignidash from other devices or your own domain, upgrades, backups, and troubleshooting.
 
 ## Local Development
 
@@ -176,6 +176,24 @@ Open http://localhost:3000 in your browser.
 | `npm run test:selfhost`     | Check self-hosting scripts and Docker Compose configuration  |
 | `npm run test:selfhost:e2e` | Build the Docker images and test every self-hosting scenario |
 | `npm run docker:build`      | Build both Docker images from your working tree as `:local`  |
+
+### Testing Self-Hosting Changes
+
+If you change anything that affects self-hosting (Docker files, `docker-compose.yml`, `scripts/`, Convex functions, or `SELF_HOSTING.md`), run the same checks as CI:
+
+```bash
+npm run test:selfhost       # script and Docker Compose configuration checks (needs Docker)
+npm run test:selfhost:e2e   # builds both images and runs every scenario in SELF_HOSTING.md
+```
+
+The end-to-end run also needs `npx playwright install chromium` and free ports 443, 3000, 3001, 3210, 3211, 3310, 3311, and 6791.
+
+To try your changes as a self-hosted stack:
+
+```bash
+npm run docker:build                    # builds both images from your working tree as :local
+IGNIDASH_TAG=local docker compose up -d
+```
 
 ### Code Style
 
