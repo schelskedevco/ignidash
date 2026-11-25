@@ -43,6 +43,7 @@ docker-compose.override.yml
 
 # self-hosting backups (contain user financial data and credentials)
 /backups/
+/backup*.zip
 
 # vercel
 .vercel

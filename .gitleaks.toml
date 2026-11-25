@@ -1,0 +1,39 @@
+# Secret scanning for Ignidash: gitleaks' default rules plus rules for this project's
+# own secrets, which the defaults miss. Used by the pre-commit hook and CI
+# (scripts/check-secrets.sh). Test changes with: sh scripts/check-secrets.test.sh
+
+title = "Ignidash"
+
+[extend]
+useDefault = true
+
+# Full read/write access to a self-hosted Convex deployment.
+# Format: "convex-self-hosted|" followed by 74 lowercase hex characters.
+[[rules]]
+id = "convex-self-hosted-admin-key"
+description = "Convex self-hosted admin key"
+regex = '''convex-self-hosted\|[0-9a-f]{64,}'''
+keywords = ["convex-self-hosted|"]
+
+# Convex Cloud deploy and admin keys, e.g. "prod:happy-otter-123|eyJ...".
+[[rules]]
+id = "convex-deploy-key"
+description = "Convex Cloud deploy key"
+regex = '''\b(?:prod|dev|preview|project):[a-z0-9][a-z0-9-]*\|[A-Za-z0-9+/=_-]{40,}'''
+keywords = ["prod:", "dev:", "preview:", "project:"]
+
+# Any of Ignidash's secret settings assigned a real-looking value, in any file.
+# Placeholders, shell variables ("$secret"), and short test values do not match.
+[[rules]]
+id = "ignidash-secret-setting"
+description = "Ignidash secret setting with a value"
+# [ \t]* rather than \s*: an empty value must not continue onto the next line.
+regex = '''\b(?:BETTER_AUTH_SECRET|CONVEX_API_SECRET|STRIPE_SECRET_KEY|STRIPE_WEBHOOK_SECRET|OPENAI_API_KEY|RESEND_API_KEY|GOOGLE_CLIENT_SECRET|CONVEX_SELF_HOSTED_ADMIN_KEY|CONVEX_DEPLOY_KEY)[ \t]*[=:][ \t]*["']?([A-Za-z0-9+/=_.|:-]{20,})'''
+secretGroup = 1
+keywords = ["better_auth_secret", "convex_api_secret", "stripe_secret_key", "stripe_webhook_secret", "openai_api_key", "resend_api_key", "google_client_secret", "convex_self_hosted_admin_key", "convex_deploy_key"]
+
+# A fixed placeholder in scripts/selfhost.test.sh, not a real key.
+[[rules.allowlists]]
+description = "Test placeholder for a legacy admin key"
+regexTarget = "match"
+regexes = ['''convex-self-hosted\|legacy''']
