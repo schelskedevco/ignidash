@@ -10,10 +10,12 @@ setup('create authenticated session', async ({ page }) => {
   await page.locator('input#password').fill(SETUP_USER.password);
   await page.getByRole('button', { name: /sign up/i }).click();
 
-  // Wait for navigation — either dashboard (new user) or stay on page (existing user)
-  await page.waitForURL(/\/(dashboard|sign)/, { timeout: 15_000 });
-
-  const onDashboard = /\/dashboard/.test(page.url());
+  // A new user lands on the dashboard; an existing user stays on /signup with an error.
+  // (Don't wait for /sign…: /signup already matches, which raced sign-up on a fresh database.)
+  const onDashboard = await page.waitForURL(/\/dashboard/, { timeout: 15_000 }).then(
+    () => true,
+    () => false
+  );
 
   if (!onDashboard) {
     // User likely already exists — sign in instead

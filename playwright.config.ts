@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './e2e',
+  testIgnore: ['selfhost/**'], // run by playwright.selfhost.config.ts against Docker
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: 0,

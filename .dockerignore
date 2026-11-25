@@ -55,7 +55,8 @@ demo-log.json
 scripts/
 !scripts/convex-init.sh
 
-# Backup files
+# Backup files (self-hosting backups contain user data and credentials)
+backups/
 *.backup
 *.bak
 

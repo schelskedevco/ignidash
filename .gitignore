@@ -41,6 +41,9 @@ yarn-error.log*
 # docker compose override (for local testing)
 docker-compose.override.yml
 
+# self-hosting backups (contain user financial data and credentials)
+/backups/
+
 # vercel
 .vercel
 
