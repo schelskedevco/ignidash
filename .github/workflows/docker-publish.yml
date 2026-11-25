@@ -94,7 +94,9 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-${{ matrix.image }}-${{ matrix.runner }}
+          # Image name last: a prefix pattern like digests-ignidash-* would also match
+          # digests-ignidash-convex-init-*, mixing the two images' digests.
+          name: digests-${{ matrix.runner }}--${{ matrix.image }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -129,7 +131,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: /tmp/digests
-          pattern: digests-${{ matrix.image }}-*
+          pattern: digests-*--${{ matrix.image }}
           merge-multiple: true
 
       - name: Set up Docker Buildx
