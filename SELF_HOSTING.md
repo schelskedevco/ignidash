@@ -170,7 +170,7 @@ The published `stable` frontend has public browser variables baked in at image-b
 
 ## Upgrading
 
-Back up the deployment first, then update and reconcile it:
+Take an [export](#export-recommended-before-every-upgrade) first, then update and reconcile the deployment:
 
 ```bash
 git pull
@@ -237,21 +237,59 @@ If `convex-data` is restored without its matching `convex-credentials` volume, r
 
 ## Backup and Restore
 
-Back up both named volumes:
+Both methods below run entirely in Docker and stream the backup to a file on the host, so they need no Node.js and work regardless of file ownership on the host. Run them from the Ignidash directory.
 
-- `convex-data` contains the database, files, deployed functions, migration state, and Convex instance credentials.
-- `convex-credentials` contains the initializer's admin key.
+Backups contain all user financial data, and the volume archive also contains the Convex instance secret and admin key. The commands create them readable only by you (`umask 077`); store them somewhere equally protected. Keep a copy of `.env.local` with them: restoring with a different `BETTER_AUTH_SECRET` invalidates every login.
 
-For a consistent raw-volume backup, stop the deployment first:
+### Export (recommended before every upgrade)
+
+A Convex snapshot export, including uploaded files, taken while Ignidash is running:
+
+```bash
+mkdir -p backups
+(umask 077; docker compose run --rm --no-deps -T --entrypoint sh convex-init -c '
+  CONVEX_SELF_HOSTED_ADMIN_KEY=$(cat /run/ignidash/admin-key) &&
+  export CONVEX_SELF_HOSTED_ADMIN_KEY &&
+  /app/node_modules/.bin/convex export --include-file-storage --path /tmp/backup.zip >&2 &&
+  cat /tmp/backup.zip' > "backups/ignidash-$(date +%Y%m%d-%H%M%S).zip")
+```
+
+To restore an export into a running deployment, **replacing all of its data**:
+
+```bash
+docker compose run --rm --no-deps -T --entrypoint sh convex-init -c '
+  cat > /tmp/backup.zip &&
+  CONVEX_SELF_HOSTED_ADMIN_KEY=$(cat /run/ignidash/admin-key) &&
+  export CONVEX_SELF_HOSTED_ADMIN_KEY &&
+  /app/node_modules/.bin/convex import --replace-all --yes /tmp/backup.zip' < backups/ignidash-YYYYMMDD-HHMMSS.zip
+```
+
+An export is also the way to move data between Convex backend versions that cannot upgrade in place; see the upstream [export/import guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md).
+
+### Volume archive (full disaster recovery)
+
+An exact copy of both volumes: `convex-data` (database, files, deployed functions, migration state, and instance credentials) and `convex-credentials` (the initializer's admin key). Stop the stack first so the copy is consistent:
+
+```bash
+mkdir -p backups
+docker compose stop
+(umask 077; docker compose run --rm --no-deps -T --entrypoint tar convex-admin-key \
+  czf - -C / convex/data credentials > "backups/ignidash-volumes-$(date +%Y%m%d-%H%M%S).tar.gz")
+docker compose up -d
+```
+
+To restore, stop the stack, **replace both volumes** with the archive, and start again:
 
 ```bash
 docker compose stop
-docker volume ls
+docker compose run --rm --no-deps -T --entrypoint sh convex-admin-key -c '
+  find /convex/data /credentials -mindepth 1 -delete && tar xzf - -C /' < backups/ignidash-volumes-YYYYMMDD-HHMMSS.tar.gz
+docker compose up -d
 ```
 
-Use your platform's volume snapshot tooling or archive both Compose-managed volumes. Protect backups because they contain financial data and administrative credentials. Restore both volumes under the same Compose project before starting services again.
+On a new host, first clone the repository at the same version, restore `.env.local`, run `ln -sf .env.local .env`, and run `docker compose create` to create the empty volumes; then run the restore commands above.
 
-For application-level exports, use the Convex Dashboard or run the pinned CLI from the `convex-init` service. Follow the upstream export/import procedure when moving between incompatible Convex backend versions.
+Restore an archive only onto the same Convex backend version it was taken from, or newer.
 
 ## Troubleshooting
 
