@@ -16,6 +16,7 @@
 # Environment:
 #   SELFHOST_E2E_SKIP_BUILD=1   use existing ghcr.io/schelskedevco/ignidash{,-convex-init}:e2e images
 #   SELFHOST_E2E_HOST_IP=...    host LAN IP for the manual scenario (auto-detected)
+#   SELFHOST_E2E_PREVIOUS_RELEASE=vX.Y.Z  release to upgrade from (default: newest tag before HEAD)
 #   SELFHOST_E2E_ARTIFACTS=dir  keep logs and Playwright output here
 # Requires: docker (Compose v2.24.4+), curl, jq, openssl, unzip, tar, git, and
 # `npx playwright install chromium` in this repository. The proxy scenario
@@ -236,7 +237,8 @@ scenario_quickstart() {
   check 'export output does not show the admin key' sh -c '! grep -qF "$1" "$2"' _ "$(admin_key)" "$artifacts/quickstart-export.err"
   check 'volume archive' run_doc_block 'Volume archive (full disaster recovery)' 1 > "$artifacts/quickstart-archive.log" 2>&1
   archive=$(ls backups/ignidash-volumes-*.tar.gz 2> /dev/null | head -n 1)
-  check 'archive holds both volumes and is mode 600' sh -c 'tar tzf "$1" | grep -qx credentials/admin-key && tar tzf "$1" | grep -q "^convex/data/" && [ "$2" = 600 ]' _ "$archive" "$(mode_of "$archive")"
+  tar tzf "$archive" > "$work/archive.list" 2> /dev/null
+  check 'archive holds both volumes and is mode 600' sh -c 'grep -qx credentials/admin-key "$1" && grep -q "^convex/data/" "$1" && [ "$2" = 600 ]' _ "$work/archive.list" "$(mode_of "$archive")"
   key_hash=$(admin_key | cksum)
   docker compose down -v > /dev/null 2>&1
   docker compose create > /dev/null 2>&1
@@ -339,9 +341,13 @@ EOF
 }
 
 scenario_upgrade() {
-  previous=$(git -C "$repository_root" describe --tags --abbrev=0 --match 'v*' HEAD^ 2> /dev/null)
-  section "Upgrade from $previous"
-  [ -n "$previous" ] || { fail 'no previous release tag (fetch tags first)'; return; }
+  # Newest release tag reachable from HEAD, excluding a tag on HEAD itself (a release run).
+  previous=${SELFHOST_E2E_PREVIOUS_RELEASE:-$(git -C "$repository_root" tag --list 'v*' --merged HEAD --no-contains HEAD --sort=-v:refname 2> "$artifacts/upgrade-git.err" | head -n 1)}
+  section "Upgrade from ${previous:-the previous release}"
+  if [ -z "$previous" ]; then
+    fail "no previous release tag found (fetch tags, or set SELFHOST_E2E_PREVIOUS_RELEASE): $(cat "$artifacts/upgrade-git.err")"
+    return
+  fi
   use_project upgrade
   directory="$work/checkouts/upgrade"
   mkdir -p "$directory"
