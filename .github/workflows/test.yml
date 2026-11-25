@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 22: engines.node floor (self-host host CLI)
+        # 22: engines.node floor
         # 24: .nvmrc, Docker image, Convex Node actions
         # 26: Vercel (engines ">=22" resolves to its newest major)
         node-version: ['22', '24', '26']
@@ -51,21 +51,82 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Validate self-hosting configuration
-        run: |
-          cp .env.selfhost.example .env.local
-          ln -sf .env.local .env
-          docker compose config --quiet
-          docker compose config --format json | jq -e '.services.app.environment | (has("BETTER_AUTH_SECRET") or has("CONVEX_API_SECRET") or has("GOOGLE_CLIENT_SECRET") or has("STRIPE_SECRET_KEY") or has("OPENAI_API_KEY") or has("RESEND_API_KEY")) | not'
-
       - name: Check self-hosting scripts
         run: |
           sudo apt-get update
           sudo apt-get install --yes shellcheck
-          shellcheck scripts/convex-admin-key.sh scripts/convex-init.sh scripts/selfhost.sh scripts/selfhost.test.sh
+          shellcheck scripts/*.sh
 
-      - name: Run self-hosting script tests
-        run: sh scripts/selfhost.test.sh
+      - name: Run self-hosting script and configuration tests
+        run: |
+          sh scripts/selfhost.test.sh
+          sh scripts/selfhost.config.test.sh
+
+  # Builds both images and runs every scenario in SELF_HOSTING.md against real
+  # containers and a real browser: quick start, manual install with LAN access
+  # and changed ports, HTTPS reverse proxy, backups, key recovery, and upgrading
+  # from the previous release. See scripts/selfhost.e2e.sh.
+  selfhost-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # release tags, for the upgrade scenario
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build Convex initializer image
-        run: docker build --target convex-init --tag ignidash-convex-init:test .
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: convex-init
+          load: true
+          tags: ghcr.io/schelskedevco/ignidash-convex-init:e2e
+          cache-from: type=gha,scope=selfhost-e2e-convex-init
+          cache-to: type=gha,mode=max,scope=selfhost-e2e-convex-init
+
+      - name: Build app image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: ghcr.io/schelskedevco/ignidash:e2e
+          build-args: |
+            SELF_HOSTED=true
+            NEXT_PUBLIC_CONVEX_URL=http://localhost:3210
+            NEXT_PUBLIC_CONVEX_SITE_URL=http://localhost:3211
+          cache-from: type=gha,scope=selfhost-e2e-app
+          cache-to: type=gha,mode=max,scope=selfhost-e2e-app
+
+      - name: Resolve reverse proxy test hostnames locally
+        run: echo '127.0.0.1 localtest.me api.localtest.me actions.localtest.me' | sudo tee -a /etc/hosts
+
+      - name: Run self-hosting end-to-end tests
+        env:
+          SELFHOST_E2E_SKIP_BUILD: '1'
+          SELFHOST_E2E_ARTIFACTS: ${{ runner.temp }}/selfhost-e2e
+        run: sh scripts/selfhost.e2e.sh
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selfhost-e2e-logs
+          path: ${{ runner.temp }}/selfhost-e2e
+          retention-days: 7

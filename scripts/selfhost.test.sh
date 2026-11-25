@@ -184,9 +184,28 @@ COMMAND_LOG="$command_log" \
     sh "$repository_root/scripts/convex-init.sh" >/dev/null 2>&1 || fail 'an empty migration list did not count as complete'
 
 # selfhost.sh: run against a scratch checkout with a fake docker binary.
+# Optional values are synced only when set; empty ones are skipped.
+: > "$command_log"
+COMMAND_LOG="$command_log" \
+  CONVEX_BIN="$fake_convex" \
+  CONVEX_ADMIN_KEY_FILE="$credentials_directory/admin-key" \
+  SELF_HOSTED=true \
+  SITE_URL=http://localhost:3000 \
+  NEXT_PUBLIC_CONVEX_URL=http://localhost:3210 \
+  NEXT_PUBLIC_CONVEX_SITE_URL=http://localhost:3211 \
+  BETTER_AUTH_SECRET="$auth_secret" \
+  CONVEX_API_SECRET="$api_secret" \
+  GOOGLE_CLIENT_ID='' \
+  OPENAI_API_KEY=test-openai-key \
+    sh "$repository_root/scripts/convex-init.sh" >/dev/null 2>&1 || fail 'initialization with optional values failed'
+assert_contains "$(cat "$command_log")" 'env set OPENAI_API_KEY'
+case "$(cat "$command_log")" in *'env set GOOGLE_CLIENT_ID'*) fail 'an empty optional value was synced' ;; esac
+
 fake_bin="$temporary_directory/bin"
 mkdir -p "$fake_bin"
-printf '#!/bin/sh\nexit 0\n' > "$fake_bin/docker"
+docker_log="$temporary_directory/docker-commands"
+# Records each docker invocation; succeeds without doing anything.
+printf '#!/bin/sh\nprintf "%%s\\n" "$*" >> "%s"\nexit 0\n' "$docker_log" > "$fake_bin/docker"
 chmod +x "$fake_bin/docker"
 
 new_checkout() {
@@ -236,3 +255,26 @@ sed -e "s|^SITE_URL=.*|SITE_URL='http://quoted.example:3000'|" \
 quoted_output=$(run_selfhost "$checkout" 2>&1) || fail 'default run failed with quoted values'
 assert_contains "$quoted_output" 'App:              http://quoted.example:3000/signup'
 assert_contains "$quoted_output" 'Convex Dashboard: http://quoted.example:6791'
+
+# What selfhost.sh asks Docker to do for each option.
+docker_calls() { # checkout args... -> the docker commands it ran, one per line
+  calls_checkout=$1
+  shift
+  : > "$docker_log"
+  run_selfhost "$calls_checkout" "$@" >/dev/null 2>&1 || return 1
+  grep -v '^compose version$' "$docker_log"
+}
+checkout=$(new_checkout)
+cp "$checkout/.env.selfhost.example" "$checkout/.env.local"
+[ "$(docker_calls "$checkout" | tr '\n' ';')" = 'compose pull;compose up -d;' ] || fail 'default run must pull and then start the stack'
+[ "$(docker_calls "$checkout" --sync-only | tr '\n' ';')" = 'compose run --rm convex-init;' ] || fail '--sync-only must run convex-init'
+[ -L "$checkout/.env" ] && [ "$(readlink "$checkout/.env")" = .env.local ] || fail '.env must link to .env.local'
+checkout=$(new_checkout)
+[ "$(printf '1\n' | docker_calls "$checkout" --init | tr '\n' ';')" = 'compose up -d;' ] || fail '--init must start the stack'
+help_output=$(run_selfhost "$checkout" --help 2>&1) || fail '--help must succeed'
+assert_contains "$help_output" 'Usage:'
+if run_selfhost "$checkout" --bogus >/dev/null 2>&1; then fail 'an unknown option must fail'; fi
+rm -f "$checkout/.env.local"
+if run_selfhost "$checkout" >/dev/null 2>&1; then fail 'running without .env.local must fail'; fi
+
+echo 'Self-host helper tests passed.'

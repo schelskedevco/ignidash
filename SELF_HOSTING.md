@@ -1,15 +1,25 @@
 # Self-Hosting Ignidash
 
-Run Ignidash with Docker Compose, including its self-hosted Convex backend. Node.js, npm, and the Convex CLI are not required on the host.
+Run Ignidash on your own machine or server with Docker Compose. Everything runs in containers: you do not need Node.js, npm, or the Convex CLI on the host.
+
+The stack has five services:
+
+| Service            | What it does                                                                                 | Runs           |
+| ------------------ | -------------------------------------------------------------------------------------------- | -------------- |
+| `convex-backend`   | Database and server functions ([Convex](https://convex.dev))                                 | Always         |
+| `convex-dashboard` | Optional admin UI for the database                                                           | Always         |
+| `convex-admin-key` | Creates the Convex admin key on first start and keeps it in a Docker volume                  | Once per start |
+| `convex-init`      | Sends your settings to Convex, deploys Ignidash's server functions, and runs data migrations | Once per start |
+| `app`              | The Ignidash web app; starts only after `convex-init` succeeds                               | Always         |
 
 ## Prerequisites
 
 - Git
-- Docker Engine (or Docker Desktop)
-- Docker Compose v2.17 or newer
+- Docker Engine or Docker Desktop
+- Docker Compose v2.17 or newer (v2.24.4 or newer if you [change ports](#changing-ports))
 - `openssl` to generate secrets (preinstalled on macOS and most Linux distributions)
 
-Verify Docker and Compose before continuing:
+Check Docker and Compose:
 
 ```bash
 docker version
@@ -24,11 +34,18 @@ cd ignidash
 sh scripts/selfhost.sh --init
 ```
 
-The script asks how you will reach Ignidash (localhost, a LAN IP or hostname, or a domain behind a reverse proxy), creates `.env.local` with freshly generated secrets, links `.env` to it, and starts the stack with `docker compose up -d`. When it finishes, open the printed URL and create your account.
+The script:
 
-The script only calls Docker. If you prefer to set things up by hand, follow the manual steps below instead.
+1. Asks how you will reach Ignidash: on this computer (localhost), from other devices on your network (LAN IP or hostname), or through your own domain behind a reverse proxy.
+2. Creates `.env.local` with freshly generated secrets, readable only by you.
+3. Links `.env` to `.env.local` (Docker Compose reads `.env`).
+4. Starts everything with `docker compose up -d`.
+
+When it finishes, open the printed URL and create your account. If you chose LAN or domain access, also read [Network Configuration](#network-configuration).
 
 ## Manual Installation
+
+Use this instead of the Quick Start if you prefer to configure everything yourself.
 
 ```bash
 git clone https://github.com/schelskedevco/ignidash.git
@@ -38,60 +55,52 @@ chmod 600 .env.local
 ln -sf .env.local .env
 ```
 
-Edit `.env.local` and configure these required values:
+Edit `.env.local` and set these required values:
 
-| Variable                      | Description                                                   |
-| ----------------------------- | ------------------------------------------------------------- |
-| `SELF_HOSTED`                 | Keep set to `true`                                            |
-| `NEXT_PUBLIC_CONVEX_URL`      | Convex API URL reachable by users' browsers                   |
-| `NEXT_PUBLIC_CONVEX_SITE_URL` | Convex HTTP Actions URL reachable by users' browsers          |
-| `SITE_URL`                    | Public URL of the Ignidash application                        |
-| `BETTER_AUTH_SECRET`          | Stable secret used by Better Auth for sessions and encryption |
-| `CONVEX_API_SECRET`           | Stable secret used to protect internal HTTP actions           |
+| Variable                      | Description                                                                                               |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `SELF_HOSTED`                 | Keep set to `true`                                                                                        |
+| `NEXT_PUBLIC_CONVEX_URL`      | Convex API URL that users' browsers connect to                                                            |
+| `NEXT_PUBLIC_CONVEX_SITE_URL` | Convex HTTP Actions URL that users' browsers connect to                                                   |
+| `SITE_URL`                    | Public URL of the Ignidash app                                                                            |
+| `BETTER_AUTH_SECRET`          | Secret that protects logins and sessions; [never change it](#sign-in-works-but-the-dashboard-never-loads) |
+| `CONVEX_API_SECRET`           | Secret that protects internal requests between services                                                   |
 
-Docker Compose reads `.env` when interpolating `docker-compose.yml`, so the `.env` → `.env.local` symlink is what makes the public URLs above reach the containers. Keep all configuration in `.env.local`. Neither file is tracked by Git.
+The URL defaults work when you use Ignidash on the same computer. For other setups, see [Network Configuration](#network-configuration).
 
-Generate each secret with:
+Generate each secret with this command, running it once per secret so the two values differ:
 
 ```bash
 openssl rand -base64 32
 ```
 
-Run the command twice and use a different value for each secret. Never change `BETTER_AUTH_SECRET` or `CONVEX_API_SECRET` during a normal restart or upgrade.
-
-Start the deployment:
+Start Ignidash:
 
 ```bash
 docker compose up -d
 ```
 
-Compose automatically waits for Convex, creates a persistent administrative credential, synchronizes the Convex environment, deploys the Convex functions bundled in the `ignidash-convex-init` image, and runs pending migrations before starting Ignidash.
+Then open `http://localhost:3000/signup`, or your `SITE_URL` followed by `/signup`.
 
-Open `http://localhost:3000/signup` unless you configured another `SITE_URL`.
+Keep all settings in `.env.local`; `.env` is only a link to it, and Git ignores both files.
 
-## Initialization Status
-
-Follow first-run initialization:
-
-```bash
-docker compose logs -f convex-admin-key convex-init
-```
-
-Inspect all service states:
+## Checking That It Started
 
 ```bash
 docker compose ps -a
 ```
 
-After successful initialization, `convex-admin-key` and `convex-init` should show `Exited (0)`. They are one-shot services, not background daemons. The `app` service starts only after `convex-init` exits successfully.
+When everything worked, `convex-admin-key` and `convex-init` show `Exited (0)`: they are one-time setup steps, not services that keep running. `app`, `convex-backend`, and `convex-dashboard` show `Up`.
 
-On a fresh installation or recreated app container, initialization failure keeps the app stopped. During an in-place upgrade, an already-running app may continue serving the previous version until Compose recreates it. Correct the reported configuration or connectivity problem, then retry:
+To follow the setup steps while they run:
 
 ```bash
-docker compose up -d
+docker compose logs -f convex-admin-key convex-init
 ```
 
-To run initialization explicitly without restarting the other services:
+If a setup step fails, the app does not start, and the `convex-init` log says what is wrong (for example, a missing secret). Fix it in `.env.local` and run `docker compose up -d` again. During an upgrade, the previous version of the app may keep running until setup succeeds.
+
+To re-run setup by itself, for example after editing `.env.local`:
 
 ```bash
 docker compose run --rm convex-init
@@ -99,11 +108,21 @@ docker compose run --rm convex-init
 
 ## Network Configuration
 
-The public URLs in `.env.local` are used by browsers. Docker-internal service addresses are configured separately and must not be placed in the public URL variables.
+Ignidash uses three addresses that users' browsers must reach:
+
+| Setting                       | Default port | Used for                       |
+| ----------------------------- | ------------ | ------------------------------ |
+| `SITE_URL`                    | 3000         | The web app                    |
+| `NEXT_PUBLIC_CONVEX_URL`      | 3210         | Live data (uses WebSockets)    |
+| `NEXT_PUBLIC_CONVEX_SITE_URL` | 3211         | Sign-in and other HTTP actions |
+
+> **Important:** the `convex-backend` container must also be able to reach `NEXT_PUBLIC_CONVEX_SITE_URL` itself, because it checks every sign-in against that address. If it cannot, signing in appears to work but the dashboard never loads. The setups below all satisfy this; see [Reverse Proxy](#reverse-proxy) and [Changing Ports](#changing-ports) for the cases that need care.
+
+After changing any of these URLs, run `docker compose up -d`.
 
 ### Localhost
 
-The example defaults are suitable when the browser runs on the Docker host:
+The defaults work when the browser runs on the same computer as Docker:
 
 ```dotenv
 NEXT_PUBLIC_CONVEX_URL=http://localhost:3210
@@ -113,7 +132,7 @@ SITE_URL=http://localhost:3000
 
 ### LAN Access
 
-Replace `localhost` with the Docker host's LAN address or hostname:
+To use Ignidash from other devices on your network, replace `localhost` with the Docker host's LAN IP address or hostname:
 
 ```dotenv
 NEXT_PUBLIC_CONVEX_URL=http://192.168.1.100:3210
@@ -121,20 +140,20 @@ NEXT_PUBLIC_CONVEX_SITE_URL=http://192.168.1.100:3211
 SITE_URL=http://192.168.1.100:3000
 ```
 
-Ports `3000`, `3210`, and `3211` must be reachable by clients. Port `6791` is needed only for direct dashboard access. Plain HTTP exposes passwords, sessions, financial data, and tokens to the network, so use TLS on any network you do not fully trust.
+Clients must be able to reach ports `3000`, `3210`, and `3211` (`6791` only for the Convex Dashboard). Plain HTTP sends passwords, sessions, and financial data unencrypted, so only use it on a network you fully trust; otherwise use a reverse proxy with HTTPS.
 
 ### Reverse Proxy
 
-Example public routing:
+To serve Ignidash over HTTPS on your own domain, route three hostnames to the three ports:
 
-| Public URL                      | Target           | Notes                                |
-| ------------------------------- | ---------------- | ------------------------------------ |
-| `https://finance.example.com`   | `localhost:3000` | Ignidash                             |
-| `https://api.example.com`       | `localhost:3210` | Convex API; WebSocket support needed |
-| `https://actions.example.com`   | `localhost:3211` | Convex HTTP Actions                  |
-| `https://dashboard.example.com` | `localhost:6791` | Optional Convex Dashboard            |
+| Public URL                      | Target           | Notes                               |
+| ------------------------------- | ---------------- | ----------------------------------- |
+| `https://finance.example.com`   | `localhost:3000` | Ignidash                            |
+| `https://api.example.com`       | `localhost:3210` | Convex API; must support WebSockets |
+| `https://actions.example.com`   | `localhost:3211` | Convex HTTP Actions                 |
+| `https://dashboard.example.com` | `localhost:6791` | Optional Convex Dashboard           |
 
-Configure matching values:
+and set:
 
 ```dotenv
 NEXT_PUBLIC_CONVEX_URL=https://api.example.com
@@ -142,35 +161,89 @@ NEXT_PUBLIC_CONVEX_SITE_URL=https://actions.example.com
 SITE_URL=https://finance.example.com
 ```
 
-The proxy for port `3210` must preserve WebSocket upgrade headers. Configure Google OAuth's callback as `{SITE_URL}/api/auth/callback/google`.
+If you use Google sign-in, set its callback URL to `{SITE_URL}/api/auth/callback/google`.
+
+As noted [above](#network-configuration), the `convex-backend` container connects to `https://actions.example.com` itself. This works without changes when that name resolves to an address the container can reach and the certificate comes from a public authority such as Let's Encrypt. Two common homelab setups need an override file:
+
+- **The name does not resolve from inside Docker**, for example because it exists only in your local DNS or your router does not support hairpin NAT. Point it at the Docker host.
+- **The certificate comes from a private or self-signed CA**, for example Caddy's internal CA, step-ca, or a `.home.arpa` domain. Give the backend a CA bundle that includes your CA: copy the system bundle out of the container (`docker compose exec convex-backend cat /etc/ssl/certs/ca-certificates.crt > ca-bundle.crt`) and append your CA's root certificate to `ca-bundle.crt`.
+
+Create `docker-compose.override.yml` next to `docker-compose.yml` (Compose loads it automatically, and Git ignores it). Keep only the parts you need:
+
+```yaml
+services:
+  convex-backend:
+    extra_hosts:
+      - 'actions.example.com:host-gateway'
+    environment:
+      - SSL_CERT_FILE=/etc/ignidash/ca-bundle.crt
+    volumes:
+      - ./ca-bundle.crt:/etc/ignidash/ca-bundle.crt:ro
+```
+
+Then run `docker compose up -d`.
+
+### Changing Ports
+
+If a default port is already in use, change the host side of the mapping in `docker-compose.override.yml`. `!override` replaces the default mapping instead of adding to it, and needs Docker Compose v2.24.4 or newer.
+
+Changing only the app port is always safe:
+
+```yaml
+services:
+  app:
+    ports: !override
+      - '3001:3000'
+```
+
+and set `SITE_URL=http://localhost:3001`.
+
+To change the Convex ports as well, use the host's LAN IP address or hostname in the URLs, not `localhost`, so that `convex-backend` can reach its own address:
+
+```yaml
+services:
+  app:
+    ports: !override
+      - '3001:3000'
+  convex-backend:
+    ports: !override
+      - '3310:3210'
+      - '3311:3211'
+```
+
+```dotenv
+SITE_URL=http://192.168.1.100:3001
+NEXT_PUBLIC_CONVEX_URL=http://192.168.1.100:3310
+NEXT_PUBLIC_CONVEX_SITE_URL=http://192.168.1.100:3311
+```
+
+Then run `docker compose up -d`.
 
 ## Optional Features
 
-Optional values in `.env.local` are synchronized to Convex when nonempty:
+These optional values in `.env.local` turn on extra features. `convex-init` sends each one to Convex when it is set:
 
-- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`
-- `OPENAI_API_KEY`, `OPENAI_ENDPOINT`
-- `RESEND_API_KEY`
-- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID`
-- `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`
+| Variables                                                       | Feature                                        |
+| --------------------------------------------------------------- | ---------------------------------------------- |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`                      | Google sign-in                                 |
+| `OPENAI_API_KEY`, `OPENAI_ENDPOINT`                             | AI chat and insights (Azure OpenAI)            |
+| `RESEND_API_KEY`                                                | Password reset and notification emails         |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` | Subscriptions                                  |
+| `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`           | Server-side analytics (also passed to the app) |
 
-`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is not synchronized to Convex. The published `stable` image was built without browser-side Stripe or PostHog values, so those require a custom frontend image.
-
-After changing configuration, sync it to Convex with:
+After changing them, apply the change:
 
 ```bash
-docker compose run --rm convex-init
+docker compose up -d
 ```
 
-If you changed the public URLs, also run `docker compose up -d` so the app and backend pick them up.
+Clearing a value in `.env.local` does not remove it from Convex. To remove one, delete it in the Convex Dashboard under **Settings → Environment Variables**.
 
-Empty optional values are skipped; they do not delete an existing value from Convex. Remove a previously configured value through the Convex Dashboard if it must be deleted.
-
-The published `stable` frontend has public browser variables baked in at image-build time. Runtime configuration patches the public Convex URLs, but changing browser-side Stripe or PostHog values requires a custom frontend image. Server-side PostHog configuration is synchronized to Convex and also passed to the app container, which reads it when it starts; run `docker compose up -d` after changing it.
+Browser-side Stripe and PostHog (`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` and browser analytics) are compiled into the app image when it is built. The published images are built without them, so using them requires building your own app image.
 
 ## Upgrading
 
-Take an [export](#export-recommended-before-every-upgrade) first, then update and reconcile the deployment:
+Take an [export](#export-recommended-before-every-upgrade) first, then run:
 
 ```bash
 git pull
@@ -178,25 +251,25 @@ docker compose pull
 docker compose up -d
 ```
 
-(`sh scripts/selfhost.sh` with no arguments does the same `pull` and `up -d`.)
+`sh scripts/selfhost.sh` with no options runs the same `pull` and `up -d`.
 
-Both images, `ignidash` (the app) and `ignidash-convex-init` (the Convex initializer), are published together with the same tags, so the Convex functions that get deployed always match the app version. On every `up`, the initializer reuses the stored admin credential, updates configured Convex environment values, deploys functions idempotently, and runs any pending migrations, waiting for them to finish. It never deletes Convex data or regenerates application secrets.
+On every start, `convex-init` reuses the stored admin key, sends your current settings to Convex, deploys the server functions that match the app version, and runs any new data migrations before the app starts. It never deletes your data or changes your secrets.
 
-The Convex backend and dashboard images are pinned by digest in `docker-compose.yml` to an upstream build tested with this release, so `docker compose pull` only changes the Convex version when you `git pull` a release that moves the pin. Review the upstream [Convex upgrading guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md) before a major Convex backend upgrade.
+The app image (`ignidash`) and the setup image (`ignidash-convex-init`) are always published together with the same tags. The Convex backend and dashboard images are pinned in `docker-compose.yml` to a version tested with each release, so they only change when a release you `git pull` moves them. Before a major Convex upgrade, also review the upstream [Convex upgrading guide](https://github.com/get-convex/convex-backend/blob/main/self-hosted/advanced/upgrading.md).
 
-### Pinning a version
+### Pinning a Version
 
-By default, Compose uses the `stable` tag. To pin a specific release, set `IGNIDASH_TAG` in `.env.local`:
+By default, Ignidash uses the `stable` tag (the latest release). To stay on a specific release, set `IGNIDASH_TAG` in `.env.local`:
 
 ```dotenv
 IGNIDASH_TAG=0.4.0
 ```
 
-`IGNIDASH_TAG` selects the tag for both the app and the initializer images. See [Docker Images](#docker-images) for the available tags.
+This selects the tag for both Ignidash images. See [Docker Images](#docker-images) for the available tags.
 
-### Upgrading from v0.3.x or earlier
+### Upgrading from v0.3.x or Earlier
 
-Older releases ran `npm run selfhost`, which used Node.js and the Convex CLI on the host. Upgrade in place with the same three commands:
+Older releases ran `npm run selfhost`, which needed Node.js on the host. Upgrade with the same three commands as above:
 
 ```bash
 git pull
@@ -204,36 +277,41 @@ docker compose pull
 docker compose up -d
 ```
 
-Keep your existing `.env.local`, the `.env` symlink, and the Docker volumes. On first start, the initializer creates its own admin credential from the persisted Convex instance secret; existing data, users, sessions, and old admin keys are kept.
+Keep your `.env.local`, the `.env` link, and the Docker volumes. On first start, Ignidash creates a new admin key from the existing Convex data; your users, sessions, and plans are kept. Node.js is no longer needed.
 
-After upgrading, delete the `CONVEX_SELF_HOSTED_URL` and `CONVEX_SELF_HOSTED_ADMIN_KEY` lines from `.env.local` and restrict the file's permissions. The initializer ignores those lines and the app never receives an admin key, but the old key still grants full access to your Convex data, and older releases created `.env.local` readable by every user on the host:
+Then remove the old admin key from `.env.local` and make the file private. The old key still gives full access to your data, and older releases left `.env.local` readable by every user on the host:
 
-```bash
-chmod 600 .env.local
-```
+1. Delete the `CONVEX_SELF_HOSTED_URL` and `CONVEX_SELF_HOSTED_ADMIN_KEY` lines from `.env.local`.
+2. Restrict the file:
 
-`scripts/selfhost.sh` applies these permissions and warns about a leftover admin key whenever it runs. Node.js is no longer needed on the host.
+   ```bash
+   chmod 600 .env.local
+   ```
+
+`scripts/selfhost.sh` sets these permissions and warns about a leftover admin key whenever it runs.
 
 ## Credentials and Dashboard Access
 
-The generated Convex admin key is stored in the `convex-credentials` Docker volume. It is not printed during startup and is not passed to the app container.
+The Convex admin key is stored in the `convex-credentials` Docker volume. It is never printed during startup and never given to the app.
 
-Display it only when dashboard or administrative access is required:
+To sign in to the Convex Dashboard (`http://localhost:6791`), display the key:
 
 ```bash
 docker compose run --rm --no-deps --entrypoint sh convex-init -c 'cat /run/ignidash/admin-key'
 ```
 
-Treat the output as a full administrative credential. Avoid saving it in shell history, tickets, or logs.
+Treat it like a root password: anyone with it can read and change all data. Avoid saving it in shell history, tickets, or logs.
 
-If the stored key is lost while `convex-data` remains intact, generate another key and rerun initialization:
+If the stored key is **deleted**, the next `docker compose up -d` creates a new one automatically.
+
+If the stored key is **wrong**, `convex-init` fails with `BadAdminKey`. This happens when `convex-data` is restored without its matching `convex-credentials` volume. Create a new key and re-run setup:
 
 ```bash
 docker compose run --rm -e FORCE_REGENERATE_ADMIN_KEY=1 convex-admin-key
 docker compose run --rm convex-init
 ```
 
-If `convex-data` is restored without its matching `convex-credentials` volume, regenerate the key the same way. Generating another key does not necessarily revoke older keys. Rotating the Convex instance secret invalidates all keys and is an advanced recovery procedure that should not be performed during a routine deployment.
+Creating a new key does not revoke older keys.
 
 ## Backup and Restore
 
@@ -293,40 +371,37 @@ Restore an archive only onto the same Convex backend version it was taken from, 
 
 ## Troubleshooting
 
-### Signup or login fails
-
-Confirm initialization succeeded before investigating the frontend:
+Start with the service states and logs:
 
 ```bash
 docker compose ps -a
 docker compose logs convex-init convex-backend app
 ```
 
-Common causes are:
+Errors from Ignidash's server functions appear in the Convex Dashboard (`http://localhost:6791`, under **Logs**), not in `docker compose logs`. See [Credentials and Dashboard Access](#credentials-and-dashboard-access) for how to sign in.
 
-- Empty `BETTER_AUTH_SECRET` or `CONVEX_API_SECRET`
-- Incorrect `SITE_URL`
-- Browser-facing Convex URLs still using `localhost` during LAN access
-- A reverse proxy that does not support WebSockets on port `3210`
-- An initializer deployment or migration failure
+### The app does not start
 
-### Failed to decrypt a Better Auth private key
-
-This indicates that `BETTER_AUTH_SECRET` changed while encrypted Better Auth data remained in Convex. Restore the previous secret from backup. Do not routinely delete JWK or session data, because doing so invalidates authentication material rather than repairing the underlying secret mismatch.
-
-### App remains stopped
-
-Inspect the one-shot initializer:
+`convex-init` failed, so the app was intentionally not started. Its log names the problem:
 
 ```bash
 docker compose logs convex-admin-key convex-init
 ```
 
-The app intentionally does not start after a failed initialization. Fix the reported error and rerun `docker compose up -d`.
+Fix it and run `docker compose up -d` again. If the log shows `BadAdminKey`, see [Credentials and Dashboard Access](#credentials-and-dashboard-access).
 
-### Port conflict
+### Sign-in works but the dashboard never loads
 
-Default ports are:
+Your password is accepted, but the dashboard never loads or shows an error. The Convex backend could not validate the sign-in. Check, in this order:
+
+1. **`convex-backend` cannot reach `NEXT_PUBLIC_CONVEX_SITE_URL`.** `docker compose logs convex-backend` shows `failed to verify TLS certificate` or connection errors. See [Reverse Proxy](#reverse-proxy) and [Changing Ports](#changing-ports).
+2. **`BETTER_AUTH_SECRET` changed** after accounts were created. The Convex Dashboard logs show `Failed to decrypt private key`. Put the previous secret back in `.env.local` and run `docker compose up -d`. Do not delete authentication data to work around this.
+3. **Browser-facing URLs still use `localhost`** while you connect from another device. See [LAN Access](#lan-access).
+4. **A reverse proxy without WebSocket support** for `NEXT_PUBLIC_CONVEX_URL`.
+
+### Port already in use
+
+`docker compose up -d` reports that a port is already allocated. See [Changing Ports](#changing-ports). The defaults are:
 
 | Port | Service             |
 | ---- | ------------------- |
@@ -339,10 +414,10 @@ Default ports are:
 
 Two images are published to the GitHub Container Registry with identical tags:
 
-| Image                                        | Purpose                                                               |
-| -------------------------------------------- | --------------------------------------------------------------------- |
-| `ghcr.io/schelskedevco/ignidash`             | The Ignidash web app                                                  |
-| `ghcr.io/schelskedevco/ignidash-convex-init` | One-shot initializer: syncs env vars, deploys Convex, runs migrations |
+| Image                                        | Purpose                                                                      |
+| -------------------------------------------- | ---------------------------------------------------------------------------- |
+| `ghcr.io/schelskedevco/ignidash`             | The Ignidash web app                                                         |
+| `ghcr.io/schelskedevco/ignidash-convex-init` | One-time setup: sends settings to Convex, deploys functions, runs migrations |
 
 | Tag                  | Description                                        |
 | -------------------- | -------------------------------------------------- |
@@ -353,6 +428,15 @@ Two images are published to the GitHub Container Registry with identical tags:
 | `<short-sha>`        | A specific commit on main (e.g. `56a1aac`)         |
 
 `docker-compose.yml` uses `stable` unless `IGNIDASH_TAG` is set.
+
+## Testing Changes to Self-Hosting
+
+Contributors changing anything that affects self-hosting can run the same checks as CI:
+
+```bash
+npm run test:selfhost       # fast script and configuration checks (needs Docker for the config checks)
+npm run test:selfhost:e2e   # builds both images and runs every scenario in this guide (about 15 minutes)
+```
 
 ## Convex Documentation
 

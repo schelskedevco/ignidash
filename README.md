@@ -96,7 +96,15 @@ See [Known Limitations](https://www.ignidash.com/help#:~:text=Known%20limitation
 
 ## Self-Hosting with Docker
 
-Self-hosting needs only Git and Docker (with Compose) on the host: no Node.js or npm. Docker Compose generates the Convex admin key, deploys the Convex functions, and runs migrations before starting the app. See [SELF_HOSTING.md](./SELF_HOSTING.md) for setup and upgrades.
+Run your own copy of Ignidash with Docker Compose. You need only Git and Docker on the host, not Node.js:
+
+```bash
+git clone https://github.com/schelskedevco/ignidash.git
+cd ignidash
+sh scripts/selfhost.sh --init
+```
+
+See [SELF_HOSTING.md](./SELF_HOSTING.md) for network access (LAN, reverse proxy), upgrades, backups, and troubleshooting.
 
 ## Local Development
 
@@ -135,13 +143,7 @@ openssl rand -base64 32  # For CONVEX_API_SECRET
 
 ### Syncing Environment Variables
 
-For cloud development, set Convex function environment variables through the Convex Dashboard or `npx convex env set`.
-
-For Docker self-hosting, sync `.env.local` changes to Convex with:
-
-```bash
-docker compose run --rm convex-init
-```
+Convex functions read their environment variables from the Convex deployment, not from `.env.local`. Set them in the Convex Dashboard or with `npx convex env set`. (Self-hosted Docker deployments sync them automatically; see [SELF_HOSTING.md](./SELF_HOSTING.md).)
 
 ### Running Locally
 
@@ -160,16 +162,19 @@ Open http://localhost:3000 in your browser.
 
 ### Available Scripts
 
-| Command              | Description              |
-| -------------------- | ------------------------ |
-| `npm run dev`        | Start Next.js dev server |
-| `npm run dev:convex` | Start Convex dev server  |
-| `npm run build`      | Production build         |
-| `npm run lint`       | Run ESLint               |
-| `npm run lint:fix`   | Run ESLint with auto-fix |
-| `npm run typecheck`  | TypeScript type checking |
-| `npm run format`     | Format with Prettier     |
-| `npm run test`       | Run Vitest tests         |
+| Command                     | Description                                                  |
+| --------------------------- | ------------------------------------------------------------ |
+| `npm run dev`               | Start Next.js dev server                                     |
+| `npm run dev:convex`        | Start Convex dev server                                      |
+| `npm run build`             | Production build                                             |
+| `npm run lint`              | Run ESLint                                                   |
+| `npm run lint:fix`          | Run ESLint with auto-fix                                     |
+| `npm run typecheck`         | TypeScript type checking                                     |
+| `npm run format`            | Format with Prettier                                         |
+| `npm run test`              | Run Vitest tests                                             |
+| `npm run test:e2e`          | Run Playwright browser tests against the dev server          |
+| `npm run test:selfhost`     | Check self-hosting scripts and Docker Compose configuration  |
+| `npm run test:selfhost:e2e` | Build the Docker images and test every self-hosting scenario |
 
 ### Code Style
 
