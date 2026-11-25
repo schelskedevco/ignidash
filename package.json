@@ -104,7 +104,7 @@
     "eslint-config-next": "16.4.6",
     "eslint-config-prettier": "^10.1.5",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
+    "lint-staged": "^17.6.0",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.13",
     "tailwindcss": "^4.1.11",
