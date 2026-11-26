@@ -123,13 +123,7 @@ export default function SectionSelector({ activeSection, setActiveSection }: Sec
             {tabs.map((tab) => (
               <button
                 key={tab.name}
-                onPointerUp={() => handleSectionSelect(tab.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleSectionSelect(tab.value);
-                  }
-                }}
+                onClick={() => handleSectionSelect(tab.value)}
                 type="button"
                 aria-current={tab.value === activeSection ? 'page' : undefined}
                 className={cn(

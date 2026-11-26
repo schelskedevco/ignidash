@@ -8,7 +8,7 @@ import type { TableColumn } from '@/lib/types/table-column';
 import Pagination from '@/components/ui/pagination';
 import Card from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
+import { withScrollPreservation } from '@/lib/utils/scroll-preservation';
 import { Button } from '@/components/catalyst/button';
 
 type SortDirection = 'asc' | 'desc' | null;
@@ -47,7 +47,6 @@ export default function Table<T extends Record<string, unknown>>({
   const [hoveredColumn, setHoveredColumn] = useState<keyof T | null>(null);
   const [selectedRow, setSelectedRow] = useState<string | null>(null);
 
-  const withScrollPreservation = useScrollPreservation();
   const handleSort = withScrollPreservation((column: keyof T) => {
     setSortState((prev) => {
       if (prev.column === column) {
@@ -258,30 +257,20 @@ export default function Table<T extends Record<string, unknown>>({
                       <tr
                         key={String(row[keyField])}
                         className={cn(
-                          'focus-outline hover:bg-emphasized-background',
+                          'hover:bg-emphasized-background',
                           'even:bg-emphasized-background/50',
                           onRowClick && 'cursor-pointer',
                           selectedRow === String(row[keyField]) && 'bg-emphasized-background even:bg-emphasized-background'
                         )}
-                        role={onRowClick ? 'button' : undefined}
-                        aria-label={onRowClick ? `View details for simulation number ${String(row[keyField])}` : undefined}
-                        tabIndex={0}
-                        onClick={(e) => {
-                          e.preventDefault();
+                        // Whole-row click is a mouse convenience; keyboard and screen-reader users get the
+                        // real <button> in the first cell, whose clicks bubble up to this handler.
+                        onClick={
+                          onRowClick &&
                           withScrollPreservation(() => {
                             setSelectedRow(String(row[keyField]));
-                            onRowClick?.(row);
-                          })();
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            withScrollPreservation(() => {
-                              setSelectedRow(String(row[keyField]));
-                              onRowClick?.(row);
-                            })();
-                          }
-                        }}
+                            onRowClick(row);
+                          })
+                        }
                       >
                         {columns.map((col, index) => {
                           const rawValue = row[col.key];
@@ -294,10 +283,20 @@ export default function Table<T extends Record<string, unknown>>({
                                 className={cn(
                                   'text-foreground py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-6 lg:pl-8',
                                   hoveredColumn === col.key && 'bg-emphasized-background',
-                                  onRowClick && 'text-primary hover:underline'
+                                  onRowClick && 'text-primary'
                                 )}
                               >
-                                {displayValue}
+                                {onRowClick ? (
+                                  <button
+                                    type="button"
+                                    className="focus-outline hover:underline"
+                                    aria-label={`View details for simulation number ${String(row[keyField])}`}
+                                  >
+                                    {displayValue}
+                                  </button>
+                                ) : (
+                                  displayValue
+                                )}
                               </td>
                             );
                           }
