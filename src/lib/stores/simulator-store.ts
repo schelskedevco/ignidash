@@ -467,6 +467,7 @@ export const useMultiSimulationResult = (
       await Promise.all([mutate(() => true, undefined, { revalidate: false }), mergeWorker.reset()]);
 
       // Creating a pool cancels any in-flight run, whose fetcher then rejects instead of caching a dead handle.
+      // Warm workers from the previous run are reused when available.
       const pool = await createWorkerPool(onProgress);
 
       const chunks: number[] = [];
@@ -487,10 +488,13 @@ export const useMultiSimulationResult = (
             while ((chunk = getNextChunk())) {
               await pool.run(worker.runSimulation(inputs, chunk.seed, chunk.size, simulationMode));
             }
+            await pool.run(worker.flush());
           })
         );
 
-        return await pool.run(mergeWorker.getMergedResult(pool.runId));
+        const result = await pool.run(mergeWorker.getMergedResult(pool.runId));
+        pool.release({ reuse: true });
+        return result;
       } finally {
         pool.release();
       }

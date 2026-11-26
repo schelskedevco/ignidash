@@ -1,12 +1,13 @@
 /**
  * Worker pool manager for parallel simulation execution.
  *
- * Creates and manages a pool of Web Workers (one per available CPU core minus one)
- * that run financial simulations off the main thread via Comlink RPC. Each worker gets a direct
- * MessageChannel to the merge worker, so partial results never pass through the main thread.
+ * Manages a pool of Web Workers (one per available CPU core minus one) that run financial simulations
+ * off the main thread via Comlink RPC. Each run gives every worker a fresh, direct MessageChannel to the
+ * merge worker, so partial results never pass through the main thread.
  *
- * Only one pool is active at a time: creating a new pool cancels the previous one, terminating its
- * workers so a superseded run stops consuming CPU immediately.
+ * Workers are kept warm between runs to skip module startup, and terminated after a period of idleness.
+ * Only one run is active at a time: starting a new run cancels the previous one by terminating its
+ * workers, the only way to stop a synchronous simulation loop.
  */
 
 import * as Comlink from 'comlink';
@@ -15,6 +16,9 @@ import { v4 as uuidv4 } from 'uuid';
 import type { SimulationWorkerAPI } from './simulation.worker';
 import { getMergeWorker } from './merge-worker-api';
 
+/** How long warm workers are kept after a run before being terminated to free their memory. */
+const IDLE_TIMEOUT_MS = 60_000;
+
 /**
  * A pool scoped to a single simulation run. Kept as a value so a superseded run's cleanup
  * can't terminate or disconnect the workers of the run that replaced it.
@@ -22,13 +26,26 @@ import { getMergeWorker } from './merge-worker-api';
 export type WorkerPool = {
   apis: Comlink.Remote<SimulationWorkerAPI>[];
   runId: string;
-  /** Races a promise against the pool's lifetime, so calls into terminated or crashed workers reject instead of hanging. */
+  /** Races a promise against the run's lifetime, so calls into terminated or crashed workers reject instead of hanging. */
   run: <T>(promise: Promise<T>) => Promise<T>;
-  /** Terminates the workers and closes all channels. Idempotent. */
-  release: () => void;
+  /**
+   * Ends the run and closes its channels. With `reuse`, a run that completed normally hands its workers back
+   * to be reused by the next run; otherwise (cancelled, failed, or no `reuse`) they are terminated. Idempotent.
+   */
+  release: (options?: { reuse?: boolean }) => void;
+};
+
+/** The workers backing a pool. Outlives a single run when parked for reuse. */
+type WorkerSet = {
+  workers: Worker[];
+  apis: Comlink.Remote<SimulationWorkerAPI>[];
+  /** Routes worker crashes to the run currently using this set; null while parked. */
+  onError: ((err: Error) => void) | null;
+  idleTimer: ReturnType<typeof setTimeout> | null;
 };
 
 let activePool: WorkerPool | null = null;
+let idleSet: WorkerSet | null = null;
 
 export class SimulationCancelledError extends Error {
   constructor() {
@@ -40,18 +57,17 @@ export class SimulationCancelledError extends Error {
 export async function createWorkerPool(onProgress: () => void): Promise<WorkerPool> {
   activePool?.release();
 
+  const set = takeIdleSet() ?? spawnWorkerSet();
+  const { apis } = set;
+
   const runId = uuidv4();
   const mergeWorker = getMergeWorker();
   const controller = new AbortController();
 
-  const workers: Worker[] = [];
-  const apis: Comlink.Remote<SimulationWorkerAPI>[] = [];
-  const progressPorts: MessagePort[] = [];
-  const connections: Promise<void>[] = [];
-
   const abortWith = (reason: Error) => {
     if (!controller.signal.aborted) controller.abort(reason);
   };
+  set.onError = abortWith;
 
   const run = <T>(promise: Promise<T>): Promise<T> => {
     const { signal } = controller;
@@ -64,30 +80,28 @@ export async function createWorkerPool(onProgress: () => void): Promise<WorkerPo
     });
   };
 
+  const progressPorts: MessagePort[] = [];
+  const connections: Promise<void>[] = [];
+
   let released = false;
-  const release = (): void => {
+  const release = ({ reuse = false }: { reuse?: boolean } = {}): void => {
     if (released) return;
     released = true;
 
-    abortWith(new SimulationCancelledError());
+    if (reuse && !controller.signal.aborted) {
+      parkWorkerSet(set);
+    } else {
+      abortWith(new SimulationCancelledError());
+      destroyWorkerSet(set);
+    }
 
-    apis.forEach((api) => api[Comlink.releaseProxy]());
-    workers.forEach((w) => w.terminate());
     progressPorts.forEach((p) => p.close());
-
     void mergeWorker.disconnect(runId);
 
     if (activePool === pool) activePool = null;
   };
 
-  const optimalSize = getOptimalWorkerCount();
-  for (let i = 0; i < optimalSize; i++) {
-    const worker = new Worker(new URL('./simulation.worker.ts', import.meta.url), { type: 'module' });
-    worker.addEventListener('error', (e) => abortWith(new Error(`Simulation worker failed: ${e.message || 'unknown error'}`)));
-    worker.addEventListener('messageerror', () => abortWith(new Error('Simulation worker message could not be deserialized')));
-
-    const api = Comlink.wrap<SimulationWorkerAPI>(worker);
-
+  for (const api of apis) {
     const merge = new MessageChannel();
     const progress = new MessageChannel();
     progress.port1.onmessage = onProgress;
@@ -97,9 +111,6 @@ export async function createWorkerPool(onProgress: () => void): Promise<WorkerPo
     connections.push(
       api.connect(Comlink.transfer({ mergePort: merge.port2, progressPort: progress.port2 }, [merge.port2, progress.port2]))
     );
-
-    workers.push(worker);
-    apis.push(api);
   }
 
   const pool: WorkerPool = { apis, runId, run, release };
@@ -113,6 +124,63 @@ export async function createWorkerPool(onProgress: () => void): Promise<WorkerPo
   }
 
   return pool;
+}
+
+function spawnWorkerSet(): WorkerSet {
+  const set: WorkerSet = { workers: [], apis: [], onError: null, idleTimer: null };
+
+  const onError = (err: Error) => {
+    if (set.onError) {
+      set.onError(err);
+    } else {
+      // A parked worker crashed: drop the whole set so the next run starts fresh.
+      if (idleSet === set) idleSet = null;
+      destroyWorkerSet(set);
+    }
+  };
+
+  const optimalSize = getOptimalWorkerCount();
+  for (let i = 0; i < optimalSize; i++) {
+    const worker = new Worker(new URL('./simulation.worker.ts', import.meta.url), { type: 'module' });
+    worker.addEventListener('error', (e) => onError(new Error(`Simulation worker failed: ${e.message || 'unknown error'}`)));
+    worker.addEventListener('messageerror', () => onError(new Error('Simulation worker message could not be deserialized')));
+
+    set.workers.push(worker);
+    set.apis.push(Comlink.wrap<SimulationWorkerAPI>(worker));
+  }
+
+  return set;
+}
+
+function takeIdleSet(): WorkerSet | null {
+  const set = idleSet;
+  idleSet = null;
+  if (set?.idleTimer) clearTimeout(set.idleTimer);
+  if (set) set.idleTimer = null;
+  return set;
+}
+
+function parkWorkerSet(set: WorkerSet): void {
+  set.onError = null;
+  if (idleSet && idleSet !== set) destroyWorkerSet(idleSet);
+
+  idleSet = set;
+  set.idleTimer = setTimeout(() => {
+    if (idleSet !== set) return;
+    idleSet = null;
+    destroyWorkerSet(set);
+  }, IDLE_TIMEOUT_MS);
+}
+
+function destroyWorkerSet(set: WorkerSet): void {
+  if (set.idleTimer) clearTimeout(set.idleTimer);
+  set.idleTimer = null;
+  set.onError = null;
+
+  set.apis.forEach((api) => api[Comlink.releaseProxy]());
+  set.workers.forEach((w) => w.terminate());
+  set.apis = [];
+  set.workers = [];
 }
 
 function getOptimalWorkerCount(): number {
