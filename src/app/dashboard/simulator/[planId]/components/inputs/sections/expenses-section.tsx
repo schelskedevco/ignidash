@@ -3,6 +3,7 @@
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useState, RefObject, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { BanknoteArrowDownIcon, CreditCardIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
@@ -24,8 +25,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
 
-import ExpenseDialog from '../dialogs/expense-dialog';
-import DebtDialog from '../dialogs/debt-dialog';
+// Dialog bodies (and their form libraries) load on first open.
+const ExpenseDialog = dynamic(() => import('../dialogs/expense-dialog'));
+const DebtDialog = dynamic(() => import('../dialogs/debt-dialog'));
 
 function getExpenseDesc(expense: ExpenseInputs) {
   return (

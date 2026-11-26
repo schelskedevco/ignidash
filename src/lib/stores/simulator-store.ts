@@ -315,6 +315,9 @@ export const useSimulatorStore = create<SimulatorState>()(
     {
       name: 'Simulator Store',
       anonymousActionType: 'simulator/action',
+      // zustand's default checks import.meta.env, which Next doesn't define, so devtools would stay on in
+      // production and serialize the whole store (including full simulation results) on every update.
+      enabled: process.env.NODE_ENV !== 'production',
     }
   )
 );

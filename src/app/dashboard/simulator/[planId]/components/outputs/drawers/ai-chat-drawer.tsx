@@ -1,7 +1,7 @@
 'use client';
 
 import { ConvexError } from 'convex/values';
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { memo, useState, useRef, useEffect, useMemo } from 'react';
 import { api } from '@/convex/_generated/api';
 import { useQuery, useMutation, usePaginatedQuery } from 'convex/react';
 import { useSmoothText } from '@convex-dev/agent/react';
@@ -105,7 +105,7 @@ interface ChatMessageProps {
   image?: string | null;
 }
 
-function ChatMessage({ message, image }: ChatMessageProps) {
+const ChatMessage = memo(function ChatMessage({ message, image }: ChatMessageProps) {
   const [copied, setCopied] = useState<boolean>(false);
   const { resolvedTheme } = useTheme();
 
@@ -180,6 +180,23 @@ function ChatMessage({ message, image }: ChatMessageProps) {
         </div>
       )}
     </div>
+  );
+}, areChatMessagePropsEqual);
+
+/**
+ * Convex returns new message objects for every row whenever the page updates (e.g. while a reply streams),
+ * so compare the rendered fields instead of identity. Otherwise every message re-parses its markdown per update.
+ */
+function areChatMessagePropsEqual(prev: ChatMessageProps, next: ChatMessageProps): boolean {
+  const a = prev.message;
+  const b = next.message;
+  return (
+    prev.image === next.image &&
+    a._id === b._id &&
+    a.body === b.body &&
+    a.author === b.author &&
+    a.isLoading === b.isLoading &&
+    a._creationTime === b._creationTime
   );
 }
 
@@ -297,7 +314,7 @@ export default function AIChatDrawer({ setOpen }: AIChatDrawerProps) {
     selectedConversationId ? { conversationId: selectedConversationId } : 'skip',
     { initialNumItems: PAGE_SIZE }
   );
-  const messages = useMemo(() => results.sort((a, b) => a.updatedAt - b.updatedAt), [results]);
+  const messages = useMemo(() => results.toSorted((a, b) => a.updatedAt - b.updatedAt), [results]);
 
   const user = useQuery(api.auth.getCurrentUserSafe);
   const canUseChat = useQuery(api.messages.canUseChat) ?? false;

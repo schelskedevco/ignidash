@@ -3,6 +3,7 @@
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useState, RefObject, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { LandmarkIcon, PiggyBankIcon, TrendingUpIcon, RouteIcon, HomeIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 
@@ -24,10 +25,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
 
-import AccountDialog from '../dialogs/account-dialog';
-import SavingsDialog from '../dialogs/savings-dialog';
-import GlidePathDialog from '../dialogs/glide-path-dialog';
-import PhysicalAssetDialog from '../dialogs/physical-asset-dialog';
+// Dialog bodies (and their form libraries) load on first open.
+const AccountDialog = dynamic(() => import('../dialogs/account-dialog'));
+const SavingsDialog = dynamic(() => import('../dialogs/savings-dialog'));
+const GlidePathDialog = dynamic(() => import('../dialogs/glide-path-dialog'));
+const PhysicalAssetDialog = dynamic(() => import('../dialogs/physical-asset-dialog'));
 
 function getAccountDesc(account: AccountInputs) {
   return (

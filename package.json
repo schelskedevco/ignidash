@@ -100,6 +100,7 @@
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "@vitest/coverage-v8": "^4.1.12",
+    "babel-plugin-react-compiler": "^1.0.0",
     "convex-test": "^0.0.41",
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
