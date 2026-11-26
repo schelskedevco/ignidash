@@ -42,6 +42,11 @@ type DerivedMultiSimulationData = {
   keyMetrics: KeyMetrics;
 };
 
+function closeRun(runId: string): void {
+  runs.get(runId)?.ports.forEach((port) => port.close());
+  runs.delete(runId);
+}
+
 const mergeAPI = {
   /**
    * Exposes a run-scoped PartialResultSink on a port whose other end is held by a simulation worker,
@@ -66,22 +71,29 @@ const mergeAPI = {
     run.ports.push(port);
   },
 
-  /** Closes a run's simulation worker ports and drops any unmerged results once its pool is released. */
+  /** Closes a run's simulation worker ports and drops any unmerged results once its pool is released. Idempotent. */
   async disconnect(runId: string): Promise<void> {
-    runs.get(runId)?.ports.forEach((port) => port.close());
-    runs.delete(runId);
+    closeRun(runId);
   },
 
-  /** Merges a run's buffered partial results, caches the combined result if the run is the latest, and returns a UUID handle. */
+  /**
+   * Merges a run's buffered partial results into the cache and returns a UUID handle for it, then frees the run's state.
+   * Rejects for a superseded run, so the caller never receives a handle that isn't backed by the cache.
+   */
   async getMergedResult(runId: string): Promise<{ handle: string }> {
     const run = runs.get(runId);
     if (!run) throw new Error('Simulation run not found');
 
+    if (runId !== latestRunId) {
+      closeRun(runId);
+      throw new Error('Simulation run was superseded');
+    }
+
     const merged: MultiSimulationResult = { simulations: run.partialResults.flatMap((r) => r.simulations) };
-    run.partialResults = [];
+    closeRun(runId);
 
     const handle = uuidv4();
-    if (runId === latestRunId) cache = { handle, res: merged };
+    cache = { handle, res: merged };
     return { handle };
   },
 

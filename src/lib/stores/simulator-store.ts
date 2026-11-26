@@ -1,6 +1,5 @@
 'use client';
 
-import * as Comlink from 'comlink';
 import { useMemo, useEffect, useState, useCallback } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
@@ -467,7 +466,8 @@ export const useMultiSimulationResult = (
     async () => {
       await Promise.all([mutate(() => true, undefined, { revalidate: false }), mergeWorker.reset()]);
 
-      const pool = await createWorkerPool();
+      // Creating a pool cancels any in-flight run, whose fetcher then rejects instead of caching a dead handle.
+      const pool = await createWorkerPool(onProgress);
 
       const chunks: number[] = [];
       for (let i = 0; i < 500; i += 10) {
@@ -485,17 +485,18 @@ export const useMultiSimulationResult = (
           pool.apis.map(async (worker) => {
             let chunk;
             while ((chunk = getNextChunk())) {
-              await worker.runSimulation(inputs, chunk.seed, chunk.size, simulationMode, Comlink.proxy(onProgress));
+              await pool.run(worker.runSimulation(inputs, chunk.seed, chunk.size, simulationMode));
             }
           })
         );
 
-        return await mergeWorker.getMergedResult(pool.runId);
+        return await pool.run(mergeWorker.getMergedResult(pool.runId));
       } finally {
         pool.release();
       }
     },
-    swrOptions
+    // Never auto-retry: a retry would rerun all simulations, and a cancelled run is retried by revisiting its key.
+    { ...swrOptions, shouldRetryOnError: false }
   );
 
   const handle = handleData?.handle;

@@ -19,19 +19,26 @@ import {
 import type { PartialResultSink } from './merge.worker';
 
 let mergeWorker: Comlink.Remote<PartialResultSink> | null = null;
+let progressPort: MessagePort | null = null;
+
+/** Posts a fire-and-forget tick per completed simulation; avoids an RPC round-trip per simulation. */
+const reportProgress = () => progressPort?.postMessage(null);
 
 const simulationAPI = {
-  /** Receives this worker's end of a MessageChannel connected to the merge worker. */
-  async connectMergeWorker(port: MessagePort): Promise<void> {
-    mergeWorker = Comlink.wrap<PartialResultSink>(port);
+  /**
+   * Receives this worker's ends of two MessageChannels: one connected to the merge worker (partial results),
+   * one to the main thread (progress ticks).
+   */
+  async connect({ mergePort, progressPort: port }: { mergePort: MessagePort; progressPort: MessagePort }): Promise<void> {
+    mergeWorker = Comlink.wrap<PartialResultSink>(mergePort);
+    progressPort = port;
   },
 
   async runSimulation(
     inputs: SimulatorInputs,
     baseSeed: number,
     numSimulations: number,
-    simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns',
-    onProgress?: () => void
+    simulationMode: 'monteCarloStochasticReturns' | 'monteCarloHistoricalReturns'
   ): Promise<void> {
     if (!mergeWorker) throw new Error('Merge worker not connected');
 
@@ -39,12 +46,12 @@ const simulationAPI = {
     switch (simulationMode) {
       case 'monteCarloStochasticReturns': {
         const engine = new MonteCarloSimulationEngine(inputs, baseSeed);
-        res = engine.runMonteCarloSimulation(numSimulations, onProgress);
+        res = engine.runMonteCarloSimulation(numSimulations, reportProgress);
         break;
       }
       case 'monteCarloHistoricalReturns': {
         const engine = new LcgHistoricalBacktestSimulationEngine(inputs, baseSeed);
-        res = engine.runLcgHistoricalBacktest(numSimulations, onProgress);
+        res = engine.runLcgHistoricalBacktest(numSimulations, reportProgress);
         break;
       }
     }
