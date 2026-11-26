@@ -449,14 +449,18 @@ export const useMultiSimulationResult = (
   const [completedSimulations, setCompletedSimulations] = useState(0);
   const onProgress = useCallback(() => setCompletedSimulations((prev) => prev + 1), []);
 
+  // Results depend on every input, not just the seed: key on their content so edits rerun the simulations.
+  // The seed is part of inputs (simulationSettings), so it doesn't need a separate key entry.
+  const inputsKey = useMemo(() => JSON.stringify(inputs), [inputs]);
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCompletedSimulations(0);
-  }, [planId, simulationSeed, simulationMode]);
+  }, [planId, inputsKey, simulationMode]);
 
   const swrOptions = { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false };
 
-  const swrKey = ['simulationHandle', planId, simulationSeed, simulationMode];
+  const swrKey = ['simulationHandle', planId, inputsKey, simulationMode];
   const {
     data: handleData,
     isLoading,
