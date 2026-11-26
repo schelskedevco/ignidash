@@ -1,6 +1,5 @@
 'use client';
 
-import * as Comlink from 'comlink';
 import { useMemo, useEffect, useState, useCallback } from 'react';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
@@ -18,7 +17,7 @@ import { LcgHistoricalBacktestReturnsProvider } from '@/lib/calc/returns-provide
 import { KeyMetricsExtractor } from '@/lib/calc/data-extractors/key-metrics-extractor';
 import { ChartDataExtractor } from '@/lib/calc/data-extractors/chart-data-extractor';
 import { TableDataExtractor } from '@/lib/calc/data-extractors/table-data-extractor';
-import { createWorkerPool, releaseWorkerPool } from '@/lib/workers/simulation-worker-api';
+import { createWorkerPool } from '@/lib/workers/simulation-worker-api';
 import { getMergeWorker } from '@/lib/workers/merge-worker-api';
 import type {
   SingleSimulationNetWorthTableRow,
@@ -450,14 +449,18 @@ export const useMultiSimulationResult = (
   const [completedSimulations, setCompletedSimulations] = useState(0);
   const onProgress = useCallback(() => setCompletedSimulations((prev) => prev + 1), []);
 
+  // Results depend on every input, not just the seed: key on their content so edits rerun the simulations.
+  // The seed is part of inputs (simulationSettings), so it doesn't need a separate key entry.
+  const inputsKey = useMemo(() => JSON.stringify(inputs), [inputs]);
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setCompletedSimulations(0);
-  }, [planId, simulationSeed, simulationMode]);
+  }, [planId, inputsKey, simulationMode]);
 
   const swrOptions = { revalidateOnFocus: false, revalidateIfStale: false, revalidateOnReconnect: false };
 
-  const swrKey = ['simulationHandle', planId, simulationSeed, simulationMode];
+  const swrKey = ['simulationHandle', planId, inputsKey, simulationMode];
   const {
     data: handleData,
     isLoading,
@@ -467,7 +470,9 @@ export const useMultiSimulationResult = (
     async () => {
       await Promise.all([mutate(() => true, undefined, { revalidate: false }), mergeWorker.reset()]);
 
-      const pool = createWorkerPool();
+      // Creating a pool cancels any in-flight run, whose fetcher then rejects instead of caching a dead handle.
+      // Warm workers from the previous run are reused when available.
+      const pool = await createWorkerPool(onProgress);
 
       const chunks: number[] = [];
       for (let i = 0; i < 500; i += 10) {
@@ -480,19 +485,26 @@ export const useMultiSimulationResult = (
         return { size: chunks[chunkIndex], seed: simulationSeed + chunkIndex * 9973, index: chunkIndex++ };
       };
 
-      await Promise.all(
-        pool.map(async (worker) => {
-          let chunk;
-          while ((chunk = getNextChunk())) {
-            await worker.runSimulation(inputs, chunk.seed, chunk.size, simulationMode, mergeWorker, Comlink.proxy(onProgress));
-          }
-        })
-      );
+      try {
+        await Promise.all(
+          pool.apis.map(async (worker) => {
+            let chunk;
+            while ((chunk = getNextChunk())) {
+              await pool.run(worker.runSimulation(inputs, chunk.seed, chunk.size, simulationMode));
+            }
+            await pool.run(worker.flush());
+          })
+        );
 
-      releaseWorkerPool();
-      return mergeWorker.getMergedResult();
+        const result = await pool.run(mergeWorker.getMergedResult(pool.runId));
+        pool.release({ reuse: true });
+        return result;
+      } finally {
+        pool.release();
+      }
     },
-    swrOptions
+    // Never auto-retry: a retry would rerun all simulations, and a cancelled run is retried by revisiting its key.
+    { ...swrOptions, shouldRetryOnError: false }
   );
 
   const handle = handleData?.handle;
