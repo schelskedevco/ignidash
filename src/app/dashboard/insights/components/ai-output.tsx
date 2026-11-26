@@ -4,6 +4,7 @@ import { useQuery, usePaginatedQuery } from 'convex/react';
 import { useSmoothText } from '@convex-dev/agent/react';
 import { api } from '@/convex/_generated/api';
 import { useState, useMemo, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { SparklesIcon, CopyIcon, CheckIcon, RefreshCwIcon, Loader2Icon } from 'lucide-react';
 import { ArrowLongLeftIcon, ArrowLongRightIcon } from '@heroicons/react/20/solid';
@@ -16,7 +17,8 @@ import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-butt
 import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog } from '@/components/catalyst/dialog';
 
-import GenerateDialog from './dialogs/generate-dialog';
+// Dialog bodies (and their form libraries) load on first open.
+const GenerateDialog = dynamic(() => import('./dialogs/generate-dialog'));
 
 function InsightsTextWhileLoading({ content }: { content: string }) {
   const [visibleText] = useSmoothText(content, { startStreaming: true, charsPerSec: 64 });
@@ -36,7 +38,7 @@ export default function AIOutput() {
   const { results, status, loadMore } = usePaginatedQuery(api.insights.list, selectedPlan ? { planId: selectedPlan.id } : 'skip', {
     initialNumItems: 1,
   });
-  const insights = useMemo(() => results.sort((a, b) => b.updatedAt - a.updatedAt), [results]);
+  const insights = useMemo(() => results.toSorted((a, b) => b.updatedAt - a.updatedAt), [results]);
   const isLoadingPage = status === 'LoadingFirstPage' || status === 'LoadingMore';
 
   const [selectedInsightIndex, setSelectedInsightIndex] = useState<number>(0);

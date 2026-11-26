@@ -5,6 +5,7 @@ import { api } from '@/convex/_generated/api';
 import type { Preloaded } from 'convex/react';
 import { usePreloadedAuthQuery } from '@convex-dev/better-auth/nextjs/client';
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { WalletIcon as MicroWalletIcon, CreditCardIcon as MicroCreditCardIcon } from '@heroicons/react/16/solid';
 import { WalletIcon, CreditCardIcon } from '@heroicons/react/24/outline';
 import { ExternalLinkIcon } from 'lucide-react';
@@ -21,8 +22,10 @@ import DataItem from '@/components/ui/data-item';
 import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-button';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 import { cn } from '@/lib/utils';
-import AssetDialog from './dialogs/asset-dialog';
-import LiabilityDialog from './dialogs/liability-dialog';
+
+// Dialog bodies (and their form libraries) load on first open.
+const AssetDialog = dynamic(() => import('./dialogs/asset-dialog'));
+const LiabilityDialog = dynamic(() => import('./dialogs/liability-dialog'));
 
 function getAssetDesc(asset: AssetInputs) {
   return (

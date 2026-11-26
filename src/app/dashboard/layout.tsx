@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { useQuery, useMutation, useConvexAuth } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import posthog from 'posthog-js';
@@ -13,7 +14,8 @@ import UnauthenticatedWrapper from '@/components/layout/unauthenticated-wrapper'
 import { usePostHogIdentify } from '@/hooks/use-posthog-identify';
 import { Dialog } from '@/components/catalyst/dialog';
 
-import OnboardingDialog from './components/dialogs/onboarding-dialog';
+// Dialog bodies (and their form libraries) load on first open.
+const OnboardingDialog = dynamic(() => import('./components/dialogs/onboarding-dialog'));
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [onboardingDialogOpen, setOnboardingDialogOpen] = useState(false);

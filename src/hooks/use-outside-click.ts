@@ -1,5 +1,5 @@
 /** Detects clicks inside or outside a referenced element for interaction tracking. */
-import { useEffect, useRef, type RefObject } from 'react';
+import { useEffect, useEffectEvent, useRef, type RefObject } from 'react';
 
 export function useClickDetection<T extends HTMLElement = HTMLDivElement>(
   onOutside: () => void,
@@ -7,27 +7,30 @@ export function useClickDetection<T extends HTMLElement = HTMLDivElement>(
 ): RefObject<T | null> {
   const ref = useRef<T | null>(null);
 
-  useEffect(() => {
+  // Effect events always see the latest callbacks, so the document listeners are bound once
+  // instead of being re-attached whenever a caller passes new inline functions.
+  const handleInteraction = useEffectEvent((event: MouseEvent | TouchEvent) => {
     const element = ref.current;
+    if (!element) return;
 
-    const handleInteraction = (event: MouseEvent | TouchEvent) => {
-      if (!element) return;
+    if (element.contains(event.target as Node)) {
+      onInside();
+    } else {
+      onOutside();
+    }
+  });
 
-      if (element.contains(event.target as Node)) {
-        onInside();
-      } else {
-        onOutside();
-      }
-    };
+  useEffect(() => {
+    const listener = (event: MouseEvent | TouchEvent) => handleInteraction(event);
 
-    document.addEventListener('mousedown', handleInteraction);
-    document.addEventListener('touchend', handleInteraction);
+    document.addEventListener('mousedown', listener);
+    document.addEventListener('touchend', listener);
 
     return () => {
-      document.removeEventListener('mousedown', handleInteraction);
-      document.removeEventListener('touchend', handleInteraction);
+      document.removeEventListener('mousedown', listener);
+      document.removeEventListener('touchend', listener);
     };
-  }, [onOutside, onInside]);
+  }, []);
 
   return ref;
 }

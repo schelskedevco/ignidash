@@ -3,6 +3,7 @@
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useState, RefObject, useCallback, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { HandCoinsIcon, InfoIcon } from 'lucide-react';
 import { PlusIcon } from '@heroicons/react/16/solid';
 import {
@@ -39,9 +40,11 @@ import DataListEmptyStateButton from '@/components/ui/data-list-empty-state-butt
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
-import ContributionRuleDialog from '../dialogs/contribution-rule-dialog';
 import SortableContributionItem from '../sortable-contribution-item';
 import ContributionItem from '../contribution-item';
+
+// Dialog bodies (and their form libraries) load on first open.
+const ContributionRuleDialog = dynamic(() => import('../dialogs/contribution-rule-dialog'));
 
 function getContributionRuleDesc(accounts: Record<string, AccountInputs>, contributionInputs: ContributionInputs) {
   const accountType = accountTypeForDisplay(accounts[contributionInputs.accountId]?.type);

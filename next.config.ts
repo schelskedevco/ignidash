@@ -7,6 +7,12 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   output: process.env.SELF_HOSTED === 'true' ? 'standalone' : undefined,
+  // Auto-memoizes components and hooks (replaces most manual useMemo/useCallback/memo).
+  reactCompiler: true,
+  experimental: {
+    // recharts isn't in Next's default list; tree-shake its barrel import.
+    optimizePackageImports: ['recharts'],
+  },
   images: {
     remotePatterns: [
       {

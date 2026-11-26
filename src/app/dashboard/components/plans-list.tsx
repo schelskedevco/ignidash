@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import type { Doc, Id } from '@/convex/_generated/dataModel';
 import type { Preloaded } from 'convex/react';
 import { usePreloadedAuthQuery } from '@convex-dev/better-auth/nextjs/client';
@@ -25,8 +26,10 @@ import {
 import { simulatorFromConvex } from '@/lib/utils/data-transformers';
 import DeleteDataItemAlert from '@/components/ui/delete-data-item-alert';
 
-import PlanDialog from './dialogs/plan-dialog';
 import Finances from './finances';
+
+// Dialog bodies (and their form libraries) load on first open.
+const PlanDialog = dynamic(() => import('./dialogs/plan-dialog'));
 
 interface PlanListItems {
   plan: Doc<'plans'>;

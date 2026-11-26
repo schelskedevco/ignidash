@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, lazy, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { LayoutDashboardIcon, MessageCircleMoreIcon, InfoIcon } from 'lucide-react';
 import type { Preloaded } from 'convex/react';
 import { usePreloadedAuthQuery } from '@convex-dev/better-auth/nextjs/client';
@@ -12,7 +13,8 @@ import Drawer from '@/components/ui/drawer';
 import { Dialog } from '@/components/catalyst/dialog';
 import ColumnHeader from '@/components/ui/column-header';
 
-import OnboardingDialog from './dialogs/onboarding-dialog';
+// Dialog bodies (and their form libraries) load on first open.
+const OnboardingDialog = dynamic(() => import('./dialogs/onboarding-dialog'));
 
 const UserFeedbackDrawer = lazy(() => import('@/components/layout/user-feedback-drawer'));
 

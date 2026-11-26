@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, lazy, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 
 import {
   usePlanData,
@@ -24,9 +25,11 @@ import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
 import SingleSimulationResults from './results-pages/single-simulation-results';
 import MultiSimulationResults from './results-pages/multi-simulation-results';
-import IncomeDialog from '../inputs/dialogs/income-dialog';
-import ExpenseDialog from '../inputs/dialogs/expense-dialog';
-import SavingsDialog from '../inputs/dialogs/savings-dialog';
+
+// Dialog bodies (and their form libraries) load on first open.
+const IncomeDialog = dynamic(() => import('../inputs/dialogs/income-dialog'));
+const ExpenseDialog = dynamic(() => import('../inputs/dialogs/expense-dialog'));
+const SavingsDialog = dynamic(() => import('../inputs/dialogs/savings-dialog'));
 
 const TimelineDrawer = lazy(() => import('../inputs/drawers/timeline-drawer'));
 const TaxSettingsDrawer = lazy(() => import('../inputs/drawers/tax-settings-drawer'));
