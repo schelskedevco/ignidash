@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
+import { withScrollPreservation } from '@/lib/utils/scroll-preservation';
 
 export enum TableType {
   AllSimulations = 'All Simulations',
@@ -15,8 +15,6 @@ interface TableTypeSelectorProps {
 }
 
 export default function TableTypeSelector({ className, setCurrentType, currentType }: TableTypeSelectorProps) {
-  const withScrollPreservation = useScrollPreservation();
-
   return (
     <div className={cn('isolate -mt-1 -ml-1 flex gap-x-2 overflow-x-auto pt-1 pb-2 pl-1', className)}>
       {Object.values(TableType).map((type) => (

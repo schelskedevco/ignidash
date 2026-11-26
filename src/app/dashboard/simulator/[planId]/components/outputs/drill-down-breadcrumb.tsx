@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { ChevronRightIcon } from '@heroicons/react/20/solid';
 
-import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
+import { withScrollPreservation } from '@/lib/utils/scroll-preservation';
 import { useActiveSeed, useRemoveActiveSeed } from '@/hooks/use-active-seed';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
@@ -12,8 +12,6 @@ import { Kbd, KbdGroup } from '@/components/ui/kbd';
 export default function DrillDownBreadcrumb() {
   const { activeSeed } = useActiveSeed();
   const removeActiveSeed = useRemoveActiveSeed();
-
-  const withScrollPreservation = useScrollPreservation();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

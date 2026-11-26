@@ -26,7 +26,7 @@ import {
   useUpdateMultiSimulationCategory,
 } from '@/lib/stores/simulator-store';
 import { formatChartString } from '@/lib/utils';
-import { useScrollPreservation } from '@/hooks/use-scroll-preserving-state';
+import { withScrollPreservation } from '@/lib/utils/scroll-preservation';
 import { useSelectedPlanId } from '@/hooks/use-selected-plan-id';
 
 interface DrillDownBreadcrumbProps {
@@ -35,8 +35,6 @@ interface DrillDownBreadcrumbProps {
 }
 
 function DrillDownBreadcrumb({ removeActiveSeed, activeSeed }: DrillDownBreadcrumbProps) {
-  const withScrollPreservation = useScrollPreservation();
-
   return (
     <nav aria-label="Breadcrumb" className="border-border/50 -mx-2 flex border-t py-2 sm:-mx-3 lg:-mx-4 xl:hidden">
       <ol role="list" className="mx-2 flex items-center space-x-2 px-1 sm:mx-3 lg:mx-4">
@@ -112,7 +110,6 @@ export default function SimulationCategorySelector({
   const multiSimulationCategory = useMultiSimulationCategory();
   const resultsCategory = availableCategories.mode === 'single' ? singleSimulationCategory : multiSimulationCategory;
 
-  const withScrollPreservation = useScrollPreservation();
   const handleCategorySelect = (category: SingleSimulationCategory | MultiSimulationCategory) => {
     track('Select simulation category', { category });
     posthog.capture('select_simulation_category', { plan_id: planId, category });
@@ -126,13 +123,7 @@ export default function SimulationCategorySelector({
           {availableCategories.categories.map((category) => (
             <button
               key={category}
-              onPointerUp={withScrollPreservation(() => handleCategorySelect(category))}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  withScrollPreservation(() => handleCategorySelect(category))();
-                }
-              }}
+              onClick={withScrollPreservation(() => handleCategorySelect(category))}
               type="button"
               className={cn(
                 'text-muted-foreground bg-background hover:bg-emphasized-background focus-outline border-border/25 relative inline-flex items-center rounded-full border px-3 py-2 text-sm font-semibold focus:z-10',
